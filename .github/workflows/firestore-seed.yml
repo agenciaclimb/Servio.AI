@@ -1,0 +1,35 @@
+﻿name: Firestore Seed
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Motivo (opcional)"
+        required: false
+  schedule:
+    - cron: "0 11 * * 1-5" # 08:00 BRT aprox.
+
+permissions:
+  contents: read
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install backend deps
+        run: |
+          cd backend
+          npm i firebase-admin
+      - name: Seed/Migrate Firestore
+        env:
+          SEED_REASON: ${{ github.event.inputs.reason }}
+        run: |
+          node scripts/firestore_seed.mjs

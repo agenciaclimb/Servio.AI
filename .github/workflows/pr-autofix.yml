@@ -1,0 +1,33 @@
+﻿name: PR Auto-fix
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install deps
+        run: |
+          if [ -f package.json ]; then npm i -D eslint prettier; npm i; fi
+
+      - name: Run eslint --fix & prettier
+        run: |
+          npx eslint . --ext .ts,.tsx,.js --fix || true
+          npx prettier . --write || true
+
+      - name: Commit auto-fixes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(ci): auto-fix (eslint/prettier)"
