@@ -1,4 +1,4 @@
-﻿﻿/**
+/**
  * scripts/firestore_seed.mjs
  * - Usa Application Default Credentials (fornecidas pela action de auth)
  * - Garante coleções básicas e um meta.schemaVersion
@@ -48,6 +48,9 @@ async function ensureCollections() {
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
   }
+
+  // índice lógico: campo status em jobs
+  await jobsRef.limit(1).get(); // força criação de coleção caso vazia (não cria índice, só lazy)
 }
 
 function appendUpdateLog(txt) {

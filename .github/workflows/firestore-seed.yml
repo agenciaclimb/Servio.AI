@@ -26,10 +26,10 @@ jobs:
 
       - name: Install backend deps
         run: |
-          cd backend
-          npm install
+          npm i firebase-admin
       - name: Seed/Migrate Firestore
         env:
           SEED_REASON: ${{ github.event.inputs.reason }}
         run: |
+          node scripts/firestore_seed.mjs
           node scripts/firestore_seed.mjs
