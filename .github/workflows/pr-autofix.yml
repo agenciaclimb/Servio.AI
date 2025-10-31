@@ -24,8 +24,8 @@ jobs:
 
       - name: Run eslint --fix & prettier
         run: |
-          npx eslint . --ext .ts,.tsx,.js --fix || true
-          npx prettier . --write || true
+          npx eslint . --ext .ts,.tsx,.js --fix --ignore-path .eslintignore || true
+          npx prettier . --write --ignore-path .gitignore || true
 
       - name: Commit auto-fixes
         uses: stefanzweifel/git-auto-commit-action@v5
