@@ -44,13 +44,71 @@ Para rodar todos os testes do backend, execute:
 npm test
 ```
 
+## 🗂️ Estrutura de Pastas
+
+```
+backend/
+├── src/
+│   └── index.js          # Aplicação Express principal
+├── tests/
+│   ├── smoke.test.ts     # Teste básico de sanidade
+│   ├── index.test.js     # Testes dos endpoints principais
+│   └── jobs.test.js      # Testes dos endpoints de jobs
+├── package.json
+└── README.md
+```
+
 ## 🌐 Endpoints Principais
 
 O serviço expõe uma API RESTful para gerenciar as principais entidades da plataforma:
 
-- `GET /users`, `GET /users/:id`, `POST /users`, `PUT /users/:id`
-- `GET /jobs`, `POST /jobs`, `PUT /jobs/:id`
-- `POST /create-checkout-session`
-- `POST /jobs/:jobId/release-payment`
-- `POST /generate-upload-url`
-- E muitos outros. Consulte `src/index.js` para a lista completa.
+### Usuários
+
+- `GET /users` - Lista todos os usuários
+- `GET /users/:id` - Busca usuário por ID
+- `POST /users` - Cria novo usuário
+- `PUT /users/:id` - Atualiza usuário
+
+### Jobs
+
+- `GET /jobs` - Lista todos os jobs (filtros: `providerId`, `status`)
+- `POST /jobs` - Cria novo job
+- `PUT /jobs/:id` - Atualiza job
+- `POST /jobs/:jobId/set-on-the-way` - Marca job como "a caminho"
+
+### Pagamentos (Stripe)
+
+- `POST /create-checkout-session` - Cria sessão de checkout
+- `POST /jobs/:jobId/release-payment` - Libera pagamento do escrow
+
+### Armazenamento
+
+- `GET /generate-upload-url` - Gera URL assinada para upload no GCS
+
+### Disputas
+
+- `POST /disputes/:disputeId/resolve` - Resolve uma disputa
+
+Consulte `src/index.js` para a lista completa de endpoints.
+
+## 🔒 Segurança
+
+- Todos os endpoints sensíveis requerem autenticação via Firebase ID token
+- Pagamentos processados através de Stripe Checkout com modo seguro
+- URLs de upload assinadas com expiração de 15 minutos
+- Validação de dados em todos os endpoints
+
+## 🧪 Desenvolvimento
+
+Para adicionar novos testes, crie arquivos `.test.js` em `tests/` seguindo o padrão de injeção de dependência:
+
+```javascript
+import { createApp } from "../src/index.js";
+
+const mockDb = {
+  /* mock do Firestore */
+};
+const app = createApp({ db: mockDb });
+```
+
+Isso permite testar endpoints sem depender de serviços externos.

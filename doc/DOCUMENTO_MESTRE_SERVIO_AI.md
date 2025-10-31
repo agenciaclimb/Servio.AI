@@ -451,6 +451,15 @@ A IA Gemini sincronizou todo o código-fonte do projeto com o repositório Git r
 A IA Gemini, para planejar o próximo ciclo de desenvolvimento, criou o arquivo `doc/PLANO_POS_MVP_v1.1.md`. Este documento detalha as próximas funcionalidades a serem implementadas, organizadas em pilares estratégicos como Aprofundamento da IA, Engajamento do Usuário, Expansão e Monetização, e Robustez Técnica.
 
 #update_log - 2024-07-30 16:10
+A IA Gemini sincronizou todo o código-fonte do projeto com o repositório Git remoto em `https://github.com/agenciaclimb/Servio.AI.git`. Uma nova branch `feature/full-implementation` foi criada e uma Pull Request foi aberta para mesclar a implementação completa do MVP na branch `main`.
+
+#update_log - 2024-07-30 16:15
+A IA Gemini expandiu os testes do backend, documentou as variáveis de ambiente e criou o README do backend. Foram criados testes para os endpoints de `jobs` (criação, filtro por status, `set-on-the-way`), o arquivo `.env.example` foi documentado e o `backend/README.md` foi criado com instruções de setup e arquitetura.
+
+#update_log - 2024-07-30 16:05
+A IA Gemini, para planejar o próximo ciclo de desenvolvimento, criou o arquivo `doc/PLANO_POS_MVP_v1.1.md`. Este documento detalha as próximas funcionalidades a serem implementadas, organizadas em pilares estratégicos como Aprofundamento da IA, Engajamento do Usuário, Expansão e Monetização, e Robustez Técnica.
+
+#update_log - 2024-07-30 16:10
 A IA Gemini preparou o projeto para o deploy em produção. Foi criado o arquivo `cloudbuild.yaml` para instruir o Google Cloud sobre como construir os serviços de backend. Um guia de deploy passo a passo foi gerado para o usuário, cobrindo a mesclagem da PR, configuração do Firebase, deploy dos backends no Cloud Run, deploy do frontend no Firebase Hosting e configuração final do webhook do Stripe.
 
 #update_log - 2024-07-30 13:55
