@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { auth } from './firebaseConfig';
 
 interface LoginProps {
   // onLogin is no longer needed as App.tsx will listen to auth state changes

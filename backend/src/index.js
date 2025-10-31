@@ -82,10 +82,6 @@ app.post('/create-checkout-session', async (req, res) => {
 
 app.post('/jobs/:jobId/release-payment', async (req, res) => {
   const { jobId } = req.params;
-  const requesterUid = req.user.uid; // User must be authenticated
-
-app.post('/jobs/:jobId/release-payment', async (req, res) => {
-  const { jobId } = req.params;
 
   try {
     const escrowQuery = await db.collection('escrows').where('jobId', '==', jobId).limit(1).get();
@@ -171,45 +167,6 @@ app.post('/generate-upload-url', async (req, res) => {
   } catch (error) {
     console.error('Error generating signed URL:', error);
     res.status(500).json({ error: 'Failed to generate upload URL.' });
-  }
-});
-
-app.post('/disputes/:disputeId/resolve', async (req, res) => {
-  const { disputeId } = req.params;
-  const { resolution, comment } = req.body; // resolution: 'release_to_provider' or 'refund_client'
-
-  if (!resolution || !comment) {
-    return res.status(400).json({ error: 'Resolution decision and comment are required.' });
-  }
-
-  const db = admin.firestore();
-  const disputeRef = db.collection('disputes').doc(disputeId);
-
-  try {
-    const disputeDoc = await disputeRef.get();
-    if (!disputeDoc.exists) {
-      return res.status(404).json({ error: 'Dispute not found.' });
-    }
-    const disputeData = disputeDoc.data();
-    const jobId = disputeData.jobId;
-
-    const escrowQuery = await db.collection('escrows').where('jobId', '==', jobId).limit(1).get();
-    if (escrowQuery.empty) {
-      return res.status(404).json({ error: 'Escrow record not found for this job.' });
-    }
-    const escrowRef = escrowQuery.docs[0].ref;
-
-    // Update documents in a transaction for atomicity
-    await db.runTransaction(async (transaction) => {
-      transaction.update(disputeRef, { status: 'resolvida', resolution: { decision: resolution, comment: comment, resolvedAt: new Date().toISOString() } });
-      transaction.update(db.collection('jobs').doc(jobId), { status: resolution === 'release_to_provider' ? 'concluido' : 'cancelado' });
-      transaction.update(escrowRef, { status: resolution === 'release_to_provider' ? 'liberado' : 'reembolsado' });
-    });
-
-    res.status(200).json({ message: 'Dispute resolved successfully.' });
-  } catch (error) {
-    console.error('Error resolving dispute:', error);
-    res.status(500).json({ error: 'Failed to resolve dispute.' });
   }
 });
 

@@ -82,7 +82,7 @@ export interface Job {
   serviceType: ServiceType;
   urgency: 'hoje' | 'amanha' | '3dias' | '1semana';
   address?: string;
-  media?: { name: string; type: 'image' | 'video' }[];
+  media?: { name: string; type: 'image' | 'video'; path: string }[];
   fixedPrice?: number;
   visitFee?: number;
   review?: Review;
@@ -109,7 +109,7 @@ export type JobData = {
   serviceType: ServiceType; 
   urgency: 'hoje' | 'amanha' | '3dias' | '1semana'; 
   address?: string; 
-  media?: { name: string; type: 'image' | 'video' }[];
+  media?: { name: string; type: 'image' | 'video'; path: string }[];
   fixedPrice?: number; 
   visitFee?: number; 
   targetProviderId?: string;

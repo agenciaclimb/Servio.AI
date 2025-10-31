@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, ProviderService } from '../types';
+import { User, ProviderService } from './types';
 
 interface ServiceCatalogModalProps {
   user: User;
