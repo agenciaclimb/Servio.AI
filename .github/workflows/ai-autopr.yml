@@ -1,0 +1,77 @@
+﻿name: AI Agent – Auto PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Motivo da execução (opcional)"
+        required: false
+  schedule:
+    # Rodar 12:00 UTC em dias úteis (ajuste se quiser outro horário)
+    - cron: "0 12 * * 1-5"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  agent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Executar agente (atualiza documento mestre)
+        run: |
+          node scripts/ai_agent_update.mjs "${{ github.event.inputs.reason || '' }}"
+
+      - name: Criar branch, commit e push
+        id: commit
+        run: |
+          set -e
+          BRANCH="bot/ai-update-$(date +%Y%m%d-%H%M%S)"
+          git switch -c "$BRANCH"
+          git config user.name  "servio-bot"
+          git config user.email "servio-bot@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            echo "branch=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          git commit -m "chore(ai): atualização automática do Documento Mestre [skip ci]"
+          git push -u origin "$BRANCH"
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Abrir Pull Request
+        if: steps.commit.outputs.branch != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branch = `${{ steps.commit.outputs.branch }}`;
+            const reason = (context.payload.inputs && context.payload.inputs.reason) ? context.payload.inputs.reason : "execução agendada";
+            const { data: pr } = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: branch,
+              base: "main",
+              title: "chore(ai): atualização automática do Documento Mestre",
+              body: [
+                "Esta PR foi aberta automaticamente pelo agente IA.",
+                "",
+                "**Alterações**:",
+                "- Atualização do `doc/DOCUMENTO_MESTRE_SERVIO_AI.md` com `#update_log`",
+                "",
+                "**Motivo**: " + reason
+              ].join("\\n")
+            });
+            core.info(`PR aberta: #${pr.number}`);
