@@ -1,4 +1,4 @@
-﻿﻿name: PR Auto-fix
+name: PR Auto-fix
 
 on:
   pull_request:

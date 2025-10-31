@@ -23,7 +23,7 @@ O arquivo `src/firebaseConfig.ts` já foi atualizado com os valores reais do seu
 // Conteúdo atual de src/firebaseConfig.ts (já preenchido)
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCC-HKRTbdshJo4xwj5g2UkZB54WCasmAE",
+  apiKey: "SUA_CHAVE_FIREBASE_AQUI",
   authDomain: "servioai.firebaseapp.com",
   projectId: "servioai",
   storageBucket: "servioai.appspot.com",
