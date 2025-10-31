@@ -2,36 +2,36 @@ const express = require('express');
 const admin = require('firebase-admin');
 const cors = require('cors');
 const { Storage } = require('@google-cloud/storage');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Use environment variable for secret key
 
-// Initialize Firebase Admin SDK
-// For Cloud Run, credentials will be automatically picked up from the service account.
-// For local development, you might need to set GOOGLE_APPLICATION_CREDENTIALS
-// or provide a service account key file directly.
-// const serviceAccount = require('./path/to/your/serviceAccountKey.json');
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount)
-// });
-admin.initializeApp(); // Assumes GOOGLE_APPLICATION_CREDENTIALS or Cloud Run environment
+function buildDefaultServices() {
+  if (admin.apps && admin.apps.length === 0) {
+    admin.initializeApp();
+  }
+  const storage = new Storage();
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  const db = admin.firestore();
+  return { db, storage, stripe };
+}
 
-const storage = new Storage();
-const db = admin.firestore();
-const app = express();
-const port = process.env.PORT || 8081; // Use a different port than server.js (8080)
+function createApp(services = {}) {
+  const { db, storage, stripe } = { ...buildDefaultServices(), ...services };
 
-app.use(cors()); // Enable Cross-Origin Resource Sharing
-app.use(express.json());
+  const app = express();
+  const port = process.env.PORT || 8081;
 
-// Basic "Hello World" endpoint for the backend service
-app.get('/', (req, res) => {
-  res.send('Hello from SERVIO.AI Backend (Firestore Service)!');
-});
+  app.use(cors());
+  app.use(express.json());
+
+  // Basic "Hello World" endpoint for the backend service
+  app.get('/', (req, res) => {
+    res.send('Hello from SERVIO.AI Backend (Firestore Service)!');
+  });
 
 // =================================================================
 // STRIPE PAYMENT ENDPOINTS
 // =================================================================
 
-app.post('/create-checkout-session', async (req, res) => {
+  app.post('/create-checkout-session', async (req, res) => {
   const { job, amount } = req.body;
   const YOUR_DOMAIN = process.env.FRONTEND_URL || 'http://localhost:5173'; // Your frontend domain
 
@@ -78,9 +78,9 @@ app.post('/create-checkout-session', async (req, res) => {
     console.error('Error creating Stripe checkout session:', error);
     res.status(500).json({ error: 'Failed to create checkout session.' });
   }
-});
+  });
 
-app.post('/jobs/:jobId/release-payment', async (req, res) => {
+  app.post('/jobs/:jobId/release-payment', async (req, res) => {
   const { jobId } = req.params;
 
   try {
@@ -117,9 +117,9 @@ app.post('/jobs/:jobId/release-payment', async (req, res) => {
     console.error('Error releasing payment:', error);
     res.status(500).json({ error: 'Falha ao liberar o pagamento.' });
   }
-});
+  });
 
-app.post('/jobs/:jobId/set-on-the-way', async (req, res) => {
+  app.post('/jobs/:jobId/set-on-the-way', async (req, res) => {
   const { jobId } = req.params;
   try {
     const jobRef = db.collection('jobs').doc(jobId);
@@ -130,14 +130,14 @@ app.post('/jobs/:jobId/set-on-the-way', async (req, res) => {
     console.error('Error setting job status to on the way:', error);
     res.status(500).json({ error: 'Failed to update job status.' });
   }
-});
+  });
 
 
 // =================================================================
 // FILE UPLOAD ENDPOINTS
 // =================================================================
 
-app.post('/generate-upload-url', async (req, res) => {
+  app.post('/generate-upload-url', async (req, res) => {
   const { fileName, contentType, jobId } = req.body;
   if (!fileName || !contentType || !jobId) {
     return res.status(400).json({ error: 'fileName, contentType, and jobId are required.' });
@@ -168,9 +168,9 @@ app.post('/generate-upload-url', async (req, res) => {
     console.error('Error generating signed URL:', error);
     res.status(500).json({ error: 'Failed to generate upload URL.' });
   }
-});
+  });
 
-app.post('/disputes/:disputeId/resolve', async (req, res) => {
+  app.post('/disputes/:disputeId/resolve', async (req, res) => {
   const { disputeId } = req.params;
   const { resolution, comment } = req.body; // resolution: 'release_to_provider' or 'refund_client'
 
@@ -178,7 +178,6 @@ app.post('/disputes/:disputeId/resolve', async (req, res) => {
     return res.status(400).json({ error: 'Resolution decision and comment are required.' });
   }
 
-  const db = admin.firestore();
   const disputeRef = db.collection('disputes').doc(disputeId);
 
   try {
@@ -207,14 +206,14 @@ app.post('/disputes/:disputeId/resolve', async (req, res) => {
     console.error('Error resolving dispute:', error);
     res.status(500).json({ error: 'Failed to resolve dispute.' });
   }
-});
+  });
 
 // =================================================================
 // USERS API ENDPOINTS
 // =================================================================
 
 // Get all users
-app.get('/users', async (req, res) => {
+  app.get('/users', async (req, res) => {
   try {
     const snapshot = await db.collection('users').get();
     const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -223,10 +222,10 @@ app.get('/users', async (req, res) => {
     console.error('Error getting users:', error);
     res.status(500).json({ error: 'Failed to retrieve users.' });
   }
-});
+  });
 
 // Get a single user by ID (email)
-app.get('/users/:id', async (req, res) => {
+  app.get('/users/:id', async (req, res) => {
   try {
     const userId = req.params.id;
     const userRef = db.collection('users').doc(userId);
@@ -240,10 +239,10 @@ app.get('/users/:id', async (req, res) => {
     console.error('Error getting user:', error);
     res.status(500).json({ error: 'Failed to retrieve user.' });
   }
-});
+  });
 
 // Create a new user
-app.post('/users', async (req, res) => {
+  app.post('/users', async (req, res) => {
   try {
     const userData = req.body;
     if (!userData.email) {
@@ -255,10 +254,10 @@ app.post('/users', async (req, res) => {
     console.error('Error creating user:', error);
     res.status(500).json({ error: 'Failed to create user.' });
   }
-});
+  });
 
 // Update an existing user
-app.put('/users/:id', async (req, res) => {
+  app.put('/users/:id', async (req, res) => {
   try {
     const userId = req.params.id;
     const userData = req.body;
@@ -269,10 +268,10 @@ app.put('/users/:id', async (req, res) => {
     console.error('Error updating user:', error);
     res.status(500).json({ error: 'Failed to update user.' });
   }
-});
+  });
 
 // Delete a user
-app.delete('/users/:id', async (req, res) => {
+  app.delete('/users/:id', async (req, res) => {
   try {
     const userId = req.params.id;
     await db.collection('users').doc(userId).delete();
@@ -281,10 +280,10 @@ app.delete('/users/:id', async (req, res) => {
     console.error('Error deleting user:', error);
     res.status(500).json({ error: 'Failed to delete user.' });
   }
-});
+  });
 
 // Get all jobs
-app.get('/jobs', async (req, res) => {
+  app.get('/jobs', async (req, res) => {
   try {
     const { providerId } = req.query;
     let query = db.collection('jobs');
@@ -298,13 +297,16 @@ app.get('/jobs', async (req, res) => {
     console.error('Error getting jobs:', error);
     res.status(500).json({ error: 'Failed to retrieve jobs.' });
   }
-});
-
-// Start the server only if the file is run directly
-if (require.main === module) {
-  app.listen(port, () => {
-    console.log(`Firestore Backend Service listening on port ${port}`);
   });
-}
 
-module.exports = app; // Export for testing
+  if (require.main === module) {
+    app.listen(port, () => {
+      console.log(`Firestore Backend Service listening on port ${port}`);
+    });
+  }
+
+  return app;
+}
+const app = createApp();
+module.exports = app;
+module.exports.createApp = createApp;
