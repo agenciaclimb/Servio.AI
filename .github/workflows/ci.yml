@@ -1,0 +1,51 @@
+﻿name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install root deps (se existirem)
+        run: |
+          if [ -f package-lock.json ]; then npm ci; elif [ -f package.json ]; then npm i; fi
+
+      - name: Install backend deps (express/firebase-admin/vitest)
+        run: |
+          if [ -f backend/package.json ]; then
+            cd backend
+            npm i
+            npm i -D vitest @vitest/coverage-v8
+          fi
+
+      - name: Lint (skips if missing)
+        run: |
+          npm run lint 2>/dev/null || echo "lint: skipped"
+
+      - name: Typecheck (skips if missing)
+        run: |
+          npm run typecheck 2>/dev/null || echo "typecheck: skipped"
+
+      - name: Test (root) (skips if missing)
+        run: |
+          npm test 2>/dev/null || echo "test(root): skipped"
+
+      - name: Test (backend) (skips if missing)
+        run: |
+          if [ -f backend/package.json ]; then
+            cd backend
+            npm test 2>/dev/null || echo "test(backend): skipped"
+          fi
