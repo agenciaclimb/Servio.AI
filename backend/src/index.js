@@ -18,9 +18,10 @@ try {
 
 const storage = new Storage();
 const defaultDb = admin.firestore();
-const defaultStripe = stripeLib(
-  process.env.STRIPE_SECRET_KEY || "sk_test_dummy",
-);
+// Stripe initialization - requires STRIPE_SECRET_KEY env var
+const defaultStripe = process.env.STRIPE_SECRET_KEY
+  ? stripeLib(process.env.STRIPE_SECRET_KEY)
+  : null; // Will be injected in tests or left null if not configured
 const port = process.env.PORT || 8081;
 
 /**
