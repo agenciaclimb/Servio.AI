@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { enhanceJobRequest } from '../services/geminiService';
-// FIX: Import JobData from types.ts instead of App.tsx
 import { EnhancedJobRequest, ServiceType, JobData, JobMode } from '../types';
 import LoadingSpinner from './LoadingSpinner';
 
@@ -68,25 +67,6 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
     }
   };
 
-  useEffect(() => {
-    if (initialPrompt) {
-        handleAnalyze(initialPrompt);
-    } else if (initialData) {
-        // Pre-populate state from initialData (e.g., after login) and go to review step
-        setFinalDescription(initialData.description);
-        setFinalCategory(initialData.category);
-        setFinalServiceType(initialData.serviceType);
-        setFinalUrgency(initialData.urgency);
-        setAddress(initialData.address || '');
-        // Note: we can't restore File objects, but we can show their names. The user would need to re-select.
-        setFiles(initialData.media ? initialData.media.map(m => new File([], m.name)) : []);
-        setFinalFixedPrice(initialData.fixedPrice?.toString() || '');
-        setFinalVisitFee(initialData.visitFee?.toString() || '');
-        setTargetProviderId(initialData.targetProviderId);
-        setStep('review');
-    }
-  }, [initialPrompt, initialData]);
-
 
   useEffect(() => {
     if (enhancedRequest) {
@@ -96,21 +76,57 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
     }
   }, [enhancedRequest]);
 
-  const handleFinalSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      
-      const media = files.map(file => ({
-          name: file.name,
-          type: file.type.startsWith('video') ? 'video' : 'image' as 'image' | 'video'
-      }));
+  useEffect(() => {
+    if (step === 'loading' && initialPrompt) {
+      handleAnalyze(initialPrompt);
+    }
+  }, [step, initialPrompt]);
 
+  const handleFinalSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setStep('loading');
+      const uploadedMedia: { name: string; path: string; type: 'image' | 'video' }[] = [];
+      const tempJobId = `temp-${Date.now()}`; // Use a temporary ID for the folder path
+
+      // Upload files one by one
+      for (const file of files) {
+        try {
+          // 1. Get signed URL from our backend
+          const token = await auth.currentUser?.getIdToken();
+          const urlResponse = await fetch(`${process.env.REACT_APP_BACKEND_API_URL}/generate-upload-url`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json',
+                       'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ fileName: file.name, contentType: file.type, jobId: tempJobId }),
+          });
+          if (!urlResponse.ok) throw new Error('Could not get upload URL.');
+          const { signedUrl, filePath } = await urlResponse.json();
+
+          // 2. Upload file directly to Google Cloud Storage
+          const uploadResponse = await fetch(signedUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': file.type },
+            body: file,
+          });
+          if (!uploadResponse.ok) throw new Error(`Failed to upload ${file.name}.`);
+
+          uploadedMedia.push({ name: file.name, path: filePath, type: file.type.startsWith('video') ? 'video' : 'image' });
+
+        } catch (error) {
+          console.error(error);
+          setError(`Erro ao enviar o arquivo: ${file.name}. Tente novamente.`);
+          setStep('review');
+          return;
+        }
+      }
+      
       onSubmit({
         description: finalDescription,
         category: finalCategory,
         serviceType: finalServiceType,
         urgency: finalUrgency,
         address,
-        media,
+        media: uploadedMedia,
         fixedPrice: finalServiceType === 'tabelado' && finalFixedPrice ? parseFloat(finalFixedPrice) : undefined,
         visitFee: finalServiceType === 'diagnostico' && finalVisitFee ? parseFloat(finalVisitFee) : undefined,
         targetProviderId: targetProviderId,

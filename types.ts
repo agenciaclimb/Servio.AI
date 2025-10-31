@@ -1,6 +1,21 @@
 export type UserType = 'cliente' | 'prestador' | 'admin';
 export type UserStatus = 'ativo' | 'suspenso';
 
+export interface ProviderService {
+  id: string;
+  name: string;
+  type: 'tabelado' | 'personalizado' | 'diagnostico';
+  description: string;
+  price?: number; // For 'tabelado'
+}
+
+export interface SEOProfile {
+  seoTitle: string;
+  metaDescription: string;
+  publicHeadline: string;
+  publicBio: string;
+}
+
 export interface PortfolioItem {
   id: string;
   imageUrl: string; // base64 data URL
@@ -31,6 +46,8 @@ export interface User {
   verificationStatus?: 'pendente' | 'verificado' | 'recusado';
   documentImage?: string; // base64 data URL
   portfolio?: PortfolioItem[];
+  serviceCatalog?: ProviderService[];
+  seo?: SEOProfile;
 }
 
 export interface ProviderProfile {
@@ -74,6 +91,7 @@ export interface Job {
   // Auction fields
   jobMode?: JobMode;
   auctionEndDate?: string; // ISO Date string
+  scheduledDate?: string; // ISO Date string
 }
 
 export interface Bid {

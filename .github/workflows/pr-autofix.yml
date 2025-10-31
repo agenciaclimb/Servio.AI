@@ -1,4 +1,4 @@
-﻿name: PR Auto-fix
+﻿﻿name: PR Auto-fix
 
 on:
   pull_request:
@@ -18,16 +18,23 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install deps
+      - name: Install backend dependencies & formatters
         run: |
-          if [ -f package.json ]; then npm i -D eslint prettier; npm i; fi
+          cd backend
+          npm install
+          # Install formatters in the root for npx
+          npm i -D eslint prettier
 
       - name: Run eslint --fix & prettier
         run: |
-          npx eslint . --ext .ts,.tsx,.js --fix || true
-          npx prettier . --write || true
+          # Target only tracked files to avoid node_modules and other ignored files
+          files_to_format=$(git ls-files -- '*.js' '*.ts' '*.tsx' '*.json' '*.md' '*.yml')
+          if [ -n "$files_to_format" ]; then
+            npx eslint $files_to_format --fix --ignore-path .gitignore || true
+            npx prettier $files_to_format --write --ignore-path .gitignore || true
+          fi
 
       - name: Commit auto-fixes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore(ci): auto-fix (eslint/prettier)"
+          commit_message: "chore(ci): apply auto-fixes from eslint/prettier"

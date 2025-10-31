@@ -1,0 +1,12 @@
++{
++  "startup": "Ler integralmente o arquivo doc/DOCUMENTO_MESTRE_SERVIO_AI.md e compreender a arquitetura, status e objetivos. Todas as ações devem seguir as regras descritas nele.",
++  "guardrails": "Nenhuma modificação de código deve ser feita sem atualizar o Documento Mestre e registrar um #update_log. O Documento Mestre é a única fonte de verdade.",
++  "runbook": "1. Ler o Documento Mestre. 2. Validar ambiente. 3. Executar próxima tarefa pendente. 4. Atualizar o Documento Mestre. 5. Commitar e abrir PR automática.",
++  "repository": "agenciaclimb/Servio.AI",
++  "goal": "Levar o sistema ao MVP funcional com deploy no Google Cloud",
++  "assistant_role": "Agente técnico autônomo com logs e commit automatizado",
++  "important_files": [
++    "doc/DOCUMENTO_MESTRE_SERVIO_AI.md",
++    "server.js"
++  ]
++}
