@@ -83,13 +83,25 @@ Segredos exigidos no GitHub (Settings → Secrets and variables → Actions):
 - `GCP_SERVICE` – Nome do serviço Cloud Run.
 - `GCP_SA_KEY` – JSON da Service Account (temporário; recomendável migrar para Workload Identity Federation).
 
+Variáveis de ambiente exigidas no Cloud Run:
+
+Configure estas variáveis no serviço Cloud Run (Console GCP → Cloud Run → seu-serviço → Edit & Deploy New Revision → Variables & Secrets):
+
+- `API_KEY` – Chave da API do Google Gemini (Vertex AI ou AI Studio)
+- `STRIPE_SECRET_KEY` – Chave secreta do Stripe (ex.: `sk_live_...` ou `sk_test_...`)
+- `GCP_STORAGE_BUCKET` – Nome do bucket do Cloud Storage (ex.: `seu-projeto.appspot.com`)
+- `FRONTEND_URL` – URL do frontend hospedado (ex.: `https://servio-ai.web.app`)
+- `PORT` – Porta do servidor (geralmente `8080`; definida automaticamente pelo Cloud Run)
+
 Como executar o deploy:
 
-1. Na aba Actions do GitHub, escolha “Deploy to Cloud Run” e clique em “Run workflow”.
+1. Na aba Actions do GitHub, escolha "Deploy to Cloud Run" e clique em "Run workflow".
 2. A execução usa `gcloud run deploy --source .` (constrói a imagem via Cloud Build e faz o deploy).
+3. **Após o primeiro deploy**, configure as variáveis de ambiente no Console do GCP.
 
 Notas de estabilidade:
 
-- Adicionamos um controle de concorrência no workflow para evitar erros de “concurrent policy changes” no IAM/Cloud Build.
+- Adicionamos um controle de concorrência no workflow para evitar erros de "concurrent policy changes" no IAM/Cloud Build.
 - Se ainda ocorrerem erros relacionados a criação de contas de serviço, aguarde alguns minutos e reexecute: é comum em primeiras ativações de APIs.
+- **Erro "A comunicação com o servidor falhou"**: Verifique se as variáveis de ambiente (especialmente `API_KEY`) estão configuradas no Cloud Run.
 - Próximo passo recomendado: migrar a autenticação para Workload Identity Federation (sem chave estática).
