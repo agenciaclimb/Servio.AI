@@ -1,0 +1,8 @@
+{
+  "id": "job-dispute-1",
+  "clientId": "cliente@servio.ai",
+  "providerId": "prestador@servio.ai",
+  "category": "Reparo Hidráulico",
+  "description": "Conserto de vazamento na torneira.",
+  "status": "em_progresso"
+}

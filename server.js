@@ -99,6 +99,7 @@ app.post('/api/match-providers', checkAuth, async (req, res) => {
 
     const weights = { proximity: 0.25, availability: 0.20, specialty: 0.15, keywordRelevance: 0.15, rating: 0.10, certificates: 0.05, criminalRecord: 0.05, platformActivity: 0.05 };
     const tierBonus = { 'Platina': 15, 'Ouro': 10, 'Prata': 5, 'Bronze': 0 };
+    const subscriptionBonus = 20; // **BÔNUS DE 20 PONTOS PARA ASSINANTES**
     const availabilityMap = { hoje: 100, amanha: 80, '3dias': 60, '1semana': 40 };
 
     const scored = await Promise.all(providers.map(async (provider) => {
@@ -111,6 +112,7 @@ app.post('/api/match-providers', checkAuth, async (req, res) => {
       const criminalRecordScore = provider.hasCriminalRecordCheck ? 100 : 0;
       const platformActivityScore = Math.min(((provider.portfolio || []).length) * 20, 100);
       const providerTier = provider.earningsProfile?.tier || 'Bronze';
+      const isSubscribed = provider.subscription?.status === 'active';
       const tierScore = tierBonus[providerTier] || 0;
 
       const finalScore =
@@ -122,6 +124,7 @@ app.post('/api/match-providers', checkAuth, async (req, res) => {
         (certificatesScore * weights.certificates) +
         (criminalRecordScore * weights.criminalRecord) +
         (platformActivityScore * weights.platformActivity) +
+        (isSubscribed ? subscriptionBonus : 0) + // **BÔNUS DE ASSINATURA APLICADO AQUI**
         tierScore; // **BÔNUS DE DESTAQUE ADICIONADO AQUI**
 
       return {

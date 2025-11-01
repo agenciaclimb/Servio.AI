@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { User, Job, MaintainedItem } from '../types';
+import { useAppContext } from '../AppContext';
 import ItemCard from './ItemCard';
 
-interface ClientDashboardProps {
-  user: User;
-  jobs: Job[];
-  items: MaintainedItem[];
-  onLogout: () => void;
-  onCreateJob: () => void;
-  onViewMap: (jobId: string) => void;
-  onAddItem: () => void;
-}
+const ClientDashboard: React.FC = () => {
+  const {
+    currentUser,
+    jobs,
+    items,
+    handleLogout,
+    setIsWizardOpen,
+    setMapJobId,
+    setIsAddItemModalOpen,
+  } = useAppContext();
 
-const ClientDashboard: React.FC<ClientDashboardProps> = ({ user, jobs, items, onLogout, onCreateJob, onViewMap, onAddItem }) => {
   const [activeTab, setActiveTab] = useState<'jobs' | 'items'>('jobs');
-  const clientJobs = jobs.filter(job => job.clientId === user.email);
+
+  if (!currentUser) return null; // Should be handled by ProtectedRoute, but good practice
+
+  const clientJobs = jobs.filter(job => job.clientId === currentUser.email);
 
   const getStatusClass = (status: string) => {
     switch (status) {
@@ -32,10 +35,10 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ user, jobs, items, on
     <div className="p-4 sm:p-6 lg:p-8">
       <header className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Bem-vinda, {user.name.split(' ')[0]}!</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Bem-vinda, {currentUser.name.split(' ')[0]}!</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">Gerencie seus serviços e itens.</p>
         </div>
-        <button onClick={onLogout} className="text-sm font-medium text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">Sair</button>
+        <button onClick={handleLogout} className="text-sm font-medium text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">Sair</button>
       </header>
 
       {/* Tabs */}
@@ -53,7 +56,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ user, jobs, items, on
       {activeTab === 'jobs' && (
         <>
           <div className="mb-6">
-            <button onClick={onCreateJob} className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+            <button onClick={() => setIsWizardOpen(true)} className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
               Solicitar Novo Serviço
             </button>
           </div>
@@ -73,7 +76,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ user, jobs, items, on
                         {job.status.replace('_', ' ')}
                       </span>
                       {job.providerId && ['agendado', 'em_progresso', 'concluido'].includes(job.status) && (
-                        <button onClick={() => onViewMap(job.id)} className="text-sm font-medium text-blue-600 hover:underline">Ver no Mapa</button>
+                        <button onClick={() => setMapJobId(job.id)} className="text-sm font-medium text-blue-600 hover:underline">Ver no Mapa</button>
                       )}
                     </div>
                   </div>
@@ -89,7 +92,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ user, jobs, items, on
       {activeTab === 'items' && (
         <>
           <div className="mb-6">
-            <button onClick={onAddItem} className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+            <button onClick={() => setIsAddItemModalOpen(true)} className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
               Adicionar Novo Item
             </button>
           </div>

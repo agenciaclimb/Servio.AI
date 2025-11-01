@@ -1,0 +1,9 @@
+{
+  "id": "job-accepted-1",
+  "clientId": "cliente@servio.ai",
+  "providerId": "provider-test@servio.ai",
+  "category": "Instalação",
+  "description": "Instalação de lustre na sala de estar.",
+  "status": "agendado",
+  "scheduledDate": "2024-09-15T14:00:00Z"
+}

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 import { useAppContext } from './AppContext';
@@ -186,7 +185,7 @@ const JobDetailsPage: React.FC = () => {
 
   const handleConfirmScheduleWrapper = async () => {
     if (!aiSuggestion) return;
-    await handleConfirmSchedule(jobId!, aiSuggestion.date, aiSuggestion.time);
+    await onConfirmSchedule(jobId, aiSuggestion.date, aiSuggestion.time);
     setAiSuggestion(null); // Hide suggestion card
     fetchData(); // Refresh all data
   };

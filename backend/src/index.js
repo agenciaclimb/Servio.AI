@@ -137,6 +137,100 @@ function createApp({
     }
   });
 
+  app.post("/create-subscription-session", async (req, res) => {
+    const { priceId, userEmail } = req.body; // priceId from your Stripe product
+    const YOUR_DOMAIN = process.env.FRONTEND_URL || "http://localhost:5173";
+
+    try {
+      // Check if user already has a Stripe customer ID, create if not.
+      // In a real app, you'd store this customer ID in your 'users' collection.
+      const customer = await stripe.customers.create({
+        email: userEmail,
+        description: `Customer for ${userEmail}`,
+      });
+
+      const session = await stripe.checkout.sessions.create({
+        customer: customer.id,
+        payment_method_types: ["card"],
+        mode: "subscription",
+        line_items: [
+          {
+            price: priceId, // e.g., price_1P...
+            quantity: 1,
+          },
+        ],
+        success_url: `${YOUR_DOMAIN}/dashboard?subscription_success=true`,
+        cancel_url: `${YOUR_DOMAIN}/dashboard?subscription_canceled=true`,
+        metadata: {
+          userEmail: userEmail,
+        },
+      });
+      res.json({ id: session.id });
+    } catch (error) {
+      console.error("Error creating Stripe subscription session:", error);
+      res.status(500).json({ error: "Failed to create subscription session." });
+    }
+  });
+
+  // Stripe webhook handler
+  app.post(
+    "/stripe-webhook",
+    express.raw({ type: "application/json" }),
+    async (req, res) => {
+      const sig = req.headers["stripe-signature"];
+      const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+      let event;
+
+      try {
+        event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+      } catch (err) {
+        console.error(`❌ Error message: ${err.message}`);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+      }
+
+      // Handle the event
+      switch (event.type) {
+        case "checkout.session.completed":
+          const session = event.data.object;
+          // Handle payment for one-time jobs
+          if (session.mode === 'payment' && session.metadata.escrowId) {
+            const escrowId = session.metadata.escrowId;
+            await db.collection("escrows").doc(escrowId).update({ status: "pago" });
+            console.log(`Escrow ${escrowId} marked as paid.`);
+          }
+          // If it's a subscription, Stripe will send 'customer.subscription.created' separately.
+          break;
+
+        case 'customer.subscription.created':
+        case 'customer.subscription.updated':
+        case 'customer.subscription.deleted':
+          const subscription = event.data.object;
+          const customerId = subscription.customer;
+          
+          // Find user by Stripe customer ID
+          const userQuery = await db.collection('users').where('stripeCustomerId', '==', customerId).limit(1).get();
+          if (!userQuery.empty) {
+            const userDoc = userQuery.docs[0];
+            const subscriptionData = {
+              planId: subscription.items.data[0].price.id,
+              stripeSubscriptionId: subscription.id,
+              status: subscription.status, // 'active', 'past_due', 'canceled', etc.
+              currentPeriodEnd: new Date(subscription.current_period_end * 1000).toISOString(),
+            };
+            await userDoc.ref.update({ subscription: subscriptionData });
+            console.log(`Subscription status updated for user ${userDoc.id} to ${subscription.status}.`);
+          }
+          break;
+
+        default:
+          console.log(`Unhandled event type ${event.type}`);
+      }
+
+      res.json({ received: true });
+    }
+  );
+
   app.post("/jobs/:jobId/release-payment", async (req, res) => {
     const { jobId } = req.params;
 
@@ -490,6 +584,61 @@ function createApp({
     } catch (error) {
       console.error("Error getting maintenance history:", error);
       res.status(500).json({ error: "Failed to retrieve maintenance history." });
+    }
+  });
+
+  // =================================================================
+  // METRICS API ENDPOINTS
+  // =================================================================
+
+  // Helper to group data by day
+  const groupByDay = (data, dateField, valueField = null) => {
+    const groups = data.reduce((acc, item) => {
+      const date = item[dateField].split('T')[0];
+      if (!acc[date]) {
+        acc[date] = { date, value: 0 };
+      }
+      acc[date].value += valueField ? (item[valueField] || 0) : 1;
+      return acc;
+    }, {});
+    return Object.values(groups).sort((a, b) => new Date(a.date) - new Date(b.date));
+  };
+
+  // Get user growth metrics
+  app.get("/metrics/user-growth", async (req, res) => {
+    try {
+      const snapshot = await db.collection("users").orderBy('memberSince').get();
+      const users = snapshot.docs.map(doc => doc.data());
+      const dailyGrowth = groupByDay(users, 'memberSince');
+      res.status(200).json(dailyGrowth);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to retrieve user growth metrics." });
+    }
+  });
+
+  // Get job creation metrics
+  app.get("/metrics/job-creation", async (req, res) => {
+    try {
+      const snapshot = await db.collection("jobs").orderBy('createdAt').get();
+      const jobs = snapshot.docs.map(doc => doc.data());
+      const dailyCreation = groupByDay(jobs, 'createdAt');
+      res.status(200).json(dailyCreation);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to retrieve job creation metrics." });
+    }
+  });
+
+  // Get revenue metrics
+  app.get("/metrics/revenue", async (req, res) => {
+    try {
+      const snapshot = await db.collection("escrows").where('status', '==', 'liberado').orderBy('releasedAt').get();
+      const escrows = snapshot.docs.map(doc => doc.data());
+      // Assuming platform fee is a fixed percentage for simplicity here
+      const platformFee = 0.15; 
+      const dailyRevenue = groupByDay(escrows, 'releasedAt', 'amount').map(item => ({ ...item, value: item.value * platformFee }));
+      res.status(200).json(dailyRevenue);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to retrieve revenue metrics." });
     }
   });
 

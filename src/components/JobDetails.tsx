@@ -2,14 +2,20 @@ import React from 'react';
 import { Job, User, Proposal, Message } from '../types';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import Chat from './Chat';
-import { useAppContext } from './AppContext';
 
 interface JobDetailsProps {
   job: Job;
   proposals: Proposal[];
   messages: Message[];
+  currentUser: User;
   onBack: () => void;
-  onDataRefresh: () => void;
+  onAcceptProposal: (proposalId: string) => void;
+  onSendMessage: (text: string) => void;
+  onPay: (job: Job, amount: number) => void;
+  onCompleteJob: (jobId: string) => void;
+  onOpenDispute: (jobId: string) => void;
+  onOpenReview: (jobId: string) => void;
+  onSetOnTheWay: (jobId: string) => void;
   aiSuggestion?: { date: string; time: string } | null;
   onConfirmSchedule: () => void;
 }
@@ -32,19 +38,7 @@ const MediaItem: React.FC<{ media: { name: string, path: string } }> = ({ media 
   );
 };
 
-const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, onBack, onDataRefresh, aiSuggestion, onConfirmSchedule }) => {
-  const {
-    currentUser,
-    authToken,
-    handleAcceptProposal,
-    handleSendMessage,
-    handlePayment,
-    handleCompleteJob,
-    setDisputeJobId,
-    setReviewJobId,
-  } = useAppContext();
-
-  if (!currentUser) return null;
+const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, currentUser, onBack, onAcceptProposal, onSendMessage, onPay, onCompleteJob, onOpenDispute, onOpenReview, onSetOnTheWay, aiSuggestion, onConfirmSchedule }) => {
 
   const getStatusClass = (status: string) => {
     switch (status) {
@@ -92,20 +86,6 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, onBac
     document.body.removeChild(link);
   };
 
-  const handleSendMessageWrapper = async (text: string) => {
-    await handleSendMessage(text, job.id);
-    onDataRefresh(); // Re-fetch data to show new message
-  };
-
-  const handleSetOnTheWay = async () => {
-    try {
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/${job.id}/set-on-the-way`, { method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` } });
-      onDataRefresh();
-    } catch (error) {
-      console.error("Error setting 'on the way' status:", error);
-    }
-  };
-
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <header className="mb-8">
@@ -127,7 +107,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, onBac
         <div className="mb-8 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
           <h3 className="font-bold text-blue-800">Pronto para Pagar?</h3>
           <p className="text-sm text-blue-700 mt-1">O pagamento ficará retido com segurança e será liberado para o prestador apenas quando você confirmar a conclusão do serviço.</p>
-          <button onClick={() => handlePayment(job, acceptedProposal.price)} className="mt-3 px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700">
+          <button onClick={() => onPay(job, acceptedProposal.price)} className="mt-3 px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700">
             Pagar com Segurança (R$ {acceptedProposal.price.toFixed(2)})
           </button>
         </div>
@@ -145,7 +125,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, onBac
             </button>
           )}
           {!isClientView && (
-            <button onClick={handleSetOnTheWay} className="mt-3 px-6 py-2 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700">
+            <button onClick={() => onSetOnTheWay(job.id)} className="mt-3 px-6 py-2 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700">
               Estou a Caminho
             </button>
           )}
@@ -156,7 +136,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, onBac
         <div className="mb-8 bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
           <h3 className="font-bold text-green-800">O serviço foi concluído?</h3>
           <p className="text-sm text-green-700 mt-1">Ao confirmar, o pagamento será liberado para o prestador. Esta ação não pode ser desfeita.</p>
-          <button onClick={() => handleCompleteJob(job.id)} className="mt-3 px-6 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700">
+          <button onClick={() => onCompleteJob(job.id)} className="mt-3 px-6 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700">
             Sim, confirmar conclusão
           </button>
         </div>
@@ -166,7 +146,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, onBac
         <div className="mb-8 bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg text-center">
           <h3 className="font-bold text-yellow-800">Serviço Concluído!</h3>
           <p className="text-sm text-yellow-700 mt-1">Sua opinião é muito importante. Por favor, avalie o serviço prestado.</p>
-          <button onClick={() => setReviewJobId(job.id)} className="mt-3 px-6 py-2 bg-yellow-500 text-white font-semibold rounded-md hover:bg-yellow-600">
+          <button onClick={() => onOpenReview(job.id)} className="mt-3 px-6 py-2 bg-yellow-500 text-white font-semibold rounded-md hover:bg-yellow-600">
             Deixar Avaliação
           </button>
         </div>
@@ -207,7 +187,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, onBac
                 <p className="text-sm text-gray-600 mt-2 italic">"{p.message}"</p>
                 {isClientView && job.status === 'ativo' && (
                   <button 
-                    onClick={() => handleAcceptProposal(p.id, job.id)}
+                    onClick={() => onAcceptProposal(p.id)}
                     className="mt-3 w-full text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md py-2"
                   >
                     Aceitar Proposta
@@ -227,15 +207,15 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, onBac
 
         {/* Right Column: Chat */}
         <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg border border-gray-100 h-[70vh]">
-          <Chat messages={messages} currentUser={currentUser} authToken={authToken} onSendMessage={handleSendMessageWrapper} aiSuggestion={aiSuggestion} onConfirmSchedule={onConfirmSchedule} />
+          <Chat messages={messages} currentUser={currentUser} onSendMessage={onSendMessage} aiSuggestion={aiSuggestion} onConfirmSchedule={onConfirmSchedule} />
         </div>
       </div>
 
       {/* Job Info Footer */}
       <footer className="mt-8 text-xs text-gray-400 text-center">
         <p>Job ID: {job.id} | Criado em: {new Date(job.createdAt).toLocaleDateString()}</p>
-        {job.status !== 'concluido' && job.status !== 'cancelado' && (
-          <button onClick={() => setDisputeJobId(job.id)} className="mt-2 text-red-500 hover:text-red-700 hover:underline">
+        {job.status === 'em_progresso' && (
+          <button onClick={() => onOpenDispute(job.id)} className="mt-2 text-red-500 hover:text-red-700 hover:underline">
             Relatar um Problema / Abrir Disputa
           </button>
         )}

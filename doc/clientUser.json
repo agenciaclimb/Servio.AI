@@ -1,0 +1,9 @@
+{
+  "email": "cliente@servio.ai",
+  "name": "Cliente Teste",
+  "type": "cliente",
+  "bio": "Cliente da plataforma SERVIO.AI.",
+  "location": "São Paulo, SP",
+  "memberSince": "2023-01-01T00:00:00Z",
+  "status": "ativo"
+}

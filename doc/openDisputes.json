@@ -1,0 +1,8 @@
+[
+  {
+    "id": "dispute-123",
+    "jobId": "job-dispute-1",
+    "initiatorId": "cliente@servio.ai",
+    "status": "aberta"
+  }
+]

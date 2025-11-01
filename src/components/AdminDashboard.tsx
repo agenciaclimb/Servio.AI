@@ -1,20 +1,10 @@
 import React, { useState } from 'react';
-import { User, Job, FraudAlert, Dispute } from '../types';
+import { useAppContext } from '../AppContext';
+import { User, FraudAlert, Dispute } from '../types';
 import VerificationModal from './VerificationModal';
 import FraudAlertModal from './FraudAlertModal';
 import DisputeAnalysisModal from './DisputeAnalysisModal';
-
-interface AdminDashboardProps {
-  user: User;
-  users: User[];
-  jobs: Job[];
-  fraudAlerts: FraudAlert[];
-  disputes: Dispute[];
-  onLogout: () => void;
-  onVerifyUser: (userId: string, newStatus: 'verificado' | 'recusado') => void;
-  onResolveFraudAlert: (alertId: string) => void;
-  onResolveDispute: (disputeId: string, resolution: 'release_to_provider' | 'refund_client', comment: string) => void;
-}
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 const StatCard: React.FC<{ title: string; value: number | string; icon: string }> = ({ title, value, icon }) => (
   <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center space-x-4">
@@ -28,13 +18,28 @@ const StatCard: React.FC<{ title: string; value: number | string; icon: string }
   </div>
 );
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, users, jobs, fraudAlerts, disputes, onLogout, onVerifyUser, onResolveFraudAlert, onResolveDispute }) => {
+const AdminDashboard: React.FC = () => {
+  const {
+    currentUser,
+    users,
+    jobs,
+    fraudAlerts,
+    disputes,
+    metrics,
+    handleLogout,
+    handleVerification,
+    handleResolveFraudAlert,
+    handleResolveDispute,
+  } = useAppContext();
+
   const [userToVerify, setUserToVerify] = useState<User | null>(null);
   const [alertToAnalyze, setAlertToAnalyze] = useState<FraudAlert | null>(null);
   const [disputeToAnalyze, setDisputeToAnalyze] = useState<Dispute | null>(null);
 
   const pendingVerifications = users.filter(u => u.verificationStatus === 'pendente');
   const recentJobs = [...jobs].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 5);
+
+  const totalRevenue = metrics.revenue.reduce((sum, item) => sum + item.value, 0);
 
   const getStatusClass = (status: string) => {
     switch (status) {
@@ -53,16 +58,45 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, users, jobs, frau
           <h1 className="text-3xl font-bold text-gray-900">Painel do Administrador</h1>
           <p className="text-gray-500 mt-1">Visão geral da plataforma SERVIO.AI.</p>
         </div>
-        <button onClick={onLogout} className="text-sm font-medium text-gray-600 hover:text-blue-600">Sair</button>
+        <button onClick={handleLogout} className="text-sm font-medium text-gray-600 hover:text-blue-600">Sair</button>
       </header>
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard title="Total de Usuários" value={users.length} icon="👥" />
         <StatCard title="Total de Serviços" value={jobs.length} icon="🛠️" />
-        <StatCard title="Verificações Pendentes" value={pendingVerifications.length} icon="📝" />
+        <StatCard title="Receita da Plataforma" value={`R$ ${totalRevenue.toFixed(2)}`} icon="💰" />
         <StatCard title="Disputas Abertas" value={disputes.filter(d => d.status === 'aberta').length} icon="⚖️" />
-        <StatCard title="Alertas de Fraude" value={fraudAlerts.length} icon="🚨" />
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+          <h3 className="font-semibold text-gray-800 mb-4">Crescimento de Usuários</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={metrics.userGrowth}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="value" name="Novos Usuários" stroke="#8884d8" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+          <h3 className="font-semibold text-gray-800 mb-4">Criação de Serviços</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={metrics.jobCreation}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="value" name="Novos Serviços" fill="#82ca9d" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -134,7 +168,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, users, jobs, frau
         <VerificationModal 
           user={userToVerify}
           onClose={() => setUserToVerify(null)}
-          onVerify={onVerifyUser}
+          onVerify={handleVerification}
         />
       )}
 
@@ -144,7 +178,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, users, jobs, frau
           job={jobs.find(j => j.id === disputeToAnalyze.jobId)!}
           onClose={() => setDisputeToAnalyze(null)}
           onResolve={(disputeId, resolution, comment) => {
-            onResolveDispute(disputeId, resolution, comment);
+            handleResolveDispute(disputeId, resolution, comment);
             setDisputeToAnalyze(null);
           }}
         />
@@ -155,8 +189,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, users, jobs, frau
           alert={alertToAnalyze}
           provider={users.find(u => u.email === alertToAnalyze.providerId)}
           onClose={() => setAlertToAnalyze(null)}
-          onResolve={(alertId) => {
-            onResolveFraudAlert(alertId);
+          onResolve={alertId => {
+            handleResolveFraudAlert(alertId);
             setAlertToAnalyze(null);
           }}
         />

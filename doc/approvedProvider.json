@@ -1,0 +1,10 @@
+{
+  "email": "provider-test@servio.ai",
+  "name": "João da Silva",
+  "type": "prestador",
+  "bio": "Mais de 10 anos de experiência com reparos elétricos e hidráulicos.",
+  "location": "São Paulo, SP",
+  "memberSince": "2024-01-01T00:00:00Z",
+  "status": "ativo",
+  "verificationStatus": "verificado"
+}

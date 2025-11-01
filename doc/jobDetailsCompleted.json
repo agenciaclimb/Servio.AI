@@ -1,0 +1,16 @@
+{
+  "id": "job-accepted-1",
+  "clientId": "cliente@servio.ai",
+  "providerId": "provider-test@servio.ai",
+  "category": "Instalação",
+  "description": "Instalação de lustre na sala de estar.",
+  "status": "concluido",
+  "scheduledDate": "2024-09-15T14:00:00Z",
+  "completedAt": "2024-09-15T16:00:00Z",
+  "review": {
+    "rating": 5,
+    "comment": "Serviço impecável, muito profissional!",
+    "authorId": "cliente@servio.ai",
+    "createdAt": "2024-09-15T17:00:00Z"
+  }
+}

@@ -48,6 +48,12 @@ export interface User {
   portfolio?: PortfolioItem[];
   serviceCatalog?: ProviderService[];
   seo?: SEOProfile;
+  subscription?: {
+    planId: string; // e.g., 'plan_destaque_mensal'
+    stripeSubscriptionId: string;
+    status: 'active' | 'canceled' | 'past_due';
+    currentPeriodEnd: string; // ISO Date string from Stripe
+  };
 }
 
 export interface ProviderProfile {

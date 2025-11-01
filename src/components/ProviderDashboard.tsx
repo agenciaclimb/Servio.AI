@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { User, Job, ProviderService } from '../types';
+import { useAppContext } from '../AppContext';
+import { ProviderService } from '../types';
 import ProfileStrength from './ProfileStrength';
 import ProfileTips from './ProfileTips';
 import EarningsProfileCard from './EarningsProfileCard';
 import BadgesShowcase from './BadgesShowcase';
 import ServiceCatalogModal from './ServiceCatalogModal';
 
-interface ProviderDashboardProps {
-  user: User;
-  jobs: Job[];
-  onLogout: () => void;
-  authToken: string | null;
-  onSaveCatalog: (updatedCatalog: ProviderService[]) => void;
-}
+const ProviderDashboard: React.FC = () => {
+  const {
+    currentUser,
+    jobs,
+    handleLogout,
+    authToken,
+    handleSaveServiceCatalog,
+  } = useAppContext();
 
-const ProviderDashboard: React.FC<ProviderDashboardProps> = ({ user, jobs, onLogout, authToken, onSaveCatalog }) => {
   const [isCatalogModalOpen, setIsCatalogModalOpen] = useState(false);
 
-  // Jobs assigned to this provider
-  const myJobs = jobs.filter(job => job.providerId === user.email && job.status !== 'concluido');
-  // Completed jobs for earnings history
-  const completedJobs = jobs.filter(job => job.providerId === user.email && job.status === 'concluido');
-  // Open jobs that are not assigned to anyone yet
+  if (!currentUser) return null; // Should be handled by ProtectedRoute
+
+  const myJobs = jobs.filter(job => job.providerId === currentUser.email && job.status !== 'concluido');
+  const completedJobs = jobs.filter(job => job.providerId === currentUser.email && job.status === 'concluido');
   const openJobs = jobs.filter(job => !job.providerId && (job.status === 'ativo' || job.status === 'em_leilao'));
 
   const getStatusClass = (status: string) => {
@@ -40,35 +40,35 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({ user, jobs, onLog
     <div className="p-4 sm:p-6 lg:p-8">
       <header className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Olá, {user.name.split(' ')[0]}!</h1>
-          {user.earningsProfile && (
-            <span className={`ml-2 px-3 py-1 text-xs font-bold rounded-full ${user.earningsProfile.tier === 'Ouro' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'}`}>
-              Nível {user.earningsProfile.tier}
+          <h1 className="text-3xl font-bold text-gray-900">Olá, {currentUser.name.split(' ')[0]}!</h1>
+          {currentUser.earningsProfile && (
+            <span className={`ml-2 px-3 py-1 text-xs font-bold rounded-full ${currentUser.earningsProfile.tier === 'Ouro' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'}`}>
+              Nível {currentUser.earningsProfile.tier}
             </span>
           )}
           <p className="text-gray-500 mt-1">Pronto para encontrar seu próximo serviço?</p>
         </div>
         <div className="flex flex-col items-end space-y-2">
-          <button onClick={onLogout} className="text-sm font-medium text-gray-600 hover:text-blue-600">Sair</button>
-          <Link to={`/provider/${user.email}`} className="text-sm font-medium text-blue-600 hover:underline">Ver meu perfil público</Link>
+          <button onClick={handleLogout} className="text-sm font-medium text-gray-600 hover:text-blue-600">Sair</button>
+          <Link to={`/provider/${currentUser.email}`} className="text-sm font-medium text-blue-600 hover:underline">Ver meu perfil público</Link>
         </div>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <div className="lg:col-span-2">
-          <ProfileStrength user={user} />
+          <ProfileStrength user={currentUser} />
         </div>
         <div>
-          <EarningsProfileCard user={user} authToken={authToken} />
+          <EarningsProfileCard user={currentUser} authToken={authToken} />
         </div>
       </div>
 
-      <ProfileTips user={user} onEditProfile={() => alert('Abrir modal de edição de perfil.')} />
+      <ProfileTips user={currentUser} onEditProfile={() => alert('Abrir modal de edição de perfil.')} />
 
       {/* Badges Section */}
       <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mt-8">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Suas Medalhas</h2>
-        <BadgesShowcase badges={user.badges || []} />
+        <BadgesShowcase badges={currentUser.badges || []} />
       </div>
 
       {/* Open Jobs Section */}
@@ -150,7 +150,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({ user, jobs, onLog
           <button onClick={() => setIsCatalogModalOpen(true)} className="text-sm font-medium text-blue-600 hover:underline">Gerenciar</button>
         </div>
         <div className="space-y-2">
-          {user.serviceCatalog && user.serviceCatalog.length > 0 ? user.serviceCatalog.map(service => (
+          {currentUser.serviceCatalog && currentUser.serviceCatalog.length > 0 ? currentUser.serviceCatalog.map(service => (
             <div key={service.id} className="p-3 border dark:border-gray-600 rounded-lg">
               <p className="font-semibold">{service.name} ({service.type}) - {service.price ? `R$ ${service.price}` : 'Sob consulta'}</p>
             </div>
@@ -160,10 +160,10 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({ user, jobs, onLog
 
       {isCatalogModalOpen && (
         <ServiceCatalogModal 
-          user={user}
+          user={currentUser}
           onClose={() => setIsCatalogModalOpen(false)}
           onSave={(catalog) => {
-            onSaveCatalog(catalog);
+            handleSaveServiceCatalog(catalog);
             setIsCatalogModalOpen(false);
           }}
         />
