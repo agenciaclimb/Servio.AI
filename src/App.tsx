@@ -106,7 +106,7 @@ const App: React.FC = () => {
               </ProtectedRoute>
             } />
             <Route path="/admin" element={
-              <ProtectedRoute isAllowed={currentUser?.type === 'admin'}>
+              <ProtectedRoute isAllowed={currentUser?.type === 'staff'}>
                 <AdminDashboard />
               </ProtectedRoute>
             } />

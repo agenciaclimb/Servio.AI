@@ -2,6 +2,8 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const fetch = require("node-fetch");
+const { OpenAI } = require('openai');
+const axios = require('axios');
 const sgMail = require('@sendgrid/mail');
 
 try {
@@ -14,8 +16,12 @@ try {
 
 const db = admin.firestore();
 
-// Inicializa o SendGrid com a chave de API armazenada na configuração do Firebase
-sgMail.setApiKey(functions.config().sendgrid.key);
+// Inicializa serviços com chaves de API armazenadas na configuração do Firebase
+if (functions.config().sendgrid && functions.config().sendgrid.key) {
+  sgMail.setApiKey(functions.config().sendgrid.key);
+}
+const openai = new OpenAI({ apiKey: functions.config().openai.key });
+
 
 // URL do seu serviço de IA (substitua pelo URL do Cloud Run em produção)
 const AI_API_URL = process.env.AI_API_URL || "http://localhost:8080"; 
@@ -194,5 +200,186 @@ exports.sendProspectInvitationEmail = functions
     } catch (error) {
       console.error(`Error in sendProspectInvitationEmail for prospect ${prospectId}:`, error);
     }
+    return null;
+  });
+
+/**
+ * Triggered on the creation of a new staff user.
+ * Sends a welcome email with a link to set their initial password.
+ */
+exports.sendWelcomeEmailToStaff = functions
+  .region("us-west1")
+  .firestore.document("users/{userId}")
+  .onCreate(async (snap) => {
+    const newUser = snap.data();
+
+    // 1. Only run for new users of type 'staff'
+    if (newUser.type !== 'staff') {
+      return null;
+    }
+
+    console.log(`New staff member detected: ${newUser.email}. Sending welcome email.`);
+
+    try {
+      // 2. Generate a password reset link (which acts as a "set your password" link)
+      const passwordResetLink = await admin.auth().generatePasswordResetLink(newUser.email);
+
+      // 3. Compose the email message
+      const subject = "Bem-vindo(a) à Equipe SERVIO.AI!";
+      const body = `
+        <p>Olá, ${newUser.name},</p>
+        <p>Seja bem-vindo(a) à equipe da SERVIO.AI! Sua conta foi criada com a função de <strong>${newUser.role}</strong>.</p>
+        <p>Para começar, por favor, configure sua senha de acesso clicando no link abaixo:</p>
+        <p><a href="${passwordResetLink}">Criar minha senha</a></p>
+        <p>Este link é válido por 24 horas.</p>
+        <p>Atenciosamente,<br>Equipe SERVIO.AI</p>
+      `;
+
+      // 4. Send the email using SendGrid
+      const msg = {
+        to: newUser.email,
+        from: 'no-reply@servio.ai', // Use um e-mail verificado no SendGrid
+        subject: subject,
+        html: body,
+      };
+
+      await sgMail.send(msg);
+      console.log(`Welcome email sent successfully to ${newUser.email}.`);
+    } catch (error) {
+      console.error(`Error sending welcome email to ${newUser.email}:`, error);
+    }
+
+    return null;
+  });
+
+/**
+ * Runs daily to generate marketing action proposals.
+ * The AI analyzes platform data and suggests content to be created.
+ */
+exports.runMarketingAI = functions
+  .region("us-west1")
+  .pubsub.schedule("every 24 hours")
+  .onRun(async (context) => {
+    console.log("Running daily marketing AI...");
+
+    try {
+      // 1. Fetch recent data for analysis (e.g., last 7 days of jobs)
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const jobsSnapshot = await db.collection("jobs").where("createdAt", ">=", sevenDaysAgo.toISOString()).get();
+      const recentJobs = jobsSnapshot.docs.map(doc => doc.data());
+
+      // 2. Call the AI to get a marketing plan
+      const planResponse = await fetch(`${AI_API_URL}/api/generate-marketing-plan`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }, // Auth needed in production
+        body: JSON.stringify({ recentJobs }),
+      });
+
+      if (!planResponse.ok) {
+        throw new Error(`AI marketing plan generation failed with status: ${planResponse.status}`);
+      }
+
+      const marketingPlan = await planResponse.json();
+
+      // 3. Save each proposed action to the 'marketing_proposals' collection for approval
+      const batch = db.batch();
+      for (const proposal of marketingPlan.proposals) {
+        const proposalRef = db.collection("marketing_proposals").doc();
+        batch.set(proposalRef, {
+          ...proposal,
+          status: 'pendente', // 'pendente', 'aprovado', 'rejeitado'
+          createdAt: new Date().toISOString(),
+        });
+      }
+      await batch.commit();
+
+      console.log(`Marketing AI finished. ${marketingPlan.proposals.length} new actions proposed.`);
+
+    } catch (error) {
+      console.error("Error in runMarketingAI:", error);
+    }
+
+    return null;
+  });
+
+/**
+ * Triggered when a marketing proposal is updated.
+ * If a blog post proposal is approved, it generates the full post and saves it.
+ */
+exports.executeApprovedMarketingAction = functions
+  .region("us-west1")
+  .firestore.document("marketing_proposals/{proposalId}")
+  .onUpdate(async (change) => {
+    const before = change.before.data();
+    const after = change.after.data();
+
+    // 1. Check if the proposal was just approved
+    if (before.status !== 'pendente' || after.status !== 'aprovado') {
+      return null;
+    }
+
+    // 2. Check if it's a blog post proposal
+    if (after.type !== 'blog_post') {
+      console.log(`Proposal ${change.after.id} is not a blog post. Skipping.`);
+      return null;
+    }
+
+    console.log(`Blog post proposal ${change.after.id} approved. Generating full content...`);
+
+    try {
+      // 3. Call the AI to generate the full blog post content
+      const postResponse = await fetch(`${AI_API_URL}/api/generate-full-blog-post`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }, // Auth needed in production
+        body: JSON.stringify({ topic: after.details.topic }),
+      });
+
+      if (!postResponse.ok) {
+        throw new Error(`AI blog post generation failed with status: ${postResponse.status}`);
+      }
+
+      const postContent = await postResponse.json();
+
+      // 4. Generate the featured image using DALL-E 3
+      const imageResponse = await openai.images.generate({
+        model: "dall-e-3",
+        prompt: postContent.featuredImage.prompt,
+        n: 1,
+        size: "1024x1024", // DALL-E 3 tem tamanhos específicos
+        quality: "standard",
+      });
+      const tempImageUrl = imageResponse.data[0].url;
+
+      // 5. Download the image from the temporary URL
+      const downloadedImage = await axios.get(tempImageUrl, { responseType: 'arraybuffer' });
+
+      // 6. Upload the image to our Google Cloud Storage bucket
+      const bucketName = process.env.GCP_STORAGE_BUCKET || 'servioai.appspot.com';
+      const bucket = admin.storage().bucket(bucketName);
+      const filePath = `blog_images/${postContent.slug}.png`;
+      const file = bucket.file(filePath);
+
+      await file.save(downloadedImage.data, {
+        metadata: { contentType: 'image/png' },
+        public: true, // Make the file publicly accessible
+      });
+      const publicImageUrl = file.publicUrl();
+
+      // 7. Save the complete blog post with the permanent image URL
+      // The document ID will be the URL-friendly slug
+      await db.collection("blog_posts").doc(postContent.slug).set({
+        ...postContent,
+        featuredImageUrl: publicImageUrl, // Save the final image URL
+        createdAt: new Date().toISOString(),
+        status: 'publicado',
+      });
+
+      console.log(`Blog post "${postContent.title}" published successfully.`);
+    } catch (error) {
+      console.error(`Error executing marketing action for proposal ${change.after.id}:`, error);
+    }
+
     return null;
   });

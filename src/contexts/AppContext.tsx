@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useStripe } from '@stripe/react-stripe-js';
-import { User, Job, Proposal, Message, MaintainedItem, Notification, Bid, FraudAlert, JobData, Dispute, ProviderService } from '../../types';
+import { User, Job, Proposal, Message, MaintainedItem, Notification, Bid, FraudAlert, JobData, Dispute, ProviderService, StaffRole } from '../../types';
 import { auth } from '../../firebaseConfig';
 import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth';
 
@@ -42,6 +42,7 @@ interface IAppContext {
   handleResolveDispute: (disputeId: string, resolution: 'release_to_provider' | 'refund_client', comment: string) => Promise<void>;
   handleResolveFraudAlert: (alertId: string) => Promise<void>;
   handleConfirmSchedule: (jobId: string, date: string, time: string) => Promise<void>;
+  handleAddStaff: (newStaffData: { name: string; email: string; role: StaffRole }) => Promise<void>;
   handleSaveServiceCatalog: (updatedCatalog: ProviderService[]) => Promise<void>;
   fetchJobs: () => Promise<void>;
   fetchAdminData: () => Promise<void>;
@@ -186,10 +187,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }, [pendingJobData]);
 
   useEffect(() => {
-    if (currentUser) {
+      if (currentUser) {
       fetchJobs();
       if (currentUser.type === 'cliente') fetchItems();
-      if (currentUser.type === 'admin') fetchAdminData();
+        if (currentUser.type === 'staff') fetchAdminData();
     }
   }, [currentUser, authToken]);
 
@@ -420,6 +421,23 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const handleAddStaff = async (newStaffData: { name: string; email: string; role: StaffRole }) => {
+    if (!currentUser || currentUser.role !== 'super_admin' || !authToken) {
+      throw new Error("Permission denied.");
+    }
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/staff`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify(newStaffData),
+      });
+      if (!response.ok) throw new Error('Failed to add staff member.');
+      await fetchAdminData(); // Refresh the list of users
+    } catch (error) {
+      console.error("Error adding staff member:", error);
+    }
+  };
+
   const value: IAppContext = {
     currentUser,
     authToken,
@@ -454,6 +472,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     handleResolveDispute,
     handleResolveFraudAlert,
     handleConfirmSchedule,
+    handleAddStaff,
     handleSaveServiceCatalog,
     fetchJobs,
     fetchAdminData,

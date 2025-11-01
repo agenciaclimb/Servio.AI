@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useAppContext } from '../contexts/AppContext';
 import { Job } from '../../types';
 import LoadingSpinner from './LoadingSpinner';
 
 const RegisterPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { handleGoogleSignIn, handleEmailSignUp } = useAppContext(); // Supondo que handleEmailSignUp exista
+  // Placeholder sem dependências do AppContext; integração de cadastro será adicionada futuramente.
 
   const [job, setJob] = useState<Job | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,19 +61,7 @@ const RegisterPage: React.FC = () => {
   // Supondo que o formulário de registro seja um componente separado ou definido aqui
   const handleRegistration = async (event: React.FormEvent) => {
     event.preventDefault();
-    // Lógica para pegar email, senha, nome, etc. do formulário
-    const email = "exemplo@email.com";
-    const password = "senha";
-    const name = "Nome do Profissional";
-    
-    try {
-      // A função de signup deve ser capaz de lidar com os IDs extras
-      await handleEmailSignUp(email, password, name, 'prestador', { invitedToJobId: jobId, prospectId });
-      // O AppContext/onAuthStateChanged cuidará do redirecionamento
-    } catch (err) {
-      console.error("Falha no registro:", err);
-      // Mostrar erro na UI
-    }
+    navigate('/login');
   };
 
   return (

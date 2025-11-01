@@ -32,6 +32,38 @@ jobs:
         with:
           ref: ${{ github.event.inputs.ref || github.ref }}
 
+      - name: Validate required secrets and inputs
+        shell: bash
+        env:
+          GH_GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          GH_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GH_FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          GH_GCP_STORAGE_BUCKET: ${{ secrets.GCP_STORAGE_BUCKET }}
+          GH_STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+        run: |
+          set -euo pipefail
+          missing=()
+          # Infra
+          [[ -z "${PROJECT_ID:-}" ]] && missing+=("GCP_PROJECT_ID")
+          [[ -z "${REGION:-}" ]] && missing+=("GCP_REGION")
+          [[ -z "${SERVICE:-}" ]] && missing+=("GCP_SERVICE")
+          [[ -z "${GH_GCP_SA_KEY:-}" ]] && missing+=("GCP_SA_KEY")
+          # App (não bloqueia o deploy, mas avisamos)
+          app_missing=()
+          [[ -z "${GH_GEMINI_API_KEY:-}" ]] && app_missing+=("GEMINI_API_KEY")
+          [[ -z "${GH_FRONTEND_URL:-}" ]] && app_missing+=("FRONTEND_URL")
+          [[ -z "${GH_GCP_STORAGE_BUCKET:-}" ]] && app_missing+=("GCP_STORAGE_BUCKET")
+          [[ -z "${GH_STRIPE_SECRET_KEY:-}" ]] && app_missing+=("STRIPE_SECRET_KEY")
+
+          if (( ${#missing[@]} > 0 )); then
+            echo "::error::Secrets obrigatórios ausentes: ${missing[*]}"
+            echo "Adicione-os em Settings → Secrets and variables → Actions. Consulte GITHUB_SECRETS.md."
+            exit 1
+          fi
+          if (( ${#app_missing[@]} > 0 )); then
+            echo "::warning::Secrets de aplicação ausentes (o deploy continuará): ${app_missing[*]}"
+          fi
+
       - name: Auth to Google Cloud
         uses: google-github-actions/auth@v2
         with:

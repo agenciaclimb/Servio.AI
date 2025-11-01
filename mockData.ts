@@ -38,8 +38,8 @@ export const MOCK_USERS: User[] = [
       headline: 'Técnico de Informática', verificationStatus: 'recusado'
   },
 
-  // Admin
-  { email: 'admin@servio.ai', name: 'Admin', type: 'admin', bio: 'Administrador da plataforma SERVIO.AI.', location: 'Matrix', memberSince: '2023-01-01T00:00:00Z', status: 'ativo' },
+  // Staff (super admin)
+  { email: 'admin@servio.ai', name: 'Admin', type: 'staff', role: 'super_admin', bio: 'Administrador da plataforma SERVIO.AI.', location: 'Matrix', memberSince: '2023-01-01T00:00:00Z', status: 'ativo' },
 
   // Novo prestador para onboarding
   { email: 'prestador-novo@servio.ai', name: 'Novo Prestador', type: 'prestador', bio: '', location: 'A definir', memberSince: new Date().toISOString(), status: 'ativo', verificationStatus: 'pendente' },

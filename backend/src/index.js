@@ -76,6 +76,27 @@ function createApp({
 } = {}) {
   const app = express();
 
+  // Middleware to check for Super Admin role
+  const checkSuperAdmin = async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).send('Unauthorized: No token provided.');
+    }
+    const idToken = authHeader.split('Bearer ')[1];
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const userDoc = await db.collection('users').doc(decodedToken.email).get();
+      if (userDoc.exists && userDoc.data().role === 'super_admin') {
+        req.user = decodedToken;
+        return next();
+      }
+      return res.status(403).send('Forbidden: Super admin access required.');
+    } catch (error) {
+      console.error('Error verifying super admin token:', error);
+      return res.status(403).send('Forbidden: Invalid token.');
+    }
+  };
+
   app.use(cors());
   app.use(express.json());
 
@@ -676,6 +697,81 @@ function createApp({
       console.error("Error generating sitemap:", error);
       res.status(500).send("Error generating sitemap.");
     }
+  });
+
+  // =================================================================
+  // STAFF MANAGEMENT API ENDPOINTS
+  // =================================================================
+
+  // Create a new staff member (only for super_admins)
+  app.post("/staff", checkSuperAdmin, async (req, res) => {
+    try {
+      const { email, name, role } = req.body;
+      if (!email || !name || !role) {
+        return res.status(400).json({ error: "Email, name, and role are required." });
+      }
+
+      // 1. Create user in Firebase Auth
+      // A temporary password is set. The user should be prompted to change it.
+      const tempPassword = Math.random().toString(36).slice(-8);
+      const userRecord = await admin.auth().createUser({
+        email: email,
+        password: tempPassword,
+        displayName: name,
+      });
+
+      // 2. Create user document in Firestore
+      const staffData = {
+        email: userRecord.email,
+        name: name,
+        type: 'staff',
+        role: role,
+        status: 'ativo',
+        memberSince: new Date().toISOString(),
+      };
+      await db.collection("users").doc(userRecord.email).set(staffData);
+
+      res.status(201).json({ message: `Staff member ${name} created successfully. Temporary password: ${tempPassword}`, id: userRecord.uid });
+    } catch (error) {
+      console.error("Error creating staff member:", error);
+      res.status(500).json({ error: "Failed to create staff member. The email might already be in use." });
+    }
+  });
+
+  // =================================================================
+  // BLOG API ENDPOINTS (Público)
+  // =================================================================
+
+  // Get all published blog posts (summary view)
+  app.get("/blog-posts", async (req, res) => {
+    try {
+      const snapshot = await db.collection("blog_posts")
+        .where('status', '==', 'publicado')
+        .orderBy('createdAt', 'desc')
+        .get();
+      
+      const posts = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          slug: data.slug,
+          title: data.title,
+          introduction: data.introduction,
+          createdAt: data.createdAt,
+        };
+      });
+      res.status(200).json(posts);
+    } catch (error) {
+      console.error("Error fetching blog posts:", error);
+      res.status(500).json({ error: "Failed to retrieve blog posts." });
+    }
+  });
+
+  // Get a single blog post by slug
+  app.get("/blog-posts/:slug", async (req, res) => {
+    const { slug } = req.params;
+    const doc = await db.collection("blog_posts").doc(slug).get();
+    if (!doc.exists) return res.status(404).json({ error: "Post not found." });
+    res.status(200).json({ id: doc.id, ...doc.data() });
   });
 
   return app;

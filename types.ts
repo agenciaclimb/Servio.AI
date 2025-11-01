@@ -1,5 +1,6 @@
-export type UserType = 'cliente' | 'prestador' | 'admin';
+export type UserType = 'cliente' | 'prestador' | 'staff';
 export type UserStatus = 'ativo' | 'suspenso';
+export type StaffRole = 'super_admin' | 'financeiro' | 'suporte' | 'prospectador' | 'marketing';
 
 export interface ProviderService {
   id: string;
@@ -31,6 +32,8 @@ export interface User {
   location: string;
   memberSince: string; // ISO Date string
   status: UserStatus;
+  role?: StaffRole; // Apenas para usuários do tipo 'staff'
+  hasCompletedOnboarding?: boolean; // Marcador opcional para tour de onboarding
   // Provider-specific fields
   headline?: string;
   specialties?: string[];
