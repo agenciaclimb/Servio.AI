@@ -1,9 +1,10 @@
-﻿name: CI
+﻿name: ci
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main, feature/**]
   pull_request:
+    branches: [main]
 
 permissions:
   contents: read
@@ -12,40 +13,43 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Install root deps (se existirem)
+      - name: Install dependencies (root)
         run: |
           if [ -f package-lock.json ]; then npm ci; elif [ -f package.json ]; then npm i; fi
 
-      - name: Install backend deps (express/firebase-admin/vitest)
+      - name: Install dependencies (backend)
         run: |
-          if [ -f backend/package.json ]; then
-            cd backend
-            npm i
-            npm i -D vitest @vitest/coverage-v8
-          fi
+          if [ -f backend/package.json ]; then (cd backend && npm ci || npm i); fi
 
-      - name: Lint (skips if missing)
-        run: |
-          npm run lint 2>/dev/null || echo "lint: skipped"
+      - name: Lint (root)
+        run: npm run lint
 
-      - name: Typecheck (skips if missing)
-        run: |
-          npm run typecheck 2>/dev/null || echo "typecheck: skipped"
+      - name: Typecheck (root)
+        run: npm run typecheck
 
-      - name: Test (root) (skips if missing)
-        run: |
-          npm test 2>/dev/null || echo "test(root): skipped"
+      - name: Tests (root + backend)
+        run: npm run test:all
 
-      - name: Test (backend) (skips if missing)
+      - name: Install gitleaks
         run: |
-          if [ -f backend/package.json ]; then
-            cd backend
-            npm test 2>/dev/null || echo "test(backend): skipped"
-          fi
+          GITLEAKS_VERSION="8.21.2"
+          curl -sSL -o gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          tar -xzf gitleaks.tar.gz
+          sudo mv gitleaks /usr/local/bin/gitleaks
+          sudo chmod +x /usr/local/bin/gitleaks
+
+      - name: Gitleaks scan (allowlist, non-blocking)
+        run: |
+          gitleaks version || true
+          # Keep scanning but never fail CI while we stabilize
+          gitleaks detect --source . --redact --config .gitleaks.toml --exit-code 0 || true

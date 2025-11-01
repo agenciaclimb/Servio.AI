@@ -1,0 +1,14 @@
+# Google Cloud Build configuration
+steps:
+  # Instala as dependências do backend de dados
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install']
+    dir: 'backend'
+
+  # Instala as dependências do backend de IA
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install']
+    dir: '' # O server.js está na raiz
+
+  # (O build do frontend é feito separadamente, geralmente no Firebase Hosting)
+  # (As Cloud Functions são implantadas via Firebase CLI)

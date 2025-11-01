@@ -1,0 +1,32 @@
+# Build outputs
+dist/
+build/
+coverage/
+.next/
+out/
+
+# Dependencies
+node_modules/
+
+# Backend (uses CommonJS)
+backend/
+server.js
+
+# Documentation
+doc/
+
+# Config files
+*.config.js
+*.config.cjs
+*.config.mjs
+vite.config.ts
+postcss.config.cjs
+
+# Test coverage
+coverage/
+*.lcov
+
+# Environment
+.env
+.env.*
+!.env.example

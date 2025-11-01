@@ -1,6 +1,21 @@
 export type UserType = 'cliente' | 'prestador' | 'admin';
 export type UserStatus = 'ativo' | 'suspenso';
 
+export interface ProviderService {
+  id: string;
+  name: string;
+  type: 'tabelado' | 'personalizado' | 'diagnostico';
+  description: string;
+  price?: number; // For 'tabelado'
+}
+
+export interface SEOProfile {
+  seoTitle: string;
+  metaDescription: string;
+  publicHeadline: string;
+  publicBio: string;
+}
+
 export interface PortfolioItem {
   id: string;
   imageUrl: string; // base64 data URL
@@ -31,6 +46,8 @@ export interface User {
   verificationStatus?: 'pendente' | 'verificado' | 'recusado';
   documentImage?: string; // base64 data URL
   portfolio?: PortfolioItem[];
+  serviceCatalog?: ProviderService[];
+  seo?: SEOProfile;
 }
 
 export interface ProviderProfile {
@@ -58,6 +75,7 @@ export interface Job {
   id: string;
   clientId: string;
   providerId?: string;
+  itemId?: string; // ID do item de 'maintained_items'
   category: string;
   description: string;
   status: JobStatus;
@@ -65,7 +83,7 @@ export interface Job {
   serviceType: ServiceType;
   urgency: 'hoje' | 'amanha' | '3dias' | '1semana';
   address?: string;
-  media?: { name: string; type: 'image' | 'video' }[];
+  media?: { name: string; type: 'image' | 'video'; path: string }[];
   fixedPrice?: number;
   visitFee?: number;
   review?: Review;
@@ -74,6 +92,7 @@ export interface Job {
   // Auction fields
   jobMode?: JobMode;
   auctionEndDate?: string; // ISO Date string
+  scheduledDate?: string; // ISO Date string
 }
 
 export interface Bid {
@@ -91,7 +110,7 @@ export type JobData = {
   serviceType: ServiceType; 
   urgency: 'hoje' | 'amanha' | '3dias' | '1semana'; 
   address?: string; 
-  media?: { name: string; type: 'image' | 'video' }[];
+  media?: { name: string; type: 'image' | 'video'; path: string }[];
   fixedPrice?: number; 
   visitFee?: number; 
   targetProviderId?: string;

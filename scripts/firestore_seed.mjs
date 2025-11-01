@@ -1,4 +1,4 @@
-﻿/**
+/**
  * scripts/firestore_seed.mjs
  * - Usa Application Default Credentials (fornecidas pela action de auth)
  * - Garante coleções básicas e um meta.schemaVersion

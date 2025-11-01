@@ -1,4 +1,4 @@
-﻿name: Firestore Seed
+name: Firestore Seed
 
 on:
   workflow_dispatch:
@@ -26,10 +26,10 @@ jobs:
 
       - name: Install backend deps
         run: |
-          cd backend
           npm i firebase-admin
       - name: Seed/Migrate Firestore
         env:
           SEED_REASON: ${{ github.event.inputs.reason }}
         run: |
+          node scripts/firestore_seed.mjs
           node scripts/firestore_seed.mjs
