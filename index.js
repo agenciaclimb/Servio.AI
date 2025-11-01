@@ -529,32 +529,4 @@ exports.processNotificationQueue = functions
     }
     return null;
   });
-      const templateId = functions.config().sendgrid.notification_template_id;
-      if (!templateId) {
-        console.error("SendGrid template ID is not configured.");
-        return null;
-      }
-
-      // 3. Compose the message using the dynamic template
-      const msg = {
-        to: user.email,
-        from: 'notificacoes@servio.ai', // Use um e-mail verificado no SendGrid
-        templateId: templateId,
-        dynamicTemplateData: {
-          subject: `🔔 Nova notificação: ${notification.text.substring(0, 30)}...`,
-          name: user.name,
-          notification_text: notification.text,
-        },
-      };
-
-      // 3. Send the email using SendGrid
-      await sgMail.send(msg);
-      console.log(`Email notification sent successfully to ${user.email}.`);
-
-    } catch (error) {
-      console.error(`Error sending email notification to ${notification.userId}:`, error);
-    }
-
-    return null;
-  });
  

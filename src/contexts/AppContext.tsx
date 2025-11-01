@@ -45,6 +45,7 @@ interface IAppContext {
   handleConfirmSchedule: (jobId: string, date: string, time: string) => Promise<void>;
   handleAddStaff: (newStaffData: { name: string; email: string; role: StaffRole }) => Promise<void>;
   handleSaveServiceCatalog: (updatedCatalog: ProviderService[]) => Promise<void>;
+  handleStartTrial: () => Promise<void>;
   handleRequestNotificationPermission: () => Promise<void>;
   fetchJobs: () => Promise<void>;
   fetchAdminData: () => Promise<void>;
@@ -440,6 +441,29 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const handleStartTrial = async () => {
+    if (!currentUser || !authToken) {
+      throw new Error("Usuário não autenticado.");
+    }
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${currentUser.email}/start-trial`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${authToken}` },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Falha ao iniciar o período de teste.');
+      }
+      // Recarrega os dados do usuário para refletir o status 'trialing'
+      const userResponse = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${currentUser.email}`, { headers: { 'Authorization': `Bearer ${authToken}` } });
+      setCurrentUser(await userResponse.json());
+    } catch (error) {
+      console.error("Error starting trial:", error);
+      throw error; // Re-throw para que o componente possa lidar com isso (ex: mostrar um alerta)
+    }
+  };
+
   const handleRequestNotificationPermission = async () => {
     if (!currentUser || !authToken) return;
 
@@ -499,6 +523,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     handleResolveFraudAlert,
     handleConfirmSchedule,
     handleAddStaff,
+    handleStartTrial,
     handleRequestNotificationPermission,
     handleSaveServiceCatalog,
     fetchJobs,

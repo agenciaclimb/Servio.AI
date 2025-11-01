@@ -20,6 +20,7 @@ const ProviderDashboard: React.FC = () => {
     authToken,
     proposals,
     handleSaveServiceCatalog,
+    handleStartTrial: contextHandleStartTrial, // Renomear para evitar conflito
   } = useAppContext();
 
   const [isCatalogModalOpen, setIsCatalogModalOpen] = useState(false);
@@ -52,10 +53,14 @@ const ProviderDashboard: React.FC = () => {
     setShowUpsellModal(true);
   };
 
-  const handleStartTrial = () => {
-    // Lógica para chamar o backend e iniciar o trial
-    alert('Iniciando seu teste gratuito de 30 dias!');
-    setShowUpsellModal(false);
+  const handleStartTrial = async () => {
+    try {
+      await contextHandleStartTrial();
+      setShowUpsellModal(false);
+      alert('Teste gratuito de 30 dias ativado com sucesso! Aproveite todos os recursos Pro.');
+    } catch (error: any) {
+      alert(`Erro: ${error.message}`);
+    }
   };
 
   return (

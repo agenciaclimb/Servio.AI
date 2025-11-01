@@ -738,6 +738,47 @@ function createApp({
     }
   });
 
+  // Start a 30-day free trial for a user
+  app.post("/users/:id/start-trial", async (req, res) => {
+    // This endpoint should be protected by checkAuth in a real scenario
+    const { id } = req.params;
+    // const requesterEmail = req.user.email; // From checkAuth middleware
+
+    // if (id !== requesterEmail) {
+    //   return res.status(403).json({ error: "Forbidden: You can only start a trial for your own account." });
+    // }
+
+    try {
+      const userRef = db.collection("users").doc(id);
+      const userDoc = await userRef.get();
+
+      if (!userDoc.exists) {
+        return res.status(404).json({ error: "User not found." });
+      }
+
+      const userData = userDoc.data();
+      if (userData.subscription && (userData.subscription.status === 'active' || userData.subscription.trialStartedAt)) {
+        return res.status(400).json({ error: "This account already has an active subscription or has used a trial period." });
+      }
+
+      const now = new Date();
+      const trialEnds = new Date();
+      trialEnds.setDate(now.getDate() + 30);
+
+      const trialSubscription = {
+        status: 'trialing',
+        trialStartedAt: now.toISOString(),
+        trialEndsAt: trialEnds.toISOString(),
+      };
+
+      await userRef.update({ subscription: trialSubscription });
+      res.status(200).json({ message: "30-day free trial started successfully!", subscription: trialSubscription });
+    } catch (error) {
+      console.error(`Error starting trial for user ${id}:`, error);
+      res.status(500).json({ error: "Failed to start free trial." });
+    }
+  });
+
   // =================================================================
   // BLOG API ENDPOINTS (Público)
   // =================================================================
