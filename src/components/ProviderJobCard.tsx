@@ -1,5 +1,5 @@
 import React from 'react';
-import { Job, User, JobStatus } from '../types';
+import { Job, User, JobStatus } from '../../types';
 import JobTimeline from './JobTimeline';
 
 interface ProviderJobCardProps {

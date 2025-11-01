@@ -1,5 +1,5 @@
 import React from 'react';
-import { Job, User, UserStatus, Notification } from '../types';
+import { Job, User, UserStatus, Notification } from '../../types';
 import AdminVerificationCard from './AdminVerificationCard';
 
 interface AdminProviderManagementProps {

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Proposal, User } from '../types';
+import { Proposal, User } from '../../types';
 
 interface ProposalDetailCardProps {
   proposal: Proposal;

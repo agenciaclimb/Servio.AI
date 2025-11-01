@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Job, ServiceType, Bid } from '../types';
+import { Job, ServiceType, Bid } from '../../types';
 import JobFAQModal from './JobFAQModal';
 
 interface JobCardProps {

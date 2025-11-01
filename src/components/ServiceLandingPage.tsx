@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { User, ProviderProfile, CategoryPageContent } from '../types';
-import { generateCategoryPageContent } from '../services/geminiService';
+import { User, ProviderProfile, CategoryPageContent } from '../../types';
+import { generateCategoryPageContent } from '../../services/geminiService';
 import LoadingSpinner from './LoadingSpinner';
 import ProviderCard from './ProviderCard';
 import StructuredDataSEO from './StructuredDataSEO';

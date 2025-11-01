@@ -1,7 +1,7 @@
 
 import React, { useState, useCallback } from 'react';
-import { IdentifiedItem, MaintainedItem } from '../types';
-import { identifyItemFromImage } from '../services/geminiService';
+import { IdentifiedItem, MaintainedItem } from '../../types';
+import { identifyItemFromImage } from '../../services/geminiService';
 import LoadingSpinner from './LoadingSpinner';
 
 interface AddItemModalProps {

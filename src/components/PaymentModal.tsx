@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Job, Proposal, User } from '../types';
+import { Job, Proposal, User } from '../../types';
 
 interface PaymentModalProps {
   job: Job;

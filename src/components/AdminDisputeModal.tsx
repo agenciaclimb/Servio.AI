@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Job, Dispute, User } from '../types';
-import { mediateDispute } from '../services/geminiService';
+import { Job, Dispute, User } from '../../types';
+import { mediateDispute } from '../../services/geminiService';
 
 interface AdminDisputeModalProps {
   job: Job;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Job, User } from '../types';
+import { Job, User } from '../../types';
 
 interface CompletedJobCardProps {
   job: Job;

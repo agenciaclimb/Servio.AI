@@ -1,10 +1,10 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { enhanceJobRequest } from '../services/geminiService';
-import { EnhancedJobRequest, ServiceType, JobData, JobMode } from '../types';
 import LoadingSpinner from './LoadingSpinner';
-import { auth } from '../firebaseConfig';
+import { enhanceJobRequest } from '../../services/geminiService';
+import { EnhancedJobRequest, ServiceType, JobData, JobMode } from '../../types';
+import { auth } from '../../firebaseConfig';
 
 interface AIJobRequestWizardProps {
   onClose: () => void;

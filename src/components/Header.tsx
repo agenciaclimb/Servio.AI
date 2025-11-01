@@ -1,7 +1,7 @@
 
 // FIX: Create the Header component
 import React from 'react';
-import { User, Notification } from '../types';
+import { User, Notification } from '../../types';
 import NotificationsBell from './NotificationsBell';
 
 interface HeaderProps {

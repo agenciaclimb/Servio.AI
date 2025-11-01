@@ -1,5 +1,5 @@
 import React from 'react';
-import { MaintainedItem } from '../types';
+import { MaintainedItem } from '../../types';
 
 interface ItemCardProps {
   item: MaintainedItem;

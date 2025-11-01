@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import ServiceRequestForm from './ServiceRequestForm';
 import ProviderCard from './ProviderCard';
 import LoadingSpinner from './LoadingSpinner';
-import { getMatchingProviders } from '../services/geminiService';
+import { getMatchingProviders } from '../../services/geminiService';
 // FIX: Import the Job type to create a valid job object.
-import { MatchingResult, User, Job } from '../types';
+import { MatchingResult, User, Job } from '../../types';
 
 interface DashboardProps {
   user: User;

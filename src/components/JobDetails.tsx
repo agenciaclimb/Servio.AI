@@ -1,5 +1,5 @@
 import React from 'react';
-import { Job, User, Proposal, Message } from '../types';
+import { Job, User, Proposal, Message } from '../../types';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import Chat from './Chat';
 
@@ -8,6 +8,7 @@ interface JobDetailsProps {
   proposals: Proposal[];
   messages: Message[];
   currentUser: User;
+  authToken?: string | null;
   onBack: () => void;
   onAcceptProposal: (proposalId: string) => void;
   onSendMessage: (text: string) => void;
@@ -18,6 +19,7 @@ interface JobDetailsProps {
   onSetOnTheWay: (jobId: string) => void;
   aiSuggestion?: { date: string; time: string } | null;
   onConfirmSchedule: () => void;
+  onDataRefresh?: () => Promise<void>;
 }
 
 const MediaItem: React.FC<{ media: { name: string, path: string } }> = ({ media }) => {
@@ -38,7 +40,7 @@ const MediaItem: React.FC<{ media: { name: string, path: string } }> = ({ media 
   );
 };
 
-const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, currentUser, onBack, onAcceptProposal, onSendMessage, onPay, onCompleteJob, onOpenDispute, onOpenReview, onSetOnTheWay, aiSuggestion, onConfirmSchedule }) => {
+const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, currentUser, authToken, onBack, onAcceptProposal, onSendMessage, onPay, onCompleteJob, onOpenDispute, onOpenReview, onSetOnTheWay, aiSuggestion, onConfirmSchedule }) => {
 
   const getStatusClass = (status: string) => {
     switch (status) {
@@ -207,7 +209,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, curre
 
         {/* Right Column: Chat */}
         <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg border border-gray-100 h-[70vh]">
-          <Chat messages={messages} currentUser={currentUser} onSendMessage={onSendMessage} aiSuggestion={aiSuggestion} onConfirmSchedule={onConfirmSchedule} />
+          <Chat messages={messages} currentUser={currentUser} authToken={authToken} onSendMessage={onSendMessage} aiSuggestion={aiSuggestion} onConfirmSchedule={onConfirmSchedule} />
         </div>
       </div>
 

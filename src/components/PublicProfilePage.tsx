@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { User, Job } from '../types';
+import { User, Job } from '../../types';
 import LoadingSpinner from './LoadingSpinner';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import { auth } from '../firebaseConfig'; // Import auth for token
+import { auth } from '../../firebaseConfig'; // Import auth for token
 import LocationMap from './LocationMap';
 
 const PortfolioItem: React.FC<{ job: Job }> = ({ job }) => {

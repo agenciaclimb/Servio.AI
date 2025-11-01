@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User } from './types';
+import { User } from '../../types';
 
 interface EarningsImprovementGuideProps {
   user: User;
@@ -41,7 +41,7 @@ const EarningsImprovementGuide: React.FC<EarningsImprovementGuideProps> = ({ use
     }
   };
 
-  const bonuses = user.earningsProfile?.bonuses;
+  const bonuses = (user as any).earningsProfile?.bonuses;
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">

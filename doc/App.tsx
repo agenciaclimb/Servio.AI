@@ -23,6 +23,8 @@ import PublicProfilePage from './components/PublicProfilePage';
 import DisputeAnalysisModal from './components/DisputeAnalysisModal';
 import ItemDetailsPage from './ItemDetailsPage';
 import CategoryLandingPage from './CategoryLandingPage';
+import BlogIndexPage from './components/BlogIndexPage';
+import BlogPostPage from './components/BlogPostPage';
 
 const App: React.FC = () => {
   const {
@@ -87,6 +89,8 @@ const App: React.FC = () => {
           <Route path="/" element={<LandingPage onSearch={handleLandingSearch} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/servicos/:category/:location?" element={<CategoryLandingPage />} />
+          <Route path="/blog" element={<BlogIndexPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/provider/:providerId" element={<PublicProfilePage />} />
 
           {/* Protected Routes */}

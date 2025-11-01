@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { MaintainedItem, Job, User } from './types';
-import LoadingSpinner from './components/LoadingSpinner';
+import { MaintainedItem, Job, User } from '../../types';
+import LoadingSpinner from './LoadingSpinner';
 
 interface ItemDetailsPageProps {
   currentUser: User;
@@ -82,7 +82,7 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({ currentUser, authToke
             {history.length > 0 ? history.map(job => (
               <Link to={`/job/${job.id}`} key={job.id} className="block p-4 border rounded-lg hover:bg-gray-50">
                 <p className="font-semibold">{job.category}</p>
-                <p className="text-sm text-gray-500">Concluído em: {new Date(job.completedAt!).toLocaleDateString()} por {job.providerId}</p>
+                <p className="text-sm text-gray-500">Status: {job.status} | Prestador: {job.providerId || 'N/A'}</p>
               </Link>
             )) : <p className="text-center text-gray-500 py-4">Nenhum serviço registrado para este item.</p>}
           </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Job, User } from '../types';
+import { Job, User } from '../../types';
 import LocationMap from './LocationMap';
 
 interface JobLocationModalProps {

@@ -386,6 +386,46 @@ app.post('/api/analyze-provider-behavior', checkAuth, async (req, res) => {
   } catch (error) { handleApiError(res, error, 'analyze-provider-behavior'); }
 });
 
+app.post('/api/prospect-new-providers', checkAuth, async (req, res) => {
+  try {
+    const { category, location } = req.body;
+    const prompt = `Aja como um recrutador de talentos para uma plataforma de serviços. Faça uma busca simulada no Google por "${category} em ${location}" e liste até 3 profissionais ou pequenas empresas que parecem promissores. Para cada um, retorne um objeto JSON com "name", "specialty", "sourceUrl" (URL de origem simulada, ex: 'google-maps-profile/123') e "reason" (justificativa curta para a escolha). Retorne um array destes objetos. Responda APENAS com o array JSON.`;
+    
+    const response = await ai.models.generateContent({ 
+      model: MODEL_FAST, 
+      contents: prompt, 
+      config: { responseMimeType: 'application/json' } 
+    });
+
+    res.json(safeJSON(response.text, []));
+  } catch (error) { handleApiError(res, error, 'prospect-new-providers'); }
+});
+
+app.post('/api/generate-prospect-invitation', checkAuth, async (req, res) => {
+  try {
+    const { prospect, job } = req.body;
+    const prompt = `Você é um especialista em aquisição de talentos para a plataforma SERVIO.AI. Sua tarefa é gerar um e-mail altamente persuasivo para convidar o profissional "${prospect.name}", especialista em "${prospect.specialty}", para uma oportunidade real de serviço de "${job.category}" em "${job.location}".
+
+Instruções para o e-mail:
+1. Tom: Profissional, direto e que valorize a reputação do profissional.
+2. Estrutura do Corpo (body):
+   - Comece mencionando que o encontramos por sua excelente reputação como especialista.
+   - Apresente a oportunidade de serviço específica e imediata.
+   - Destaque 3 benefícios claros da SERVIO.AI: "Receba novos clientes sem custo.", "Pagamento garantido e seguro via sistema de escrow.", e "Crie seu perfil profissional gratuito em minutos."
+   - Call-to-Action (CTA): Termine com um CTA forte, convidando-o a ver os detalhes da oportunidade e se cadastrar. Inclua um placeholder **[LINK_DE_CADASTRO]** que será substituído pela URL.
+3. Formato de Saída: Retorne um JSON com "subject" (assunto) e "body" (corpo do e-mail em texto simples, com quebras de linha \\n).
+Responda APENAS com o JSON.`;
+    
+    const response = await ai.models.generateContent({ 
+      model: MODEL_FAST, 
+      contents: prompt, 
+      config: { responseMimeType: 'application/json' } 
+    });
+
+    res.json(safeJSON(response.text));
+  } catch (error) { handleApiError(res, error, 'generate-prospect-invitation'); }
+});
+
 // Catch-all (optional): serve index.html if present; otherwise 404
 app.get('*', (req, res) => {
   const index = path.join(__dirname, 'index.html');

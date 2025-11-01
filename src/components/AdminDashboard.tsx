@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useAppContext } from '../AppContext';
-import { User, FraudAlert, Dispute } from '../types';
+import { useAppContext } from '../contexts/AppContext';
+import { User, FraudAlert, Dispute } from '../../types';
 import VerificationModal from './VerificationModal';
 import FraudAlertModal from './FraudAlertModal';
 import DisputeAnalysisModal from './DisputeAnalysisModal';
+import AdminProspects from './AdminProspects';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 const StatCard: React.FC<{ title: string; value: number | string; icon: string }> = ({ title, value, icon }) => (
@@ -97,6 +98,11 @@ const AdminDashboard: React.FC = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
+      </div>
+
+      {/* Prospecting Section */}
+      <div className="mb-8">
+        <AdminProspects />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

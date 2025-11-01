@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
-import { useAppContext } from './AppContext';
-import { User, Job, Proposal, Message } from './types';
+import { useAppContext } from './contexts/AppContext';
+import { User, Job, Proposal, Message } from '../types';
 
 import Login from './components/Login';
 import ProviderOnboarding from './components/ProviderOnboarding';
@@ -20,8 +20,10 @@ import AddItemModal from './components/AddItemModal';
 import JobLocationModal from './components/JobLocationModal';
 import PublicProfilePage from './components/PublicProfilePage';
 import DisputeAnalysisModal from './components/DisputeAnalysisModal';
-import ItemDetailsPage from './ItemDetailsPage';
-import CategoryLandingPage from './CategoryLandingPage';
+import ItemDetailsPage from './components/ItemDetailsPage';
+import CategoryLandingPage from './components/CategoryLandingPage';
+import BlogIndexPage from './components/BlogIndexPage'; // Corrigido
+import BlogPostPage from './components/BlogPostPage'; // Corrigido
 
 const App: React.FC = () => {
   const {
@@ -31,7 +33,6 @@ const App: React.FC = () => {
     setIsWizardOpen,
     handleJobSubmit,
     handleLandingSearch,
-    initialPrompt,
     disputeJobId,
     setDisputeJobId,
     handleOpenDispute,
@@ -45,6 +46,11 @@ const App: React.FC = () => {
     setMapJobId,
     jobs,
     users,
+    authToken,
+    handleAcceptProposal,
+    handleSendMessage,
+    handlePayment,
+    handleCompleteJob,
   } = useAppContext();
 
   const navigate = useNavigate();
@@ -59,8 +65,6 @@ const App: React.FC = () => {
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location, navigate]);
-
-      setFraudAlerts(fraudAlertsData);
 
   const renderDashboard = () => {
     if (!currentUser) return <Navigate to="/login" />;
@@ -86,6 +90,8 @@ const App: React.FC = () => {
           <Route path="/" element={<LandingPage onSearch={handleLandingSearch} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/servicos/:category/:location?" element={<CategoryLandingPage />} />
+          <Route path="/blog" element={<BlogIndexPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/provider/:providerId" element={<PublicProfilePage />} />
 
           {/* Protected Routes */}
@@ -95,8 +101,8 @@ const App: React.FC = () => {
               <JobDetailsPage />
             } />
             <Route path="/onboarding" element={
-              <ProtectedRoute isAllowed={currentUser?.type === 'provider'}>
-                <ProviderOnboarding />
+              <ProtectedRoute isAllowed={currentUser?.type === 'prestador'}>
+                <ProviderOnboarding user={currentUser!} />
               </ProtectedRoute>
             } />
             <Route path="/admin" element={
@@ -106,7 +112,7 @@ const App: React.FC = () => {
             } />
             <Route path="/item/:itemId" element={
               <ProtectedRoute isAllowed={currentUser?.type === 'cliente'}>
-                <ItemDetailsPage />
+                <ItemDetailsPage currentUser={currentUser!} authToken={authToken!} />
               </ProtectedRoute>
             } />
           </Route>
@@ -116,7 +122,7 @@ const App: React.FC = () => {
           <AIJobRequestWizard 
             onClose={() => setIsWizardOpen(false)}
             initialData={{ targetProviderId: location.state?.targetProviderId } as any}
-            initialPrompt={initialPrompt || undefined}
+            initialPrompt={location.state?.initialPrompt || undefined}
             onSubmit={handleJobSubmit}
           />
         )}
@@ -155,7 +161,18 @@ const App: React.FC = () => {
 
 // A new component to manage its own data fetching for the details page
 const JobDetailsPage: React.FC = () => {
-  const { fetchDataForJobDetails, handleConfirmSchedule } = useAppContext();
+  const { 
+    currentUser,
+    authToken,
+    fetchDataForJobDetails, 
+    handleConfirmSchedule,
+    handleAcceptProposal,
+    handleSendMessage,
+    handlePayment,
+    handleCompleteJob,
+    setDisputeJobId,
+    setReviewJobId,
+  } = useAppContext();
   const { jobId } = useParams<{ jobId: string }>();
   const navigate = useNavigate();
   const [job, setJob] = useState<Job | null>(null);
@@ -185,7 +202,7 @@ const JobDetailsPage: React.FC = () => {
 
   const handleConfirmScheduleWrapper = async () => {
     if (!aiSuggestion) return;
-    await onConfirmSchedule(jobId, aiSuggestion.date, aiSuggestion.time);
+    await handleConfirmSchedule(jobId, aiSuggestion.date, aiSuggestion.time); // Corrigido
     setAiSuggestion(null); // Hide suggestion card
     fetchData(); // Refresh all data
   };
@@ -193,7 +210,26 @@ const JobDetailsPage: React.FC = () => {
   if (isLoading) return <LoadingSpinner />;
   if (!job) return <div>Job não encontrado.</div>;
 
-  return <JobDetails job={job} proposals={proposals} messages={messages} onBack={() => navigate(-1)} onDataRefresh={fetchData} aiSuggestion={aiSuggestion} onConfirmSchedule={handleConfirmScheduleWrapper} />;
+  return (
+    <JobDetails 
+      job={job} 
+      proposals={proposals} 
+      messages={messages} 
+      currentUser={currentUser!}
+      authToken={authToken}
+      onBack={() => navigate(-1)} 
+      onAcceptProposal={(proposalId) => handleAcceptProposal(proposalId, jobId!)}
+      onSendMessage={(text) => handleSendMessage(text, jobId!)}
+      onPay={(job, amount) => handlePayment(job, amount)}
+      onCompleteJob={(jobId) => handleCompleteJob(jobId)}
+      onOpenDispute={() => setDisputeJobId(jobId!)}
+      onOpenReview={() => setReviewJobId(jobId!)}
+      onSetOnTheWay={(jobId) => {/* Implementar se necessário */}}
+      aiSuggestion={aiSuggestion} 
+      onConfirmSchedule={handleConfirmScheduleWrapper}
+      onDataRefresh={fetchData}
+    />
+  );
 };
 
 export default App;

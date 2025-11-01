@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Message, User } from '../types';
+import { Message, User } from '../../types';
 import AISchedulingAssistant from './AISchedulingAssistant';
 import PlatformSecurityNotice from './PlatformSecurityNotice';
 import { SparklesIcon } from '@heroicons/react/24/outline';
@@ -56,11 +56,11 @@ const Chat: React.FC<ChatProps> = ({ messages, currentUser, authToken, onSendMes
     <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
       <PlatformSecurityNotice />
       {aiSuggestion && (
-        <AISchedulingAssistant 
-          suggestion={aiSuggestion}
-          onConfirm={onConfirmSchedule}
-          onDismiss={() => { /* Logic to dismiss suggestion can be added here */ }}
-        />
+    <AISchedulingAssistant 
+        schedule={aiSuggestion as any}
+      onConfirm={onConfirmSchedule}
+        onClose={() => {}}
+    />
       )}
       <div className="flex-grow space-y-4 overflow-y-auto pr-2">
         {messages.map(msg => (

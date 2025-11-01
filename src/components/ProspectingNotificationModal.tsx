@@ -1,13 +1,11 @@
 
 import React from 'react';
-import { Prospect } from '../types';
 
 interface ProspectingNotificationModalProps {
-  prospects: Prospect[];
   onClose: () => void;
 }
 
-const ProspectingNotificationModal: React.FC<ProspectingNotificationModalProps> = ({ prospects, onClose }) => {
+const ProspectingNotificationModal: React.FC<ProspectingNotificationModalProps> = ({ onClose }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg m-4 transform transition-all" onClick={(e) => e.stopPropagation()}>
@@ -22,14 +20,9 @@ const ProspectingNotificationModal: React.FC<ProspectingNotificationModalProps> 
                         Não encontramos um profissional 100% compatível em sua área no momento, mas não se preocupe!
                     </p>
                     <p className="text-gray-600 mt-1">
-                        Nossa equipe foi notificada e já está buscando ativamente os melhores talentos para o seu serviço. Entraremos em contato em breve.
+                        Nossa equipe de aquisição de talentos foi notificada e já está buscando ativamente os melhores profissionais para o seu serviço. Entraremos em contato em breve com novas opções.
                     </p>
-                     <div className="mt-6 text-left text-xs bg-gray-50 p-3 rounded-lg border">
-                        <p className="font-semibold text-gray-500">A IA sugeriu os seguintes perfis para nossa equipe de prospecção:</p>
-                        <ul className="list-disc list-inside mt-2 text-gray-500">
-                            {prospects.map(p => <li key={p.name}>{p.name} ({p.specialty})</li>)}
-                        </ul>
-                    </div>
+
                     <div className="mt-6">
                         <button 
                             onClick={onClose}

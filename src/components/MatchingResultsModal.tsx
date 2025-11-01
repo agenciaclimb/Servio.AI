@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MatchingResult } from '../types';
+import { MatchingResult } from '../../types';
 import ProviderCard from './ProviderCard';
 
 interface MatchingResultsModalProps {

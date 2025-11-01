@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Job, User } from '../types';
-import { generateProposalMessage } from '../services/geminiService';
+import { Job, User } from '../../types';
+import { generateProposalMessage } from '../../services/geminiService';
 
 interface ProposalModalProps {
   job: Job;

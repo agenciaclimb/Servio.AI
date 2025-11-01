@@ -1,5 +1,5 @@
 import React from 'react';
-import { Job, Proposal, JobStatus } from '../types';
+import { Job, Proposal, JobStatus } from '../../types';
 
 interface ClientJobCardProps {
   job: Job;

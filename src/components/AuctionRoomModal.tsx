@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Job, Bid, User } from '../types';
+import { Job, Bid, User } from '../../types';
 
 interface AuctionRoomModalProps {
   job: Job;

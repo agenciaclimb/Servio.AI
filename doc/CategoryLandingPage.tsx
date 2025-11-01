@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { CategoryPageContent } from '../../types';
-import LoadingSpinner from './LoadingSpinner';
+import LoadingSpinner from '../src/components/LoadingSpinner';
 
 const CategoryLandingPage: React.FC = () => {
   const { category, location } = useParams<{ category: string; location?: string }>();
@@ -44,8 +44,48 @@ const CategoryLandingPage: React.FC = () => {
     return <div className="text-center p-8">Não foi possível carregar o conteúdo para esta categoria.</div>;
   }
 
+  // Gera o JSON-LD para SEO com múltiplos schemas usando @graph
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "name": "SERVIO.AI",
+        "url": "https://servio.ai", // URL principal da plataforma
+        "logo": "https://servio.ai/logo.png" // URL do logo
+      },
+      {
+        "@type": "Service",
+        "serviceType": content.title,
+        "description": content.introduction,
+        "provider": {
+          "@type": "Organization",
+          "name": "SERVIO.AI"
+        },
+        ...(location && { "areaServed": {
+          "@type": "City",
+          "name": location
+        }}),
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": content.faq.map(item => ({
+          "@type": "Question",
+          "name": item.question,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": item.answer
+          }
+        }))
+      }
+    ]
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6">
+      {/* Adiciona os Dados Estruturados (Schema.org) para SEO */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+
       <header className="text-center my-12">
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">{content.title}</h1>
         <p className="mt-4 text-lg text-gray-600">{content.introduction}</p>

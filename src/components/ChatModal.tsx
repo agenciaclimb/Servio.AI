@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Job, Message, User, ScheduledDateTime, ChatSuggestion } from '../types';
-import { proposeScheduleFromChat, getChatAssistance } from '../services/geminiService';
+import { Job, Message, User, ScheduledDateTime, ChatSuggestion } from '../../types';
+import { proposeScheduleFromChat, getChatAssistance } from '../../services/geminiService';
 import AISchedulingAssistant from './AISchedulingAssistant';
 
 interface ChatModalProps {

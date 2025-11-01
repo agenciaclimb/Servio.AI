@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, ExtractedDocumentInfo } from '../types';
-import { auth } from '../firebaseConfig'; // Import auth for token
-import { extractInfoFromDocument } from '../services/geminiService';
+import { User, ExtractedDocumentInfo } from '../../types';
+import { auth } from '../../firebaseConfig'; // Import auth for token
+import { extractInfoFromDocument } from '../../services/geminiService';
 import LoadingSpinner from './LoadingSpinner';
 
 interface ProviderOnboardingProps {

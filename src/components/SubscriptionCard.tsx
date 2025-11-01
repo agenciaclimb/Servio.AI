@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User } from './types';
+import { User } from '../../types';
 import { useStripe } from '@stripe/react-stripe-js';
 
 interface SubscriptionCardProps {

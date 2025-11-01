@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 
 interface ProtectedRouteProps {
   isAllowed: boolean;
-  redirectPath?: string;
+  children?: ReactNode;
+  redirectTo?: string;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ isAllowed, redirectPath = '/login' }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ isAllowed, children, redirectTo = "/login" }) => {
   if (!isAllowed) {
-    return <Navigate to={redirectPath} replace />;
+    return <Navigate to={redirectTo} replace />;
   }
-  return <Outlet />;
+  
+  // If children provided, render them; otherwise render Outlet for nested routes
+  return children ? <>{children}</> : <Outlet />;
 };
 
 export default ProtectedRoute;

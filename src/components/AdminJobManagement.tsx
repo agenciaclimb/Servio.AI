@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Job, User, JobStatus } from '../types';
+import { Job, User, JobStatus } from '../../types';
 
 interface AdminJobManagementProps {
   allJobs: Job[];

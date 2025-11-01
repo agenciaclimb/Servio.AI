@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Job, Dispute } from '../types';
+import { Job, Dispute } from '../../types';
 
 interface DisputeAnalysisModalProps {
   job: Job;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Job, Proposal, Escrow, EscrowStatus } from '../types';
+import { Job, Proposal, Escrow, EscrowStatus } from '../../types';
 import StatCard from './StatCard';
 
 interface AdminFinancialsProps {

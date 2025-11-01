@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Job, Proposal, User } from '../types';
+import { Job, Proposal, User } from '../../types';
 import ProposalDetailCard from './ProposalDetailCard';
 
 interface ProposalListModalProps {

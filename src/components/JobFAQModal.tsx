@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Job, FAQItem } from '../types';
-import { generateJobFAQ } from '../services/geminiService';
+import { Job, FAQItem } from '../../types';
+import { generateJobFAQ } from '../../services/geminiService';
 
 interface JobFAQModalProps {
   job: Job;

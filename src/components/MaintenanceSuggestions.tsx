@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { MaintainedItem, MaintenanceSuggestion } from '../types';
-import { suggestMaintenance } from '../services/geminiService';
+import { MaintainedItem, MaintenanceSuggestion } from '../../types';
+import { suggestMaintenance } from '../../services/geminiService';
 
 interface MaintenanceSuggestionsProps {
   items: MaintainedItem[];

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Notification } from '../types';
+import { Notification } from '../../types';
 import NotificationsPopover from './NotificationsPopover';
 
 interface NotificationsBellProps {

@@ -9,7 +9,7 @@ interface JobDetailsProps {
   proposals: Proposal[];
   messages: Message[];
   onBack: () => void;
-  onDataRefresh: () => void;
+  onDataRefresh: () => Promise<void>;
   aiSuggestion?: { date: string; time: string } | null;
   onConfirmSchedule: () => void;
 }

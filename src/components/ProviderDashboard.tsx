@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAppContext } from '../AppContext';
-import { ProviderService } from '../types';
+import { useAppContext } from '../contexts/AppContext';
+import { ProviderService } from '../../types';
 import ProfileStrength from './ProfileStrength';
 import ProfileTips from './ProfileTips';
 import EarningsProfileCard from './EarningsProfileCard';
@@ -41,9 +41,9 @@ const ProviderDashboard: React.FC = () => {
       <header className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Olá, {currentUser.name.split(' ')[0]}!</h1>
-          {currentUser.earningsProfile && (
-            <span className={`ml-2 px-3 py-1 text-xs font-bold rounded-full ${currentUser.earningsProfile.tier === 'Ouro' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'}`}>
-              Nível {currentUser.earningsProfile.tier}
+          {(currentUser as any).earningsProfile && (
+            <span className={`ml-2 px-3 py-1 text-xs font-bold rounded-full ${(currentUser as any).earningsProfile.tier === 'Ouro' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'}`}>
+              Nível {(currentUser as any).earningsProfile.tier}
             </span>
           )}
           <p className="text-gray-500 mt-1">Pronto para encontrar seu próximo serviço?</p>
@@ -68,7 +68,7 @@ const ProviderDashboard: React.FC = () => {
       {/* Badges Section */}
       <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mt-8">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Suas Medalhas</h2>
-        <BadgesShowcase badges={currentUser.badges || []} />
+  <BadgesShowcase badges={(currentUser as any).badges || []} />
       </div>
 
       {/* Open Jobs Section */}
@@ -127,12 +127,12 @@ const ProviderDashboard: React.FC = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <p className="font-semibold text-gray-700">{job.category}</p>
-                  <p className="text-xs text-gray-500">Concluído em: {new Date(job.completedAt || Date.now()).toLocaleDateString()}</p>
+                  <p className="text-xs text-gray-500">Concluído em: {new Date(((job as any).completedAt || job.createdAt)).toLocaleDateString()}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-green-600 text-lg">+ R$ {job.earnings?.providerShare.toFixed(2)}</p>
+                  <p className="font-bold text-green-600 text-lg">+ R$ {( (job as any).earnings?.providerShare ?? 0).toFixed(2)}</p>
                   <p className="text-xs text-gray-500">
-                    ({(job.earnings?.rate * 100).toFixed(0)}% de R$ {(job.earnings?.providerShare + job.earnings?.platformShare).toFixed(2)})
+                    ({(((job as any).earnings?.rate ?? 0) * 100).toFixed(0)}% de R$ {((((job as any).earnings?.providerShare ?? 0) + ((job as any).earnings?.platformShare ?? 0)).toFixed(2))})
                   </p>
                 </div>
               </div>

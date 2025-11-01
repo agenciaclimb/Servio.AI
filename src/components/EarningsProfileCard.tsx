@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, SentimentAlert } from './types'; // Supondo que SentimentAlert esteja em types
+import { User } from '../../types';
 
 interface EarningsProfileCardProps {
   user: User;
@@ -21,7 +21,8 @@ const BonusItem: React.FC<{ label: string; value: number; achieved: boolean }> =
 );
 
 const EarningsProfileCard: React.FC<EarningsProfileCardProps> = ({ user, authToken }) => {
-  const [profile, setProfile] = useState<User['earningsProfile'] | null>(null);
+  // Using any here because earningsProfile is provided by backend and not part of core User type
+  const [profile, setProfile] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

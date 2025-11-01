@@ -1,5 +1,5 @@
 import React from 'react';
-import { MatchingResult } from '../types';
+import { MatchingResult } from '../../types';
 
 interface ProviderCardProps {
   result: MatchingResult;

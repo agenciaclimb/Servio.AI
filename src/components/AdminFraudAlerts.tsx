@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { FraudAlert, User, FraudAlertStatus } from '../types';
+import { FraudAlert, User, FraudAlertStatus } from '../../types';
 
 interface AdminFraudAlertsProps {
   allAlerts: FraudAlert[];

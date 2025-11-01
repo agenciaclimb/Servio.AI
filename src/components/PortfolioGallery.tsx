@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PortfolioItem } from '../types';
+import { PortfolioItem } from '../../types';
 
 const PortfolioLightbox: React.FC<{ item: PortfolioItem; onClose: () => void }> = ({ item, onClose }) => (
     <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4" onClick={onClose}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FraudAlert, User } from '../types';
+import { FraudAlert, User } from '../../types';
 
 interface FraudAlertModalProps {
   alert: FraudAlert;
@@ -35,7 +35,7 @@ const FraudAlertModal: React.FC<FraudAlertModalProps> = ({ alert, provider, onCl
           </button>
           <button
             // TODO: Implement suspension logic
-            onClick={() => alert('Ação de suspensão a ser implementada.')}
+            onClick={() => window.alert('Ação de suspensão a ser implementada.')}
             className="px-6 py-2 border border-red-300 text-red-600 font-medium rounded-md hover:bg-red-50 dark:hover:bg-red-900/50"
           >
             Suspender Prestador

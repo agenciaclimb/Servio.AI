@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { User, Job, SEOProfileContent, Review } from '../types';
+import { User, Job, SEOProfileContent, Review } from '../../types';
 import CompletedJobCard from './CompletedJobCard';
 import PublicContactCTA from './PublicContactCTA';
 import StructuredDataSEO from './StructuredDataSEO';
-import { summarizeReviews, generateSEOProfileContent } from '../services/geminiService';
+import { summarizeReviews, generateSEOProfileContent } from '../../services/geminiService';
 import LocationMap from './LocationMap';
 import PortfolioGallery from './PortfolioGallery';
 

@@ -1,84 +1,198 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const fetch = require("node-fetch");
+const sgMail = require('@sendgrid/mail');
 
-admin.initializeApp();
+try {
+  if (!admin.apps.length) {
+    admin.initializeApp();
+  }
+} catch (e) {
+  console.error("Firebase admin initialization error", e);
+}
 
 const db = admin.firestore();
+
+// Inicializa o SendGrid com a chave de API armazenada na configuração do Firebase
+sgMail.setApiKey(functions.config().sendgrid.key);
+
+// URL do seu serviço de IA (substitua pelo URL do Cloud Run em produção)
+const AI_API_URL = process.env.AI_API_URL || "http://localhost:8080"; 
+// URL do seu backend (substitua pelo URL do Cloud Run em produção)
+const BACKEND_API_URL = process.env.BACKEND_API_URL || "http://localhost:8081";
 
 /**
  * Triggered on the creation of a new proposal.
  * Fetches the related job and client to create a notification for the client.
  */
 exports.notifyClientOnNewProposal = functions
-  .region("us-west1") // Consistent with the project region
+  .region("us-west1")
   .firestore.document("proposals/{proposalId}")
-  .onCreate(async (snap, context) => {
+  .onCreate(async (snap) => {
     const newProposal = snap.data();
-
     try {
-      // 1. Get the job to find the client's ID
-      const jobRef = db.collection("jobs").doc(newProposal.jobId);
-      const jobDoc = await jobRef.get();
+      const jobDoc = await db.collection("jobs").doc(newProposal.jobId).get();
       if (!jobDoc.exists) {
         console.error(`Job with ID ${newProposal.jobId} not found.`);
         return null;
       }
       const jobData = jobDoc.data();
-      const clientId = jobData.clientId;
-
-      // 2. Create the notification for the client
       const notificationRef = db.collection("notifications").doc();
-      const notificationPayload = {
+      await notificationRef.set({
         id: notificationRef.id,
-        userId: clientId,
+        userId: jobData.clientId,
         text: `Você recebeu uma nova proposta para o job "${jobData.category}".`,
         isRead: false,
         createdAt: new Date().toISOString(),
         relatedJobId: newProposal.jobId,
-      };
-
-      await notificationRef.set(notificationPayload);
-      console.log(`Notification created for user ${clientId} for job ${newProposal.jobId}`);
+      });
+      console.log(`Notification created for user ${jobData.clientId} for job ${newProposal.jobId}`);
     } catch (error) {
-      console.error("Error creating notification for new proposal:", error);
+      console.error("Error in notifyClientOnNewProposal:", error);
     }
     return null;
   });
 
 /**
- * Triggered when a provider is verified.
- * Generates and saves SEO content for their public profile.
+ * Periodically analyzes active chats for negative sentiment.
+ * Runs every 15 minutes.
  */
-exports.generateSeoOnVerification = functions
+exports.analyzeChatSentimentPeriodically = functions
   .region("us-west1")
-  .firestore.document("users/{userId}")
-  .onUpdate(async (change, context) => {
-    const beforeData = change.before.data();
-    const afterData = change.after.data();
+  .pubsub.schedule("every 15 minutes")
+  .onRun(async (context) => {
+    console.log("Running periodic chat sentiment analysis...");
 
-    // Trigger only when a provider's status changes to 'verificado'
-    if (afterData.type === 'prestador' && beforeData.verificationStatus !== 'verificado' && afterData.verificationStatus === 'verificado') {
+    // 1. Find active jobs (e.g., status 'em_progresso' or 'a_caminho')
+    const activeJobsSnapshot = await db.collection("jobs")
+      .where("status", "in", ["em_progresso", "a_caminho"])
+      .get();
+
+    if (activeJobsSnapshot.empty) {
+      console.log("No active jobs found to analyze.");
+      return null;
+    }
+
+    // 2. For each active job, get chat messages and analyze sentiment
+    for (const jobDoc of activeJobsSnapshot.docs) {
+      const job = jobDoc.data();
+      const jobId = jobDoc.id;
+
+      const messagesSnapshot = await db.collection("messages")
+        .where("chatId", "==", jobId)
+        .orderBy("createdAt", "asc")
+        .get();
+
+      if (messagesSnapshot.docs.length < 4) { // Don't analyze very short chats
+        continue;
+      }
+
+      const messages = messagesSnapshot.docs.map(doc => doc.data());
+
       try {
-        // Call our own AI service to generate SEO content
-        const response = await fetch('http://localhost:8080/api/generate-seo', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user: afterData }),
+        // 3. Call the AI service to analyze sentiment
+        const response = await fetch(`${AI_API_URL}/api/analyze-sentiment`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages }),
         });
 
         if (!response.ok) {
-            throw new Error('Failed to generate SEO content from API.');
+          console.error(`AI API call failed for job ${jobId} with status: ${response.status}`);
+          continue;
         }
 
-        const seoData = await response.json();
+        const sentimentResult = await response.json();
 
-        // Save the generated SEO data back to the user's profile
-        await change.after.ref.update({ seo: seoData });
-
-        console.log(`SEO content generated and saved for provider ${context.params.userId}`);
+        // 4. If sentiment is alertable, create an alert in the backend
+        if (sentimentResult && sentimentResult.isAlertable) {
+          console.log(`Alertable sentiment detected for job ${jobId}. Creating alert.`);
+          await fetch(`${BACKEND_API_URL}/sentiment-alerts`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...sentimentResult, jobId }),
+          });
+        }
       } catch (error) {
-        console.error("Error generating SEO content:", error);
+        console.error(`Error analyzing sentiment for job ${jobId}:`, error);
       }
+    }
+
+    console.log("Periodic chat sentiment analysis finished.");
+    return null;
+  });
+
+/**
+ * Triggered on the creation of a new prospect.
+ * Generates and sends an invitation email via AI and updates the prospect's status.
+ */
+exports.sendProspectInvitationEmail = functions
+  .region("us-west1")
+  .firestore.document("prospects/{prospectId}")
+  .onCreate(async (snap) => {
+    const prospect = snap.data();
+    const prospectId = snap.id;
+
+    console.log(`New prospect found: ${prospect.name}. Generating invitation.`);
+
+    try {
+      // 1. Fetch the related job to get context for the email
+      const jobDoc = await db.collection("jobs").doc(prospect.relatedJobId).get();
+      if (!jobDoc.exists) {
+        console.error(`Job with ID ${prospect.relatedJobId} not found for prospect ${prospectId}.`);
+        return null;
+      }
+      const job = jobDoc.data();
+
+      // 2. Call the AI service to generate the email content
+      const emailResponse = await fetch(`${AI_API_URL}/api/generate-prospect-invitation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }, // Auth header would be needed in production
+        body: JSON.stringify({ prospect, job }),
+      });
+
+      if (!emailResponse.ok) {
+        throw new Error(`AI email generation failed with status: ${emailResponse.status}`);
+      }
+
+      const emailContent = await emailResponse.json();
+
+      // 1. Construir a URL de cadastro dinâmica
+      const frontendUrl = functions.config().app.frontend_url || 'http://localhost:5173';
+      const registrationUrl = `${frontendUrl}/register?source=prospect_invitation&jobId=${prospect.relatedJobId}&prospectId=${prospectId}`;
+
+      // 2. Substituir o placeholder no corpo do e-mail
+      const finalBody = emailContent.body.replace('[LINK_DE_CADASTRO]', registrationUrl);
+
+      // Pega o ID do grupo de descadastro da configuração do Firebase
+      const unsubscribeGroupId = functions.config().sendgrid.prospect_unsubscribe_group_id;
+
+      // 3. Send the email using SendGrid
+      const msg = {
+        to: prospect.email || 'email.do.prospect@example.com', // O e-mail do profissional prospectado
+        from: 'contato@servio.ai', // SEU E-MAIL VERIFICADO NO SENDGRID
+        subject: emailContent.subject,
+        // Usa o corpo do e-mail com a URL real
+        html: finalBody.replace(/\n/g, '<br>'), // Converte quebras de linha para HTML
+        // Anexa o e-mail a um grupo de descadastro específico
+        asm: {
+          groupId: parseInt(unsubscribeGroupId, 10),
+        },
+      };
+
+      await sgMail.send(msg);
+      console.log(`Email successfully sent to ${prospect.name} at ${msg.to}`);
+
+      // 4. Update the prospect's status to 'convidado'
+      await db.collection("prospects").doc(prospectId).update({
+        status: 'convidado',
+        lastContactedAt: new Date().toISOString(),
+      });
+
+      console.log(`Successfully sent invitation to ${prospect.name} and updated status.`);
+    } catch (error) {
+      console.error(`Error in sendProspectInvitationEmail for prospect ${prospectId}:`, error);
     }
     return null;
   });

@@ -1,8 +1,8 @@
 // FIX: Create the FindProvidersPage component
 import React, { useState, useMemo, useEffect } from 'react';
-import { User, Job, ProviderProfile, ParsedSearchQuery } from '../types';
+import { User, Job, ProviderProfile, ParsedSearchQuery } from '../../types';
 import ProviderSearchResultCard from './ProviderSearchResultCard';
-import { parseSearchQuery } from '../services/geminiService';
+import { parseSearchQuery } from '../../services/geminiService';
 
 interface FindProvidersPageProps {
   allUsers: User[];

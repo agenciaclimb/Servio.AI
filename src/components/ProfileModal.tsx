@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { User, PortfolioItem } from '../types';
-import { enhanceProviderProfile } from '../services/geminiService';
+import { User, PortfolioItem } from '../../types';
+import { enhanceProviderProfile } from '../../services/geminiService';
 
 interface ProfileModalProps {
   user: User;

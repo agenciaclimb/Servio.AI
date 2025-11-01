@@ -642,6 +642,41 @@ function createApp({
     }
   });
 
+  // =================================================================
+  // SEO ENDPOINTS
+  // =================================================================
+
+  app.get("/sitemap.xml", async (req, res) => {
+    const YOUR_DOMAIN = process.env.FRONTEND_URL || "http://localhost:5173";
+    try {
+      const usersSnapshot = await db.collection("users").where('type', '==', 'prestador').where('verificationStatus', '==', 'verificado').get();
+      const providers = usersSnapshot.docs.map(doc => doc.data());
+
+      // Idealmente, teríamos uma coleção de 'categorias' ou extrairíamos das existentes
+      const categories = ['eletricista', 'encanador', 'pintor', 'montador-de-moveis'];
+
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+      
+      // Add static pages
+      xml += `<url><loc>${YOUR_DOMAIN}/</loc></url>\n`;
+
+      // Add category pages
+      categories.forEach(cat => {
+        xml += `<url><loc>${YOUR_DOMAIN}/servicos/${cat}</loc></url>\n`;
+      });
+
+      // Add provider profiles
+      providers.forEach(p => {
+        xml += `<url><loc>${YOUR_DOMAIN}/provider/${p.email}</loc></url>\n`;
+      });
+
+      xml += `</urlset>`;
+      res.header('Content-Type', 'application/xml').send(xml);
+    } catch (error) {
+      console.error("Error generating sitemap:", error);
+      res.status(500).send("Error generating sitemap.");
+    }
+  });
 
   return app;
 }

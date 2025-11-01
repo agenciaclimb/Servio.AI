@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useStripe } from '@stripe/react-stripe-js';
-import { User, Job, Proposal, Message, MaintainedItem, Notification, Bid, FraudAlert, JobData, Dispute, ProviderService } from '../../types';
-import { auth } from '../../firebaseConfig';
-import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth';
+import { User, Job, Proposal, Message, MaintainedItem, Notification, Bid, FraudAlert, JobData, SentimentAlert, Dispute, ProviderService, UserType } from '../../types';
+import { auth } from './firebaseConfig';
+import { onAuthStateChanged, signOut, User as FirebaseUser, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 // Define the shape of the context value
-interface IAppContext {
+export interface IAppContext {
   currentUser: User | null;
   authToken: string | null;
   isLoading: boolean;
@@ -19,7 +19,7 @@ interface IAppContext {
   bids: Bid[];
   disputes: Dispute[];
   fraudAlerts: FraudAlert[];
-  sentimentAlerts: any[];
+  sentimentAlerts: SentimentAlert[];
   metrics: { userGrowth: any[], jobCreation: any[], revenue: any[] };
   isWizardOpen: boolean;
   disputeJobId: string | null;
@@ -29,6 +29,8 @@ interface IAppContext {
   
   // Functions
   handleLogout: () => void;
+  handleEmailLogin: (email: string, password: string) => Promise<void>;
+  handleGoogleSignIn: () => Promise<void>;
   handleJobSubmit: (jobData: JobData, fromPending?: boolean) => Promise<void>;
   handleLandingSearch: (query: string) => void;
   handleSaveItem: (newItemData: Omit<MaintainedItem, 'id' | 'clientId' | 'maintenanceHistory' | 'createdAt'>) => Promise<void>;
@@ -68,7 +70,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [bids, setBids] = useState<Bid[]>([]);
   const [disputes, setDisputes] = useState<Dispute[]>([]);
   const [fraudAlerts, setFraudAlerts] = useState<FraudAlert[]>([]);
-  const [sentimentAlerts, setSentimentAlerts] = useState<any[]>([]);
+  const [sentimentAlerts, setSentimentAlerts] = useState<SentimentAlert[]>([]);
   const [metrics, setMetrics] = useState({ userGrowth: [], jobCreation: [], revenue: [] });
 
   const [isLoading, setIsLoading] = useState(true);
@@ -162,11 +164,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             setCurrentUser(userData);
 
             if (pendingJobData) {
-                handleJobSubmit({ ...pendingJobData, clientId: userData.email } as any, true);
+                handleJobSubmit({ ...pendingJobData, clientId: userData.email }, true);
                 setPendingJobData(null);
             }
 
-            if (userData.type === 'prestador' && userData.verificationStatus !== 'verificado') {
+            if (userData.type === 'provider' && userData.verificationStatus !== 'verificado') {
                 navigate('/onboarding');
             } else {
                 navigate(location.pathname === '/' || location.pathname === '/login' ? '/dashboard' : location.pathname);
@@ -197,6 +199,49 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     signOut(auth);
   };
 
+  const handleEmailLogin = async (email: string, password: string) => {
+    await signInWithEmailAndPassword(auth, email, password);
+    // onAuthStateChanged will handle the rest
+  };
+
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const firebaseUser = result.user;
+
+      if (firebaseUser && firebaseUser.email) {
+        // Check if user exists in our DB
+        const userResponse = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${firebaseUser.email}`, {
+          headers: { 'Authorization': `Bearer ${await firebaseUser.getIdToken()}` }
+        });
+
+        if (!userResponse.ok) {
+          // User does not exist, create a new one
+          const newUser: User = {
+            email: firebaseUser.email,
+            name: firebaseUser.displayName || 'Novo Usuário',
+            type: 'cliente', // Default to client for new sign-ups
+            bio: '',
+            location: '',
+            memberSince: new Date().toISOString(),
+            status: 'ativo',
+          };
+
+          await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await firebaseUser.getIdToken()}` },
+            body: JSON.stringify(newUser),
+          });
+        }
+        // onAuthStateChanged will handle navigation and state updates
+      }
+    } catch (error) {
+      console.error("Google Sign-In failed:", error);
+      throw error; // Re-throw to be caught by the component
+    }
+  };
+
   const handleJobSubmit = async (jobData: JobData, fromPending = false) => {
     if (!currentUser && !fromPending) {
       setPendingJobData(jobData);
@@ -204,7 +249,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       navigate('/login');
       return;
     }
-    const finalClientId = currentUser?.email || (jobData as any).clientId;
+    const finalClientId = currentUser?.email || jobData.clientId;
     const newJobPayload = { ...jobData, clientId: finalClientId };
 
     try {
@@ -441,6 +486,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     isAddItemModalOpen,
     mapJobId,
     handleLogout,
+    handleEmailLogin,
+    handleGoogleSignIn,
     handleJobSubmit,
     handleLandingSearch,
     handleSaveItem,
