@@ -257,6 +257,9 @@ A IA Gemini corrigiu o workflow de CI em `.github/workflows/pr-autofix.yml` com 
 #update_log - 2024-07-30 11:20
 A IA Gemini iniciou o desenvolvimento do frontend. Foram criados os arquivos `src/App.tsx` (componente principal), `src/components/Login.tsx` (página de login), `src/main.tsx` (ponto de entrada da aplicação) e `src/index.css` (estilos base). O `App.tsx` agora gerencia o estado de login e a renderização das diferentes visões da aplicação. O Documento Mestre foi atualizado.
 
+#update_log - 2025-10-31 23:08
+Correção crítica do CI: O teste `firebaseConfig.test.ts` estava falhando no GitHub Actions porque tentava inicializar o Firebase Auth com a API key real (que é uma chave pública e não secreta, mas precisa ser válida para conectar). No CI não há essa variável configurada. Solução: Adicionado mock completo do Firebase usando `vi.mock()` no teste, evitando tentativa de conexão real. Testes locais e do backend agora passam 100%. Commit 5974d62 enviado. Aguardando nova execução do CI para validar que todos os jobs ficam verdes.
+
 #update_log - 2024-07-30 11:25
 A IA Gemini respondeu a uma dúvida sobre o estado do frontend, esclarecendo que a estrutura inicial foi criada, mas a lógica real (conexão com API, autenticação, roteamento) ainda está pendente. Como próximo passo, foi criado o componente `src/components/ClientDashboard.tsx` para substituir o placeholder anterior, exibindo os jobs do cliente a partir dos dados fictícios. O `App.tsx` foi atualizado para renderizar este novo componente.
 
@@ -627,6 +630,24 @@ A IA Gemini continuou a implementação do teste E2E da "Jornada do Cliente". O 
 
 #update_log - 2025-11-01 04:30
 A IA Gemini expandiu o teste E2E da "Jornada do Cliente" para incluir o recebimento de propostas e o início da comunicação. O teste agora simula a visualização de propostas na página de detalhes do serviço e o envio de uma mensagem no chat, validando a interação inicial entre cliente e prestador.
+
+#update_log - 2025-11-01 05:00
+A IA Gemini iniciou a implementação do teste E2E para a "Jornada do Prestador". Foi criado o arquivo `cypress/e2e/provider_journey.cy.ts`, e o primeiro cenário foi implementado, cobrindo o cadastro de um novo prestador, o preenchimento do perfil na tela de onboarding e a submissão do perfil para verificação.
+
+#update_log - 2025-11-01 05:30
+A IA Gemini continuou o teste E2E da "Jornada do Prestador", implementando o fluxo de aprovação pelo administrador e o envio da primeira proposta. O teste agora simula o login do admin, a aprovação do prestador pendente e, em seguida, o login do prestador recém-aprovado para encontrar um serviço e enviar uma proposta com sucesso.
+
+#update_log - 2025-11-01 06:00
+A IA Gemini avançou no teste E2E da "Jornada do Cliente", implementando os passos de aceite de proposta e o fluxo de pagamento. O teste agora simula o clique no botão "Aceitar Proposta", verifica a atualização da UI, simula o clique no botão de pagamento e valida o retorno bem-sucedido da plataforma após o "pagamento" no Stripe.
+
+#update_log - 2025-11-01 06:30
+A IA Gemini finalizou o teste E2E da "Jornada do Cliente". Foram adicionados os passos finais de confirmação da conclusão do serviço (liberando o pagamento) e a submissão de uma avaliação para o prestador. Com isso, todo o fluxo feliz do cliente, desde a busca até a avaliação, está coberto por testes automatizados.
+
+#update_log - 2025-11-01 07:00
+A IA Gemini finalizou o teste E2E da "Jornada do Prestador". Foi adicionado um novo cenário que cobre o fluxo após o aceite da proposta, incluindo a visualização do serviço agendado, a ação de "Estou a Caminho" e a verificação do recebimento da avaliação após a conclusão do serviço.
+
+#update_log - 2025-11-01 07:30
+A IA Gemini implementou a funcionalidade "Páginas de Categoria Otimizadas para SEO". Foi criado o componente `CategoryLandingPage.tsx`, que busca conteúdo gerado pela IA (`/api/generate-category-page`) e o exibe. Uma nova rota pública (`/servicos/:category/:location?`) foi adicionada para tornar essas páginas acessíveis e indexáveis.
 
 5. Rastreabilidade
 
