@@ -43,7 +43,7 @@ describe("Jornada de Disputa", () => {
     // Login como Admin
     cy.visit("/login");
     cy.get('input[name="email"]').type("admin@servio.ai");
-    cy.get('input[name-="password"]').type("adminpass");
+    cy.get('input[name="password"]').type("adminpass");
     cy.contains("button", "Entrar").click();
     cy.wait("@adminLogin");
 
