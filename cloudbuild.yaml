@@ -6,6 +6,7 @@
 substitutions:
   _REGION: us-west1
   _SERVICE: servio-ai
+  # Nome do repositório do Artifact Registry (atenção: hífen, não ponto)
   _REPO: servio-ai
   _IMAGE: ai-server
 

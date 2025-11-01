@@ -97,12 +97,17 @@
      - Service Account User
      - Logs Writer (Cloud Logging) — obrigatório para o gatilho do Cloud Build escrever logs
 
-3. **Build timeout ou erro de Docker**
+3. **Erro ao fazer push no Artifact Registry: `name unknown: Repository 'servio.ai' not found`**
+   - Causa: variável de substituição `_REPO` configurada como `servio.ai` (com ponto) no gatilho do Cloud Build.
+   - Correção: edite o gatilho e defina `_REPO` como `servio-ai` (com hífen), na mesma região do repositório criado (`us-west1`).
+   - Confirme que o repositório existe em Artifact Registry: `Artifact Registry → Repositories → servio-ai (Docker) → Region: us-west1`.
+
+4. **Build timeout ou erro de Docker**
    - Vá em Cloud Build → Settings
    - Ative a API "Cloud Build API" se ainda não estiver
    - Verifique que "Docker" builder está disponível
 
-4. **Container não inicia (PORT error)**
+5. **Container não inicia (PORT error)**
    - Verifique que NÃO há variável PORT no Cloud Run
    - O Cloud Run injeta PORT automaticamente
    - Container port deve estar 8080
