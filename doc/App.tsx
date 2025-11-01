@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useStripe } from '@stripe/react-stripe-js';
-import { User, Job, Proposal, Message, MaintainedItem, Notification, Bid, FraudAlert, JobData } from './types';
+import { User, Job, Proposal, Message, MaintainedItem, Notification, Bid, FraudAlert, JobData, SentimentAlert } from './types';
 import { MOCK_USERS, MOCK_JOBS, MOCK_PROPOSALS, MOCK_MESSAGES, MOCK_ITEMS, MOCK_NOTIFICATIONS, MOCK_BIDS, MOCK_FRAUD_ALERTS } from './mockData';
 import { auth } from './firebaseConfig';
 import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth';
@@ -24,6 +24,7 @@ import AddItemModal from './components/AddItemModal';
 import JobLocationModal from './components/JobLocationModal';
 import PublicProfilePage from './components/PublicProfilePage';
 import DisputeAnalysisModal from './components/DisputeAnalysisModal';
+import ItemDetailsPage from './ItemDetailsPage';
 
 const App: React.FC = () => {
   // State Management
@@ -36,6 +37,7 @@ const App: React.FC = () => {
   const [bids, setBids] = useState<Bid[]>(MOCK_BIDS);
   const [disputes, setDisputes] = useState<Dispute[]>([]);
   const [fraudAlerts, setFraudAlerts] = useState<FraudAlert[]>(MOCK_FRAUD_ALERTS);
+  const [sentimentAlerts, setSentimentAlerts] = useState<SentimentAlert[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -46,6 +48,7 @@ const App: React.FC = () => {
   const [pendingJobData, setPendingJobData] = useState<JobData | null>(null);
   const [initialPrompt, setInitialPrompt] = useState<string | null>(null);
   const [mapJobId, setMapJobId] = useState<string | null>(null);
+  const [authToken, setAuthToken] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -55,6 +58,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
       if (firebaseUser && firebaseUser.email) {
+        const token = await firebaseUser.getIdToken();
         // User is signed in, fetch profile from our backend API
         const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${firebaseUser.email}`);
         if (!response.ok) {
@@ -66,6 +70,7 @@ const App: React.FC = () => {
 
         if (userData) {
           setCurrentUser(userData);
+          setAuthToken(token);
           // If there's a pending job, submit it now that the user is logged in
           if (pendingJobData) {
             handleJobSubmit({ ...pendingJobData, clientId: userData.email }, true);
@@ -90,6 +95,7 @@ const App: React.FC = () => {
       } else {
         // User is signed out
         setCurrentUser(null);
+        setAuthToken(null);
         if (location.pathname !== '/login') navigate('/');
       }
       setIsLoading(false);
@@ -142,17 +148,20 @@ const App: React.FC = () => {
 
   const fetchAdminData = async () => {
     try {
-      const [usersResponse, fraudAlertsResponse, disputesResponse] = await Promise.all([
+      const [usersResponse, fraudAlertsResponse, disputesResponse, sentimentAlertsResponse] = await Promise.all([
         fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`),
         fetch(`${import.meta.env.VITE_BACKEND_API_URL}/fraud-alerts`),
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/disputes`)
+        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/disputes`),
+        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/sentiment-alerts`),
       ]);
       const usersData: User[] = await usersResponse.json();
       const fraudAlertsData: FraudAlert[] = await fraudAlertsResponse.json();
       const disputesData: Dispute[] = await disputesResponse.json();
+      const sentimentAlertsData: SentimentAlert[] = await sentimentAlertsResponse.json();
       setUsers(usersData);
       setFraudAlerts(fraudAlertsData);
       setDisputes(disputesData);
+      setSentimentAlerts(sentimentAlertsData);
     } catch (error) {
       console.error("Failed to fetch admin data:", error);
     }
@@ -518,6 +527,7 @@ const App: React.FC = () => {
             <Route path="/job/:jobId" element={
               <JobDetailsPage 
                 currentUser={currentUser!} 
+                authToken={authToken}
                 onAcceptProposal={handleAcceptProposal} 
                 onSendMessage={handleSendMessage}
                 onPay={handlePayment}
@@ -534,7 +544,12 @@ const App: React.FC = () => {
             } />
             <Route path="/admin" element={
               <ProtectedRoute isAllowed={currentUser?.type === 'admin'}>
-                <AdminDashboard user={currentUser!} users={users} jobs={jobs} fraudAlerts={fraudAlerts} disputes={disputes} onLogout={handleLogout} onVerifyUser={handleVerification} onResolveDispute={handleResolveDispute} onResolveFraudAlert={handleResolveFraudAlert} />
+                <AdminDashboard user={currentUser!} users={users} jobs={jobs} fraudAlerts={fraudAlerts} disputes={disputes} sentimentAlerts={sentimentAlerts} onLogout={handleLogout} onVerifyUser={handleVerification} onResolveDispute={handleResolveDispute} onResolveFraudAlert={handleResolveFraudAlert} />
+              </ProtectedRoute>
+            } />
+            <Route path="/item/:itemId" element={
+              <ProtectedRoute isAllowed={currentUser?.type === 'cliente'}>
+                <ItemDetailsPage currentUser={currentUser!} authToken={authToken} />
               </ProtectedRoute>
             } />
           </Route>
@@ -582,7 +597,7 @@ const App: React.FC = () => {
 };
 
 // A new component to manage its own data fetching for the details page
-const JobDetailsPage: React.FC<{ currentUser: User, onAcceptProposal: any, onSendMessage: any, onPay: any, onCompleteJob: any, onOpenDispute: any, onOpenReview: any, onConfirmSchedule: any }> = ({ currentUser, onAcceptProposal, onSendMessage, onPay, onCompleteJob, onOpenDispute, onOpenReview, onConfirmSchedule }) => {
+const JobDetailsPage: React.FC<{ currentUser: User, authToken: string | null, onAcceptProposal: any, onSendMessage: any, onPay: any, onCompleteJob: any, onOpenDispute: any, onOpenReview: any, onConfirmSchedule: any }> = ({ currentUser, authToken, onAcceptProposal, onSendMessage, onPay, onCompleteJob, onOpenDispute, onOpenReview, onConfirmSchedule }) => {
   const { jobId } = useParams<{ jobId: string }>();
   const navigate = useNavigate();
   const [job, setJob] = useState<Job | null>(null);
@@ -648,7 +663,7 @@ const JobDetailsPage: React.FC<{ currentUser: User, onAcceptProposal: any, onSen
 
   if (!job) return <LoadingSpinner />;
 
-  return <JobDetails job={job} proposals={proposals} messages={messages} currentUser={currentUser} onBack={() => navigate(-1)} onAcceptProposal={(propId: string) => onAcceptProposal(propId, jobId)} onSendMessage={handleSendMessageWrapper} onPay={onPay} onCompleteJob={onCompleteJob} onOpenDispute={onOpenDispute} onOpenReview={onOpenReview} onSetOnTheWay={handleSetOnTheWay} aiSuggestion={aiSuggestion} onConfirmSchedule={handleConfirmScheduleWrapper} />;
+  return <JobDetails job={job} proposals={proposals} messages={messages} currentUser={currentUser} authToken={authToken} onBack={() => navigate(-1)} onAcceptProposal={(propId: string) => onAcceptProposal(propId, jobId)} onSendMessage={handleSendMessageWrapper} onPay={onPay} onCompleteJob={onCompleteJob} onOpenDispute={onOpenDispute} onOpenReview={onOpenReview} onSetOnTheWay={handleSetOnTheWay} aiSuggestion={aiSuggestion} onConfirmSchedule={handleConfirmScheduleWrapper} />;
 };
 
 export default App;

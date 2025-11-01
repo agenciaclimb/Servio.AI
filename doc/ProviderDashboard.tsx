@@ -1,22 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { User, Job } from '../types';
+import { User, Job, ProviderService } from '../types';
 import ProfileStrength from './ProfileStrength';
 import ProfileTips from './ProfileTips';
+import EarningsProfileCard from './EarningsProfileCard';
+import BadgesShowcase from './BadgesShowcase';
 import ServiceCatalogModal from './ServiceCatalogModal';
 
 interface ProviderDashboardProps {
   user: User;
   jobs: Job[];
   onLogout: () => void;
+  authToken: string | null;
   onSaveCatalog: (updatedCatalog: ProviderService[]) => void;
 }
 
-const ProviderDashboard: React.FC<ProviderDashboardProps> = ({ user, jobs, onLogout, onSaveCatalog }) => {
+const ProviderDashboard: React.FC<ProviderDashboardProps> = ({ user, jobs, onLogout, authToken, onSaveCatalog }) => {
   const [isCatalogModalOpen, setIsCatalogModalOpen] = useState(false);
 
   // Jobs assigned to this provider
-  const myJobs = jobs.filter(job => job.providerId === user.email);
+  const myJobs = jobs.filter(job => job.providerId === user.email && job.status !== 'concluido');
+  // Completed jobs for earnings history
+  const completedJobs = jobs.filter(job => job.providerId === user.email && job.status === 'concluido');
   // Open jobs that are not assigned to anyone yet
   const openJobs = jobs.filter(job => !job.providerId && (job.status === 'ativo' || job.status === 'em_leilao'));
 
@@ -36,6 +41,11 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({ user, jobs, onLog
       <header className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Olá, {user.name.split(' ')[0]}!</h1>
+          {user.earningsProfile && (
+            <span className={`ml-2 px-3 py-1 text-xs font-bold rounded-full ${user.earningsProfile.tier === 'Ouro' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'}`}>
+              Nível {user.earningsProfile.tier}
+            </span>
+          )}
           <p className="text-gray-500 mt-1">Pronto para encontrar seu próximo serviço?</p>
         </div>
         <div className="flex flex-col items-end space-y-2">
@@ -44,11 +54,22 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({ user, jobs, onLog
         </div>
       </header>
 
-      {/* Profile Strength Section */}
-      <ProfileStrength user={user} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div className="lg:col-span-2">
+          <ProfileStrength user={user} />
+        </div>
+        <div>
+          <EarningsProfileCard user={user} authToken={authToken} />
+        </div>
+      </div>
 
-      {/* AI Profile Tip Section */}
       <ProfileTips user={user} onEditProfile={() => alert('Abrir modal de edição de perfil.')} />
+
+      {/* Badges Section */}
+      <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mt-8">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Suas Medalhas</h2>
+        <BadgesShowcase badges={user.badges || []} />
+      </div>
 
       {/* Open Jobs Section */}
       <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-8">
@@ -93,6 +114,31 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({ user, jobs, onLog
             </Link>
           )) : (
             <p className="text-center text-gray-500 py-4">Você ainda não possui serviços em andamento.</p>
+          )}
+        </div>
+      </div>
+
+      {/* Earnings History Section */}
+      <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mt-8">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Histórico de Ganhos</h2>
+        <div className="space-y-3">
+          {completedJobs.length > 0 ? completedJobs.map(job => (
+            <div key={job.id} className="p-3 border rounded-lg bg-gray-50">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="font-semibold text-gray-700">{job.category}</p>
+                  <p className="text-xs text-gray-500">Concluído em: {new Date(job.completedAt || Date.now()).toLocaleDateString()}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold text-green-600 text-lg">+ R$ {job.earnings?.providerShare.toFixed(2)}</p>
+                  <p className="text-xs text-gray-500">
+                    ({(job.earnings?.rate * 100).toFixed(0)}% de R$ {(job.earnings?.providerShare + job.earnings?.platformShare).toFixed(2)})
+                  </p>
+                </div>
+              </div>
+            </div>
+          )) : (
+            <p className="text-center text-gray-500 py-4">Você ainda não concluiu nenhum serviço.</p>
           )}
         </div>
       </div>

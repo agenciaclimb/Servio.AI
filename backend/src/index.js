@@ -136,12 +136,32 @@ function createApp({
       // TODO: Implement Stripe Payout/Transfer to the provider's connected account.
       // This is a critical step for a real application.
       // For now, we simulate the success by updating our internal state.
+
+      // **NOVA LÓGICA DE COMISSÃO DINÂMICA**
+      const providerDoc = await db.collection('users').doc(escrowData.providerId).get();
+      if (!providerDoc.exists) throw new Error('Provider not found for commission calculation.');
+      
+      // Reutiliza a lógica de cálculo de estatísticas
+      const jobsSnapshot = await db.collection('jobs').where('providerId', '==', escrowData.providerId).where('status', '==', 'concluido').get();
+      const completedJobs = jobsSnapshot.docs.map(doc => doc.data());
+      const totalRevenue = completedJobs.reduce((sum, job) => sum + (job.price || 0), 0);
+      const ratings = completedJobs.map(job => job.review?.rating).filter(Boolean);
+      const averageRating = ratings.length > 0 ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length : 0;
+      const stats = { totalJobs: completedJobs.length, totalRevenue, averageRating, totalDisputes: 0 }; // Simplificado
+
+      const earningsProfile = calculateProviderRate(providerDoc.data(), stats);
+      const providerShare = escrowData.amount * earningsProfile.currentRate;
+      const platformShare = escrowData.amount * (1 - earningsProfile.currentRate);
+
       console.log(
-        `Simulating Stripe Payout for Escrow ID: ${escrowDoc.id} to Provider: ${escrowData.providerId}`,
+        `Simulating Stripe Payout for Escrow ID: ${escrowDoc.id}. Total: ${escrowData.amount}. Provider (${earningsProfile.currentRate * 100}%): ${providerShare.toFixed(2)}. Platform: ${platformShare.toFixed(2)}.`
       );
 
       // Update job and escrow status
-      await db.collection("jobs").doc(jobId).update({ status: "concluido" });
+      await db.collection("jobs").doc(jobId).update({ 
+        status: "concluido",
+        earnings: { providerShare, platformShare, rate: earningsProfile.currentRate } 
+      });
       await escrowDoc.ref.update({ status: "liberado" });
 
       res.status(200).json({
@@ -384,6 +404,59 @@ function createApp({
     }
   });
 
+  // =================================================================
+  // SENTIMENT ALERTS API ENDPOINTS
+  // =================================================================
+
+  // Get all sentiment alerts
+  app.get("/sentiment-alerts", async (req, res) => {
+    try {
+      const snapshot = await db.collection("sentiment_alerts").orderBy('createdAt', 'desc').get();
+      const alerts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(alerts);
+    } catch (error) {
+      console.error("Error getting sentiment alerts:", error);
+      res.status(500).json({ error: "Failed to retrieve sentiment alerts." });
+    }
+  });
+
+  // Create a new sentiment alert
+  app.post("/sentiment-alerts", async (req, res) => {
+    try {
+      const alertData = {
+        ...req.body,
+        createdAt: new Date().toISOString(),
+        status: "novo", // 'novo', 'revisado'
+      };
+      const alertRef = db.collection("sentiment_alerts").doc();
+      await alertRef.set(alertData);
+      res.status(201).json({ id: alertRef.id, ...alertData });
+    } catch (error) {
+      console.error("Error creating sentiment alert:", error);
+      res.status(500).json({ error: "Failed to create sentiment alert." });
+    }
+  });
+
+  // Get maintenance history for a specific item
+  app.get("/maintained-items/:itemId/history", async (req, res) => {
+    try {
+      const { itemId } = req.params;
+      const snapshot = await db
+        .collection("jobs")
+        .where("itemId", "==", itemId)
+        .where("status", "==", "concluido")
+        .orderBy("completedAt", "desc")
+        .get();
+
+      const history = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(history);
+    } catch (error) {
+      console.error("Error getting maintenance history:", error);
+      res.status(500).json({ error: "Failed to retrieve maintenance history." });
+    }
+  });
+
+
   return app;
 }
 
@@ -397,4 +470,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { createApp, app };
+module.exports = { createApp, app, calculateProviderRate };

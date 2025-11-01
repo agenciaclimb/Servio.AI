@@ -75,6 +75,7 @@ export interface Job {
   id: string;
   clientId: string;
   providerId?: string;
+  itemId?: string; // ID do item de 'maintained_items'
   category: string;
   description: string;
   status: JobStatus;

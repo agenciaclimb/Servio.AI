@@ -98,6 +98,7 @@ app.post('/api/match-providers', checkAuth, async (req, res) => {
     const providers = (allUsers || []).filter(u => u.type === 'prestador' && u.verificationStatus === 'verificado');
 
     const weights = { proximity: 0.25, availability: 0.20, specialty: 0.15, keywordRelevance: 0.15, rating: 0.10, certificates: 0.05, criminalRecord: 0.05, platformActivity: 0.05 };
+    const tierBonus = { 'Platina': 15, 'Ouro': 10, 'Prata': 5, 'Bronze': 0 };
     const availabilityMap = { hoje: 100, amanha: 80, '3dias': 60, '1semana': 40 };
 
     const scored = await Promise.all(providers.map(async (provider) => {
@@ -109,6 +110,8 @@ app.post('/api/match-providers', checkAuth, async (req, res) => {
       const certificatesScore = provider.hasCertificates ? 100 : 0;
       const criminalRecordScore = provider.hasCriminalRecordCheck ? 100 : 0;
       const platformActivityScore = Math.min(((provider.portfolio || []).length) * 20, 100);
+      const providerTier = provider.earningsProfile?.tier || 'Bronze';
+      const tierScore = tierBonus[providerTier] || 0;
 
       const finalScore =
         (proximityScore * weights.proximity) +
@@ -118,7 +121,8 @@ app.post('/api/match-providers', checkAuth, async (req, res) => {
         (ratingScore * weights.rating) +
         (certificatesScore * weights.certificates) +
         (criminalRecordScore * weights.criminalRecord) +
-        (platformActivityScore * weights.platformActivity);
+        (platformActivityScore * weights.platformActivity) +
+        tierScore; // **BÔNUS DE DESTAQUE ADICIONADO AQUI**
 
       return {
         providerId: provider.email,
@@ -251,6 +255,55 @@ app.post('/api/get-chat-assistance', checkAuth, async (req, res) => {
   } catch (error) { handleApiError(res, error, 'get-chat-assistance'); }
 });
 
+app.post('/api/suggest-chat-reply', checkAuth, async (req, res) => {
+  try {
+    const { messages, currentUserType } = req.body;
+    if (!messages || !currentUserType || messages.length === 0) {
+      return res.status(400).json({ error: 'Histórico de mensagens e tipo de usuário são obrigatórios.' });
+    }
+
+    const prompt = `Você é um assistente de comunicação para a plataforma SERVIO.AI. Analise o histórico do chat entre um cliente e um prestador de serviço. O usuário atual é um "${currentUserType}". Com base na última mensagem, sugira até 3 respostas curtas, úteis e profissionais para ele. Retorne um array JSON de strings. Se não houver sugestão clara, retorne um array vazio. Histórico: ${messages.map(m => `${m.senderId === 'system' ? 'Sistema' : (m.senderId.includes('cliente') ? 'Cliente' : 'Prestador')}: "${m.text}"`).join(' | ')}. Responda APENAS com o array JSON.`;
+    
+    const response = await ai.models.generateContent({ 
+      model: MODEL_FAST, 
+      contents: prompt, 
+      config: { responseMimeType: 'application/json' } 
+    });
+    
+    res.json(safeJSON(response.text, []));
+  } catch (error) { 
+    handleApiError(res, error, 'suggest-chat-reply'); 
+  }
+});
+
+app.post('/api/analyze-sentiment', checkAuth, async (req, res) => {
+  try {
+    const { messages } = req.body;
+    if (!messages || messages.length < 2) {
+      return res.json(null); // Não analisa chats muito curtos
+    }
+
+    const prompt = `Você é um analista de sentimento para a plataforma SERVIO.AI. Analise o tom geral do chat entre um cliente e um prestador. O histórico é: ${messages.map(m => `${m.senderId.includes('cliente') ? 'Cliente' : 'Prestador'}: "${m.text}"`).join(' | ')}. Retorne um JSON com "sentiment" ('positivo', 'neutro', 'negativo', 'frustrado'), "isAlertable" (boolean, true se for negativo ou frustrado) e "reason" (explicação curta). Responda APENAS com o JSON.`;
+    
+    const response = await ai.models.generateContent({ model: MODEL_FAST, contents: prompt, config: { responseMimeType: 'application/json' } });
+    res.json(safeJSON(response.text));
+  } catch (error) { handleApiError(res, error, 'analyze-sentiment'); }
+});
+
+app.post('/api/generate-earnings-tip', checkAuth, async (req, res) => {
+  try {
+    // Em um app real, buscaríamos o usuário e suas estatísticas do DB
+    const { userId } = req.body; 
+    const prompt = `Sou um prestador de serviço na plataforma SERVIO.AI. Meu email é ${userId}. Quero aumentar meus ganhos. Analise meu perfil (hipoteticamente, se não tiver acesso) e me dê uma dica curta, prática e motivacional sobre o que focar primeiro para melhorar meu percentual de ganhos. Seja específico, por exemplo, 'focar em conseguir boas avaliações para atingir o bônus de 2%'. Responda APENAS com o texto da dica.`;
+    
+    const response = await ai.models.generateContent({ model: MODEL_FAST, contents: prompt });
+    res.json({ tip: (response.text || 'Concentre-se em oferecer um excelente atendimento para garantir avaliações de 5 estrelas. Isso não só atrai mais clientes, mas também aumenta seus ganhos!').trim() });
+
+  } catch (error) {
+    handleApiError(res, error, 'generate-earnings-tip');
+  }
+});
+
 app.post('/api/parse-search', checkAuth, async (req, res) => {
   try {
     const { query } = req.body;
@@ -308,4 +361,3 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
   console.log(`AI Server listening on port ${port}`);
 });
-

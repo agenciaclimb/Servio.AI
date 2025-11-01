@@ -1,5 +1,7 @@
 # Backend Service - SERVIO.AI (Firestore API)
 
+[![CI](https://github.com/agenciaclimb/Servio.AI/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/agenciaclimb/Servio.AI/actions/workflows/ci.yml)
+
 Este diretório contém o serviço de backend principal da plataforma SERVIO.AI, responsável por toda a lógica de negócios, interações com o banco de dados Firestore e integrações com serviços externos como Stripe e Google Cloud Storage.
 
 ## 🚀 Arquitetura
