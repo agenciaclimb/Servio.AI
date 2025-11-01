@@ -1,7 +1,8 @@
-name: PR Auto-fix
+name: pr-autofix
 
 on:
   pull_request:
+    branches: [main]
     types: [opened, synchronize, reopened]
 
 permissions:
@@ -13,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -20,14 +23,18 @@ jobs:
 
       - name: Install deps
         run: |
-          if [ -f package.json ]; then npm i -D eslint prettier; npm i; fi
+          if [ -f package-lock.json ]; then npm ci; else npm i; fi
 
-      - name: Run eslint --fix & prettier
+      - name: ESLint auto-fix (TS only, respect ignore)
         run: |
-          npx eslint . --ext .ts,.tsx,.js --fix --ignore-path .eslintignore || true
-          npx prettier . --write --ignore-path .gitignore || true
+          npx eslint . --ext .ts,.tsx --ignore-path .eslintignore --fix || true
 
-      - name: Commit auto-fixes
+      - name: Prettier format (safe)
+        run: |
+          npx prettier --write "**/*.{ts,tsx,md,json,yml,yaml}" || true
+
+      - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore(ci): auto-fix (eslint/prettier)"
+          commit_message: "chore(autofix): apply eslint/prettier fixes"
+          branch: ${{ github.head_ref }}
