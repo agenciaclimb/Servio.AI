@@ -5,6 +5,7 @@ import LoadingSpinner from './LoadingSpinner';
 interface BlogPost {
   title: string;
   slug: string;
+  category: string;
   introduction: string;
   sections: { heading: string; content: string }[];
   conclusion: string;

@@ -8,8 +8,8 @@ Com o MVP (Minimum Viable Product) da plataforma SERVIO.AI concluído e pronto p
 
 **Objetivo:** Tornar a IA ainda mais proativa e indispensável para o usuário.
 
-- **Notificações por Push/SMS:**
-  - **O quê:** Integrar o Firebase Cloud Messaging (FCM) e/ou Twilio para enviar notificações críticas (novo job, mensagem, alerta de "a caminho") diretamente para o celular do usuário, mesmo com o app fechado.
+- **Notificações por E-mail e Push/SMS:**
+  - **O quê:** Integrar o SendGrid para notificações por e-mail (✅ **Concluído**) e planejar a integração com Firebase Cloud Messaging (FCM) para push e Twilio para WhatsApp.
   - **Por quê:** Aumenta drasticamente a velocidade de resposta e o engajamento.
 
 - **Assistente de Resposta no Chat:**

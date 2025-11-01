@@ -774,6 +774,32 @@ function createApp({
     res.status(200).json({ id: doc.id, ...doc.data() });
   });
 
+  // Get related blog posts by category
+  app.get("/blog-posts/related", async (req, res) => {
+    const { category, exclude, limit = '3' } = req.query;
+    if (!category || !exclude) {
+      return res.status(400).json({ error: "Category and exclude parameters are required." });
+    }
+
+    try {
+      const snapshot = await db.collection("blog_posts")
+        .where('status', '==', 'publicado')
+        .where('category', '==', category)
+        .where('slug', '!=', exclude) // Exclude the current post
+        .limit(parseInt(limit, 10))
+        .get();
+
+      const posts = snapshot.docs.map(doc => {
+        const { title, slug, featuredImageUrl } = doc.data();
+        return { title, slug, featuredImageUrl };
+      });
+      res.status(200).json(posts);
+    } catch (error) {
+      console.error("Error fetching related blog posts:", error);
+      res.status(500).json({ error: "Failed to retrieve related posts." });
+    }
+  });
+
   return app;
 }
 

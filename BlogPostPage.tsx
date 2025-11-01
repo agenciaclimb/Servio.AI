@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import LoadingSpinner from './src/components/LoadingSpinner';
+import SocialShareButtons from './src/components/SocialShareButtons';
+import RelatedArticles from './src/components/RelatedArticles';
 
 interface BlogPost {
   title: string;
   slug: string;
   introduction: string;
   sections: { heading: string; content: string }[];
+  category: string;
   conclusion: string;
   featuredImageUrl?: string;
 }
@@ -57,6 +60,13 @@ const BlogPostPage: React.FC = () => {
         <Link to="/" state={{ action: 'requestService', category: post.slug.split('-')[post.slug.split('-').length -1] }} className="no-underline inline-block mt-6 px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700">
           Encontrar um Profissional Agora
         </Link>
+
+        <SocialShareButtons 
+          postUrl={window.location.href}
+          title={post.title}
+        />
+
+        <RelatedArticles category={post.category} currentPostSlug={post.slug} />
       </article>
     </div>
   );

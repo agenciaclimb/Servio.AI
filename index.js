@@ -2,8 +2,7 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const fetch = require("node-fetch");
-const { OpenAI } = require('openai');
-const axios = require('axios');
+const { VertexAI } = require('@google-cloud/vertexai');
 const sgMail = require('@sendgrid/mail');
 
 try {
@@ -20,8 +19,11 @@ const db = admin.firestore();
 if (functions.config().sendgrid && functions.config().sendgrid.key) {
   sgMail.setApiKey(functions.config().sendgrid.key);
 }
-const openai = new OpenAI({ apiKey: functions.config().openai.key });
-
+// Inicializa o Vertex AI. A autenticação é automática no ambiente do Google Cloud.
+const vertex_ai = new VertexAI({
+  project: process.env.GCP_PROJECT || 'gen-lang-client-0737507616', 
+  location: 'us-central1' 
+});
 
 // URL do seu serviço de IA (substitua pelo URL do Cloud Run em produção)
 const AI_API_URL = process.env.AI_API_URL || "http://localhost:8080"; 
@@ -342,32 +344,36 @@ exports.executeApprovedMarketingAction = functions
 
       const postContent = await postResponse.json();
 
-      // 4. Generate the featured image using DALL-E 3
-      const imageResponse = await openai.images.generate({
-        model: "dall-e-3",
-        prompt: postContent.featuredImage.prompt,
-        n: 1,
-        size: "1024x1024", // DALL-E 3 tem tamanhos específicos
-        quality: "standard",
+      // 4. Generate the featured image using Imagen 2 on Vertex AI
+      const generativeModel = vertex_ai.getGenerativeModel({
+        model: 'imagen-2',
       });
-      const tempImageUrl = imageResponse.data[0].url;
 
-      // 5. Download the image from the temporary URL
-      const downloadedImage = await axios.get(tempImageUrl, { responseType: 'arraybuffer' });
+      const imageResponse = await generativeModel.generateContent({
+        contents: [{ role: 'user', parts: [{ text: postContent.featuredImage.prompt }] }],
+        generation_config: {
+          "outputImageCount": 1,
+          "quality": "standard" // 'standard' é mais rápido e barato que 'hd'
+        }
+      });
 
-      // 6. Upload the image to our Google Cloud Storage bucket
+      // A resposta do Imagen vem em base64
+      const imageBase64 = imageResponse.response.candidates[0].content.parts[0].fileData.data;
+      const imageBuffer = Buffer.from(imageBase64, 'base64');
+
+      // 5. Upload the image to our Google Cloud Storage bucket
       const bucketName = process.env.GCP_STORAGE_BUCKET || 'servioai.appspot.com';
       const bucket = admin.storage().bucket(bucketName);
       const filePath = `blog_images/${postContent.slug}.png`;
       const file = bucket.file(filePath);
 
-      await file.save(downloadedImage.data, {
+      await file.save(imageBuffer, {
         metadata: { contentType: 'image/png' },
         public: true, // Make the file publicly accessible
       });
       const publicImageUrl = file.publicUrl();
 
-      // 7. Save the complete blog post with the permanent image URL
+      // 6. Save the complete blog post with the permanent image URL
       // The document ID will be the URL-friendly slug
       await db.collection("blog_posts").doc(postContent.slug).set({
         ...postContent,
@@ -383,3 +389,47 @@ exports.executeApprovedMarketingAction = functions
 
     return null;
   });
+
+/**
+ * Triggered on the creation of a new notification document.
+ * Sends an email to the user with the notification content.
+ */
+exports.sendEmailNotification = functions
+  .region("us-west1")
+  .firestore.document("notifications/{notificationId}")
+  .onCreate(async (snap) => {
+    const notification = snap.data();
+
+    if (!notification || !notification.userId) {
+      console.log("Notification data is invalid, skipping email.");
+      return null;
+    }
+
+    try {
+      // 1. Fetch the user's profile to get their email and name
+      const userDoc = await db.collection("users").doc(notification.userId).get();
+      if (!userDoc.exists) {
+        console.error(`User ${notification.userId} not found. Cannot send email.`);
+        return null;
+      }
+      const user = userDoc.data();
+
+      // 2. Compose the email message
+      const msg = {
+        to: user.email,
+        from: 'notificacoes@servio.ai', // Use um e-mail verificado no SendGrid
+        subject: `🔔 Nova notificação: ${notification.text.substring(0, 30)}...`,
+        html: `<p>Olá, ${user.name},</p><p>Você tem uma nova notificação na plataforma SERVIO.AI:</p><p><strong>${notification.text}</strong></p><p>Acesse seu painel para ver mais detalhes.</p>`,
+      };
+
+      // 3. Send the email using SendGrid
+      await sgMail.send(msg);
+      console.log(`Email notification sent successfully to ${user.email}.`);
+
+    } catch (error) {
+      console.error(`Error sending email notification to ${notification.userId}:`, error);
+    }
+
+    return null;
+  });
+ 

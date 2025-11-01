@@ -87,14 +87,13 @@ jobs:
           echo "Verificando APIs necessárias..."
           gcloud services list --enabled --project "$PROJECT_ID" | grep -E "(run.googleapis.com|cloudbuild.googleapis.com|artifactregistry.googleapis.com)" || true
 
-      - name: Deploy to Cloud Run
+      - name: Build & Deploy via Cloud Build (Dockerfile → Artifact Registry → Cloud Run)
         run: |
           set -eo pipefail
-          gcloud run deploy "$SERVICE" \
-            --source . \
-            --region "$REGION" \
+          SUB_SHA="${GITHUB_SHA::7}"
+          echo "Usando SHORT_SHA=$SUB_SHA"
+          gcloud builds submit \
             --project "$PROJECT_ID" \
-            --allow-unauthenticated \
-            --set-env-vars="API_KEY=${{ secrets.GEMINI_API_KEY }},FRONTEND_URL=${{ secrets.FRONTEND_URL }},GCP_STORAGE_BUCKET=${{ secrets.GCP_STORAGE_BUCKET }},STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" \
-            --verbosity=debug \
+            --config cloudbuild.yaml \
+            --substitutions=_REGION="$REGION",_SERVICE="$SERVICE",_REPO="servio-ai",_IMAGE="ai-server",SHORT_SHA="$SUB_SHA" \
             --quiet
