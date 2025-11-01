@@ -64,6 +64,34 @@ Acesse: http://localhost:5173
 
 ---
 
+## Erro: Cloud Build Falhando (3-16 segundos)
+
+### Sintomas
+
+- Builds no Cloud Build falham rapidamente (< 20s)
+- Console do GCP mostra histórico de builds vermelhos
+- Erro: "require is not defined in ES module scope"
+
+### Causa Raiz
+
+O `package.json` tinha `"type": "module"` (necessário para Vite/frontend), mas o servidor (`server.js`) usava CommonJS (`require`). O Cloud Build não conseguia executar o servidor.
+
+### Solução Implementada
+
+✅ **Já resolvido!** O servidor foi renomeado para `server.cjs` para forçar CommonJS.
+
+Mudanças aplicadas:
+
+- `server.js` → `server.cjs`
+- Adicionadas dependências do servidor no `package.json` raiz
+- Script `start` aponta para `node server.cjs`
+
+### Próximo Deploy
+
+O próximo deploy manual via GitHub Actions deve funcionar corretamente. Lembre-se de configurar as variáveis de ambiente no Cloud Run antes de testar.
+
+---
+
 ## Erro: "Cannot find module" no CI/CD
 
 ### Causa
