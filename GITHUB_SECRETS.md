@@ -23,11 +23,13 @@ Configure os seguintes secrets em **Settings → Secrets and variables → Actio
 
 4. **GCP_SA_KEY**
    - Descrição: JSON completo da Service Account com permissões
-   - Permissões necessárias:
+   - Permissões necessárias (mínimo para Artifact Registry):
      - `Cloud Run Admin`
      - `Cloud Build Editor`
-     - `Storage Admin` (para Artifact Registry)
+     - `Artifact Registry Writer`
      - `Service Account User`
+   - Observação: se for usar Container Registry (gcr.io), em vez de Artifact Registry,
+     substitua `Artifact Registry Writer` por `Storage Admin`.
    - Como gerar:
      1. Console GCP → IAM & Admin → Service Accounts
      2. Criar nova SA ou usar existente

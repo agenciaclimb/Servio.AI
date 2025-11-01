@@ -1,33 +1,35 @@
-# Google Cloud Build configuration for AI Server
+# Google Cloud Build configuration for AI Server (Artifact Registry)
+# Pre-requisite: create an Artifact Registry repository named "servio-ai"
+# in region "us-west1" (Console → Artifact Registry → Create Repository)
 steps:
   # Build Docker image
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "build"
       - "-t"
-      - "gcr.io/$PROJECT_ID/servio-ai:$COMMIT_SHA"
+      - "us-west1-docker.pkg.dev/$PROJECT_ID/servio-ai/ai-server:$COMMIT_SHA"
       - "-t"
-      - "gcr.io/$PROJECT_ID/servio-ai:latest"
+      - "us-west1-docker.pkg.dev/$PROJECT_ID/servio-ai/ai-server:latest"
       - "-f"
       - "Dockerfile"
       - "."
 
-  # Push image to Container Registry
+  # Push image to Artifact Registry
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "gcr.io/$PROJECT_ID/servio-ai:$COMMIT_SHA"
+      - "us-west1-docker.pkg.dev/$PROJECT_ID/servio-ai/ai-server:$COMMIT_SHA"
 
   # Push latest tag
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "gcr.io/$PROJECT_ID/servio-ai:latest"
+      - "us-west1-docker.pkg.dev/$PROJECT_ID/servio-ai/ai-server:latest"
 
-# Store images in Container Registry
+# Store images in Artifact Registry
 images:
-  - "gcr.io/$PROJECT_ID/servio-ai:$COMMIT_SHA"
-  - "gcr.io/$PROJECT_ID/servio-ai:latest"
+  - "us-west1-docker.pkg.dev/$PROJECT_ID/servio-ai/ai-server:$COMMIT_SHA"
+  - "us-west1-docker.pkg.dev/$PROJECT_ID/servio-ai/ai-server:latest"
 
 # Build timeout
 timeout: 1200s
