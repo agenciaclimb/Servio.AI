@@ -16,6 +16,11 @@ try {
 const app = express();
 const port = process.env.PORT || 8080;
 
+// Diagnostic logs for Cloud Run troubleshooting
+console.log('[Server] PORT:', port);
+console.log('[Server] API_KEY present:', !!process.env.API_KEY);
+console.log('[Server] Node version:', process.version);
+
 // Middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(cors());
