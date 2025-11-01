@@ -51,3 +51,10 @@ images:
   - "us-west1-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE}:latest"
 
 timeout: 1200s
+
+# Logging options required by some org policies when using a user-managed
+# service account for Cloud Build. This avoids the need to configure a
+# GCS logs bucket explicitly.
+options:
+  logging: CLOUD_LOGGING_ONLY
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
