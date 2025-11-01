@@ -1,16 +1,16 @@
 title = "Servio.AI gitleaks configuration"
 
-# Allowlist for known non-secret patterns and docs paths.
+# Global allowlist for known non-secret patterns/paths.
 # Rationale:
-# - Firebase Web API keys (AIza...) are not secrets and are safe to be public.
-# - Documentation files may include placeholder-looking strings that trip rules.
+# - Firebase Web API keys (AIza...) are NOT secrets and are safe to be public.
+# - Documentation may contain example strings that match leak signatures.
 
-[[allowlist]]
-description = "Allow Firebase Web API keys and docs examples"
+[allowlist]
+description = "Allow Firebase web keys and specific docs"
 regexes = [
-  '''AIza[0-9A-Za-z\-_]{35}''',
+  '''AIza[0-9A-Za-z\-_]{35}'''
 ]
 paths = [
   '''doc/COMO_CONFIGURAR_CHAVES\.md''',
-  '''firebaseConfig\.ts''',
+  '''firebaseConfig\.ts'''
 ]
