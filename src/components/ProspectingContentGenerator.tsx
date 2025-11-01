@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { api } from '../lib/api';
 import LoadingSpinner from './LoadingSpinner';
 
 interface ProspectingContentGeneratorProps {
@@ -19,11 +18,11 @@ const ProspectingContentGenerator: React.FC<ProspectingContentGeneratorProps> = 
     setIsLoading(true);
     setPostText('');
     try {
-      const response = await api.post('/generate-prospecting-post', { serviceName, providerName });
-      setPostText(response.data.postText);
-    } catch (error) {
-      console.error("Failed to generate post:", error);
-      setPostText('Desculpe, não foi possível gerar o conteúdo no momento.');
+      // Local content generation placeholder
+      const text = `Sou ${providerName} e realizo ${serviceName} com qualidade e rapidez. Atendo na sua região e tenho horários flexíveis. Solicite um orçamento sem compromisso e receba atendimento hoje mesmo! #${serviceName.replace(/\s+/g, '')} #Serviços #Profissional`;
+      // Simula pequena latência
+      await new Promise((r) => setTimeout(r, 300));
+      setPostText(text);
     } finally {
       setIsLoading(false);
     }

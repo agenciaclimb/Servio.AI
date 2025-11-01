@@ -444,6 +444,54 @@ exports.sendPushNotification = functions
     return null;
   });
 
+/**
+ * Runs daily to check for expired trial periods.
+ * Reverts the user's subscription status and notifies them.
+ */
+exports.checkTrialExpirations = functions
+  .region("us-west1")
+  .pubsub.schedule("every 24 hours")
+  .onRun(async (context) => {
+    console.log("Checking for expired trials...");
+    const now = new Date().toISOString();
+
+    // 1. Find all users with an expired trial
+    const querySnapshot = await db.collection("users")
+      .where("subscription.status", "==", "trialing")
+      .where("subscription.trialEndsAt", "<=", now)
+      .get();
+
+    if (querySnapshot.empty) {
+      console.log("No expired trials found.");
+      return null;
+    }
+
+    const batch = db.batch();
+
+    querySnapshot.forEach(doc => {
+      const userId = doc.id;
+      console.log(`Trial expired for user: ${userId}. Reverting status.`);
+
+      // 2. Revert the user's subscription status by removing the field
+      const userRef = db.collection("users").doc(userId);
+      batch.update(userRef, { subscription: admin.firestore.FieldValue.delete() });
+
+      // 3. Create a notification for the user
+      const notificationRef = db.collection("notifications").doc();
+      batch.set(notificationRef, {
+        id: notificationRef.id,
+        userId: userId,
+        text: "Seu período de teste do Plano Pro terminou. Assine agora para continuar usando os recursos exclusivos!",
+        isRead: false,
+        createdAt: new Date().toISOString(),
+      });
+    });
+
+    await batch.commit();
+    console.log(`Processed ${querySnapshot.size} expired trials.`);
+    return null;
+  });
+
 
 /**
  * Periodically processes unsent notifications, groups them by user,

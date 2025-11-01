@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { User, Job } from '../../types';
-import { api } from '../lib/api';
 
 interface FinancialInsightsCardProps {
   user: User;
@@ -21,11 +20,16 @@ const FinancialInsightsCard: React.FC<FinancialInsightsCardProps> = ({ user, com
     }
     setIsLoading(true);
     try {
-      const response = await api.post('/get-financial-insights', {
-        completedJobs,
-        providerName: user.name,
-      });
-      setInsights(response.data);
+      // Local, deterministic summary (placeholder for API)
+      const total = completedJobs.length;
+      const categories = completedJobs.reduce<Record<string, number>>((acc, j) => {
+        acc[j.category] = (acc[j.category] || 0) + 1;
+        return acc;
+      }, {});
+      const topCategory = Object.entries(categories).sort((a, b) => b[1] - a[1])[0]?.[0] || 'geral';
+      const profitabilityAnalysis = `Você concluiu ${total} serviços recentemente. A categoria mais frequente foi ${topCategory}.`;
+      const actionableSuggestion = `Crie um pacote promocional para ${topCategory} e destaque depoimentos no seu perfil.`;
+      setInsights({ profitabilityAnalysis, actionableSuggestion });
     } finally {
       setIsLoading(false);
     }

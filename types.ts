@@ -55,7 +55,7 @@ export interface User {
   subscription?: {
     planId: string; // e.g., 'plan_destaque_mensal'
     stripeSubscriptionId: string;
-    status: 'active' | 'canceled' | 'past_due';
+    status: 'active' | 'trialing' | 'canceled' | 'past_due';
     currentPeriodEnd: string; // ISO Date string from Stripe
     trialStartedAt?: string;
     trialEndsAt?: string;

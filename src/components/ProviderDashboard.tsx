@@ -103,7 +103,7 @@ const ProviderDashboard: React.FC = () => {
       
       {/* Business Funnel Section */}
       <div className="mt-8">
-        <ProviderJobFunnel user={currentUser} openJobs={openJobs} proposedJobs={proposedJobs} inProgressJobs={inProgressJobs} paymentPendingJobs={paymentPendingJobs} />
+        <ProviderJobFunnel openJobs={openJobs} proposedJobs={proposedJobs} inProgressJobs={inProgressJobs} paymentPendingJobs={paymentPendingJobs} />
       </div>
 
       {/* Prospecting Content Generator CTA */}
