@@ -30,6 +30,21 @@ app.use(cors());
 // Health
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
+// Root - simple welcome to avoid confusion with 404 on Cloud Run
+app.get('/', (_req, res) => {
+  res.json({
+    name: 'Servio.AI - AI Server',
+    status: 'running',
+    health: '/health',
+    docs: 'Use POST endpoints under /api/*',
+    env: {
+      apiKeyPresent: Boolean(process.env.API_KEY),
+      bucketConfigured: Boolean(process.env.GCP_STORAGE_BUCKET),
+      frontendUrlConfigured: Boolean(process.env.FRONTEND_URL)
+    }
+  });
+});
+
 // Root helper (so / doesn't 404 when index.html is not present in the image)
 app.get('/', (_req, res) => {
   res.type('text/plain').send('Servio.AI AI server up. Try GET /health or POST /api/...');
