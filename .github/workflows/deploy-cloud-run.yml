@@ -3,6 +3,11 @@
 on:
   # Torna o deploy explícito e previsível: execute manualmente
   workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch ou tag para deploy"
+        required: false
+        default: "feature/full-implementation"
   # (Opcional) Publique versões marcadas com tag v*
   push:
     tags:
@@ -24,6 +29,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
 
       - name: Auth to Google Cloud
         uses: google-github-actions/auth@v2
@@ -38,12 +45,24 @@ jobs:
         with:
           version: ">= 462.0.0"
 
+      - name: GCloud info (preflight)
+        run: |
+          set -x
+          gcloud --version
+          gcloud auth list
+          gcloud config list
+          echo "Project: $PROJECT_ID / Region: $REGION / Service: $SERVICE"
+          echo "Verificando APIs necessárias..."
+          gcloud services list --enabled --project "$PROJECT_ID" | grep -E "(run.googleapis.com|cloudbuild.googleapis.com|artifactregistry.googleapis.com)" || true
+
       - name: Deploy to Cloud Run
         run: |
+          set -eo pipefail
           gcloud run deploy "$SERVICE" \
             --source . \
             --region "$REGION" \
             --project "$PROJECT_ID" \
             --allow-unauthenticated \
             --set-env-vars="API_KEY=${{ secrets.GEMINI_API_KEY }},FRONTEND_URL=${{ secrets.FRONTEND_URL }},GCP_STORAGE_BUCKET=${{ secrets.GCP_STORAGE_BUCKET }},STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" \
+            --verbosity=debug \
             --quiet
