@@ -1,6 +1,6 @@
 # 📘 DOCUMENTO MESTRE - SERVIO.AI
 
-**Última atualização:** 31/10/2025 21:10
+**Última atualização:** 01/11/2025 03:58
 
 ---
 
@@ -276,6 +276,41 @@ Sequência de correções aplicadas:
 - Título: "Feature: Implementação completa da estrutura base do Servio.AI"
 - Estado: Estrutura completa de frontend (React+Vite+TS), backend (Express+Firestore), CI/CD (GitHub Actions), testes (Vitest), e documentação estabelecidos
 - Branch feature/full-implementation mantida para desenvolvimento contínuo
+
+#update_log - 2025-11-01 00:20
+Higienização de estrutura e diagnóstico de warnings no VS Code:
+
+- Movidos componentes React que estavam no backend (`backend/src/*.tsx`) para o frontend (`src/components/` e `src/contexts/`).
+- Confirmado `tsconfig.json` com `exclude: ["doc", "backend"]`, evitando que exemplos de `doc/` impactem o build/tsc. Os avisos no VS Code em `doc/*.tsx` são inofensivos (playground) e não afetam CI.
+- Consolidada pasta de componentes: fonte canônica é `src/components/`. Itens duplicados na pasta `components/` da raiz serão removidos conforme avançarmos, mantendo compatibilidade.
+- Qualidade local: Lint PASS, Typecheck PASS, Testes PASS (frontend + backend). CI em verde após correção do download do Gitleaks (versão pinada 8.21.2) e mock do Firebase nos testes.
+
+Próximos passos:
+
+1. Remover definitivamente duplicatas em `components/` (raiz) mantendo apenas `src/components/`.
+2. Checagem de IAM no GCP (logs indicaram falhas de permissão concorrente). Ajustar papéis no Service Account do Cloud Run e evitar mutação de políticas em runtime.
+3. Reativar Gitleaks como bloqueante quando a allowlist estiver madura.
+4. Padronizar imports absolutos no frontend (alias @/ para `src/`).
+
+#update_log - 2025-11-01 03:58
+Correção crítica do deploy workflow (GitHub Actions "deploy-cloud-run"):
+
+**Contexto**: Logs do GCP apresentavam múltiplas falhas consecutivas de deploy (IAM "concurrent policy changes", "service account does not exist", "Credentials Build API error"), além de deploy automático disparado em cada push, gerando execuções concorrentes.
+
+**Alterações aplicadas**:
+
+- Workflow `.github/workflows/deploy-cloud-run.yml` refatorado para executar apenas manualmente (`workflow_dispatch`) ou via tag `v*`, impedindo builds contínuos em cada push.
+- Adicionado `concurrency: deploy-${{ github.ref_name }}` com `cancel-in-progress: true` no job para evitar sobreposição de execuções do Cloud Build/IAM.
+- Preparados comentários para futura migração a Workload Identity Federation (sem key estática).
+- `README.md` atualizado com seção "Deploy (Cloud Run)" documentando pré-requisitos GCP (APIs, Service Account com papéis corretos, segredos GitHub), instruções e notas de troubleshooting para IAM/concurrency.
+
+**Testes locais**: Lint/Typecheck/Tests continuam verdes. Push em `feature/full-implementation` realizado (commit 2b6635e). Esta mudança evita disparo de deploy automático; próximo deploy será executado manualmente quando apropriado.
+
+**Pendências mapeadas**:
+
+1. Limpar duplicatas em `components/` (raiz) mantendo apenas `src/components/`.
+2. Revisar IAM da Service Account no GCP conforme documentado no README (IAM Admin vs concorrência).
+3. Padronizar alias @/ e imports absolutos no frontend.
 
 #update_log - 2024-07-30 11:25
 A IA Gemini respondeu a uma dúvida sobre o estado do frontend, esclarecendo que a estrutura inicial foi criada, mas a lógica real (conexão com API, autenticação, roteamento) ainda está pendente. Como próximo passo, foi criado o componente `src/components/ClientDashboard.tsx` para substituir o placeholder anterior, exibindo os jobs do cliente a partir dos dados fictícios. O `App.tsx` foi atualizado para renderizar este novo componente.
