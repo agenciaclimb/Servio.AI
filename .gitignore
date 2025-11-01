@@ -17,6 +17,14 @@ dist-ssr
 .env.*
 !.env.example
 
+# Service Account keys (NEVER commit!)
+*.json
+!package.json
+!package-lock.json
+!tsconfig*.json
+!.vscode/*.json
+!firebase.json
+
 # Test coverage
 coverage/
 backend/coverage/
