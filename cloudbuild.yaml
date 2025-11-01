@@ -1,14 +1,33 @@
-# Google Cloud Build configuration
+# Google Cloud Build configuration for AI Server
 steps:
-  # Instala as dependências do backend de dados
-  - name: 'gcr.io/cloud-builders/npm'
-    args: ['install']
-    dir: 'backend'
+  # Build Docker image
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/servio-ai:$COMMIT_SHA"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/servio-ai:latest"
+      - "-f"
+      - "Dockerfile"
+      - "."
 
-  # Instala as dependências do backend de IA
-  - name: 'gcr.io/cloud-builders/npm'
-    args: ['install']
-    dir: '' # O server.js está na raiz
+  # Push image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "gcr.io/$PROJECT_ID/servio-ai:$COMMIT_SHA"
 
-  # (O build do frontend é feito separadamente, geralmente no Firebase Hosting)
-  # (As Cloud Functions são implantadas via Firebase CLI)
+  # Push latest tag
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "gcr.io/$PROJECT_ID/servio-ai:latest"
+
+# Store images in Container Registry
+images:
+  - "gcr.io/$PROJECT_ID/servio-ai:$COMMIT_SHA"
+  - "gcr.io/$PROJECT_ID/servio-ai:latest"
+
+# Build timeout
+timeout: 1200s

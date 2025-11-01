@@ -1,0 +1,58 @@
+# Dockerignore for AI Server
+# Ignore development and build artifacts
+
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Build outputs
+dist/
+coverage/
+.vite/
+
+# Development files
+*.local
+.env*
+!.env.example
+
+# Source code (frontend)
+src/
+components/
+doc/
+tests/
+backend/
+
+# Config files
+vite.config.ts
+vitest.config.ts
+tsconfig*.json
+tailwind.config.js
+postcss.config.js
+
+# CI/CD
+.github/
+.husky/
+
+# Git
+.git/
+.gitignore
+.gitleaks.toml
+
+# Docs
+*.md
+!README.md
+
+# IDE
+.vscode/
+.idea/
+
+# Testing
+cypress/
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+
+# Misc
+*.log
+.DS_Store
