@@ -7,10 +7,12 @@ const { GoogleGenAI, Type } = require('@google/genai');
 // Initialize Firebase Admin (idempotent)
 try {
   if (!admin.apps || admin.apps.length === 0) {
-    admin.initializeApp();
+    // Temporarily disabled for Cloud Run troubleshooting
+    // admin.initializeApp();
+    console.log('[Server] Firebase Admin initialization skipped (troubleshooting mode)');
   }
-} catch (_) {
-  // noop: allow running without firebase credentials locally
+} catch (err) {
+  console.error('[Server] Firebase Admin init failed:', err.message);
 }
 
 const app = express();
@@ -28,8 +30,18 @@ app.use(cors());
 // Health
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
+// Root helper (so / doesn't 404 when index.html is not present in the image)
+app.get('/', (_req, res) => {
+  res.type('text/plain').send('Servio.AI AI server up. Try GET /health or POST /api/...');
+});
+
 // Auth middleware (Firebase ID token)
 const checkAuth = async (req, res, next) => {
+  // Temporarily skip auth for troubleshooting
+  console.log('[Server] Auth check skipped (troubleshooting mode)');
+  return next();
+  
+  /* Original auth code (re-enable after fixing Firebase):
   const hdr = req.headers.authorization || '';
   if (!hdr.startsWith('Bearer ')) return res.status(401).send('Unauthorized: No Token Provided');
   const idToken = hdr.substring('Bearer '.length);
@@ -40,6 +52,7 @@ const checkAuth = async (req, res, next) => {
     console.error('Auth error (AI API):', err);
     return res.status(403).send('Unauthorized: Invalid Token');
   }
+  */
 };
 
 // Gemini client
