@@ -1,4 +1,27 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+// Mock Firebase antes de importar o config para evitar tentativa de conexão real no CI
+vi.mock('firebase/app', () => ({
+  initializeApp: vi.fn(() => ({ name: '[DEFAULT]' })),
+}));
+
+vi.mock('firebase/auth', () => ({
+  getAuth: vi.fn(() => ({ app: { name: '[DEFAULT]' } })),
+}));
+
+vi.mock('firebase/firestore', () => ({
+  getFirestore: vi.fn(() => ({ app: { name: '[DEFAULT]' } })),
+}));
+
+vi.mock('firebase/storage', () => ({
+  getStorage: vi.fn(() => ({ app: { name: '[DEFAULT]' } })),
+}));
+
+vi.mock('firebase/analytics', () => ({
+  getAnalytics: vi.fn(() => ({ app: { name: '[DEFAULT]' } })),
+  isSupported: vi.fn(async () => false),
+}));
+
 import app, { auth, db, storage, getAnalyticsIfSupported } from '../firebaseConfig';
 
 // This test ensures our Firebase config wires up without exposing or logging any secrets.
