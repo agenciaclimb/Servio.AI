@@ -1,18 +1,25 @@
 ﻿name: Deploy to Cloud Run
 
 on:
-  push:
-    branches: [ "main" ]
+  # Torna o deploy explícito e previsível: execute manualmente
   workflow_dispatch:
+  # (Opcional) Publique versões marcadas com tag v*
+  push:
+    tags:
+      - "v*"
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  REGION:     ${{ secrets.GCP_REGION }}
-  SERVICE:    ${{ secrets.GCP_SERVICE }}
+  REGION: ${{ secrets.GCP_REGION }}
+  SERVICE: ${{ secrets.GCP_SERVICE }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Evita execuções concorrentes que causam erros de IAM/Cloud Build
+    concurrency:
+      group: deploy-${{ github.ref_name }}
+      cancel-in-progress: true
 
     steps:
       - name: Check out repository
@@ -22,6 +29,9 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
+          # Para futura migração a Workload Identity Federation (mais seguro):
+          # workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          # service_account: ${{ secrets.GCP_DEPLOY_SA }}
 
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2

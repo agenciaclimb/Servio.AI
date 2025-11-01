@@ -56,3 +56,40 @@ O serviço expõe uma API RESTful para gerenciar as principais entidades da plat
 - `POST /jobs/:jobId/release-payment`
 - `POST /generate-upload-url`
 - E muitos outros. Consulte `src/index.js` para a lista completa.
+
+## 🚢 Deploy (Cloud Run)
+
+Há um workflow dedicado para deploy em Cloud Run: `Deploy to Cloud Run`.
+
+Como medida de segurança e estabilidade, o deploy foi configurado para executar apenas manualmente ("Run workflow") ou quando você publica uma tag `v*` no repositório. Isso evita falhas automáticas em pushes enquanto a configuração do GCP é estabilizada.
+
+Pré‑requisitos no GCP (uma vez por projeto):
+
+- APIs habilitadas: `run.googleapis.com`, `cloudbuild.googleapis.com`, `artifactregistry.googleapis.com`, `iamcredentials.googleapis.com`.
+- Uma Service Account de deploy com os papéis:
+  - Cloud Run Admin
+  - Service Account User
+  - Artifact Registry Writer
+  - Cloud Build Editor
+- Um repositório do Artifact Registry (por exemplo, `us-docker.pkg.dev/<PROJECT_ID>/servio-ai`).
+- O agente do Cloud Run (serverless-robot) e do Cloud Build devem existir automaticamente ao habilitar as APIs; se houver erros de “service account does not exist”, reabra o console do GCP e confirme a habilitação das APIs. Em casos raros, crie as identidades de serviço com:
+  - `gcloud beta services identity create --service=run.googleapis.com`
+  - `gcloud beta services identity create --service=cloudbuild.googleapis.com`
+
+Segredos exigidos no GitHub (Settings → Secrets and variables → Actions):
+
+- `GCP_PROJECT_ID` – ID do projeto.
+- `GCP_REGION` – Região (ex.: `us-central1`).
+- `GCP_SERVICE` – Nome do serviço Cloud Run.
+- `GCP_SA_KEY` – JSON da Service Account (temporário; recomendável migrar para Workload Identity Federation).
+
+Como executar o deploy:
+
+1. Na aba Actions do GitHub, escolha “Deploy to Cloud Run” e clique em “Run workflow”.
+2. A execução usa `gcloud run deploy --source .` (constrói a imagem via Cloud Build e faz o deploy).
+
+Notas de estabilidade:
+
+- Adicionamos um controle de concorrência no workflow para evitar erros de “concurrent policy changes” no IAM/Cloud Build.
+- Se ainda ocorrerem erros relacionados a criação de contas de serviço, aguarde alguns minutos e reexecute: é comum em primeiras ativações de APIs.
+- Próximo passo recomendado: migrar a autenticação para Workload Identity Federation (sem chave estática).
