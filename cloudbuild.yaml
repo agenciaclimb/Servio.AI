@@ -1,35 +1,53 @@
-# Google Cloud Build configuration for AI Server (Artifact Registry)
-# Pre-requisite: create an Artifact Registry repository named "servio-ai"
-# in region "us-west1" (Console → Artifact Registry → Create Repository)
+# Google Cloud Build (1ª geração) — Build & Deploy para Cloud Run
+# Pré‑requisitos:
+# - Artifact Registry habilitado e repositório "servio-ai" (Docker) na região us-west1
+# - APIs habilitadas: run.googleapis.com, cloudbuild.googleapis.com, artifactregistry.googleapis.com
+
+substitutions:
+  _REGION: us-west1
+  _SERVICE: servio-ai
+  _REPO: servio-ai
+  _IMAGE: ai-server
+
 steps:
-  # Build Docker image
+  # 1) Build da imagem Docker
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "build"
       - "-t"
-      - "us-west1-docker.pkg.dev/$PROJECT_ID/servio-ai/ai-server:$COMMIT_SHA"
+      - "us-west1-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE}:$SHORT_SHA"
       - "-t"
-      - "us-west1-docker.pkg.dev/$PROJECT_ID/servio-ai/ai-server:latest"
+      - "us-west1-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE}:latest"
       - "-f"
       - "Dockerfile"
       - "."
 
-  # Push image to Artifact Registry
+  # 2) Push da imagem
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "us-west1-docker.pkg.dev/$PROJECT_ID/servio-ai/ai-server:$COMMIT_SHA"
+      - "us-west1-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE}:$SHORT_SHA"
 
-  # Push latest tag
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "us-west1-docker.pkg.dev/$PROJECT_ID/servio-ai/ai-server:latest"
+      - "us-west1-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE}:latest"
 
-# Store images in Artifact Registry
+  # 3) Deploy no Cloud Run usando a imagem (as variáveis de ambiente já existentes no serviço são preservadas)
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - "${_SERVICE}"
+      - "--image=us-west1-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE}:$SHORT_SHA"
+      - "--region=${_REGION}"
+      - "--platform=managed"
+      - "--allow-unauthenticated"
+
+# Artefatos publicados
 images:
-  - "us-west1-docker.pkg.dev/$PROJECT_ID/servio-ai/ai-server:$COMMIT_SHA"
-  - "us-west1-docker.pkg.dev/$PROJECT_ID/servio-ai/ai-server:latest"
+  - "us-west1-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE}:$SHORT_SHA"
+  - "us-west1-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE}:latest"
 
-# Build timeout
 timeout: 1200s
