@@ -24,22 +24,22 @@ Clique em **"Adicionar variável"** para cada uma:
 
 ```
 Nome: API_KEY
-Valor: AIzaSyBkmw_vLXnjWhHfi2dAjud-BjruOO-RUPY
+Valor: <INSIRA_SUA_CHAVE_GEMINI_AQUI>
 ```
 
 ```
 Nome: GCP_STORAGE_BUCKET
-Valor: servioai.firebasestorage.app
+Valor: <SEU_BUCKET_STORAGE>
 ```
 
 ```
 Nome: FRONTEND_URL
-Valor: https://servio-ai-100025070228.us-west1.run.app
+Valor: <URL_DO_FRONTEND>
 ```
 
 ```
 Nome: STRIPE_SECRET_KEY
-Valor: sk_test_51OmPLvJEyu4utlB89Ut4+ri4ru04UX0Y90mIY3tXWnGu9guG1A2KYY1bEg6QKtRhQBgYjQvCnRtNvl_HdAQzXL96o0LontFKgu
+Valor: <SUA_CHAVE_SECRETA_STRIPE>
 ```
 
 ```
@@ -77,20 +77,29 @@ Depois do deploy:
 
 ## 🔒 Segurança das Chaves
 
-✅ **Chaves públicas (OK compartilhar):**
+NUNCA cole chaves reais neste documento ou no repositório. Use variáveis de ambiente e cofres de segredos.
 
-- `VITE_FIREBASE_API_KEY` - Chave pública do Firebase
-- `VITE_STRIPE_PUBLISHABLE_KEY` - Chave pública do Stripe
+✅ Podem ficar no cliente (públicas):
 
-⚠️ **Chaves privadas (NUNCA commitar):**
+- `VITE_STRIPE_PUBLISHABLE_KEY`
 
-- `API_KEY` - Gemini (já configurada)
-- `STRIPE_SECRET_KEY` - Stripe (já configurada)
+⚠️ DEVEM ficar privadas (servidor/Cloud Run/GitHub Secrets):
 
-Estas chaves privadas devem estar APENAS:
+- `API_KEY` (Gemini)
+- `STRIPE_SECRET_KEY` (Stripe)
 
-- No Cloud Run (variáveis de ambiente)
-- No `.env.local` (seu ambiente local, já no .gitignore)
+Armazenamento recomendado:
+
+- Cloud Run → Variáveis de ambiente
+- GitHub → Secrets de repositório/ambiente
+- Local → `.env.local` (está no .gitignore)
+
+Se uma chave vazar:
+
+1. Regenerar imediatamente no provedor (GCP/Stripe)
+2. Restringir por IP/origem quando aplicável
+3. Remover dos commits e reescrever histórico, se necessário (BFG ou `git filter-repo`)
+4. Auditar logs de uso e faturamento
 
 ---
 
