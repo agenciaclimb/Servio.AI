@@ -28,6 +28,7 @@ Configure os seguintes secrets em **Settings → Secrets and variables → Actio
      - `Cloud Build Editor`
      - `Artifact Registry Writer`
      - `Service Account User`
+     - `Logs Writer (Cloud Logging)`
    - Observação: se for usar Container Registry (gcr.io), em vez de Artifact Registry,
      substitua `Artifact Registry Writer` por `Storage Admin`.
    - Como gerar:

@@ -93,8 +93,9 @@
    - Certifique-se que a SA tem as roles:
      - Cloud Run Admin
      - Cloud Build Editor
-     - Storage Admin
+     - Artifact Registry Writer
      - Service Account User
+     - Logs Writer (Cloud Logging) — obrigatório para o gatilho do Cloud Build escrever logs
 
 3. **Build timeout ou erro de Docker**
    - Vá em Cloud Build → Settings
@@ -118,6 +119,7 @@
    - Se faltar alguma, adicione manualmente
 
 3. **Teste local primeiro**
+
    ```powershell
    $env:API_KEY="sua-chave-gemini"
    $env:PORT="8080"
