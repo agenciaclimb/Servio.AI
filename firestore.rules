@@ -1,85 +1,135 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // =================================
+    // Helper Functions
+    // =================================
+    function isSignedIn() {
+      return request.auth != null;
+    }
 
-    // Users collection
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    function getUserData(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && getUserData(request.auth.uid).type == 'admin';
+    }
+    
+    function isClient() {
+      return isSignedIn() && getUserData(request.auth.uid).type == 'cliente';
+    }
+
+    function isProvider() {
+      return isSignedIn() && getUserData(request.auth.uid).type == 'prestador';
+    }
+    
+    function isJobParticipant(jobId) {
+      let job = get(/databases/$(database)/documents/jobs/$(jobId)).data;
+      return isSignedIn() && (request.auth.uid == job.clientId || request.auth.uid == job.providerId);
+    }
+
+    // =================================
+    // Collection Rules
+    // =================================
+
     match /users/{userId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null && request.auth.uid == userId;
-      allow update: if request.auth != null && request.auth.uid == userId;
-      allow delete: if false; // No deletion of users for now
+      // Anyone can read a public profile
+      allow read: if true; 
+      
+      // Only the user themselves can create their own document with valid data
+      allow create: if isOwner(userId)
+                    && request.resource.data.email == userId
+                    && request.resource.data.type in ['cliente', 'prestador']
+                    && request.resource.data.name is string;
+
+      // User can update their own profile. Admin can update any profile.
+      allow update: if isOwner(userId) || isAdmin();
+      
+      // Deletion is disallowed for now.
+      allow delete: if false;
     }
 
-    // Jobs collection
     match /jobs/{jobId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.type == 'cliente';
-      allow update: if request.auth != null && (request.auth.uid == resource.data.clientId || request.auth.uid == resource.data.providerId);
-      allow delete: if false; // No deletion of jobs for now
+      // Anyone signed in can read job details
+      allow read: if isSignedIn();
+      
+      // Only a client can create a job for themselves
+      allow create: if isClient() && isOwner(request.resource.data.clientId);
+      
+      // Only a job participant or an admin can update a job
+      allow update: if isJobParticipant(jobId) || isAdmin();
+      
+      allow delete: if false;
     }
 
-    // Proposals collection
     match /proposals/{proposalId} {
-      allow read: if request.auth != null && (request.auth.uid == resource.data.providerId || request.auth.uid == get(/databases/$(database)/documents/jobs/$(resource.data.jobId)).data.clientId);
-      allow create: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.type == 'prestador';
-      allow update: if request.auth != null && (request.auth.uid == resource.data.providerId || request.auth.uid == get(/databases/$(database)/documents/jobs/$(resource.data.jobId)).data.clientId);
+      // Only job participants can read proposals for that job
+      allow read: if isJobParticipant(request.resource.data.jobId);
+      
+      // Only a verified provider can create a proposal for themselves
+      allow create: if isProvider() 
+                    && getUserData(request.auth.uid).verificationStatus == 'verificado'
+                    && isOwner(request.resource.data.providerId);
+                    
+      // Only the client can update the proposal (to accept it)
+      allow update: if get(/databases/$(database)/documents/jobs/$(request.resource.data.jobId)).data.clientId == request.auth.uid;
+      
       allow delete: if false;
     }
 
-    // Messages collection
     match /messages/{messageId} {
-      allow read: if request.auth != null && (request.auth.uid == get(/databases/$(database)/documents/jobs/$(resource.data.chatId)).data.clientId || request.auth.uid == get(/databases/$(database)/documents/jobs/$(resource.data.chatId)).data.providerId);
-      allow create: if request.auth != null && (request.auth.uid == get(/databases/$(database)/documents/jobs/$(resource.data.chatId)).data.clientId || request.auth.uid == get(/databases/$(database)/documents/jobs/$(resource.data.chatId)).data.providerId);
-      allow update: if false;
-      allow delete: if false;
+      // Only participants of the chat (job) can read or create messages
+      allow read, create: if isJobParticipant(request.resource.data.chatId);
+      allow update, delete: if false;
     }
 
-    // Notifications collection
     match /notifications/{notificationId} {
-      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
-      allow create: if request.auth != null; // System can create notifications
-      allow update: if request.auth != null && request.auth.uid == resource.data.userId;
-      allow delete: if false;
+      // Only the recipient can read or update (mark as read) their notifications
+      allow read, update: if isOwner(resource.data.userId);
+      // Only the system (backend) can create notifications, so client writes are disallowed
+      allow create, delete: if false;
     }
 
-    // Escrows collection
     match /escrows/{escrowId} {
-      allow read: if request.auth != null && (request.auth.uid == resource.data.clientId || request.auth.uid == resource.data.providerId);
-      allow create: if request.auth != null; // Only system/backend should create
-      allow update: if request.auth != null; // Only system/backend should update
-      allow delete: if false;
+      // Only participants or admins can read escrow details
+      allow read: if isJobParticipant(resource.data.jobId) || isAdmin();
+      // Only the system (backend) can create or update escrows
+      allow create, update, delete: if false;
     }
 
-    // Fraud Alerts collection
     match /fraud_alerts/{alertId} {
-      allow read: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.type == 'admin';
-      allow create: if request.auth != null; // Only system/backend should create
-      allow update: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.type == 'admin';
-      allow delete: if false;
+      // Only admins can read/update fraud alerts
+      allow read, update: if isAdmin();
+      // Only the system (backend) can create alerts
+      allow create, delete: if false;
     }
 
-    // Disputes collection
     match /disputes/{disputeId} {
-      allow read: if request.auth != null && (request.auth.uid == resource.data.initiatorId || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.type == 'admin');
-      allow create: if request.auth != null;
-      allow update: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.type == 'admin';
+      // Only the initiator, the other job participant, or an admin can read
+      allow read: if isJobParticipant(resource.data.jobId) || isAdmin();
+      // A job participant can create a dispute
+      allow create: if isJobParticipant(request.resource.data.jobId);
+      // Only an admin can resolve (update) a dispute
+      allow update: if isAdmin();
       allow delete: if false;
     }
 
-    // Maintained Items collection
     match /maintained_items/{itemId} {
-      allow read: if request.auth != null && request.auth.uid == resource.data.clientId;
-      allow create: if request.auth != null && request.auth.uid == resource.data.clientId;
-      allow update: if request.auth != null && request.auth.uid == resource.data.clientId;
-      allow delete: if request.auth != null && request.auth.uid == resource.data.clientId;
+      // Only the owner of the item can manage it
+      allow read, create, update, delete: if isOwner(resource.data.clientId);
     }
 
-    // Bids collection
     match /bids/{bidId} {
-      allow read: if request.auth != null && (request.auth.uid == resource.data.providerId || request.auth.uid == get(/databases/$(database)/documents/jobs/$(resource.data.jobId)).data.clientId);
-      allow create: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.type == 'prestador';
-      allow update: if request.auth != null && request.auth.uid == resource.data.providerId;
-      allow delete: if false;
+      // Similar to proposals
+      allow read: if isJobParticipant(request.resource.data.jobId);
+      allow create: if isProvider() && isOwner(request.resource.data.providerId);
+      allow update, delete: if false;
     }
   }
 }

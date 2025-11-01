@@ -44,7 +44,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   const [chattingWithJob, setChattingWithJob] = useState<Job | null>(null);
 
   if (user.verificationStatus !== 'verificado') {
-    return <ProviderOnboarding user={user} setUsers={setUsers} />;
+    return <ProviderOnboarding user={user} />;
   }
 
   // Jobs provider has proposed on
