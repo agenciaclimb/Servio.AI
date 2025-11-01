@@ -34,6 +34,7 @@ export interface User {
   status: UserStatus;
   role?: StaffRole; // Apenas para usuários do tipo 'staff'
   hasCompletedOnboarding?: boolean; // Marcador opcional para tour de onboarding
+  fcmTokens?: string[]; // Armazena os tokens de dispositivo para notificações push
   // Provider-specific fields
   headline?: string;
   specialties?: string[];
@@ -56,6 +57,8 @@ export interface User {
     stripeSubscriptionId: string;
     status: 'active' | 'canceled' | 'past_due';
     currentPeriodEnd: string; // ISO Date string from Stripe
+    trialStartedAt?: string;
+    trialEndsAt?: string;
   };
 }
 

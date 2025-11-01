@@ -11,6 +11,9 @@ node_modules/
 # Backend (uses CommonJS)
 backend/
 server.js
+server.cjs
+index.js
+scripts/
 
 # Documentation
 doc/

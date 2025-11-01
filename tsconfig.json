@@ -18,5 +18,12 @@
     "allowImportingTsExtensions": true,
     "noEmit": true
   },
-  "exclude": ["doc", "backend", "components"]
+  "exclude": [
+    "doc",
+    "backend",
+    "components",
+    "index.js",
+    "server.cjs",
+    "server.js"
+  ]
 }

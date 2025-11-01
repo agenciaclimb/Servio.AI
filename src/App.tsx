@@ -24,7 +24,9 @@ import ItemDetailsPage from './components/ItemDetailsPage';
 import CategoryLandingPage from './components/CategoryLandingPage';
 import BlogIndexPage from './components/BlogIndexPage'; // Corrigido
 import BlogPostPage from './components/BlogPostPage'; // Corrigido
+import NotificationPermissionBanner from './components/NotificationPermissionBanner';
 
+import ProposalForm from './components/ProposalForm'; // Importar o novo formulário
 const App: React.FC = () => {
   const {
     currentUser,
@@ -51,10 +53,20 @@ const App: React.FC = () => {
     handleSendMessage,
     handlePayment,
     handleCompleteJob,
+    handleRequestNotificationPermission,
   } = useAppContext();
 
   const navigate = useNavigate();
   const location = useLocation();
+  const [showNotificationBanner, setShowNotificationBanner] = useState(false);
+
+  useEffect(() => {
+    // Mostra o banner apenas se o usuário estiver logado, o navegador suportar notificações,
+    // a permissão ainda não tiver sido concedida e o banner não tiver sido dispensado.
+    if (currentUser && 'Notification' in window && Notification.permission === 'default' && sessionStorage.getItem('notificationBannerDismissed') !== 'true') {
+      setShowNotificationBanner(true);
+    }
+  }, [currentUser]);
 
   // Listen for navigation state from PublicProfilePage
   useEffect(() => {
@@ -154,6 +166,19 @@ const App: React.FC = () => {
             onClose={() => setMapJobId(null)}
           />
         )}
+
+        {showNotificationBanner && (
+          <NotificationPermissionBanner 
+            onAllow={async () => {
+              await handleRequestNotificationPermission();
+              setShowNotificationBanner(false);
+            }}
+            onDismiss={() => {
+              sessionStorage.setItem('notificationBannerDismissed', 'true');
+              setShowNotificationBanner(false);
+            }}
+          />
+        )}
       </main>
     </div>
   );
@@ -164,6 +189,7 @@ const JobDetailsPage: React.FC = () => {
   const { 
     currentUser,
     authToken,
+    proposals: allProposals, // Renomear para evitar conflito
     fetchDataForJobDetails, 
     handleConfirmSchedule,
     handleAcceptProposal,
@@ -175,11 +201,18 @@ const JobDetailsPage: React.FC = () => {
   } = useAppContext();
   const { jobId } = useParams<{ jobId: string }>();
   const navigate = useNavigate();
+  const location = useLocation(); // Usar o hook useLocation
+
   const [job, setJob] = useState<Job | null>(null);
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [aiSuggestion, setAiSuggestion] = useState<{ date: string; time: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Ler o rascunho da proposta do estado da navegação
+  const proposalDraft = location.state?.proposalDraft || '';
+  const hasProviderProposed = allProposals.some(p => p.jobId === jobId && p.providerId === currentUser?.email);
 
   const fetchData = async () => {
     if (!jobId) return;
@@ -207,6 +240,28 @@ const JobDetailsPage: React.FC = () => {
     fetchData(); // Refresh all data
   };
 
+  const handleProposalSubmit = async (price: number, message: string) => {
+    if (!currentUser || !jobId || !authToken) return;
+    setIsSubmitting(true);
+    try {
+      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/proposals`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify({
+          jobId,
+          providerId: currentUser.email,
+          price,
+          message,
+        }),
+      });
+      await fetchData(); // Recarrega os dados para mostrar a nova proposta
+    } catch (error) {
+      console.error("Failed to submit proposal:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (isLoading) return <LoadingSpinner />;
   if (!job) return <div>Job não encontrado.</div>;
 
@@ -225,6 +280,16 @@ const JobDetailsPage: React.FC = () => {
       onOpenDispute={() => setDisputeJobId(jobId!)}
       onOpenReview={() => setReviewJobId(jobId!)}
       onSetOnTheWay={(jobId) => {/* Implementar se necessário */}}
+      // Passa o formulário de proposta como um "filho" para o JobDetails
+      proposalFormComponent={
+        currentUser?.type === 'prestador' && !job.providerId && !hasProviderProposed ? (
+          <ProposalForm 
+            initialMessage={proposalDraft}
+            onSubmit={handleProposalSubmit}
+            isLoading={isSubmitting}
+          />
+        ) : null
+      }
       aiSuggestion={aiSuggestion} 
       onConfirmSchedule={handleConfirmScheduleWrapper}
       onDataRefresh={fetchData}

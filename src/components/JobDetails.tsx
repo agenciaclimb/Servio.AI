@@ -20,6 +20,7 @@ interface JobDetailsProps {
   aiSuggestion?: { date: string; time: string } | null;
   onConfirmSchedule: () => void;
   onDataRefresh?: () => Promise<void>;
+  proposalFormComponent?: React.ReactNode;
 }
 
 const MediaItem: React.FC<{ media: { name: string, path: string } }> = ({ media }) => {
@@ -40,7 +41,7 @@ const MediaItem: React.FC<{ media: { name: string, path: string } }> = ({ media 
   );
 };
 
-const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, currentUser, authToken, onBack, onAcceptProposal, onSendMessage, onPay, onCompleteJob, onOpenDispute, onOpenReview, onSetOnTheWay, aiSuggestion, onConfirmSchedule }) => {
+const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, currentUser, authToken, onBack, onAcceptProposal, onSendMessage, onPay, onCompleteJob, onOpenDispute, onOpenReview, onSetOnTheWay, aiSuggestion, onConfirmSchedule, proposalFormComponent }) => {
 
   const getStatusClass = (status: string) => {
     switch (status) {
@@ -161,6 +162,13 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, curre
             {'★'.repeat(job.review.rating).padEnd(5, '☆')}
           </div>
           <p className="text-sm text-gray-600 italic">"{job.review.comment}"</p>
+        </div>
+      )}
+
+      {proposalFormComponent && (
+        <div className="mb-8 bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-800 mb-3">Enviar Proposta</h3>
+          {proposalFormComponent}
         </div>
       )}
 

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useStripe } from '@stripe/react-stripe-js';
 import { User, Job, Proposal, Message, MaintainedItem, Notification, Bid, FraudAlert, JobData, Dispute, ProviderService, StaffRole } from '../../types';
+import { requestForToken } from '../firebaseMessaging';
 import { auth } from '../../firebaseConfig';
 import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth';
 
@@ -44,6 +45,7 @@ interface IAppContext {
   handleConfirmSchedule: (jobId: string, date: string, time: string) => Promise<void>;
   handleAddStaff: (newStaffData: { name: string; email: string; role: StaffRole }) => Promise<void>;
   handleSaveServiceCatalog: (updatedCatalog: ProviderService[]) => Promise<void>;
+  handleRequestNotificationPermission: () => Promise<void>;
   fetchJobs: () => Promise<void>;
   fetchAdminData: () => Promise<void>;
   fetchDataForJobDetails: (jobId: string) => Promise<{ job: Job, proposals: Proposal[], messages: Message[] }>;
@@ -438,6 +440,30 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const handleRequestNotificationPermission = async () => {
+    if (!currentUser || !authToken) return;
+
+    const fcmToken = await requestForToken();
+    if (fcmToken) {
+      // Evita adicionar tokens duplicados
+      const currentTokens = currentUser.fcmTokens || [];
+      if (!currentTokens.includes(fcmToken)) {
+        const updatedTokens = [...currentTokens, fcmToken];
+        try {
+          await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${currentUser.email}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+            body: JSON.stringify({ fcmTokens: updatedTokens }),
+          });
+          // Atualiza o estado local do usuário
+          setCurrentUser(prev => prev ? { ...prev, fcmTokens: updatedTokens } : null);
+        } catch (error) {
+          console.error("Failed to save FCM token:", error);
+        }
+      }
+    }
+  };
+
   const value: IAppContext = {
     currentUser,
     authToken,
@@ -473,6 +499,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     handleResolveFraudAlert,
     handleConfirmSchedule,
     handleAddStaff,
+    handleRequestNotificationPermission,
     handleSaveServiceCatalog,
     fetchJobs,
     fetchAdminData,

@@ -392,34 +392,159 @@ exports.executeApprovedMarketingAction = functions
 
 /**
  * Triggered on the creation of a new notification document.
- * Sends an email to the user with the notification content.
+ * Sends a push notification to the user's registered devices via FCM.
  */
-exports.sendEmailNotification = functions
+exports.sendPushNotification = functions
   .region("us-west1")
   .firestore.document("notifications/{notificationId}")
   .onCreate(async (snap) => {
     const notification = snap.data();
 
     if (!notification || !notification.userId) {
-      console.log("Notification data is invalid, skipping email.");
+      console.log("Notification data is invalid, skipping push notification.");
       return null;
     }
 
     try {
-      // 1. Fetch the user's profile to get their email and name
+      // 1. Fetch the user's profile to get their FCM tokens
       const userDoc = await db.collection("users").doc(notification.userId).get();
       if (!userDoc.exists) {
-        console.error(`User ${notification.userId} not found. Cannot send email.`);
+        console.error(`User ${notification.userId} not found. Cannot send push notification.`);
         return null;
       }
       const user = userDoc.data();
+      const tokens = user.fcmTokens;
 
-      // 2. Compose the email message
+      if (!tokens || tokens.length === 0) {
+        console.log(`User ${notification.userId} has no FCM tokens. Skipping push notification.`);
+        return null;
+      }
+
+      // 2. Construct the push notification payload
+      const payload = {
+        notification: {
+          title: 'Nova Notificação na SERVIO.AI',
+          body: notification.text,
+        },
+        webpush: {
+          fcm_options: {
+            link: `${functions.config().app.frontend_url}/job/${notification.relatedJobId || ''}`,
+          },
+        },
+      };
+
+      // 3. Send the message to all of the user's tokens
+      const response = await admin.messaging().sendToDevice(tokens, payload);
+      console.log(`Push notification sent successfully to ${response.successCount} of ${tokens.length} tokens for user ${notification.userId}.`);
+
+    } catch (error) {
+      console.error(`Error sending push notification to ${notification.userId}:`, error);
+    }
+
+    return null;
+  });
+
+
+/**
+ * Periodically processes unsent notifications, groups them by user,
+ * generates an intelligent summary via AI, and sends a single digest email.
+ */
+exports.processNotificationQueue = functions
+  .region("us-west1")
+  .pubsub.schedule("every 10 minutes")
+  .onRun(async (context) => {
+    console.log("Running notification queue processor...");
+
+    // 1. Find all notifications that haven't been sent yet
+    const querySnapshot = await db.collection("notifications").where("emailSent", "==", false).get();
+    if (querySnapshot.empty) {
+      console.log("No new notifications to send.");
+      return null;
+    }
+
+    // 2. Group notifications by user
+    const notificationsByUser = querySnapshot.docs.reduce((acc, doc) => {
+      const notification = { id: doc.id, ...doc.data() };
+      acc[notification.userId] = acc[notification.userId] || [];
+      acc[notification.userId].push(notification);
+      return acc;
+    }, {});
+
+    // 3. Process each user's batch of notifications
+    for (const userId in notificationsByUser) {
+      const userNotifications = notificationsByUser[userId];
+      
+      try {
+        const userDoc = await db.collection("users").doc(userId).get();
+        if (!userDoc.exists) continue;
+        const user = userDoc.data();
+
+        // 4. Call our new AI endpoint to get a summary
+        const summaryResponse = await fetch(`${AI_API_URL}/api/summarize-notifications`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ notifications: userNotifications, userName: user.name }),
+        });
+        if (!summaryResponse.ok) throw new Error("AI summary failed.");
+        const summaryData = await summaryResponse.json();
+
+        // 5. Send the digest email using a dynamic template
+        const digestTemplateId = functions.config().sendgrid.digest_template_id;
+        if (!digestTemplateId) throw new Error("SendGrid digest template ID not configured.");
+
+        // A IA agora nos diz qual notificação é a mais importante
+        const primaryNotification = userNotifications.find(n => n.id === summaryData.primaryAction.notificationId);
+        
+        // Se a IA não retornar um ID válido, usamos a primeira como fallback
+        const targetNotification = primaryNotification || userNotifications[0]; 
+
+        const primaryActionUrl = `${functions.config().app.frontend_url}/job/${targetNotification.relatedJobId}`;
+
+        const msg = {
+          to: user.email,
+          from: 'notificacoes@servio.ai',
+          templateId: digestTemplateId,
+          dynamicTemplateData: {
+            subject: summaryData.subject,
+            name: user.name,
+            summary: summaryData.summary,
+            primary_action_text: summaryData.primaryAction.text,
+            primary_action_url: primaryActionUrl, // Replace placeholder with real URL
+          },
+        };
+        await sgMail.send(msg);
+
+        // 6. Mark all processed notifications as sent
+        const batch = db.batch();
+        userNotifications.forEach(n => {
+          const docRef = db.collection("notifications").doc(n.id);
+          batch.update(docRef, { emailSent: true });
+        });
+        await batch.commit();
+
+        console.log(`Sent digest email to ${userId} for ${userNotifications.length} notifications.`);
+      } catch (error) {
+        console.error(`Failed to process notifications for user ${userId}:`, error);
+      }
+    }
+    return null;
+  });
+      const templateId = functions.config().sendgrid.notification_template_id;
+      if (!templateId) {
+        console.error("SendGrid template ID is not configured.");
+        return null;
+      }
+
+      // 3. Compose the message using the dynamic template
       const msg = {
         to: user.email,
         from: 'notificacoes@servio.ai', // Use um e-mail verificado no SendGrid
-        subject: `🔔 Nova notificação: ${notification.text.substring(0, 30)}...`,
-        html: `<p>Olá, ${user.name},</p><p>Você tem uma nova notificação na plataforma SERVIO.AI:</p><p><strong>${notification.text}</strong></p><p>Acesse seu painel para ver mais detalhes.</p>`,
+        templateId: templateId,
+        dynamicTemplateData: {
+          subject: `🔔 Nova notificação: ${notification.text.substring(0, 30)}...`,
+          name: user.name,
+          notification_text: notification.text,
+        },
       };
 
       // 3. Send the email using SendGrid

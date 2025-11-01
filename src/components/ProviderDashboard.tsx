@@ -7,6 +7,10 @@ import ProfileTips from './ProfileTips';
 import EarningsProfileCard from './EarningsProfileCard';
 import BadgesShowcase from './BadgesShowcase';
 import ServiceCatalogModal from './ServiceCatalogModal';
+import ProviderJobFunnel from './ProviderJobFunnel';
+import FinancialInsightsCard from './FinancialInsightsCard';
+import ProspectingContentGenerator from './ProspectingContentGenerator';
+import SubscriptionUpsellModal from './SubscriptionUpsellModal';
 
 const ProviderDashboard: React.FC = () => {
   const {
@@ -14,16 +18,23 @@ const ProviderDashboard: React.FC = () => {
     jobs,
     handleLogout,
     authToken,
+    proposals,
     handleSaveServiceCatalog,
   } = useAppContext();
 
   const [isCatalogModalOpen, setIsCatalogModalOpen] = useState(false);
+  const [showContentGenerator, setShowContentGenerator] = useState(false);
+  const [showUpsellModal, setShowUpsellModal] = useState(false);
+  const [upsellFeatureName, setUpsellFeatureName] = useState('');
 
   if (!currentUser) return null; // Should be handled by ProtectedRoute
 
-  const myJobs = jobs.filter(job => job.providerId === currentUser.email && job.status !== 'concluido');
+  // Lógica para o Funil de Negócios
   const completedJobs = jobs.filter(job => job.providerId === currentUser.email && job.status === 'concluido');
-  const openJobs = jobs.filter(job => !job.providerId && (job.status === 'ativo' || job.status === 'em_leilao'));
+  const openJobs = jobs.filter(job => !job.providerId && (job.status === 'ativo' || job.status === 'em_leilao') && !proposals.some(p => p.jobId === job.id && p.providerId === currentUser.email));
+  const proposedJobs = jobs.filter(job => proposals.some(p => p.jobId === job.id && p.providerId === currentUser.email && p.status === 'pendente'));
+  const inProgressJobs = jobs.filter(job => job.providerId === currentUser.email && ['agendado', 'a_caminho', 'em_progresso'].includes(job.status));
+  const paymentPendingJobs = jobs.filter(job => job.providerId === currentUser.email && job.status === 'pagamento_pendente');
 
   const getStatusClass = (status: string) => {
     switch (status) {
@@ -34,6 +45,17 @@ const ProviderDashboard: React.FC = () => {
       case 'em_leilao': return 'bg-orange-100 text-orange-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const handleUpsellClick = (featureName: string) => {
+    setUpsellFeatureName(featureName);
+    setShowUpsellModal(true);
+  };
+
+  const handleStartTrial = () => {
+    // Lógica para chamar o backend e iniciar o trial
+    alert('Iniciando seu teste gratuito de 30 dias!');
+    setShowUpsellModal(false);
   };
 
   return (
@@ -57,6 +79,9 @@ const ProviderDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <div className="lg:col-span-2">
           <ProfileStrength user={currentUser} />
+          <div className="mt-8">
+            <FinancialInsightsCard user={currentUser} completedJobs={completedJobs} onUpgradeClick={() => handleUpsellClick('Análise Financeira')} />
+          </div>
         </div>
         <div>
           <EarningsProfileCard user={currentUser} authToken={authToken} />
@@ -70,52 +95,17 @@ const ProviderDashboard: React.FC = () => {
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Suas Medalhas</h2>
   <BadgesShowcase badges={(currentUser as any).badges || []} />
       </div>
-
-      {/* Open Jobs Section */}
-      <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-8">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Novas Oportunidades</h2>
-        <div className="space-y-4">
-          {openJobs.length > 0 ? openJobs.map(job => (
-            <Link to={`/job/${job.id}`} key={job.id} className="block p-4 border rounded-lg hover:bg-gray-50">
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-semibold text-gray-800">{job.category}</p>
-                  <p className="text-sm text-gray-500 truncate max-w-xs sm:max-w-md">{job.description}</p>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <span className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusClass(job.status)}`}>
-                    {job.status.replace('_', ' ')}
-                  </span>
-                  <span className="text-sm font-medium text-blue-600 hover:text-blue-500">Ver Detalhes</span>
-                </div>
-              </div>
-            </Link>
-          )) : (
-            <p className="text-center text-gray-500 py-4">Nenhuma nova oportunidade no momento.</p>
-          )}
-        </div>
+      
+      {/* Business Funnel Section */}
+      <div className="mt-8">
+        <ProviderJobFunnel user={currentUser} openJobs={openJobs} proposedJobs={proposedJobs} inProgressJobs={inProgressJobs} paymentPendingJobs={paymentPendingJobs} />
       </div>
 
-      {/* My Jobs Section */}
-      <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Meus Serviços</h2>
-        <div className="space-y-4">
-          {myJobs.length > 0 ? myJobs.map(job => (
-            <Link to={`/job/${job.id}`} key={job.id} className="block p-4 border rounded-lg hover:bg-gray-50">
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-semibold text-gray-800">{job.category}</p>
-                  <p className="text-sm text-gray-500 truncate max-w-xs sm:max-w-md">{job.description}</p>
-                </div>
-                <span className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusClass(job.status)}`}>
-                  {job.status.replace('_', ' ')}
-                </span>
-              </div>
-            </Link>
-          )) : (
-            <p className="text-center text-gray-500 py-4">Você ainda não possui serviços em andamento.</p>
-          )}
-        </div>
+      {/* Prospecting Content Generator CTA */}
+      <div className="mt-8 text-center">
+        <button onClick={() => currentUser.subscription?.status === 'active' || currentUser.subscription?.status === 'trialing' ? setShowContentGenerator(true) : handleUpsellClick('Gerador de Conteúdo')} className="px-6 py-3 text-base font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
+          📣 Gerar Post para Redes Sociais com IA
+        </button>
       </div>
 
       {/* Earnings History Section */}
@@ -166,6 +156,21 @@ const ProviderDashboard: React.FC = () => {
             handleSaveServiceCatalog(catalog);
             setIsCatalogModalOpen(false);
           }}
+        />
+      )}
+
+      {showContentGenerator && (
+        <ProspectingContentGenerator 
+          providerName={currentUser.name}
+          onClose={() => setShowContentGenerator(false)}
+        />
+      )}
+
+      {showUpsellModal && (
+        <SubscriptionUpsellModal 
+          featureName={upsellFeatureName}
+          onClose={() => setShowUpsellModal(false)}
+          onStartTrial={handleStartTrial}
         />
       )}
     </div>
