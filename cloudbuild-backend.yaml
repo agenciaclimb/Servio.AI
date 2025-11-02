@@ -9,6 +9,19 @@ substitutions:
   _IMAGE: backend
 
 steps:
+  # Debug: List workspace contents
+  - name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        echo "=== Workspace contents ==="
+        ls -la /workspace
+        echo "=== Backend directory ==="
+        ls -la /workspace/backend || echo "backend directory not found"
+        echo "=== Dockerfile check ==="
+        test -f /workspace/backend/Dockerfile && echo "Dockerfile exists" || echo "Dockerfile NOT found"
+
   # 1) Build backend Docker image
   - name: "gcr.io/cloud-builders/docker"
     args:
@@ -18,7 +31,7 @@ steps:
       - "-t"
       - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:latest"
       - "-f"
-      - "backend/Dockerfile"
+      - "./backend/Dockerfile"
       - "."
 
   # 2) Push image with SHORT_SHA tag
