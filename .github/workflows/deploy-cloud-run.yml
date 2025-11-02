@@ -85,6 +85,17 @@ jobs:
         with:
           version: ">= 462.0.0"
 
+      - name: Configure gcloud project and verify APIs
+        run: |
+          set -x
+          gcloud config set project "$PROJECT_ID"
+          gcloud services list --enabled --project "$PROJECT_ID" | grep -E "(run.googleapis.com|cloudbuild.googleapis.com|artifactregistry.googleapis.com)" || true
+          echo "Verificando repositório do Artifact Registry: servio-ai"
+          gcloud artifacts repositories describe servio-ai --location="$REGION" --project "$PROJECT_ID" || {
+            echo "::error::Repositório 'servio-ai' não encontrado na região $REGION. Crie-o no Artifact Registry ou ajuste _REPO no cloudbuild*.yaml";
+            exit 1;
+          }
+
       - name: GCloud info (preflight)
         run: |
           set -x
@@ -106,7 +117,7 @@ jobs:
             --project "$PROJECT_ID" \
             --config cloudbuild.yaml \
             --substitutions=_REGION="$REGION",_SERVICE="servio-ai",_REPO="servio-ai",_IMAGE="ai-server",SHORT_SHA="$SUB_SHA" \
-            --quiet
+            --verbosity=debug --quiet || exit 1
 
       - name: Build & Deploy Backend Service
         if: ${{ github.event.inputs.service == 'both' || github.event.inputs.service == 'backend' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }}
@@ -118,4 +129,4 @@ jobs:
             --project "$PROJECT_ID" \
             --config cloudbuild-backend.yaml \
             --substitutions=_REGION="$REGION",_SERVICE="servio-backend",_REPO="servio-ai",_IMAGE="backend",SHORT_SHA="$SUB_SHA" \
-            --quiet
+            --verbosity=debug --quiet || exit 1
