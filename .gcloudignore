@@ -1,0 +1,50 @@
+# .gcloudignore - Cloud Build upload configuration
+# This file specifies which files should NOT be uploaded to Cloud Build
+
+# Node modules (serão instalados no container)
+node_modules/
+backend/node_modules/
+
+# Arquivos de desenvolvimento
+.git/
+.github/
+.vscode/
+.husky/
+
+# Testes e cobertura
+coverage/
+backend/coverage/
+*.test.js
+*.test.ts
+**/__tests__/
+backend/tests/
+
+# Documentação
+doc/
+*.md
+!backend/README.md
+
+# Arquivos temporários
+*.log
+.DS_Store
+.env
+.env.local
+
+# Build artifacts do frontend
+dist/
+build/
+.cache/
+
+# Cypress e testes E2E
+cypress/
+e2e/
+*.cy.ts
+*.cy.js
+
+# Firebase local
+.firebase/
+firebase-debug.log
+
+# Outros
+mockData.ts
+scripts/
