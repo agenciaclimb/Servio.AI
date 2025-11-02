@@ -1,0 +1,57 @@
+# Google Cloud Build - Backend REST API Service
+# Builds and deploys the backend REST API to Cloud Run (PORT 8081)
+# Paired with cloudbuild.yaml (AI service on PORT 8080)
+
+substitutions:
+  _REGION: us-west1
+  _SERVICE: servio-backend
+  _REPO: servio-ai
+  _IMAGE: backend
+
+steps:
+  # 1) Build backend Docker image
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:${SHORT_SHA}"
+      - "-t"
+      - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:latest"
+      - "-f"
+      - "backend/Dockerfile"
+      - "."
+
+  # 2) Push image with SHORT_SHA tag
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:${SHORT_SHA}"
+
+  # 3) Push image with latest tag
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:latest"
+
+  # 4) Deploy to Cloud Run
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+    entrypoint: gcloud
+    args:
+      - "run"
+      - "deploy"
+      - "${_SERVICE}"
+      - "--image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:${SHORT_SHA}"
+      - "--region=${_REGION}"
+      - "--platform=managed"
+      - "--allow-unauthenticated"
+      - "--port=8081"
+      - "--set-env-vars=PORT=8081"
+
+# Artifacts published to Artifact Registry
+images:
+  - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:${SHORT_SHA}"
+  - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:latest"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: "N1_HIGHCPU_8"
