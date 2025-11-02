@@ -59,7 +59,6 @@ steps:
       - "--platform=managed"
       - "--allow-unauthenticated"
       - "--port=8081"
-      - "--set-env-vars=PORT=8081"
 
 # Artifacts published to Artifact Registry
 images:
