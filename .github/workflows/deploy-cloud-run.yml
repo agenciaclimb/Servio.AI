@@ -8,6 +8,15 @@ on:
         description: "Branch ou tag para deploy"
         required: false
         default: "feature/full-implementation"
+      service:
+        description: "Serviço para deploy (ai, backend, ou both)"
+        required: false
+        default: "both"
+        type: choice
+        options:
+          - both
+          - ai
+          - backend
   # (Opcional) Publique versões marcadas com tag v*
   push:
     tags:
@@ -16,7 +25,7 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REGION: ${{ secrets.GCP_REGION }}
-  SERVICE: ${{ secrets.GCP_SERVICE }}
+  # SERVICE secret não é mais obrigatório; serviços são definidos por step
 
 jobs:
   deploy:
@@ -46,7 +55,6 @@ jobs:
           # Infra
           [[ -z "${PROJECT_ID:-}" ]] && missing+=("GCP_PROJECT_ID")
           [[ -z "${REGION:-}" ]] && missing+=("GCP_REGION")
-          [[ -z "${SERVICE:-}" ]] && missing+=("GCP_SERVICE")
           [[ -z "${GH_GCP_SA_KEY:-}" ]] && missing+=("GCP_SA_KEY")
           # App (não bloqueia o deploy, mas avisamos)
           app_missing=()
@@ -83,17 +91,31 @@ jobs:
           gcloud --version
           gcloud auth list
           gcloud config list
-          echo "Project: $PROJECT_ID / Region: $REGION / Service: $SERVICE"
+          echo "Project: $PROJECT_ID / Region: $REGION"
+          echo "Serviços alvo: servio-ai (AI) e servio-backend (REST API)"
           echo "Verificando APIs necessárias..."
           gcloud services list --enabled --project "$PROJECT_ID" | grep -E "(run.googleapis.com|cloudbuild.googleapis.com|artifactregistry.googleapis.com)" || true
 
-      - name: Build & Deploy via Cloud Build (Dockerfile → Artifact Registry → Cloud Run)
+      - name: Build & Deploy AI Service
+        if: ${{ github.event.inputs.service == 'both' || github.event.inputs.service == 'ai' || github.event.inputs.service == '' }}
         run: |
           set -eo pipefail
           SUB_SHA="${GITHUB_SHA::7}"
-          echo "Usando SHORT_SHA=$SUB_SHA"
+          echo "Deploying AI Service (servio-ai) - SHORT_SHA=$SUB_SHA"
           gcloud builds submit \
             --project "$PROJECT_ID" \
             --config cloudbuild.yaml \
-            --substitutions=_REGION="$REGION",_SERVICE="$SERVICE",_REPO="servio-ai",_IMAGE="ai-server",SHORT_SHA="$SUB_SHA" \
+            --substitutions=_REGION="$REGION",_SERVICE="servio-ai",_REPO="servio-ai",_IMAGE="ai-server",SHORT_SHA="$SUB_SHA" \
+            --quiet
+
+      - name: Build & Deploy Backend Service
+        if: ${{ github.event.inputs.service == 'both' || github.event.inputs.service == 'backend' || github.event.inputs.service == '' }}
+        run: |
+          set -eo pipefail
+          SUB_SHA="${GITHUB_SHA::7}"
+          echo "Deploying Backend Service (servio-backend) - SHORT_SHA=$SUB_SHA"
+          gcloud builds submit \
+            --project "$PROJECT_ID" \
+            --config cloudbuild-backend.yaml \
+            --substitutions=_REGION="$REGION",_SERVICE="servio-backend",_REPO="servio-ai",_IMAGE="backend",SHORT_SHA="$SUB_SHA" \
             --quiet
