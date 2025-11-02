@@ -22,7 +22,7 @@ steps:
         echo "=== Dockerfile check ==="
         test -f /workspace/backend/Dockerfile && echo "Dockerfile exists" || echo "Dockerfile NOT found"
 
-  # 1) Build backend Docker image
+  # 1) Build backend Docker image (usando contexto backend/)
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "build"
@@ -31,8 +31,9 @@ steps:
       - "-t"
       - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:latest"
       - "-f"
-      - "./backend/Dockerfile"
+      - "Dockerfile"
       - "."
+    dir: "backend"
 
   # 2) Push image with SHORT_SHA tag
   - name: "gcr.io/cloud-builders/docker"
