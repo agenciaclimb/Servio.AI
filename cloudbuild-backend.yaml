@@ -51,7 +51,3 @@ steps:
 images:
   - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:${SHORT_SHA}"
   - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:latest"
-
-options:
-  logging: CLOUD_LOGGING_ONLY
-  machineType: "N1_HIGHCPU_8"
