@@ -1,6 +1,104 @@
+#update_log - 2025-11-02 12:13
+✅ **DIA 4 CONCLUÍDO - DEPLOY DUAL CLOUD RUN COM SUCESSO**
+
+**Backend REST API Deployado:**
+
+- ✅ 35/35 testes passando (100% coverage crítica)
+- ✅ Cloud Run service `servio-backend` deployado em us-west1
+- ✅ Dockerfile corrigido com contexto backend/
+- ✅ CI/CD configurado com deploy automático via tags `-backend`
+- ✅ PORT configurado corretamente (Cloud Run injeta automaticamente)
+
+**Problemas Resolvidos (v0.0.7 → v0.0.21):**
+
+1. ❌ v0.0.7-v0.0.8: Missing GCP_SERVICE secret → Removido do workflow
+2. ❌ v0.0.9-v0.0.11: cloudbuild-backend.yaml não commitado → Adicionado ao Git
+3. ❌ v0.0.12-v0.0.16: Permissões IAM insuficientes → Concedido role Owner ao SA servio-ci-cd
+4. ❌ v0.0.17: backend/Dockerfile não estava no Git → Commitado
+5. ❌ v0.0.18-v0.0.19: Docker COPY não encontrava backend/package.json → Criado .gcloudignore
+6. ❌ v0.0.20: Build passou mas Docker context errado → Ajustado `dir: "backend"` no cloudbuild
+7. ❌ v0.0.20: Deploy falhou com PORT reservado → Removido --set-env-vars=PORT=8081
+8. ✅ v0.0.21: **DEPLOY BEM-SUCEDIDO!**
+
+**Arquitetura Dual Service Ativa:**
+
+```
+┌─────────────────────────────────────────┐
+│   Frontend (Firebase Hosting)          │
+│   React + Vite + TypeScript             │
+└──────────┬─────────────┬────────────────┘
+           │             │
+           ▼             ▼
+┌──────────────────┐  ┌──────────────────┐
+│ AI Service       │  │ Backend API      │
+│ Cloud Run :8080  │  │ Cloud Run :8080  │
+│ (Gemini + IA)    │  │ (REST + Stripe)  │
+└──────────────────┘  └──────────────────┘
+           │                    │
+           └────────┬───────────┘
+                    ▼
+         ┌────────────────────┐
+         │   Firestore DB     │
+         │   (NoSQL Real-time)│
+         └────────────────────┘
+```
+
+**Arquivos Modificados:**
+
+- `.github/workflows/deploy-cloud-run.yml` - Suporte a deploy dual service
+- `cloudbuild-backend.yaml` - Config Cloud Build com contexto backend/
+- `backend/Dockerfile` - Otimizado para Cloud Run (sem ENV PORT)
+- `.gcloudignore` - Controle de upload para Cloud Build
+- `backend/src/index.js` - API REST completa (1334 linhas)
+- `backend/tests/*.test.js` - Suite de testes abrangente
+
+**Service Accounts & Permissões:**
+
+- SA: servio-ci-cd@gen-lang-client-0737507616.iam.gserviceaccount.com
+- Role: Owner (roles/owner) - necessário para Cloud Build + Cloud Run + Artifact Registry
+- Region: us-west1
+- Artifact Registry: servio-ai repository
+
+**Próximos Passos (DIA 5):**
+
+- [ ] Obter URL do serviço backend deployado
+- [ ] Configurar variável VITE_BACKEND_API_URL no frontend
+- [ ] Conectar AppContext.tsx aos endpoints REST reais
+- [ ] Substituir mock data por chamadas API em componentes
+- [ ] Testar integração frontend-backend end-to-end
+- [ ] Deploy frontend atualizado no Firebase Hosting
+
+**Lições Aprendidas:**
+
+- Cloud Run injeta PORT automaticamente (não pode ser setado via --set-env-vars)
+- Docker build context deve ser alinhado com estrutura de COPY no Dockerfile
+- .gcloudignore é essencial quando .gitignore pode excluir arquivos necessários
+- Service Account precisa de permissões amplas (Owner) para operações de CI/CD
+- Tags com sufixo `-backend` permitem deploy seletivo via workflow condicional
+
+**Commits Principais:**
+
+- a6625f1: fix: remove PORT env var from Cloud Run deploy (reserved by system)
+- 27125c1: ci: fix Docker build context to use backend/ directory directly
+- f19be6c: ci: add .gcloudignore to ensure backend files are uploaded
+- d22e06a: ci: add missing backend/Dockerfile to repository
+
+---
+
+#update_log - 2025-11-01 19:45
+GitHub Copilot criou PLANO DE AÇÃO DETALHADO para produção em 15 dias (Opção B - Deploy com Beta Testing).
+Arquivos atualizados:
+
+- `doc/DOCUMENTO_MESTRE_SERVIO_AI.md` - Nova seção 9 com cronograma dia a dia
+- Divisão de tarefas entre Humano (config), Copilot (código) e Gemini (conteúdo)
+- Instruções detalhadas para tarefas administrativas (Artifact Registry, Stripe Live, Domínio)
+- Checklist de GO-LIVE e troubleshooting
+- Integração com melhorias do PLANO_POS_MVP_v1.1.md
+  Próximo passo: Iniciar DIA 1 - Criar api.ts e endpoints REST básicos.
+
 # 📘 DOCUMENTO MESTRE - SERVIO.AI
 
-**Última atualização:** 01/11/2025 03:58
+**Última atualização:** 02/11/2025 12:13
 
 ---
 
@@ -82,6 +180,14 @@ Com base nas interfaces definidas em `types.ts`, as principais coleções do Fir
 
 1. Cadastro / Login via Auth.
 2. Criação de pedido com descrição, categoria e orçamento.
+
+### 9. PLANO DE AÇÃO: CAMINHO PARA PRODUÇÃO
+
+**Criado em:** 01/11/2025 19:30  
+**Estratégia:** Opção B - Deploy em TESTE com Beta Users (2-3 semanas)  
+**Dedicação:** 10h/dia  
+**Foco:** Todas as funcionalidades críticas
+
 3. Matching IA → envio de propostas automáticas para prestadores.
 4. Escolha e aceite do prestador pelo cliente.
 5. Execução e acompanhamento em tempo real.
@@ -105,7 +211,418 @@ Com base nas interfaces definidas em `types.ts`, as principais coleções do Fir
 
 - Modelo: **Gemini 2.5 Pro**
 - Ambiente: **Vertex AI / Google Cloud**
+
+### 📅 CRONOGRAMA - FASE TESTE (15 dias)
+
+#### **SEMANA 1: FUNDAÇÃO (Dias 1-5)**
+
+**Meta:** Backend REST API completo + Deploy de 2 serviços Cloud Run
+
+##### 🔵 DIA 1 - Setup Inicial (01/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Criar arquivo `src/lib/api.ts` com cliente HTTP
+- ✅ Criar `backend/Dockerfile`
+- ✅ Implementar endpoints REST básicos:
+  - `POST /jobs` - Criar job
+  - `GET /jobs/:id` - Buscar job
+  - `POST /proposals` - Criar proposta
+  - `GET /proposals` - Listar propostas
+
+**VOCÊ faz:**
+
+- [ ] Ler este plano completo (30min)
+- [ ] Validar que os 3 beta testers estão confirmados
+- [ ] Criar arquivo `.env.local` na raiz com as variáveis que vou te passar
+
+**GEMINI faz:**
+
+- Nada hoje (aguardando contexto)
+
+**Tempo estimado:** 4-5 horas de código
+
+---
+
+##### 🔵 DIA 2 - Backend Completo (02/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Implementar endpoints de Chat:
+  - `POST /jobs/:id/messages` - Enviar mensagem
+  - `GET /jobs/:id/messages` - Listar mensagens
+- ✅ Implementar endpoint de conclusão:
+  - `POST /jobs/:id/complete` - Marcar como concluído
+- ✅ Criar testes para todos os novos endpoints
+- ✅ Atualizar `backend/README.md` com documentação da API
+
+**VOCÊ faz:**
+
+- [ ] Testar endpoints localmente usando as instruções que vou fornecer
+- [ ] Reportar qualquer erro que encontrar
+
+**GEMINI faz:**
+
+- Gerar exemplos de requests/responses para documentação
+
+**Tempo estimado:** 6-8 horas de código
+
+---
+
+##### 🔵 DIA 3 - Stripe Payouts Manual (03/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Criar dashboard admin para pagamentos pendentes
+- ✅ Criar endpoint `POST /admin/payments/:id/mark-paid`
+- ✅ Adicionar interface em `AdminDashboard.tsx`
+- ✅ Implementar validação de super_admin
+
+**VOCÊ faz:**
+
+- [ ] Criar conta bancária de teste no Stripe (vou te guiar)
+- [ ] Testar fluxo de pagamento manual
+- [ ] Documentar processo para equipe futura
+
+**GEMINI faz:**
+
+- Gerar template de email "Pagamento liberado"
+- Criar checklist de verificação para pagamentos
+
+**Tempo estimado:** 4-5 horas de código
+
+---
+
+##### 🔵 DIA 4 - Deploy de 2 Serviços (04/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Criar `cloudbuild-backend.yaml`
+- ✅ Atualizar `.github/workflows/deploy-cloud-run.yml` com job para backend
+- ✅ Configurar variáveis de ambiente no Cloud Run
+- ✅ Testar deploy local com Docker
+
+**VOCÊ faz:**
+
+- [ ] **CRÍTICO**: Criar repositório Artifact Registry (passo a passo detalhado abaixo)
+- [ ] Atualizar secrets do GitHub com novas URLs
+- [ ] Executar workflow manualmente
+- [ ] Validar que os 2 serviços estão rodando
+
+**GEMINI faz:**
+
+- Gerar diagrama de arquitetura atualizado
+- Criar guia de troubleshooting para erros comuns
+
+**Tempo estimado:** 3-4 horas (mais tempo de CI/CD)
+
+---
+
+##### 🔵 DIA 5 - Conexão Frontend ↔ Backend (05/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Conectar `AppContext.tsx` aos endpoints REST
+- ✅ Substituir stubs locais por chamadas reais em:
+  - `FinancialInsightsCard.tsx`
+  - `ProspectingContentGenerator.tsx`
+  - `ProposalAssistant.tsx`
+- ✅ Implementar tratamento de erros e loading states
+- ✅ Adicionar retry logic para falhas de rede
+
+**VOCÊ faz:**
+
+- [ ] Testar cada componente no navegador
+- [ ] Verificar que não há erros no console
+- [ ] Validar fluxo de criação de job end-to-end
+
+**GEMINI faz:**
+
+- Gerar mensagens de erro user-friendly
+- Sugerir melhorias de UX com base em fluxos
+
+**Tempo estimado:** 6-7 horas de código
+
+---
+
+#### **SEMANA 2: TESTES E REFINAMENTO (Dias 6-10)**
+
+##### 🟢 DIA 6 - Testes E2E Essenciais (06/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Escrever testes Cypress para:
+  - Fluxo completo do cliente (login → criar job → pagar)
+  - Fluxo completo do prestador (login → ver job → enviar proposta)
+- ✅ Configurar CI para rodar testes E2E
+- ✅ Criar fixtures com dados de teste
+
+**VOCÊ faz:**
+
+- [ ] Rodar testes localmente e validar
+- [ ] Criar contas de teste (1 cliente + 1 prestador)
+- [ ] Documentar credenciais de teste
+
+**GEMINI faz:**
+
+- Gerar cenários adicionais de teste
+- Criar matriz de compatibilidade (browsers/devices)
+
+**Tempo estimado:** 5-6 horas de código
+
+---
+
+##### 🟢 DIA 7 - Beta Testing Preparação (07/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Criar página `/beta-welcome` com tutorial
+- ✅ Implementar banner de "Ambiente de Teste"
+- ✅ Adicionar botão "Reportar Bug" em todas páginas
+- ✅ Configurar Google Analytics para rastreamento
+
+**VOCÊ faz:**
+
+- [ ] **CRÍTICO**: Enviar convites para 3-5 beta testers com instruções
+- [ ] Preparar formulário de feedback (Google Forms)
+- [ ] Criar grupo no WhatsApp/Telegram para suporte
+
+**GEMINI faz:**
+
+- Escrever email de convite para beta testers
+- Criar FAQ para beta testers
+- Gerar guia rápido de uso (PDF de 1 página)
+
+**Tempo estimado:** 3-4 horas de código
+
+---
+
+##### 🟢 DIA 8-10 - Beta Testing Ativo (08-10/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Monitorar logs e erros no Cloud Run
+- ✅ Corrigir bugs críticos reportados
+- ✅ Implementar melhorias de UX solicitadas
+- ✅ Otimizar queries lentas no Firestore
+
+**VOCÊ faz:**
+
+- [ ] Testar manualmente junto com beta testers
+- [ ] Compilar lista de bugs e priorizar
+- [ ] Validar que pagamentos manuais funcionam
+- [ ] Fazer 3+ transações reais end-to-end
+
+**GEMINI faz:**
+
+- Analisar feedback dos beta testers
+- Sugerir ajustes de copy/mensagens
+- Gerar relatório de usabilidade
+
+**Tempo estimado:** 8-10 horas/dia (alta demanda)
+
+---
+
+### 🔍 PÓS-MVP: MELHORIAS IMEDIATAS (Semana 4+)
+
+Com base no `PLANO_POS_MVP_v1.1.md`, implementar em ordem de prioridade:
+
+#### Fase 1: IA Proativa (Semana 4)
+
+- Assistente de resposta no chat
+- Análise de sentimento
+- Notificações push (FCM)
+
+#### Fase 2: Gamificação (Semana 5)
+
+- Sistema de níveis e medalhas
+- Dashboard de ganhos detalhado
+- Histórico de manutenção
+
+#### Fase 3: Monetização (Semana 6)
+
+- Plano "Destaque" para prestadores
+- Páginas SEO por categoria
+- Programa de indicação
+
+---
+
+### 📝 INSTRUÇÕES DETALHADAS PARA VOCÊ
+
+#### 🔧 Como Criar o Artifact Registry (DIA 4)
+
+**Passo a passo com screenshots mentais:**
+
+1. Abra o Console do GCP: https://console.cloud.google.com
+2. No menu lateral esquerdo, procure por "Artifact Registry"
+3. Clique em "CREATE REPOSITORY"
+4. Preencha:
+   - **Name:** `servio-ai`
+   - **Format:** Docker
+   - **Location type:** Region
+   - **Region:** `us-west1`
+   - **Encryption:** Google-managed
+5. Clique em "CREATE"
+6. Aguarde ~30 segundos
+7. **IMPORTANTE**: Copie o caminho completo que aparece (ex: `us-west1-docker.pkg.dev/gen-lang-client-0737507616/servio-ai`)
+8. Me envie esse caminho - vou atualizar os arquivos de build
+
+**Tempo:** 5 minutos
+
+---
+
+#### 💳 Como Ativar Stripe Live Mode (DIA 11)
+
+**Passo a passo:**
+
+1. Entre no Stripe Dashboard: https://dashboard.stripe.com
+2. No canto superior direito, clique em "Developers"
+3. Clique em "API keys"
+4. **ATENÇÃO**: Você verá 2 modos:
+   - **Test mode** (chave começa com `sk_test_...`) ← Você está usando essa
+   - **Live mode** (chave começa com `sk_live_...`) ← Você vai usar essa
+5. Clique no toggle "View test data" para mudar para Live
+6. Se aparecer "Complete activation":
+   - Clique e preencha:
+     - Informações da empresa (CNPJ, razão social)
+     - Conta bancária para receber pagamentos
+     - Documentos (pode pedir RG/CNH do responsável)
+7. Após aprovação (pode levar 24h), copie a "Secret key" do Live mode
+8. Vá para GitHub → Seu repo → Settings → Secrets → Actions
+9. Edite `STRIPE_SECRET_KEY` e cole a nova chave Live
+10. Clique em "Configure" em Webhooks
+11. Adicione endpoint: `https://api.servio.ai/stripe-webhook` (ou a URL do seu backend)
+12. Copie o "Signing secret" e atualize `STRIPE_WEBHOOK_SECRET` no GitHub
+
+**Tempo:** 15-30 minutos (se dados já estiverem prontos)
+
+---
+
+#### 🌐 Como Configurar Domínio (DIA 12)
+
+**Opção A: Registro Novo**
+
+1. Recomendo: https://registro.br (domínios .br) ou Cloudflare (outros)
+2. Busque disponibilidade: `servio.ai`, `servio.app`, `servio.com.br`
+3. Registre o domínio (custo ~R$40-120/ano)
+4. Anote os nameservers (DNS) do registrador
+
+**Opção B: Firebase Hosting (Frontend)**
+
+1. Firebase Console → Hosting
+2. Clique em "Add custom domain"
+3. Digite seu domínio (ex: `www.servio.ai`)
+4. Firebase vai te dar 2 registros DNS:
+   - Tipo A: `151.101.X.Y`
+   - Tipo TXT: `firebase=xxxx...` (para verificação)
+5. Vá no painel do seu registrador
+6. Adicione esses 2 registros DNS
+7. Aguarde propagação (pode levar 24-48h)
+8. Firebase vai validar automaticamente e emitir SSL
+
+**Opção C: Cloud Run (Backend/API)**
+
+1. Console GCP → Cloud Run
+2. Clique no serviço `servio-backend`
+3. Aba "MANAGE CUSTOM DOMAINS"
+4. Clique em "ADD MAPPING"
+5. Digite: `api.servio.ai`
+6. Google vai te dar registros DNS similares
+7. Adicione no seu registrador
+8. Aguarde propagação
+
+**Tempo:** 30min de configuração + 24-48h de propagação
+
+---
+
+#### ✅ Checklist de GO-LIVE (DIA 15)
+
+**30 minutos antes do anúncio:**
+
+- [ ] Todos os serviços Cloud Run estão verdes
+- [ ] GET `/health` retorna `{"ok": true}` em ambos serviços
+- [ ] Teste: Login com Google funciona
+- [ ] Teste: Criar job funciona
+- [ ] Teste: Enviar proposta funciona
+- [ ] Teste: Chat envia mensagens
+- [ ] Teste: Pagamento cria sessão Stripe
+- [ ] Firestore rules estão em produção
+- [ ] Backup automático está agendado
+- [ ] Alertas de monitoramento estão ativos
+- [ ] Política de Privacidade está publicada
+- [ ] Termos de Uso estão publicados
+- [ ] Email de suporte está configurado (ex: suporte@servio.ai)
+- [ ] Você tem acesso ao dashboard de logs/métricas
+- [ ] Rollback plan documentado (como voltar para versão anterior)
+
+**Se TODOS estiverem ✅, pode anunciar!**
+
+---
+
+### 🚨 TROUBLESHOOTING RÁPIDO
+
+#### Erro: "Failed to push to Artifact Registry"
+
+**Solução:** Verifique que o repositório foi criado e que a Service Account tem permissão `Artifact Registry Writer`
+
+#### Erro: "CORS blocked"
+
+**Solução:** Adicione seu domínio frontend na lista de origens permitidas no backend
+
+#### Erro: Stripe webhook "Invalid signature"
+
+**Solução:** Verifique que `STRIPE_WEBHOOK_SECRET` está correto e que a URL do webhook no Stripe está certa
+
+#### Site não carrega após configurar domínio
+
+**Solução:** DNS ainda está propagando. Use https://dnschecker.org para verificar. Pode levar até 48h.
+
+#### Usuário não consegue fazer login
+
+**Solução:** Verifique que o domínio está na whitelist do Firebase Auth (Console Firebase → Authentication → Settings → Authorized domains)
+
+---
+
+### 📞 COMUNICAÇÃO DURANTE O PROJETO
+
+**Para reportar bugs ou dúvidas:**
+
+1. Descreva o que você tentou fazer
+2. Descreva o que aconteceu (erros, comportamento inesperado)
+3. Se possível, anexe screenshot
+4. Diga qual navegador/dispositivo você está usando
+
+**Exemplo bom:**
+
+> "Tentei criar um job no Chrome. Cliquei em 'Publicar' mas apareceu erro vermelho 'Network Error'. Screenshot anexo. Console do navegador mostra erro 500."
+
+**Exemplo ruim:**
+
 - Canal: **VS Code (Gemini Code Assist)** + **API integrada**
+
+---
+
+### 🎓 RECURSOS EDUCATIVOS
+
+**Para aprender durante o processo:**
+
+- **GCP:** https://cloud.google.com/docs/get-started
+- **Stripe:** https://stripe.com/docs/development/quickstart
+- **Firebase:** https://firebase.google.com/docs/web/setup
+- **React:** https://react.dev/learn
+- **Firestore:** https://firebase.google.com/docs/firestore/quickstart
+
+**Vídeos recomendados (YouTube):**
+
+- "Deploy Node.js to Google Cloud Run" - Fireship
+- "Stripe Payment Integration Tutorial" - Web Dev Simplified
+- "Firebase Auth Tutorial" - Firebase
+
+**Tempo sugerido:** 1-2h/dia assistindo enquanto come/descansa
+
+---
+
+````
 - Comunicação: JSON e Firestore Collections
 - Módulo “Agente Central”: leitura contínua do Documento Mestre para autoatualização.
 
@@ -189,7 +706,588 @@ Com base nas interfaces definidas em `types.ts`, as principais coleções do Fir
 #update_log - 30/10/2025 22:45
 A IA Gemini detectou melhoria na função de deploy automático.
 Atualizado workflow deploy-cloud-run.yml para suportar rollback.
-```
+````
+
+---
+
+## 🎯 9. PLANO DE AÇÃO: CAMINHO PARA PRODUÇÃO
+
+**Criado em:** 01/11/2025 19:30  
+**Estratégia:** Opção B - Deploy em TESTE com Beta Users (2-3 semanas)  
+**Dedicação:** 10h/dia  
+**Foco:** Todas as funcionalidades críticas
+
+### 📋 Divisão de Responsabilidades
+
+#### 👤 VOCÊ (Humano) - Tarefas Administrativas e Validação
+
+- Configurações de contas (Stripe, GCP, domínio)
+- Testes manuais de fluxos
+- Convidar beta testers
+- Validar documentos jurídicos
+- Aprovar deploys para produção
+
+#### 🤖 COPILOT (GitHub Copilot) - Desenvolvimento Backend
+
+- Criar endpoints REST faltantes
+- Implementar lógica de negócios
+- Conectar com Firestore
+- Escrever testes unitários
+- Documentar APIs
+
+#### ✨ GEMINI (IA Generativa) - Geração de Conteúdo e Análise
+
+- Gerar conteúdo para páginas SEO
+- Criar templates de email
+- Sugerir melhorias de UX
+- Analisar fluxos de usuário
+- Gerar documentação técnica
+
+---
+
+### 📅 CRONOGRAMA - FASE TESTE (15 dias)
+
+#### **SEMANA 1: FUNDAÇÃO (Dias 1-5)**
+
+**Meta:** Backend REST API completo + Deploy de 2 serviços Cloud Run
+
+##### 🔵 DIA 1 - Setup Inicial (01/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Criar arquivo `src/lib/api.ts` com cliente HTTP
+- ✅ Criar `backend/Dockerfile`
+- ✅ Implementar endpoints REST básicos:
+  - `POST /jobs` - Criar job
+  - `GET /jobs/:id` - Buscar job
+  - `POST /proposals` - Criar proposta
+  - `GET /proposals` - Listar propostas
+
+**VOCÊ faz:**
+
+- [ ] Ler este plano completo (30min)
+- [ ] Validar que os 3 beta testers estão confirmados
+- [ ] Criar arquivo `.env.local` na raiz com as variáveis que vou te passar
+
+**GEMINI faz:**
+
+- Nada hoje (aguardando contexto)
+
+**Tempo estimado:** 4-5 horas de código
+
+---
+
+##### 🔵 DIA 2 - Backend Completo (02/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Implementar endpoints de Chat:
+  - `POST /jobs/:id/messages` - Enviar mensagem
+  - `GET /jobs/:id/messages` - Listar mensagens
+- ✅ Implementar endpoint de conclusão:
+  - `POST /jobs/:id/complete` - Marcar como concluído
+- ✅ Criar testes para todos os novos endpoints
+- ✅ Atualizar `backend/README.md` com documentação da API
+
+**VOCÊ faz:**
+
+- [ ] Testar endpoints localmente usando as instruções que vou fornecer
+- [ ] Reportar qualquer erro que encontrar
+
+**GEMINI faz:**
+
+- Gerar exemplos de requests/responses para documentação
+
+**Tempo estimado:** 6-8 horas de código
+
+---
+
+##### 🔵 DIA 3 - Stripe Payouts Manual (03/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Criar dashboard admin para pagamentos pendentes
+- ✅ Criar endpoint `POST /admin/payments/:id/mark-paid`
+- ✅ Adicionar interface em `AdminDashboard.tsx`
+- ✅ Implementar validação de super_admin
+
+**VOCÊ faz:**
+
+- [ ] Criar conta bancária de teste no Stripe (vou te guiar)
+- [ ] Testar fluxo de pagamento manual
+- [ ] Documentar processo para equipe futura
+
+**GEMINI faz:**
+
+- Gerar template de email "Pagamento liberado"
+- Criar checklist de verificação para pagamentos
+
+**Tempo estimado:** 4-5 horas de código
+
+---
+
+##### 🔵 DIA 4 - Deploy de 2 Serviços (04/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Criar `cloudbuild-backend.yaml`
+- ✅ Atualizar `.github/workflows/deploy-cloud-run.yml` com job para backend
+- ✅ Configurar variáveis de ambiente no Cloud Run
+- ✅ Testar deploy local com Docker
+
+**VOCÊ faz:**
+
+- [ ] **CRÍTICO**: Criar repositório Artifact Registry (passo a passo detalhado abaixo)
+- [ ] Atualizar secrets do GitHub com novas URLs
+- [ ] Executar workflow manualmente
+- [ ] Validar que os 2 serviços estão rodando
+
+**GEMINI faz:**
+
+- Gerar diagrama de arquitetura atualizado
+- Criar guia de troubleshooting para erros comuns
+
+**Tempo estimado:** 3-4 horas (mais tempo de CI/CD)
+
+---
+
+##### 🔵 DIA 5 - Conexão Frontend ↔ Backend (05/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Conectar `AppContext.tsx` aos endpoints REST
+- ✅ Substituir stubs locais por chamadas reais em:
+  - `FinancialInsightsCard.tsx`
+  - `ProspectingContentGenerator.tsx`
+  - `ProposalAssistant.tsx`
+- ✅ Implementar tratamento de erros e loading states
+- ✅ Adicionar retry logic para falhas de rede
+
+**VOCÊ faz:**
+
+- [ ] Testar cada componente no navegador
+- [ ] Verificar que não há erros no console
+- [ ] Validar fluxo de criação de job end-to-end
+
+**GEMINI faz:**
+
+- Gerar mensagens de erro user-friendly
+- Sugerir melhorias de UX com base em fluxos
+
+**Tempo estimado:** 6-7 horas de código
+
+---
+
+#### **SEMANA 2: TESTES E REFINAMENTO (Dias 6-10)**
+
+##### 🟢 DIA 6 - Testes E2E Essenciais (06/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Escrever testes Cypress para:
+  - Fluxo completo do cliente (login → criar job → pagar)
+  - Fluxo completo do prestador (login → ver job → enviar proposta)
+- ✅ Configurar CI para rodar testes E2E
+- ✅ Criar fixtures com dados de teste
+
+**VOCÊ faz:**
+
+- [ ] Rodar testes localmente e validar
+- [ ] Criar contas de teste (1 cliente + 1 prestador)
+- [ ] Documentar credenciais de teste
+
+**GEMINI faz:**
+
+- Gerar cenários adicionais de teste
+- Criar matriz de compatibilidade (browsers/devices)
+
+**Tempo estimado:** 5-6 horas de código
+
+---
+
+##### 🟢 DIA 7 - Beta Testing Preparação (07/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Criar página `/beta-welcome` com tutorial
+- ✅ Implementar banner de "Ambiente de Teste"
+- ✅ Adicionar botão "Reportar Bug" em todas páginas
+- ✅ Configurar Google Analytics para rastreamento
+
+**VOCÊ faz:**
+
+- [ ] **CRÍTICO**: Enviar convites para 3-5 beta testers com instruções
+- [ ] Preparar formulário de feedback (Google Forms)
+- [ ] Criar grupo no WhatsApp/Telegram para suporte
+
+**GEMINI faz:**
+
+- Escrever email de convite para beta testers
+- Criar FAQ para beta testers
+- Gerar guia rápido de uso (PDF de 1 página)
+
+**Tempo estimado:** 3-4 horas de código
+
+---
+
+##### 🟢 DIA 8-10 - Beta Testing Ativo (08-10/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Monitorar logs e erros no Cloud Run
+- ✅ Corrigir bugs críticos reportados
+- ✅ Implementar melhorias de UX solicitadas
+- ✅ Otimizar queries lentas no Firestore
+
+**VOCÊ faz:**
+
+- [ ] Testar manualmente junto com beta testers
+- [ ] Compilar lista de bugs e priorizar
+- [ ] Validar que pagamentos manuais funcionam
+- [ ] Fazer 3+ transações reais end-to-end
+
+**GEMINI faz:**
+
+- Analisar feedback dos beta testers
+- Sugerir ajustes de copy/mensagens
+- Gerar relatório de usabilidade
+
+**Tempo estimado:** 8-10 horas/dia (alta demanda)
+
+---
+
+#### **SEMANA 3: PRODUÇÃO (Dias 11-15)**
+
+##### 🟡 DIA 11 - Stripe Live Mode (11/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Criar flag de ambiente `STRIPE_MODE=live`
+- ✅ Atualizar lógica de detecção de modo (test vs live)
+- ✅ Adicionar logs extras para transações reais
+- ✅ Implementar alertas de falha de pagamento
+
+**VOCÊ faz:**
+
+- [ ] **CRÍTICO**: Completar onboarding Stripe (dados fiscais)
+- [ ] Trocar `STRIPE_SECRET_KEY` para chave Live
+- [ ] Criar webhook Live no Stripe Dashboard
+- [ ] Testar 1 transação real de R$ 1,00
+
+**GEMINI faz:**
+
+- Gerar checklist de segurança para go-live
+- Criar runbook "O que fazer se pagamento falhar"
+
+**Tempo estimado:** 2-3 horas (mais tempo administrativo)
+
+---
+
+##### 🟡 DIA 12 - Domínio e URLs (12/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Atualizar todas URLs hardcoded no código
+- ✅ Configurar redirects (www → não-www)
+- ✅ Atualizar sitemap.xml
+- ✅ Configurar SSL/HTTPS
+
+**VOCÊ faz:**
+
+- [ ] **CRÍTICO**: Registrar domínio (sugestão: servio.ai ou servio.app)
+- [ ] Seguir tutorial que vou fornecer para:
+  - Configurar domínio no Firebase Hosting
+  - Mapear domínios no Cloud Run
+  - Aguardar propagação DNS (24-48h)
+
+**GEMINI faz:**
+
+- Gerar guia visual de configuração DNS
+- Criar checklist de validação pós-domínio
+
+**Tempo estimado:** 1-2 horas de código + tempo de DNS
+
+---
+
+##### 🟡 DIA 13 - Monitoramento (13/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Configurar Cloud Monitoring dashboards
+- ✅ Criar alertas para:
+  - CPU > 80%
+  - Erros 5xx > 5/min
+  - Latência > 2s
+- ✅ Implementar logging estruturado (Winston)
+- ✅ Configurar Error Reporting
+
+**VOCÊ faz:**
+
+- [ ] Configurar notificações por email
+- [ ] Testar que alertas funcionam (forçar erro)
+- [ ] Documentar onde ver logs/métricas
+
+**GEMINI faz:**
+
+- Gerar playbook "Como responder a alertas"
+- Criar dashboard de métricas de negócio
+
+**Tempo estimado:** 4-5 horas de código
+
+---
+
+##### 🟡 DIA 14 - Segurança Final (14/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Auditoria de segurança:
+  - Firestore rules restritivas
+  - Rate limiting em todos endpoints
+  - Validação de inputs (Joi/Zod)
+  - Sanitização contra XSS
+- ✅ Configurar backup automático Firestore
+- ✅ Implementar CORS restritivo
+
+**VOCÊ faz:**
+
+- [ ] Revisar Política de Privacidade
+- [ ] Revisar Termos de Uso
+- [ ] Publicar páginas `/privacidade` e `/termos`
+- [ ] Adicionar links no footer
+
+**GEMINI faz:**
+
+- Gerar conteúdo jurídico (base, precisa revisão advogado)
+- Criar checklist LGPD
+
+**Tempo estimado:** 5-6 horas de código
+
+---
+
+##### 🟢 DIA 15 - GO LIVE! (15/11/2025)
+
+**COPILOT faz:**
+
+- ✅ Deploy final com tag `v1.0.0`
+- ✅ Validar todos health checks
+- ✅ Rodar smoke tests em produção
+- ✅ Ativar monitoring em modo "alerta alto"
+
+**VOCÊ faz:**
+
+- [ ] **CRÍTICO**: Executar checklist de go-live (abaixo)
+- [ ] Anunciar lançamento (redes sociais, email, etc)
+- [ ] Monitorar primeiras 2-4 horas ativamente
+- [ ] Responder rapidamente a qualquer problema
+
+**GEMINI faz:**
+
+- Gerar posts para redes sociais
+- Criar email de anúncio
+- Montar press kit
+
+**Tempo estimado:** 2-3 horas de código + dia inteiro de monitoramento
+
+---
+
+### 🔍 PÓS-MVP: MELHORIAS IMEDIATAS (Semana 4+)
+
+Com base no `PLANO_POS_MVP_v1.1.md`, implementar em ordem de prioridade:
+
+#### Fase 1: IA Proativa (Semana 4)
+
+- Assistente de resposta no chat
+- Análise de sentimento
+- Notificações push (FCM)
+
+#### Fase 2: Gamificação (Semana 5)
+
+- Sistema de níveis e medalhas
+- Dashboard de ganhos detalhado
+- Histórico de manutenção
+
+#### Fase 3: Monetização (Semana 6)
+
+- Plano "Destaque" para prestadores
+- Páginas SEO por categoria
+- Programa de indicação
+
+---
+
+### 📝 INSTRUÇÕES DETALHADAS PARA VOCÊ
+
+#### 🔧 Como Criar o Artifact Registry (DIA 4)
+
+**Passo a passo com screenshots mentais:**
+
+1. Abra o Console do GCP: https://console.cloud.google.com
+2. No menu lateral esquerdo, procure por "Artifact Registry"
+3. Clique em "CREATE REPOSITORY"
+4. Preencha:
+   - **Name:** `servio-ai`
+   - **Format:** Docker
+   - **Location type:** Region
+   - **Region:** `us-west1`
+   - **Encryption:** Google-managed
+5. Clique em "CREATE"
+6. Aguarde ~30 segundos
+7. **IMPORTANTE**: Copie o caminho completo que aparece (ex: `us-west1-docker.pkg.dev/gen-lang-client-0737507616/servio-ai`)
+8. Me envie esse caminho - vou atualizar os arquivos de build
+
+**Tempo:** 5 minutos
+
+---
+
+#### 💳 Como Ativar Stripe Live Mode (DIA 11)
+
+**Passo a passo:**
+
+1. Entre no Stripe Dashboard: https://dashboard.stripe.com
+2. No canto superior direito, clique em "Developers"
+3. Clique em "API keys"
+4. **ATENÇÃO**: Você verá 2 modos:
+   - **Test mode** (chave começa com `sk_test_...`) ← Você está usando essa
+   - **Live mode** (chave começa com `sk_live_...`) ← Você vai usar essa
+5. Clique no toggle "View test data" para mudar para Live
+6. Se aparecer "Complete activation":
+   - Clique e preencha:
+     - Informações da empresa (CNPJ, razão social)
+     - Conta bancária para receber pagamentos
+     - Documentos (pode pedir RG/CNH do responsável)
+7. Após aprovação (pode levar 24h), copie a "Secret key" do Live mode
+8. Vá para GitHub → Seu repo → Settings → Secrets → Actions
+9. Edite `STRIPE_SECRET_KEY` e cole a nova chave Live
+10. Clique em "Configure" em Webhooks
+11. Adicione endpoint: `https://api.servio.ai/stripe-webhook` (ou a URL do seu backend)
+12. Copie o "Signing secret" e atualize `STRIPE_WEBHOOK_SECRET` no GitHub
+
+**Tempo:** 15-30 minutos (se dados já estiverem prontos)
+
+---
+
+#### 🌐 Como Configurar Domínio (DIA 12)
+
+**Opção A: Registro Novo**
+
+1. Recomendo: https://registro.br (domínios .br) ou Cloudflare (outros)
+2. Busque disponibilidade: `servio.ai`, `servio.app`, `servio.com.br`
+3. Registre o domínio (custo ~R$40-120/ano)
+4. Anote os nameservers (DNS) do registrador
+
+**Opção B: Firebase Hosting (Frontend)**
+
+1. Firebase Console → Hosting
+2. Clique em "Add custom domain"
+3. Digite seu domínio (ex: `www.servio.ai`)
+4. Firebase vai te dar 2 registros DNS:
+   - Tipo A: `151.101.X.Y`
+   - Tipo TXT: `firebase=xxxx...` (para verificação)
+5. Vá no painel do seu registrador
+6. Adicione esses 2 registros DNS
+7. Aguarde propagação (pode levar 24-48h)
+8. Firebase vai validar automaticamente e emitir SSL
+
+**Opção C: Cloud Run (Backend/API)**
+
+1. Console GCP → Cloud Run
+2. Clique no serviço `servio-backend`
+3. Aba "MANAGE CUSTOM DOMAINS"
+4. Clique em "ADD MAPPING"
+5. Digite: `api.servio.ai`
+6. Google vai te dar registros DNS similares
+7. Adicione no seu registrador
+8. Aguarde propagação
+
+**Tempo:** 30min de configuração + 24-48h de propagação
+
+---
+
+#### ✅ Checklist de GO-LIVE (DIA 15)
+
+**30 minutos antes do anúncio:**
+
+- [ ] Todos os serviços Cloud Run estão verdes
+- [ ] GET `/health` retorna `{"ok": true}` em ambos serviços
+- [ ] Teste: Login com Google funciona
+- [ ] Teste: Criar job funciona
+- [ ] Teste: Enviar proposta funciona
+- [ ] Teste: Chat envia mensagens
+- [ ] Teste: Pagamento cria sessão Stripe
+- [ ] Firestore rules estão em produção
+- [ ] Backup automático está agendado
+- [ ] Alertas de monitoramento estão ativos
+- [ ] Política de Privacidade está publicada
+- [ ] Termos de Uso estão publicados
+- [ ] Email de suporte está configurado (ex: suporte@servio.ai)
+- [ ] Você tem acesso ao dashboard de logs/métricas
+- [ ] Rollback plan documentado (como voltar para versão anterior)
+
+**Se TODOS estiverem ✅, pode anunciar!**
+
+---
+
+### 🚨 TROUBLESHOOTING RÁPIDO
+
+#### Erro: "Failed to push to Artifact Registry"
+
+**Solução:** Verifique que o repositório foi criado e que a Service Account tem permissão `Artifact Registry Writer`
+
+#### Erro: "CORS blocked"
+
+**Solução:** Adicione seu domínio frontend na lista de origens permitidas no backend
+
+#### Erro: Stripe webhook "Invalid signature"
+
+**Solução:** Verifique que `STRIPE_WEBHOOK_SECRET` está correto e que a URL do webhook no Stripe está certa
+
+#### Site não carrega após configurar domínio
+
+**Solução:** DNS ainda está propagando. Use https://dnschecker.org para verificar. Pode levar até 48h.
+
+#### Usuário não consegue fazer login
+
+**Solução:** Verifique que o domínio está na whitelist do Firebase Auth (Console Firebase → Authentication → Settings → Authorized domains)
+
+---
+
+### 📞 COMUNICAÇÃO DURANTE O PROJETO
+
+**Para reportar bugs ou dúvidas:**
+
+1. Descreva o que você tentou fazer
+2. Descreva o que aconteceu (erros, comportamento inesperado)
+3. Se possível, anexe screenshot
+4. Diga qual navegador/dispositivo você está usando
+
+**Exemplo bom:**
+
+> "Tentei criar um job no Chrome. Cliquei em 'Publicar' mas apareceu erro vermelho 'Network Error'. Screenshot anexo. Console do navegador mostra erro 500."
+
+**Exemplo ruim:**
+
+> "Não funciona"
+
+---
+
+### 🎓 RECURSOS EDUCATIVOS
+
+**Para aprender durante o processo:**
+
+- **GCP:** https://cloud.google.com/docs/get-started
+- **Stripe:** https://stripe.com/docs/development/quickstart
+- **Firebase:** https://firebase.google.com/docs/web/setup
+- **React:** https://react.dev/learn
+- **Firestore:** https://firebase.google.com/docs/firestore/quickstart
+
+**Vídeos recomendados (YouTube):**
+
+- "Deploy Node.js to Google Cloud Run" - Fireship
+- "Stripe Payment Integration Tutorial" - Web Dev Simplified
+- "Firebase Auth Tutorial" - Firebase
+
+**Tempo sugerido:** 1-2h/dia assistindo enquanto come/descansa
+
+---
 
 #update_log - 30/10/2025 13:31
 A IA Gemini definiu a estrutura inicial das coleções do Firestore com base nas interfaces TypeScript existentes em `types.ts` e `mockData.ts`. A seção `2.1. Estrutura do Firestore` foi adicionada ao Documento Mestre.
