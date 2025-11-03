@@ -14,6 +14,15 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
+// Warn if any Firebase env var is missing to help diagnose login errors
+const missing = Object.entries(firebaseConfig)
+  .filter(([_, v]) => !v)
+  .map(([k]) => k);
+if (missing.length) {
+  console.warn('[Firebase] Variáveis ausentes:', missing.join(', '), '\
+\nVerifique o arquivo .env.local com chaves VITE_FIREBASE_* do seu projeto e Authorized Domains no Firebase Auth.');
+}
+
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);

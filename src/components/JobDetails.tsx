@@ -20,6 +20,8 @@ interface JobDetailsProps {
   aiSuggestion?: { date: string; time: string } | null;
   onConfirmSchedule: () => void;
   onDataRefresh?: () => Promise<void>;
+  documentVerificationComponent?: React.ReactNode;
+  analysisComponent?: React.ReactNode;
   proposalFormComponent?: React.ReactNode;
 }
 
@@ -41,7 +43,7 @@ const MediaItem: React.FC<{ media: { name: string, path: string } }> = ({ media 
   );
 };
 
-const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, currentUser, authToken, onBack, onAcceptProposal, onSendMessage, onPay, onCompleteJob, onOpenDispute, onOpenReview, onSetOnTheWay, aiSuggestion, onConfirmSchedule, proposalFormComponent }) => {
+const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, currentUser, authToken, onBack, onAcceptProposal, onSendMessage, onPay, onCompleteJob, onOpenDispute, onOpenReview, onSetOnTheWay, aiSuggestion, onConfirmSchedule, documentVerificationComponent, analysisComponent, proposalFormComponent }) => {
 
   const getStatusClass = (status: string) => {
     switch (status) {
@@ -163,6 +165,16 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job, proposals, messages, curre
           </div>
           <p className="text-sm text-gray-600 italic">"{job.review.comment}"</p>
         </div>
+      )}
+
+      {/* Document Verification Section */}
+      {documentVerificationComponent && (
+        <div className="mb-8">{documentVerificationComponent}</div>
+      )}
+
+      {/* Renderiza o componente de análise, se ele for passado */}
+      {analysisComponent && (
+        <div className="mb-8">{analysisComponent}</div>
       )}
 
       {proposalFormComponent && (

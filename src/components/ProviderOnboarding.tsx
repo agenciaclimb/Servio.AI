@@ -66,7 +66,7 @@ const ProviderOnboarding: React.FC<ProviderOnboardingProps> = ({ user }) => {
       };
 
       const token = await auth.currentUser?.getIdToken();
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_API_URL}/users/${user.email}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${user.email}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json',
                    'Authorization': `Bearer ${token}` },

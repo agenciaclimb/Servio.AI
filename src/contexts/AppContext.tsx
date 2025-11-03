@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useStripe } from '@stripe/react-stripe-js';
-import { User, Job, Proposal, Message, MaintainedItem, Notification, Bid, FraudAlert, JobData, Dispute, ProviderService, StaffRole } from '../../types';
+import { User, Job, Proposal, Message, MaintainedItem, Notification, Bid, FraudAlert, JobData, Dispute, ProviderService, StaffRole, Escrow } from '../../types';
+import { api } from '../lib/api';
+import { aiApi } from '../lib/aiApi';
 import { requestForToken } from '../firebaseMessaging';
 import { auth } from '../../firebaseConfig';
 import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth';
@@ -22,6 +24,7 @@ interface IAppContext {
   fraudAlerts: FraudAlert[];
   sentimentAlerts: any[];
   metrics: { userGrowth: any[], jobCreation: any[], revenue: any[] };
+  escrows: Escrow[];
   isWizardOpen: boolean;
   disputeJobId: string | null;
   reviewJobId: string |null;
@@ -45,6 +48,7 @@ interface IAppContext {
   handleConfirmSchedule: (jobId: string, date: string, time: string) => Promise<void>;
   handleAddStaff: (newStaffData: { name: string; email: string; role: StaffRole }) => Promise<void>;
   handleSaveServiceCatalog: (updatedCatalog: ProviderService[]) => Promise<void>;
+  handleMarkAsPaid: (escrowId: string) => Promise<void>;
   handleStartTrial: () => Promise<void>;
   handleRequestNotificationPermission: () => Promise<void>;
   fetchJobs: () => Promise<void>;
@@ -57,6 +61,10 @@ interface IAppContext {
   setReviewJobId: (jobId: string | null) => void;
   setIsAddItemModalOpen: (isOpen: boolean) => void;
   setMapJobId: (jobId: string | null) => void;
+
+  // Landing search -> Wizard prompt
+  initialPrompt?: string | null;
+  setInitialPrompt?: (value: string | null) => void;
 }
 
 const AppContext = createContext<IAppContext | null>(null);
@@ -74,6 +82,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [fraudAlerts, setFraudAlerts] = useState<FraudAlert[]>([]);
   const [sentimentAlerts, setSentimentAlerts] = useState<any[]>([]);
   const [metrics, setMetrics] = useState({ userGrowth: [], jobCreation: [], revenue: [] });
+  const [escrows, setEscrows] = useState<Escrow[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -94,9 +103,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const fetchJobs = async () => {
     if (!authToken) return;
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs`, { headers: { 'Authorization': `Bearer ${authToken}` } });
-      const jobsData: Job[] = await response.json();
-      setJobs(jobsData);
+      const jobsData = await api.get<Job[]>('/jobs');
+      setJobs(jobsData || []);
     } catch (error) {
       console.error("Failed to fetch jobs:", error);
     }
@@ -105,9 +113,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const fetchItems = async () => {
     if (!currentUser || !authToken) return;
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/maintained-items?clientId=${currentUser.email}`, { headers: { 'Authorization': `Bearer ${authToken}` } });
-      const itemsData: MaintainedItem[] = await response.json();
-      setItems(itemsData);
+      const itemsData = await api.get<MaintainedItem[]>(`/maintained-items?clientId=${currentUser.email}`);
+      setItems(itemsData || []);
     } catch (error) {
       console.error("Failed to fetch items:", error);
     }
@@ -116,23 +123,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const fetchAdminData = async () => {
     if (!authToken) return;
     try {
-      const [usersResponse, fraudAlertsResponse, disputesResponse, sentimentAlertsResponse, userGrowthRes, jobCreationRes, revenueRes] = await Promise.all([
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, { headers: { 'Authorization': `Bearer ${authToken}` } }),
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/fraud-alerts`, { headers: { 'Authorization': `Bearer ${authToken}` } }),
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/disputes`, { headers: { 'Authorization': `Bearer ${authToken}` } }),
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/sentiment-alerts`, { headers: { 'Authorization': `Bearer ${authToken}` } }),
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/metrics/user-growth`, { headers: { 'Authorization': `Bearer ${authToken}` } }),
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/metrics/job-creation`, { headers: { 'Authorization': `Bearer ${authToken}` } }),
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/metrics/revenue`, { headers: { 'Authorization': `Bearer ${authToken}` } }),
+      const [usersResponse, fraudAlertsResponse, disputesResponse, sentimentAlertsResponse, escrowsRes, userGrowthRes, jobCreationRes, revenueRes] = await Promise.all([
+        api.get<User[]>('/users'),
+        api.get<FraudAlert[]>('/fraud-alerts'),
+        api.get<Dispute[]>('/disputes'),
+        api.get<any[]>('/sentiment-alerts'),
+        api.get<Escrow[]>('/escrows'),
+        api.get<any[]>('/metrics/user-growth'),
+        api.get<any[]>('/metrics/job-creation'),
+        api.get<any[]>('/metrics/revenue'),
       ]);
-      setUsers(await usersResponse.json());
-      setFraudAlerts(await fraudAlertsResponse.json());
-      setDisputes(await disputesResponse.json());
-      setSentimentAlerts(await sentimentAlertsResponse.json());
+      setUsers(usersResponse || []);
+      setFraudAlerts(fraudAlertsResponse || []);
+      setDisputes(disputesResponse || []);
+      setSentimentAlerts(sentimentAlertsResponse || []);
+      setEscrows(escrowsRes || []);
       setMetrics({
-        userGrowth: await userGrowthRes.json(),
-        jobCreation: await jobCreationRes.json(),
-        revenue: await revenueRes.json(),
+        userGrowth: userGrowthRes || [],
+        jobCreation: jobCreationRes || [],
+        revenue: revenueRes || [],
       });
     } catch (error) {
       console.error("Failed to fetch admin data:", error);
@@ -141,16 +150,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const fetchDataForJobDetails = async (jobId: string) => {
     if (!authToken) throw new Error("Not authenticated");
-    const headers = { 'Authorization': `Bearer ${authToken}` };
     const [jobResponse, proposalsResponse, messagesResponse] = await Promise.all([
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/${jobId}`, { headers }),
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/proposals?jobId=${jobId}`, { headers }),
-        fetch(`${import.meta.env.VITE_BACKEND_API_URL}/messages/${jobId}`, { headers })
+        api.get<Job>(`/jobs/${jobId}`),
+        api.get<Proposal[]>(`/proposals?jobId=${jobId}`),
+        api.get<Message[]>(`/jobs/${jobId}/messages`)
     ]);
     return {
-        job: await jobResponse.json(),
-        proposals: await proposalsResponse.json(),
-        messages: await messagesResponse.json(),
+        job: jobResponse,
+        proposals: proposalsResponse || [],
+        messages: messagesResponse || [],
     };
   };
 
@@ -159,10 +167,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       if (firebaseUser && firebaseUser.email) {
         const token = await firebaseUser.getIdToken();
         setAuthToken(token);
+        api.setAuthToken(token);
+        aiApi.setAuthToken(token);
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${firebaseUser.email}`, { headers: { 'Authorization': `Bearer ${token}` } });
-            if (!response.ok) throw new Error("User not found in DB");
-            const userData: User = await response.json();
+            const userData = await api.get<User>(`/users/${firebaseUser.email}`);
             setCurrentUser(userData);
 
             if (pendingJobData) {
@@ -182,6 +190,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       } else {
         setCurrentUser(null);
         setAuthToken(null);
+        api.setAuthToken(null);
+        aiApi.setAuthToken(null);
         if (location.pathname !== '/' && !location.pathname.startsWith('/servicos')) navigate('/');
       }
       setIsLoading(false);
@@ -212,14 +222,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const newJobPayload = { ...jobData, clientId: finalClientId };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify(newJobPayload),
-      });
-      if (!response.ok) throw new Error('Failed to create job.');
+      const created = await api.post<Job>('/jobs', newJobPayload);
       setIsWizardOpen(false);
+      // Limpa prompt inicial após submissão
+      setInitialPrompt(null);
       await fetchJobs();
+      // Redireciona para detalhes do job recém-criado (melhor conversão)
+      if (created && (created as any).id) {
+        navigate(`/job/${(created as any).id}`);
+      } else if (!fromPending) {
+        navigate('/dashboard');
+      }
     } catch (error) {
       console.error("Error submitting job:", error);
     }
@@ -234,11 +247,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (!currentUser || !authToken) return;
     const payload = { ...newItemData, clientId: currentUser.email };
     try {
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/maintained-items`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify(payload),
-      });
+      await api.post('/maintained-items', payload);
       setIsAddItemModalOpen(false);
       await fetchItems();
     } catch (error) {
@@ -250,11 +259,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (!currentUser || !authToken) return;
     const messagePayload = { chatId: jobId, senderId: currentUser.email, text };
     try {
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify(messagePayload),
-      });
+      await api.post(`/jobs/${jobId}/messages`, messagePayload);
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -266,16 +271,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (!proposalToAccept) return;
 
     try {
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/${jobId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ status: 'em_progresso', providerId: proposalToAccept.providerId }),
-      });
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/proposals/${proposalId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ status: 'aceita' }),
-      });
+      await api.put(`/jobs/${jobId}`, { status: 'em_progresso', providerId: proposalToAccept.providerId });
+      await api.put(`/proposals/${proposalId}`, { status: 'aceita' });
       await fetchJobs();
     } catch (error) {
       console.error("Error accepting proposal:", error);
@@ -285,12 +282,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const handlePayment = async (job: Job, amount: number) => {
     if (!stripe || !authToken) return;
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/create-checkout-session`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ job, amount }),
-      });
-      const session = await response.json();
+      const session = await api.post<{ id: string }>('/create-checkout-session', { job, amount });
       await stripe.redirectToCheckout({ sessionId: session.id });
     } catch (error) {
       console.error("Error initiating payment:", error);
@@ -300,10 +292,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const handleCompleteJob = async (jobId: string) => {
     if (!authToken) return;
     try {
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/${jobId}/release-payment`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${authToken}` },
-      });
+      await api.post(`/jobs/${jobId}/complete`);
       await fetchJobs();
     } catch (error) {
       console.error("Error completing job:", error);
@@ -313,16 +302,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const handleOpenDispute = async (jobId: string, reason: string) => {
     if (!currentUser || !authToken) return;
     try {
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/disputes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ jobId, initiatorId: currentUser.email, reason }),
-      });
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/${jobId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ status: 'em_disputa' }),
-      });
+      await api.post('/disputes', { jobId, initiatorId: currentUser.email, reason });
+      await api.put(`/jobs/${jobId}`, { status: 'em_disputa' });
       await fetchJobs();
       setDisputeJobId(null);
     } catch (error) {
@@ -333,11 +314,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const handleVerification = async (userId: string, newStatus: 'verificado' | 'recusado') => {
     if (!authToken) return;
     try {
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${userId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ verificationStatus: newStatus }),
-      });
+      await api.put(`/users/${userId}`, { verificationStatus: newStatus });
       await fetchAdminData();
     } catch (error) {
       console.error("Error during user verification:", error);
@@ -348,11 +325,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (!currentUser || !authToken) return;
     try {
       const reviewPayload = { review: { rating, comment, authorId: currentUser.email, createdAt: new Date().toISOString() } };
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/${jobId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify(reviewPayload),
-      });
+      await api.put(`/jobs/${jobId}`, reviewPayload);
       await fetchJobs();
       setReviewJobId(null);
     } catch (error) {
@@ -363,11 +336,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const handleResolveDispute = async (disputeId: string, resolution: 'release_to_provider' | 'refund_client', comment: string) => {
     if (!authToken) return;
     try {
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/disputes/${disputeId}/resolve`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ resolution, comment }),
-      });
+      await api.post(`/disputes/${disputeId}/resolve`, { resolution, comment });
       await fetchJobs();
       await fetchAdminData();
     } catch (error) {
@@ -378,14 +347,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const handleResolveFraudAlert = async (alertId: string) => {
     if (!authToken) return;
     try {
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/fraud-alerts/${alertId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ status: 'revisado' }),
-      });
+      await api.put(`/fraud-alerts/${alertId}`, { status: 'revisado' });
       await fetchAdminData();
     } catch (error) {
       console.error("Error resolving fraud alert:", error);
+    }
+  };
+
+  const handleMarkAsPaid = async (escrowId: string) => {
+    if (!authToken) return;
+    try {
+      await api.post(`/admin/payments/${escrowId}/mark-paid`);
+      await fetchAdminData();
+    } catch (error) {
+      console.error("Error marking escrow as paid:", error);
     }
   };
 
@@ -393,17 +368,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (!authToken) return;
     try {
       const scheduledDateTime = new Date(`${date}T${time}:00`);
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/${jobId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ status: 'agendado', scheduledDate: scheduledDateTime.toISOString() }),
-      });
+      await api.put(`/jobs/${jobId}`, { status: 'agendado', scheduledDate: scheduledDateTime.toISOString() });
       const systemMessage = `✅ Serviço agendado para ${scheduledDateTime.toLocaleDateString('pt-BR')} às ${time}.`;
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ chatId: jobId, senderId: 'system', text: systemMessage }),
-      });
+      await api.post(`/jobs/${jobId}/messages`, { senderId: 'system', text: systemMessage });
     } catch (error) {
       console.error("Error confirming schedule:", error);
     }
@@ -412,13 +379,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const handleSaveServiceCatalog = async (updatedCatalog: ProviderService[]) => {
     if (!currentUser || !authToken) return;
     try {
-      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${currentUser.email}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ serviceCatalog: updatedCatalog }),
-      });
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${currentUser.email}`, { headers: { 'Authorization': `Bearer ${authToken}` } });
-      setCurrentUser(await response.json());
+      await api.put(`/users/${currentUser.email}`, { serviceCatalog: updatedCatalog });
+      const updatedUser = await api.get<User>(`/users/${currentUser.email}`);
+      setCurrentUser(updatedUser);
     } catch (error) {
       console.error("Error saving service catalog:", error);
     }
@@ -429,13 +392,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       throw new Error("Permission denied.");
     }
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/staff`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify(newStaffData),
-      });
-      if (!response.ok) throw new Error('Failed to add staff member.');
-      await fetchAdminData(); // Refresh the list of users
+      await api.post('/staff', newStaffData);
+      await fetchAdminData();
     } catch (error) {
       console.error("Error adding staff member:", error);
     }
@@ -446,18 +404,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       throw new Error("Usuário não autenticado.");
     }
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${currentUser.email}/start-trial`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${authToken}` },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Falha ao iniciar o período de teste.');
-      }
+      await api.post(`/users/${currentUser.email}/start-trial`);
       // Recarrega os dados do usuário para refletir o status 'trialing'
-      const userResponse = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${currentUser.email}`, { headers: { 'Authorization': `Bearer ${authToken}` } });
-      setCurrentUser(await userResponse.json());
+      const updatedUser = await api.get<User>(`/users/${currentUser.email}`);
+      setCurrentUser(updatedUser);
     } catch (error) {
       console.error("Error starting trial:", error);
       throw error; // Re-throw para que o componente possa lidar com isso (ex: mostrar um alerta)
@@ -474,11 +424,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       if (!currentTokens.includes(fcmToken)) {
         const updatedTokens = [...currentTokens, fcmToken];
         try {
-          await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${currentUser.email}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-            body: JSON.stringify({ fcmTokens: updatedTokens }),
-          });
+          await api.put(`/users/${currentUser.email}`, { fcmTokens: updatedTokens });
           // Atualiza o estado local do usuário
           setCurrentUser(prev => prev ? { ...prev, fcmTokens: updatedTokens } : null);
         } catch (error) {
@@ -503,6 +449,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     fraudAlerts,
     sentimentAlerts,
     metrics,
+    escrows,
     isWizardOpen,
     disputeJobId,
     reviewJobId,
@@ -523,6 +470,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     handleResolveFraudAlert,
     handleConfirmSchedule,
     handleAddStaff,
+    handleMarkAsPaid,
     handleStartTrial,
     handleRequestNotificationPermission,
     handleSaveServiceCatalog,
@@ -534,6 +482,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setReviewJobId,
     setIsAddItemModalOpen,
     setMapJobId,
+    // Expor prompt inicial para o App usar no Wizard
+    initialPrompt,
+    setInitialPrompt,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

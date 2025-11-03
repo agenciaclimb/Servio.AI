@@ -1,32 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { Routes, Route, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 import { useAppContext } from './contexts/AppContext';
 import { User, Job, Proposal, Message } from '../types';
 
-import Login from './components/Login';
-import ProviderOnboarding from './components/ProviderOnboarding';
-import AIJobRequestWizard from './components/AIJobRequestWizard';
-import ClientDashboard from './components/ClientDashboard';
-import ProviderDashboard from './components/ProviderDashboard';
-import AdminDashboard from './components/AdminDashboard';
-import JobDetails from './components/JobDetails';
+// Componentes críticos (carregamento imediato)
 import LoadingSpinner from './components/LoadingSpinner';
 import ProtectedRoute from './components/ProtectedRoute';
 import LandingPage from './components/LandingPage';
-import DisputeModal from './components/DisputeModal';
-import ReviewModal from './components/ReviewModal';
-import ServiceCatalogModal from './components/ServiceCatalogModal';
-import AddItemModal from './components/AddItemModal';
-import JobLocationModal from './components/JobLocationModal';
-import PublicProfilePage from './components/PublicProfilePage';
-import DisputeAnalysisModal from './components/DisputeAnalysisModal';
-import ItemDetailsPage from './components/ItemDetailsPage';
+import Login from './components/Login';
 import CategoryLandingPage from './components/CategoryLandingPage';
-import BlogIndexPage from './components/BlogIndexPage'; // Corrigido
-import BlogPostPage from './components/BlogPostPage'; // Corrigido
-import NotificationPermissionBanner from './components/NotificationPermissionBanner';
 
-import ProposalForm from './components/ProposalForm'; // Importar o novo formulário
+// Lazy load de componentes pesados (code splitting)
+const AIJobRequestWizard = lazy(() => import('./components/AIJobRequestWizard'));
+const ClientDashboard = lazy(() => import('./components/ClientDashboard'));
+const ProviderDashboard = lazy(() => import('./components/ProviderDashboard'));
+const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
+const ProviderOnboarding = lazy(() => import('./components/ProviderOnboarding'));
+const JobDetails = lazy(() => import('./components/JobDetails'));
+const PublicProfilePage = lazy(() => import('./components/PublicProfilePage'));
+const ItemDetailsPage = lazy(() => import('./components/ItemDetailsPage'));
+const BlogIndexPage = lazy(() => import('./components/BlogIndexPage'));
+const BlogPostPage = lazy(() => import('./components/BlogPostPage'));
+const BetaWelcomePage = lazy(() => import('./components/BetaWelcomePage'));
+const DocumentVerification = lazy(() => import('./components/DocumentVerification'));
+const ComparativeAnalysis = lazy(() => import('./components/ComparativeAnalysis'));
+const ProposalForm = lazy(() => import('./components/ProposalForm'));
+
+// Modais (lazy load - só carregam quando abertos)
+const DisputeModal = lazy(() => import('./components/DisputeModal'));
+const ReviewModal = lazy(() => import('./components/ReviewModal'));
+const ServiceCatalogModal = lazy(() => import('./components/ServiceCatalogModal'));
+const AddItemModal = lazy(() => import('./components/AddItemModal'));
+const JobLocationModal = lazy(() => import('./components/JobLocationModal'));
+const DisputeAnalysisModal = lazy(() => import('./components/DisputeAnalysisModal'));
+
+// Banners leves (import direto)
+import NotificationPermissionBanner from './components/NotificationPermissionBanner';
+import TestEnvironmentBanner from './components/TestEnvironmentBanner';
+import ReportBugButton from './components/ReportBugButton';
 const App: React.FC = () => {
   const {
     currentUser,
@@ -35,6 +46,9 @@ const App: React.FC = () => {
     setIsWizardOpen,
     handleJobSubmit,
     handleLandingSearch,
+    // usar o prompt vindo do contexto para pré-preencher o wizard
+    initialPrompt,
+    setInitialPrompt,
     disputeJobId,
     setDisputeJobId,
     handleOpenDispute,
@@ -59,6 +73,7 @@ const App: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showNotificationBanner, setShowNotificationBanner] = useState(false);
+  const isTestEnvironment = import.meta.env.VITE_APP_ENV !== 'production';
 
   useEffect(() => {
     // Mostra o banner apenas se o usuário estiver logado, o navegador suportar notificações,
@@ -96,15 +111,19 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-200 transition-colors duration-300">
+      {isTestEnvironment && <TestEnvironmentBanner />}
+      {isTestEnvironment && <ReportBugButton />}
       <main className="container mx-auto p-4">
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<LandingPage onSearch={handleLandingSearch} />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/servicos/:category/:location?" element={<CategoryLandingPage />} />
-          <Route path="/blog" element={<BlogIndexPage />} />
-          <Route path="/blog/:slug" element={<BlogPostPage />} />
-          <Route path="/provider/:providerId" element={<PublicProfilePage />} />
+        <Suspense fallback={<div className="flex justify-center items-center min-h-screen"><LoadingSpinner /></div>}>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<LandingPage onSearch={handleLandingSearch} />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/servicos/:category/:location?" element={<CategoryLandingPage />} />
+            <Route path="/blog" element={<BlogIndexPage />} />
+            <Route path="/blog/:slug" element={<BlogPostPage />} />
+            <Route path="/beta-welcome" element={<BetaWelcomePage />} />
+            <Route path="/provider/:providerId" element={<PublicProfilePage />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute isAllowed={!!currentUser} />}>
@@ -131,40 +150,50 @@ const App: React.FC = () => {
         </Routes>
 
         {isWizardOpen && (
-          <AIJobRequestWizard 
-            onClose={() => setIsWizardOpen(false)}
-            initialData={{ targetProviderId: location.state?.targetProviderId } as any}
-            initialPrompt={location.state?.initialPrompt || undefined}
-            onSubmit={handleJobSubmit}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <AIJobRequestWizard 
+              onClose={() => { setIsWizardOpen(false); setInitialPrompt && setInitialPrompt(null); }}
+              initialData={{ targetProviderId: location.state?.targetProviderId } as any}
+              initialPrompt={initialPrompt || undefined}
+              onSubmit={handleJobSubmit}
+            />
+          </Suspense>
         )}
         {disputeJobId && (
-          <DisputeModal 
-            jobId={disputeJobId}
-            onClose={() => setDisputeJobId(null)}
-            onSubmit={handleOpenDispute}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <DisputeModal 
+              jobId={disputeJobId}
+              onClose={() => setDisputeJobId(null)}
+              onSubmit={handleOpenDispute}
+            />
+          </Suspense>
         )}
         {reviewJobId && (
-          <ReviewModal 
-            jobId={reviewJobId}
-            onClose={() => setReviewJobId(null)}
-            onSubmit={handleReviewSubmit}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <ReviewModal 
+              jobId={reviewJobId}
+              onClose={() => setReviewJobId(null)}
+              onSubmit={handleReviewSubmit}
+            />
+          </Suspense>
         )}
         {isAddItemModalOpen && (
-          <AddItemModal 
-            onClose={() => setIsAddItemModalOpen(false)}
-            onSave={handleSaveItem}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <AddItemModal 
+              onClose={() => setIsAddItemModalOpen(false)}
+              onSave={handleSaveItem}
+            />
+          </Suspense>
         )}
         {mapJobId && (
-          <JobLocationModal
-            job={jobs.find(j => j.id === mapJobId)!}
-            client={users.find(u => u.email === jobs.find(j => j.id === mapJobId)?.clientId)!}
-            provider={users.find(u => u.email === jobs.find(j => j.id === mapJobId)?.providerId)!}
-            onClose={() => setMapJobId(null)}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <JobLocationModal
+              job={jobs.find(j => j.id === mapJobId)!}
+              client={users.find(u => u.email === jobs.find(j => j.id === mapJobId)?.clientId)!}
+              provider={users.find(u => u.email === jobs.find(j => j.id === mapJobId)?.providerId)!}
+              onClose={() => setMapJobId(null)}
+            />
+          </Suspense>
         )}
 
         {showNotificationBanner && (
@@ -179,6 +208,7 @@ const App: React.FC = () => {
             }}
           />
         )}
+        </Suspense>
       </main>
     </div>
   );
@@ -189,6 +219,7 @@ const JobDetailsPage: React.FC = () => {
   const { 
     currentUser,
     authToken,
+    users,
     proposals: allProposals, // Renomear para evitar conflito
     fetchDataForJobDetails, 
     handleConfirmSchedule,
@@ -209,6 +240,8 @@ const JobDetailsPage: React.FC = () => {
   const [aiSuggestion, setAiSuggestion] = useState<{ date: string; time: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showUpsellModal, setShowUpsellModal] = useState(false);
+  const [upsellFeatureName, setUpsellFeatureName] = useState('');
 
   // Ler o rascunho da proposta do estado da navegação
   const proposalDraft = location.state?.proposalDraft || '';
@@ -262,6 +295,42 @@ const JobDetailsPage: React.FC = () => {
     }
   };
 
+  const handleUpsellClick = (featureName: string) => {
+    setUpsellFeatureName(featureName);
+    setShowUpsellModal(true);
+  };
+
+  const handleRequestDocument = async (documentName: string) => {
+    if (!jobId || !authToken) return;
+    try {
+      // Este endpoint precisará ser criado no backend
+      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/${jobId}/document-requests`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify({ documentName }),
+      });
+      await fetchData(); // Recarrega os dados do job
+    } catch (error) {
+      console.error("Failed to request document:", error);
+    }
+  };
+
+  const handleFileUpload = async (requestId: string, file: File) => {
+    if (!jobId || !authToken) return;
+    try {
+      // A lógica de upload de arquivo (get signed URL, upload to GCS) seria semelhante à do AIJobRequestWizard
+      // Por simplicidade, vamos simular e chamar um endpoint de atualização
+      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/${jobId}/document-requests/${requestId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify({ status: 'enviado', fileName: file.name }), // Simulação
+      });
+      await fetchData();
+    } catch (error) {
+      console.error("Failed to upload document:", error);
+    }
+  };
+
   if (isLoading) return <LoadingSpinner />;
   if (!job) return <div>Job não encontrado.</div>;
 
@@ -287,6 +356,30 @@ const JobDetailsPage: React.FC = () => {
             initialMessage={proposalDraft}
             onSubmit={handleProposalSubmit}
             isLoading={isSubmitting}
+          />
+        ) : null
+      }
+      // Passa o componente de análise comparativa
+      analysisComponent={
+        currentUser?.type === 'cliente' && proposals.length > 1 ? (
+          <ComparativeAnalysis
+            proposals={proposals}
+            providers={users.filter(u => proposals.some(p => p.providerId === u.email))}
+            isSubscribed={currentUser.subscription?.status === 'active' || currentUser.subscription?.status === 'trialing'}
+            onUpgradeClick={() => handleUpsellClick('Análise Comparativa de Propostas')}
+          />
+        ) : null
+      }
+      // Passa o componente de verificação de documentos
+      documentVerificationComponent={
+        (currentUser?.type === 'cliente' || currentUser?.email === job.providerId) && job.providerId ? (
+          <DocumentVerification
+            job={job}
+            isSubscribed={currentUser.subscription?.status === 'active' || currentUser.subscription?.status === 'trialing'}
+            onUpgradeClick={() => handleUpsellClick('Verificação de Documentos')}
+            onRequestDocument={handleRequestDocument}
+            onFileUpload={handleFileUpload}
+            isClientView={currentUser.type === 'cliente'}
           />
         ) : null
       }

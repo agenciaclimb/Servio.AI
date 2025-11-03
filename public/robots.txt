@@ -1,0 +1,17 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://servio.ai/sitemap.xml
+
+# Disallow admin and private routes
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /profile
+Disallow: /wizard
+
+# Allow all categories and public pages
+Allow: /servicos/
+Allow: /cidades/
+Allow: /blog/

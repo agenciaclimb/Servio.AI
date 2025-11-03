@@ -1,23 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+  <!-- DNS Prefetch e Preconnect para vendors críticos (máx. 2 preconnects) -->
+  <!-- Stripe: necessário para checkout (preconnect) -->
+  <link rel="dns-prefetch" href="https://js.stripe.com" />
+  <link rel="preconnect" href="https://js.stripe.com" crossorigin />
+
+  <!-- Firebase Auth (Identity Toolkit) é o único preconnect mantido -->
+  <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com" />
+  <link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin />
+
+  <!-- Demais Firebase endpoints apenas com dns-prefetch (sem preconnect) para evitar warning -->
+  <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
+  <link rel="dns-prefetch" href="https://securetoken.googleapis.com" />
+    
     <title>SERVIO.AI - Find the Perfect Professional</title>
     <meta name="description" content="A marketplace platform that connects clients with service providers using the power of Gemini models for personalized matching, secure payments, and verified reviews." id="meta-description" />
-    <script src="https://cdn.tailwindcss.com"></script>
-  <script type="importmap">
-{
-  "imports": {
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.27.0",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0"
-  }
-}
-</script>
-<!-- Styles are provided via Tailwind CDN and component-level CSS -->
+    
+  <!-- Stripe será carregado sob demanda via loadStripe (sem script global) -->
+  <!-- Tailwind CSS é importado via src/index.css (build local) -->
 </head>
   <body>
     <div id="root"></div>

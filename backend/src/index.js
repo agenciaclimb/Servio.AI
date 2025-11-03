@@ -439,6 +439,36 @@ function createApp({
     }
   });
 
+  // Create a new dispute
+  app.post("/disputes", async (req, res) => {
+    try {
+      const { jobId, initiatorId, reason } = req.body;
+      if (!jobId || !initiatorId || !reason) {
+        return res.status(400).json({ error: "jobId, initiatorId and reason are required." });
+      }
+
+      const disputeRef = db.collection("disputes").doc();
+      const dispute = {
+        id: disputeRef.id,
+        jobId,
+        initiatorId,
+        reason,
+        status: 'aberta',
+        messages: [],
+        createdAt: new Date().toISOString(),
+      };
+      await disputeRef.set(dispute);
+
+      // Also update the job status to 'em_disputa'
+      await db.collection('jobs').doc(jobId).update({ status: 'em_disputa' });
+
+      res.status(201).json(dispute);
+    } catch (error) {
+      console.error("Error creating dispute:", error);
+      res.status(500).json({ error: "Failed to create dispute." });
+    }
+  });
+
   // =================================================================
   // USERS API ENDPOINTS
   // =================================================================
@@ -545,7 +575,7 @@ function createApp({
       const jobData = {
         ...req.body,
         createdAt: new Date().toISOString(),
-        status: req.body.status || "aberto",
+        status: req.body.status || "ativo",
       };
       const jobRef = db.collection("jobs").doc();
       await jobRef.set(jobData);
@@ -553,6 +583,181 @@ function createApp({
     } catch (error) {
       console.error("Error creating job:", error);
       res.status(500).json({ error: "Failed to create job." });
+    }
+  });
+
+  // Mark a job as complete by the client
+  app.post("/jobs/:id/complete", async (req, res) => {
+    // This should be protected by checkAuth
+    try {
+      const { id } = req.params;
+      // const requesterEmail = req.user.email;
+
+      const jobRef = db.collection("jobs").doc(id);
+      const jobDoc = await jobRef.get();
+
+      if (!jobDoc.exists) {
+        return res.status(404).json({ error: "Job not found." });
+      }
+
+      // if (jobDoc.data().clientId !== requesterEmail) {
+      //   return res.status(403).json({ error: "Forbidden: Only the client can complete the job." });
+      // }
+
+      await jobRef.update({ status: "concluido" });
+      res.status(200).json({ message: "Job marked as complete successfully." });
+    } catch (error) {
+      console.error("Error completing job:", error);
+      res.status(500).json({ error: "Failed to complete job." });
+    }
+  });
+
+  // =================================================================
+  // MESSAGES API ENDPOINTS
+  // =================================================================
+
+  // Get all messages for a specific chat (job)
+  app.get("/jobs/:jobId/messages", async (req, res) => {
+    try {
+      const { jobId } = req.params;
+      const snapshot = await db.collection("messages").where("chatId", "==", jobId).orderBy("createdAt", "asc").get();
+      const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(messages);
+    } catch (error) {
+      console.error("Error getting messages:", error);
+      res.status(500).json({ error: "Failed to retrieve messages." });
+    }
+  });
+
+  // Compatibility route: GET /messages/:jobId
+  app.get("/messages/:jobId", async (req, res) => {
+    try {
+      const { jobId } = req.params;
+      const snapshot = await db
+        .collection("messages")
+        .where("chatId", "==", jobId)
+        .orderBy("createdAt", "asc")
+        .get();
+      const messages = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(messages);
+    } catch (error) {
+      console.error("Error getting messages (compat):", error);
+      res.status(500).json({ error: "Failed to retrieve messages." });
+    }
+  });
+
+  // Get a single job by ID
+  app.get("/jobs/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const doc = await db.collection("jobs").doc(id).get();
+      if (!doc.exists) {
+        return res.status(404).json({ error: "Job not found." });
+      }
+      res.status(200).json({ id: doc.id, ...doc.data() });
+    } catch (error) {
+      console.error("Error getting job:", error);
+      res.status(500).json({ error: "Failed to retrieve job." });
+    }
+  });
+
+  // Generic update for a job document
+  app.put("/jobs/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      const jobRef = db.collection("jobs").doc(id);
+      const jobDoc = await jobRef.get();
+      if (!jobDoc.exists) {
+        return res.status(404).json({ error: "Job not found." });
+      }
+      await jobRef.update(updates);
+      const updated = await jobRef.get();
+      res.status(200).json({ id: updated.id, ...updated.data() });
+    } catch (error) {
+      console.error("Error updating job:", error);
+      res.status(500).json({ error: "Failed to update job." });
+    }
+  });
+
+  // =================================================================
+  // PROPOSALS API ENDPOINTS
+  // =================================================================
+
+  // Get proposals, optionally filtered by jobId
+  app.get("/proposals", async (req, res) => {
+    try {
+      const { jobId } = req.query;
+      let query = db.collection("proposals");
+      if (jobId) {
+        query = query.where("jobId", "==", jobId);
+      }
+      const snapshot = await query.get();
+      const proposals = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(proposals);
+    } catch (error) {
+      console.error("Error getting proposals:", error);
+      res.status(500).json({ error: "Failed to retrieve proposals." });
+    }
+  });
+
+  // Create a new proposal
+  app.post("/proposals", async (req, res) => {
+    try {
+      const proposalData = { ...req.body, createdAt: new Date().toISOString(), status: 'pendente' };
+      const proposalRef = await db.collection("proposals").add(proposalData);
+      res.status(201).json({ id: proposalRef.id, ...proposalData });
+    } catch (error) {
+      console.error("Error creating proposal:", error);
+      res.status(500).json({ error: "Failed to create proposal." });
+    }
+  });
+
+  // Update proposal
+  app.put("/proposals/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      const ref = db.collection("proposals").doc(id);
+      const doc = await ref.get();
+      if (!doc.exists) return res.status(404).json({ error: "Proposal not found." });
+      await ref.update(updates);
+      const updated = await ref.get();
+      res.status(200).json({ id: updated.id, ...updated.data() });
+    } catch (error) {
+      console.error("Error updating proposal:", error);
+      res.status(500).json({ error: "Failed to update proposal." });
+    }
+  });
+
+  // Create a new message in a chat
+  app.post("/jobs/:jobId/messages", async (req, res) => {
+    try {
+      const { jobId } = req.params;
+      // const senderId = req.user.email;
+      const { text, senderId } = req.body; // senderId is temporary until auth is fully enforced
+      const messageData = { chatId: jobId, senderId, text, createdAt: new Date().toISOString() };
+      const messageRef = await db.collection("messages").add(messageData);
+      res.status(201).json({ id: messageRef.id, ...messageData });
+    } catch (error) {
+      console.error("Error sending message:", error);
+      res.status(500).json({ error: "Failed to send message." });
+    }
+  });
+
+  // Compatibility route: POST /messages
+  app.post("/messages", async (req, res) => {
+    try {
+      const { chatId, text, senderId } = req.body;
+      if (!chatId || !text || !senderId) {
+        return res.status(400).json({ error: "chatId, text and senderId are required." });
+      }
+      const messageData = { chatId, senderId, text, createdAt: new Date().toISOString() };
+      const messageRef = await db.collection("messages").add(messageData);
+      res.status(201).json({ id: messageRef.id, ...messageData });
+    } catch (error) {
+      console.error("Error sending message (compat):", error);
+      res.status(500).json({ error: "Failed to send message." });
     }
   });
 
@@ -605,6 +810,48 @@ function createApp({
     } catch (error) {
       console.error("Error getting maintenance history:", error);
       res.status(500).json({ error: "Failed to retrieve maintenance history." });
+    }
+  });
+
+  // List maintained items for a client
+  app.get("/maintained-items", async (req, res) => {
+    try {
+      const { clientId } = req.query;
+      if (!clientId) return res.status(400).json({ error: "clientId is required" });
+      const snapshot = await db
+        .collection("maintained_items")
+        .where("clientId", "==", clientId)
+        .orderBy("createdAt", "desc")
+        .get();
+      const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(items);
+    } catch (error) {
+      console.error("Error listing maintained items:", error);
+      res.status(500).json({ error: "Failed to retrieve maintained items." });
+    }
+  });
+
+  // Create a maintained item for a client
+  app.post("/maintained-items", async (req, res) => {
+    try {
+      const payload = req.body;
+      if (!payload || !payload.clientId || !payload.name || !payload.category) {
+        return res
+          .status(400)
+          .json({ error: "clientId, name and category are required." });
+      }
+      const ref = db.collection("maintained_items").doc();
+      const newItem = {
+        ...payload,
+        id: ref.id,
+        createdAt: new Date().toISOString(),
+        maintenanceHistory: [],
+      };
+      await ref.set(newItem);
+      res.status(201).json(newItem);
+    } catch (error) {
+      console.error("Error creating maintained item:", error);
+      res.status(500).json({ error: "Failed to create maintained item." });
     }
   });
 
@@ -780,6 +1027,189 @@ function createApp({
   });
 
   // =================================================================
+  // DOCUMENT REQUESTS API ENDPOINTS
+  // =================================================================
+
+  // Create a new document request for a job
+  app.post("/jobs/:jobId/document-requests", async (req, res) => {
+    // This should be protected by checkAuth and role checks
+    const { jobId } = req.params;
+    const { documentName } = req.body;
+
+    if (!documentName) {
+      return res.status(400).json({ error: "Document name is required." });
+    }
+
+    try {
+      const jobRef = db.collection("jobs").doc(jobId);
+      const newRequest = {
+        id: db.collection('dummy').doc().id, // Generate a random ID
+        documentName,
+        status: 'solicitado',
+        createdAt: new Date().toISOString(),
+      };
+
+      // Firestore doesn't have a native way to push to an array, so we read, update, and write.
+      await jobRef.update({
+        documentRequests: admin.firestore.FieldValue.arrayUnion(newRequest)
+      });
+
+      res.status(201).json(newRequest);
+    } catch (error) {
+      console.error(`Error creating document request for job ${jobId}:`, error);
+      res.status(500).json({ error: "Failed to create document request." });
+    }
+  });
+
+  // Update a document request (e.g., after file upload)
+  // This is a simplified version. A real implementation would be more complex.
+  app.put("/jobs/:jobId/document-requests/:requestId", async (req, res) => {
+    // This endpoint is simplified for demonstration.
+    // A robust implementation would involve transactions to update the array element.
+    // For now, we acknowledge the request. The Cloud Function will do the heavy lifting.
+    const { jobId, requestId } = req.params;
+    console.log(`Received update for document request ${requestId} in job ${jobId} with data:`, req.body);
+    res.status(200).json({ message: "Document status update acknowledged." });
+  });
+
+  // =================================================================
+  // INVITATIONS API ENDPOINTS
+  // =================================================================
+
+  // Create a new invitation for a provider
+  app.post("/invitations", async (req, res) => {
+    // This should be protected by checkAuth
+    const { providerEmail, clientId, clientName } = req.body;
+
+    if (!providerEmail || !clientId || !clientName) {
+      return res.status(400).json({ error: "Provider email, client ID, and client name are required." });
+    }
+
+    try {
+      const invitationRef = db.collection("invitations").doc();
+      const newInvitation = {
+        id: invitationRef.id,
+        providerEmail,
+        clientId,
+        clientName,
+        status: 'pendente',
+        createdAt: new Date().toISOString(),
+      };
+
+      await invitationRef.set(newInvitation);
+      res.status(201).json({ message: "Invitation created successfully. The provider will be notified shortly." });
+    } catch (error) {
+      console.error(`Error creating invitation for ${providerEmail}:`, error);
+      res.status(500).json({ error: "Failed to create invitation." });
+    }
+  });
+
+  // List invitations (filter by clientId or providerEmail)
+  app.get("/invitations", async (req, res) => {
+    try {
+      const { clientId, providerEmail } = req.query;
+      let query = db.collection("invitations");
+      if (clientId) query = query.where("clientId", "==", clientId);
+      if (providerEmail) query = query.where("providerEmail", "==", providerEmail);
+      const snapshot = await query.orderBy('createdAt', 'desc').get();
+      const invitations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(invitations);
+    } catch (error) {
+      console.error("Error listing invitations:", error);
+      res.status(500).json({ error: "Failed to retrieve invitations." });
+    }
+  });
+
+  // =================================================================
+  // CONTRACTS API ENDPOINTS
+  // =================================================================
+
+  // GET /contracts - List contracts, filterable by clientId or providerId
+  app.get("/contracts", async (req, res) => {
+    // This should be protected by checkAuth
+    try {
+      const { clientId, providerId } = req.query;
+      let query = db.collection("contracts");
+
+      if (clientId) {
+        query = query.where("clientId", "==", clientId);
+      }
+      if (providerId) {
+        query = query.where("providerId", "==", providerId);
+      }
+
+      const snapshot = await query.orderBy('createdAt', 'desc').get();
+      const contracts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(contracts);
+    } catch (error) {
+      console.error("Error fetching contracts:", error);
+      res.status(500).json({ error: "Failed to retrieve contracts." });
+    }
+  });
+
+  // POST /contracts - Create a new contract
+  app.post("/contracts", async (req, res) => {
+    // This should be protected by checkAuth
+    try {
+      const contractData = req.body;
+      if (!contractData.clientId || !contractData.title) {
+        return res.status(400).json({ error: "Client ID and title are required." });
+      }
+
+      const newContractRef = db.collection("contracts").doc();
+      await newContractRef.set({ ...contractData, id: newContractRef.id, createdAt: new Date().toISOString() });
+      res.status(201).json({ id: newContractRef.id, ...contractData });
+    } catch (error) {
+      console.error("Error creating contract:", error);
+      res.status(500).json({ error: "Failed to create contract." });
+    }
+  });
+
+  // =================================================================
+  // ADMIN MANUAL PAYOUTS
+  // =================================================================
+
+  // List escrows (optional filter by status)
+  app.get("/escrows", async (req, res) => {
+    try {
+      const { status, clientId, providerId } = req.query;
+      let query = db.collection("escrows");
+      if (status) query = query.where("status", "==", status);
+      if (clientId) query = query.where("clientId", "==", clientId);
+      if (providerId) query = query.where("providerId", "==", providerId);
+      const snapshot = await query.orderBy('createdAt', 'desc').get();
+      const escrows = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(escrows);
+    } catch (error) {
+      console.error("Error listing escrows:", error);
+      res.status(500).json({ error: "Failed to retrieve escrows." });
+    }
+  });
+
+  // Mark an escrow as paid to the provider (manual payout)
+  app.post("/admin/payments/:escrowId/mark-paid", checkSuperAdmin, async (req, res) => {
+    try {
+      const { escrowId } = req.params;
+      const escrowRef = db.collection("escrows").doc(escrowId);
+      const escrowDoc = await escrowRef.get();
+
+      if (!escrowDoc.exists || escrowDoc.data().status !== 'liberado') {
+        return res.status(404).json({ error: "Pending payment not found or not in correct status." });
+      }
+
+      await escrowRef.update({
+        status: 'pago_ao_prestador',
+        paidOutAt: new Date().toISOString(),
+      });
+
+      res.status(200).json({ message: "Payment marked as paid successfully." });
+    } catch (error) {
+      console.error("Error marking payment as paid:", error);
+      res.status(500).json({ error: "Failed to mark payment as paid." });
+    }
+  });
+
+  // =================================================================
   // BLOG API ENDPOINTS (Público)
   // =================================================================
 
@@ -838,6 +1268,51 @@ function createApp({
     } catch (error) {
       console.error("Error fetching related blog posts:", error);
       res.status(500).json({ error: "Failed to retrieve related posts." });
+    }
+  });
+
+  // =================================================================
+  // FRAUD ALERTS AND DISPUTES LISTING (Admin)
+  // =================================================================
+
+  // List fraud alerts
+  app.get("/fraud-alerts", async (req, res) => {
+    try {
+      const snapshot = await db.collection("fraud_alerts").orderBy('createdAt', 'desc').get();
+      const alerts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(alerts);
+    } catch (error) {
+      console.error("Error listing fraud alerts:", error);
+      res.status(500).json({ error: "Failed to retrieve fraud alerts." });
+    }
+  });
+
+  // Update fraud alert
+  app.put("/fraud-alerts/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      const ref = db.collection("fraud_alerts").doc(id);
+      const doc = await ref.get();
+      if (!doc.exists) return res.status(404).json({ error: "Fraud alert not found." });
+      await ref.update(updates);
+      const updated = await ref.get();
+      res.status(200).json({ id: updated.id, ...updated.data() });
+    } catch (error) {
+      console.error("Error updating fraud alert:", error);
+      res.status(500).json({ error: "Failed to update fraud alert." });
+    }
+  });
+
+  // List disputes
+  app.get("/disputes", async (req, res) => {
+    try {
+      const snapshot = await db.collection("disputes").orderBy('createdAt', 'desc').get();
+      const disputes = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(disputes);
+    } catch (error) {
+      console.error("Error listing disputes:", error);
+      res.status(500).json({ error: "Failed to retrieve disputes." });
     }
   });
 

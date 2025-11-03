@@ -18,7 +18,16 @@ const Login: React.FC<LoginProps> = () => {
       await signInWithEmailAndPassword(auth, email, password);
       // App.tsx will handle the redirect
     } catch (err: any) {
-      setError("Falha no login. Verifique seu e-mail e senha.");
+      const code = err?.code || '';
+      if (code === 'auth/invalid-api-key' || code === 'auth/configuration-not-found') {
+        setError('Configuração do Firebase inválida. Verifique as variáveis VITE_FIREBASE_* e se o provedor Email/Senha está ativado.');
+      } else if (code === 'auth/operation-not-allowed') {
+        setError('Login por e-mail/senha está desativado no Firebase Auth. Ative o provedor no Console.');
+      } else if (code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+        setError('Falha no login. Verifique seu e-mail e senha.');
+      } else {
+        setError('Falha no login. Tente novamente.');
+      }
       console.error(err);
     }
   };
@@ -30,7 +39,18 @@ const Login: React.FC<LoginProps> = () => {
       await signInWithPopup(auth, provider);
       // App.tsx will handle the redirect
     } catch (err: any) {
-      setError("Falha no login com Google.");
+      const code = err?.code || '';
+      if (code === 'auth/operation-not-allowed') {
+        setError('Login com Google desativado. Ative o provedor Google no Firebase Auth.');
+      } else if (code === 'auth/unauthorized-domain') {
+        setError('Domínio não autorizado no Firebase Auth. Adicione localhost e servio.ai em Authorized Domains.');
+      } else if (code === 'auth/popup-blocked' || code === 'auth/popup-closed-by-user') {
+        setError('Popup bloqueado. Recarregue a página e tente novamente ou habilite pop-ups.');
+      } else if (code === 'auth/invalid-api-key' || code === 'auth/configuration-not-found') {
+        setError('Configuração do Firebase inválida. Verifique VITE_FIREBASE_API_KEY e AUTH_DOMAIN.');
+      } else {
+        setError('Falha no login com Google.');
+      }
       console.error(err);
     }
   };

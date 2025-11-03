@@ -8,6 +8,7 @@ import AdminProspects from './AdminProspects';
 import AdminTeamManagement from './AdminTeamManagement';
 import StaffOnboardingTour from './StaffOnboardingTour';
 import DailyBriefingCard from './DailyBriefingCard';
+import AdminManualPayouts from './AdminManualPayouts';
 import AdminMarketingHub from './AdminMarketingHub';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
@@ -31,6 +32,7 @@ const permissions = {
   team: ['super_admin'],
   verifications: ['super_admin', 'suporte'],
   disputes: ['super_admin', 'suporte'],
+  payouts: ['super_admin', 'financeiro'],
   marketing: ['super_admin', 'marketing'],
 };
 
@@ -41,11 +43,13 @@ const AdminDashboard: React.FC = () => {
     jobs,
     fraudAlerts,
     disputes,
+    escrows, // Supondo que escrows serão buscados no AppContext
     metrics,
     handleLogout,
     handleVerification,
     handleResolveFraudAlert,
     handleAddStaff, // Supondo que esta função será criada no AppContext
+    handleMarkAsPaid, // Supondo que esta função será criada no AppContext
     handleResolveDispute,
   } = useAppContext();
 
@@ -56,6 +60,7 @@ const AdminDashboard: React.FC = () => {
 
   const staffMembers = users.filter(u => u.type === 'staff');
   const pendingVerifications = users.filter(u => u.verificationStatus === 'pendente');
+  const pendingPayouts = escrows.filter(e => e.status === 'liberado');
   const recentJobs = [...jobs].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 5);
 
   const totalRevenue = metrics.revenue.reduce((sum, item) => sum + item.value, 0);
@@ -163,6 +168,13 @@ const AdminDashboard: React.FC = () => {
       {permissions.team.includes(currentUser.role!) && (
         <div id="team-panel" className="mb-8">
           <AdminTeamManagement staff={staffMembers} onAddStaff={handleAddStaff} />
+        </div>
+      )}
+
+      {/* Manual Payouts Section */}
+      {permissions.payouts.includes(currentUser.role!) && (
+        <div id="payouts-panel" className="mb-8">
+          <AdminManualPayouts pendingPayouts={pendingPayouts} onMarkAsPaid={handleMarkAsPaid} />
         </div>
       )}
 

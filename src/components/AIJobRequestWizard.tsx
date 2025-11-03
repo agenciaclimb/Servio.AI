@@ -94,7 +94,7 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
         try {
           // 1. Get signed URL from our backend
           const token = await auth.currentUser?.getIdToken();
-          const urlResponse = await fetch(`${process.env.REACT_APP_BACKEND_API_URL}/generate-upload-url`, {
+          const urlResponse = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/generate-upload-url`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json',
                        'Authorization': `Bearer ${token}` },
@@ -114,8 +114,9 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
           uploadedMedia.push({ name: file.name, path: filePath, type: file.type.startsWith('video') ? 'video' : 'image' });
 
         } catch (error) {
-          console.error(error);
-          setError(`Erro ao enviar o arquivo: ${file.name}. Tente novamente.`);
+          console.error('Upload error:', error);
+          const errorMsg = error instanceof Error ? error.message : 'Erro desconhecido';
+          setError(`Erro ao enviar o arquivo ${file.name}: ${errorMsg}. Verifique sua conexão e tente novamente.`);
           setStep('review');
           return;
         }

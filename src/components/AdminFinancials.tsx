@@ -13,6 +13,7 @@ const statusStyles: { [key in EscrowStatus]: { bg: string, text: string } } = {
   liberado: { bg: 'bg-green-100', text: 'text-green-800' },
   reembolsado: { bg: 'bg-red-100', text: 'text-red-800' },
   em_disputa: { bg: 'bg-orange-100', text: 'text-orange-800' },
+    pago_ao_prestador: { bg: 'bg-blue-100', text: 'text-blue-800' },
 };
 
 

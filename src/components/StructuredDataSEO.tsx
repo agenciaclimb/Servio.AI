@@ -1,6 +1,7 @@
 import React from 'react';
 
-type SchemaType = 'LocalBusiness' | 'Service' | 'Person';
+// Allow any Schema.org type to be rendered (FAQPage, HowTo, WebSite, Organization, etc.)
+type SchemaType = string;
 
 interface StructuredDataSEOProps {
   schemaType: SchemaType;

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 
 const loadingMessages = [
     "Analisando sua solicitação...",
@@ -9,7 +9,7 @@ const loadingMessages = [
     "Quase pronto!"
 ];
 
-const LoadingSpinner: React.FC = () => {
+const LoadingSpinner: React.FC = memo(() => {
     const [message, setMessage] = useState(loadingMessages[0]);
 
     useEffect(() => {
@@ -35,6 +35,6 @@ const LoadingSpinner: React.FC = () => {
             <p className="text-lg font-semibold text-gray-700 transition-opacity duration-500">{message}</p>
         </div>
     );
-};
+});
 
 export default LoadingSpinner;

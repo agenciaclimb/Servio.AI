@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import ItemCard from './ItemCard';
+import ProviderHub from './ProviderHub';
+import ContractManagementDashboard from './ContractManagementDashboard';
+import ClientReportsDashboard from './ClientReportsDashboard';
+import SubscriptionUpsellModal from './SubscriptionUpsellModal';
+import { Invitation, Contract } from '../../types';
 
 const ClientDashboard: React.FC = () => {
   const {
@@ -12,13 +17,97 @@ const ClientDashboard: React.FC = () => {
     setIsWizardOpen,
     setMapJobId,
     setIsAddItemModalOpen,
+    authToken,
+    handleStartTrial: contextHandleStartTrial,
   } = useAppContext();
 
   const [activeTab, setActiveTab] = useState<'jobs' | 'items'>('jobs');
+  const [showUpsellModal, setShowUpsellModal] = useState(false);
+  const [upsellFeatureName, setUpsellFeatureName] = useState('');
+  const [invitations, setInvitations] = useState<Invitation[]>([]);
+  const [contracts, setContracts] = useState<Contract[]>([]);
+
+  const fetchContracts = async () => {
+    if (!currentUser || !authToken) return;
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/contracts?clientId=${currentUser.email}`, {
+        headers: { 'Authorization': `Bearer ${authToken}` }
+      });
+      if (response.ok) {
+        setContracts(await response.json());
+      }
+    } catch (error) {
+      console.error("Failed to fetch contracts:", error);
+    }
+  };
+
+  const fetchInvitations = async () => {
+    if (!currentUser || !authToken) return;
+    try {
+      // Este endpoint precisará ser criado no backend
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/invitations?clientId=${currentUser.email}`, { headers: { 'Authorization': `Bearer ${authToken}` } });
+      if (response.ok) {
+        setInvitations(await response.json());
+      }
+    } catch (error) {
+      console.error("Failed to fetch invitations:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser && authToken) {
+      fetchInvitations();
+      fetchContracts();
+    }
+  }, [currentUser, authToken]);
 
   if (!currentUser) return null; // Should be handled by ProtectedRoute, but good practice
 
   const clientJobs = jobs.filter(job => job.clientId === currentUser.email);
+  const completedJobs = clientJobs.filter(job => job.status === 'concluido');
+
+  const handleUpsellClick = (featureName: string) => {
+    setUpsellFeatureName(featureName);
+    setShowUpsellModal(true);
+  };
+
+  const handleStartTrial = async () => {
+    try {
+      await contextHandleStartTrial();
+      setShowUpsellModal(false);
+      alert('Teste gratuito do Plano Corporativo ativado com sucesso!');
+    } catch (error: any) {
+      alert(`Erro: ${error.message}`);
+    }
+  };
+
+  const handleInviteProvider = async (providerEmail: string) => {
+    if (!currentUser || !authToken) return;
+    await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/invitations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+      body: JSON.stringify({ providerEmail, clientId: currentUser.email, clientName: currentUser.name }),
+    });
+    await fetchInvitations(); // Refresh the list
+  };
+
+  const handleCreateContract = async (newContractData: { title: string, scope: string }) => {
+    if (!currentUser || !authToken) return;
+    try {
+      await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/contracts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify({
+          ...newContractData,
+          clientId: currentUser.email,
+          status: 'rascunho',
+        }),
+      });
+      await fetchContracts(); // Recarrega a lista de contratos
+    } catch (error) {
+      console.error("Failed to create contract:", error);
+    }
+  };
 
   const getStatusClass = (status: string) => {
     switch (status) {
@@ -40,6 +129,21 @@ const ClientDashboard: React.FC = () => {
         </div>
         <button onClick={handleLogout} className="text-sm font-medium text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">Sair</button>
       </header>
+
+      {/* Reports Dashboard for Corporate Plan */}
+      <div className="mb-8">
+        <ClientReportsDashboard user={currentUser} completedJobs={completedJobs} onUpgradeClick={() => handleUpsellClick('Relatórios de Gestão')} />
+      </div>
+
+      {/* Provider Hub for Corporate Plan */}
+      <div className="mb-8">
+        <ProviderHub user={currentUser} invitations={invitations} onInvite={handleInviteProvider} onUpgradeClick={() => handleUpsellClick('Convite Direto de Prestadores')} />
+      </div>
+
+      {/* Contract Management for Corporate Plan */}
+      <div className="mb-8">
+        <ContractManagementDashboard user={currentUser} contracts={contracts} onUpgradeClick={() => handleUpsellClick('Gestão de Contratos')} onCreateContract={handleCreateContract} />
+      </div>
 
       {/* Tabs */}
       <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
@@ -103,6 +207,14 @@ const ClientDashboard: React.FC = () => {
           </div>
           {items.length === 0 && <p className="text-center text-gray-500 py-8">Você ainda não cadastrou nenhum item.</p>}
         </>
+      )}
+
+      {showUpsellModal && (
+        <SubscriptionUpsellModal 
+          featureName={upsellFeatureName}
+          onClose={() => setShowUpsellModal(false)}
+          onStartTrial={handleStartTrial}
+        />
       )}
     </div>
   );

@@ -15,7 +15,7 @@ const ProfileTips: React.FC<ProfileTipsProps> = ({ user, onEditProfile }) => {
     const fetchTip = async () => {
       const token = await auth.currentUser?.getIdToken();
       try {
-        const response = await fetch(`${process.env.REACT_APP_AI_API_URL}/api/generate-tip`, {
+        const response = await fetch(`${import.meta.env.VITE_AI_API_URL}/api/generate-tip`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json',
                      'Authorization': `Bearer ${token}` },

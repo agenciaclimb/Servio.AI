@@ -48,8 +48,8 @@ const PublicProfilePage: React.FC = () => {
       try {
         const [userResponse, jobsResponse] = await Promise.all([
           // Pass token for authenticated requests
-          fetch(`${process.env.REACT_APP_BACKEND_API_URL}/users/${providerId}`),
-          fetch(`${process.env.REACT_APP_BACKEND_API_URL}/jobs?providerId=${providerId}`)
+          fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${providerId}`),
+          fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs?providerId=${providerId}`)
         ]);
         const userData: User = await userResponse.json();
         const allJobs: Job[] = await jobsResponse.json();

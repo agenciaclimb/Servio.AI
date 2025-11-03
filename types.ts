@@ -105,6 +105,51 @@ export interface Job {
   jobMode?: JobMode;
   auctionEndDate?: string; // ISO Date string
   scheduledDate?: string; // ISO Date string
+  documentRequests?: DocumentRequest[]; // Adicionado para conter os documentos
+}
+
+export interface Invitation {
+  id: string;
+  clientId: string; // Email da empresa que convidou
+  clientName: string;
+  providerEmail: string;
+  status: 'pendente' | 'aceito';
+  createdAt: string; // ISO Date string
+}
+
+export interface ContractMilestone {
+  id: string;
+  description: string;
+  dueDate: string; // ISO Date string
+  amount: number;
+  status: 'pendente' | 'aprovado_para_pagamento' | 'pago';
+  invoiceId?: string; // ID da fatura no Stripe
+}
+
+export interface Contract {
+  id: string;
+  clientId: string;
+  providerId: string;
+  title: string;
+  scopeOfWork: string;
+  status: 'rascunho' | 'pendente_assinatura' | 'ativo' | 'concluido' | 'cancelado';
+  milestones: ContractMilestone[];
+  signatureRequestId?: string; // ID do provedor de assinatura
+  signedDocumentUrl?: string; // URL do documento assinado
+  createdAt: string; // ISO Date string
+}
+
+export interface DocumentRequest {
+  id: string;
+  documentName: string; // Ex: "Apólice de Seguro de Responsabilidade Civil"
+  status: 'solicitado' | 'enviado' | 'verificado' | 'rejeitado';
+  fileUrl?: string; // URL do arquivo no Cloud Storage
+  uploadedAt?: string;
+  analysis?: { // Análise da IA
+    summary: string;
+    isValid: boolean;
+    reason: string;
+  };
 }
 
 export interface Bid {
@@ -161,7 +206,7 @@ export interface Notification {
   createdAt: Date;
 }
 
-export type EscrowStatus = 'bloqueado' | 'liberado' | 'reembolsado' | 'em_disputa';
+export type EscrowStatus = 'bloqueado' | 'liberado' | 'reembolsado' | 'em_disputa' | 'pago_ao_prestador';
 
 export interface Escrow {
   id: string;
@@ -224,12 +269,16 @@ export interface MaintainedItem {
   clientId: string;
   name: string;
   category: string;
+  location?: string; // Ex: "Bloco A, Sala 301"
+  group?: string; // Ex: "Equipamentos de TI", "Sistema de Incêndio"
   brand?: string;
   model?: string;
   serialNumber?: string;
   imageUrl: string;
   notes?: string;
   createdAt: string; // ISO Date string
+  purchaseDate?: string; // ISO Date string
+  warrantyExpiresAt?: string; // ISO Date string
   maintenanceHistory: {
     jobId: string;
     date: string;

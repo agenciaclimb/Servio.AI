@@ -492,6 +492,70 @@ exports.checkTrialExpirations = functions
     return null;
   });
 
+/**
+ * Runs daily to send reminders to users whose trial is ending in 3 days.
+ */
+exports.sendTrialEndingReminders = functions
+  .region("us-west1")
+  .pubsub.schedule("every 24 hours")
+  .onRun(async (context) => {
+    console.log("Checking for trials ending soon...");
+
+    // 1. Calculate the target date range (exactly 3 days from now)
+    const now = new Date();
+    const threeDaysFromNowStart = new Date(now);
+    threeDaysFromNowStart.setDate(now.getDate() + 3);
+    threeDaysFromNowStart.setHours(0, 0, 0, 0);
+
+    const threeDaysFromNowEnd = new Date(threeDaysFromNowStart);
+    threeDaysFromNowEnd.setHours(23, 59, 59, 999);
+
+    // 2. Find users whose trial ends within that 24-hour window
+    const querySnapshot = await db.collection("users")
+      .where("subscription.status", "==", "trialing")
+      .where("subscription.trialEndsAt", ">=", threeDaysFromNowStart.toISOString())
+      .where("subscription.trialEndsAt", "<=", threeDaysFromNowEnd.toISOString())
+      .get();
+
+    if (querySnapshot.empty) {
+      console.log("No trials ending in 3 days.");
+      return null;
+    }
+
+    // 3. Process each user found
+    for (const doc of querySnapshot.docs) {
+      const user = doc.data();
+      console.log(`Sending trial ending reminder to ${user.email}`);
+
+      try {
+        // 4. Call AI to generate a persuasive email body
+        const emailBodyResponse = await fetch(`${AI_API_URL}/api/generate-trial-ending-email`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userName: user.name, daysRemaining: 3 }),
+        });
+        const emailData = await emailBodyResponse.json();
+
+        // 5. Send email using a dedicated SendGrid template
+        const templateId = functions.config().sendgrid.trial_ending_template_id;
+        const msg = {
+          to: user.email,
+          from: 'notificacoes@servio.ai',
+          templateId: templateId,
+          dynamicTemplateData: {
+            ...emailData, // Contains 'subject' and 'body'
+            name: user.name,
+            cta_url: `${functions.config().app.frontend_url}/subscribe`, // Link to subscription page
+          },
+        };
+        await sgMail.send(msg);
+      } catch (error) {
+        console.error(`Failed to send trial reminder to ${user.email}:`, error);
+      }
+    }
+    return null;
+  });
+
 
 /**
  * Periodically processes unsent notifications, groups them by user,
@@ -574,6 +638,158 @@ exports.processNotificationQueue = functions
       } catch (error) {
         console.error(`Failed to process notifications for user ${userId}:`, error);
       }
+    }
+    return null;
+  });
+
+/**
+ * Triggered when a compliance document is uploaded to Cloud Storage.
+ * Analyzes the document with AI and updates the corresponding request in Firestore.
+ */
+exports.processDocumentUpload = functions
+  .region("us-west1")
+  .storage.object()
+  .onFinalize(async (object) => {
+    const filePath = object.name; // Ex: 'jobs/job123/documents/req456-id-card.png'
+    const contentType = object.contentType;
+
+    // 1. Verify if it's a compliance document
+    if (!filePath || !filePath.startsWith('jobs/') || !filePath.includes('/documents/')) {
+      console.log(`File ${filePath} is not a compliance document. Skipping.`);
+      return null;
+    }
+    if (!contentType || !contentType.startsWith('image/')) {
+      console.log(`File ${filePath} is not an image. Skipping.`);
+      return null;
+    }
+
+    // 2. Extract IDs from the file path
+    const parts = filePath.split('/');
+    const jobId = parts[1];
+    const fileName = parts[3];
+    const requestId = fileName.split('-')[0];
+
+    console.log(`Processing document ${fileName} for job ${jobId}, request ${requestId}.`);
+
+    try {
+      // 3. Get the document content as base64
+      const file = admin.storage().bucket(object.bucket).file(filePath);
+      const [buffer] = await file.download();
+      const base64Image = buffer.toString('base64');
+
+      // 4. Call AI to analyze the document
+      const docRequestRef = db.collection('jobs').doc(jobId).collection('document_requests').doc(requestId);
+      const docRequestSnap = await docRequestRef.get();
+      const documentName = docRequestSnap.data()?.documentName || 'Documento';
+
+      const analysisResponse = await fetch(`${AI_API_URL}/api/analyze-compliance-document`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }, // Auth needed
+        body: JSON.stringify({ base64Image, mimeType: contentType, documentName }),
+      });
+      const analysis = await analysisResponse.json();
+
+      // 5. Update the document request in Firestore with the analysis
+      await docRequestRef.update({ analysis, status: 'verificado' });
+      console.log(`Successfully analyzed and updated document request ${requestId}.`);
+    } catch (error) {
+      console.error(`Failed to process document ${filePath}:`, error);
+    }
+    return null;
+  });
+
+/**
+ * Triggered on the creation of a new direct invitation.
+ * Generates and sends an invitation email from a client to a provider.
+ */
+exports.sendDirectInvitationEmail = functions
+  .region("us-west1")
+  .firestore.document("invitations/{invitationId}")
+  .onCreate(async (snap) => {
+    const invitation = snap.data();
+
+    console.log(`New direct invitation from ${invitation.clientName} to ${invitation.providerEmail}.`);
+
+    try {
+      // 1. Call the AI service to generate the email content
+      const emailResponse = await fetch(`${AI_API_URL}/api/generate-provider-invitation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }, // Auth needed in production
+        body: JSON.stringify({ clientName: invitation.clientName, providerEmail: invitation.providerEmail }),
+      });
+
+      if (!emailResponse.ok) {
+        throw new Error(`AI email generation failed with status: ${emailResponse.status}`);
+      }
+
+      const emailContent = await emailResponse.json();
+      const registrationUrl = `${functions.config().app.frontend_url}/register?source=direct_invitation&clientId=${invitation.clientId}`;
+
+      // 2. Send the email using a dedicated SendGrid template
+      const templateId = functions.config().sendgrid.direct_invitation_template_id; // Assumes this ID is configured
+      const msg = {
+        to: invitation.providerEmail,
+        from: 'convites@servio.ai', // Use um e-mail verificado no SendGrid
+        templateId: templateId,
+        dynamicTemplateData: {
+          ...emailContent,
+          client_name: invitation.clientName,
+          cta_url: registrationUrl,
+        },
+      };
+
+      await sgMail.send(msg);
+      console.log(`Direct invitation email sent successfully to ${invitation.providerEmail}.`);
+    } catch (error) {
+      console.error(`Error in sendDirectInvitationEmail for invitation ${snap.id}:`, error);
+    }
+    return null;
+  });
+
+/**
+ * Triggered on the creation of a new direct invitation.
+ * Generates and sends an invitation email from a client to a provider.
+ */
+exports.sendDirectInvitationEmail = functions
+  .region("us-west1")
+  .firestore.document("invitations/{invitationId}")
+  .onCreate(async (snap) => {
+    const invitation = snap.data();
+
+    console.log(`New direct invitation from ${invitation.clientName} to ${invitation.providerEmail}.`);
+
+    try {
+      // 1. Call the AI service to generate the email content
+      const emailResponse = await fetch(`${AI_API_URL}/api/generate-provider-invitation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }, // Auth needed in production
+        body: JSON.stringify({ clientName: invitation.clientName, providerEmail: invitation.providerEmail }),
+      });
+
+      if (!emailResponse.ok) {
+        throw new Error(`AI email generation failed with status: ${emailResponse.status}`);
+      }
+
+      const emailContent = await emailResponse.json();
+      const registrationUrl = `${functions.config().app.frontend_url}/register?source=direct_invitation&clientId=${invitation.clientId}`;
+
+      // 2. Send the email using a dedicated SendGrid template
+      const templateId = functions.config().sendgrid.direct_invitation_template_id; // Assumes this ID is configured
+      const msg = {
+        to: invitation.providerEmail,
+        from: 'convites@servio.ai', // Use um e-mail verificado no SendGrid
+        templateId: templateId,
+        dynamicTemplateData: {
+          ...emailContent,
+          client_name: invitation.clientName,
+          cta_url: registrationUrl,
+        },
+      };
+
+      await sgMail.send(msg);
+      console.log(`Direct invitation email sent successfully to ${invitation.providerEmail}.`);
+    } catch (error) {
+      console.error(`Error in sendDirectInvitationEmail for invitation ${snap.id}:`, error);
     }
     return null;
   });

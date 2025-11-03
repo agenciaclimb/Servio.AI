@@ -34,22 +34,19 @@ import {
  * This is the standard, secure way to build a production application.
  */
 
+import { aiApi } from '../src/lib/aiApi';
+
 /**
- * A utility to handle API responses from our own backend.
+ * A utility to handle API responses using the AI backend client.
+ * Ensures we always hit VITE_AI_API_URL instead of the Vite dev server.
  */
 const fetchFromBackend = async <T>(endpoint: string, body: object): Promise<T> => {
-    const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-    });
-
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'A comunicação com o servidor falhou.' }));
-        throw new Error(errorData.error || 'Erro desconhecido no servidor.');
+    try {
+        return await aiApi.post<T>(endpoint, body);
+    } catch (err: any) {
+        const message = err?.message || 'A comunicação com o servidor falhou.';
+        throw new Error(message);
     }
-
-    return response.json();
 }
 
 
