@@ -64,3 +64,9 @@ steps:
 images:
   - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:${SHORT_SHA}"
   - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:latest"
+
+timeout: 1200s
+
+# Logging options - usando apenas Cloud Logging sem bucket storage
+options:
+  logging: CLOUD_LOGGING_ONLY
