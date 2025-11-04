@@ -107,17 +107,13 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Configure Docker auth for Artifact Registry
+      - name: Configure Docker to use gcloud as credential helper
         run: |
           set -x
-          # Use gcloud-authenticated credentials to push to Artifact Registry
-          gcloud auth configure-docker --quiet "${REGION}-docker.pkg.dev"
-
-      - name: Docker login with gcloud access token (fallback)
-        run: |
-          set -euo pipefail
-          TOKEN="$(gcloud auth print-access-token)"
-          echo "$TOKEN" | docker login -u oauth2accesstoken --password-stdin "${REGION}-docker.pkg.dev"
+          # Configure docker to use gcloud credentials directly
+          gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+          # Verify authentication works
+          gcloud auth application-default print-access-token
 
       # Repository 'servio-ai' already exists in us-west1
       # No need to create it on every run
