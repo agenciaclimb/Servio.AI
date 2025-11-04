@@ -21,7 +21,7 @@ if (functions.config().sendgrid && functions.config().sendgrid.key) {
 }
 // Inicializa o Vertex AI. A autenticação é automática no ambiente do Google Cloud.
 const vertex_ai = new VertexAI({
-  project: process.env.GCP_PROJECT || 'gen-lang-client-0737507616', 
+  project: process.env.GCP_PROJECT || 'servioai',
   location: 'us-central1' 
 });
 
