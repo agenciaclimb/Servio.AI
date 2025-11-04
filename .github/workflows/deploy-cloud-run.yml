@@ -113,6 +113,12 @@ jobs:
           # Use gcloud-authenticated credentials to push to Artifact Registry
           gcloud auth configure-docker --quiet "${REGION}-docker.pkg.dev"
 
+      - name: Docker login with gcloud access token (fallback)
+        run: |
+          set -euo pipefail
+          TOKEN="$(gcloud auth print-access-token)"
+          echo "$TOKEN" | docker login -u oauth2accesstoken --password-stdin "${REGION}-docker.pkg.dev"
+
       # Repository 'servio-ai' already exists in us-west1
       # No need to create it on every run
 
