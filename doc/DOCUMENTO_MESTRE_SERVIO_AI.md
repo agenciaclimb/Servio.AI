@@ -486,8 +486,49 @@ Temos **SEO 100 e Accessibility 100** - o core da experiência do usuário está
 
 ---
 
+#update_log - 2025-11-04 15:25
+🚀 Deploy sem Cloud Build (Artifact Registry + Cloud Run)
+
+Problema:
+
+- Workflow falhava com `BucketForbiddenError` no `gs://*_cloudbuild` ao rodar `gcloud builds submit` (SA do GitHub Actions sem acesso ao bucket padrão do Cloud Build).
+
+Solução aplicada:
+
+- Atualizamos `/.github/workflows/deploy-cloud-run.yml` para não usar Cloud Build.
+- Novo fluxo: Docker Buildx no runner → push para Artifact Registry → `gcloud run deploy` com a imagem publicada.
+- Benefício: elimina dependência do bucket `_cloudbuild` e reduz pontos de falha de IAM.
+
+Detalhes técnicos:
+
+- Login Docker no registry `${REGION}-docker.pkg.dev` usando SA JSON (`docker/login-action`).
+- Garante repositório `servio-ai` no Artifact Registry (cria se não existir).
+- Build & push de duas imagens:
+  - AI: `.../servio-ai/ai-server:{SHA,latest}` com `Dockerfile` na raiz.
+  - Backend: `.../servio-ai/backend:{SHA,latest}` com `backend/Dockerfile`.
+- Deploys:
+  - `gcloud run deploy servio-ai --image=.../ai-server:{SHA}`
+  - `gcloud run deploy servio-backend --image=.../backend:{SHA} --port=8081`
+
+Requisitos de IAM para a SA do Actions:
+
+- `roles/artifactregistry.writer` (push de imagem)
+- `roles/run.admin` (deploy de serviço)
+- `roles/iam.serviceAccountUser` (se usar runtime SA)
+- (Opcional) `roles/artifactregistry.admin` para criação automática do repositório
+
+Como acionar:
+
+- GitHub → Actions → "Deploy to Cloud Run" → `workflow_dispatch` → service: `both` | `ai` | `backend`
+
+Status:
+
+- Workflow atualizado no repositório. Próximo passo: executar e validar endpoints.
+
+---
+
 #update_log - 2025-11-03 14:55
-�🖼️ OG-IMAGE JPG + TAILWIND LOCAL + PREVIEW
+🖼️ OG-IMAGE JPG + TAILWIND LOCAL + PREVIEW
 
 Atualizações rápidas concluídas:
 

@@ -26,6 +26,7 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REGION: ${{ secrets.GCP_REGION }}
   # SERVICE secret não é mais obrigatório; serviços são definidos por step
+  REPO: servio-ai
 
 jobs:
   deploy:
@@ -102,26 +103,64 @@ jobs:
           echo "Verificando APIs necessárias..."
           gcloud services list --enabled --project "$PROJECT_ID" | grep -E "(run.googleapis.com|cloudbuild.googleapis.com|artifactregistry.googleapis.com)" || true
 
-      - name: Build & Deploy AI Service
+      # ===== Build & Deploy without Cloud Build (avoids _cloudbuild bucket permission) =====
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker auth to Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGION }}-docker.pkg.dev
+          username: _json_key
+          password: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Ensure Artifact Registry repository exists
+        run: |
+          set -x
+          gcloud artifacts repositories describe "$REPO" --location="$REGION" --project "$PROJECT_ID" >/dev/null 2>&1 || \
+          gcloud artifacts repositories create "$REPO" --repository-format=docker --location="$REGION" --description="Servio.AI images"
+
+      - name: Build & Push AI image (Docker)
+        if: ${{ github.event.inputs.service == 'both' || github.event.inputs.service == 'ai' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-backend')) }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/ai-server:${{ github.sha }}
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/ai-server:latest
+
+      - name: Deploy AI Service
         if: ${{ github.event.inputs.service == 'both' || github.event.inputs.service == 'ai' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-backend')) }}
         run: |
-          set -eo pipefail
-          SUB_SHA="${GITHUB_SHA::7}"
-          echo "Deploying AI Service (servio-ai) - SHORT_SHA=$SUB_SHA"
-          gcloud builds submit \
-            --project "$PROJECT_ID" \
-            --config cloudbuild.yaml \
-            --substitutions=_REGION="$REGION",_SERVICE="servio-ai",_REPO="servio-ai",_IMAGE="ai-server",SHORT_SHA="$SUB_SHA" \
-            --verbosity=debug --quiet || exit 1
+          set -euo pipefail
+          IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/ai-server:${GITHUB_SHA}"
+          gcloud run deploy servio-ai \
+            --image="$IMAGE" \
+            --region="$REGION" \
+            --platform=managed \
+            --allow-unauthenticated
 
-      - name: Build & Deploy Backend Service
+      - name: Build & Push Backend image (Docker)
+        if: ${{ github.event.inputs.service == 'both' || github.event.inputs.service == 'backend' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }}
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/backend:${{ github.sha }}
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/backend:latest
+
+      - name: Deploy Backend Service
         if: ${{ github.event.inputs.service == 'both' || github.event.inputs.service == 'backend' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }}
         run: |
-          set -eo pipefail
-          SUB_SHA="${GITHUB_SHA::7}"
-          echo "Deploying Backend Service (servio-backend) - SHORT_SHA=$SUB_SHA"
-          gcloud builds submit \
-            --project "$PROJECT_ID" \
-            --config cloudbuild-backend.yaml \
-            --substitutions=_REGION="$REGION",_SERVICE="servio-backend",_REPO="servio-ai",_IMAGE="backend",SHORT_SHA="$SUB_SHA" \
-            --verbosity=debug --quiet || exit 1
+          set -euo pipefail
+          IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/backend:${GITHUB_SHA}"
+          gcloud run deploy servio-backend \
+            --image="$IMAGE" \
+            --region="$REGION" \
+            --platform=managed \
+            --allow-unauthenticated \
+            --port=8081
