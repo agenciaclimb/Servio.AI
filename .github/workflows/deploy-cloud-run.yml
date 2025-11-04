@@ -90,11 +90,6 @@ jobs:
           set -x
           gcloud config set project "$PROJECT_ID"
           gcloud services list --enabled --project "$PROJECT_ID" | grep -E "(run.googleapis.com|cloudbuild.googleapis.com|artifactregistry.googleapis.com)" || true
-          echo "Verificando repositório do Artifact Registry: servio-ai"
-          gcloud artifacts repositories describe servio-ai --location="$REGION" --project "$PROJECT_ID" || {
-            echo "::error::Repositório 'servio-ai' não encontrado na região $REGION. Crie-o no Artifact Registry ou ajuste _REPO no cloudbuild*.yaml";
-            exit 1;
-          }
 
       - name: GCloud info (preflight)
         run: |
