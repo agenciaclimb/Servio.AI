@@ -42,11 +42,13 @@ async function main() {
   const token = process.argv[2];
   
   if (!token) {
-    console.error('Usage: node test_auth_flow.mjs <FIREBASE_ID_TOKEN>');
-    console.error('\nTo get a token:');
-    console.error('1. Open browser console on your app');
-    console.error('2. Run: await firebase.auth().currentUser.getIdToken()');
-    console.error('3. Copy the token and pass it as argument');
+    console.error('❌ Uso: node scripts/test_auth_flow.mjs <FIREBASE_ID_TOKEN>');
+    console.error('\n📋 Para obter o token:');
+    console.error('1. Faça login no app (http://localhost:4173)');
+    console.error('2. Clique no botão "Copiar ID Token" no banner superior');
+    console.error('3. Cole o token como argumento deste script');
+    console.error('\nOu no console do navegador:');
+    console.error('  await window.getIdToken()');
     process.exit(1);
   }
   

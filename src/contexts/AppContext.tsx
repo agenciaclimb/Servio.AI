@@ -170,7 +170,29 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         api.setAuthToken(token);
         aiApi.setAuthToken(token);
         try {
-            const userData = await api.get<User>(`/users/${firebaseUser.email}`);
+            // Tenta buscar usuário; se não existir, cria automaticamente
+            let userData: User;
+            try {
+              userData = await api.get<User>(`/users/${encodeURIComponent(firebaseUser.email)}`);
+            } catch (getUserError: any) {
+              // Se retornar 404 ou 500, tenta criar o usuário automaticamente
+              const status = getUserError?.response?.status;
+              if (status === 404 || status === 500 || getUserError?.message?.includes('404')) {
+                console.log('[Auth] Usuário não encontrado no backend. Criando automaticamente...');
+                const newUserPayload = {
+                  email: firebaseUser.email,
+                  name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
+                  type: 'cliente' as const, // Padrão: cliente
+                  phone: firebaseUser.phoneNumber || '',
+                  verificationStatus: 'pendente' as const,
+                  createdAt: new Date().toISOString(),
+                };
+                userData = await api.post<User>('/users', newUserPayload);
+                console.log('[Auth] Usuário criado com sucesso:', userData.email);
+              } else {
+                throw getUserError;
+              }
+            }
             setCurrentUser(userData);
 
             if (pendingJobData) {
@@ -314,7 +336,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const handleVerification = async (userId: string, newStatus: 'verificado' | 'recusado') => {
     if (!authToken) return;
     try {
-      await api.put(`/users/${userId}`, { verificationStatus: newStatus });
+      await api.put(`/users/${encodeURIComponent(userId)}`, { verificationStatus: newStatus });
       await fetchAdminData();
     } catch (error) {
       console.error("Error during user verification:", error);
@@ -379,8 +401,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const handleSaveServiceCatalog = async (updatedCatalog: ProviderService[]) => {
     if (!currentUser || !authToken) return;
     try {
-      await api.put(`/users/${currentUser.email}`, { serviceCatalog: updatedCatalog });
-      const updatedUser = await api.get<User>(`/users/${currentUser.email}`);
+      await api.put(`/users/${encodeURIComponent(currentUser.email)}`, { serviceCatalog: updatedCatalog });
+      const updatedUser = await api.get<User>(`/users/${encodeURIComponent(currentUser.email)}`);
       setCurrentUser(updatedUser);
     } catch (error) {
       console.error("Error saving service catalog:", error);
@@ -404,9 +426,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       throw new Error("Usuário não autenticado.");
     }
     try {
-      await api.post(`/users/${currentUser.email}/start-trial`);
+      await api.post(`/users/${encodeURIComponent(currentUser.email)}/start-trial`);
       // Recarrega os dados do usuário para refletir o status 'trialing'
-      const updatedUser = await api.get<User>(`/users/${currentUser.email}`);
+      const updatedUser = await api.get<User>(`/users/${encodeURIComponent(currentUser.email)}`);
       setCurrentUser(updatedUser);
     } catch (error) {
       console.error("Error starting trial:", error);
@@ -424,7 +446,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       if (!currentTokens.includes(fcmToken)) {
         const updatedTokens = [...currentTokens, fcmToken];
         try {
-          await api.put(`/users/${currentUser.email}`, { fcmTokens: updatedTokens });
+          await api.put(`/users/${encodeURIComponent(currentUser.email)}`, { fcmTokens: updatedTokens });
           // Atualiza o estado local do usuário
           setCurrentUser(prev => prev ? { ...prev, fcmTokens: updatedTokens } : null);
         } catch (error) {

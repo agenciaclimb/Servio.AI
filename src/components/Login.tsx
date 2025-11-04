@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup, signInWithRedirect, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
 
 interface LoginProps {
@@ -45,7 +45,13 @@ const Login: React.FC<LoginProps> = () => {
       } else if (code === 'auth/unauthorized-domain') {
         setError('Domínio não autorizado no Firebase Auth. Adicione localhost e servio.ai em Authorized Domains.');
       } else if (code === 'auth/popup-blocked' || code === 'auth/popup-closed-by-user') {
-        setError('Popup bloqueado. Recarregue a página e tente novamente ou habilite pop-ups.');
+        // Fallback automático para redirect quando popup é bloqueado
+        try {
+          await signInWithRedirect(auth, provider);
+          return; // a navegação continuará após o redirect
+        } catch (redirectErr: any) {
+          setError('Popup bloqueado e redirect falhou. Habilite pop-ups ou tente novamente.');
+        }
       } else if (code === 'auth/invalid-api-key' || code === 'auth/configuration-not-found') {
         setError('Configuração do Firebase inválida. Verifique VITE_FIREBASE_API_KEY e AUTH_DOMAIN.');
       } else {
