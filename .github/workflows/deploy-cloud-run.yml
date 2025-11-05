@@ -115,6 +115,13 @@ jobs:
           # Verify authentication works
           gcloud auth application-default print-access-token
 
+      - name: Docker login (explicit) to Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGION }}-docker.pkg.dev
+          username: _json_key
+          password: ${{ secrets.GCP_SA_KEY }}
+
       # Repository 'servio-ai' already exists in us-west1
       # No need to create it on every run
 
