@@ -103,6 +103,20 @@ jobs:
           echo "Verificando APIs necessárias..."
           gcloud services list --enabled --project "$PROJECT_ID" | grep -E "(run.googleapis.com|cloudbuild.googleapis.com|artifactregistry.googleapis.com)" || true
 
+      - name: Artifact Registry diagnostics
+        run: |
+          set -x
+          echo "Descrevendo repositório Artifact Registry..."
+          gcloud artifacts repositories describe "$REPO" --location="$REGION" || true
+          echo "Listando repositórios na região..."
+          gcloud artifacts repositories list --location="$REGION" || true
+          echo "Política de IAM do repositório (completa):"
+          gcloud artifacts repositories get-iam-policy "$REPO" --location="$REGION" --format=json || true
+          echo "Conta gcloud ativa:"
+          gcloud auth list --filter=status:ACTIVE --format="value(account)" || true
+          echo "Listando imagens existentes (se houver) para confirmar acesso de leitura..."
+          gcloud artifacts docker images list "$REGION-docker.pkg.dev/$PROJECT_ID/$REPO" || true
+
       # ===== Build & Deploy without Cloud Build (avoids _cloudbuild bucket permission) =====
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -122,6 +136,22 @@ jobs:
           username: _json_key
           password: ${{ secrets.GCP_SA_KEY }}
 
+      - name: Show Docker config for registry host
+        run: |
+          set -x
+          if [ -f "$HOME/.docker/config.json" ]; then
+            echo "~/.docker/config.json:" && cat "$HOME/.docker/config.json" | sed -E 's/"auth"\s*:\s*"[^"]+"/"auth":"***"/g'
+          else
+            echo "Docker config.json não encontrado"
+          fi
+
+      - name: Sanity push to Artifact Registry (hello-world)
+        run: |
+          set -euo pipefail
+          docker pull hello-world:latest
+          docker tag hello-world:latest "${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/sanity:gha-${GITHUB_RUN_ID}"
+          docker push "${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/sanity:gha-${GITHUB_RUN_ID}"
+
       # Repository 'servio-ai' already exists in us-west1
       # No need to create it on every run
 
@@ -132,6 +162,8 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
+          provenance: false
+          sbom: false
           tags: |
             ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/ai-server:${{ github.sha }}
             ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/ai-server:latest
@@ -154,6 +186,8 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
+          provenance: false
+          sbom: false
           tags: |
             ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/backend:${{ github.sha }}
             ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/backend:latest
