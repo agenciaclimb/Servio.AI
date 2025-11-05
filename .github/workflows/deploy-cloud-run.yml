@@ -86,6 +86,16 @@ jobs:
         with:
           version: ">= 462.0.0"
 
+      - name: Activate service account in gcloud (explicit)
+        run: |
+          set -x
+          KEY_FILE="${GOOGLE_APPLICATION_CREDENTIALS:-${GOOGLE_GHA_CREDS_PATH:-}}"
+          if [ -n "$KEY_FILE" ] && [ -f "$KEY_FILE" ]; then
+            gcloud auth activate-service-account --key-file="$KEY_FILE"
+          else
+            echo "::warning::Service account key file environment variable not set; relying on auth action overrides"
+          fi
+
       - name: Configure gcloud project and verify APIs
         run: |
           set -x
