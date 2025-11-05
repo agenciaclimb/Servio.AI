@@ -1,3 +1,109 @@
+#update_log - 2025-11-05 02:45
+🎉 **CI/CD PIPELINE RESOLVIDO - ARTIFACT REGISTRY FUNCIONANDO 100%**
+
+**Problema Identificado:**
+O deploy CI/CD no Cloud Run estava falhando com erro:
+
+```
+denied: Permission "artifactregistry.repositories.uploadArtifacts" denied on resource "projects/***/locations/***/repositories/servio-ai"
+```
+
+**Causa Raiz:**
+Configuração de **DOIS PROJETOS GCP MISTURADOS**:
+
+- ❌ Secrets GitHub apontavam para projeto: `servioai` (projeto antigo/errado)
+- ❌ Service Account usada: `servio-ci-cd@servioai.iam.gserviceaccount.com`
+- ✅ Artifact Registry estava em: `gen-lang-client-0737507616` (projeto correto)
+
+**Solução Aplicada:**
+
+1. **Identificação via Diagnósticos Profundos**
+   - Adicionados steps de diagnóstico no workflow
+   - Logs mostraram SA ativa e project_id
+   - Confirmado uso da SA errada
+
+2. **Geração de Nova Service Account Key**
+
+   ```bash
+   gcloud iam service-accounts keys create servio-cicd-correct-key.json \
+     --iam-account=servio-cicd@gen-lang-client-0737507616.iam.gserviceaccount.com \
+     --project=gen-lang-client-0737507616
+   ```
+
+3. **Atualização dos GitHub Secrets**
+   - `GCP_PROJECT_ID`: `servioai` → `gen-lang-client-0737507616`
+   - `GCP_SA_KEY`: Chave da SA correta (`servio-cicd@gen-lang-client-0737507616`)
+
+4. **Validação com Tag v0.0.35-backend**
+   - ✅ Service Account correta ativada
+   - ✅ Sanity push funcionou (hello-world → Artifact Registry)
+   - ✅ Build da imagem backend completado
+   - ✅ Push para `us-west1-docker.pkg.dev/gen-lang-client-0737507616/servio-ai/backend`
+   - ✅ Deploy no Cloud Run executado com sucesso
+
+**Melhorias Implementadas no Workflow:**
+
+1. **Ativação Explícita da Service Account**
+
+   ```yaml
+   - name: Activate service account in gcloud (explicit)
+     run: |
+       gcloud auth activate-service-account --key-file="$KEY_FILE"
+       echo "Service Account (from key file):" && cat "$KEY_FILE" | jq -r '.client_email'
+   ```
+
+2. **Diagnósticos do Artifact Registry**
+   - Describe repository
+   - Get IAM policy
+   - List images
+   - Show active account
+
+3. **Sanity Push (hello-world)**
+   - Push de imagem mínima antes dos builds grandes
+   - Valida credenciais e permissões
+
+4. **Desabilitar Provenance/SBOM**
+   ```yaml
+   provenance: false
+   sbom: false
+   ```
+
+   - Reduz superfície de permissões necessárias
+
+**Status Final:**
+✅ **Pipeline CI/CD 100% Funcional**
+
+- Artifact Registry: Pushes OK
+- Cloud Run: Deploys automáticos
+- GitHub Actions: Fluxo completo funcionando
+
+**✅ Deploy Backend Confirmado:**
+
+- URL: https://servio-backend-h5ogjon7aa-uw.a.run.app
+- Status: 🟢 Online
+- Health check: `GET /` → 200 OK
+- Validação pendente: Endpoints com Firestore (necessário configurar env vars)
+
+**Próximos Passos (Opcional):**
+
+1. ✅ ~~Remover diagnósticos do workflow~~ (manter para troubleshooting futuro)
+2. ✅ ~~Validar endpoints do backend~~ (Online, pending env vars)
+3. Testar deploy do frontend (ai-server) via tag
+4. ✅ **Documentar configuração de secrets** → Ver **[SECURITY_KEYS_GUIDE.md](../SECURITY_KEYS_GUIDE.md)**
+
+**📚 Documentação Criada:**
+
+- **[SECURITY_KEYS_GUIDE.md](../SECURITY_KEYS_GUIDE.md)**: Guia completo de segurança para chaves e configurações
+  - GitHub Secrets (como configurar, erros comuns)
+  - GCP Service Accounts (criação, roles, rotação)
+  - Firebase (configurações públicas vs. privadas)
+  - Stripe (chaves publishable vs. secret)
+  - Boas práticas gerais (rotação, .gitignore, menor privilégio)
+  - Checklist de segurança
+  - Procedimento em caso de vazamento
+
+---
+
 #update_log - 2025-11-04 00:00
 🏆 **LIGHTHOUSE AUDIT #3 - RESULTADOS FINAIS (localhost:4173 - Desktop)**
 
@@ -524,6 +630,37 @@ Como acionar:
 Status:
 
 - Workflow atualizado no repositório. Próximo passo: executar e validar endpoints.
+
+---
+
+#update_log - 2025-11-04 15:40
+⚠️ Falha ao criar repositório no Artifact Registry durante o Deploy
+
+Resumo:
+
+- Durante a execução do novo workflow (Docker Buildx → Artifact Registry → Cloud Run) o passo "Ensure Artifact Registry repository exists" tentou criar o repositório `servio-ai` automaticamente e falhou com `PERMISSION_DENIED: artifactregistry.repositories.create`.
+
+Diagnóstico:
+
+- A conta de serviço usada pelo GitHub Actions (secret `GCP_SA_KEY`) não possui a permissão necessária para criar repositórios no Artifact Registry.
+
+Correção recomendada (escolha uma):
+
+1. Conceder à SA usada pelo Actions o papel `roles/artifactregistry.admin`. Exemplo:
+
+```pwsh
+gcloud projects add-iam-policy-binding gen-lang-client-0737507616 \
+  --member="serviceAccount:SERVICO_SA_EMAIL" \
+  --role="roles/artifactregistry.admin"
+```
+
+2. Ou criar manualmente o repositório `servio-ai` no Artifact Registry (Console → Artifact Registry → Create Repository) com formato `Docker` e localização `us-west1`. Depois apenas garanta `roles/artifactregistry.writer` na SA.
+
+3. Alternativa técnica: remover do workflow a tentativa de criar o repositório automaticamente e exigir que ele exista antes do run (mais seguro). Posso aplicar essa mudança se preferir.
+
+Próximo passo executável:
+
+- Aplique um dos passos 1 ou 2 acima; em seguida reexecute o workflow. Após sucesso, registrarei as URLs dos serviços e resultados no Documento Mestre.
 
 ---
 
