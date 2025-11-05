@@ -92,6 +92,7 @@ jobs:
           KEY_FILE="${GOOGLE_APPLICATION_CREDENTIALS:-${GOOGLE_GHA_CREDS_PATH:-}}"
           if [ -n "$KEY_FILE" ] && [ -f "$KEY_FILE" ]; then
             gcloud auth activate-service-account --key-file="$KEY_FILE"
+            echo "Service Account (from key file):" && cat "$KEY_FILE" | jq -r '.client_email'
           else
             echo "::warning::Service account key file environment variable not set; relying on auth action overrides"
           fi
