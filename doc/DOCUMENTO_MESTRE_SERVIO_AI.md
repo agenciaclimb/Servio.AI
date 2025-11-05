@@ -1,3 +1,26 @@
+#update_log - 2025-11-05 03:05
+🚀 Deploy do Frontend (ai-server) no Cloud Run — SUCESSO
+
+• Serviço: servio-ai  
+• URL: https://servio-ai-h5ogjon7aa-uw.a.run.app  
+• Trigger: tag v0.0.1-frontend (GitHub Actions → Deploy to Cloud Run)
+
+Heads HTTP (resumo):
+
+```
+HTTP/1.1 200 OK
+x-powered-by: Express
+content-type: application/json; charset=utf-8
+server: Google Frontend
+```
+
+Notas:
+
+- Pipeline validou push no Artifact Registry e deploy no Cloud Run com a mesma SA do backend (servio-cicd@gen-lang-client-0737507616).
+- Mantidos steps de diagnóstico opcionais no workflow para troubleshooting futuro.
+
+---
+
 #update_log - 2025-11-05 02:45
 🎉 **CI/CD PIPELINE RESOLVIDO - ARTIFACT REGISTRY FUNCIONANDO 100%**
 
@@ -63,6 +86,7 @@ Configuração de **DOIS PROJETOS GCP MISTURADOS**:
    - Valida credenciais e permissões
 
 4. **Desabilitar Provenance/SBOM**
+
    ```yaml
    provenance: false
    sbom: false
