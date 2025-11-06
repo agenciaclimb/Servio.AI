@@ -169,7 +169,7 @@ const App: React.FC = () => {
     setAllJobs(prev => [newJob, ...prev]);
     setWizardData(null);
 
-    // If it was a direct invitation, notify the provider and we're done.
+    // If it was a direct invitation, notify the provider and redirect to dashboard
     if (jobData.targetProviderId) {
         const provider = allUsers.find(u => u.email === jobData.targetProviderId);
         if (provider) {
@@ -180,13 +180,15 @@ const App: React.FC = () => {
                 isRead: false,
                 createdAt: new Date(),
             }]);
-            alert(`Ótimo! Seu pedido foi enviado diretamente para ${provider.name}. Eles serão notificados para enviar uma proposta.`);
+            alert(`✅ Ótimo! Seu pedido foi enviado diretamente para ${provider.name}.\n\nEles serão notificados e você receberá uma proposta em breve.`);
+            setView({ name: 'dashboard' });
         }
         return;
     }
     
     if (newJob.jobMode === 'leilao') {
-      alert(`Seu leilão para "${newJob.category}" foi publicado e ficará ativo até ${new Date(newJob.auctionEndDate!).toLocaleString('pt-BR')}.`);
+      alert(`✅ Seu leilão para "${newJob.category}" foi publicado!\n\nFica ativo até ${new Date(newJob.auctionEndDate!).toLocaleString('pt-BR')}.\n\nPrestadores começarão a enviar lances em breve.`);
+      setView({ name: 'dashboard' });
       return;
     }
 
@@ -343,7 +345,10 @@ const App: React.FC = () => {
       {matchingResults && (
         <MatchingResultsModal 
             results={matchingResults}
-            onClose={() => setMatchingResults(null)}
+            onClose={() => {
+              setMatchingResults(null);
+              setView({ name: 'dashboard' });
+            }}
             onInvite={handleInviteProvider}
         />
       )}
@@ -351,10 +356,12 @@ const App: React.FC = () => {
       {prospects && (
         <ProspectingNotificationModal
             prospects={prospects}
-            onClose={() => setProspects(null)}
+            onClose={() => {
+              setProspects(null);
+              setView({ name: 'dashboard' });
+            }}
         />
       )}
-
     </div>
   );
 };
