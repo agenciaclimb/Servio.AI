@@ -1,0 +1,56 @@
+name: Validate GCP SA Key
+
+on:
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: gen-lang-client-0737507616
+  REGION: us-west1
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print context
+        run: |
+          echo "Repo: $GITHUB_REPOSITORY"
+          echo "Ref:  $GITHUB_REF"
+          echo "Project: $PROJECT_ID | Region: $REGION"
+
+      - name: Auth to Google Cloud (using GCP_SA_KEY)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: ">= 462.0.0"
+
+      - name: Activate service account and assert project match
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE="${GOOGLE_APPLICATION_CREDENTIALS:-${GOOGLE_GHA_CREDS_PATH:-}}"
+          if [[ -z "${FILE}" || ! -f "${FILE}" ]]; then
+            echo "::error::Creds file not found"
+            exit 1
+          fi
+          gcloud auth activate-service-account --key-file="$FILE"
+          SA_EMAIL=$(jq -r '.client_email' "$FILE")
+          echo "Service Account: $SA_EMAIL"
+          if [[ "$SA_EMAIL" != *"@gen-lang-client-0737507616.iam.gserviceaccount.com" ]]; then
+            echo "::error::Wrong project SA"
+            exit 1
+          fi
+          gcloud config set project "$PROJECT_ID"
+
+      - name: Read-only checks
+        run: |
+          set -x
+          gcloud artifacts repositories list --location="$REGION" || exit 1
+          gcloud run services list --region="$REGION" || exit 1
+
+      - name: Result
+        run: echo "✅ GCP_SA_KEY válido para projeto $PROJECT_ID"
