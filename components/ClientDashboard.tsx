@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Job, User, Proposal, Message, Dispute, MaintainedItem, JobData, Escrow, Notification, ScheduledDateTime, DisputeMessage, Bid } from '../types';
 import ClientJobCard from './ClientJobCard';
 import ProposalListModal from './ProposalListModal';
@@ -408,6 +408,80 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
             onSendMessage={handleSendMessage}
             onConfirmSchedule={handleConfirmSchedule}
         />
+      )}
+
+      {/* AI Assistant Widget */}
+      <AIAssistantWidget userName={user.name.split(' ')[0]} />
+    </div>
+  );
+};
+
+// AI Assistant Widget Component
+interface AIAssistantWidgetProps {
+  userName: string;
+}
+
+const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ userName }) => {
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [currentTip, setCurrentTip] = useState(0);
+
+  const tips = [
+    "💡 Dica: Adicione fotos detalhadas ao solicitar um serviço para receber propostas mais precisas.",
+    "🎯 Você sabia? Prestadores verificados têm maior taxa de conclusão de serviços.",
+    "⏰ Programe manutenções preventivas e economize até 30% em reparos emergenciais.",
+    "📱 Use o chat integrado para tirar dúvidas antes de aceitar uma proposta."
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTip((prev) => (prev + 1) % tips.length);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [tips.length]);
+
+  return (
+    <div className={`fixed bottom-4 right-4 z-50 transition-all duration-300 ${isExpanded ? 'w-80' : 'w-16'}`}>
+      {isExpanded ? (
+        <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-2xl p-4 text-white">
+          <div className="flex justify-between items-start mb-3">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl animate-pulse">✨</span>
+              <span className="font-semibold">IA Assistente</span>
+            </div>
+            <button 
+              onClick={() => setIsExpanded(false)}
+              className="text-white/80 hover:text-white text-sm"
+            >
+              ✕
+            </button>
+          </div>
+          
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 mb-3 min-h-[60px]">
+            <p className="text-sm leading-relaxed">{tips[currentTip]}</p>
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              onClick={() => alert('Em breve! A IA te ajudará a criar serviços de forma ainda mais inteligente.')}
+              className="flex-1 bg-white/20 hover:bg-white/30 rounded-lg px-3 py-2 text-xs font-medium transition"
+            >
+              Novo Serviço
+            </button>
+            <button
+              onClick={() => alert('Chat com IA em desenvolvimento - Em breve você poderá conversar diretamente com nossa assistente!')}
+              className="flex-1 bg-white/20 hover:bg-white/30 rounded-lg px-3 py-2 text-xs font-medium transition"
+            >
+              Preciso de Ajuda
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          onClick={() => setIsExpanded(true)}
+          className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform"
+        >
+          <span className="text-4xl animate-pulse">✨</span>
+        </button>
       )}
     </div>
   );
