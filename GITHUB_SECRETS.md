@@ -85,12 +85,23 @@ Ou manualmente:
 
 Após adicionar todos os secrets, você pode validar executando o workflow:
 
-1. Actions → Deploy to Cloud Run → Run workflow
-2. Monitore os logs do deploy
-3. Verifique se o serviço sobe sem erros de variáveis faltando
+1. Actions → Validate GCP SA Key → Run workflow (preferível: valida apenas autenticação, leitura de AR e Cloud Run)
+   - Saída esperada: "✅ GCP_SA_KEY válido e com acesso esperado para o projeto gen-lang-client-0737507616"
+   - O job também imprime o e-mail da Service Account; verifique se termina com `@gen-lang-client-0737507616.iam.gserviceaccount.com`.
+2. (Opcional) Actions → Deploy to Cloud Run → Run workflow
+   - Se a validação passar, você pode rodar um deploy. O passo "Auth to Google Cloud" deve passar; um "Sanity push" no Artifact Registry confirmará permissão de escrita.
 
 ## Troubleshooting
 
 - **Erro "secret not found"**: Verifique o nome exato do secret (case-sensitive)
 - **Erro de permissão no GCP**: Revise as roles da Service Account
 - **Container não inicia**: Verifique logs do Cloud Run para variáveis faltando
+
+## Boas práticas para chaves (Service Account Keys)
+
+- Evite acumular várias chaves ativas para a mesma SA. Mantenha apenas 1 (no máximo 2 durante rotação).
+- Se existirem chaves antigas que não são mais usadas no GitHub, apague-as em: IAM & Admin → Service Accounts → [sua SA] → Keys.
+- Sempre que rotacionar a chave:
+  1.  Gere a nova chave JSON; atualize o secret `GCP_SA_KEY` no GitHub.
+  2.  Confirme com o workflow "Validate GCP SA Key".
+  3.  Delete a chave anterior.

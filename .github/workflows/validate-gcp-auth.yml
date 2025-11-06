@@ -1,0 +1,74 @@
+name: Validate GCP SA Key
+
+on:
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: gen-lang-client-0737507616
+  REGION: us-west1
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print context
+        run: |
+          echo "Repo: $GITHUB_REPOSITORY"
+          echo "Ref:  $GITHUB_REF"
+          echo "Project: $PROJECT_ID | Region: $REGION"
+
+      - name: Auth to Google Cloud (using GCP_SA_KEY)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: ">= 462.0.0"
+
+      - name: Activate service account (explicit) and assert project match
+        shell: bash
+        env:
+          KEY_FILE: ${{ env.GOOGLE_APPLICATION_CREDENTIALS || env.GOOGLE_GHA_CREDS_PATH }}
+        run: |
+          set -euo pipefail
+          FILE="${GOOGLE_APPLICATION_CREDENTIALS:-${GOOGLE_GHA_CREDS_PATH:-}}"
+          if [[ -z "${FILE}" || ! -f "${FILE}" ]]; then
+            echo "::error::Creds file do auth action não encontrado"
+            exit 1
+          fi
+          # Ativa SA e mostra e-mail
+          gcloud auth activate-service-account --key-file="$FILE"
+          SA_EMAIL=$(jq -r '.client_email' "$FILE")
+          echo "Service Account: $SA_EMAIL"
+          # Checa domínio do projeto correto
+          if [[ "$SA_EMAIL" != *"@gen-lang-client-0737507616.iam.gserviceaccount.com" ]]; then
+            echo "::error::Essa chave não pertence ao projeto esperado (gen-lang-client-0737507616)"
+            exit 1
+          fi
+          # Configura projeto e valida
+          gcloud config set project "$PROJECT_ID"
+          CURRENT=$(gcloud config get-value core/project)
+          echo "gcloud project em uso: $CURRENT"
+          if [[ "$CURRENT" != "$PROJECT_ID" ]]; then
+            echo "::error::Projeto configurado difere do esperado"
+            exit 1
+          fi
+
+      - name: Read-only checks (Artifact Registry, Cloud Run)
+        run: |
+          set -x
+          gcloud --version
+          gcloud auth list
+          gcloud config list
+          echo "Listando repositórios do Artifact Registry em $REGION (espera-se sucesso)..."
+          gcloud artifacts repositories list --location="$REGION" || exit 1
+          echo "Descrvendo repositório padrão (se existir)..."
+          gcloud artifacts repositories describe servio-ai --location="$REGION" || true
+          echo "Listando serviços do Cloud Run em $REGION (espera-se sucesso, mesmo sem serviços)..."
+          gcloud run services list --region="$REGION" || exit 1
+
+      - name: Result
+        run: echo "✅ GCP_SA_KEY válido e com acesso esperado para o projeto $PROJECT_ID"

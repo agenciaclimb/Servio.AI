@@ -23,8 +23,9 @@ on:
       - "v*"
 
 env:
-  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  REGION: ${{ secrets.GCP_REGION }}
+  # ✅ CORRIGIDO: Projeto correto (ID: 1000250760228)
+  PROJECT_ID: gen-lang-client-0737507616
+  REGION: us-west1
   # SERVICE secret não é mais obrigatório; serviços são definidos por step
   REPO: servio-ai
 
