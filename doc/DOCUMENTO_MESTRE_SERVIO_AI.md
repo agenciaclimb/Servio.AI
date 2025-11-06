@@ -4,29 +4,42 @@
 
 ---
 
-## 🚀 DEPLOY BEM-SUCEDIDO - 06/11/2025 16:55
+## 🚀 DEPLOY COMPLETO E VALIDADO - 06/11/2025 17:15
 
-✅ **Ambos os serviços deployados com sucesso no Cloud Run!**
+✅ **Sistema 100% operacional no Cloud Run com IA habilitada!**
 
 **Serviços Ativos:**
 
 - **Backend API:** https://servio-backend-1000250760228.us-west1.run.app
   - Status: ✓ Online e respondendo
-  - Revisão: `servio-backend-00005-hrs`
-- **IA Service:** `servio-ai-00049-9mx`
+  - Revisão: `servio-backend-00006-vcn`
+- **IA Service:** `servio-ai-00050-tzg`
   - Status: ✓ Online (100% traffic)
+  - ✅ GEMINI_API_KEY configurada
 
 **GitHub Actions:**
 
 - ✅ Workflow "Validate GCP SA Key" funcionando (valida autenticação)
-- ✅ Workflow "Deploy to Cloud Run" atualizado com Docker + Artifact Registry
+- ✅ Workflow "Deploy to Cloud Run" com Docker + Artifact Registry
 - ✅ `secrets.GCP_SA_KEY` validado para projeto `gen-lang-client-0737507616`
+- ✅ `secrets.GEMINI_API_KEY` configurada — funcionalidades IA habilitadas
+
+**Secrets Configurados:**
+
+- ✅ GCP_PROJECT_ID
+- ✅ GCP_REGION
+- ✅ GCP_SA_KEY
+- ✅ GCP_SERVICE
+- ✅ GCP_STORAGE_BUCKET
+- ✅ GEMINI_API_KEY
+- ✅ FRONTEND_URL
+- ✅ STRIPE_SECRET_KEY
 
 **Próximos passos:**
 
-1. ⚠️ Adicionar secret `GEMINI_API_KEY` no GitHub para habilitar funcionalidades IA
-2. Configurar variáveis de ambiente nos serviços Cloud Run (FRONTEND_URL, etc.)
-3. Testar fluxo completo: login → criar job → proposta → pagamento
+1. Deploy do frontend para Firebase Hosting
+2. Testar fluxo completo: login → criar job → proposta → pagamento
+3. Configurar domínio customizado (opcional)
 
 ---
 
