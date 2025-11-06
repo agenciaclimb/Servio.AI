@@ -1,6 +1,32 @@
 # 📘 DOCUMENTO MESTRE - SERVIO.AI
 
-**Última atualização:** 31/10/2025 21:10
+**Última atualização:** 06/11/2025 17:00
+
+---
+
+## 🚀 DEPLOY BEM-SUCEDIDO - 06/11/2025 16:55
+
+✅ **Ambos os serviços deployados com sucesso no Cloud Run!**
+
+**Serviços Ativos:**
+
+- **Backend API:** https://servio-backend-1000250760228.us-west1.run.app
+  - Status: ✓ Online e respondendo
+  - Revisão: `servio-backend-00005-hrs`
+- **IA Service:** `servio-ai-00049-9mx`
+  - Status: ✓ Online (100% traffic)
+
+**GitHub Actions:**
+
+- ✅ Workflow "Validate GCP SA Key" funcionando (valida autenticação)
+- ✅ Workflow "Deploy to Cloud Run" atualizado com Docker + Artifact Registry
+- ✅ `secrets.GCP_SA_KEY` validado para projeto `gen-lang-client-0737507616`
+
+**Próximos passos:**
+
+1. ⚠️ Adicionar secret `GEMINI_API_KEY` no GitHub para habilitar funcionalidades IA
+2. Configurar variáveis de ambiente nos serviços Cloud Run (FRONTEND_URL, etc.)
+3. Testar fluxo completo: login → criar job → proposta → pagamento
 
 ---
 
