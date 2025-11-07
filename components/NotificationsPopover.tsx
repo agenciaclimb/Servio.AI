@@ -7,7 +7,8 @@ interface NotificationsPopoverProps {
   onMarkAllAsRead: () => void;
 }
 
-const timeAgo = (date: Date): string => {
+const timeAgo = (dateIso: string): string => {
+    const date = new Date(dateIso);
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
     if (seconds < 60) return "agora";
     const minutes = Math.floor(seconds / 60);

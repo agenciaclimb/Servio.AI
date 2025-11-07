@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Job, User, Proposal, Message, Dispute, MaintainedItem, JobData, Escrow, Notification, ScheduledDateTime, DisputeMessage, Bid } from '../types';
 import { enhanceJobRequest } from '../services/geminiService';
-import * as API from '../services/api';
 import ClientJobCard from './ClientJobCard';
 import ProposalListModal from './ProposalListModal';
 import PaymentModal from './PaymentModal';
@@ -14,16 +13,17 @@ import JobLocationModal from './JobLocationModal';
 import ChatModal from './ChatModal';
 import AuctionRoomModal from './AuctionRoomModal';
 import MaintenanceSuggestions from './MaintenanceSuggestions';
-import ClientDashboardSkeleton from './skeletons/ClientDashboardSkeleton';
 
 interface ClientDashboardProps {
   user: User;
-  allUsers: User;
+  allJobs: Job[];
+  allUsers: User[];
   allProposals: Proposal[];
   allMessages: Message[];
   allDisputes: Dispute[];
   allBids: Bid[];
   maintainedItems: MaintainedItem[];
+  setAllJobs: React.Dispatch<React.SetStateAction<Job[]>>;
   setAllProposals: React.Dispatch<React.SetStateAction<Proposal[]>>;
   setAllMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   setAllNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
@@ -36,36 +36,12 @@ interface ClientDashboardProps {
 }
 
 const ClientDashboard: React.FC<ClientDashboardProps> = ({
-  user, allUsers, allProposals, allMessages, maintainedItems, allDisputes, allBids,
-  setAllProposals, setAllMessages, setAllNotifications, setAllEscrows, setAllDisputes, setMaintainedItems,
+  user, allJobs, allUsers, allProposals, allMessages, maintainedItems, allDisputes, allBids,
+  setAllJobs, setAllProposals, setAllMessages, setAllNotifications, setAllEscrows, setAllDisputes, setMaintainedItems,
   onViewProfile, onNewJobFromItem, onUpdateUser
 }) => {
-  const [userJobs, setUserJobs] = useState<Job[]>([]);
-  const [isLoadingJobs, setIsLoadingJobs] = useState(true);
-
-  useEffect(() => {
-    // Simulate loading for skeleton screen visibility
-    const timer = setTimeout(() => {
-      setIsLoadingJobs(false);
-    }, 1500); // Adjust time as needed
-    const loadJobs = async () => {
-      setIsLoadingJobs(true);
-      try {
-        const jobs = await API.fetchJobsForUser(user.email);
-        setUserJobs(jobs);
-      } catch (error) {
-        console.error("Failed to fetch user jobs:", error);
-      } finally {
-        setIsLoadingJobs(false);
-      }
-    };
-
-    // loadJobs(); // Temporarily disabled to show skeleton
-
-    return () => clearTimeout(timer);
-  }, [user.email]);
-
-  const [currentView, setCurrentView] = useState<'inicio' | 'servicos' | 'itens' | 'ajuda'>('inicio');
+  const [activeTab, setActiveTab] = useState<'jobs' | 'items'>('jobs');
+  // Onboarding & perfil
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [viewingProposalsForJob, setViewingProposalsForJob] = useState<Job | null>(null);
@@ -78,16 +54,14 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
   const [viewingJobOnMap, setViewingJobOnMap] = useState<Job | null>(null);
   const [chattingWithJob, setChattingWithJob] = useState<Job | null>(null);
 
-  if (isLoadingJobs) {
-    return <ClientDashboardSkeleton />;
-  }
 
-
-  const activeJobs = userJobs.filter(j => !['concluido', 'cancelado'].includes(j.status));
-  const completedJobs = userJobs.filter(j => j.status === 'concluido');
+  const userJobs = allJobs.filter(job => job.clientId === user.email);
+  const firstServiceDone = userJobs.length > 0;
+  const firstItemDone = maintainedItems.length > 0;
   const profileComplete = Boolean(user.address && user.bio && user.bio.length > 20);
-  const onboardingStepsTotal = 4;
-  const onboardingStepsDone = [profileComplete, userJobs.length > 0, maintainedItems.length > 0].filter(Boolean).length;
+  const onboardingStepsTotal = 3;
+  const onboardingStepsDone = [profileComplete, firstServiceDone, firstItemDone].filter(Boolean).length;
+
   const handleAcceptProposal = (proposalId: string) => {
     const proposal = allProposals.find(p => p.id === proposalId);
     if (proposal) {
@@ -95,89 +69,51 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     }
   };
 
-  const handlePaymentSuccess = async () => {
+  const handlePaymentSuccess = () => {
     if (!payingForProposal) return;
-    const { jobId, providerId, price, id: proposalId } = payingForProposal;
+    const { jobId, providerId, price } = payingForProposal;
 
-    try {
-      // Update proposal status via API
-      await API.updateProposal(proposalId, { status: 'aceita' });
-      
-      // Update other proposals for same job to rejected
-      const otherProposals = allProposals.filter(p => p.jobId === jobId && p.id !== proposalId);
-      for (const prop of otherProposals) {
-        await API.updateProposal(prop.id, { status: 'recusada' });
-      }
-      
-      // Update job status
-      const newEscrowId = `esc-${Date.now()}`;
-      await API.updateJob(jobId, { 
-        status: 'proposta_aceita', 
-        providerId, 
-        escrowId: newEscrowId 
-      });
+    // Update proposal status
+    setAllProposals(prev => prev.map(p => p.jobId === jobId ? { ...p, status: p.id === payingForProposal.id ? 'aceita' : 'recusada' } : p));
+    
+    // Update job status
+    const newEscrowId = `esc-${Date.now()}`;
+    setAllJobs(prev => prev.map(j => j.id === jobId ? { ...j, status: 'proposta_aceita', providerId, escrowId: newEscrowId } : j));
 
-      // Update local state
-      setAllProposals(prev => prev.map(p => 
-        p.jobId === jobId ? { ...p, status: p.id === proposalId ? 'aceita' : 'recusada' } : p
-      ));
-      setUserJobs(prev => prev.map(j => 
-        j.id === jobId ? { ...j, status: 'proposta_aceita', providerId, escrowId: newEscrowId } : j
-      ));
+    // Create Escrow
+    setAllEscrows(prev => [...prev, {
+      id: newEscrowId,
+      jobId,
+      clientId: user.email,
+      providerId,
+      amount: price,
+      status: 'bloqueado',
+  createdAt: new Date().toISOString(),
+    }]);
 
-      // Create Escrow (local for now - would need API endpoint)
-      setAllEscrows(prev => [...prev, {
-        id: newEscrowId,
-        jobId,
-        clientId: user.email,
-        providerId,
-        amount: price,
-        status: 'bloqueado',
-        createdAt: new Date().toISOString(),
-      }]);
+    setAllNotifications(prev => [...prev, {
+      id: `notif-${Date.now()}`,
+      userId: providerId,
+      text: `Sua proposta para o job "${allJobs.find(j => j.id === jobId)?.category}" foi aceita!`,
+      isRead: false,
+  createdAt: new Date().toISOString(),
+    }]);
 
-      // Notify provider
-      await API.createNotification({
-        userId: providerId,
-        text: `Sua proposta para o job "${userJobs.find(j => j.id === jobId)?.category}" foi aceita!`,
-        isRead: false,
-      });
-
-      setPayingForProposal(null);
-      setViewingProposalsForJob(null);
-      console.log('Proposal accepted and payment processed');
-    } catch (error) {
-      console.error('Failed to process payment:', error);
-      alert('Erro ao processar pagamento. Tente novamente.');
-    }
+    setPayingForProposal(null);
+    setViewingProposalsForJob(null);
   };
   
-  const handleFinalizeJob = async (reviewData: { rating: number, comment: string }) => {
+  const handleFinalizeJob = (reviewData: { rating: number, comment: string }) => {
     if(!reviewingJob) return;
 
-    try {
-      // Update Job with review and set status to 'concluido'
-      await API.updateJob(reviewingJob.id, {
-        status: 'concluido',
-        review: { ...reviewData, authorId: user.email, createdAt: new Date().toISOString() }
-      });
+    // Update Job with review and set status to 'concluido'
+    setAllJobs(prev => prev.map(j => j.id === reviewingJob.id ? { ...j, status: 'concluido', review: { ...reviewData, authorId: user.email, createdAt: new Date().toISOString() } } : j));
 
-      setUserJobs(prev => prev.map(j => 
-        j.id === reviewingJob.id ? { ...j, status: 'concluido', review: { ...reviewData, authorId: user.email, createdAt: new Date().toISOString() } } : j
-      ));
-
-      // Release payment from escrow (local for now - would need API endpoint)
-      setAllEscrows(prev => prev.map(e => 
-        e.jobId === reviewingJob.id ? { ...e, status: 'liberado', releasedAt: new Date().toISOString() } : e
-      ));
-      
-      setReviewingJob(null);
-      console.log('Job finalized with review');
-    } catch (error) {
-      console.error('Failed to finalize job:', error);
-      alert('Erro ao finalizar serviço. Tente novamente.');
-    }
-  };
+    // Release payment from escrow
+  setAllEscrows(prev => prev.map(e => e.jobId === reviewingJob.id ? { ...e, status: 'liberado', releasedAt: new Date().toISOString() } : e));
+    
+    setReviewingJob(null);
+  }
 
   const handleReportIssue = (job: Job) => {
     const newDisputeId = `disp-${Date.now()}`;
@@ -196,7 +132,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
         createdAt: new Date().toISOString()
     };
     setAllDisputes(prev => [...prev, newDispute]);
-    setUserJobs(prev => prev.map(j => j.id === job.id ? {...j, status: 'em_disputa', disputeId: newDisputeId} : j));
+    setAllJobs(prev => prev.map(j => j.id === job.id ? {...j, status: 'em_disputa', disputeId: newDisputeId} : j));
     setAllEscrows(prev => prev.map(e => e.jobId === job.id ? {...e, status: 'em_disputa'} : e));
     setViewingDisputeForJob(job);
   };
@@ -218,14 +154,14 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
         );
 
         const dispute = allDisputes.find(d => d.id === disputeId);
-        const job = userJobs.find(j => j.id === dispute?.jobId);
-    if (job?.providerId) {
+        const job = allJobs.find(j => j.id === dispute?.jobId);
+        if (job?.providerId) {
             setAllNotifications(prev => [...prev, {
                 id: `notif-dispute-${Date.now()}`,
                 userId: job.providerId!,
                 text: `Nova mensagem na disputa do job "${job.category}".`,
                 isRead: false,
-        createdAt: new Date().toISOString(),
+                createdAt: new Date().toISOString(),
             }]);
         }
     };
@@ -252,27 +188,27 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     };
     setAllMessages(prev => [...prev, newMessage]);
 
-    const job = userJobs.find(j => j.id === messageData.chatId);
-  if (job) {
-    const otherPartyId = job.providerId === user.email ? job.clientId : job.providerId;
-    if (otherPartyId) {
-      setAllNotifications(prev => [...prev, {
-        id: `notif-${Date.now()}`,
-        userId: otherPartyId,
-        text: `Nova mensagem de ${user.name} sobre o job "${job.category}".`,
-        isRead: false,
-        createdAt: new Date().toISOString(),
-      }]);
+    const job = allJobs.find(j => j.id === messageData.chatId);
+    if (job) {
+        const otherPartyId = job.providerId === user.email ? job.clientId : job.providerId;
+        if (otherPartyId) {
+            setAllNotifications(prev => [...prev, {
+                id: `notif-${Date.now()}`,
+                userId: otherPartyId,
+                text: `Nova mensagem de ${user.name} sobre o job "${job.category}".`,
+                isRead: false,
+                createdAt: new Date().toISOString(),
+            }]);
+        }
     }
-  }
   };
   
   const handleConfirmSchedule = (jobId: string, schedule: ScheduledDateTime, messageId?: string) => {
-    const job = userJobs.find(j => j.id === jobId);
+    const job = allJobs.find(j => j.id === jobId);
     if (!job || !job.providerId) return;
 
     // 1. Update Job Status
-    setUserJobs(prev => prev.map(j => (j.id === jobId ? { ...j, status: 'agendado' } : j)));
+    setAllJobs(prev => prev.map(j => (j.id === jobId ? { ...j, status: 'agendado' } : j)));
 
     const formattedDate = new Date(`${schedule.date}T00:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     const confirmationText = `✅ Agendamento confirmado para ${formattedDate} às ${schedule.time}.`;
@@ -290,12 +226,12 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
 
     // 3. Notify the Provider
   setAllNotifications(prev => [...prev, {
-        id: `notif-${Date.now()}`,
-        userId: job.providerId!,
-        text: `Agendamento confirmado para o job "${job.category}"!`,
-        isRead: false,
+    id: `notif-${Date.now()}`,
+    userId: job.providerId!,
+    text: `Agendamento confirmado para o job "${job.category}"!`,
+    isRead: false,
     createdAt: new Date().toISOString(),
-    }]);
+  }]);
 
     // 4. Mark the proposal message as confirmed
     if (messageId) {
@@ -321,279 +257,150 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-6 flex-1">
-          <div className="flex items-center gap-2 mb-8">
-            <span className="text-2xl">👋</span>
-            <div>
-              <p className="text-sm font-semibold text-gray-900">Olá, {user.name.split(' ')[0]}!</p>
-              <button onClick={() => setIsProfileModalOpen(true)} className="text-xs text-blue-600 hover:underline">Conta Pessoal</button>
-            </div>
-          </div>
-
-          <nav className="space-y-1">
-            <button
-              onClick={() => setCurrentView('inicio')}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                currentView === 'inicio' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <span className="text-lg">🏠</span>
-              Início
-            </button>
-            <button
-              onClick={() => setCurrentView('servicos')}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                currentView === 'servicos' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <span className="text-lg">📋</span>
-              Meus Serviços
-            </button>
-            <button
-              onClick={() => setCurrentView('itens')}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                currentView === 'itens' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <span className="text-lg">📦</span>
-              Meus Itens
-            </button>
-            <button
-              onClick={() => setCurrentView('ajuda')}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                currentView === 'ajuda' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <span className="text-lg">❓</span>
-              Ajuda
-            </button>
-          </nav>
+    <div className="p-4 sm:p-6 lg:p-8">
+      {/* Cabeçalho com saudação */}
+      <header className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Bem-vind{user.name.split(' ')[0].endsWith('a') ? 'a' : 'o'}, {user.name.split(' ')[0]}!</h1>
+          <p className="text-gray-500 mt-1">Gerencie seus serviços e itens.</p>
         </div>
-        <div className="p-6 border-t border-gray-200">
-          <button className="text-sm text-gray-600 hover:text-blue-600">Sair</button>
-        </div>
-      </aside>
+      </header>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="max-w-7xl mx-auto p-6 sm:p-8 space-y-6">
-          {currentView === 'inicio' && (
-            <>
-              {/* Card de Onboarding */}
-              {showOnboarding && !profileComplete && (
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-8 text-white shadow-xl">
+      {/* Card de Onboarding - Apenas se não tiver nenhum serviço E nenhum item */}
+      {showOnboarding && userJobs.length === 0 && maintainedItems.length === 0 && (
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 p-6 border-2 border-blue-200 shadow-sm mb-6">
+          <button
+            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-xl"
+            onClick={() => setShowOnboarding(false)}
+            aria-label="Fechar onboarding"
+          >×</button>
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0 text-4xl">👋</div>
+            <div className="flex-1">
+              <h2 className="text-lg font-bold text-gray-900 mb-1">Bem-vindo ao Servio.AI!</h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Comece solicitando seu primeiro serviço ou cadastrando um item para manutenção futura.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {!profileComplete && (
                   <button
-                    className="absolute top-4 right-4 text-white/70 hover:text-white text-xl"
-                    onClick={() => setShowOnboarding(false)}
-                  >✕</button>
-                  <div className="flex items-start gap-4 mb-6">
-                    <span className="text-4xl">✨</span>
-                    <div>
-                      <h2 className="text-2xl font-bold mb-2">Complete seu perfil</h2>
-                      <p className="text-blue-100 mb-4">{onboardingStepsDone} de {onboardingStepsTotal} passos concluídos</p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="bg-white/15 backdrop-blur-sm rounded-xl p-6">
-                      <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-xl font-bold mb-3">1</div>
-                      <h3 className="font-semibold mb-2">Complete seu perfil</h3>
-                      <p className="text-sm text-blue-100 mb-4">Adicione telefone e localização</p>
-                      <button
-                        onClick={() => setIsProfileModalOpen(true)}
-                        className="text-sm px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 transition"
-                      >Completar</button>
-                    </div>
-                    <div className="bg-white/15 backdrop-blur-sm rounded-xl p-6">
-                      <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-xl font-bold mb-3">2</div>
-                      <h3 className="font-semibold mb-2">Solicite seu primeiro serviço</h3>
-                      <p className="text-sm text-blue-100 mb-4">A IA vai te ajudar!</p>
-                    </div>
-                    <div className="bg-white/15 backdrop-blur-sm rounded-xl p-6">
-                      <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-xl font-bold mb-3">3</div>
-                      <h3 className="font-semibold mb-2">Cadastre um item</h3>
-                      <p className="text-sm text-blue-100 mb-4">Para manutenção preventiva</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Cards de Estatísticas */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-medium text-gray-600">Serviços Ativos</h3>
-                    <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
-                      <span className="text-xl">📋</span>
-                    </div>
-                  </div>
-                  <p className="text-3xl font-bold text-gray-900">{activeJobs.length}</p>
-                </div>
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-medium text-gray-600">Concluídos</h3>
-                    <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
-                      <span className="text-xl">💬</span>
-                    </div>
-                  </div>
-                  <p className="text-3xl font-bold text-gray-900">{completedJobs.length}</p>
-                </div>
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-medium text-gray-600">Itens Cadastrados</h3>
-                    <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
-                      <span className="text-xl">🧰</span>
-                    </div>
-                  </div>
-                  <p className="text-3xl font-bold text-gray-900">{maintainedItems.length}</p>
-                </div>
-              </div>
-
-              {/* Ações Rápidas */}
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Ações Rápidas</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <button
-                    onClick={() => onNewJobFromItem('')}
-                    className="flex items-center gap-4 p-6 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition shadow-lg"
-                  >
-                    <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center">
-                      <span className="text-2xl">✨</span>
-                    </div>
-                    <div className="text-left">
-                      <h3 className="font-semibold mb-1">Solicitar Serviço</h3>
-                      <p className="text-sm text-blue-100">Com ajuda da IA</p>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => setIsAddItemModalOpen(true)}
-                    className="flex items-center gap-4 p-6 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition shadow-lg"
-                  >
-                    <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center">
-                      <span className="text-2xl">⚙️</span>
-                    </div>
-                    <div className="text-left">
-                      <h3 className="font-semibold mb-1">Cadastrar Item</h3>
-                      <p className="text-sm text-purple-100">Para manutenção</p>
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              {maintainedItems.length > 0 && (
-                <MaintenanceSuggestions items={maintainedItems} onSuggestJob={onNewJobFromItem} />
-              )}
-            </>
-          )}
-
-          {currentView === 'servicos' && (
-            <>
-              <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">Meus Serviços</h1>
+                    onClick={() => setIsProfileModalOpen(true)}
+                    className="text-xs font-medium px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+                  >Complete seu Perfil</button>
+                )}
                 <button
                   onClick={() => onNewJobFromItem('')}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm font-medium"
-                >
-                  + Novo Serviço
-                </button>
-              </div>
-              <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">Meus Serviços</h1>
-                <button
-                  onClick={() => onNewJobFromItem('')}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm font-medium"
-                >
-                  + Novo Serviço
-                </button>
-              </div>
-              {userJobs.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {userJobs.map(job => (
-                    <ClientJobCard
-                      key={job.id}
-                      job={job}
-                      proposals={allProposals.filter(p => p.jobId === job.id)}
-                      onViewProposals={() => job.jobMode === 'leilao' ? setViewingAuctionForJob(job) : setViewingProposalsForJob(job)}
-                      onChat={() => setChattingWithJob(job)}
-                      onFinalize={() => setReviewingJob(job)}
-                      onReportIssue={() => handleReportIssue(job)}
-                      onViewOnMap={setViewingJobOnMap}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
-                  <span className="text-6xl mb-4 block">📋</span>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhum serviço ainda</h3>
-                  <p className="text-gray-500 mb-6">Solicite seu primeiro serviço com ajuda da IA</p>
-                  <button
-                    onClick={() => onNewJobFromItem('')}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                  >
-                    Solicitar Serviço
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-
-          {currentView === 'itens' && (
-            <>
-              <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">Meus Itens</h1>
+                  className="text-xs font-medium px-4 py-2 rounded-md bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 transition"
+                >Solicitar Serviço</button>
                 <button
                   onClick={() => setIsAddItemModalOpen(true)}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm font-medium"
-                >
-                  + Novo Item
-                </button>
-              </div>
-              {maintainedItems.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {maintainedItems.map(item => (
-                    <ItemCard key={item.id} item={item} onClick={() => setViewingItem(item)} />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
-                  <span className="text-6xl mb-4 block">📦</span>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhum item cadastrado</h3>
-                  <p className="text-gray-500 mb-6">Cadastre itens para facilitar manutenções futuras</p>
-                  <button
-                    onClick={() => setIsAddItemModalOpen(true)}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                  >
-                    Cadastrar Item
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-
-          {currentView === 'ajuda' && (
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200">
-              <h1 className="text-2xl font-bold text-gray-900 mb-6">Central de Ajuda</h1>
-              <div className="space-y-4">
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <h3 className="font-semibold text-gray-900 mb-2">Como solicitar um serviço?</h3>
-                  <p className="text-sm text-gray-600">Use nossa IA assistente para descrever seu problema e receber propostas de profissionais qualificados.</p>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <h3 className="font-semibold text-gray-900 mb-2">Como funciona o pagamento?</h3>
-                  <p className="text-sm text-gray-600">O valor fica retido em segurança e só é liberado após a conclusão do serviço.</p>
-                </div>
+                  className="text-xs font-medium px-4 py-2 rounded-md bg-white border border-purple-600 text-purple-600 hover:bg-purple-50 transition"
+                >Cadastrar Item</button>
               </div>
             </div>
-          )}
+          </div>
         </div>
-      </main>
+      )}
 
-      {/* AI Assistant Widget */}
-      <AIAssistantWidget userName={user.name.split(' ')[0]} userAddress={user.address} />
+      {/* Botão discreto para reabrir guia de início */}
+      {!showOnboarding && userJobs.length === 0 && maintainedItems.length === 0 && (
+        <div className="flex justify-center mb-6">
+          <button
+            onClick={() => setShowOnboarding(true)}
+            className="text-sm text-gray-500 hover:text-gray-700 underline flex items-center gap-1"
+          >
+            <span>💡</span> Ver guia de início
+          </button>
+        </div>
+      )}
 
-      {/* Modals */}
+      {maintainedItems.length > 0 && (
+        <div className="mb-6">
+          <MaintenanceSuggestions items={maintainedItems} onSuggestJob={onNewJobFromItem} />
+        </div>
+      )}
+
+      {/* Tabs */}
+      <div className="border-b border-gray-200 mb-6">
+        <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+          <button
+            onClick={() => setActiveTab('jobs')}
+            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'jobs'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Meus Serviços
+          </button>
+          <button
+            onClick={() => setActiveTab('items')}
+            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'items'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Meus Itens
+          </button>
+        </nav>
+      </div>
+
+      {/* Tab: Serviços */}
+      {activeTab === 'jobs' && (
+        <>
+          <div className="mb-6">
+            <button
+              onClick={() => onNewJobFromItem('')}
+              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+            >
+              Solicitar Novo Serviço
+            </button>
+          </div>
+          <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+            <div className="space-y-4">
+              {userJobs.length > 0 ? (
+                userJobs.map(job => (
+                  <ClientJobCard
+                    key={job.id}
+                    job={job}
+                    proposals={allProposals.filter(p => p.jobId === job.id)}
+                    onViewProposals={() => job.jobMode === 'leilao' ? setViewingAuctionForJob(job) : setViewingProposalsForJob(job)}
+                    onChat={() => setChattingWithJob(job)}
+                    onFinalize={() => setReviewingJob(job)}
+                    onReportIssue={() => handleReportIssue(job)}
+                    onViewOnMap={setViewingJobOnMap}
+                  />
+                ))
+              ) : (
+                <p className="text-center text-gray-500 py-4">Você ainda não solicitou nenhum serviço.</p>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Tab: Itens */}
+      {activeTab === 'items' && (
+        <>
+          <div className="mb-6">
+            <button
+              onClick={() => setIsAddItemModalOpen(true)}
+              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+            >
+              Adicionar Novo Item
+            </button>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {maintainedItems.map(item => (
+              <ItemCard key={item.id} item={item} onClick={() => setViewingItem(item)} />
+            ))}
+          </div>
+          {maintainedItems.length === 0 && (
+            <p className="text-center text-gray-500 py-8">Você ainda não cadastrou nenhum item.</p>
+          )}
+        </>
+      )}
 
       {viewingProposalsForJob && (
         <ProposalListModal

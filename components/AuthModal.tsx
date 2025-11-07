@@ -21,11 +21,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, userType, onClose, onSwitch
     e.preventDefault();
     setError('');
 
-    // For the demo, we assume the provided email is valid.
-    // We also need to determine the user type on login.
-    // Let's default to 'cliente' if logging in, but this would
-    // come from the backend in a real app.
-    const typeForSuccess = isLogin ? 'cliente' : userType;
+  // Para login, usar o tipo selecionado (userType) e não sempre 'cliente'.
+  const typeForSuccess = userType;
     
     if (!isLogin) {
       if (password !== confirmPassword) {
