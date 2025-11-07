@@ -9,7 +9,7 @@ Este documento rastreia funcionalidades pendentes e melhorias planejadas para ve
 - **Stripe Payout/Transfer Implementation**
   - **Arquivo**: `backend/src/index.js:136`
   - **Descrição**: Implementar transferência real para conta conectada do prestador via Stripe
-  - **Status**: Simulado no código atual
+  - **Status**: ✅ Concluído - Lógica implementada com `stripe.transfers.create()`
   - **Impacto**: Alto - necessário para liberação de pagamentos real
   - **Referência**: [Stripe Connect Documentation](https://stripe.com/docs/connect)
 

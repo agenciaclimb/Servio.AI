@@ -79,7 +79,7 @@ export interface Job {
   category: string;
   description: string;
   status: JobStatus;
-  createdAt: Date;
+  createdAt: string; // ISO Date string
   serviceType: ServiceType;
   urgency: 'hoje' | 'amanha' | '3dias' | '1semana';
   address?: string;
@@ -146,7 +146,7 @@ export interface Notification {
   userId: string;
   text: string;
   isRead: boolean;
-  createdAt: Date;
+  createdAt: string; // ISO Date string
 }
 
 export type EscrowStatus = 'bloqueado' | 'liberado' | 'reembolsado' | 'em_disputa';
@@ -158,8 +158,8 @@ export interface Escrow {
   providerId: string;
   amount: number;
   status: EscrowStatus;
-  createdAt: Date;
-  releasedAt?: Date;
+  createdAt: string; // ISO Date string
+  releasedAt?: string; // ISO Date string
 }
 
 export type FraudAlertStatus = 'novo' | 'revisado' | 'resolvido';

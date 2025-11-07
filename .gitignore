@@ -27,3 +27,19 @@ backend/coverage/
 *.njsproj
 *.sln
 *.sw?
+
+# AI / indexação pesada
+build/
+.vercel/
+.next/
+*.zip
+*.mp4
+*.pdf
+*.png
+*.jpg
+
+# GCP Service Account Credentials (NEVER COMMIT)
+doc/gen-lang-client-*.json
+**/gen-lang-client-*.json
+*.json.key
+*service-account*.json

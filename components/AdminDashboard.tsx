@@ -11,29 +11,58 @@ import { serviceNameToCategory } from '../services/geminiService';
 
 interface AdminDashboardProps {
   user: User;
-  allJobs: Job[];
-  allUsers: User[];
-  allProposals: Proposal[];
-  allFraudAlerts: FraudAlert[];
-  allEscrows: Escrow[];
-  allDisputes: Dispute[];
-  setAllFraudAlerts: React.Dispatch<React.SetStateAction<FraudAlert[]>>;
-  setAllUsers: React.Dispatch<React.SetStateAction<User[]>>;
-  setAllJobs: React.Dispatch<React.SetStateAction<Job[]>>;
-  setAllEscrows: React.Dispatch<React.SetStateAction<Escrow[]>>;
-  setAllDisputes: React.Dispatch<React.SetStateAction<Dispute[]>>;
-  setAllNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
 }
 
 type AdminTab = 'analytics' | 'jobs' | 'providers' | 'financials' | 'fraud';
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ 
-    user, allJobs, allUsers, allProposals, allFraudAlerts, allEscrows, allDisputes,
-    setAllFraudAlerts, setAllUsers, setAllJobs, setAllEscrows, setAllDisputes, setAllNotifications
-}) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     const [activeTab, setActiveTab] = useState<AdminTab>('providers');
     const [isSitemapOpen, setIsSitemapOpen] = useState(false);
     const [mediatingJob, setMediatingJob] = useState<Job | null>(null);
+
+    // Internal state for all data
+    const [allJobs, setAllJobs] = useState<Job[]>([]);
+    const [allUsers, setAllUsers] = useState<User[]>([]);
+    const [allProposals, setAllProposals] = useState<Proposal[]>([]);
+    const [allFraudAlerts, setAllFraudAlerts] = useState<FraudAlert[]>([]);
+    const [allEscrows, setAllEscrows] = useState<Escrow[]>([]);
+    const [allDisputes, setAllDisputes] = useState<Dispute[]>([]);
+    const [allNotifications, setAllNotifications] = useState<Notification[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const loadAdminData = async () => {
+            setIsLoading(true);
+            try {
+                const [
+                    jobs,
+                    users,
+                    proposals,
+                    fraudAlerts,
+                    // escrows, // Assuming no direct fetch for all escrows yet
+                    disputes,
+                ] = await Promise.all([
+                    API.fetchJobs(),
+                    API.fetchAllUsers(),
+                    API.fetchProposals(),
+                    API.fetchFraudAlerts(),
+                    // API.fetchEscrows(),
+                    API.fetchDisputes(),
+                ]);
+                setAllJobs(jobs);
+                setAllUsers(users);
+                setAllProposals(proposals);
+                setAllFraudAlerts(fraudAlerts);
+                // setAllEscrows(escrows);
+                setAllDisputes(disputes);
+            } catch (error) {
+                console.error("Failed to load admin dashboard data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        loadAdminData();
+    }, []);
     
     const newAlertsCount = allFraudAlerts.filter(a => a.status === 'novo').length;
     const openDisputesCount = allJobs.filter(j => j.status === 'em_disputa').length;
@@ -58,6 +87,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         setAllJobs(prev => prev.map(j => j.id === jobId ? { ...j, status: 'concluido' } : j));
         
         setMediatingJob(null); // Close the modal
+    };
+
+    const handleSuspendProvider = async (userId: string) => {
+        try {
+            await API.updateUser(userId, { status: 'suspenso' });
+            setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status: 'suspenso' } : u));
+            console.log(`Provider ${userId} suspended.`);
+        } catch (error) {
+            console.error(`Failed to suspend provider ${userId}:`, error);
+            alert('Falha ao suspender o prestador.');
+        }
     };
 
 

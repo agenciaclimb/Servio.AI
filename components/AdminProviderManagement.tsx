@@ -34,7 +34,7 @@ const AdminProviderManagement: React.FC<AdminProviderManagementProps> = ({ allUs
           userId: userId,
           text: notificationText,
           isRead: false,
-          createdAt: new Date(),
+          createdAt: new Date().toISOString(),
       }]);
   };
 

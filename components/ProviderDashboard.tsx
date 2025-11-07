@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Job, User, Proposal, FraudAlert, Dispute, JobStatus, Notification, Message, ScheduledDateTime, DisputeMessage, Bid } from '../types';
 import JobCard from './JobCard';
 import ProposalModal from './ProposalModal';
@@ -12,97 +12,132 @@ import { generateReferralEmail, analyzeProviderBehaviorForFraud } from '../servi
 import ChatModal from './ChatModal';
 import ProviderOnboarding from './ProviderOnboarding';
 import AuctionRoomModal from './AuctionRoomModal';
+import ProviderDashboardSkeleton from './skeletons/ProviderDashboardSkeleton';
+import PaymentSetupCard from './PaymentSetupCard';
+
+import * as API from '../services/api';
 
 interface ProviderDashboardProps {
   user: User;
-  allJobs: Job[];
-  allUsers: User[];
-  allProposals: Proposal[];
-  allMessages: Message[];
-  allDisputes: Dispute[];
-  allBids: Bid[];
-  setAllJobs: React.Dispatch<React.SetStateAction<Job[]>>;
-  setAllProposals: React.Dispatch<React.SetStateAction<Proposal[]>>;
-  setAllMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-  setAllNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
   onViewProfile: (userId: string) => void;
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
-  setAllFraudAlerts: React.Dispatch<React.SetStateAction<FraudAlert[]>>;
-  setAllDisputes: React.Dispatch<React.SetStateAction<Dispute[]>>;
   onPlaceBid: (jobId: string, amount: number) => void;
 }
 
 const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
-  user, allJobs, allUsers, allProposals, allMessages, allDisputes, allBids,
-  setAllProposals, setAllNotifications, setUsers, setAllJobs, setAllMessages, setAllDisputes, setAllFraudAlerts,
-  onPlaceBid
+  user,
+  onViewProfile,
+  onPlaceBid,
 }) => {
   const [proposingForJob, setProposingForJob] = useState<Job | null>(null);
   const [viewingAuctionForJob, setViewingAuctionForJob] = useState<Job | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [referralEmail, setReferralEmail] = useState<{subject: string, body: string} | null>(null);
   const [chattingWithJob, setChattingWithJob] = useState<Job | null>(null);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [allMessages, setAllMessages] = useState<Message[]>([]);
+  // Component-specific data states
+  const [availableJobs, setAvailableJobs] = useState<Job[]>([]);
+  const [myJobs, setMyJobs] = useState<Job[]>([]);
+  const [completedJobs, setCompletedJobs] = useState<Job[]>([]);
+  const [myProposals, setMyProposals] = useState<Proposal[]>([]);
+  const [myBids, setMyBids] = useState<Bid[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [allDisputes, setAllDisputes] = useState<Dispute[]>([]);
+  const [allFraudAlerts, setAllFraudAlerts] = useState<FraudAlert[]>([]);
+
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch all necessary data within the component
+        const [openJobs, providerJobs, proposals, bids, users, messages] = await Promise.all([
+          API.fetchOpenJobs(),
+          API.fetchJobsForProvider(user.email),
+          API.fetchProposalsForProvider(user.email),
+          API.fetchBidsForProvider(user.email),
+          API.fetchAllUsers(),
+          API.fetchMessages(),
+        ]);
+
+        setAvailableJobs(openJobs.filter(j => j.clientId !== user.email));
+        setMyJobs(providerJobs.filter(j => !['concluido', 'cancelado'].includes(j.status)));
+        setCompletedJobs(providerJobs.filter(j => j.status === 'concluido'));
+        setMyProposals(proposals);
+        setMyBids(bids);
+        setAllUsers(users);
+        setAllMessages(messages);
+        // Disputes and alerts would also be fetched here if needed globally in this component
+        // For now, they are passed as empty arrays or managed via props if still necessary elsewhere.
+
+      } catch (error) {
+        console.error("Failed to load provider dashboard data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (user.verificationStatus === 'verificado') {
+      loadDashboardData();
+    }
+  }, [user.email, user.verificationStatus]);
+
 
   if (user.verificationStatus !== 'verificado') {
     return <ProviderOnboarding user={user} />;
   }
 
   // Jobs provider has proposed on
-  const proposedJobIds = allProposals.filter(p => p.providerId === user.email).map(p => p.jobId);
-  const biddedJobIds = allBids.filter(b => b.providerId === user.email).map(b => b.jobId);
+  const proposedJobIds = myProposals.map(p => p.jobId);
+  const biddedJobIds = myBids.map(b => b.jobId);
   
-  // Jobs available for provider to propose on
-  const availableJobs = allJobs.filter(job => (job.status === 'ativo' || job.status === 'em_leilao') && job.clientId !== user.email);
-
-  // Jobs assigned to the provider
-  const myJobs = allJobs.filter(job => job.providerId === user.email && job.status !== 'concluido' && job.status !== 'cancelado');
-  
-  const completedJobs = allJobs.filter(job => job.providerId === user.email && job.status === 'concluido');
-
   const handleSendProposal = async (proposalData: { message: string; price: number }) => {
     if (!proposingForJob) return;
 
-    const newProposal: Proposal = {
-      id: `prop-${Date.now()}`,
-      jobId: proposingForJob.id,
-      providerId: user.email,
-      ...proposalData,
-      status: 'pendente',
-      createdAt: new Date().toISOString()
-    };
-    setAllProposals(prev => [...prev, newProposal]);
-    setAllNotifications(prev => [...prev, {
-      id: `notif-${Date.now()}`,
-      userId: proposingForJob.clientId,
-      text: `Você recebeu uma nova proposta para "${proposingForJob.category}".`,
-      isRead: false,
-      createdAt: new Date(),
-    }]);
-
-    setProposingForJob(null);
-
-    // Fraud check
     try {
-        const analysis = await analyzeProviderBehaviorForFraud(user, { type: 'proposal', data: newProposal });
-        if (analysis?.isSuspicious) {
-            const newAlert: FraudAlert = {
-                id: `fra-${Date.now()}`,
-                providerId: user.email,
-                riskScore: analysis.riskScore,
-                reason: analysis.reason,
-                status: 'novo',
-                createdAt: new Date().toISOString(),
-            };
-            setAllFraudAlerts(prev => [newAlert, ...prev]);
-        }
+      // Create proposal via API
+      const newProposal = await API.createProposal({
+        jobId: proposingForJob.id,
+        providerId: user.email,
+        message: proposalData.message,
+        price: proposalData.price,
+        status: 'pendente',
+      });
+      
+      setMyProposals(prev => [...prev, newProposal]);
+      
+      // Notify client
+      API.createNotification({
+        userId: proposingForJob.clientId,
+        text: `Você recebeu uma nova proposta para "${proposingForJob.category}".`,
+        isRead: false,
+      });
+
+      setProposingForJob(null);
+      console.log('Proposal sent successfully:', newProposal);
+
+      // Fraud check
+      const analysis = await analyzeProviderBehaviorForFraud(user, { type: 'proposal', data: newProposal });
+      if (analysis?.isSuspicious) {
+          const newAlert: FraudAlert = {
+              id: `fra-${Date.now()}`,
+              providerId: user.email,
+              riskScore: analysis.riskScore,
+              reason: analysis.reason,
+              status: 'novo',
+              createdAt: new Date().toISOString(),
+          };
+          setAllFraudAlerts(prev => [newAlert, ...prev]);
+      }
     } catch (error) {
-        console.error("Fraud analysis failed during proposal:", error);
+      console.error("Failed to send proposal:", error);
+      alert("Erro ao enviar proposta. Tente novamente.");
+      setProposingForJob(null);
     }
   };
   
   const handleSaveProfile = async (updatedData: Partial<User>) => {
     const updatedUser = { ...user, ...updatedData };
-    setUsers(prev => prev.map(u => u.email === user.email ? updatedUser : u));
+    setAllUsers(prev => prev.map(u => u.email === user.email ? updatedUser : u));
     setIsProfileModalOpen(false);
 
     // Fraud check
@@ -125,27 +160,31 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   };
 
   const handleUpdateJobStatus = (jobId: string, newStatus: JobStatus) => {
-    setAllJobs(prev => prev.map(j => j.id === jobId ? {...j, status: newStatus} : j));
-    const job = allJobs.find(j => j.id === jobId);
-    if(job) {
-       setAllNotifications(prev => [...prev, {
-        id: `notif-${Date.now()}`,
-        userId: job.clientId,
-        text: `Atualização no seu job: ${user.name} está ${newStatus.replace('_', ' ')}.`,
-        isRead: false,
-        createdAt: new Date(),
-      }]);
+    const job = myJobs.find(j => j.id === jobId);
+    if(!job) return;
 
-       const statusUpdateMessage: Message = {
-        id: `msg-system-status-${Date.now()}`,
-        chatId: jobId,
-        senderId: 'system',
-        text: `Status atualizado para: ${newStatus.replace('_', ' ')}`,
-        createdAt: new Date().toISOString(),
-        type: 'system_notification',
-      };
-      setAllMessages(prev => [...prev, statusUpdateMessage]);
-    }
+    const updatedJob = { ...job, status: newStatus };
+    setMyJobs(prev => prev.map(j => j.id === jobId ? updatedJob : j));
+    
+    API.updateJob(jobId, { status: newStatus });
+    
+    API.createNotification({
+      id: `notif-${Date.now()}`,
+      userId: job.clientId,
+      text: `Atualização no seu job: ${user.name} está ${newStatus.replace('_', ' ')}.`,
+      isRead: false,
+      createdAt: new Date().toISOString(),
+    });
+
+    const statusUpdateMessage: Message = {
+      id: `msg-system-status-${Date.now()}`,
+      chatId: jobId,
+      senderId: 'system',
+      text: `Status atualizado para: ${newStatus.replace('_', ' ')}`,
+      createdAt: new Date().toISOString(),
+      type: 'system_notification',
+    };
+    setAllMessages(prev => [...prev, statusUpdateMessage]);
   };
   
   const handleSendReferral = async (friendEmail: string) => {
@@ -169,24 +208,26 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
     };
     setAllMessages(prev => [...prev, newMessage]);
 
-    const job = allJobs.find(j => j.id === messageData.chatId);
+    const job = myJobs.find(j => j.id === messageData.chatId);
     if (job) {
-       setAllNotifications(prev => [...prev, {
-            id: `notif-${Date.now()}`,
-            userId: job.clientId,
-            text: `Nova mensagem de ${user.name} sobre o job "${job.category}".`,
-            isRead: false,
-            createdAt: new Date(),
-        }]);
+      API.createNotification({
+        id: `notif-${Date.now()}`,
+        userId: job.clientId,
+        text: `Nova mensagem de ${user.name} sobre o job "${job.category}".`,
+        isRead: false,
+        createdAt: new Date().toISOString(),
+      });
     }
   };
 
   const handleConfirmSchedule = (jobId: string, schedule: ScheduledDateTime, messageId?: string) => {
-    const job = allJobs.find(j => j.id === jobId);
+    const job = myJobs.find(j => j.id === jobId);
     if (!job) return;
 
     // 1. Update Job Status
-    setAllJobs(prev => prev.map(j => (j.id === jobId ? { ...j, status: 'agendado' } : j)));
+    const updatedJob = { ...job, status: 'agendado' as JobStatus };
+    setMyJobs(prev => prev.map(j => (j.id === jobId ? updatedJob : j)));
+    API.updateJob(jobId, { status: 'agendado' });
     
     const formattedDate = new Date(`${schedule.date}T00:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     const confirmationText = `✅ Agendamento confirmado para ${formattedDate} às ${schedule.time}.`;
@@ -203,13 +244,13 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
     setAllMessages(prev => [...prev, systemMessage]);
 
     // 3. Notify the Client
-    setAllNotifications(prev => [...prev, {
-        id: `notif-${Date.now()}`,
-        userId: job.clientId,
-        text: `Agendamento confirmado por ${user.name} para o job "${job.category}"!`,
-        isRead: false,
-        createdAt: new Date(),
-    }]);
+    API.createNotification({
+      id: `notif-${Date.now()}`,
+      userId: job.clientId,
+      text: `Agendamento confirmado por ${user.name} para o job "${job.category}"!`,
+      isRead: false,
+      createdAt: new Date().toISOString(),
+    });
 
     // 4. Mark the proposal message as confirmed
     if (messageId) {
@@ -234,15 +275,15 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         );
 
         const dispute = allDisputes.find(d => d.id === disputeId);
-        const job = allJobs.find(j => j.id === dispute?.jobId);
+        const job = myJobs.find(j => j.id === dispute?.jobId);
         if (job) {
-            setAllNotifications(prev => [...prev, {
-                id: `notif-dispute-${Date.now()}`,
-                userId: job.clientId,
-                text: `Nova mensagem na disputa do job "${job.category}".`,
-                isRead: false,
-                createdAt: new Date(),
-            }]);
+            API.createNotification({
+              id: `notif-dispute-${Date.now()}`,
+              userId: job.clientId,
+              text: `Nova mensagem na disputa do job "${job.category}".`,
+              isRead: false,
+              createdAt: new Date().toISOString(),
+            });
         }
     };
 
@@ -254,6 +295,10 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         }
     };
 
+  if (isLoading) {
+    return <ProviderDashboardSkeleton />;
+  }
+
 
   return (
     <div className="space-y-10">
@@ -264,6 +309,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
           <div className="flex flex-col space-y-4">
               <ProfileTips user={user} onEditProfile={() => setIsProfileModalOpen(true)} />
               <ReferralProgram onSendReferral={handleSendReferral} />
+              <PaymentSetupCard user={user} />
           </div>
       </div>
 
@@ -296,7 +342,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
               <JobCard
                 key={job.id}
                 job={job}
-                bids={allBids.filter(b => b.jobId === job.id)}
+                bids={myBids.filter(b => b.jobId === job.id)}
                 onProposeClick={() => handleJobClick(job)}
                 hasProposed={job.jobMode === 'leilao' ? biddedJobIds.includes(job.id) : proposedJobIds.includes(job.id)}
               />
@@ -321,7 +367,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         <AuctionRoomModal
           job={viewingAuctionForJob}
           currentUser={user}
-          bids={allBids.filter(b => b.jobId === viewingAuctionForJob.id)}
+          bids={myBids.filter(b => b.jobId === viewingAuctionForJob.id)}
           onClose={() => setViewingAuctionForJob(null)}
           onPlaceBid={onPlaceBid}
         />

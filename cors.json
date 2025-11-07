@@ -1,0 +1,18 @@
+[
+  {
+    "origin": [
+      "http://localhost:4173",
+      "http://localhost:3000",
+      "https://gen-lang-client-0737507616.firebaseapp.com",
+      "https://gen-lang-client-0737507616.web.app"
+    ],
+    "method": ["GET", "HEAD", "PUT", "POST", "DELETE"],
+    "responseHeader": [
+      "Content-Type",
+      "Content-Range",
+      "Content-Encoding",
+      "x-goog-resumable"
+    ],
+    "maxAgeSeconds": 3600
+  }
+]

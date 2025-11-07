@@ -49,38 +49,38 @@ export const MOCK_JOBS: Job[] = [
   { 
     id: 'job-1', clientId: 'cliente@servio.ai', providerId: 'prestador@servio.ai', category: 'reparos', 
     description: 'Instalação de duas tomadas novas na parede da sala e verificação de um disjuntor que está caindo.',
-    status: 'concluido', createdAt: new Date('2023-08-10T10:00:00Z'), serviceType: 'personalizado', urgency: '3dias',
+  status: 'concluido', createdAt: new Date('2023-08-10T10:00:00Z').toISOString(), serviceType: 'personalizado', urgency: '3dias',
     address: 'Rua das Flores, 123, São Paulo, SP', jobMode: 'normal',
     review: { rating: 5, comment: 'Carlos foi excepcional! Muito profissional, rápido e o serviço ficou perfeito. Recomendo!', authorId: 'cliente@servio.ai', createdAt: new Date('2023-08-12T14:00:00Z').toISOString() }
   },
   { 
     id: 'job-2', clientId: 'rodrigo.souza@email.com', providerId: 'mariana.costa@email.com', category: 'reparos',
     description: 'Pintar um quarto de 12m², incluindo teto. As paredes estão em bom estado, somente a pintura será necessária.',
-    status: 'pagamento_pendente', createdAt: new Date('2023-08-15T14:00:00Z'), serviceType: 'personalizado', urgency: '1semana',
+  status: 'pagamento_pendente', createdAt: new Date('2023-08-15T14:00:00Z').toISOString(), serviceType: 'personalizado', urgency: '1semana',
     address: 'Av. Copacabana, 456, Rio de Janeiro, RJ', jobMode: 'normal',
   },
   { 
     id: 'job-3', clientId: 'cliente@servio.ai', category: 'reparos',
     description: 'Vazamento no sifão da pia da cozinha. Preciso de um reparo urgente pois está alagando o armário.',
-    status: 'ativo', createdAt: new Date(), serviceType: 'diagnostico', urgency: 'hoje',
+  status: 'ativo', createdAt: new Date().toISOString(), serviceType: 'diagnostico', urgency: 'hoje',
     address: 'Rua das Flores, 123, São Paulo, SP', jobMode: 'normal',
   },
   {
     id: 'job-4', clientId: 'rodrigo.souza@email.com', providerId: 'fernanda.design@email.com', category: 'design',
     description: 'Criação de um logotipo para minha nova cafeteria. Preciso de algo moderno e que remeta a café de qualidade.',
-    status: 'em_progresso', createdAt: new Date('2023-08-18T09:00:00Z'), serviceType: 'personalizado', urgency: '1semana',
+  status: 'em_progresso', createdAt: new Date('2023-08-18T09:00:00Z').toISOString(), serviceType: 'personalizado', urgency: '1semana',
     address: 'Trabalho Remoto', jobMode: 'normal',
   },
   {
     id: 'job-5', clientId: 'cliente@servio.ai', providerId: 'joao.pedreiro@email.com', category: 'reparos',
     description: 'O chuveiro do banheiro social não está esquentando. Acredito que a resistência queimou.',
-    status: 'em_disputa', disputeId: 'disp-1', escrowId: 'esc-1', createdAt: new Date('2023-08-20T11:00:00Z'), serviceType: 'personalizado', urgency: 'amanha',
+  status: 'em_disputa', disputeId: 'disp-1', escrowId: 'esc-1', createdAt: new Date('2023-08-20T11:00:00Z').toISOString(), serviceType: 'personalizado', urgency: 'amanha',
     address: 'Rua das Flores, 123, São Paulo, SP', jobMode: 'normal',
   },
   { 
     id: 'job-6', clientId: 'rodrigo.souza@email.com', category: 'design',
     description: 'Preciso de um website institucional de 5 páginas para minha startup de tecnologia. Foco em design limpo, moderno e responsivo. Incluir formulário de contato.',
-    status: 'em_leilao', createdAt: new Date(), serviceType: 'personalizado', urgency: '1semana',
+  status: 'em_leilao', createdAt: new Date().toISOString(), serviceType: 'personalizado', urgency: '1semana',
     address: 'Trabalho Remoto', jobMode: 'leilao', auctionEndDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours from now
   },
 ];
@@ -121,8 +121,8 @@ export const MOCK_ITEMS: MaintainedItem[] = [
 ];
 
 export const MOCK_NOTIFICATIONS: Notification[] = [
-    { id: 'notif-1', userId: 'prestador@servio.ai', text: 'Você recebeu uma nova proposta para o job "Reparos".', isRead: false, createdAt: new Date() },
-    { id: 'notif-2', userId: 'cliente@servio.ai', text: 'Sua proposta para o job "Pintura" foi aceita!', isRead: true, createdAt: new Date(new Date().getTime() - 3600 * 1000 * 2) }, // 2 hours ago
+  { id: 'notif-1', userId: 'prestador@servio.ai', text: 'Você recebeu uma nova proposta para o job "Reparos".', isRead: false, createdAt: new Date().toISOString() },
+  { id: 'notif-2', userId: 'cliente@servio.ai', text: 'Sua proposta para o job "Pintura" foi aceita!', isRead: true, createdAt: new Date(new Date().getTime() - 3600 * 1000 * 2).toISOString() }, // 2 hours ago
 ];
 
 export const MOCK_FRAUD_ALERTS: FraudAlert[] = [

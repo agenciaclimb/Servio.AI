@@ -39,7 +39,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, allUsers, allJobs }) => {
         category: selectedCategory,
         description,
         status: 'ativo',
-        createdAt: new Date(),
+  createdAt: new Date().toISOString(),
         serviceType: 'personalizado', // Assume a default service type
         urgency: '1semana', // Assume a default urgency
       };

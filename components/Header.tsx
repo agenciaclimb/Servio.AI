@@ -48,9 +48,9 @@ const Header: React.FC<HeaderProps> = ({ user, notifications, onLoginClick, onRe
                     onMarkAllAsRead={onMarkAllAsRead}
                 />
                 <span className="hidden sm:block text-sm text-gray-600">Olá, {user.name}!</span>
-                 <button onClick={() => onSetView('dashboard')} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
-                    Painel
-                </button>
+         <button onClick={() => { console.log('Painel button clicked'); onSetView('dashboard'); }} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+          Painel
+        </button>
                 <button
                   onClick={onLogoutClick}
                   className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-100 rounded-md hover:bg-blue-200"

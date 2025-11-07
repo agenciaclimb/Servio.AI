@@ -1,5 +1,3 @@
-// FIX: Create the main App component
-// FIX: Import useState and useEffect from React to resolve 'Cannot find name' errors.
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
@@ -13,7 +11,7 @@ import ProspectingNotificationModal from './components/ProspectingNotificationMo
 import ProfilePage from './components/ProfilePage';
 import ServiceLandingPage from './components/ServiceLandingPage';
 import ProviderLandingPage from './components/ProviderLandingPage';
-import FindProvidersPage from './components/FindProvidersPage'; // FIX: Import FindProvidersPage
+import FindProvidersPage from './components/FindProvidersPage';
 
 import {
   User,
@@ -32,9 +30,9 @@ import {
   Bid,
 } from './types';
 import { getMatchingProviders, analyzeProviderBehaviorForFraud } from './services/geminiService';
-// FIX: Import mock data and correct serviceNameToCategory import
-import { MOCK_USERS, MOCK_JOBS, MOCK_PROPOSALS, MOCK_MESSAGES, MOCK_ITEMS, MOCK_NOTIFICATIONS, MOCK_BIDS, MOCK_FRAUD_ALERTS } from './mockData';
 import { serviceNameToCategory } from './services/geminiService';
+// API Service - loads from backend or falls back to mock data
+import * as API from './services/api';
 
 type View =
   | { name: 'home' }
@@ -42,35 +40,41 @@ type View =
   | { name: 'profile'; data: { userId: string, isPublic?: boolean } }
   | { name: 'service-landing'; data: { category: string, location?: string } }
   | { name: 'provider-landing' }
-  | { name: 'find-providers' }; // FIX: Update view type
+  | { name: 'find-providers' };
 
 const App: React.FC = () => {
   // State
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [view, setView] = useState<View>({ name: 'home' });
-  
+  const [isLoadingData, setIsLoadingData] = useState(true);
+
   // Modals
   const [authModal, setAuthModal] = useState<{ mode: 'login' | 'register'; userType: UserType } | null>(null);
   const [wizardData, setWizardData] = useState<{ prompt?: string; data?: JobData } | null>(null);
   const [matchingResults, setMatchingResults] = useState<MatchingResult[] | null>(null);
   const [prospects, setProspects] = useState<Prospect[] | null>(null);
 
-  // Mock Data State
-  const [allUsers, setAllUsers] = useState<User[]>(MOCK_USERS);
-  const [allJobs, setAllJobs] = useState<Job[]>(MOCK_JOBS);
-  const [allProposals, setAllProposals] = useState<Proposal[]>(MOCK_PROPOSALS);
-  const [allMessages, setAllMessages] = useState<Message[]>(MOCK_MESSAGES);
-  const [maintainedItems, setMaintainedItems] = useState<MaintainedItem[]>(MOCK_ITEMS);
-  const [allNotifications, setAllNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
-  const [allBids, setAllBids] = useState<Bid[]>(MOCK_BIDS);
+  // Garante que, ao logar, o usuário vá para o dashboard correto
+  useEffect(() => {
+    console.log('useEffect dashboard redirect', { currentUser, view });
+    if (currentUser && view.name !== 'dashboard') {
+      setView({ name: 'dashboard' });
+    }
+  }, [currentUser, view.name]);
+
+  // Data State - minimal global state
+  const [maintainedItems, setMaintainedItems] = useState<MaintainedItem[]>([]);
+  const [allNotifications, setAllNotifications] = useState<Notification[]>([]);
   const [allEscrows, setAllEscrows] = useState<Escrow[]>([]);
-  const [allFraudAlerts, setAllFraudAlerts] = useState<FraudAlert[]>(MOCK_FRAUD_ALERTS);
-  const [allDisputes, setAllDisputes] = useState<Dispute[]>([]);
-  
   const [jobDataToCreate, setJobDataToCreate] = useState<JobData | null>(null);
   const [contactProviderAfterLogin, setContactProviderAfterLogin] = useState<string|null>(null);
 
-  // Simple URL-based routing effect
+  useEffect(() => {
+    // Data fetching has been moved to individual dashboards/components.
+    // App.tsx is now primarily a router and high-level state manager.
+  }, []);
+
+  // Simple URL-based routing effect (apenas na montagem)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const profileId = params.get('profile');
@@ -78,13 +82,11 @@ const App: React.FC = () => {
     const serviceLocation = params.get('local');
 
     if (profileId) {
-      setView({ name: 'profile', data: { userId: profileId, isPublic: !currentUser } });
+      setView({ name: 'profile', data: { userId: profileId, isPublic: true } });
     } else if (serviceCategory) {
-       setView({ name: 'service-landing', data: { category: serviceCategory, location: serviceLocation || undefined } });
-    } else {
-       // setView({ name: 'home' }); // Avoid resetting view on every render
+      setView({ name: 'service-landing', data: { category: serviceCategory, location: serviceLocation || undefined } });
     }
-  }, [currentUser]); // Re-evaluate when user logs in/out
+  }, []); // Só na montagem
 
 
   const handleSetView = (viewName: string, data?: any) => {
@@ -96,31 +98,36 @@ const App: React.FC = () => {
   }
 
   // Auth Handlers
-  const handleAuthSuccess = (email: string, type: UserType) => {
-    let user = allUsers.find(u => u.email === email);
+  const handleAuthSuccess = async (email: string, type: UserType) => {
+    console.log('handleAuthSuccess', { email, type });
+    let user = await API.fetchUserById(email);
+
     if (!user) {
-        // Create a new user for registration
-        user = {
-            email,
-            name: email.split('@')[0],
-            type: type,
-            bio: '',
-            location: 'São Paulo, SP',
-            memberSince: new Date().toISOString(),
-            status: 'ativo',
-            verificationStatus: type === 'prestador' ? 'pendente' : undefined
-        };
-        setAllUsers(prev => [...prev, user!]);
+      // Create a new user for registration
+      const newUserPayload: Omit<User, 'memberSince' | 'id'> = {
+        email,
+        name: email.split('@')[0],
+        type: type,
+        bio: '',
+        location: 'São Paulo, SP',
+        status: 'ativo',
+        verificationStatus: type === 'prestador' ? 'pendente' : undefined,
+      };
+      // The 'id' should be the same as the email for consistency in our app model
+      user = await API.createUser({ ...newUserPayload, id: email });
     }
     setCurrentUser(user);
     setAuthModal(null);
 
-    // If user wanted to contact a provider, handle that now
+    // Redirecionar para o painel correto após login
+    setView({ name: 'dashboard' });
+
+    // Se o usuário queria contatar um provedor, faz isso agora
     if (contactProviderAfterLogin) {
         handleLoginToContact(contactProviderAfterLogin);
         setContactProviderAfterLogin(null);
     } else if (jobDataToCreate) {
-        // If there was a job being created, open the wizard now
+        // Se havia um job sendo criado, abre o wizard agora
         setWizardData({ data: jobDataToCreate });
         setJobDataToCreate(null);
     }
@@ -152,7 +159,10 @@ const App: React.FC = () => {
   }
 
   const handleUpdateUser = (userEmail: string, partial: Partial<User>) => {
-    setAllUsers(prev => prev.map(u => u.email === userEmail ? { ...u, ...partial } : u));
+    // This now calls the API directly.
+    // The local state update will happen inside the component that needs it.
+    API.updateUser(userEmail, partial).catch(err => console.error("Failed to update user via API", err));
+
     if (currentUser?.email === userEmail) {
       setCurrentUser(prev => prev ? { ...prev, ...partial } : prev);
     }
@@ -163,7 +173,7 @@ const App: React.FC = () => {
         userId: userEmail,
         text: 'Seu perfil foi atualizado com sucesso.',
         isRead: false,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
       }
     ]));
   }
@@ -177,77 +187,57 @@ const App: React.FC = () => {
         return;
     }
 
-    const newJob: Job = {
-      id: `job-${Date.now()}`,
-      clientId: currentUser.email,
-      description: jobData.description,
-      category: jobData.category,
-      serviceType: jobData.serviceType,
-      urgency: jobData.urgency,
-      address: jobData.address,
-      media: jobData.media,
-      fixedPrice: jobData.fixedPrice,
-      visitFee: jobData.visitFee,
-      status: jobData.jobMode === 'leilao' ? 'em_leilao' : 'ativo',
-      createdAt: new Date(),
-      jobMode: jobData.jobMode || 'normal',
-      auctionEndDate: jobData.jobMode === 'leilao' && jobData.auctionDurationHours 
-        ? new Date(Date.now() + jobData.auctionDurationHours * 60 * 60 * 1000).toISOString()
-        : undefined,
-    };
-    setAllJobs(prev => [newJob, ...prev]);
-    setWizardData(null);
+    try {
+      // Create job via API
+      const newJob = await API.createJob(jobData, currentUser.email);
+      // No need to setAllJobs here, dashboards fetch their own data
+      setWizardData(null);
+      console.log('Job created successfully:', newJob);
 
-    // If it was a direct invitation, notify the provider and redirect to dashboard
-    if (jobData.targetProviderId) {
-        const provider = allUsers.find(u => u.email === jobData.targetProviderId);
-        if (provider) {
-             setAllNotifications(prev => [...prev, {
-                id: `notif-direct-${Date.now()}`,
-                userId: jobData.targetProviderId!,
-                text: `Você recebeu um convite direto de ${currentUser.name} para o job "${newJob.category}".`,
-                isRead: false,
-                createdAt: new Date(),
-            }]);
+      // If it was a direct invitation, notify the provider and redirect to dashboard
+      if (jobData.targetProviderId) {
+          const provider = await API.fetchUserById(jobData.targetProviderId);
+          if (provider) {
+            await API.createNotification({
+              userId: jobData.targetProviderId!,
+              text: `Você recebeu um convite direto de ${currentUser.name} para o job "${newJob.category}".`,
+              isRead: false,
+            });
             alert(`✅ Ótimo! Seu pedido foi enviado diretamente para ${provider.name}.\n\nEles serão notificados e você receberá uma proposta em breve.`);
             setView({ name: 'dashboard' });
-        }
+          }
+          return;
+      }
+      
+      if (newJob.jobMode === 'leilao') {
+        alert(`✅ Seu leilão para "${newJob.category}" foi publicado!\n\nFica ativo até ${new Date(newJob.auctionEndDate!).toLocaleString('pt-BR')}.\n\nPrestadores começarão a enviar lances em breve.`);
+        setView({ name: 'dashboard' });
         return;
-    }
-    
-    if (newJob.jobMode === 'leilao') {
-      alert(`✅ Seu leilão para "${newJob.category}" foi publicado!\n\nFica ativo até ${new Date(newJob.auctionEndDate!).toLocaleString('pt-BR')}.\n\nPrestadores começarão a enviar lances em breve.`);
-      setView({ name: 'dashboard' });
-      return;
-    }
+      }
 
-    // AI Matching (normal flow)
-    try {
-      const results = await getMatchingProviders(newJob, allUsers, allJobs);
+      // AI Matching (normal flow)
+      const allUsersForMatching = await API.fetchAllUsers(); // Fetch users just for matching
+      const results = await getMatchingProviders(newJob, allUsersForMatching, []);
       if (results.length > 0) {
         setMatchingResults(results);
       } else {
-         setProspects([{name: "João da Silva", specialty: "Eletricista"}, {name: "Marcos Andrade", specialty: "Eletricista Predial"}]);
+        setProspects([{name: "João da Silva", specialty: "Eletricista"}, {name: "Marcos Andrade", specialty: "Eletricista Predial"}]);
       }
     } catch (error) {
-       console.error("Matching failed:", error);
-       alert("Ocorreu um erro ao buscar profissionais. Tente novamente.");
+      console.error("Failed to create job:", error);
+      alert("Erro ao criar serviço. Por favor, tente novamente.");
+      setWizardData(null);
     }
   };
   
   const handleInviteProvider = (providerId: string) => {
-      const job = allJobs[0]; // Assume the last created job
-      setAllNotifications(prev => [...prev, {
-          id: `notif-invite-${Date.now()}`,
-          userId: providerId,
-          text: `Você foi convidado para o job "${job.category}"`,
-          isRead: false,
-          createdAt: new Date(),
-      }]);
+    // This logic needs a job context, which is no longer available globally.
+    // This feature might need to be moved or re-thought.
+    console.warn("handleInviteProvider needs refactoring as allJobs is not global anymore.");
   };
   
-  const handleLoginToContact = (providerId: string) => {
-      const provider = allUsers.find(u => u.email === providerId);
+  const handleLoginToContact = async (providerId: string) => {
+      const provider = await API.fetchUserById(providerId);
       if (!provider) return;
 
       if (!currentUser) {
@@ -262,66 +252,39 @@ const App: React.FC = () => {
   
   const handlePlaceBid = async (jobId: string, amount: number) => {
     if (!currentUser || currentUser.type !== 'prestador') return;
-    const job = allJobs.find(j => j.id === jobId);
-    if (!job) return;
-
-    const newBid: Bid = {
-        id: `bid-${Date.now()}`,
-        jobId,
-        providerId: currentUser.email,
-        amount,
-        createdAt: new Date().toISOString(),
-    };
-    setAllBids(prev => [...prev, newBid]);
     
-    // Notify the client
-    setAllNotifications(prev => [...prev, {
-        id: `notif-bid-${Date.now()}`,
-        userId: job.clientId,
-        text: `Novo lance de ${amount.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})} no seu leilão para "${job.category}"!`,
-        isRead: false,
-        createdAt: new Date(),
-    }]);
-
-    // Fraud check
-    try {
-        const analysis = await analyzeProviderBehaviorForFraud(currentUser, { type: 'bid', data: newBid });
-        if (analysis?.isSuspicious) {
-            const newAlert: FraudAlert = {
-                id: `fra-${Date.now()}`,
-                providerId: currentUser.email,
-                riskScore: analysis.riskScore,
-                reason: analysis.reason,
-                status: 'novo',
-                createdAt: new Date().toISOString(),
-            };
-            setAllFraudAlerts(prev => [newAlert, ...prev]);
-        }
-    } catch (error) {
-        console.error("Fraud analysis failed during bid:", error);
-    }
+    // This function is now primarily handled within ProviderDashboard.
+    // The logic here could be removed if no longer used directly by App.
+    console.log("Placing bid from App.tsx - this might be deprecated", { jobId, amount });
   };
 
 
   const renderContent = () => {
+    // Debug: logar estado do usuário e da view
+    console.log('renderContent', { currentUser, view });
+    // Se estiver logado e não estiver no dashboard, força redirecionamento
+    if (currentUser && view.name !== 'dashboard') {
+      setView({ name: 'dashboard' });
+      return null;
+    }
     switch (view.name) {
       case 'dashboard':
         if (!currentUser) { handleSetView('home'); return null; }
-  if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allJobs={allJobs} allUsers={allUsers} allProposals={allProposals} allMessages={allMessages} maintainedItems={maintainedItems} allDisputes={allDisputes} allBids={allBids} setAllJobs={setAllJobs} setAllProposals={setAllProposals} setAllMessages={setAllMessages} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllEscrows={setAllEscrows} setAllDisputes={setAllDisputes} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} onUpdateUser={handleUpdateUser} />;
-        if (currentUser.type === 'prestador') return <ProviderDashboard user={currentUser} allJobs={allJobs} allUsers={allUsers} allProposals={allProposals} allMessages={allMessages} allDisputes={allDisputes} allBids={allBids} setAllJobs={setAllJobs} setAllProposals={setAllProposals} setAllMessages={setAllMessages} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setUsers={setAllUsers} setAllFraudAlerts={setAllFraudAlerts} setAllDisputes={setAllDisputes} onPlaceBid={handlePlaceBid} />;
-        if (currentUser.type === 'admin') return <AdminDashboard user={currentUser} allJobs={allJobs} allUsers={allUsers} allProposals={allProposals} allFraudAlerts={allFraudAlerts} allEscrows={allEscrows} allDisputes={allDisputes} setAllFraudAlerts={setAllFraudAlerts} setAllUsers={setAllUsers} setAllJobs={setAllJobs} setAllEscrows={setAllEscrows} setAllDisputes={setAllDisputes} setAllNotifications={setAllNotifications} />;
+        if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allUsers={[]} allProposals={[]} allMessages={[]} maintainedItems={maintainedItems} allDisputes={[]} allBids={[]} setAllProposals={() => {}} setAllMessages={() => {}} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllEscrows={setAllEscrows} setAllDisputes={()=>{}} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} onUpdateUser={handleUpdateUser} />;
+        if (currentUser.type === 'prestador') return <ProviderDashboard user={currentUser} onViewProfile={(userId) => handleSetView('profile', {userId})} onPlaceBid={() => {}} />;
+        if (currentUser.type === 'admin') return <AdminDashboard user={currentUser} />;
         return null;
       case 'profile':
-        const profileUser = allUsers.find(u => u.email === view.data.userId);
-        if (!profileUser) return <div>Perfil não encontrado.</div>;
-        return <ProfilePage user={profileUser} allJobs={allJobs} allUsers={allUsers} onBackToDashboard={() => handleSetView('dashboard')} isPublicView={!!view.data.isPublic} onLoginToContact={handleLoginToContact} />;
+        // ProfilePage will need to fetch its own user data
+        return <ProfilePage userId={view.data.userId} onBackToDashboard={() => handleSetView('dashboard')} isPublicView={!!view.data.isPublic} onLoginToContact={handleLoginToContact} />;
       case 'service-landing':
-          return <ServiceLandingPage category={view.data.category} location={view.data.location} allUsers={allUsers} serviceNameToCategory={serviceNameToCategory} />;
+          // This page will also need to fetch its own user data
+          return <ServiceLandingPage category={view.data.category} location={view.data.location} serviceNameToCategory={serviceNameToCategory} />;
       case 'provider-landing':
           return <ProviderLandingPage onRegisterClick={() => setAuthModal({mode: 'register', userType: 'prestador'})} />;
       // FIX: Add case for find-providers view
       case 'find-providers':
-          return <FindProvidersPage allUsers={allUsers} allJobs={allJobs} onViewProfile={(userId) => handleSetView('profile', { userId, isPublic: !currentUser })} onContact={handleLoginToContact} />;
+          return <FindProvidersPage allUsers={[]} allJobs={[]} onViewProfile={(userId) => handleSetView('profile', { userId, isPublic: !currentUser })} onContact={handleLoginToContact} />;
       case 'home':
       default:
         return (

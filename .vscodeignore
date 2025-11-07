@@ -1,0 +1,43 @@
+# Exclusões para indexação/watchers do VS Code
+# Reduz carga do Extension Host (crítico para Gemini/Copilot)
+
+# Build artifacts
+dist/
+build/
+.next/
+.vercel/
+coverage/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+.pnp.*
+.yarn/
+
+# Logs and temp
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Documentation (pode ser grande)
+doc/gen-lang-client-*.json
+doc/DOCUMENTO_MESTRE_*.md
+
+# Test artifacts
+backend/coverage/
+.nyc_output/
+test-results/
+
+# IDE
+.idea/
+*.iml
+.vscode-test/
+
+# OS files
+Thumbs.db
+desktop.ini
