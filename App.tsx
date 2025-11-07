@@ -132,7 +132,19 @@ const App: React.FC = () => {
   };
 
   const handleSmartSearch = (prompt: string) => {
-    setWizardData({ prompt });
+    if (!currentUser) {
+      // Se não estiver logado, salvar o prompt e abrir modal de login
+      setJobDataToCreate({ 
+        description: prompt, 
+        category: 'reparos', 
+        serviceType: 'personalizado', 
+        urgency: '3dias' 
+      } as JobData);
+      setAuthModal({ mode: 'login', userType: 'cliente' });
+    } else {
+      // Se já estiver logado, abrir wizard diretamente
+      setWizardData({ prompt });
+    }
   };
   
   const handleNewJobFromItem = (prompt: string) => {
