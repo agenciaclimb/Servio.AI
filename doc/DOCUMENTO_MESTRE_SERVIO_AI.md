@@ -1,6 +1,6 @@
 # 📘 DOCUMENTO MESTRE - SERVIO.AI
 
-**Última atualização:** 06/11/2025 20:15
+**Última atualização:** 07/11/2025 00:50
 
 ---
 
@@ -43,9 +43,18 @@
 
 **Status atual:** https://gen-lang-client-0737507616.web.app
 
-### ✅ Cenário atual (20:30 - DEPLOY CONCLUÍDO)
+### ✅ Cenário atual (00:50 - CORREÇÃO HOMEPAGE DEPLOYADA)
 
 **Frontend em produção:** https://gen-lang-client-0737507616.web.app
+
+**CORREÇÃO CRÍTICA APLICADA:**
+
+- Página inicial agora exige login antes de abrir o wizard (evita página branca).
+- Após login, o wizard abre automaticamente com o texto digitado na home.
+- `AIJobRequestWizard` agora suporta `initialData` completo (não apenas `initialPrompt`).
+- Wizard detecta se vem do chat (com dados completos) e pula direto para a tela de revisão.
+
+**Funcionalidades ativas:**
 
 - Dashboard do cliente com onboarding completo (perfil, primeiro serviço, primeiro item).
 - Modal de perfil com validação (bio mínima 30 caracteres).
