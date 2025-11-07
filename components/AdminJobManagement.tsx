@@ -24,7 +24,7 @@ const AdminJobManagement: React.FC<AdminJobManagementProps> = ({ allJobs, allUse
   const [filter, setFilter] = useState<JobStatus | 'all'>('all');
 
   const filteredJobs = (filter === 'all' ? allJobs : allJobs.filter(j => j.status === filter))
-    .sort((a,b) => b.createdAt.getTime() - a.createdAt.getTime());
+    .sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   return (
      <div className="bg-white shadow-sm border rounded-lg overflow-hidden">

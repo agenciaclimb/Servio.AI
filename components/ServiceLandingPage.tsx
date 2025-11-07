@@ -1,123 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { User, ProviderProfile, CategoryPageContent } from '../types';
-import { generateCategoryPageContent } from '../services/geminiService';
-import LoadingSpinner from './LoadingSpinner';
-import ProviderCard from './ProviderCard';
-import StructuredDataSEO from './StructuredDataSEO';
-
+import { User } from '../types';
+import * as API from '../services/api';
+import { SkeletonBlock } from './skeletons/SkeletonBlock';
 
 interface ServiceLandingPageProps {
   category: string;
   location?: string;
-  allUsers: User[];
-  serviceNameToCategory: { [key: string]: string };
+  serviceNameToCategory: (name: string) => string;
 }
 
-const ServiceLandingPage: React.FC<ServiceLandingPageProps> = ({ category, location, allUsers, serviceNameToCategory }) => {
-  const [content, setContent] = useState<CategoryPageContent | null>(null);
+const ProviderCardSkeleton: React.FC = () => (
+  <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
+    <div className="flex items-center gap-4">
+      <SkeletonBlock className="w-16 h-16 rounded-full" />
+      <div className="space-y-2 flex-1">
+        <SkeletonBlock className="h-5 w-1/2" />
+        <SkeletonBlock className="h-4 w-1/3" />
+        <SkeletonBlock className="h-4 w-3/4" />
+      </div>
+    </div>
+  </div>
+);
+
+const ServiceLandingPage: React.FC<ServiceLandingPageProps> = ({ category, location }) => {
+  const [providers, setProviders] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const decodedCategory = decodeURIComponent(category || '');
-  const decodedLocation = decodeURIComponent(location || '');
-
   useEffect(() => {
-    const fetchContent = async () => {
+    const fetchProvidersData = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const generatedContent = await generateCategoryPageContent(decodedCategory, decodedLocation);
-        setContent(generatedContent);
+        // In a real backend, this would be filtered by category and location
+        const fetchedProviders = await API.fetchProviders();
+        setProviders(fetchedProviders.filter(p => p.specialties?.includes(category)));
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Falha ao carregar conteúdo.');
+        setError("Não foi possível carregar os prestadores de serviço.");
+        console.error(err);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchContent();
-  }, [decodedCategory, decodedLocation]);
 
-  const providers = allUsers.filter(user => {
-    if (user.type !== 'prestador') return false;
-
-    // Match by location if specified
-    const locationMatch = !decodedLocation || user.location.toLowerCase().includes(decodedLocation.toLowerCase());
-    
-    // Match category using the map
-    const headline = user.headline || '';
-    const providerCategory = serviceNameToCategory[headline];
-    const categoryMatch = providerCategory === decodedCategory;
-
-    return categoryMatch && locationMatch;
-  });
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
-  if (error) {
-    return <div className="text-center text-red-500 bg-red-50 p-4 rounded-lg">Erro: {error}</div>;
-  }
-
-  if (!content) {
-    return <div className="text-center text-gray-500">Página não encontrada.</div>;
-  }
+    fetchProvidersData();
+  }, [category, location]);
 
   return (
-    <div>
-        <StructuredDataSEO 
-            schemaType="Service"
-            data={{
-                name: content.title,
-                description: content.introduction,
-                provider: {
-                    "@type": "Organization",
-                    name: "SERVIO.AI"
-                }
-            }}
-        />
+    <div className="max-w-7xl mx-auto p-6">
+      <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        Prestadores de Serviço para <span className="text-blue-600">{category}</span>
+      </h1>
+      {location && <p className="text-lg text-gray-600 mb-8">em {location}</p>}
 
-      <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-        <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">{content.title}</h1>
-        <p className="mt-4 text-lg text-gray-600">{content.introduction}</p>
-      </div>
-
-      <div className="mt-12">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">Profissionais disponíveis</h2>
-        {providers.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {providers.map(provider => (
-                // Dummy conversion for display, a real app would have this structured better
-                 <ProviderCard key={provider.email} result={{
-                    provider: {
-                        id: provider.email,
-                        name: provider.name,
-                        service: provider.headline || 'Serviço',
-                        location: provider.location,
-                        rating: 4.5, // Dummy rating
-                        bio: provider.bio,
-                        headline: provider.headline || ''
-                    },
-                    compatibilityScore: 90, // Dummy score
-                    justification: "Este profissional atende aos critérios da sua busca."
-                }} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-center text-gray-500 bg-gray-50 p-8 rounded-lg">Nenhum profissional encontrado para esta categoria/localização no momento.</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {isLoading && Array.from({ length: 6 }).map((_, i) => <ProviderCardSkeleton key={i} />)}
+        {!isLoading && error && <p className="text-red-500 col-span-full">{error}</p>}
+        {!isLoading && providers.length === 0 && !error && (
+          <p className="text-gray-500 col-span-full">Nenhum prestador encontrado para esta categoria.</p>
         )}
-      </div>
-
-      <div className="mt-16">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">Perguntas Frequentes (FAQ)</h2>
-        <div className="space-y-4">
-          {content.faq.map((item, index) => (
-            <div key={index} className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-              <h3 className="font-semibold text-lg text-gray-900">{item.question}</h3>
-              <p className="mt-2 text-gray-600">{item.answer}</p>
-            </div>
-          ))}
-        </div>
+        {/* Here you would map over `providers` and render a real ProviderCard component */}
       </div>
     </div>
   );

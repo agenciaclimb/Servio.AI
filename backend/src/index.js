@@ -77,11 +77,79 @@ function createApp({
   const app = express();
 
   app.use(cors());
-  app.use(express.json());
+  
+  // Use express.json() for all routes except the webhook
+  app.use((req, res, next) => {
+    if (req.path === '/api/stripe-webhook') return next();
+    return express.json()(req, res, next);
+  });
 
   // Basic "Hello World" endpoint for the backend service
   app.get("/", (req, res) => {
     res.send("Hello from SERVIO.AI Backend (Firestore Service)!");
+  });
+
+  // =================================================================
+  // STRIPE CONNECT ONBOARDING
+  // =================================================================
+
+  app.post("/api/stripe/create-connect-account", async (req, res) => {
+    const { userId } = req.body;
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required." });
+    }
+
+    try {
+      const userRef = db.collection("users").doc(userId);
+      const userDoc = await userRef.get();
+
+      if (!userDoc.exists) {
+        return res.status(404).json({ error: "User not found." });
+      }
+
+      const account = await stripe.accounts.create({
+        type: 'express',
+        email: userId,
+        country: 'BR',
+        capabilities: {
+          card_payments: { requested: true },
+          transfers: { requested: true },
+        },
+      });
+
+      await userRef.update({ stripeAccountId: account.id });
+
+      res.status(200).json({ accountId: account.id });
+    } catch (error) {
+      console.error("Error creating Stripe Connect account:", error);
+      res.status(500).json({ error: "Failed to create Stripe Connect account." });
+    }
+  });
+
+  app.post("/api/stripe/create-account-link", async (req, res) => {
+    const { userId } = req.body;
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required." });
+    }
+
+    try {
+      const userDoc = await db.collection("users").doc(userId).get();
+      if (!userDoc.exists || !userDoc.data().stripeAccountId) {
+        return res.status(404).json({ error: "Stripe account not found for this user." });
+      }
+
+      const accountLink = await stripe.accountLinks.create({
+        account: userDoc.data().stripeAccountId,
+        refresh_url: `${process.env.FRONTEND_URL}/onboarding-stripe/refresh`,
+        return_url: `${process.env.FRONTEND_URL}/dashboard?stripe_onboarding_complete=true`,
+        type: 'account_onboarding',
+      });
+
+      res.status(200).json({ url: accountLink.url });
+    } catch (error) {
+      console.error("Error creating Stripe account link:", error);
+      res.status(500).json({ error: "Failed to create account link." });
+    }
   });
 
   // =================================================================
@@ -92,7 +160,28 @@ function createApp({
     const { job, amount } = req.body;
     const YOUR_DOMAIN = process.env.FRONTEND_URL || "http://localhost:5173"; // Your frontend domain
 
+    if (!job.providerId) {
+      return res.status(400).json({ error: "Job must have a provider assigned to create a payment session." });
+    }
+
     try {
+      // Fetch provider to get their Stripe Connect account ID
+      const providerDoc = await db.collection('users').doc(job.providerId).get();
+      if (!providerDoc.exists) {
+        return res.status(404).json({ error: 'Provider not found.' });
+      }
+      const providerData = providerDoc.data();
+      const providerStripeId = providerData.stripeAccountId;
+
+      if (!providerStripeId) {
+        return res.status(400).json({ error: "The provider has not set up their payment account." });
+      }
+
+      // Calculate platform fee and provider share
+      // This logic can be simplified if stats are not needed at this stage, but for consistency we calculate it.
+      const earningsProfile = calculateProviderRate(providerData, {}); // Simplified stats for now
+      const providerShareInCents = Math.round(amount * earningsProfile.currentRate * 100);
+
       // Create an escrow record in Firestore first
       const escrowRef = db.collection("escrows").doc();
       const escrowData = {
@@ -121,6 +210,13 @@ function createApp({
             quantity: 1,
           },
         ],
+        payment_intent_data: {
+          application_fee_amount: (amount * 100) - providerShareInCents,
+          transfer_data: {
+            destination: providerStripeId,
+            // The amount that will be transferred to the destination account.
+          },
+        },
         mode: "payment",
         success_url: `${YOUR_DOMAIN}/job/${job.id}?payment_success=true`,
         cancel_url: `${YOUR_DOMAIN}/job/${job.id}?payment_canceled=true`,
@@ -136,6 +232,50 @@ function createApp({
       res.status(500).json({ error: "Failed to create checkout session." });
     }
   });
+
+  // =================================================================
+  // STRIPE WEBHOOK
+  // =================================================================
+
+  app.post('/api/stripe-webhook', express.raw({type: 'application/json'}), async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    if (!sig || !endpointSecret) {
+      return res.status(400).send('Webhook Error: Missing signature or secret.');
+    }
+
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    } catch (err) {
+      console.log(`❌ Webhook signature verification failed.`, err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Handle the event
+    switch (event.type) {
+      case 'checkout.session.completed':
+        const session = event.data.object;
+        const { escrowId } = session.metadata;
+        const paymentIntentId = session.payment_intent;
+
+        if (escrowId && paymentIntentId) {
+          console.log(`✅ Checkout session completed for Escrow ID: ${escrowId}.`);
+          const escrowRef = db.collection('escrows').doc(escrowId);
+          await escrowRef.update({ status: 'pago', paymentIntentId: paymentIntentId });
+        }
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    res.json({received: true});
+  });
+
 
   app.post("/jobs/:jobId/release-payment", async (req, res) => {
     const { jobId } = req.params;
@@ -170,13 +310,20 @@ function createApp({
         });
       }
 
-      // TODO: Implement Stripe Payout/Transfer to the provider's connected account.
-      // This is a critical step for a real application.
-      // For now, we simulate the success by updating our internal state.
-
-      // **NOVA LÓGICA DE COMISSÃO DINÂMICA**
       const providerDoc = await db.collection('users').doc(escrowData.providerId).get();
-      if (!providerDoc.exists) throw new Error('Provider not found for commission calculation.');
+      if (!providerDoc.exists) {
+        return res.status(404).json({ error: 'Prestador não encontrado para o pagamento.' });
+      }
+      const providerData = providerDoc.data();
+      const providerStripeId = providerData.stripeAccountId;
+
+      if (!providerStripeId) {
+        return res.status(400).json({ error: 'O prestador não possui uma conta de pagamento configurada.' });
+      }
+
+      if (!escrowData.paymentIntentId) {
+        return res.status(400).json({ error: 'ID de intenção de pagamento não encontrado. Não é possível liberar os fundos.' });
+      }
       
       // Reutiliza a lógica de cálculo de estatísticas
       const jobsSnapshot = await db.collection('jobs').where('providerId', '==', escrowData.providerId).where('status', '==', 'concluido').get();
@@ -187,19 +334,35 @@ function createApp({
       const stats = { totalJobs: completedJobs.length, totalRevenue, averageRating, totalDisputes: 0 }; // Simplificado
 
       const earningsProfile = calculateProviderRate(providerDoc.data(), stats);
-      const providerShare = escrowData.amount * earningsProfile.currentRate;
-      const platformShare = escrowData.amount * (1 - earningsProfile.currentRate);
+      const providerShare = Math.round(escrowData.amount * earningsProfile.currentRate * 100); // Em centavos
+      const platformShare = (escrowData.amount * 100) - providerShare; // Em centavos
+
+      // Retrieve the charge ID from the Payment Intent
+      const paymentIntent = await stripe.paymentIntents.retrieve(escrowData.paymentIntentId);
+      const chargeId = paymentIntent.latest_charge;
+
+      // Create the transfer to the provider's connected account
+      const transfer = await stripe.transfers.create({
+        amount: providerShare,
+        currency: 'brl',
+        destination: providerStripeId,
+        source_transaction: chargeId, // Link the transfer to the original charge
+        metadata: {
+          jobId: jobId,
+          escrowId: escrowDoc.id,
+        }
+      });
 
       console.log(
-        `Simulating Stripe Payout for Escrow ID: ${escrowDoc.id}. Total: ${escrowData.amount}. Provider (${earningsProfile.currentRate * 100}%): ${providerShare.toFixed(2)}. Platform: ${platformShare.toFixed(2)}.`
+        `Stripe Transfer successful for Escrow ID: ${escrowDoc.id}. Transfer ID: ${transfer.id}. Amount: ${providerShare / 100}`
       );
 
       // Update job and escrow status
       await db.collection("jobs").doc(jobId).update({ 
         status: "concluido",
-        earnings: { providerShare, platformShare, rate: earningsProfile.currentRate } 
+        earnings: { providerShare: providerShare / 100, platformShare: platformShare / 100, rate: earningsProfile.currentRate } 
       });
-      await escrowDoc.ref.update({ status: "liberado" });
+      await escrowDoc.ref.update({ status: "liberado", stripeTransferId: transfer.id });
 
       res.status(200).json({
         message: "Pagamento liberado e serviço concluído com sucesso.",

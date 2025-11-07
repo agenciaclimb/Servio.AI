@@ -25,8 +25,9 @@ const serviceTypeDetails: { [key in ServiceType]: { text: string, className: str
     'diagnostico': { text: 'Diagnóstico', className: 'bg-yellow-100 text-yellow-800', icon: '🔍' },
 };
 
-const timeAgo = (date: Date): string => {
-    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+const timeAgo = (dateIso: string): string => {
+  const date = new Date(dateIso);
+  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
     if (seconds < 60) return "agora mesmo";
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `há ${minutes} min`;
