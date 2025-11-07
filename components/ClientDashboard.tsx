@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Job, User, Proposal, Message, Dispute, MaintainedItem, JobData, Escrow, Notification, ScheduledDateTime, DisputeMessage, Bid } from '../types';
+import { enhanceJobRequest } from '../services/geminiService';
 import ClientJobCard from './ClientJobCard';
 import ProposalListModal from './ProposalListModal';
 import PaymentModal from './PaymentModal';
@@ -31,14 +32,18 @@ interface ClientDashboardProps {
   setAllDisputes: React.Dispatch<React.SetStateAction<Dispute[]>>;
   setMaintainedItems: React.Dispatch<React.SetStateAction<MaintainedItem[]>>;
   onNewJobFromItem: (prompt: string) => void;
+  onUpdateUser: (userEmail: string, partial: Partial<User>) => void; // novo para edição de perfil do cliente
 }
 
 const ClientDashboard: React.FC<ClientDashboardProps> = ({
   user, allJobs, allUsers, allProposals, allMessages, maintainedItems, allDisputes, allBids,
   setAllJobs, setAllProposals, setAllMessages, setAllNotifications, setAllEscrows, setAllDisputes, setMaintainedItems,
-  onViewProfile, onNewJobFromItem
+  onViewProfile, onNewJobFromItem, onUpdateUser
 }) => {
   const [activeTab, setActiveTab] = useState<'jobs' | 'items'>('jobs');
+  // Onboarding & perfil
+  const [showOnboarding, setShowOnboarding] = useState(true);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [viewingProposalsForJob, setViewingProposalsForJob] = useState<Job | null>(null);
   const [viewingAuctionForJob, setViewingAuctionForJob] = useState<Job | null>(null);
   const [payingForProposal, setPayingForProposal] = useState<Proposal | null>(null);
@@ -51,6 +56,11 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
 
 
   const userJobs = allJobs.filter(job => job.clientId === user.email);
+  const firstServiceDone = userJobs.length > 0;
+  const firstItemDone = maintainedItems.length > 0;
+  const profileComplete = Boolean(user.address && user.bio && user.bio.length > 20);
+  const onboardingStepsTotal = 3;
+  const onboardingStepsDone = [profileComplete, firstServiceDone, firstItemDone].filter(Boolean).length;
 
   const handleAcceptProposal = (proposalId: string) => {
     const proposal = allProposals.find(p => p.id === proposalId);
@@ -229,8 +239,73 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     }
   };
 
+  const handleSaveProfile = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const updated: Partial<User> = {
+      name: String(formData.get('name') || user.name),
+      address: String(formData.get('address') || user.address || ''),
+      bio: String(formData.get('bio') || user.bio),
+      location: String(formData.get('location') || user.location),
+    };
+    if ((updated.bio || '').trim().length < 30) {
+      alert('Sua bio está muito curta. Escreva pelo menos 30 caracteres para ajudar os prestadores a te conhecer melhor.');
+      return;
+    }
+    onUpdateUser(user.email, updated);
+    setIsProfileModalOpen(false);
+  };
+
   return (
     <div className="space-y-8">
+      {/* Card de Onboarding */}
+      {showOnboarding && onboardingStepsDone < onboardingStepsTotal && (
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white shadow-lg">
+          <button
+            className="absolute top-4 right-4 text-white/70 hover:text-white"
+            onClick={() => setShowOnboarding(false)}
+            aria-label="Fechar onboarding"
+          >✕</button>
+          <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+            <span>🚀 Bem-vindo! Seu progresso inicial</span>
+          </h2>
+          <p className="text-sm mb-4">
+            {onboardingStepsDone} de {onboardingStepsTotal} passos concluídos.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {!profileComplete && (
+              <div className="bg-white/15 rounded-lg p-4 backdrop-blur-sm">
+                <p className="font-semibold text-sm">1. Complete seu perfil</p>
+                <p className="text-xs text-blue-100 mb-2">Adicione endereço e uma bio mais completa.</p>
+                <button
+                  onClick={() => setIsProfileModalOpen(true)}
+                  className="text-xs font-medium px-3 py-1 rounded bg-white/25 hover:bg-white/35 transition"
+                >Editar Perfil</button>
+              </div>
+            )}
+            {!firstServiceDone && (
+              <div className="bg-white/15 rounded-lg p-4 backdrop-blur-sm">
+                <p className="font-semibold text-sm">2. Solicite seu primeiro serviço</p>
+                <p className="text-xs text-blue-100 mb-2">A IA pode ajudar a descrever o problema.</p>
+                <button
+                  onClick={() => onNewJobFromItem('')}
+                  className="text-xs font-medium px-3 py-1 rounded bg-white/25 hover:bg-white/35 transition"
+                >Solicitar Serviço</button>
+              </div>
+            )}
+            {!firstItemDone && (
+              <div className="bg-white/15 rounded-lg p-4 backdrop-blur-sm">
+                <p className="font-semibold text-sm">3. Cadastre um item</p>
+                <p className="text-xs text-blue-100 mb-2">Facilita futuras manutenções.</p>
+                <button
+                  onClick={() => setIsAddItemModalOpen(true)}
+                  className="text-xs font-medium px-3 py-1 rounded bg-white/25 hover:bg-white/35 transition"
+                >Adicionar Item</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Meu Painel</h1>
         <button 
@@ -411,7 +486,43 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       )}
 
       {/* AI Assistant Widget */}
-      <AIAssistantWidget userName={user.name.split(' ')[0]} />
+      <AIAssistantWidget userName={user.name.split(' ')[0]} userAddress={user.address} />
+      {/* Modal simples de edição de perfil */}
+      {isProfileModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
+          <div className="bg-white w-full max-w-lg rounded-xl shadow-xl p-6 relative">
+            <button
+              onClick={() => setIsProfileModalOpen(false)}
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+              aria-label="Fechar"
+            >✕</button>
+            <h3 className="text-lg font-bold mb-4">Completar Perfil</h3>
+            <form onSubmit={handleSaveProfile} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+                <input name="name" defaultValue={user.name} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
+                <input name="address" defaultValue={user.address} placeholder="Rua, nº, bairro" className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Localização (cidade)</label>
+                <input name="location" defaultValue={user.location} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                <textarea name="bio" defaultValue={user.bio} rows={4} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
+                <p className="text-xs text-gray-500 mt-1">Dica: escreva ao menos 30 caracteres.</p>
+              </div>
+              <div className="flex justify-end gap-3 pt-2">
+                <button type="button" onClick={() => setIsProfileModalOpen(false)} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-100 hover:bg-gray-200">Cancelar</button>
+                <button type="submit" className="px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700">Salvar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -419,11 +530,19 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
 // AI Assistant Widget Component
 interface AIAssistantWidgetProps {
   userName: string;
+  userAddress?: string;
 }
 
-const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ userName }) => {
+const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ userName, userAddress }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [currentTip, setCurrentTip] = useState(0);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<{ role: 'user' | 'ai'; text: string }[]>([
+    { role: 'ai', text: `Olá ${userName}! Descreva brevemente o problema e vou montar um pedido de serviço para você.` }
+  ]);
+  const [isBuildingJob, setIsBuildingJob] = useState(false);
+  const [isConsultingAI, setIsConsultingAI] = useState(false);
+  const [draftJobData, setDraftJobData] = useState<Partial<JobData>>(userAddress ? { address: userAddress } : {});
 
   const tips = [
     "💡 Dica: Adicione fotos detalhadas ao solicitar um serviço para receber propostas mais precisas.",
@@ -459,16 +578,35 @@ const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ userName }) => {
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 mb-3 min-h-[60px]">
             <p className="text-sm leading-relaxed">{tips[currentTip]}</p>
           </div>
+          
+          {/* Chips de urgência rápida */}
+          {isChatOpen && draftJobData.description && (
+            <div className="flex flex-wrap gap-1 mb-2">
+              {['hoje', 'amanha', '3dias', '1semana'].map(u => (
+                <button
+                  key={u}
+                  type="button"
+                  onClick={() => {
+                    setDraftJobData(prev => ({ ...prev, urgency: u as any }));
+                    setChatMessages(prev => [...prev, { role: 'ai', text: `Urgência atualizada para: ${u}.` }]);
+                  }}
+                  className={`px-2 py-1 text-xs rounded ${draftJobData.urgency === u ? 'bg-white text-purple-700 font-semibold' : 'bg-white/30 text-white'}`}
+                >
+                  {u}
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="flex gap-2">
             <button
-              onClick={() => alert('Em breve! A IA te ajudará a criar serviços de forma ainda mais inteligente.')}
+              onClick={() => setIsChatOpen(true)}
               className="flex-1 bg-white/20 hover:bg-white/30 rounded-lg px-3 py-2 text-xs font-medium transition"
             >
               Novo Serviço
             </button>
             <button
-              onClick={() => alert('Chat com IA em desenvolvimento - Em breve você poderá conversar diretamente com nossa assistente!')}
+              onClick={() => setIsChatOpen(true)}
               className="flex-1 bg-white/20 hover:bg-white/30 rounded-lg px-3 py-2 text-xs font-medium transition"
             >
               Preciso de Ajuda
@@ -482,6 +620,102 @@ const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ userName }) => {
         >
           <span className="text-4xl animate-pulse">✨</span>
         </button>
+      )}
+      {isChatOpen && (
+        <div className="fixed bottom-24 right-4 w-80 bg-white rounded-xl shadow-xl border border-blue-200 flex flex-col overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 flex justify-between items-center">
+            <span className="text-sm font-semibold">Assistente IA</span>
+            <button onClick={() => setIsChatOpen(false)} className="text-white/80 hover:text-white text-xs">✕</button>
+          </div>
+          <div className="p-3 space-y-2 max-h-72 overflow-y-auto text-sm">
+            {chatMessages.map((m, i) => (
+              <div key={i} className={`px-3 py-2 rounded-lg whitespace-pre-line ${m.role === 'ai' ? 'bg-blue-50 text-blue-900' : 'bg-purple-50 text-purple-900 ml-auto'} max-w-[85%]`}>{m.text}</div>
+            ))}
+            {isConsultingAI && (<div className="text-xs text-blue-600 animate-pulse flex items-center gap-1"><span>🤖</span> Consultando IA...</div>)}
+            {isBuildingJob && (<div className="text-xs text-gray-500 animate-pulse">Gerando sugestão...</div>)}
+          </div>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const text = String(formData.get('msg') || '').trim();
+              if (!text) return;
+              e.currentTarget.reset();
+              setChatMessages(prev => [...prev, { role: 'user', text }]);
+              const lower = text.toLowerCase();
+              const next: Partial<JobData> = { ...draftJobData };
+              // Tentativa: usar backend de IA para enriquecer a descrição
+              setIsConsultingAI(true);
+              try {
+                const ai = await enhanceJobRequest(text);
+                if (ai?.enhancedDescription) next.description = ai.enhancedDescription;
+                if (ai?.suggestedCategory) next.category = ai.suggestedCategory as any;
+                if (ai?.suggestedServiceType) next.serviceType = ai.suggestedServiceType;
+              } catch (_) {
+                setChatMessages(prev => [...prev, { role: 'ai', text: 'Não consegui consultar a IA agora, vou tentar entender sua mensagem localmente.' }]);
+              } finally {
+                setIsConsultingAI(false);
+              }
+              if (!next.category) {
+                if (lower.includes('eletric') || lower.includes('tomada')) next.category = 'reparos';
+                if (lower.includes('pint') || lower.includes('parede')) next.category = 'reparos';
+                if (lower.includes('comput') || lower.includes('notebook')) next.category = 'ti';
+              }
+              if (!next.description) next.description = text;
+              if (!next.serviceType) next.serviceType = 'personalizado';
+              if (!next.urgency) {
+                if (lower.includes('urg') || lower.includes('hoje')) next.urgency = 'hoje';
+                else if (lower.includes('amanha')) next.urgency = 'amanha';
+                else next.urgency = '3dias';
+              }
+              setDraftJobData(next);
+              if (lower === 'publicar') {
+                const jobData: JobData = {
+                  description: next.description || 'Serviço solicitado',
+                  category: next.category || 'reparos',
+                  serviceType: next.serviceType || 'personalizado',
+                  urgency: next.urgency || '3dias'
+                };
+                window.dispatchEvent(new CustomEvent('open-wizard-from-chat', { detail: jobData }));
+                setChatMessages(prev => [...prev, { role: 'ai', text: 'Abrindo assistente de criação de serviço...' }]);
+                return;
+              }
+              setIsBuildingJob(true);
+              setTimeout(() => {
+                setIsBuildingJob(false);
+                const missing: string[] = [];
+                if (!next.address) missing.push('endereço');
+                if (!next.fixedPrice && !next.visitFee) missing.push('preço estimado');
+                if (missing.length === 0) {
+                  setChatMessages(prev => [...prev, { role: 'ai', text: 'Pronto! Digite "publicar" para abrir o formulário e revisar antes de enviar.' }]);
+                } else {
+                  setChatMessages(prev => [...prev, { role: 'ai', text: `Resumo:\nCategoria: ${next.category}\nUrgência: ${next.urgency}\nFalta(m): ${missing.join(', ')}.\nVocê pode complementar ou digitar "publicar" para avançar mesmo assim.` }]);
+                }
+              }, 900);
+            }}
+            className="border-t border-gray-200 p-2 flex gap-2"
+          >
+            <input name="msg" placeholder="Digite sua mensagem..." className="flex-1 rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500" />
+            <button type="submit" className="px-3 py-2 bg-blue-600 text-white rounded-md text-xs hover:bg-blue-700">Enviar</button>
+            <button
+              type="button"
+              onClick={() => {
+                const next = draftJobData;
+                const jobData: JobData = {
+                  description: next.description || 'Serviço solicitado',
+                  category: next.category || 'reparos',
+                  serviceType: next.serviceType || 'personalizado',
+                  urgency: next.urgency || '3dias'
+                };
+                window.dispatchEvent(new CustomEvent('open-wizard-from-chat', { detail: jobData }));
+                setChatMessages(prev => [...prev, { role: 'ai', text: 'Abrindo assistente de criação de serviço...' }]);
+              }}
+              className="px-3 py-2 bg-purple-600 text-white rounded-md text-xs hover:bg-purple-700"
+            >
+              Gerar Pedido
+            </button>
+          </form>
+        </div>
       )}
     </div>
   );

@@ -1,6 +1,76 @@
 # 📘 DOCUMENTO MESTRE - SERVIO.AI
 
-**Última atualização:** 06/11/2025 17:00
+**Última atualização:** 06/11/2025 20:15
+
+---
+
+## 🚀 MELHORIAS DE UX - CLIENTE DASHBOARD - 06/11/2025 20:15
+
+✅ **Widget IA Assistente implementado e deployado!**
+✅ **Onboarding inicial + Modal de Perfil adicionados**
+✅ **Chat IA pré-formulário (MVP) conectado ao Wizard**
+
+### O que foi realizado:
+
+1. **Descoberta da arquitetura de produção:**
+   - Identificado que produção usa ROOT-level files (App.tsx, components/)
+   - Pasta src/ era experimental e estava causando erros de build
+   - Removida pasta src/ e focado em ROOT components/ClientDashboard.tsx
+
+2. **Widget IA Assistente adicionado:**
+   - Componente flutuante no canto inferior direito
+
+- Dicas contextuais rotativas (muda a cada 8 segundos)
+- Design moderno com gradiente azul/roxo
+- Botões de ação: "Novo Serviço" e "Preciso de Ajuda" agora abrem um chat leve com IA (substitui alerts)
+- Chat monta rascunho de `JobData` (categoria/urgência/descrição) por palavras‑chave e oferece botão "Gerar Pedido" para abrir o Wizard
+
+3. **Onboarding inicial + modal de perfil (ClientDashboard):**
+
+- Card superior mostrando progresso (Perfil, Primeiro Serviço, Primeiro Item)
+- Botão "Editar Perfil" abre modal com Nome, Endereço, Localização e Bio
+- Atualização de perfil via `onUpdateUser` (estado + notificação de sucesso)
+
+4. **Integração Chat → Wizard:**
+
+- Evento global `open-wizard-from-chat` capturado em `App.tsx` e convertido em `wizardData`
+- Abre `AIJobRequestWizard` já com campos iniciais preenchidos
+- Estado expansível/colapsável para melhor UX
+
+3. **Correção da configuração Firebase:**
+   - Adicionado hosting config em firebase.json
+   - Deploy realizado com sucesso
+
+**Status atual:** https://gen-lang-client-0737507616.web.app
+
+### Cenário atual (20:15)
+
+- Frontend estável no Firebase Hosting com dashboard do cliente atualizado.
+- Onboarding inicial ativo (perfil, serviço, item) com modal de perfil.
+- Widget IA abre chat conversacional (MVP) e aciona o AI Wizard com dados pré-preenchidos.
+- Integração inicial com backend de IA: chat tenta `enhanceJobRequest` e faz fallback local se indisponível.
+- Firebase Hosting configurado para API: rewrite `/api/**` → Cloud Run `servio-backend` (us-west1).
+- Dev proxy no Vite: `/api` aponta para `VITE_BACKEND_URL` ou `http://localhost:8081`.
+
+### Próximos passos prioritários:
+
+1. **[EM ANDAMENTO]** Corrigir redirecionamento após "Solicitar Serviço"
+   - Problema: Página em branco após IA gerar descrição
+   - Ação: Verificar AIJobRequestWizard e fluxo de submissão
+
+2. ✅ Adicionar checklist de onboarding (concluído)
+
+- Modal de edição de perfil para clientes
+- Indicadores de progresso (perfil, primeiro serviço, primeiro item)
+
+3. **[EM ANDAMENTO]** Evoluir chat para usar backend `/api/enhance-job`
+
+- Já integrado de forma otimista; reforçar UX de carregamento e mensagens de erro
+- Enriquecer mapeamento de categoria/urgência e aceitar fotos (contagem de arquivos)
+
+4. ✅ Conectar botões do Widget IA
+
+- "Novo Serviço" e "Preciso de Ajuda" → abrem o chat IA
 
 ---
 
@@ -16,6 +86,8 @@
 - **IA Service:** `servio-ai-00050-tzg`
   - Status: ✓ Online (100% traffic)
   - ✅ GEMINI_API_KEY configurada
+- **Frontend:** https://gen-lang-client-0737507616.web.app
+  - Status: ✓ Online com Widget IA Assistente
 
 **GitHub Actions:**
 
@@ -34,12 +106,6 @@
 - ✅ GEMINI_API_KEY
 - ✅ FRONTEND_URL
 - ✅ STRIPE_SECRET_KEY
-
-**Próximos passos:**
-
-1. Deploy do frontend para Firebase Hosting
-2. Testar fluxo completo: login → criar job → proposta → pagamento
-3. Configurar domínio customizado (opcional)
 
 ---
 
