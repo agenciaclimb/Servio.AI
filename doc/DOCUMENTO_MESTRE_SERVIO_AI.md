@@ -43,34 +43,41 @@
 
 **Status atual:** https://gen-lang-client-0737507616.web.app
 
-### Cenário atual (20:15)
+### ✅ Cenário atual (20:30 - DEPLOY CONCLUÍDO)
 
-- Frontend estável no Firebase Hosting com dashboard do cliente atualizado.
-- Onboarding inicial ativo (perfil, serviço, item) com modal de perfil.
-- Widget IA abre chat conversacional (MVP) e aciona o AI Wizard com dados pré-preenchidos.
-- Integração inicial com backend de IA: chat tenta `enhanceJobRequest` e faz fallback local se indisponível.
-- Firebase Hosting configurado para API: rewrite `/api/**` → Cloud Run `servio-backend` (us-west1).
-- Dev proxy no Vite: `/api` aponta para `VITE_BACKEND_URL` ou `http://localhost:8081`.
+**Frontend em produção:** https://gen-lang-client-0737507616.web.app
 
-### Próximos passos prioritários:
+- Dashboard do cliente com onboarding completo (perfil, primeiro serviço, primeiro item).
+- Modal de perfil com validação (bio mínima 30 caracteres).
+- Widget IA com chat conversacional que:
+  - Consulta backend `/api/enhance-job` via Gemini (com indicador de carregamento).
+  - Fallback local se backend indisponível (mensagem amigável).
+  - Usa endereço do usuário automaticamente quando disponível.
+  - Chips de urgência rápida (hoje, amanha, 3dias, 1semana).
+  - Botão "Gerar Pedido" abre AI Wizard com JobData pré-preenchido.
+- Roteamento de API configurado:
+  - Firebase Hosting: rewrite `/api/**` → Cloud Run `servio-backend` (us-west1).
+  - Dev proxy no Vite: `/api` aponta para `VITE_BACKEND_URL` ou `http://localhost:8081`.
 
-1. **[EM ANDAMENTO]** Corrigir redirecionamento após "Solicitar Serviço"
-   - Problema: Página em branco após IA gerar descrição
-   - Ação: Verificar AIJobRequestWizard e fluxo de submissão
+### Próximos passos sugeridos:
 
-2. ✅ Adicionar checklist de onboarding (concluído)
+1. **Validação em produção**
+   - Testar fluxo completo: Chat IA → Wizard → Criação de serviço → Matching
+   - Verificar logs do Cloud Run para confirmar que `/api/enhance-job` está respondendo
+   - Ajustar mensagens de erro conforme feedback real
 
-- Modal de edição de perfil para clientes
-- Indicadores de progresso (perfil, primeiro serviço, primeiro item)
+2. **Melhorias incrementais do chat IA**
+   - Aceitar upload de fotos (passar `fileCount` para `enhanceJobRequest`)
+   - Expandir mapeamento de categorias (adicionar mais palavras-chave)
+   - Permitir editar descrição/categoria no próprio chat antes de "Gerar Pedido"
 
-3. **[EM ANDAMENTO]** Evoluir chat para usar backend `/api/enhance-job`
+3. **Persistência de dados**
+   - Salvar progresso do onboarding no Firestore (campo `user.onboarding.completedSteps`)
+   - Sincronizar rascunho do chat com Firestore para não perder dados ao fechar
 
-- Já integrado de forma otimista; reforçar UX de carregamento e mensagens de erro
-- Enriquecer mapeamento de categoria/urgência e aceitar fotos (contagem de arquivos)
-
-4. ✅ Conectar botões do Widget IA
-
-- "Novo Serviço" e "Preciso de Ajuda" → abrem o chat IA
+4. **Otimizações de performance**
+   - Code-splitting do `AIJobRequestWizard` e outros modais pesados
+   - Lazy loading de componentes grandes (ClientDashboard, ProviderDashboard)
 
 ---
 
