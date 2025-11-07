@@ -139,6 +139,23 @@ const App: React.FC = () => {
       setWizardData({ prompt });
   }
 
+  const handleUpdateUser = (userEmail: string, partial: Partial<User>) => {
+    setAllUsers(prev => prev.map(u => u.email === userEmail ? { ...u, ...partial } : u));
+    if (currentUser?.email === userEmail) {
+      setCurrentUser(prev => prev ? { ...prev, ...partial } : prev);
+    }
+    setAllNotifications(prev => ([
+      ...prev,
+      {
+        id: `notif-profile-${Date.now()}`,
+        userId: userEmail,
+        text: 'Seu perfil foi atualizado com sucesso.',
+        isRead: false,
+        createdAt: new Date(),
+      }
+    ]));
+  }
+
   const handleWizardSubmit = async (jobData: JobData) => {
     if (!currentUser) {
         // If user isn't logged in, save the data and show login modal
@@ -278,7 +295,7 @@ const App: React.FC = () => {
     switch (view.name) {
       case 'dashboard':
         if (!currentUser) { handleSetView('home'); return null; }
-        if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allJobs={allJobs} allUsers={allUsers} allProposals={allProposals} allMessages={allMessages} maintainedItems={maintainedItems} allDisputes={allDisputes} allBids={allBids} setAllJobs={setAllJobs} setAllProposals={setAllProposals} setAllMessages={setAllMessages} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllEscrows={setAllEscrows} setAllDisputes={setAllDisputes} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} />;
+  if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allJobs={allJobs} allUsers={allUsers} allProposals={allProposals} allMessages={allMessages} maintainedItems={maintainedItems} allDisputes={allDisputes} allBids={allBids} setAllJobs={setAllJobs} setAllProposals={setAllProposals} setAllMessages={setAllMessages} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllEscrows={setAllEscrows} setAllDisputes={setAllDisputes} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} onUpdateUser={handleUpdateUser} />;
         if (currentUser.type === 'prestador') return <ProviderDashboard user={currentUser} allJobs={allJobs} allUsers={allUsers} allProposals={allProposals} allMessages={allMessages} allDisputes={allDisputes} allBids={allBids} setAllJobs={setAllJobs} setAllProposals={setAllProposals} setAllMessages={setAllMessages} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setUsers={setAllUsers} setAllFraudAlerts={setAllFraudAlerts} setAllDisputes={setAllDisputes} onPlaceBid={handlePlaceBid} />;
         if (currentUser.type === 'admin') return <AdminDashboard user={currentUser} allJobs={allJobs} allUsers={allUsers} allProposals={allProposals} allFraudAlerts={allFraudAlerts} allEscrows={allEscrows} allDisputes={allDisputes} setAllFraudAlerts={setAllFraudAlerts} setAllUsers={setAllUsers} setAllJobs={setAllJobs} setAllEscrows={setAllEscrows} setAllDisputes={setAllDisputes} setAllNotifications={setAllNotifications} />;
         return null;
@@ -304,6 +321,16 @@ const App: React.FC = () => {
   };
 
   const userNotifications = currentUser ? allNotifications.filter(n => n.userId === currentUser.email) : [];
+
+  // Listener: abrir wizard a partir do chat IA (Cliente)
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const custom = e as CustomEvent<JobData>;
+      setWizardData({ data: custom.detail });
+    };
+    window.addEventListener('open-wizard-from-chat', handler as EventListener);
+    return () => window.removeEventListener('open-wizard-from-chat', handler as EventListener);
+  }, []);
 
   return (
     <div className="bg-slate-50 min-h-screen">
