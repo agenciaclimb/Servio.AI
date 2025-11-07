@@ -33,22 +33,27 @@ const auctionDurations: { hours: number, label: string }[] = [
 ];
 
 const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubmit, initialPrompt, initialData }) => {
-  const [step, setStep] = useState<'initial' | 'loading' | 'review'>(initialPrompt ? 'loading' : 'initial');
-  const [initialRequest, setInitialRequest] = useState(initialPrompt || '');
-  const [address, setAddress] = useState('');
+  const [step, setStep] = useState<'initial' | 'loading' | 'review'>(() => {
+    // Se temos initialData, ir direto para review; se tem initialPrompt, ir para loading
+    if (initialData && (initialData.description || initialData.category)) return 'review';
+    if (initialPrompt) return 'loading';
+    return 'initial';
+  });
+  const [initialRequest, setInitialRequest] = useState(initialPrompt || initialData?.description || '');
+  const [address, setAddress] = useState(initialData?.address || '');
   const [files, setFiles] = useState<File[]>([]);
   const [enhancedRequest, setEnhancedRequest] = useState<EnhancedJobRequest | null>(null);
   const [error, setError] = useState<string | null>(null);
   
-  const [finalDescription, setFinalDescription] = useState('');
-  const [finalCategory, setFinalCategory] = useState('');
-  const [finalServiceType, setFinalServiceType] = useState<ServiceType>('personalizado');
-  const [finalUrgency, setFinalUrgency] = useState<'hoje' | 'amanha' | '3dias' | '1semana'>('3dias');
-  const [finalFixedPrice, setFinalFixedPrice] = useState('');
-  const [finalVisitFee, setFinalVisitFee] = useState('');
+  const [finalDescription, setFinalDescription] = useState(initialData?.description || '');
+  const [finalCategory, setFinalCategory] = useState(initialData?.category || '');
+  const [finalServiceType, setFinalServiceType] = useState<ServiceType>(initialData?.serviceType || 'personalizado');
+  const [finalUrgency, setFinalUrgency] = useState<'hoje' | 'amanha' | '3dias' | '1semana'>(initialData?.urgency || '3dias');
+  const [finalFixedPrice, setFinalFixedPrice] = useState(initialData?.fixedPrice?.toString() || '');
+  const [finalVisitFee, setFinalVisitFee] = useState(initialData?.visitFee?.toString() || '');
   const [targetProviderId, setTargetProviderId] = useState<string | undefined>(initialData?.targetProviderId);
-  const [jobMode, setJobMode] = useState<JobMode>('normal');
-  const [auctionDuration, setAuctionDuration] = useState<number>(24);
+  const [jobMode, setJobMode] = useState<JobMode>(initialData?.jobMode || 'normal');
+  const [auctionDuration, setAuctionDuration] = useState<number>(initialData?.auctionDurationHours || 24);
 
   const handleAnalyze = async (prompt: string, address?: string, fileCount?: number) => {
     if (prompt.trim().length < 10) {
