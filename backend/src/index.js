@@ -208,8 +208,35 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
   // POST /api/match-providers - Simple matching logic (prototype)
   app.post('/api/match-providers', async (req, res) => {
     try {
-      const { job, allUsers = [], allJobs = [] } = req.body || {};
+      let { job, jobId, allUsers = [], allJobs = [] } = req.body || {};
+      
+      // Resilience: If only jobId provided, fetch the job from Firestore
+      if (!job && jobId) {
+        try {
+          const jobDoc = await db.collection('jobs').doc(jobId).get();
+          if (jobDoc.exists) {
+            job = { id: jobDoc.id, ...jobDoc.data() };
+          }
+        } catch (err) {
+          console.error('Failed to fetch job by ID:', err);
+        }
+      }
+      
       if (!job) return res.status(400).json({ error: 'Job data is required.' });
+
+      // If no users provided, fetch active providers from Firestore
+      if (allUsers.length === 0) {
+        try {
+          const usersSnapshot = await db.collection('users')
+            .where('type', '==', 'prestador')
+            .where('verificationStatus', '==', 'verificado')
+            .limit(50)
+            .get();
+          allUsers = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        } catch (err) {
+          console.error('Failed to fetch providers:', err);
+        }
+      }
 
       // Basic heuristic: consider providers that match category or have headline/specialties containing it
       const category = (job.category || '').toString().toLowerCase();
@@ -239,7 +266,7 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
       .sort((a, b) => b.score - a.score)
       .slice(0, 10);
 
-      return res.json(scored);
+      return res.json({ matches: scored, total: scored.length });
     } catch (err) {
       console.error('match-providers error', err);
       return res.status(500).json({ error: 'Failed to match providers' });
