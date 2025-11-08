@@ -169,11 +169,9 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
     API.updateJob(jobId, { status: newStatus });
     
     API.createNotification({
-      id: `notif-${Date.now()}`,
       userId: job.clientId,
       text: `Atualização no seu job: ${user.name} está ${newStatus.replace('_', ' ')}.`,
       isRead: false,
-      createdAt: new Date().toISOString(),
     });
 
     const statusUpdateMessage: Message = {
@@ -211,11 +209,9 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
     const job = myJobs.find(j => j.id === messageData.chatId);
     if (job) {
       API.createNotification({
-        id: `notif-${Date.now()}`,
         userId: job.clientId,
         text: `Nova mensagem de ${user.name} sobre o job "${job.category}".`,
         isRead: false,
-        createdAt: new Date().toISOString(),
       });
     }
   };
@@ -245,11 +241,9 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
 
     // 3. Notify the Client
     API.createNotification({
-      id: `notif-${Date.now()}`,
       userId: job.clientId,
       text: `Agendamento confirmado por ${user.name} para o job "${job.category}"!`,
       isRead: false,
-      createdAt: new Date().toISOString(),
     });
 
     // 4. Mark the proposal message as confirmed
@@ -278,11 +272,9 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         const job = myJobs.find(j => j.id === dispute?.jobId);
         if (job) {
             API.createNotification({
-              id: `notif-dispute-${Date.now()}`,
               userId: job.clientId,
               text: `Nova mensagem na disputa do job "${job.category}".`,
               isRead: false,
-              createdAt: new Date().toISOString(),
             });
         }
     };

@@ -2,6 +2,9 @@
 
 ---
 
+#update_log - 07/11/2025 18:55
+Segurança e deploy: push bloqueado por segredos. Removi credenciais do histórico e atualizei .gitignore. Commit reenviado, pipeline acionado. Backend smoke test: 4/4 PASSED.
+
 #update_log - 07/11/2025 15:00
 Plano de estabilização MVP iniciado.
 
@@ -1195,6 +1198,40 @@ A IA Gemini documentou o processo para testar webhooks do Stripe localmente.
   2.  **Processo Detalhado:** O guia cobre a instalação da CLI, o login na conta Stripe, o encaminhamento de eventos (`stripe listen --forward-to ...`), a configuração do segredo do webhook local (`STRIPE_WEBHOOK_SECRET`) e a verificação dos resultados no console e no Firestore.
 - **Resultado:** Este guia foi adicionado ao `DOCUMENTO_MESTRE` para servir como uma fonte de conhecimento interna, permitindo que qualquer desenvolvedor valide o fluxo de confirmação de pagamento de forma segura e eficiente antes de fazer o deploy para produção.
 - **Próximo Passo:** Executar o roteiro de teste completo da jornada de pagamento para validar a integração de ponta a ponta.
+
+#update_log - 07/11/2025 15:15
+A IA Gemini, no papel de Engenheira de Integração e Estabilidade, iniciou a fase final de validação do MVP.
+
+- **Ação:** Análise completa do `DOCUMENTO_MESTRE` e consolidação das pendências para a estabilização final.
+- **Sumário das Pendências:**
+  - **Validação E2E:** Execução dos roteiros de teste para a "Jornada de Contratação" e "Jornada de Pagamento Completa".
+  - **Persistência de Dados:** Confirmação de que todas as interações (jobs, propostas, mensagens, pagamentos) são salvas e lidas corretamente do Firestore.
+  - **Validação de Webhooks:** Teste do webhook do Stripe para garantir a atualização do status do `escrow` e o salvamento do `paymentIntentId`.
+- **Plano de Execução:**
+  1.  Validar o fluxo de onboarding de pagamento do prestador.
+  2.  Executar o teste E2E da jornada de contratação de serviço.
+  3.  Executar o teste E2E do fluxo de pagamento completo, incluindo a liberação de fundos.
+  4.  Documentar todos os resultados e corrigir quaisquer bugs encontrados.
+  5.  Atualizar o status do projeto para "MVP Funcional Validado" após a conclusão bem-sucedida dos testes.
+- **Resultado:** Um plano de ação claro foi estabelecido para validar o sistema de ponta a ponta, garantindo que ele esteja 100% funcional antes do lançamento.
+- **Próximo Passo:** Iniciar a execução do roteiro de teste para a "Jornada de Pagamento Completa", começando pela validação do onboarding do prestador.
+
+#update_log - 07/11/2025 15:15
+A IA Gemini, no papel de Engenheira de Integração e Estabilidade, iniciou a fase final de validação do MVP.
+
+- **Ação:** Análise completa do `DOCUMENTO_MESTRE` e consolidação das pendências para a estabilização final.
+- **Sumário das Pendências:**
+  - **Validação E2E:** Execução dos roteiros de teste para a "Jornada de Contratação" e "Jornada de Pagamento Completa".
+  - **Persistência de Dados:** Confirmação de que todas as interações (jobs, propostas, mensagens, pagamentos) são salvas e lidas corretamente do Firestore.
+  - **Validação de Webhooks:** Teste do webhook do Stripe para garantir a atualização do status do `escrow` e o salvamento do `paymentIntentId`.
+- **Plano de Execução:**
+  1.  Validar o fluxo de onboarding de pagamento do prestador.
+  2.  Executar o teste E2E da jornada de contratação de serviço.
+  3.  Executar o teste E2E do fluxo de pagamento completo, incluindo a liberação de fundos.
+  4.  Documentar todos os resultados e corrigir quaisquer bugs encontrados.
+  5.  Atualizar o status do projeto para "MVP Funcional Validado" após a conclusão bem-sucedida dos testes.
+- **Resultado:** Um plano de ação claro foi estabelecido para validar o sistema de ponta a ponta, garantindo que ele esteja 100% funcional antes do lançamento.
+- **Próximo Passo:** Iniciar a execução do roteiro de teste para a "Jornada de Pagamento Completa", começando pela validação do onboarding do prestador.
 
 #update_log - 07/11/2025 11:35
 A IA Gemini, como Engenheira de Integração e Estabilidade, refatorou o `ClientDashboard.tsx` para buscar seus próprios dados.

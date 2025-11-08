@@ -48,6 +48,7 @@ export interface User {
   portfolio?: PortfolioItem[];
   serviceCatalog?: ProviderService[];
   seo?: SEOProfile;
+  stripeAccountId?: string; // Stripe Connected Account ID
 }
 
 export interface ProviderProfile {

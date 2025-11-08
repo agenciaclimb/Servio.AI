@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, Job, SEOProfileContent, Review } from '../types';
+import * as API from '../services/api';
 import CompletedJobCard from './CompletedJobCard';
 import PublicContactCTA from './PublicContactCTA';
 import StructuredDataSEO from './StructuredDataSEO';
@@ -8,9 +9,7 @@ import LocationMap from './LocationMap';
 import PortfolioGallery from './PortfolioGallery';
 
 interface ProfilePageProps {
-  user: User;
-  allJobs: Job[];
-  allUsers: User[];
+    userId: string;
   onBackToDashboard: () => void;
   isPublicView: boolean;
   onLoginToContact: (providerId: string) => void;
@@ -23,15 +22,39 @@ const StarIcon: React.FC<{ filled: boolean; className?: string }> = ({ filled, c
 );
 
 
-const ProfilePage: React.FC<ProfilePageProps> = ({ user, allJobs, allUsers, onBackToDashboard, isPublicView, onLoginToContact }) => {
-  const [summary, setSummary] = useState<string | null>(null);
-  const [isSummaryLoading, setIsSummaryLoading] = useState(false);
-  const [summaryError, setSummaryError] = useState<string | null>(null);
-  const [seoContent, setSeoContent] = useState<SEOProfileContent | null>(null);
-  const [isSeoLoading, setIsSeoLoading] = useState(false);
+const ProfilePage: React.FC<ProfilePageProps> = ({ userId, onBackToDashboard, isPublicView, onLoginToContact }) => {
+    const [user, setUser] = useState<User | null>(null);
+    const [allJobs, setAllJobs] = useState<Job[]>([]);
+    const [allUsers, setAllUsers] = useState<User[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [summary, setSummary] = useState<string | null>(null);
+    const [isSummaryLoading, setIsSummaryLoading] = useState(false);
+    const [summaryError, setSummaryError] = useState<string | null>(null);
+    const [seoContent, setSeoContent] = useState<SEOProfileContent | null>(null);
+    const [isSeoLoading, setIsSeoLoading] = useState(false);
 
-  const providerJobs = allJobs.filter(job => job.providerId === user.email && job.status === 'concluido' && job.review);
-  const reviews = providerJobs.map(job => job.review).filter(Boolean) as Review[];
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [fetchedUser, fetchedJobs, fetchedUsers] = await Promise.all([
+                    API.fetchUserById(userId),
+                    API.fetchJobs(),
+                    API.fetchAllUsers(),
+                ]);
+                setUser(fetchedUser);
+                setAllJobs(fetchedJobs);
+                setAllUsers(fetchedUsers);
+            } catch (error) {
+                console.error('Error fetching profile data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchData();
+    }, [userId]);
+
+    const providerJobs = user ? allJobs.filter(job => job.providerId === user.email && job.status === 'concluido' && job.review) : [];
+    const reviews = providerJobs.map(job => job.review).filter(Boolean) as Review[];
   
   const totalReviews = reviews.length;
   const averageRating = totalReviews > 0
@@ -70,6 +93,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, allJobs, allUsers, onBa
         document.title = 'SERVIO.AI - Find the Perfect Professional';
     };
   }, [seoContent]);
+
+    // Safe early return AFTER hooks are declared to satisfy Rules of Hooks
+    if (isLoading || !user) {
+            return <div className="flex items-center justify-center min-h-screen"><div className="text-xl">Carregando perfil...</div></div>;
+    }
 
   const handleGenerateSummary = async () => {
     setIsSummaryLoading(true);
