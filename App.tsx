@@ -262,11 +262,7 @@ const App: React.FC = () => {
   const renderContent = () => {
     // Debug: logar estado do usuário e da view
     console.log('renderContent', { currentUser, view });
-    // Se estiver logado e não estiver no dashboard, força redirecionamento
-    if (currentUser && view.name !== 'dashboard') {
-      setView({ name: 'dashboard' });
-      return null;
-    }
+    
     switch (view.name) {
       case 'dashboard':
         if (!currentUser) { handleSetView('home'); return null; }
