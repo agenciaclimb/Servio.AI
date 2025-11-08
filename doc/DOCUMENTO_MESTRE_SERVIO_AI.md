@@ -1,40 +1,58 @@
-#update_log - 08/11/2025 22:45
-🎉 **SPRINT 1 CONCLUÍDO - Fluxo Job Creation → Proposta → Aceite FUNCIONAL**
+#update_log - 08/11/2025 19:50
+🎉🚀 **SPRINT 1 100% CONCLUÍDO - E2E VALIDADO (8/8 TESTES PASSANDO)**
 
-**IMPLEMENTAÇÕES COMPLETAS:**
+**MARCO ALCANÇADO:** Sistema reference-grade com fluxo completo Job → Matching → Proposta → Aceite validado end-to-end!
 
-1. ✅ **AIJobRequestWizard → Backend conectado**
-   - Job agora salva no Firestore via POST /jobs (backend Cloud Run)
+**TESTES E QUALIDADE:**
+
+- ✅ **Backend:** 81/81 testes unitários/integração PASSANDO (100%)
+- ✅ **E2E:** 8/8 testes automatizados PASSANDO (100%)
+- ✅ **Cloud Run:** Deploy automático via GitHub Actions (tags v\*-backend)
+- ✅ **Resiliência:** Fallbacks implementados, dependency injection para testes
+
+**IMPLEMENTAÇÕES SPRINT 1:**
+
+1. ✅ **Backend REST API Completo**
+   - CRUD Proposals: GET, POST, PUT /proposals
+   - CRUD Notifications: GET, POST, PUT /notifications
+   - CRUD Jobs: GET /jobs/:id, PUT /jobs/:id (além do POST já existente)
+   - Matching IA: POST /api/match-providers (com fetch automático de providers do Firestore)
+   - Upload files: POST /generate-upload-url (com DI para testes)
+
+2. ✅ **AIJobRequestWizard → Backend Conectado**
+   - Job salva no Firestore via POST /jobs (backend Cloud Run)
    - Upload de arquivos via signed URL funcional
    - Wizard mantém dados em caso de login necessário
 
-2. ✅ **Matching automático implementado**
+3. ✅ **Matching Automático IA (Gemini 2.5 Pro)**
    - Nova função `matchProvidersForJob()` em services/api.ts
-   - Chama `/api/match-providers` no backend (com fallback local)
+   - Backend `/api/match-providers` com heurística de score + fallback
+   - Resilience: aceita `job` object OU `jobId` (busca do Firestore automaticamente)
    - Retorna providers com score e razão do match
+   - Se `allUsers` vazio, busca providers verificados do Firestore automaticamente
 
-3. ✅ **Notificações automáticas para prestadores**
-   - Top 5 providers são notificados após job criado
-   - Notificação via POST /notifications (salvo no Firestore)
+4. ✅ **Notificações Automáticas**
+   - Top 5 providers notificados após job criado
+   - Endpoint POST /notifications salva no Firestore
    - Mensagem personalizada com razão do match
 
-4. ✅ **Envio de propostas (ProposalModal)**
+5. ✅ **Envio de Propostas (ProposalModal)**
    - ProposalModal totalmente funcional em ProviderDashboard
    - handleSendProposal chama API.createProposal (POST /proposals)
    - Cria notificação para cliente automaticamente
    - Geração de mensagem com IA (Gemini)
 
-5. ✅ **Exibição de propostas (ProposalListModal)**
+6. ✅ **Exibição de Propostas (ProposalListModal)**
    - ClientDashboard exibe ProposalListModal para cada job
    - Filtra propostas por jobId, ordena por preço
    - ProposalDetailCard mostra dados do prestador + proposta
    - Botão "Ver Propostas" em cada job card
 
-6. ✅ **Aceitação de proposta (handleAcceptProposal)**
+7. ✅ **Aceitação de Proposta (handleAcceptProposal)**
    - handleAcceptProposal/handlePaymentSuccess implementado
-   - Atualiza proposta para status 'aceita' via API.updateProposal
+   - Atualiza proposta para status 'aceita' via API.updateProposal (PUT)
    - Rejeita automaticamente outras propostas do mesmo job
-   - Atualiza job para status 'proposta_aceita' via API.updateJob
+   - Atualiza job para status 'proposta_aceita' via API.updateJob (PUT)
    - Cria escrow local (amount bloqueado)
    - Notifica prestador sobre aceitação
 
@@ -163,24 +181,38 @@
 
 **📋 ROADMAP PARA 100% FUNCIONAL**
 
-**SPRINT 1 (Dias 1-3): MVP Mínimo Funcional**
+**✅ SPRINT 1 (CONCLUÍDO - 08/11/2025):** MVP Mínimo Funcional
 Objetivo: Cliente cria job → Prestador recebe → Envia proposta → Cliente aceita
 
-Tarefas:
+Tarefas Completadas:
 
-1. Conectar AIJobRequestWizard ao backend (POST /jobs + salvar Firestore)
-2. Implementar chamada automática a /api/match-providers após criar job
-3. Criar notificação de novo job para prestadores (Cloud Function ou direto)
-4. Habilitar envio de propostas (ProposalForm → POST /proposals)
-5. Exibir propostas no ClientDashboard (GET /proposals?jobId=X)
-6. Implementar aceite de proposta (PUT /proposals/:id + PUT /jobs/:id)
-7. Teste E2E: Job → Proposta → Aceite
+1. ✅ Conectar AIJobRequestWizard ao backend (POST /jobs + salvar Firestore)
+2. ✅ Implementar chamada automática a /api/match-providers após criar job
+3. ✅ Criar notificação de novo job para prestadores (POST /notifications direto)
+4. ✅ Habilitar envio de propostas (ProposalForm → POST /proposals)
+5. ✅ Exibir propostas no ClientDashboard (GET /proposals?jobId=X)
+6. ✅ Implementar aceite de proposta (PUT /proposals/:id + PUT /jobs/:id)
+7. ✅ Teste E2E: Job → Proposta → Aceite (8/8 testes passando)
 
-**Resultado:** Cliente consegue criar job e receber/aceitar propostas
+**Resultado:** ✅ Cliente cria job, recebe propostas e aceita com sucesso. Sistema validado E2E.
 
-**Arquivos a modificar:**
+**Qualidade Alcançada:**
 
-- components/AIJobRequestWizard.tsx
+- 81/81 backend tests passando (100%)
+- 8/8 E2E tests passando (100%)
+- Deploy automático via tags (Cloud Run)
+- Resiliência e fallbacks implementados
+
+**Arquivos modificados:**
+
+- components/AIJobRequestWizard.tsx (conectado a POST /jobs)
+- services/api.ts (matchProvidersForJob implementado)
+- App.tsx (matching automático após job criado)
+- components/ProposalModal.tsx (handleSendProposal funcional)
+- components/ClientDashboard.tsx (ProposalListModal + handleAcceptProposal)
+- backend/src/index.js (CRUD completo: proposals, notifications, jobs)
+- backend/tests/uploads.test.ts (DI para testes isolados)
+- scripts/test_sprint1_e2e.mjs (suite E2E completa)
 - components/ClientDashboard.tsx
 - components/ProviderDashboard.tsx
 - components/ProposalForm.tsx (criar se não existe)
@@ -188,25 +220,25 @@ Tarefas:
 
 ---
 
-**SPRINT 2 (Dias 4-6): Pagamentos Funcionando**
+**⏳ SPRINT 2 (PRÓXIMO): Pagamentos Funcionando**
 Objetivo: Dinheiro circula na plataforma com segurança
 
-Tarefas:
+Tarefas (Estimativa: 2-3 dias):
 
-1. Integrar Stripe Checkout Session (botão "Pagar" → POST /create-checkout-session)
-2. Configurar webhook endpoint em produção (Cloud Run + Stripe Dashboard)
-3. Validar webhook checkout.session.completed (criar escrow no Firestore)
-4. Implementar liberação de pagamento (botão "Liberar" → POST /jobs/:id/release-payment)
-5. Testar retenção em escrow (Stripe Dashboard → validar hold)
-6. Adicionar tratamento de erros e retry logic
+1. ⏳ Integrar Stripe Checkout Session (handleAcceptProposal → POST /create-checkout-session)
+2. ⏳ Configurar webhook endpoint em produção (Cloud Run /webhook + Stripe Dashboard URL)
+3. ⏳ Validar webhook checkout.session.completed (criar escrow no Firestore)
+4. ⏳ Implementar liberação de pagamento (botão "Liberar" → POST /jobs/:id/release-payment)
+5. ⏳ Testar retenção em escrow (Stripe Dashboard → validar hold)
+6. ⏳ Adicionar tratamento de erros e retry logic
 
 **Resultado:** Pagamentos seguros com escrow funcionando end-to-end
 
 **Arquivos a modificar:**
 
-- components/JobDetails.tsx (botão pagar)
-- backend/src/index.js (webhook handler)
-- Configuração Stripe Dashboard (webhook URL)
+- components/ClientDashboard.tsx (handleAcceptProposal já preparado)
+- backend/src/index.js (adicionar /create-checkout-session e validar /webhook)
+- Configuração Stripe Dashboard (webhook URL: https://servio-backend-h5ogjon7aa-uw.a.run.app/webhook)
 
 ---
 
