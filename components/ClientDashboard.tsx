@@ -88,10 +88,31 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
   const profileComplete = Boolean(user.address && user.bio && user.bio.length > 20);
   const onboardingStepsTotal = 4;
   const onboardingStepsDone = [profileComplete, userJobs.length > 0, maintainedItems.length > 0].filter(Boolean).length;
-  const handleAcceptProposal = (proposalId: string) => {
+  const handleAcceptProposal = async (proposalId: string) => {
     const proposal = allProposals.find(p => p.id === proposalId);
-    if (proposal) {
-      setPayingForProposal(proposal);
+    if (!proposal) return;
+
+    const job = userJobs.find(j => j.id === proposal.jobId);
+    if (!job) {
+      alert('Job não encontrado');
+      return;
+    }
+
+    try {
+      // Create Stripe Checkout Session
+      const { id: sessionId } = await API.createCheckoutSession(job, proposal.price);
+      
+      // Redirect to Stripe Checkout
+      const stripe = (window as any).Stripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+      const { error } = await stripe.redirectToCheckout({ sessionId });
+      
+      if (error) {
+        console.error('Stripe redirect error:', error);
+        alert('Erro ao redirecionar para pagamento. Tente novamente.');
+      }
+    } catch (error) {
+      console.error('Failed to create checkout session:', error);
+      alert('Erro ao criar sessão de pagamento. Tente novamente.');
     }
   };
 
@@ -162,17 +183,22 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
         review: { ...reviewData, authorId: user.email, createdAt: new Date().toISOString() }
       });
 
+      // Release payment from escrow via API
+      const releaseResult = await API.releasePayment(reviewingJob.id);
+      console.log('Payment release result:', releaseResult);
+
       setUserJobs(prev => prev.map(j => 
         j.id === reviewingJob.id ? { ...j, status: 'concluido', review: { ...reviewData, authorId: user.email, createdAt: new Date().toISOString() } } : j
       ));
 
-      // Release payment from escrow (local for now - would need API endpoint)
+      // Update escrow locally
       setAllEscrows(prev => prev.map(e => 
         e.jobId === reviewingJob.id ? { ...e, status: 'liberado', releasedAt: new Date().toISOString() } : e
       ));
       
       setReviewingJob(null);
-      console.log('Job finalized with review');
+      alert('✅ Serviço finalizado e pagamento liberado com sucesso!');
+      console.log('Job finalized with review and payment released');
     } catch (error) {
       console.error('Failed to finalize job:', error);
       alert('Erro ao finalizar serviço. Tente novamente.');
