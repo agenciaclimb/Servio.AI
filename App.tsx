@@ -257,7 +257,11 @@ const App: React.FC = () => {
     
     switch (view.name) {
       case 'dashboard':
-        if (!currentUser) { handleSetView('home'); return null; }
+        // Evita redirecionar para 'home' enquanto o login está finalizando.
+        // Quando o usuário fizer login, setCurrentUser será atualizado e o painel renderiza.
+        if (!currentUser) {
+          return <div style={{padding: '2rem'}}>Carregando seu painel…</div>;
+        }
         if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allUsers={[]} allProposals={[]} allMessages={[]} maintainedItems={maintainedItems} allDisputes={[]} allBids={[]} setAllProposals={() => {}} setAllMessages={() => {}} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllEscrows={setAllEscrows} setAllDisputes={() => {}} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} onUpdateUser={handleUpdateUser} />;
         if (currentUser.type === 'prestador') return <ProviderDashboard user={currentUser} onViewProfile={(userId) => handleSetView('profile', {userId})} onPlaceBid={() => {}} />;
         if (currentUser.type === 'admin') return <AdminDashboard user={currentUser} />;

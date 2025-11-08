@@ -195,6 +195,47 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
     }
   });
 
+  // POST /api/match-providers - Simple matching logic (prototype)
+  app.post('/api/match-providers', async (req, res) => {
+    try {
+      const { job, allUsers = [], allJobs = [] } = req.body || {};
+      if (!job) return res.status(400).json({ error: 'Job data is required.' });
+
+      // Basic heuristic: consider providers that match category or have headline/specialties containing it
+      const category = (job.category || '').toString().toLowerCase();
+      const location = (job.location || '').toString().toLowerCase();
+
+      const providers = allUsers.filter(u => (u && (u.type === 'prestador')));
+
+      const scored = providers.map(p => {
+        const name = (p.name || '').toLowerCase();
+        const headline = (p.headline || '').toLowerCase();
+        const specialties = Array.isArray(p.specialties) ? p.specialties.join(' ').toLowerCase() : '';
+        const pLocation = (p.location || '').toLowerCase();
+
+        let score = 0;
+        if (category && (headline.includes(category) || specialties.includes(category))) score += 0.6;
+        if (location && pLocation.includes(location)) score += 0.2;
+        if (p.averageRating) score += Math.min(0.2, (Number(p.averageRating) || 0) / 25); // up to +0.2 at 5.0
+
+        return {
+          providerId: p.email || p.id,
+          name: p.name,
+          score: Number(score.toFixed(2)),
+          reason: `Match por categoria${location ? ' e localização' : ''}${p.averageRating ? ' + reputação' : ''}`.trim(),
+        };
+      })
+      .filter(r => r.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10);
+
+      return res.json(scored);
+    } catch (err) {
+      console.error('match-providers error', err);
+      return res.status(500).json({ error: 'Failed to match providers' });
+    }
+  });
+
   // =================================================================
   // STRIPE CONNECT ONBOARDING
   // =================================================================
