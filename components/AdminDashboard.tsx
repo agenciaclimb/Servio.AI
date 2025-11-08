@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Job, User, Proposal, FraudAlert, Escrow, Dispute, Notification } from '../types';
-import * as API from '../services/api';
 import AdminAnalytics from './AdminAnalytics';
 import AdminJobManagement from './AdminJobManagement';
 import AdminProviderManagement from './AdminProviderManagement';
@@ -9,6 +8,7 @@ import SitemapGenerator from './SitemapGenerator';
 import AdminFraudAlerts from './AdminFraudAlerts';
 import AdminDisputeModal from './AdminDisputeModal'; // Import the new modal
 import { serviceNameToCategory } from '../services/geminiService';
+import * as API from '../services/api';
 
 interface AdminDashboardProps {
   user: User;
@@ -129,7 +129,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     ];
 
     return (
-        <div>
+        <div data-testid="admin-dashboard-root">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Painel do Administrador</h1>
                  <button onClick={() => setIsSitemapOpen(true)} className="px-4 py-2 text-sm font-medium text-blue-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
@@ -137,10 +137,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
                 </button>
             </div>
 
-            <div className="border-b border-gray-200 mb-6">
+            <div className="border-b border-gray-200 mb-6" data-testid="admin-tabs">
                 <nav className="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
                     {tabs.map(tab => (
-                        <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                        <button
+                            data-testid={`admin-tab-${tab.id}`}
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
                             className={`${activeTab === tab.id ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
                                 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2`}
                         >
@@ -154,8 +157,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
                     ))}
                 </nav>
             </div>
-            <div>
-                {renderTabContent()}
+            <div data-testid="admin-active-tab-content">
+                {isLoading ? (
+                    <div className="p-4 text-sm text-gray-500" data-testid="admin-loading">Carregando dados administrativos...</div>
+                ) : (
+                    renderTabContent()
+                )}
             </div>
              {isSitemapOpen && <SitemapGenerator users={allUsers} serviceNameToCategory={serviceNameToCategory} onClose={() => setIsSitemapOpen(false)} />}
              {mediatingJob && (
