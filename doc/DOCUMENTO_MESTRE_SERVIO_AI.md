@@ -1,6 +1,42 @@
+#update_log - 08/11/2025 06:30
+🤖 IA ENDPOINTS IMPLEMENTADOS - Backend agora suporta Gemini AI.
+
+Problema: Frontend chamava /api/enhance-job e /api/suggest-maintenance mas backend não tinha esses endpoints, causando erros 404 "A comunicação com o servidor falhou".
+
+Solução implementada:
+
+- Instalado @google/generative-ai no backend (package.json)
+- Criado /api/enhance-job: Transforma prompt do usuário em descrição estruturada de job (category, serviceType, urgency, estimatedBudget)
+- Criado /api/suggest-maintenance: Analisa itens cadastrados e sugere manutenções preventivas
+- Modelo usado: gemini-2.0-flash-exp (rápido e eficiente)
+- Criado backend/Dockerfile (Node 18 Alpine, production-ready)
+- Atualizado deploy workflow para passar GEMINI_API_KEY, STRIPE_SECRET_KEY, FRONTEND_URL, GCP_STORAGE_BUCKET via --set-env-vars
+
+Commits:
+
+- 94028d9: feat AI endpoints
+- 559311e: fix redirect loop (segundo)
+- 117299c: feat Dockerfile + env vars
+
+Próxima ação: DEPLOY MANUAL REQUERIDO
+Acesse GitHub → Actions → "Deploy to Cloud Run" → "Run workflow" → service: backend → Run
+Aguarde ~5-10 minutos para deploy completar, depois teste o wizard de criação de job.
+
+Status: ⏳ Aguardando deploy manual via GitHub Actions.
+
 # 📘 DOCUMENTO MESTRE - SERVIO.AI
 
 ---
+
+#update_log - 08/11/2025 04:10
+🔧 FIX CRÍTICO: Loop de redirecionamento corrigido - login → dashboard agora funcional.
+
+Problema identificado: renderContent() em App.tsx forçava redirecionamento para dashboard sempre que usuário estava logado E não estava no dashboard, criando loop infinito que impedia navegação.
+
+Solução: Removida lógica de redirecionamento forçado (linhas 266-269). handleAuthSuccess já redireciona corretamente após login via setView({name: 'dashboard'}).
+
+Commit: f21d2ef
+Status: Deploy em andamento, aguardando validação manual do fluxo login → dashboard.
 
 #update_log - 08/11/2025 02:30
 ✅ CI/CD #102 PASSOU - TypeScript/ESLint corrigidos, deploy em produção.
