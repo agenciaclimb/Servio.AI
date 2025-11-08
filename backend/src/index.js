@@ -83,6 +83,16 @@ function createApp({
   const app = express();
 
   app.use(cors());
+  // Lightweight test/dev auth: allow injecting user via header in non-authenticated environments
+  app.use((req, _res, next) => {
+    if (!req.user) {
+      const injected = req.headers['x-user-email'];
+      if (injected && typeof injected === 'string') {
+        req.user = { email: injected };
+      }
+    }
+    next();
+  });
   
   // Use express.json() for all routes except the webhook
   app.use((req, res, next) => {

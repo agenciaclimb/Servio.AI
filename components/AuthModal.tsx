@@ -39,10 +39,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, userType, onClose, onSwitch
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center" aria-modal="true" role="dialog" onClick={onClose}>
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center" aria-modal="true" role="dialog" onClick={onClose} data-testid="auth-modal">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md m-4 transform transition-all" onClick={(e) => e.stopPropagation()}>
         <div className="relative p-8">
-            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600" data-testid="auth-modal-close">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
@@ -70,7 +70,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, userType, onClose, onSwitch
                 
                 {error && <p className="text-sm text-red-600">{error}</p>}
 
-                <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" data-testid="auth-submit-button">
                     {isLogin ? 'Entrar' : 'Criar Conta'}
                 </button>
             </form>

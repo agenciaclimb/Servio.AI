@@ -54,6 +54,7 @@ const Header: React.FC<HeaderProps> = ({ user, notifications, onLoginClick, onRe
                 <button
                   onClick={onLogoutClick}
                   className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-100 rounded-md hover:bg-blue-200"
+                  data-testid="header-logout-button"
                 >
                   Sair
                 </button>
@@ -63,12 +64,14 @@ const Header: React.FC<HeaderProps> = ({ user, notifications, onLoginClick, onRe
                 <button
                   onClick={() => onLoginClick('cliente')}
                   className="px-4 py-2 text-sm font-medium text-blue-600 rounded-md hover:bg-blue-50"
+                  data-testid="header-login-button"
                 >
                   Entrar
                 </button>
                 <button
                   onClick={() => onRegisterClick('cliente')}
                   className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                  data-testid="header-register-button"
                 >
                   Cadastre-se
                 </button>
