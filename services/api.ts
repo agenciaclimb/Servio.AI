@@ -182,6 +182,36 @@ export async function createStripeAccountLink(userId: string): Promise<{ url: st
   });
 }
 
+// ============================================================================
+// STRIPE CHECKOUT & PAYMENTS
+// ============================================================================
+
+export async function createCheckoutSession(
+  job: Job, 
+  amount: number
+): Promise<{ id: string }> {
+  if (USE_MOCK) {
+    console.log('Mock: Creating Stripe Checkout Session', { jobId: job.id, amount });
+    return Promise.resolve({ id: `cs_mock_${Date.now()}` });
+  }
+
+  return apiCall<{ id: string }>('/create-checkout-session', {
+    method: 'POST',
+    body: JSON.stringify({ job, amount }),
+  });
+}
+
+export async function releasePayment(jobId: string): Promise<{ success: boolean; message: string }> {
+  if (USE_MOCK) {
+    console.log('Mock: Releasing payment for job', jobId);
+    return Promise.resolve({ success: true, message: 'Pagamento liberado com sucesso (mock)' });
+  }
+
+  return apiCall<{ success: boolean; message: string }>(`/jobs/${jobId}/release-payment`, {
+    method: 'POST',
+  });
+}
+
 
 // ============================================================================
 // JOBS

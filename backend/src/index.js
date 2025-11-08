@@ -549,6 +549,7 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
       await escrowDoc.ref.update({ status: "liberado", stripeTransferId: transfer.id });
 
       res.status(200).json({
+        success: true,
         message: "Pagamento liberado e serviço concluído com sucesso.",
       });
     } catch (error) {
