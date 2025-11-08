@@ -1,29 +1,30 @@
-﻿{
-    "name": "servio-ai-backend",
-    "version": "1.0.0",
-    "description": "Backend for SERVIO.AI Cloud Run service",
-    "main": "src/index.js",
-    "scripts": {
-        "start": "node src/index.js",
-        "test": "vitest run --coverage"
-    },
-    "dependencies": {
-        "@google-cloud/storage": "^7.13.0",
-        "cors": "^2.8.5",
-        "express": "^4.19.2",
-        "firebase-admin": "^12.1.0",
-        "stripe": "^16.6.0"
-    },
-    "devDependencies": {
-        "@vitest/coverage-v8": "^2.0.5",
-        "supertest": "^7.0.0",
-        "typescript": "^5.2.2",
-        "vitest": "^2.0.5"
-    },
-        "postcss": {
-            "plugins": {}
-        },
-    "engines": {
-        "node": "18"
-    }
+{
+  "name": "servio-ai-backend",
+  "version": "1.0.0",
+  "description": "Backend for SERVIO.AI Cloud Run service",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "^7.13.0",
+    "@google/generative-ai": "^0.24.1",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.1.0",
+    "stripe": "^16.6.0"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^2.0.5",
+    "supertest": "^7.0.0",
+    "typescript": "^5.2.2",
+    "vitest": "^2.0.5"
+  },
+  "postcss": {
+    "plugins": {}
+  },
+  "engines": {
+    "node": "18"
+  }
 }
