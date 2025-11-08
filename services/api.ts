@@ -29,8 +29,8 @@ import {
 } from '../mockData';
 
 // Get backend URL from environment variable
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8081';
-const USE_MOCK = !import.meta.env.VITE_BACKEND_URL; // Use mock if no backend URL configured
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_BACKEND_API_URL || 'https://servio-backend-h5ogjon7aa-uw.a.run.app';
+const USE_MOCK = false; // Always try real backend first, fallback to mock on error
 
 console.log('API Service initialized:', { BACKEND_URL, USE_MOCK });
 
@@ -574,5 +574,52 @@ export async function fetchFraudAlerts(): Promise<FraudAlert[]> {
   } catch (error) {
     console.warn('Failed to fetch fraud alerts, using mock data');
     return MOCK_FRAUD_ALERTS;
+  }
+}
+
+// ============================================================================
+// AI MATCHING
+// ============================================================================
+
+export interface MatchingProvider {
+  provider: User;
+  score: number;
+  reason: string;
+}
+
+/**
+ * Calls backend AI matching endpoint to find best providers for a job
+ * Falls back to basic local matching if backend is unavailable
+ */
+export async function matchProvidersForJob(jobId: string): Promise<MatchingProvider[]> {
+  if (USE_MOCK) {
+    console.log('Mock: Matching providers locally for job', jobId);
+    // Basic mock matching - just return verified providers
+    const providers = MOCK_USERS.filter(
+      u => u.type === 'prestador' && u.verificationStatus === 'verificado'
+    );
+    return Promise.resolve(
+      providers.map(p => ({
+        provider: p,
+        score: 0.8,
+        reason: 'Prestador verificado com experiência na categoria'
+      }))
+    );
+  }
+
+  try {
+    return await apiCall<MatchingProvider[]>(`/api/match-providers`, {
+      method: 'POST',
+      body: JSON.stringify({ jobId }),
+    });
+  } catch (error) {
+    console.warn('AI matching failed, using basic local matching');
+    // Fallback to basic matching
+    const providers = await fetchProviders();
+    return providers.slice(0, 3).map(p => ({
+      provider: p,
+      score: 0.7,
+      reason: 'Prestador disponível'
+    }));
   }
 }
