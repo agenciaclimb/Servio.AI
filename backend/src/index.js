@@ -3,6 +3,7 @@ const admin = require("firebase-admin");
 const cors = require("cors");
 const { Storage } = require("@google-cloud/storage");
 const stripeLib = require("stripe");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Initialize Firebase Admin SDK
 // For Cloud Run, credentials will be automatically picked up from the service account.
@@ -22,6 +23,10 @@ const defaultDb = admin.firestore();
 const defaultStripe = process.env.STRIPE_SECRET_KEY
   ? stripeLib(process.env.STRIPE_SECRET_KEY)
   : null; // Will be injected in tests or left null if not configured
+// Gemini AI initialization - requires GEMINI_API_KEY env var
+const defaultGenAI = process.env.GEMINI_API_KEY
+  ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+  : null;
 const port = process.env.PORT || 8081;
 
 /**
@@ -73,6 +78,7 @@ function createApp({
   db = defaultDb,
   storage: storageInstance = storage,
   stripe = defaultStripe,
+  genAI = defaultGenAI,
 } = {}) {
   const app = express();
 
@@ -87,6 +93,106 @@ function createApp({
   // Basic "Hello World" endpoint for the backend service
   app.get("/", (req, res) => {
     res.send("Hello from SERVIO.AI Backend (Firestore Service)!");
+  });
+
+  // =================================================================
+  // AI ENDPOINTS (GEMINI)
+  // =================================================================
+
+  // POST /api/enhance-job - Enhance job request with AI
+  app.post("/api/enhance-job", async (req, res) => {
+    if (!genAI) {
+      return res.status(503).json({ error: "AI service not configured. Set GEMINI_API_KEY." });
+    }
+
+    const { prompt, address, fileCount } = req.body;
+    if (!prompt) {
+      return res.status(400).json({ error: "Prompt is required." });
+    }
+
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+      
+      const systemPrompt = `Você é um assistente especializado em transformar solicitações de serviços em descrições estruturadas e profissionais.
+
+Analise a solicitação do usuário e retorne um JSON com os seguintes campos:
+- description: Descrição profissional e detalhada do serviço
+- category: Uma das categorias (reparos, instalacao, montagem, limpeza, design, ti, beleza, eventos, consultoria, outro)
+- serviceType: Tipo específico do serviço
+- urgency: Urgência (hoje, amanha, 3dias, semana, flexivel)
+- estimatedBudget: Orçamento estimado em reais (número)
+
+Solicitação do usuário: ${prompt}
+${address ? `Endereço: ${address}` : ''}
+${fileCount ? `Número de arquivos anexados: ${fileCount}` : ''}
+
+Responda APENAS com o JSON, sem markdown ou texto adicional.`;
+
+      const result = await model.generateContent(systemPrompt);
+      const text = result.response.text();
+      
+      // Parse JSON from response, removing markdown code blocks if present
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error("AI response was not valid JSON");
+      }
+      
+      const enhancedJob = JSON.parse(jsonMatch[0]);
+      res.json(enhancedJob);
+    } catch (error) {
+      console.error("Error enhancing job:", error);
+      res.status(500).json({ error: "Failed to enhance job request." });
+    }
+  });
+
+  // POST /api/suggest-maintenance - Suggest maintenance for an item
+  app.post("/api/suggest-maintenance", async (req, res) => {
+    if (!genAI) {
+      return res.status(503).json({ error: "AI service not configured. Set GEMINI_API_KEY." });
+    }
+
+    const { item } = req.body;
+    if (!item || !item.name) {
+      return res.status(400).json({ error: "Item data is required." });
+    }
+
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+      
+      const systemPrompt = `Você é um assistente de manutenção preventiva. Analise o item e sugira manutenção se necessário.
+
+Item: ${item.name}
+Categoria: ${item.category || 'não especificada'}
+${item.lastMaintenance ? `Última manutenção: ${item.lastMaintenance}` : 'Sem registro de manutenção'}
+
+Se o item precisa de manutenção, retorne um JSON com:
+- title: Título da sugestão
+- description: Descrição detalhada
+- urgency: Nível de urgência (baixa, media, alta)
+- estimatedCost: Custo estimado em reais
+
+Se NÃO precisa de manutenção, retorne null.
+
+Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
+
+      const result = await model.generateContent(systemPrompt);
+      const text = result.response.text().trim();
+      
+      if (text === 'null' || text.toLowerCase() === 'null') {
+        return res.json(null);
+      }
+      
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        return res.json(null);
+      }
+      
+      const suggestion = JSON.parse(jsonMatch[0]);
+      res.json(suggestion);
+    } catch (error) {
+      console.error("Error suggesting maintenance:", error);
+      res.status(500).json({ error: "Failed to suggest maintenance." });
+    }
   });
 
   // =================================================================
