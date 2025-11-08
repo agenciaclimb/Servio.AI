@@ -180,9 +180,8 @@ const App: React.FC = () => {
     }
 
     try {
-      // Create job via API
+      // Create job via API (saves to Firestore via backend)
       const newJob = await API.createJob(jobData, currentUser.email);
-      // No need to setAllJobs here, dashboards fetch their own data
       setWizardData(null);
       console.log('Job created successfully:', newJob);
 
@@ -207,14 +206,39 @@ const App: React.FC = () => {
         return;
       }
 
-      // AI Matching (normal flow)
-      const allUsersForMatching = await API.fetchAllUsers(); // Fetch users just for matching
-      const results = await getMatchingProviders(newJob, allUsersForMatching, []);
-      if (results.length > 0) {
-        setMatchingResults(results);
-      } else {
-        setProspects([{name: "João da Silva", specialty: "Eletricista"}, {name: "Marcos Andrade", specialty: "Eletricista Predial"}]);
+      // AI Matching automático (normal flow)
+      try {
+        console.log('Starting automatic AI matching for job:', newJob.id);
+        const matchingResults = await API.matchProvidersForJob(newJob.id);
+        
+        if (matchingResults && matchingResults.length > 0) {
+          console.log(`Found ${matchingResults.length} matching providers`);
+          
+          // Notificar cada prestador sobre o novo job
+          for (const match of matchingResults.slice(0, 5)) { // Notify top 5 matches
+            try {
+              await API.createNotification({
+                userId: match.provider.email,
+                text: `Novo serviço disponível: ${newJob.category} - ${match.reason}`,
+                isRead: false,
+              });
+            } catch (notifError) {
+              console.warn('Failed to notify provider:', match.provider.email, notifError);
+            }
+          }
+          
+          alert(`✅ Job "${newJob.category}" criado com sucesso!\n\n${matchingResults.length} prestadores qualificados foram notificados.\n\nVocê receberá propostas em breve.`);
+        } else {
+          console.log('No matching providers found');
+          alert(`✅ Job "${newJob.category}" criado!\n\nVamos buscar os melhores profissionais para você.`);
+        }
+      } catch (matchingError) {
+        console.error('Matching failed, but job was created:', matchingError);
+        alert(`✅ Job "${newJob.category}" criado com sucesso!\n\nVocê receberá propostas em breve.`);
       }
+      
+      setView({ name: 'dashboard' });
+      
     } catch (error) {
       console.error("Failed to create job:", error);
       alert("Erro ao criar serviço. Por favor, tente novamente.");

@@ -594,7 +594,6 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
         .json({ error: "Resolution decision and comment are required." });
     }
 
-    const db = admin.firestore();
     const disputeRef = db.collection("disputes").doc(disputeId);
 
     try {
@@ -810,6 +809,206 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
     } catch (error) {
       console.error("Error getting maintenance history:", error);
       res.status(500).json({ error: "Failed to retrieve maintenance history." });
+    }
+  });
+
+  // =================================================================
+  // PROPOSALS ENDPOINTS
+  // =================================================================
+
+  // GET /proposals - List all proposals (with optional filters)
+  app.get("/proposals", async (req, res) => {
+    try {
+      const { jobId, providerId, status } = req.query;
+      let query = db.collection("proposals");
+
+      if (jobId) query = query.where("jobId", "==", jobId);
+      if (providerId) query = query.where("providerId", "==", providerId);
+      if (status) query = query.where("status", "==", status);
+
+      const snapshot = await query.get();
+      const proposals = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      
+      res.status(200).json(proposals);
+    } catch (error) {
+      console.error("Error listing proposals:", error);
+      res.status(500).json({ error: "Failed to retrieve proposals." });
+    }
+  });
+
+  // POST /proposals - Create new proposal
+  app.post("/proposals", async (req, res) => {
+    try {
+      const { jobId, providerId, price, message } = req.body;
+
+      if (!jobId || !providerId || price === undefined) {
+        return res.status(400).json({ error: "jobId, providerId, and price are required." });
+      }
+
+      const proposalData = {
+        jobId,
+        providerId,
+        price: Number(price),
+        message: message || "",
+        status: "pendente",
+        createdAt: new Date().toISOString(),
+      };
+
+      const docRef = await db.collection("proposals").add(proposalData);
+      const newProposal = { id: docRef.id, ...proposalData };
+
+      res.status(201).json(newProposal);
+    } catch (error) {
+      console.error("Error creating proposal:", error);
+      res.status(500).json({ error: "Failed to create proposal." });
+    }
+  });
+
+  // PUT /proposals/:id - Update proposal
+  app.put("/proposals/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+
+      delete updates.jobId;
+      delete updates.providerId;
+      delete updates.createdAt;
+      updates.updatedAt = new Date().toISOString();
+
+      const docRef = db.collection("proposals").doc(id);
+      const doc = await docRef.get();
+
+      if (!doc.exists) {
+        return res.status(404).json({ error: "Proposal not found." });
+      }
+
+      await docRef.update(updates);
+      const updatedDoc = await docRef.get();
+
+      res.status(200).json({ id: updatedDoc.id, ...updatedDoc.data() });
+    } catch (error) {
+      console.error("Error updating proposal:", error);
+      res.status(500).json({ error: "Failed to update proposal." });
+    }
+  });
+
+  // =================================================================
+  // NOTIFICATIONS ENDPOINTS
+  // =================================================================
+
+  // GET /notifications - List all notifications (with optional filters)
+  app.get("/notifications", async (req, res) => {
+    try {
+      const { userId, isRead } = req.query;
+      let query = db.collection("notifications");
+
+      if (userId) query = query.where("userId", "==", userId);
+      if (isRead !== undefined) {
+        query = query.where("isRead", "==", isRead === "true");
+      }
+
+      const snapshot = await query.orderBy("createdAt", "desc").get();
+      const notifications = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      
+      res.status(200).json(notifications);
+    } catch (error) {
+      console.error("Error listing notifications:", error);
+      res.status(500).json({ error: "Failed to retrieve notifications." });
+    }
+  });
+
+  // POST /notifications - Create new notification
+  app.post("/notifications", async (req, res) => {
+    try {
+      const { userId, text, type } = req.body;
+
+      if (!userId || !text) {
+        return res.status(400).json({ error: "userId and text are required." });
+      }
+
+      const notificationData = {
+        userId,
+        text,
+        type: type || "info",
+        isRead: false,
+        createdAt: new Date().toISOString(),
+      };
+
+      const docRef = await db.collection("notifications").add(notificationData);
+      const newNotification = { id: docRef.id, ...notificationData };
+
+      res.status(201).json(newNotification);
+    } catch (error) {
+      console.error("Error creating notification:", error);
+      res.status(500).json({ error: "Failed to create notification." });
+    }
+  });
+
+  // PUT /notifications/:id - Update notification (mark as read)
+  app.put("/notifications/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+
+      const docRef = db.collection("notifications").doc(id);
+      const doc = await docRef.get();
+
+      if (!doc.exists) {
+        return res.status(404).json({ error: "Notification not found." });
+      }
+
+      await docRef.update(updates);
+      const updatedDoc = await docRef.get();
+
+      res.status(200).json({ id: updatedDoc.id, ...updatedDoc.data() });
+    } catch (error) {
+      console.error("Error updating notification:", error);
+      res.status(500).json({ error: "Failed to update notification." });
+    }
+  });
+
+  // =================================================================
+  // JOBS ENDPOINTS (UPDATES)
+  // =================================================================
+
+  // GET /jobs/:id - Get single job
+  app.get("/jobs/:id", async (req, res) => {
+    try {
+      const doc = await db.collection("jobs").doc(req.params.id).get();
+      if (!doc.exists) {
+        return res.status(404).json({ error: "Job not found." });
+      }
+      res.status(200).json({ id: doc.id, ...doc.data() });
+    } catch (error) {
+      console.error("Error getting job:", error);
+      res.status(500).json({ error: "Failed to retrieve job." });
+    }
+  });
+
+  // PUT /jobs/:id - Update job
+  app.put("/jobs/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+
+      delete updates.createdAt;
+      delete updates.clientId;
+      updates.updatedAt = new Date().toISOString();
+
+      const docRef = db.collection("jobs").doc(id);
+      const doc = await docRef.get();
+
+      if (!doc.exists) {
+        return res.status(404).json({ error: "Job not found." });
+      }
+
+      await docRef.update(updates);
+      const updatedDoc = await docRef.get();
+
+      res.status(200).json({ id: updatedDoc.id, ...updatedDoc.data() });
+    } catch (error) {
+      console.error("Error updating job:", error);
+      res.status(500).json({ error: "Failed to update job." });
     }
   });
 
