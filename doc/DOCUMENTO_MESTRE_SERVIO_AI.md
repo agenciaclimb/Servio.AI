@@ -2,6 +2,27 @@
 
 ---
 
+#update_log - 08/11/2025 02:30
+✅ CI/CD #102 PASSOU - TypeScript/ESLint corrigidos, deploy em produção.
+
+Correções aplicadas:
+
+- tsconfig.json: ajustado include para monorepo sem src/ (_.ts, _.tsx, components/**, services/**, contexts/\*\*)
+- 7 erros TypeScript resolvidos: App.tsx, ClientDashboard.tsx, ProviderDashboard.tsx (tipagens, imports skeleton)
+- 7 erros ESLint (rule-of-hooks) corrigidos em ProfilePage.tsx: hooks movidos antes do early return
+- Movidos arquivos skeleton para components/skeletons/ (JobCardSkeleton, etc.)
+
+Build/Deploy:
+
+- GitHub Actions #102: ✅ Lint, Typecheck, Tests (root + backend) passaram
+- Commit: 84c2f71
+- Frontend: https://gen-lang-client-0737507616.web.app (atualizado)
+- Backend: https://servio-backend-h5ogjon7aa-uw.a.run.app (estável)
+
+Backend smoke test pós-deploy: ✅ 4/4 endpoints OK (health, users, jobs, upload URL).
+
+Próxima ação: Iniciar validação E2E (Cenário 1: Cliente, Cenário 2: Prestador) e validar persistência Firestore + Stripe.
+
 #update_log - 07/11/2025 18:55
 Segurança e deploy: push bloqueado por segredos. Removi credenciais do histórico e atualizei .gitignore. Commit reenviado, pipeline acionado. Backend smoke test: 4/4 PASSED.
 
