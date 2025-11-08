@@ -565,7 +565,8 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
       if (!bucketName) {
         throw new Error("GCP_STORAGE_BUCKET environment variable not set.");
       }
-      const bucket = storage.bucket(bucketName);
+  // Use injected storage instance (for tests) instead of global singleton
+  const bucket = storageInstance.bucket(bucketName);
       const filePath = `jobs/${jobId}/${Date.now()}-${fileName}`;
       const file = bucket.file(filePath);
 
@@ -579,6 +580,15 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
       const [url] = await file.getSignedUrl(options);
       res.status(200).json({ signedUrl: url, filePath: filePath });
     } catch (error) {
+      // If bucket env missing but we explicitly allow fake uploads (CI/dev), return deterministic mock URL
+      if (!process.env.GCP_STORAGE_BUCKET && process.env.ALLOW_FAKE_UPLOADS === 'true') {
+        const fakePath = `jobs/${jobId}/${Date.now()}-${fileName}`;
+        return res.status(200).json({
+          signedUrl: 'https://fake-upload.local/signed-url',
+          filePath: fakePath,
+          fake: true,
+        });
+      }
       console.error("Error generating signed URL:", error);
       res.status(500).json({ error: "Failed to generate upload URL." });
     }
