@@ -114,7 +114,7 @@ const App: React.FC = () => {
         verificationStatus: type === 'prestador' ? 'pendente' : undefined,
       };
       // The 'id' should be the same as the email for consistency in our app model
-      user = await API.createUser({ ...newUserPayload, id: email });
+      user = await API.createUser(newUserPayload);
     }
     setCurrentUser(user);
     setAuthModal(null);
@@ -270,7 +270,7 @@ const App: React.FC = () => {
     switch (view.name) {
       case 'dashboard':
         if (!currentUser) { handleSetView('home'); return null; }
-        if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allUsers={[]} allProposals={[]} allMessages={[]} maintainedItems={maintainedItems} allDisputes={[]} allBids={[]} setAllProposals={() => {}} setAllMessages={() => {}} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllEscrows={setAllEscrows} setAllDisputes={()=>{}} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} onUpdateUser={handleUpdateUser} />;
+        if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allUsers={[]} allProposals={[]} allMessages={[]} maintainedItems={maintainedItems} allDisputes={[]} allBids={[]} setAllProposals={() => {}} setAllMessages={() => {}} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllEscrows={setAllEscrows} setAllDisputes={() => {}} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} onUpdateUser={handleUpdateUser} />;
         if (currentUser.type === 'prestador') return <ProviderDashboard user={currentUser} onViewProfile={(userId) => handleSetView('profile', {userId})} onPlaceBid={() => {}} />;
         if (currentUser.type === 'admin') return <AdminDashboard user={currentUser} />;
         return null;
@@ -279,7 +279,7 @@ const App: React.FC = () => {
         return <ProfilePage userId={view.data.userId} onBackToDashboard={() => handleSetView('dashboard')} isPublicView={!!view.data.isPublic} onLoginToContact={handleLoginToContact} />;
       case 'service-landing':
           // This page will also need to fetch its own user data
-          return <ServiceLandingPage category={view.data.category} location={view.data.location} serviceNameToCategory={serviceNameToCategory} />;
+          return <ServiceLandingPage category={view.data.category} location={view.data.location} serviceNameToCategory={(name: string) => serviceNameToCategory[name] || name} />;
       case 'provider-landing':
           return <ProviderLandingPage onRegisterClick={() => setAuthModal({mode: 'register', userType: 'prestador'})} />;
       // FIX: Add case for find-providers view

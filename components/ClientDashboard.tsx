@@ -18,7 +18,7 @@ import ClientDashboardSkeleton from './skeletons/ClientDashboardSkeleton';
 
 interface ClientDashboardProps {
   user: User;
-  allUsers: User;
+  allUsers: User[];
   allProposals: Proposal[];
   allMessages: Message[];
   allDisputes: Dispute[];
@@ -616,7 +616,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       )}
       {payingForProposal && (
         <PaymentModal 
-            job={allJobs.find(j => j.id === payingForProposal.jobId)!}
+            job={userJobs.find(j => j.id === payingForProposal.jobId)!}
             proposal={payingForProposal}
             provider={allUsers.find(u => u.email === payingForProposal.providerId)!}
             onClose={() => setPayingForProposal(null)}
