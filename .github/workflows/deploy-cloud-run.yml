@@ -157,6 +157,15 @@ jobs:
             echo "Docker config.json não encontrado"
           fi
 
+      - name: Check AI Dockerfile exists
+        id: ai_check
+        run: |
+          if [ -f "./Dockerfile" ]; then
+            echo "has_ai=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_ai=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Sanity push to Artifact Registry (hello-world)
         run: |
           set -euo pipefail
@@ -168,7 +177,7 @@ jobs:
       # No need to create it on every run
 
       - name: Build & Push AI image (Docker)
-        if: ${{ github.event.inputs.service == 'both' || github.event.inputs.service == 'ai' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-backend')) }}
+        if: ${{ (github.event.inputs.service == 'both' || github.event.inputs.service == 'ai' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-backend'))) && steps.ai_check.outputs.has_ai == 'true' }}
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -181,7 +190,7 @@ jobs:
             ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/ai-server:latest
 
       - name: Deploy AI Service
-        if: ${{ github.event.inputs.service == 'both' || github.event.inputs.service == 'ai' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-backend')) }}
+        if: ${{ (github.event.inputs.service == 'both' || github.event.inputs.service == 'ai' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-backend'))) && steps.ai_check.outputs.has_ai == 'true' }}
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
