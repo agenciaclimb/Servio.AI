@@ -1,4 +1,41 @@
 #update_log - 08/11/2025 08:15
+🛠️ INÍCIO FASE QA 360 - Planejamento abrangente de testes para deixar sistema 100% operacional (cliente, prestador, admin, IA, pagamentos, disputas, notificações, SEO).
+
+Escopo da fase:
+
+- Painel Cliente: login, IA prospecção (/api/enhance-job), criação de job, receber e aceitar proposta, chat, avaliação.
+- Painel Prestador: onboarding, receber matching (/api/match-providers), enviar proposta, conectar Stripe (mock), ver jobs.
+- Painel Admin: tabs (analytics, jobs, providers, financials, fraud), suspender prestador, resolver disputa, sitemap.
+- Pagamentos: checkout (escrow), webhook (checkout.session.completed), release-payment, cálculo de rate.
+- Disputas & Fraud: abrir disputa, mediação admin, alteração de escrow/job, contagem de alertas.
+- Notificações: geração nos eventos chave (proposta aceita, disputa, suspensão, verificação).
+- IA Marketing (planejado): endpoint /api/ai/marketing-suggestions (se ausente) para headlines/bios/posts.
+- Uploads: geração de URL e associação a job.
+- SEO/Acessibilidade: sitemap generator, headings, labels críticos.
+
+Estratégia de testes:
+
+1. Unit: regras de negócio (calculateProviderRate, scoring match, validações de status).
+2. Integração (backend): mocks de Stripe + Firestore para /create-checkout-session, webhook, /jobs/:id/release-payment, disputes.
+3. E2E (Playwright): fluxos encadeados cliente ↔ prestador ↔ admin (smoke + críticos).
+4. Segurança/Autorização: garantir bloqueio de ações sensíveis (release-payment somente cliente, admin somente type=admin, suspensão restrita).
+5. Resiliência IA: fallback e mensagens quando timeout / erro Gemini.
+
+Métricas de saída previstas:
+
+- 0 falhas E2E em smoke principal.
+- Cobertura backend > 40% (foco em regras sensíveis: pagamentos/disputas).
+- Checklist UX sem erros de console.
+
+Próximos passos imediatos (Sprint QA 1):
+
+1. Ajuste AdminDashboard (testids + loading) ✅
+2. Teste E2E admin base (placeholder enquanto roteamento real não existe) ✅
+3. Camada testes Stripe (mocks) - PENDENTE
+4. Fluxo criação job → proposta → aceite (E2E expandido) - PENDENTE
+
+Status: 🚀 Preparação concluída, execução iniciada.
+
 🧪 TESTES E2E IMPLEMENTADOS - Playwright validando jornadas principais (5/5 passando).
 
 Framework: Playwright substituiu Cypress por performance superior, melhor auto-waiting, e suporte nativo a parallelism.
