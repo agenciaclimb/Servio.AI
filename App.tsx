@@ -54,14 +54,6 @@ const App: React.FC = () => {
   const [matchingResults, setMatchingResults] = useState<MatchingResult[] | null>(null);
   const [prospects, setProspects] = useState<Prospect[] | null>(null);
 
-  // Garante que, ao logar, o usuário vá para o dashboard correto
-  useEffect(() => {
-    console.log('useEffect dashboard redirect', { currentUser, view });
-    if (currentUser && view.name !== 'dashboard') {
-      setView({ name: 'dashboard' });
-    }
-  }, [currentUser, view.name]);
-
   // Data State - minimal global state
   const [maintainedItems, setMaintainedItems] = useState<MaintainedItem[]>([]);
   const [allNotifications, setAllNotifications] = useState<Notification[]>([]);
