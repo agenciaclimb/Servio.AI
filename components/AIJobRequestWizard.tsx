@@ -202,6 +202,7 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
               onClick={() => handleAnalyze(initialRequest, address, files.length)}
               disabled={!initialRequest}
               className="w-full flex justify-center items-center py-3 px-6 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed"
+              data-testid="wizard-analyze-button"
             >
               Analisar com IA ✨
             </button>
@@ -302,7 +303,7 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
             </div>
             <div className="bg-gray-50 px-8 py-4 rounded-b-2xl flex justify-end items-center space-x-3">
                 <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Cancelar</button>
-                <button type="submit" className="px-6 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700">
+                <button type="submit" className="px-6 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700" data-testid="wizard-publish-button">
                     {jobMode === 'leilao' ? 'Publicar Leilão' : 'Publicar Job'}
                 </button>
           </div>
@@ -312,10 +313,10 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
+    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose} data-testid="wizard-modal">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl m-4 transform transition-all max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
         <div className="relative flex-grow overflow-y-auto">
-            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10">
+            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10" data-testid="wizard-close">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             {renderContent()}
