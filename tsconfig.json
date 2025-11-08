@@ -18,6 +18,12 @@
     "allowImportingTsExtensions": true,
     "noEmit": true
   },
-  "include": ["src/**/*"],
+  "include": [
+    "*.ts",
+    "*.tsx",
+    "components/**/*",
+    "services/**/*",
+    "contexts/**/*"
+  ],
   "exclude": ["node_modules", "dist", "build", ".next", ".vercel", "coverage"]
 }
