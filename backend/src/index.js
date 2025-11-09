@@ -1021,11 +1021,14 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
       const snapshot = await db
         .collection("messages")
         .where("chatId", "==", chatId)
-        .orderBy("createdAt", "asc")
         .limit(parseInt(limit))
         .get();
 
       const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      // Sort by createdAt on server side (since Firestore composite index not created yet)
+      messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      
       res.status(200).json(messages);
     } catch (error) {
       console.error("Error listing messages:", error);
