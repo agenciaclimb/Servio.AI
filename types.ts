@@ -48,7 +48,7 @@ export interface User {
   portfolio?: PortfolioItem[];
   serviceCatalog?: ProviderService[];
   seo?: SEOProfile;
-  stripeAccountId?: string; // Stripe Connected Account ID
+  providerRate?: number; // Commission rate for provider (0.0 - 1.0), e.g., 0.85 = provider gets 85%
 }
 
 export interface ProviderProfile {
@@ -94,6 +94,13 @@ export interface Job {
   jobMode?: JobMode;
   auctionEndDate?: string; // ISO Date string
   scheduledDate?: string; // ISO Date string
+  // Earnings tracking
+  earnings?: {
+    totalAmount: number;
+    providerShare: number;
+    platformFee: number;
+    paidAt?: string; // ISO Date string
+  };
 }
 
 export interface Bid {
