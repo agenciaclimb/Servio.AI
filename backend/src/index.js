@@ -1006,6 +1006,109 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
   });
 
   // =================================================================
+  // MESSAGES (CHAT) ENDPOINTS
+  // =================================================================
+
+  // GET /messages - List messages for a chat
+  app.get("/messages", async (req, res) => {
+    try {
+      const { chatId, limit = 100 } = req.query;
+
+      if (!chatId) {
+        return res.status(400).json({ error: "chatId query parameter is required." });
+      }
+
+      const snapshot = await db
+        .collection("messages")
+        .where("chatId", "==", chatId)
+        .orderBy("createdAt", "asc")
+        .limit(parseInt(limit))
+        .get();
+
+      const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(messages);
+    } catch (error) {
+      console.error("Error listing messages:", error);
+      res.status(500).json({ error: "Failed to retrieve messages." });
+    }
+  });
+
+  // POST /messages - Create new message
+  app.post("/messages", async (req, res) => {
+    try {
+      const { chatId, senderId, text, type } = req.body;
+
+      if (!chatId || !senderId || !text) {
+        return res.status(400).json({ error: "chatId, senderId, and text are required." });
+      }
+
+      const messageData = {
+        chatId,
+        senderId,
+        text,
+        type: type || "text",
+        createdAt: new Date().toISOString(),
+      };
+
+      const docRef = await db.collection("messages").add(messageData);
+      const newMessage = { id: docRef.id, ...messageData };
+
+      // Trigger notification for recipient (simplified - in production use Cloud Function)
+      // For now, we'll skip automatic notification and let frontend handle it
+
+      res.status(201).json(newMessage);
+    } catch (error) {
+      console.error("Error creating message:", error);
+      res.status(500).json({ error: "Failed to create message." });
+    }
+  });
+
+  // =================================================================
+  // JOBS UTILITIES (already defined earlier, kept for reference)
+  // =================================================================
+
+  // GET /jobs/:id - Get single job by ID
+  app.get("/jobs/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const docRef = db.collection("jobs").doc(id);
+      const doc = await docRef.get();
+
+      if (!doc.exists) {
+        return res.status(404).json({ error: "Job not found." });
+      }
+
+      res.status(200).json({ id: doc.id, ...doc.data() });
+    } catch (error) {
+      console.error("Error fetching job:", error);
+      res.status(500).json({ error: "Failed to fetch job." });
+    }
+  });
+
+  // PUT /jobs/:id - Update job
+  app.put("/jobs/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+
+      const docRef = db.collection("jobs").doc(id);
+      const doc = await docRef.get();
+
+      if (!doc.exists) {
+        return res.status(404).json({ error: "Job not found." });
+      }
+
+      await docRef.update(updates);
+      const updatedDoc = await docRef.get();
+
+      res.status(200).json({ id: updatedDoc.id, ...updatedDoc.data() });
+    } catch (error) {
+      console.error("Error updating notification:", error);
+      res.status(500).json({ error: "Failed to update notification." });
+    }
+  });
+
+  // =================================================================
   // JOBS ENDPOINTS (UPDATES)
   // =================================================================
 

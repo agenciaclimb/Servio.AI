@@ -427,16 +427,17 @@ export async function updateProposal(proposalId: string, updates: Partial<Propos
 // MESSAGES
 // ============================================================================
 
-export async function fetchMessages(): Promise<Message[]> {
+export async function fetchMessages(chatId?: string): Promise<Message[]> {
   if (USE_MOCK) {
-    return Promise.resolve(MOCK_MESSAGES);
+    return Promise.resolve(chatId ? MOCK_MESSAGES.filter(m => m.chatId === chatId) : MOCK_MESSAGES);
   }
 
   try {
-    return await apiCall<Message[]>('/messages');
+    const url = chatId ? `/messages?chatId=${chatId}` : '/messages';
+    return await apiCall<Message[]>(url);
   } catch (error) {
     console.warn('Failed to fetch messages, using mock data');
-    return MOCK_MESSAGES;
+    return chatId ? MOCK_MESSAGES.filter(m => m.chatId === chatId) : MOCK_MESSAGES;
   }
 }
 

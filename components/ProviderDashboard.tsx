@@ -37,6 +37,26 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   const [allMessages, setAllMessages] = useState<Message[]>([]);
   // Component-specific data states
   const [availableJobs, setAvailableJobs] = useState<Job[]>([]);
+
+  // Load messages from Firestore when chat is opened
+  useEffect(() => {
+    if (chattingWithJob) {
+      const loadMessages = async () => {
+        try {
+          const messages = await API.fetchMessages(chattingWithJob.id);
+          setAllMessages(prev => {
+            // Merge with existing messages, avoid duplicates
+            const existingIds = new Set(prev.map(m => m.id));
+            const newMessages = messages.filter(m => !existingIds.has(m.id));
+            return [...prev, ...newMessages];
+          });
+        } catch (error) {
+          console.error('Failed to load chat messages:', error);
+        }
+      };
+      loadMessages();
+    }
+  }, [chattingWithJob]);
   const [myJobs, setMyJobs] = useState<Job[]>([]);
   const [completedJobs, setCompletedJobs] = useState<Job[]>([]);
   const [myProposals, setMyProposals] = useState<Proposal[]>([]);
@@ -196,23 +216,33 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
     }
   };
 
-  const handleSendMessage = (messageData: Partial<Message> & { chatId: string, text: string }) => {
-    const newMessage: Message = {
-        id: `msg-${Date.now()}`,
+  const handleSendMessage = async (messageData: Partial<Message> & { chatId: string, text: string }) => {
+    try {
+      // Save message to backend (Firestore)
+      const savedMessage = await API.createMessage({
+        chatId: messageData.chatId,
         senderId: user.email,
-        createdAt: new Date().toISOString(),
-        type: 'text',
-        ...messageData,
-    };
-    setAllMessages(prev => [...prev, newMessage]);
-
-    const job = myJobs.find(j => j.id === messageData.chatId);
-    if (job) {
-      API.createNotification({
-        userId: job.clientId,
-        text: `Nova mensagem de ${user.name} sobre o job "${job.category}".`,
-        isRead: false,
+        text: messageData.text,
+        type: messageData.type || 'text',
       });
+      
+      // Update local state with saved message
+      setAllMessages(prev => [...prev, savedMessage]);
+
+      // Send notification to the client
+      const job = myJobs.find(j => j.id === messageData.chatId);
+      if (job) {
+        await API.createNotification({
+          userId: job.clientId,
+          text: `Nova mensagem de ${user.name} sobre o job "${job.category}".`,
+          isRead: false,
+        });
+      }
+      
+      console.log('Message sent and saved to Firestore');
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      alert('Erro ao enviar mensagem. Tente novamente.');
     }
   };
 
