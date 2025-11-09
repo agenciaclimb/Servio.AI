@@ -14,7 +14,7 @@ const db = admin.firestore();
  * 1. Get message data
  * 2. Determine recipient (if sender is client, notify provider, and vice versa)
  * 3. Create notification in Firestore
- * 4. (Future) Send push notification
+ * 4. Send push notification via FCM
  */
 exports.notifyOnNewMessage = functions.firestore
   .document('messages/{messageId}')
@@ -71,17 +71,39 @@ exports.notifyOnNewMessage = functions.firestore
       
       console.log(`Notification created for user ${recipientId}`);
 
-      // TODO: Send push notification via FCM
-      // const userDoc = await db.collection('users').doc(recipientId).get();
-      // if (userDoc.exists && userDoc.data().fcmToken) {
-      //   await admin.messaging().send({
-      //     token: userDoc.data().fcmToken,
-      //     notification: {
-      //       title: 'Nova Mensagem',
-      //       body: notification.text,
-      //     }
-      //   });
-      // }
+      // Send push notification via FCM if token exists
+      const userDoc = await db.collection('users').doc(recipientId).get();
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        const fcmToken = userData.fcmToken;
+        const prefs = userData.notificationPreferences || {};
+        
+        // Check if user wants new message notifications (default: true)
+        if (fcmToken && (prefs.newMessage !== false)) {
+          try {
+            await admin.messaging().send({
+              token: fcmToken,
+              notification: {
+                title: 'Nova Mensagem no Servio.AI',
+                body: notification.text,
+              },
+              webpush: {
+                fcmOptions: {
+                  link: `${process.env.APP_URL || 'https://servio.ai'}/dashboard`,
+                },
+              },
+            });
+            console.log(`FCM push sent to ${recipientId}`);
+          } catch (fcmError) {
+            console.warn(`Failed to send FCM to ${recipientId}:`, fcmError);
+            // If token is invalid, remove it
+            if (fcmError.code === 'messaging/registration-token-not-registered') {
+              await db.collection('users').doc(recipientId).update({ fcmToken: admin.firestore.FieldValue.delete() });
+              console.log(`Removed invalid FCM token for ${recipientId}`);
+            }
+          }
+        }
+      }
 
       return null;
     } catch (error) {
