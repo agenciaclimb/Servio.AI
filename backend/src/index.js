@@ -632,6 +632,40 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
     }
   });
 
+  // =================================================================
+  // DISPUTES API ENDPOINTS
+  // =================================================================
+
+  // Get all disputes
+  app.get("/disputes", async (req, res) => {
+    try {
+      const snapshot = await db.collection("disputes").orderBy('createdAt', 'desc').get();
+      const disputes = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(disputes);
+    } catch (error) {
+      console.error("Error getting disputes:", error);
+      res.status(500).json({ error: "Failed to retrieve disputes." });
+    }
+  });
+
+  // Create a new dispute
+  app.post("/disputes", async (req, res) => {
+    try {
+      const disputeData = {
+        ...req.body,
+        createdAt: new Date().toISOString(),
+        status: "aberta", // 'aberta', 'resolvida'
+      };
+      const disputeRef = db.collection("disputes").doc();
+      await disputeRef.set(disputeData);
+      res.status(201).json({ id: disputeRef.id, ...disputeData });
+    } catch (error) {
+      console.error("Error creating dispute:", error);
+      res.status(500).json({ error: "Failed to create dispute." });
+    }
+  });
+
+  // Resolve a dispute (admin only)
   app.post("/disputes/:disputeId/resolve", async (req, res) => {
     const { disputeId } = req.params;
     const { resolution, comment } = req.body; // resolution: 'release_to_provider' or 'refund_client'

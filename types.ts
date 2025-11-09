@@ -31,6 +31,8 @@ export interface User {
   location: string;
   memberSince: string; // ISO Date string
   status: UserStatus;
+  // Payments
+  stripeAccountId?: string; // Stripe Connect Account ID (prestador)
   // Provider-specific fields
   headline?: string;
   specialties?: string[];
@@ -91,6 +93,14 @@ export interface Job {
   serviceType: ServiceType;
   urgency: 'hoje' | 'amanha' | '3dias' | '1semana';
   address?: string;
+  // Location details (used for filtering in ProviderDashboard)
+  location?: {
+    address?: string;
+    city?: string;
+    state?: string;
+    lat?: number;
+    lng?: number;
+  };
   media?: { name: string; type: 'image' | 'video'; path: string }[];
   fixedPrice?: number;
   visitFee?: number;
