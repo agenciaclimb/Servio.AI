@@ -14,6 +14,7 @@ import ProviderOnboarding from './ProviderOnboarding';
 import AuctionRoomModal from './AuctionRoomModal';
 import ProviderDashboardSkeleton from './skeletons/ProviderDashboardSkeleton';
 import PaymentSetupCard from './PaymentSetupCard';
+import ProviderEarningsCard from './ProviderEarningsCard';
 
 import * as API from '../services/api';
 
@@ -337,6 +338,14 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   }
 
 
+  // Calculate provider stats
+  const totalJobs = completedJobs.length + myJobs.filter(j => j.status === 'concluido').length;
+  const allReviews = completedJobs.filter(j => j.review?.rating).map(j => j.review!.rating);
+  const averageRating = allReviews.length > 0 
+    ? allReviews.reduce((sum, r) => sum + r, 0) / allReviews.length 
+    : 5.0;
+  const currentRate = user.providerRate || 0.85; // Default 85% commission
+
   return (
     <div className="space-y-10">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -344,6 +353,12 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
             <ProfileStrength user={user} onEditProfile={() => setIsProfileModalOpen(true)} />
           </div>
           <div className="flex flex-col space-y-4">
+              <ProviderEarningsCard 
+                completedJobs={completedJobs}
+                currentRate={currentRate}
+                totalJobs={totalJobs}
+                averageRating={averageRating}
+              />
               <ProfileTips user={user} onEditProfile={() => setIsProfileModalOpen(true)} />
               <ReferralProgram onSendReferral={handleSendReferral} />
               <PaymentSetupCard user={user} />

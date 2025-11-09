@@ -541,10 +541,20 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
         `Stripe Transfer successful for Escrow ID: ${escrowDoc.id}. Transfer ID: ${transfer.id}. Amount: ${providerShare / 100}`
       );
 
+      // Update provider's commission rate in their profile
+      await db.collection("users").doc(escrowData.providerId).update({
+        providerRate: earningsProfile.currentRate
+      });
+
       // Update job and escrow status
       await db.collection("jobs").doc(jobId).update({ 
         status: "concluido",
-        earnings: { providerShare: providerShare / 100, platformShare: platformShare / 100, rate: earningsProfile.currentRate } 
+        earnings: { 
+          totalAmount: escrowData.amount / 100, // Convert cents to BRL
+          providerShare: providerShare / 100, // Convert cents to BRL
+          platformFee: platformShare / 100, // Convert cents to BRL
+          paidAt: new Date().toISOString()
+        } 
       });
       await escrowDoc.ref.update({ status: "liberado", stripeTransferId: transfer.id });
 
