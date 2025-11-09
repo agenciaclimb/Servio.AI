@@ -37,6 +37,9 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   const [allMessages, setAllMessages] = useState<Message[]>([]);
   // Component-specific data states
   const [availableJobs, setAvailableJobs] = useState<Job[]>([]);
+  // Filters for available jobs
+  const [categoryFilter, setCategoryFilter] = useState<string>('Todos');
+  const [locationFilter, setLocationFilter] = useState<string>('');
 
   // Load messages from Firestore when chat is opened
   useEffect(() => {
@@ -109,6 +112,18 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   // Jobs provider has proposed on
   const proposedJobIds = myProposals.map(p => p.jobId);
   const biddedJobIds = myBids.map(b => b.jobId);
+
+  // Filter available jobs
+  const filteredJobs = availableJobs.filter(job => {
+    const matchesCategory = categoryFilter === 'Todos' || job.category === categoryFilter;
+    const matchesLocation = !locationFilter || 
+      job.location?.address?.toLowerCase().includes(locationFilter.toLowerCase()) ||
+      job.location?.city?.toLowerCase().includes(locationFilter.toLowerCase());
+    return matchesCategory && matchesLocation;
+  });
+
+  // Get unique categories from available jobs
+  const categories = ['Todos', ...new Set(availableJobs.map(j => j.category))];
   
   const handleSendProposal = async (proposalData: { message: string; price: number }) => {
     if (!proposingForJob) return;
@@ -357,10 +372,53 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Oportunidades Disponíveis</h2>
-        {availableJobs.length > 0 ? (
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold text-gray-800">Oportunidades Disponíveis</h2>
+          <span className="text-sm text-gray-600">{filteredJobs.length} jobs encontrados</span>
+        </div>
+
+        {/* Filters */}
+        <div className="bg-white rounded-lg shadow-sm border p-4 mb-6 flex flex-wrap gap-4">
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            >
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Localização</label>
+            <input
+              type="text"
+              value={locationFilter}
+              onChange={(e) => setLocationFilter(e.target.value)}
+              placeholder="Buscar por cidade ou endereço..."
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          {(categoryFilter !== 'Todos' || locationFilter) && (
+            <div className="flex items-end">
+              <button
+                onClick={() => {
+                  setCategoryFilter('Todos');
+                  setLocationFilter('');
+                }}
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Limpar filtros
+              </button>
+            </div>
+          )}
+        </div>
+
+        {filteredJobs.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {availableJobs.map(job => (
+            {filteredJobs.map(job => (
               <JobCard
                 key={job.id}
                 job={job}
@@ -372,7 +430,11 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
           </div>
         ) : (
            <div className="text-center py-10 bg-white rounded-lg shadow-sm border">
-            <p className="text-gray-600">Nenhuma oportunidade nova no momento. Volte em breve!</p>
+            <p className="text-gray-600">
+              {availableJobs.length === 0 
+                ? 'Nenhuma oportunidade nova no momento. Volte em breve!'
+                : 'Nenhum job encontrado com os filtros selecionados. Tente ajustar os filtros.'}
+            </p>
           </div>
         )}
       </div>
