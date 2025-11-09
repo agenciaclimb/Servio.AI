@@ -8,8 +8,9 @@ out/
 # Dependencies
 node_modules/
 
-# Backend (uses CommonJS)
+# Backend and Functions (use CommonJS)
 backend/
+functions/
 server.js
 
 # Documentation
