@@ -43,8 +43,9 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
     const messagesRef = collection(db, 'messages');
     const q = query(
       messagesRef,
-      where('chatId', '==', job.id),
-      orderBy('createdAt', 'asc')
+      where('chatId', '==', job.id)
+      // Note: orderBy removed to avoid composite index requirement
+      // Sorting done in client after retrieval
     );
 
     const unsubscribe: Unsubscribe = onSnapshot(q, (snapshot) => {
@@ -52,6 +53,11 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
       snapshot.forEach((doc) => {
         updatedMessages.push({ id: doc.id, ...doc.data() } as Message);
       });
+
+      // Sort messages by createdAt (client-side since no composite index)
+      updatedMessages.sort((a, b) => 
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
 
       // Update parent state with real-time messages
       setAllMessages((prev) => {
