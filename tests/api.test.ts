@@ -87,7 +87,7 @@ describe('API Service', () => {
       const jobData = {
         description: 'Test description',
         category: 'reparos' as any,
-        serviceType: 'Encanador',
+        serviceType: 'Encanador' as any,
         urgency: '3dias' as any,
         address: 'Test Address',
         jobMode: 'normal' as any,
@@ -123,7 +123,7 @@ describe('API Service', () => {
   describe('updateJob', () => {
     it('deve atualizar job com sucesso', async () => {
       const jobId = 'job123';
-      const updates = { status: 'concluido' };
+      const updates = { status: 'concluido' as any };
 
       const mockResponse = {
         id: jobId,
@@ -186,12 +186,12 @@ describe('API Service', () => {
         providerId: 'provider@test.com',
         price: 150,
         message: 'Posso realizar o serviço com qualidade.',
+        status: 'pendente' as any,
       };
 
       const mockResponse = {
         id: 'proposal123',
         ...proposalData,
-        status: 'pendente',
         createdAt: new Date().toISOString(),
       };
 
