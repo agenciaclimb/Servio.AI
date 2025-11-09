@@ -60,62 +60,30 @@ async function createJob(jobData) {
 }
 
 async function completeJobWithEarnings(jobId, price, rating) {
-  // 1. Accept proposal (simulate)
-  await fetch(`${BASE_URL}/jobs/${jobId}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      status: 'proposta_aceita',
-      providerId: testProvider.email,
-      fixedPrice: price
-    }),
-  });
+  // Simulate complete job flow with earnings (simplified without Stripe)
+  const providerRate = 0.85; // 85% commission
+  const providerShare = price * providerRate;
+  const platformFee = price - providerShare;
 
-  // 2. Create escrow
-  const escrowResponse = await fetch(`${BASE_URL}/escrows`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      jobId,
-      clientId: testClient.email,
-      providerId: testProvider.email,
-      amount: price * 100, // cents
-      status: 'retido',
-      paymentIntentId: `pi_test_${Date.now()}`,
-    }),
-  });
-  
-  const escrow = await escrowResponse.json();
-
-  // 3. Complete job
+  // Update job to completed with earnings and review
   await fetch(`${BASE_URL}/jobs/${jobId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ 
       status: 'concluido',
-      review: {
-        rating,
-        comment: 'Great service!',
-        authorId: testClient.email,
-        createdAt: new Date().toISOString(),
-      }
-    }),
-  });
-
-  // 4. Simulate earnings calculation (without actual Stripe transfer)
-  const providerRate = 0.85; // 85% commission
-  const providerShare = price * providerRate;
-  const platformFee = price - providerShare;
-
-  await fetch(`${BASE_URL}/jobs/${jobId}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+      providerId: testProvider.email,
+      fixedPrice: price,
       earnings: {
         totalAmount: price,
         providerShare,
         platformFee,
         paidAt: new Date().toISOString(),
+      },
+      review: {
+        rating,
+        comment: 'Great service!',
+        authorId: testClient.email,
+        createdAt: new Date().toISOString(),
       }
     }),
   });
