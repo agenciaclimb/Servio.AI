@@ -726,6 +726,64 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
   });
 
   // =================================================================
+  // TEST UTILITIES (Escrow seeding) - Enabled only when ENABLE_TEST_UTILS=true
+  // =================================================================
+  if (process.env.ENABLE_TEST_UTILS === 'true') {
+    /**
+     * POST /test-utils/seed-escrow
+     * Creates an escrow record for a given job so that dispute resolution flows
+     * can be exercised in integration tests without going through Stripe checkout.
+     * Body: { jobId, clientId, providerId, amount (number, BRL), status? }
+     */
+    app.post('/test-utils/seed-escrow', async (req, res) => {
+      try {
+        const { jobId, clientId, providerId, amount = 100, status = 'pago' } = req.body || {};
+        if (!jobId || !clientId || !providerId) {
+          return res.status(400).json({ error: 'jobId, clientId and providerId are required.' });
+        }
+        const escrowQuery = await db.collection('escrows').where('jobId', '==', jobId).limit(1).get();
+        if (!escrowQuery.empty) {
+          const existing = escrowQuery.docs[0];
+            return res.status(200).json({ reused: true, id: existing.id, ...existing.data() });
+        }
+        const escrowRef = db.collection('escrows').doc();
+        const escrowData = {
+          id: escrowRef.id,
+          jobId,
+          clientId,
+          providerId,
+          amount, // Stored in BRL, consistent with existing code paths
+          status, // 'pendente' | 'pago' | 'liberado' | 'disputa' | 'reembolsado'
+          createdAt: new Date().toISOString(),
+          seededForTests: true,
+        };
+        await escrowRef.set(escrowData);
+        return res.status(201).json(escrowData);
+      } catch (err) {
+        console.error('Error seeding escrow (test util):', err);
+        return res.status(500).json({ error: 'Failed to seed escrow.' });
+      }
+    });
+
+    /**
+     * GET /test-utils/escrow/:jobId
+     * Fetch first escrow associated with a job (for test assertions)
+     */
+    app.get('/test-utils/escrow/:jobId', async (req, res) => {
+      try {
+        const { jobId } = req.params;
+        const snapshot = await db.collection('escrows').where('jobId', '==', jobId).limit(1).get();
+        if (snapshot.empty) return res.status(404).json({ error: 'No escrow for this job.' });
+        const doc = snapshot.docs[0];
+        return res.status(200).json({ id: doc.id, ...doc.data() });
+      } catch (err) {
+        console.error('Error fetching escrow (test util):', err);
+        return res.status(500).json({ error: 'Failed to fetch escrow.' });
+      }
+    });
+  }
+
+  // =================================================================
   // USERS API ENDPOINTS
   // =================================================================
 

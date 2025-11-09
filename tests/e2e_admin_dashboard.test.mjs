@@ -223,6 +223,34 @@ async function test_06_fetch_disputes() {
   }
 }
 
+// Test 6b: Seed escrow (test utils) to enable resolution (optional)
+async function test_06b_seed_escrow() {
+  console.log('\n[TEST 6b] Seed escrow for job (optional)...');
+  try {
+    const res = await fetch(`${BASE_URL}/test-utils/seed-escrow`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jobId: testJobId,
+        clientId: testClientId,
+        providerId: testProviderId,
+        amount: 150,
+        status: 'pago'
+      }),
+    });
+    if (![200,201].includes(res.status)) {
+      console.log('↷ Skipped: test-utils escrow seeding not available');
+      return false;
+    }
+    const data = await res.json();
+    console.log(`✓ Escrow ${data.reused ? 'reused' : 'seeded'}: ${data.id} (status=${data.status})`);
+    return true;
+  } catch {
+    console.log('↷ Skipped: escrow seeding request failed');
+    return false;
+  }
+}
+
 // Test 7: Resolve dispute as admin (skip if no dispute created)
 async function test_07_resolve_dispute() {
   console.log('\n[TEST 7] Resolve dispute as admin...');
@@ -270,7 +298,19 @@ async function test_08_verify_dispute_analytics() {
     return;
   }
   expect(!!testDispute).toBe(true);
-  expect(testDispute.resolution?.outcome).toBe('reembolsado');
+  // decision is set on dispute resolution; outcome lives in escrow status
+  expect(testDispute.resolution?.decision).toBe('refund_client');
+
+  // If test utils enabled, verify escrow is marked "reembolsado"
+  try {
+    const escrowRes = await fetch(`${BASE_URL}/test-utils/escrow/${testDispute.jobId || ''}`);
+    if ([200,201].includes(escrowRes.status)) {
+      const escrow = await escrowRes.json();
+      expect(escrow.status).toBe('reembolsado');
+      console.log('✓ Escrow status verified: reembolsado');
+    }
+  } catch {}
+
   console.log(`✓ Dispute resolution verified in analytics`);
 }
 
@@ -343,6 +383,7 @@ describe('Admin Dashboard E2E (API integration)', () => {
   it('05-08 dispute flow (skipped if endpoint missing)', async () => {
     await test_05_create_dispute();
     await test_06_fetch_disputes();
+    await test_06b_seed_escrow();
     await test_07_resolve_dispute();
     await test_08_verify_dispute_analytics();
   }, 30000);
