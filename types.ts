@@ -49,6 +49,13 @@ export interface User {
   serviceCatalog?: ProviderService[];
   seo?: SEOProfile;
   providerRate?: number; // Commission rate for provider (0.0 - 1.0), e.g., 0.85 = provider gets 85%
+  fcmToken?: string; // Firebase Cloud Messaging token for push notifications
+  notificationPreferences?: {
+    newMessage?: boolean;
+    jobStatusChange?: boolean;
+    disputeEvents?: boolean;
+    marketing?: boolean;
+  };
 }
 
 export interface ProviderProfile {
