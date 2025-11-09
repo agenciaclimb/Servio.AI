@@ -727,6 +727,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
             onClose={() => setChattingWithJob(null)}
             onSendMessage={handleSendMessage}
             onConfirmSchedule={handleConfirmSchedule}
+            setAllMessages={setAllMessages}
         />
       )}
 

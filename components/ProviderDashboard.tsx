@@ -413,6 +413,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
             onClose={() => setChattingWithJob(null)}
             onSendMessage={handleSendMessage}
             onConfirmSchedule={handleConfirmSchedule}
+            setAllMessages={setAllMessages}
         />
       )}
     </div>
