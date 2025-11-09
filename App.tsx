@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { registerUserFcmToken, onForegroundMessage } from './services/messagingService';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import ClientDashboard from './components/ClientDashboard';
@@ -111,6 +112,18 @@ const App: React.FC = () => {
     setCurrentUser(user);
     setAuthModal(null);
 
+    // Attempt FCM token registration (non-blocking)
+    registerUserFcmToken(email).catch(() => {});
+
+    // Setup foreground notification listener once per session
+    onForegroundMessage((payload) => {
+      if (payload?.notification) {
+        // Simple toast fallback - replace with UI component later
+        console.log('[FCM] Foreground message:', payload);
+        alert(`🔔 ${payload.notification.title || 'Nova notificação'}\n${payload.notification.body || ''}`);
+      }
+    });
+
     // Redirecionar para o painel correto após login
     setView({ name: 'dashboard' });
 
@@ -128,6 +141,7 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setCurrentUser(null);
     handleSetView('home');
+    // Optionally: clear FCM token server-side (not strictly required now)
   };
 
   const handleSmartSearch = (prompt: string) => {
