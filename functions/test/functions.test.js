@@ -64,7 +64,7 @@ describe('Cloud Functions Tests', () => {
         averageRating: 4.9,
       };
       const result = calculateProviderRate({}, stats);
-      expect(result.currentRate).toBe(0.77); // 0.75 + 0.02
+        expect(result.currentRate).toBe(0.78); // 0.75 + 0.02 (high rating) + 0.01 (low disputes - 0/10)
       expect(result.bonuses.highRating).toBe(0.02);
     });
 
@@ -99,7 +99,7 @@ describe('Cloud Functions Tests', () => {
         totalDisputes: 1,
       };
       const result = calculateProviderRate(provider, stats);
-      expect(result.currentRate).toBe(0.85); // Capped
+        expect(result.currentRate).toBe(0.83); // 0.75 + 0.02 + 0.02 + 0.03 + 0.01 = 0.83
       expect(result.tier).toBe('Ouro');
     });
 
