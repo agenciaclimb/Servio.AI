@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Job, Message, User, ScheduledDateTime, ChatSuggestion } from '../types';
 import { proposeScheduleFromChat, getChatAssistance } from '../services/geminiService';
 import AISchedulingAssistant from './AISchedulingAssistant';
+import { db } from '../firebaseConfig';
+import { collection, query, where, orderBy, onSnapshot, Unsubscribe } from 'firebase/firestore';
 
 interface ChatModalProps {
   job: Job;
@@ -11,9 +13,10 @@ interface ChatModalProps {
   onClose: () => void;
   onSendMessage: (messageData: Partial<Message> & { chatId: string; text: string }) => void;
   onConfirmSchedule: (jobId: string, schedule: ScheduledDateTime, messageId?: string) => void;
+  setAllMessages?: React.Dispatch<React.SetStateAction<Message[]>>;
 }
 
-const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, messages, onClose, onSendMessage, onConfirmSchedule }) => {
+const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, messages, onClose, onSendMessage, onConfirmSchedule, setAllMessages }) => {
   const [newMessage, setNewMessage] = useState('');
   const [suggestedSchedule, setSuggestedSchedule] = useState<ScheduledDateTime | null>(null);
   const [isCheckingForSchedule, setIsCheckingForSchedule] = useState(false);
@@ -32,6 +35,39 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Real-time updates via Firestore onSnapshot
+  useEffect(() => {
+    if (!setAllMessages) return; // Only enable real-time if parent provides setter
+
+    const messagesRef = collection(db, 'messages');
+    const q = query(
+      messagesRef,
+      where('chatId', '==', job.id),
+      orderBy('createdAt', 'asc')
+    );
+
+    const unsubscribe: Unsubscribe = onSnapshot(q, (snapshot) => {
+      const updatedMessages: Message[] = [];
+      snapshot.forEach((doc) => {
+        updatedMessages.push({ id: doc.id, ...doc.data() } as Message);
+      });
+
+      // Update parent state with real-time messages
+      setAllMessages((prev) => {
+        // Merge with existing messages from other chats
+        const otherChats = prev.filter(m => m.chatId !== job.id);
+        return [...otherChats, ...updatedMessages];
+      });
+
+      console.log(`📩 Real-time: ${updatedMessages.length} mensagens carregadas para chat ${job.id}`);
+    }, (error) => {
+      console.error('❌ Erro no onSnapshot:', error);
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, [job.id, setAllMessages]);
 
   const checkForScheduleSuggestion = async () => {
       if (job.status !== 'proposta_aceita' && job.status !== 'agendado') return;
