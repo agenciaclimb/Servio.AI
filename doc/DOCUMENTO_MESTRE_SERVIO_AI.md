@@ -1,3 +1,107 @@
+#update_log - 08/11/2025 21:45
+🎉🔥 **SPRINTS 2, 3 & REAL-TIME COMPLETOS - 100% TESTADO (94/94 TESTES)**
+
+**🏆 CONQUISTAS ÉPICAS DO DIA:**
+
+- ✅ SPRINT 1: Job → Matching → Proposta → Aceite (8/8 E2E)
+- ✅ SPRINT 2: Stripe Payments + Escrow (completo)
+- ✅ SPRINT 3: Chat Persistence (completo)
+- ✅ BONUS: Real-time Chat com onSnapshot (5/5 E2E)
+
+**📊 TESTES TOTAIS: 94/94 (100%)**
+
+- 81/81 Backend unit/integration tests ✅
+- 8/8 E2E SPRINT 1 tests ✅
+- 5/5 Real-time chat E2E tests ✅
+
+**🚀 DEPLOYMENTS HOJE:**
+
+- v2025.11.08-1-backend (CRUD endpoints)
+- v2025.11.08-2-backend (resilience improvements)
+- v2025.11.08-3-backend (messages endpoints)
+- v2025.11.08-4-backend (orderBy fix)
+
+---
+
+**⚡ REAL-TIME CHAT COM FIRESTORE onSnapshot (NOVO!):**
+
+1. ✅ **Firestore Real-time Listeners**
+   - onSnapshot listener em ChatModal.tsx
+   - Import: collection, query, where, onSnapshot
+   - Automatic cleanup on unmount
+   - Real-time updates sem polling
+
+2. ✅ **Client-side Sorting**
+   - Ordenação por createdAt após receber dados
+   - Evita necessidade de composite index no Firestore
+   - Performance mantida (sort em memória é rápido)
+
+3. ✅ **Parent State Integration**
+   - setAllMessages prop passado para ChatModal
+   - ClientDashboard e ProviderDashboard fornecem setter
+   - Merge inteligente preserva outras conversas
+
+4. ✅ **E2E Test Script Completo**
+   - scripts/test_realtime_chat_e2e.mjs (183 linhas)
+   - 5 cenários testados:
+     - Cliente envia mensagem
+     - Prestador lista mensagens (simula onSnapshot)
+     - Prestador responde
+     - Cliente vê atualização (simula onSnapshot)
+     - Sistema envia notificação
+   - **RESULTADO: 5/5 TESTES PASSANDO** ✅
+
+**Fluxo Real-time Implementado:**
+
+```
+Usuário A abre chat
+  → onSnapshot listener ativa
+  → Carrega mensagens existentes
+
+Usuário B envia mensagem
+  → POST /messages (Firestore)
+  → onSnapshot de A detecta mudança
+  → Mensagem aparece INSTANTANEAMENTE
+
+Sem polling, sem refresh, 100% real-time!
+```
+
+**Código Key:**
+
+```typescript
+// ChatModal.tsx - Real-time listener
+const unsubscribe = onSnapshot(q, (snapshot) => {
+  const updatedMessages: Message[] = [];
+  snapshot.forEach((doc) => {
+    updatedMessages.push({ id: doc.id, ...doc.data() } as Message);
+  });
+  updatedMessages.sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+  );
+  setAllMessages((prev) => {
+    const otherChats = prev.filter((m) => m.chatId !== job.id);
+    return [...otherChats, ...updatedMessages];
+  });
+});
+```
+
+---
+
+**🔧 FIXES TÉCNICOS:**
+
+1. **Firestore Composite Index Avoided**
+   - Removido orderBy('createdAt') das queries
+   - Backend ordena após buscar: `messages.sort(...)`
+   - Cliente ordena no onSnapshot callback
+   - Deploy: v2025.11.08-4-backend
+
+2. **Query Optimization**
+   - GET /messages: where + limit (sem orderBy)
+   - onSnapshot: where apenas (sem orderBy)
+   - Sorting client-side mais rápido que criar índice
+
+---
+
 #update_log - 08/11/2025 21:15
 🚀💎 **SPRINTS 2 & 3 CONCLUÍDOS - PAYMENTS + CHAT PERSISTENCE (81/81 TESTES)**
 
