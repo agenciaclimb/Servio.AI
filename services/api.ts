@@ -592,20 +592,37 @@ export async function fetchDisputes(): Promise<Dispute[]> {
 }
 
 // ============================================================================
-// FRAUD ALERTS (for admin)
+// SENTIMENT / RISK ALERTS (formerly "fraud alerts") (for admin)
 // ============================================================================
 
-export async function fetchFraudAlerts(): Promise<FraudAlert[]> {
+/**
+ * Fetch sentiment/risk alerts from the backend.
+ * These alerts are generated based on chat sentiment analysis, payment disputes,
+ * and other risk indicators.
+ */
+export async function fetchSentimentAlerts(): Promise<FraudAlert[]> {
   if (USE_MOCK) {
     return Promise.resolve(MOCK_FRAUD_ALERTS);
   }
 
   try {
-    return await apiCall<FraudAlert[]>('/fraud-alerts');
+    return await apiCall<FraudAlert[]>('/sentiment-alerts');
   } catch (error) {
-    console.warn('Failed to fetch fraud alerts, using mock data');
+    console.warn('Failed to fetch sentiment alerts, using mock data');
     return MOCK_FRAUD_ALERTS;
   }
+}
+
+/**
+ * @deprecated Use fetchSentimentAlerts() instead. 
+ * This function is maintained for backward compatibility.
+ * 
+ * The term "fraud alerts" was originally used but the backend now calls these
+ * "sentiment alerts" to better reflect that they are generated from multiple
+ * risk signals (sentiment analysis, disputes, etc), not just fraud.
+ */
+export async function fetchFraudAlerts(): Promise<FraudAlert[]> {
+  return fetchSentimentAlerts();
 }
 
 // ============================================================================
