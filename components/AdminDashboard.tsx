@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Job, User, Proposal, FraudAlert, Escrow, Dispute, Notification } from '../types';
-import AdminAnalytics from './AdminAnalytics';
+import AdminAnalyticsDashboard from './AdminAnalyticsDashboard';
 import AdminJobManagement from './AdminJobManagement';
 import AdminProviderManagement from './AdminProviderManagement';
 import AdminFinancials from './AdminFinancials';
@@ -46,7 +46,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
                     API.fetchJobs(),
                     API.fetchAllUsers(),
                     API.fetchProposals(),
-                    API.fetchFraudAlerts(),
+                    API.fetchSentimentAlerts(), // Using new name (fetchFraudAlerts is now deprecated wrapper)
                     // API.fetchEscrows(),
                     API.fetchDisputes(),
                 ]);
@@ -105,7 +105,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     const renderTabContent = () => {
         switch (activeTab) {
             case 'analytics':
-                return <AdminAnalytics allJobs={allJobs} allUsers={allUsers} />;
+                return <AdminAnalyticsDashboard allJobs={allJobs} allUsers={allUsers} allDisputes={allDisputes} allFraudAlerts={allFraudAlerts} />;
             case 'jobs':
                 return <AdminJobManagement allJobs={allJobs} allUsers={allUsers} onMediateClick={setMediatingJob} />;
             case 'providers':
