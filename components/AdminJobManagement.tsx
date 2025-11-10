@@ -48,12 +48,12 @@ const AdminJobManagement: React.FC<AdminJobManagementProps> = ({ allJobs, allUse
             <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                     <tr>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job ID</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente / Prestador</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoria</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Job ID</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Cliente / Prestador</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Categoria</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Data</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Ações</th>
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -63,10 +63,10 @@ const AdminJobManagement: React.FC<AdminJobManagementProps> = ({ allJobs, allUse
                         const statusStyle = statusStyles[job.status];
                         return (
                             <tr key={job.id} className={`${job.status === 'em_disputa' ? 'bg-red-50' : ''}`}>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{job.id}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-mono">{job.id}</td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="text-sm font-medium text-gray-900">{client?.name}</div>
-                                    <div className="text-sm text-gray-500">{provider?.name || 'N/A'}</div>
+                                    <div className="text-sm text-gray-600">{provider?.name || 'N/A'}</div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{job.category}</td>
                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -74,7 +74,7 @@ const AdminJobManagement: React.FC<AdminJobManagementProps> = ({ allJobs, allUse
                                         {job.status.replace('_', ' ')}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(job.createdAt).toLocaleDateString('pt-BR')}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{new Date(job.createdAt).toLocaleDateString('pt-BR')}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     {job.status === 'em_disputa' ? (
                                         <button onClick={() => onMediateClick(job)} className="text-red-600 hover:text-red-900 font-bold">Mediar</button>

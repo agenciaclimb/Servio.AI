@@ -105,11 +105,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, onClose, onSave }) =>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl m-4 transform transition-all max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
           <div className="relative p-8 flex-grow overflow-y-auto">
-            <button type="button" onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <button type="button" onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-600">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Editar seu Perfil</h2>
-            <p className="text-gray-500 mb-6">Mantenha suas informações atualizadas para atrair mais clientes.</p>
+            <p className="text-gray-600 mb-6">Mantenha suas informações atualizadas para atrair mais clientes.</p>
 
             {user.type === 'prestador' && (
                 <div className="mb-6">
@@ -208,7 +208,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, onClose, onSave }) =>
                              </div>
                              <div>
                                  <label htmlFor="portfolio-image-upload" className="sr-only">Imagem do Projeto</label>
-                                 <input type="file" id="portfolio-image-upload" accept="image/*" onChange={e => setNewPortfolioImage(e.target.files ? e.target.files[0] : null)} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+                                 <input type="file" id="portfolio-image-upload" accept="image/*" onChange={e => setNewPortfolioImage(e.target.files ? e.target.files[0] : null)} className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
                              </div>
                              {portfolioError && <p className="text-xs text-red-600">{portfolioError}</p>}
                              <button type="submit" className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600">+ Adicionar Projeto</button>
@@ -217,7 +217,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, onClose, onSave }) =>
 
                     <div className="pt-4 border-t border-gray-200">
                         <h3 className="text-md font-medium text-gray-800">Verificação de Documentos</h3>
-                        <p className="text-sm text-gray-500 mb-3">Aumente a confiança dos clientes (simulação).</p>
+                        <p className="text-sm text-gray-600 mb-3">Aumente a confiança dos clientes (simulação).</p>
                         <div className="space-y-2">
                             <div className="relative flex items-start">
                                 <div className="flex h-6 items-center">
@@ -225,7 +225,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, onClose, onSave }) =>
                                 </div>
                                 <div className="ml-3 text-sm leading-6">
                                     <label htmlFor="certificates" className="font-medium text-gray-900">Possuo certificados e diplomas</label>
-                                    <p className="text-gray-500">Marque se você pode fornecer comprovantes de suas qualificações.</p>
+                                    <p className="text-gray-600">Marque se você pode fornecer comprovantes de suas qualificações.</p>
                                 </div>
                             </div>
                             <div className="relative flex items-start">
@@ -234,7 +234,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, onClose, onSave }) =>
                                 </div>
                                 <div className="ml-3 text-sm leading-6">
                                     <label htmlFor="criminal" className="font-medium text-gray-900">Verificação de antecedentes</label>
-                                    <p className="text-gray-500">Marque se você pode fornecer um atestado de antecedentes criminais.</p>
+                                    <p className="text-gray-600">Marque se você pode fornecer um atestado de antecedentes criminais.</p>
                                 </div>
                             </div>
                         </div>

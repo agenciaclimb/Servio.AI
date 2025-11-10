@@ -99,14 +99,14 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ onClose, onSave }) => {
         return (
              <div className="p-8 text-center">
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">Adicionar Novo Item</h2>
-                <p className="text-gray-500 mb-6">Carregue uma foto e deixe a IA fazer o trabalho pesado.</p>
+                <p className="text-gray-600 mb-6">Carregue uma foto e deixe a IA fazer o trabalho pesado.</p>
                 <div 
                     onDrop={onDrop}
                     onDragOver={onDragOver}
                     className="mt-1 flex justify-center px-6 pt-10 pb-12 border-2 border-gray-300 border-dashed rounded-md"
                 >
                     <div className="space-y-1 text-center">
-                        <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <svg className="mx-auto h-12 w-12 text-gray-500" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         <div className="flex text-sm text-gray-600">
                             <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
                                 <span>Carregue uma foto</span>
@@ -114,7 +114,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ onClose, onSave }) => {
                             </label>
                             <p className="pl-1">ou arraste e solte</p>
                         </div>
-                        <p className="text-xs text-gray-500">PNG, JPG, GIF até 4MB</p>
+                        <p className="text-xs text-gray-600">PNG, JPG, GIF até 4MB</p>
                     </div>
                 </div>
                 {error && <p className="text-sm text-red-600 mt-4">{error}</p>}
@@ -127,7 +127,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ onClose, onSave }) => {
              <form onSubmit={handleSubmit} className="flex flex-col h-full">
                 <div className="p-8 flex-grow overflow-y-auto">
                     <h2 className="text-2xl font-bold text-gray-800 mb-2">Revise as Informações</h2>
-                    <p className="text-gray-500 mb-6">A IA preencheu os detalhes. Edite se necessário.</p>
+                    <p className="text-gray-600 mb-6">A IA preencheu os detalhes. Edite se necessário.</p>
                     
                     <div className="space-y-4">
                         {imageDataUrl && (
@@ -179,7 +179,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ onClose, onSave }) => {
     <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl m-4 transform transition-all max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
         <div className="relative flex-grow">
-            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10">
+            <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-600 z-10">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             {renderContent()}

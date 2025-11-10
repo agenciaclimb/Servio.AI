@@ -99,7 +99,8 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
         try {
           // 1. Get signed URL from our backend
           const token = await auth.currentUser?.getIdToken();
-          const urlResponse = await fetch(`${process.env.REACT_APP_BACKEND_API_URL}/generate-upload-url`, {
+          const backendBase = (import.meta as any).env?.VITE_BACKEND_API_URL || (window?.location?.origin ?? '');
+          const urlResponse = await fetch(`${backendBase.replace(/\/$/, '')}/generate-upload-url`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json',
                        'Authorization': `Bearer ${token}` },
@@ -120,9 +121,8 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
 
         } catch (error) {
           console.error(error);
-          setError(`Erro ao enviar o arquivo: ${file.name}. Tente novamente.`);
-          setStep('review');
-          return;
+          // Graceful degradation: skip media on failure but allow the job request to continue
+          setError(`Não foi possível enviar o arquivo: ${file.name}. O pedido continuará sem este anexo.`);
         }
       }
       
@@ -158,7 +158,7 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
         return (
           <div className="p-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Assistente de Criação de Job</h2>
-            <p className="text-gray-500 mb-6">Quanto mais detalhes, melhores as propostas. Nossa IA vai te ajudar a organizar tudo.</p>
+            <p className="text-gray-600 mb-6">Quanto mais detalhes, melhores as propostas. Nossa IA vai te ajudar a organizar tudo.</p>
             <div className="space-y-6">
                 <div>
                     <label htmlFor="initial-request" className="block text-sm font-medium text-gray-700 mb-1">1. Descreva sua necessidade*</label>
@@ -179,9 +179,9 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
                     <label className="block text-sm font-medium text-gray-700 mb-1">3. Fotos ou vídeos (opcional)</label>
                     <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                         <div className="space-y-1 text-center">
-                        <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <svg className="mx-auto h-12 w-12 text-gray-500" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         <div className="flex text-sm text-gray-600"><label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none"><span>Carregar arquivos</span><input id="file-upload" name="file-upload" type="file" className="sr-only" multiple onChange={handleFileChange} /></label><p className="pl-1">ou arraste e solte</p></div>
-                        <p className="text-xs text-gray-500">PNG, JPG, MP4, PDF até 10MB</p>
+                        <p className="text-xs text-gray-600">PNG, JPG, MP4, PDF até 10MB</p>
                         </div>
                     </div>
                      {files.length > 0 && (
@@ -221,7 +221,7 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
           <form onSubmit={handleFinalSubmit}>
             <div className="p-8">
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">Revise o seu Pedido</h2>
-                <p className="text-gray-500 mb-6">A IA aprimorou sua solicitação. Você pode editar todos os detalhes antes de publicar.</p>
+                <p className="text-gray-600 mb-6">A IA aprimorou sua solicitação. Você pode editar todos os detalhes antes de publicar.</p>
                 <div className="space-y-6">
                     <div>
                         <label htmlFor="service-description" className="block text-sm font-medium text-gray-700">Descrição do Serviço</label>
@@ -239,9 +239,9 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
                         <label className="block text-sm font-medium text-gray-700 mb-1">Adicionar fotos, vídeos ou projetos</label>
                          <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                             <div className="space-y-1 text-center">
-                            <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                            <svg className="mx-auto h-12 w-12 text-gray-500" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                             <div className="flex text-sm text-gray-600"><label htmlFor="file-upload-review" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none"><span>Carregar arquivos</span><input id="file-upload-review" name="file-upload-review" type="file" className="sr-only" multiple onChange={handleFileChange} /></label><p className="pl-1">ou arraste e solte</p></div>
-                            <p className="text-xs text-gray-500">PNG, JPG, MP4, PDF até 10MB</p>
+                            <p className="text-xs text-gray-600">PNG, JPG, MP4, PDF até 10MB</p>
                             </div>
                         </div>
                         {files.length > 0 && (
@@ -273,14 +273,14 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
                                 <span className="text-2xl mt-1">💬</span>
                                 <div>
                                     <p className="font-semibold text-gray-800">Normal</p>
-                                    <p className="text-xs text-gray-500">Receba propostas de múltiplos profissionais.</p>
+                                    <p className="text-xs text-gray-600">Receba propostas de múltiplos profissionais.</p>
                                 </div>
                             </button>
                              <button type="button" onClick={() => setJobMode('leilao')} className={`p-4 rounded-lg border-2 text-left flex items-start space-x-3 transition-all ${jobMode === 'leilao' ? 'bg-orange-50 border-orange-500 ring-2 ring-orange-500' : 'bg-white border-gray-200 hover:border-orange-400'}`}>
                                 <span className="text-2xl mt-1">⚖️</span>
                                 <div>
                                     <p className="font-semibold text-gray-800">Leilão</p>
-                                    <p className="text-xs text-gray-500">Profissionais competem pelo menor preço.</p>
+                                    <p className="text-xs text-gray-600">Profissionais competem pelo menor preço.</p>
                                 </div>
                             </button>
                         </div>
@@ -316,7 +316,7 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
     <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose} data-testid="wizard-modal">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl m-4 transform transition-all max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
         <div className="relative flex-grow overflow-y-auto">
-            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10" data-testid="wizard-close">
+            <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-600 z-10" data-testid="wizard-close">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             {renderContent()}

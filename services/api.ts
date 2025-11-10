@@ -28,8 +28,12 @@ import {
   MOCK_FRAUD_ALERTS,
 } from '../mockData';
 
-// Get backend URL from environment variable
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_BACKEND_API_URL || 'https://servio-backend-h5ogjon7aa-uw.a.run.app';
+// Get backend URL from environment variable (prefer unified VITE_API_BASE_URL)
+const BACKEND_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  import.meta.env.VITE_BACKEND_URL ||
+  import.meta.env.VITE_BACKEND_API_URL ||
+  'https://servio-backend-h5ogjon7aa-uw.a.run.app';
 const USE_MOCK = false; // Always try real backend first, fallback to mock on error
 
 console.log('API Service initialized:', { BACKEND_URL, USE_MOCK });
@@ -670,4 +674,77 @@ export async function matchProvidersForJob(jobId: string): Promise<MatchingProvi
       reason: 'Prestador disponível'
     }));
   }
+}
+
+// ============================================================================
+// ADMIN PROVIDER MANAGEMENT (stubs for future backend integration)
+// ============================================================================
+
+interface ProviderStatusResponse { success: boolean; message: string; user?: User }
+
+/**
+ * Suspends a provider (admin action). Backend should validate admin auth and persist status + audit log.
+ * Stub: Performs API call; if fails, throws (no mock fallback – suspension must be explicit).
+ */
+export async function suspendProvider(userId: string, reason: string): Promise<ProviderStatusResponse> {
+  return apiCall<ProviderStatusResponse>(`/admin/providers/${userId}/suspend`, {
+    method: 'POST',
+    body: JSON.stringify({ reason })
+  });
+}
+
+/**
+ * Reactivates a suspended provider (admin action).
+ */
+export async function reactivateProvider(userId: string): Promise<ProviderStatusResponse> {
+  return apiCall<ProviderStatusResponse>(`/admin/providers/${userId}/reactivate`, {
+    method: 'POST'
+  });
+}
+
+/**
+ * Sets verification status for a provider. Used by admin identity review workflow.
+ */
+export async function setVerificationStatus(userId: string, status: 'pendente' | 'verificado' | 'recusado', note?: string): Promise<ProviderStatusResponse> {
+  return apiCall<ProviderStatusResponse>(`/admin/providers/${userId}/verification`, {
+    method: 'POST',
+    body: JSON.stringify({ status, note })
+  });
+}
+
+// ============================================================================
+// DISPUTE MANAGEMENT
+// ============================================================================
+
+export interface CreateDisputeData {
+  jobId: string;
+  reporterId: string;
+  reporterRole: 'client' | 'provider';
+  reason: string;
+  description: string;
+}
+
+export async function createDispute(data: CreateDisputeData): Promise<Dispute> {
+  return apiCall<Dispute>('/api/disputes', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+}
+
+export async function resolveDispute(disputeId: string, resolution: { decision: string; notes: string }): Promise<Dispute> {
+  return apiCall<Dispute>(`/api/disputes/${disputeId}/resolve`, {
+    method: 'PATCH',
+    body: JSON.stringify(resolution)
+  });
+}
+
+// ============================================================================
+// PAYMENT CONFIRMATION
+// ============================================================================
+
+export async function confirmPayment(jobId: string, sessionId: string): Promise<{ success: boolean }> {
+  return apiCall<{ success: boolean }>('/api/payments/confirm', {
+    method: 'POST',
+    body: JSON.stringify({ jobId, sessionId })
+  });
 }

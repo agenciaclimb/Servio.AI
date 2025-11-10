@@ -33,7 +33,7 @@ const NotificationsBell: React.FC<NotificationsBellProps> = ({ notifications, on
     <div className="relative" ref={popoverRef}>
       <button 
         onClick={togglePopover}
-        className="relative p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        className="relative p-2 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         aria-label="View notifications"
       >
         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

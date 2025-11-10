@@ -18,7 +18,7 @@ const ReferralProgram: React.FC<ReferralProgramProps> = ({ onSendReferral }) => 
     return (
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 h-full flex flex-col">
             <h3 className="font-bold text-gray-800 text-lg">Indique um Colega e Ganhe!</h3>
-            <p className="text-sm text-gray-500 mt-2 flex-grow">
+            <p className="text-sm text-gray-600 mt-2 flex-grow">
                 Conhece um profissional talentoso? Convide-o para a SERVIO.AI.
                 Quando ele completar o primeiro serviço, você ganha R$50!
             </p>

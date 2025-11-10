@@ -18,8 +18,9 @@ const statusDetails: { [key in Proposal['status']]: { text: string; bg: string; 
 };
 
 const ProposalDetailCard: React.FC<ProposalDetailCardProps> = ({ proposal, provider, onAccept, isJobDecided, onViewProfile }) => {
-  const status = statusDetails[proposal.status];
-  const isPending = proposal.status === 'pendente';
+  const statusKey = (proposal.status || 'pendente') as Proposal['status'];
+  const status = statusDetails[statusKey];
+  const isPending = statusKey === 'pendente';
   const providerName = provider?.name || proposal.providerId;
 
   return (
@@ -27,7 +28,7 @@ const ProposalDetailCard: React.FC<ProposalDetailCardProps> = ({ proposal, provi
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
         <div className="flex-grow">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-gray-500">Proposta de:</p>
+            <p className="text-sm font-semibold text-gray-600">Proposta de:</p>
             <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${status.bg} ${status.text_color}`}>
               {status.text}
             </span>
@@ -41,7 +42,7 @@ const ProposalDetailCard: React.FC<ProposalDetailCardProps> = ({ proposal, provi
           </button>
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-6 text-left sm:text-right">
-          <p className="text-sm font-semibold text-gray-500">Valor:</p>
+          <p className="text-sm font-semibold text-gray-600">Valor:</p>
           <p className="text-2xl font-bold text-blue-600">
             {proposal.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </p>
@@ -59,6 +60,7 @@ const ProposalDetailCard: React.FC<ProposalDetailCardProps> = ({ proposal, provi
           <button 
             onClick={() => onAccept(proposal.id)}
             className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg shadow-sm hover:bg-blue-700 transition"
+            data-testid={`accept-proposal-${proposal.id}`}
           >
             Aceitar e Pagar com Segurança
           </button>

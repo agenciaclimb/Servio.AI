@@ -148,14 +148,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId, onBackToDashboard, is
             <div className="p-8">
                 <div className="flex flex-col sm:flex-row sm:items-center">
                     <div className="flex-shrink-0">
-                        <div className="h-24 w-24 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-4xl font-bold">
+                        <div className="h-24 w-24 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 text-4xl font-bold">
                             {user.name.charAt(0)}
                         </div>
                     </div>
                     <div className="mt-4 sm:mt-0 sm:ml-6">
                         <h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
                         {user.type === 'prestador' && <p className="text-lg text-blue-600 font-semibold">{isSeoLoading ? 'Carregando...' : seoContent?.publicHeadline || user.headline}</p>}
-                        <p className="text-sm text-gray-500 mt-1">{user.location}</p>
+                        <p className="text-sm text-gray-600 mt-1">{user.location}</p>
                     </div>
                 </div>
 
@@ -168,15 +168,15 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId, onBackToDashboard, is
                                 <StarIcon key={i} filled={i < Math.round(averageRating)} className="w-6 h-6" />
                             ))}
                         </div>
-                        <p className="text-sm text-gray-500">Avaliação Média</p>
+                        <p className="text-sm text-gray-600">Avaliação Média</p>
                     </div>
                     <div>
                         <p className="text-2xl font-bold text-gray-800">{providerJobs.length}</p>
-                        <p className="text-sm text-gray-500">Jobs Concluídos</p>
+                        <p className="text-sm text-gray-600">Jobs Concluídos</p>
                     </div>
                     <div>
                         <p className="text-2xl font-bold text-gray-800">{new Date(user.memberSince).toLocaleDateString('pt-BR')}</p>
-                        <p className="text-sm text-gray-500">Membro Desde</p>
+                        <p className="text-sm text-gray-600">Membro Desde</p>
                     </div>
                 </div>
                 )}

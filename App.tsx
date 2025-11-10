@@ -1,18 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
+import { ToastProvider } from './contexts/ToastContext'; // Importar o Provider
 import { registerUserFcmToken, onForegroundMessage } from './services/messagingService';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
-import ClientDashboard from './components/ClientDashboard';
-import ProviderDashboard from './components/ProviderDashboard';
-import AdminDashboard from './components/AdminDashboard';
 import AuthModal from './components/AuthModal';
-import AIJobRequestWizard from './components/AIJobRequestWizard';
-import MatchingResultsModal from './components/MatchingResultsModal';
-import ProspectingNotificationModal from './components/ProspectingNotificationModal';
-import ProfilePage from './components/ProfilePage';
-import ServiceLandingPage from './components/ServiceLandingPage';
-import ProviderLandingPage from './components/ProviderLandingPage';
-import FindProvidersPage from './components/FindProvidersPage';
+
+// Code-splitting: lazy load dashboards (componentes pesados)
+const ClientDashboard = lazy(() => import('./components/ClientDashboard'));
+const ProviderDashboard = lazy(() => import('./components/ProviderDashboard'));
+const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
+
+// Code-splitting: lazy load modals e wizards
+const AIJobRequestWizard = lazy(() => import('./components/AIJobRequestWizard'));
+const MatchingResultsModal = lazy(() => import('./components/MatchingResultsModal'));
+const ProspectingNotificationModal = lazy(() => import('./components/ProspectingNotificationModal'));
+
+// Code-splitting: lazy load pages
+const ProfilePage = lazy(() => import('./components/ProfilePage'));
+const ServiceLandingPage = lazy(() => import('./components/ServiceLandingPage'));
+const ProviderLandingPage = lazy(() => import('./components/ProviderLandingPage'));
+const PaymentSuccessPage = lazy(() => import('./components/PaymentSuccessPage'));
+const FindProvidersPage = lazy(() => import('./components/FindProvidersPage'));
 
 import {
   User,
@@ -41,7 +50,8 @@ type View =
   | { name: 'profile'; data: { userId: string, isPublic?: boolean } }
   | { name: 'service-landing'; data: { category: string, location?: string } }
   | { name: 'provider-landing' }
-  | { name: 'find-providers' };
+  | { name: 'find-providers' }
+  | { name: 'payment-success' };
 
 const App: React.FC = () => {
   // State
@@ -93,48 +103,61 @@ const App: React.FC = () => {
   // Auth Handlers
   const handleAuthSuccess = async (email: string, type: UserType) => {
     console.log('handleAuthSuccess', { email, type });
-    let user = await API.fetchUserById(email);
+    
+    try {
+      let user = await API.fetchUserById(email);
 
-    if (!user) {
-      // Create a new user for registration
-      const newUserPayload: Omit<User, 'memberSince' | 'id'> = {
-        email,
-        name: email.split('@')[0],
-        type: type,
-        bio: '',
-        location: 'São Paulo, SP',
-        status: 'ativo',
-        verificationStatus: type === 'prestador' ? 'pendente' : undefined,
-      };
-      // The 'id' should be the same as the email for consistency in our app model
-      user = await API.createUser(newUserPayload);
-    }
-    setCurrentUser(user);
-    setAuthModal(null);
-
-    // Attempt FCM token registration (non-blocking)
-    registerUserFcmToken(email).catch(() => {});
-
-    // Setup foreground notification listener once per session
-    onForegroundMessage((payload) => {
-      if (payload?.notification) {
-        // Simple toast fallback - replace with UI component later
-        console.log('[FCM] Foreground message:', payload);
-        alert(`🔔 ${payload.notification.title || 'Nova notificação'}\n${payload.notification.body || ''}`);
+      if (!user) {
+        // Create a new user for registration
+        const newUserPayload: Omit<User, 'memberSince' | 'id'> = {
+          email,
+          name: email.split('@')[0],
+          type: type,
+          bio: '',
+          location: 'São Paulo, SP',
+          status: 'ativo',
+          verificationStatus: type === 'prestador' ? 'pendente' : undefined,
+        };
+        // The 'id' should be the same as the email for consistency in our app model
+        user = await API.createUser(newUserPayload);
       }
-    });
+      
+      // IMPORTANTE: Primeiro atualiza o usuário, DEPOIS redireciona
+      setCurrentUser(user);
+      setAuthModal(null);
 
-    // Redirecionar para o painel correto após login
-    setView({ name: 'dashboard' });
+      // Attempt FCM token registration (non-blocking)
+      registerUserFcmToken(email).catch(() => {});
 
-    // Se o usuário queria contatar um provedor, faz isso agora
-    if (contactProviderAfterLogin) {
-        handleLoginToContact(contactProviderAfterLogin);
-        setContactProviderAfterLogin(null);
-    } else if (jobDataToCreate) {
-        // Se havia um job sendo criado, abre o wizard agora
-        setWizardData({ data: jobDataToCreate });
-        setJobDataToCreate(null);
+      // Setup foreground notification listener once per session
+      onForegroundMessage((payload) => {
+        if (payload?.notification) {
+          // Simple toast fallback - replace with UI component later
+          console.log('[FCM] Foreground message:', payload);
+          alert(`🔔 ${payload.notification.title || 'Nova notificação'}\n${payload.notification.body || ''}`);
+        }
+      });
+
+      // Pequeno delay para garantir que o estado foi atualizado
+      setTimeout(() => {
+        // Redirecionar para o painel correto após login
+        setView({ name: 'dashboard' });
+
+        // Se o usuário queria contatar um provedor, faz isso agora
+        if (contactProviderAfterLogin) {
+            handleLoginToContact(contactProviderAfterLogin);
+            setContactProviderAfterLogin(null);
+        } else if (jobDataToCreate) {
+            // Se havia um job sendo criado, abre o wizard agora
+            setWizardData({ data: jobDataToCreate });
+            setJobDataToCreate(null);
+        }
+      }, 100);
+      
+    } catch (error) {
+      console.error('Erro no login:', error);
+      alert('Erro ao fazer login. Por favor, tente novamente.');
+      setAuthModal(null);
     }
   };
 
@@ -315,7 +338,15 @@ const App: React.FC = () => {
       // FIX: Add case for find-providers view
       case 'find-providers':
           return <FindProvidersPage allUsers={[]} allJobs={[]} onViewProfile={(userId) => handleSetView('profile', { userId, isPublic: !currentUser })} onContact={handleLoginToContact} />;
+      case 'payment-success':
+        return <PaymentSuccessPage />;
       case 'home':
+        return (
+          <div>
+            <HeroSection onSmartSearch={handleSmartSearch} />
+          </div>
+        );
+
       default:
         return (
           <div>
@@ -337,64 +368,86 @@ const App: React.FC = () => {
     return () => window.removeEventListener('open-wizard-from-chat', handler as EventListener);
   }, []);
 
-  return (
-    <div className="bg-slate-50 min-h-screen">
-      <Header
-        user={currentUser}
-        notifications={userNotifications}
-        onLoginClick={(type) => setAuthModal({ mode: 'login', userType: type })}
-        onRegisterClick={(type) => setAuthModal({ mode: 'register', userType: type })}
-        onLogoutClick={handleLogout}
-        onSetView={handleSetView}
-        onMarkAsRead={(id) => setAllNotifications(allNotifications.map(n => n.id === id ? {...n, isRead: true} : n))}
-        onMarkAllAsRead={() => setAllNotifications(allNotifications.map(n => n.userId === currentUser?.email ? {...n, isRead: true} : n))}
-      />
-      <main>
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            {renderContent()}
-        </div>
-      </main>
-
-      {authModal && (
-        <AuthModal
-          mode={authModal.mode}
-          userType={authModal.userType}
-          onClose={() => setAuthModal(null)}
-          onSwitchMode={(newMode) => setAuthModal({ ...authModal, mode: newMode })}
-          onSuccess={handleAuthSuccess}
-        />
-      )}
-      
-      {wizardData && (
-        <AIJobRequestWizard 
-            onClose={() => setWizardData(null)}
-            onSubmit={handleWizardSubmit}
-            initialPrompt={wizardData.prompt}
-            initialData={wizardData.data}
-        />
-      )}
-
-      {matchingResults && (
-        <MatchingResultsModal 
-            results={matchingResults}
-            onClose={() => {
-              setMatchingResults(null);
-              setView({ name: 'dashboard' });
-            }}
-            onInvite={handleInviteProvider}
-        />
-      )}
-      
-      {prospects && (
-        <ProspectingNotificationModal
-            prospects={prospects}
-            onClose={() => {
-              setProspects(null);
-              setView({ name: 'dashboard' });
-            }}
-        />
-      )}
+  // Loading fallback component para Suspense
+  const LoadingFallback = () => (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+        <p className="text-slate-600">Carregando...</p>
+      </div>
     </div>
+  );
+
+  return (
+    <ToastProvider> {/* Envolver a aplicação com o ToastProvider */}
+      <div className="bg-slate-50 min-h-screen">
+        <Header
+          user={currentUser}
+          notifications={userNotifications}
+          onLoginClick={(type) => setAuthModal({ mode: 'login', userType: type })}
+          onRegisterClick={(type) => setAuthModal({ mode: 'register', userType: type })}
+          onLogoutClick={handleLogout}
+          onSetView={handleSetView}
+          onMarkAsRead={(id) => setAllNotifications(allNotifications.map(n => n.id === id ? {...n, isRead: true} : n))}
+          onMarkAllAsRead={() => setAllNotifications(allNotifications.map(n => n.userId === currentUser?.email ? {...n, isRead: true} : n))}
+        />
+        <main>
+          <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <ErrorBoundary>
+              <Suspense fallback={<LoadingFallback />}>
+                {renderContent()}
+              </Suspense>
+            </ErrorBoundary>
+          </div>
+        </main>
+
+        {authModal && (
+          <AuthModal
+            mode={authModal.mode}
+            userType={authModal.userType}
+            onClose={() => setAuthModal(null)}
+            onSwitchMode={(newMode) => setAuthModal({ ...authModal, mode: newMode })}
+            onSuccess={handleAuthSuccess}
+          />
+        )}
+        
+        {wizardData && (
+          <Suspense fallback={<LoadingFallback />}>
+            <AIJobRequestWizard 
+                onClose={() => setWizardData(null)}
+                onSubmit={handleWizardSubmit}
+                initialPrompt={wizardData.prompt}
+                initialData={wizardData.data}
+            />
+          </Suspense>
+        )}
+
+        {matchingResults && (
+          <Suspense fallback={<LoadingFallback />}>
+            <MatchingResultsModal 
+                results={matchingResults}
+                onClose={() => {
+                  setMatchingResults(null);
+                  setView({ name: 'dashboard' });
+                }}
+                onInvite={handleInviteProvider}
+            />
+          </Suspense>
+        )}
+        
+        {prospects && (
+          <Suspense fallback={<LoadingFallback />}>
+            <ProspectingNotificationModal
+                prospects={prospects}
+                onClose={() => {
+                  setProspects(null);
+                  setView({ name: 'dashboard' });
+                }}
+            />
+          </Suspense>
+        )}
+      </div>
+    </ToastProvider>
   );
 };
 

@@ -62,7 +62,7 @@ const ProviderEarningsCard: React.FC<ProviderEarningsCardProps> = ({
         <p className="text-3xl font-bold text-green-600">
           {totalEarnings.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
         </p>
-        <p className="text-xs text-gray-500 mt-1">{completedJobs.length} serviços concluídos</p>
+        <p className="text-xs text-gray-600 mt-1">{completedJobs.length} serviços concluídos</p>
       </div>
 
       {/* This Month */}
@@ -72,7 +72,7 @@ const ProviderEarningsCard: React.FC<ProviderEarningsCardProps> = ({
           <p className="text-lg font-bold text-blue-600">
             {thisMonthEarnings.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </p>
-          <p className="text-xs text-gray-500">{thisMonthJobs.length} jobs</p>
+          <p className="text-xs text-gray-600">{thisMonthJobs.length} jobs</p>
         </div>
 
         <div className="bg-white rounded-lg p-3 shadow-sm">
@@ -80,7 +80,7 @@ const ProviderEarningsCard: React.FC<ProviderEarningsCardProps> = ({
           <p className="text-lg font-bold text-purple-600">
             {averageJobValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </p>
-          <p className="text-xs text-gray-500">ticket médio</p>
+          <p className="text-xs text-gray-600">ticket médio</p>
         </div>
       </div>
 
@@ -96,7 +96,7 @@ const ProviderEarningsCard: React.FC<ProviderEarningsCardProps> = ({
             style={{ width: `${currentRate * 100}%` }}
           ></div>
         </div>
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-gray-600 mt-1">
           Plataforma: {platformFee.toFixed(0)}% • Você: {(currentRate * 100).toFixed(0)}%
         </p>
       </div>
