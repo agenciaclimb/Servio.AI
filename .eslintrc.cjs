@@ -20,11 +20,15 @@ module.exports = {
   settings: {},
   ignorePatterns: ['dist', 'node_modules', 'doc/**', 'backend/**'],
   rules: {
-    'react/react-in-jsx-scope': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-unused-vars': 'off',
-    'no-case-declarations': 'off',
-    'prefer-const': 'off',
-    'react-hooks/exhaustive-deps': 'off',
+    'react/react-in-jsx-scope': 'off', // React 18+ não precisa
+    '@typescript-eslint/no-explicit-any': 'warn', // Permitir mas avisar
+    '@typescript-eslint/no-unused-vars': ['error', { 
+      argsIgnorePattern: '^_',
+      varsIgnorePattern: '^_'
+    }],
+    'no-case-declarations': 'warn',
+    'prefer-const': 'warn',
+    'react-hooks/exhaustive-deps': 'warn', // CRÍTICO para React
+    'no-console': ['warn', { allow: ['warn', 'error'] }], // Bloquear console.log em prod
   },
 };
