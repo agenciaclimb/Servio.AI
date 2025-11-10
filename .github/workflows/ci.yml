@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
 
       - name: Install dependencies (root)
         run: |
@@ -63,6 +63,21 @@ jobs:
 
       - name: Build (validate production bundle)
         run: npm run build
+
+      - name: Check bundle size
+        run: |
+          BUNDLE_SIZE=$(du -sh dist | cut -f1)
+          echo "📦 Bundle size: $BUNDLE_SIZE"
+
+      - name: Security audit (npm)
+        continue-on-error: true
+        run: |
+          npm audit --audit-level=high || echo "⚠️ Vulnerabilidades encontradas"
+
+      - name: Dependency check
+        continue-on-error: true
+        run: |
+          npx depcheck --ignores="@types/*,eslint-*,@typescript-eslint/*,prettier,husky,lint-staged,vite,vitest,@vitejs/*,cypress,playwright"
 
       - name: Install gitleaks
         run: |
