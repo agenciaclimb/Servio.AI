@@ -129,6 +129,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
   const completedJobs = userJobs.filter(j => j.status === 'concluido');
   const profileComplete = Boolean(user.address && user.bio && user.bio.length > 20);
   const onboardingStepsDone = [profileComplete, userJobs.length > 0, maintainedItems.length > 0].filter(Boolean).length;
+  const onboardingStepsTotal = 4;
   const handleAcceptProposal = async (proposalId: string) => {
     const proposal = allProposals.find(p => p.id === proposalId);
     if (!proposal) return;
