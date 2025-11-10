@@ -1,5 +1,6 @@
 import React from 'react';
 import { Job, User, UserStatus, Notification } from '../types';
+import { suspendProvider, reactivateProvider, setVerificationStatus, createNotification } from '../services/api';
 import AdminVerificationCard from './AdminVerificationCard';
 
 interface AdminProviderManagementProps {
@@ -18,25 +19,52 @@ const AdminProviderManagement: React.FC<AdminProviderManagementProps> = ({ allUs
   const providers = allUsers.filter(u => u.type === 'prestador');
   const pendingVerifications = providers.filter(p => p.verificationStatus === 'pendente');
 
-  const handleUpdateStatus = (userId: string, status: UserStatus) => {
-    setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status } : u));
-  };
+    const handleUpdateStatus = async (userId: string, status: UserStatus) => {
+        // optimistic update
+        const prevUsers = allUsers;
+        setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status } : u));
+        try {
+            if (status === 'suspenso') {
+                await suspendProvider(userId, 'Suspended by admin via dashboard');
+                await createNotification({ userId, text: 'Sua conta foi suspensa. Entre em contato com o suporte.', isRead: false });
+            } else {
+                await reactivateProvider(userId);
+                await createNotification({ userId, text: 'Sua conta foi reativada. Você já pode voltar a trabalhar.', isRead: false });
+            }
+        } catch (err) {
+            console.error('Failed to persist provider status change:', err);
+            // revert optimistic change on error
+            setAllUsers(prevUsers);
+        }
+    };
   
-  const handleVerificationDecision = (userId: string, decision: 'verificado' | 'recusado') => {
-      setAllUsers(prev => prev.map(u => u.email === userId ? {...u, verificationStatus: decision} : u));
+    const handleVerificationDecision = async (userId: string, decision: 'verificado' | 'recusado') => {
+        // optimistic update
+        const prevUsers = allUsers;
+        setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, verificationStatus: decision } : u));
 
-      const notificationText = decision === 'verificado'
-          ? "Parabéns! Sua identidade foi verificada e seu perfil está ativo."
-          : "Houve um problema com sua verificação de identidade. Por favor, envie seus documentos novamente.";
+        const notificationText = decision === 'verificado'
+            ? 'Parabéns! Sua identidade foi verificada e seu perfil está ativo.'
+            : 'Houve um problema com sua verificação de identidade. Por favor, envie seus documentos novamente.';
 
-      setAllNotifications(prev => [...prev, {
-          id: `notif-verify-${Date.now()}`,
-          userId: userId,
-          text: notificationText,
-          isRead: false,
-          createdAt: new Date().toISOString(),
-      }]);
-  };
+        try {
+            await setVerificationStatus(userId, decision);
+            // persist notification server-side; also reflect locally for instant UX
+            const created = await createNotification({ userId, text: notificationText, isRead: false });
+            setAllNotifications(prev => [...prev, created]);
+        } catch (err) {
+            console.error('Failed to persist verification decision:', err);
+            // revert optimistic change on error, still show local notification to guide admin
+            setAllUsers(prevUsers);
+            setAllNotifications(prev => [...prev, {
+                id: `notif-verify-${Date.now()}`,
+                userId: userId,
+                text: notificationText,
+                isRead: false,
+                createdAt: new Date().toISOString(),
+            }]);
+        }
+    };
 
   const getProviderStats = (providerId: string) => {
     const providerJobs = allJobs.filter(j => j.providerId === providerId);
@@ -71,12 +99,12 @@ const AdminProviderManagement: React.FC<AdminProviderManagementProps> = ({ allUs
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Verificação</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jobs Concluídos</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Média Aval.</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Nome</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Verificação</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Jobs Concluídos</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Média Aval.</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Ações</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -87,7 +115,7 @@ const AdminProviderManagement: React.FC<AdminProviderManagementProps> = ({ allUs
                                     <tr key={provider.email}>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">{provider.name}</div>
-                                            <div className="text-sm text-gray-500">{provider.email}</div>
+                                            <div className="text-sm text-gray-600">{provider.email}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                                             {provider.verificationStatus === 'verificado' && <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Verificado</span>}

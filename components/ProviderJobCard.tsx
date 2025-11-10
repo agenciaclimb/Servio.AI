@@ -17,7 +17,7 @@ const ProviderJobCard: React.FC<ProviderJobCardProps> = ({ job, client, onChat, 
       <div className="p-6 flex-grow flex flex-col">
         <div>
             <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">{job.category}</p>
-            <p className="text-xs text-gray-500 mt-1">Cliente: {clientName}</p>
+            <p className="text-xs text-gray-600 mt-1">Cliente: {clientName}</p>
         </div>
         <p className="mt-2 text-gray-700 text-sm flex-grow line-clamp-3">{job.description}</p>
         <div className="mt-4">

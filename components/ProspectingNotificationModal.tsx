@@ -25,8 +25,8 @@ const ProspectingNotificationModal: React.FC<ProspectingNotificationModalProps> 
                         Nossa equipe foi notificada e já está buscando ativamente os melhores talentos para o seu serviço. Entraremos em contato em breve.
                     </p>
                      <div className="mt-6 text-left text-xs bg-gray-50 p-3 rounded-lg border">
-                        <p className="font-semibold text-gray-500">A IA sugeriu os seguintes perfis para nossa equipe de prospecção:</p>
-                        <ul className="list-disc list-inside mt-2 text-gray-500">
+                        <p className="font-semibold text-gray-600">A IA sugeriu os seguintes perfis para nossa equipe de prospecção:</p>
+                        <ul className="list-disc list-inside mt-2 text-gray-600">
                             {prospects.map(p => <li key={p.name}>{p.name} ({p.specialty})</li>)}
                         </ul>
                     </div>

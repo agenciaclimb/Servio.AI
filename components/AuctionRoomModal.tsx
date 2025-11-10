@@ -44,7 +44,7 @@ const CountdownTimer: React.FC<{ endDate: string }> = ({ endDate }) => {
                     {Object.entries(timeLeft).map(([interval, value]) => (
                         <div key={interval} className="flex flex-col items-center">
                             <span className="text-2xl font-bold text-gray-800">{value.toString().padStart(2, '0')}</span>
-                            <span className="text-xs text-gray-500 uppercase">{interval}</span>
+                            <span className="text-xs text-gray-600 uppercase">{interval}</span>
                         </div>
                     ))}
                 </div>
@@ -120,11 +120,11 @@ const AuctionRoomModal: React.FC<AuctionRoomModalProps> = ({ job, currentUser, b
         <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl m-4 transform transition-all h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
                 <header className="relative p-6 border-b border-gray-200">
-                    <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-600">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                     <h2 className="text-xl font-bold text-gray-800">Sala de Leilão ⚖️</h2>
-                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">{job.description}</p>
+                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{job.description}</p>
                 </header>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 flex-grow min-h-0">
@@ -139,13 +139,13 @@ const AuctionRoomModal: React.FC<AuctionRoomModalProps> = ({ job, currentUser, b
                                     </div>
                                     <div className="ml-3 flex-grow">
                                         <p className="text-sm font-semibold text-gray-700">{bidderAnonymizationMap.get(bid.providerId) || 'Lance Anônimo'}</p>
-                                        <p className="text-xs text-gray-500">{new Date(bid.createdAt).toLocaleString('pt-BR')}</p>
+                                        <p className="text-xs text-gray-600">{new Date(bid.createdAt).toLocaleString('pt-BR')}</p>
                                     </div>
                                     <p className="text-lg font-bold text-gray-800">{bid.amount.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
                                 </div>
                             ))
                         ) : (
-                            <p className="text-center text-gray-500">Seja o primeiro a dar um lance!</p>
+                            <p className="text-center text-gray-600">Seja o primeiro a dar um lance!</p>
                         )}
                     </main>
 
@@ -153,11 +153,11 @@ const AuctionRoomModal: React.FC<AuctionRoomModalProps> = ({ job, currentUser, b
                     <aside className="p-6 flex flex-col justify-between">
                        <div>
                          <div className="pb-6 border-b">
-                            <h4 className="text-sm font-semibold text-gray-500 text-center mb-2">Tempo Restante</h4>
+                            <h4 className="text-sm font-semibold text-gray-600 text-center mb-2">Tempo Restante</h4>
                             {job.auctionEndDate && <CountdownTimer endDate={job.auctionEndDate} />}
                         </div>
                         <div className="pt-6">
-                            <h4 className="text-sm font-semibold text-gray-500 text-center mb-1">Menor Lance</h4>
+                            <h4 className="text-sm font-semibold text-gray-600 text-center mb-1">Menor Lance</h4>
                             <p className="text-4xl font-bold text-green-600 text-center">{lowestBid ? lowestBid.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : '---'}</p>
                         </div>
                        </div>
@@ -167,7 +167,7 @@ const AuctionRoomModal: React.FC<AuctionRoomModalProps> = ({ job, currentUser, b
                                 <label htmlFor="bid-amount" className="block text-sm font-medium text-gray-700">Seu lance (deve ser menor)</label>
                                 <div className="relative mt-1 rounded-md shadow-sm">
                                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                        <span className="text-gray-500 sm:text-sm">R$</span>
+                                        <span className="text-gray-600 sm:text-sm">R$</span>
                                     </div>
                                     <input type="number" name="bid-amount" id="bid-amount" step="1"
                                         value={newBidAmount}

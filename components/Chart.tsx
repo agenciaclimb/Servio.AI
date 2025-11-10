@@ -25,7 +25,7 @@ const Chart: React.FC<ChartProps> = ({ title, data }) => {
               </div>
             </div>
           </div>
-        )) : <p className="text-sm text-gray-500">Dados insuficientes para exibir o gráfico.</p>}
+        )) : <p className="text-sm text-gray-600">Dados insuficientes para exibir o gráfico.</p>}
       </div>
     </div>
   );

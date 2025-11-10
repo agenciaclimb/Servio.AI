@@ -173,11 +173,11 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
     <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg m-4 transform transition-all h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
         <header className="relative p-4 border-b border-gray-200 flex-shrink-0">
-            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-600">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             <h2 className="text-lg font-bold text-gray-800">Chat com {otherParty?.name || 'Usuário'}</h2>
-            <p className="text-sm text-gray-500 truncate">Sobre o job: {job.category}</p>
+            <p className="text-sm text-gray-600 truncate">Sobre o job: {job.category}</p>
         </header>
 
         <main className="flex-grow overflow-y-auto p-4 space-y-4 bg-slate-100">
@@ -219,7 +219,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
                     <div key={msg.id} className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
                         <div className={`max-w-xs md:max-w-md px-4 py-2 rounded-2xl ${isCurrentUser ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}>
                             <p>{msg.text}</p>
-                            <p className={`text-xs mt-1 ${isCurrentUser ? 'text-blue-200' : 'text-gray-500'}`}>
+                            <p className={`text-xs mt-1 ${isCurrentUser ? 'text-blue-200' : 'text-gray-600'}`}>
                                 {new Date(msg.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                             </p>
                         </div>

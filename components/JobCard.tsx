@@ -85,7 +85,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, bids, onProposeClick, hasPropose
 
       </div>
       <div className="px-6 pb-4 pt-2 bg-gray-50 border-t border-gray-100">
-        <div className="flex justify-between items-center text-xs text-gray-500 mb-4">
+        <div className="flex justify-between items-center text-xs text-gray-600 mb-4">
             <span>Publicado {timeAgo(job.createdAt)}</span>
              {!isAuction && (
                 <button onClick={() => setIsFaqOpen(true)} className="font-semibold text-blue-600 hover:underline">

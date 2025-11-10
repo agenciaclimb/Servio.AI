@@ -20,7 +20,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch }) => {
         Qual problema podemos 
         <span className="block text-blue-600">resolver para você hoje?</span>
       </h1>
-      <p className="mt-4 max-w-md mx-auto text-lg text-gray-500 sm:text-xl md:mt-5 md:max-w-3xl">
+      <p className="mt-4 max-w-md mx-auto text-lg text-gray-600 sm:text-xl md:mt-5 md:max-w-3xl">
         Simplesmente descreva sua necessidade abaixo e deixe nossa IA criar um pedido de serviço detalhado para os melhores profissionais.
       </p>
       <div className="mt-8 max-w-xl mx-auto">
@@ -45,7 +45,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch }) => {
             Começar Agora ✨
           </button>
         </form>
-         <p className="mt-4 text-xs text-gray-500">
+         <p className="mt-4 text-xs text-gray-600">
             Ao continuar, você concorda com nossos Termos de Serviço e Política de Privacidade.
         </p>
       </div>

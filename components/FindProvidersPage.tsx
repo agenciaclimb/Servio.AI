@@ -233,7 +233,7 @@ const FindProvidersPage: React.FC<FindProvidersPageProps> = ({ allUsers, allJobs
             ) : (
                 <div className="text-center py-16 bg-white rounded-2xl shadow-lg border border-gray-100">
                     <h3 className="text-lg font-medium text-gray-900">Nenhum resultado encontrado</h3>
-                    <p className="mt-1 text-sm text-gray-500">Tente ajustar seus termos de busca ou limpar os filtros.</p>
+                    <p className="mt-1 text-sm text-gray-600">Tente ajustar seus termos de busca ou limpar os filtros.</p>
                 </div>
             )}
         </main>

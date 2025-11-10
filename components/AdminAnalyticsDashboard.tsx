@@ -27,7 +27,7 @@ const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = ({
             <div>
               <p className="text-sm text-gray-600 mb-1">Usuários Totais</p>
               <p className="text-3xl font-bold text-gray-900">{analytics.users.total}</p>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-gray-600 mt-2">
                 {analytics.users.activeProviders} prestadores ativos
               </p>
             </div>
@@ -41,7 +41,7 @@ const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = ({
             <div>
               <p className="text-sm text-gray-600 mb-1">Jobs Criados</p>
               <p className="text-3xl font-bold text-gray-900">{analytics.jobs.total}</p>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-gray-600 mt-2">
                 {analytics.jobs.completionRate}% conclusão
               </p>
             </div>
@@ -57,7 +57,7 @@ const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = ({
               <p className="text-3xl font-bold text-gray-900">
                 {analytics.revenue.platform.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </p>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-gray-600 mt-2">
                 Ticket médio: {analytics.revenue.avgJobValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </p>
             </div>
@@ -71,7 +71,7 @@ const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = ({
             <div>
               <p className="text-sm text-gray-600 mb-1">Disputas</p>
               <p className="text-3xl font-bold text-gray-900">{analytics.disputes.total}</p>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-gray-600 mt-2">
                 {analytics.disputes.open} abertas • {analytics.disputes.rate}% taxa
               </p>
             </div>
@@ -87,7 +87,7 @@ const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = ({
           <div className="flex justify-between items-center">
             <span className="text-2xl font-bold text-orange-600">{analytics.fraud.total}</span>
             <div className="text-right">
-              <p className="text-xs text-gray-500">{analytics.fraud.new} novos</p>
+              <p className="text-xs text-gray-600">{analytics.fraud.new} novos</p>
               <p className="text-xs text-red-600">{analytics.fraud.highRisk} alto risco</p>
             </div>
           </div>
@@ -98,7 +98,7 @@ const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = ({
           <div className="flex justify-between items-center">
             <span className="text-2xl font-bold text-blue-600">{analytics.recent.jobs}</span>
             <div className="text-right">
-              <p className="text-xs text-gray-500">jobs criados</p>
+              <p className="text-xs text-gray-600">jobs criados</p>
               <p className="text-xs text-green-600">{analytics.recent.completions} concluídos</p>
             </div>
           </div>
@@ -109,7 +109,7 @@ const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = ({
           <div className="flex justify-between items-center">
             <span className="text-2xl font-bold text-indigo-600">{analytics.users.verifiedProviders}</span>
             <div className="text-right">
-              <p className="text-xs text-gray-500">verificados</p>
+              <p className="text-xs text-gray-600">verificados</p>
               <p className="text-xs text-red-600">{analytics.users.suspendedUsers} suspensos</p>
             </div>
           </div>
@@ -125,7 +125,7 @@ const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = ({
             {analytics.topCategories.map(([category, count], idx) => (
               <div key={category} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <span className="text-sm font-medium text-gray-500 w-6">#{idx + 1}</span>
+                  <span className="text-sm font-medium text-gray-600 w-6">#{idx + 1}</span>
                   <span className="text-sm text-gray-900">{category}</span>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -149,10 +149,10 @@ const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = ({
             {analytics.topProviders.map((provider, idx) => (
               <div key={provider.email} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <span className="text-sm font-medium text-gray-500 w-6">#{idx + 1}</span>
+                  <span className="text-sm font-medium text-gray-600 w-6">#{idx + 1}</span>
                   <div>
                     <p className="text-sm font-medium text-gray-900">{provider.name}</p>
-                    <p className="text-xs text-gray-500">{provider.email}</p>
+                    <p className="text-xs text-gray-600">{provider.email}</p>
                   </div>
                 </div>
                 <span className="text-sm font-semibold text-green-600">{provider.count} jobs</span>

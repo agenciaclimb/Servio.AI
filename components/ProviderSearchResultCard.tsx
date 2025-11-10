@@ -37,7 +37,7 @@ const ProviderSearchResultCard: React.FC<ProviderSearchResultCardProps> = ({ pro
       <div className="p-6 flex-grow">
         <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">{provider.service}</p>
         <h3 className="block mt-1 text-lg leading-tight font-bold text-black">{provider.name}</h3>
-        <p className="mt-2 text-gray-500 text-sm">{provider.location}</p>
+        <p className="mt-2 text-gray-600 text-sm">{provider.location}</p>
 
         <div className="flex items-center mt-3 text-xs text-gray-600 space-x-4">
             <div className="flex items-center">
@@ -45,7 +45,7 @@ const ProviderSearchResultCard: React.FC<ProviderSearchResultCardProps> = ({ pro
                 <span className="font-semibold ml-1.5">{provider.rating.toFixed(1)}</span>
             </div>
             <div className="flex items-center">
-                 <svg className="w-4 h-4 mr-1 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" /></svg>
+                 <svg className="w-4 h-4 mr-1 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" /></svg>
                 <span className="font-semibold">{provider.jobsCompleted}</span>
                 <span className="ml-1">jobs concluídos</span>
             </div>

@@ -24,7 +24,7 @@ const StepCard: React.FC<{ number: string; title: string; children: React.ReactN
             {number}
         </div>
         <h3 className="mt-4 text-xl font-bold text-gray-800">{title}</h3>
-        <p className="mt-2 text-gray-500">{children}</p>
+        <p className="mt-2 text-gray-600">{children}</p>
     </div>
 );
 
@@ -38,7 +38,7 @@ const ProviderLandingPage: React.FC<ProviderLandingPageProps> = ({ onRegisterCli
           Sua expertise, nossos clientes.
           <span className="block text-blue-600">Junte-se à revolução dos serviços.</span>
         </h1>
-        <p className="mt-4 max-w-md mx-auto text-lg text-gray-500 sm:text-xl md:mt-5 md:max-w-3xl">
+        <p className="mt-4 max-w-md mx-auto text-lg text-gray-600 sm:text-xl md:mt-5 md:max-w-3xl">
           Conectamos seu talento a milhares de clientes que precisam de você. Foque no que você faz de melhor, e deixe que a SERVIO.AI cuide do resto.
         </p>
         <div className="mt-8">
@@ -54,7 +54,7 @@ const ProviderLandingPage: React.FC<ProviderLandingPageProps> = ({ onRegisterCli
       {/* How it Works Section */}
       <section className="py-20">
         <h2 className="text-3xl font-bold text-center text-gray-900">Simples, rápido e eficiente</h2>
-        <p className="text-center mt-2 text-gray-500">Comece a receber propostas em 3 passos:</p>
+        <p className="text-center mt-2 text-gray-600">Comece a receber propostas em 3 passos:</p>
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-12">
             <StepCard number="1" title="Crie seu Perfil Grátis">
                 Mostre suas habilidades, adicione sua localização e deixe nossa IA otimizar seu perfil para atrair os clientes certos.
@@ -71,7 +71,7 @@ const ProviderLandingPage: React.FC<ProviderLandingPageProps> = ({ onRegisterCli
       {/* Benefits Section */}
       <section className="py-20 bg-slate-50 rounded-lg">
         <h2 className="text-3xl font-bold text-center text-gray-900">Vantagens que fazem a diferença</h2>
-         <p className="text-center mt-2 text-gray-500">Ferramentas para impulsionar seu negócio.</p>
+         <p className="text-center mt-2 text-gray-600">Ferramentas para impulsionar seu negócio.</p>
         <div className="mt-12 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
           <FeatureCard icon="🎯" title="Clientes Qualificados">
             Chega de perder tempo. Conectamos você a clientes que realmente precisam dos seus serviços e estão prontos para contratar.

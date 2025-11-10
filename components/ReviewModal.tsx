@@ -48,11 +48,11 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ job, onClose, onSubmit }) => 
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg m-4 transform transition-all" onClick={(e) => e.stopPropagation()}>
         <form onSubmit={handleSubmit}>
           <div className="relative p-8">
-              <button type="button" onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+              <button type="button" onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-600">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
               </button>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Finalizar e Avaliar Serviço</h2>
-              <p className="text-gray-500 mb-6">Seu feedback é importante para a comunidade.</p>
+              <p className="text-gray-600 mb-6">Seu feedback é importante para a comunidade.</p>
 
               <div className="space-y-6">
                 <div>

@@ -35,7 +35,7 @@ const CompletedJobCard: React.FC<CompletedJobCardProps> = ({ job, client }) => {
                         <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide">{name}</p>
                     </div>
                     <p className="text-sm text-gray-600">{job.description}</p>
-                    <p className="text-xs text-gray-400 mt-2">Cliente: {clientName}</p>
+                    <p className="text-xs text-gray-500 mt-2">Cliente: {clientName}</p>
                 </div>
                 {job.review && (
                     <div className="mt-4 sm:mt-0 sm:ml-6 text-left sm:text-right flex-shrink-0">

@@ -57,7 +57,7 @@ const ServiceLandingPage: React.FC<ServiceLandingPageProps> = ({ category, locat
         {isLoading && Array.from({ length: 6 }).map((_, i) => <ProviderCardSkeleton key={i} />)}
         {!isLoading && error && <p className="text-red-500 col-span-full">{error}</p>}
         {!isLoading && providers.length === 0 && !error && (
-          <p className="text-gray-500 col-span-full">Nenhum prestador encontrado para esta categoria.</p>
+          <p className="text-gray-600 col-span-full">Nenhum prestador encontrado para esta categoria.</p>
         )}
         {/* Here you would map over `providers` and render a real ProviderCard component */}
       </div>

@@ -1,82 +1,87 @@
-
 import React, { useState } from 'react';
-import { Job, Proposal, User } from '../types';
+import type { Job, Proposal, User } from '../types';
 
 interface PaymentModalProps {
   job: Job;
   proposal: Proposal;
   provider: User;
+  isOpen: boolean;
   onClose: () => void;
-  onPaymentSuccess: () => void;
+  onConfirmPayment: (proposal: Proposal) => Promise<void>;
 }
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ job, proposal, provider, onClose, onPaymentSuccess }) => {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const platformFee = proposal.price * 0.15;
-  const providerReceives = proposal.price * 0.85;
+const PaymentModal: React.FC<PaymentModalProps> = ({ job, proposal, provider, isOpen, onClose, onConfirmPayment }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleConfirmPayment = () => {
-    setIsProcessing(true);
-    // Simulate API call to payment gateway
-    setTimeout(() => {
-        onPaymentSuccess();
-        setIsProcessing(false);
-    }, 1500);
+  if (!isOpen) {
+    return null;
+  }
+
+  const handlePayment = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await onConfirmPayment(proposal);
+      // A navegação será tratada pela função onConfirmPayment
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ocorreu um erro desconhecido.');
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg m-4 transform transition-all" onClick={(e) => e.stopPropagation()}>
-        <div className="relative p-8">
-            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md m-4 transform transition-all" data-testid="payment-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="relative p-8 text-center">
+          <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">&times;</button>
+          
+          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
+            <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H4a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+          </div>
+
+          <h2 className="text-2xl font-bold text-gray-800">Finalizar Pagamento</h2>
+          <p className="text-gray-600 mt-2">Você está contratando <span className="font-semibold">{provider.name}</span> para o serviço de <span className="font-semibold">{job.category}</span>.</p>
+
+          <div className="mt-6 bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+            <div className="flex justify-between items-center text-lg">
+              <span className="font-bold text-gray-900">Total a pagar:</span>
+              <span className="font-bold text-blue-600">{proposal.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+            </div>
+          </div>
+
+          <div className="mt-6 text-left bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <h4 className="font-bold text-yellow-800 text-sm mb-2">🔒 Como funciona o Pagamento Seguro:</h4>
+            <ul className="space-y-1 text-xs text-yellow-700 list-disc list-inside">
+              <li>Seu dinheiro fica bloqueado com segurança na plataforma.</li>
+              <li>Você aprova a liberação para o profissional somente após a conclusão do serviço.</li>
+              <li>Em caso de problema, você pode abrir uma disputa para nossa equipe mediar.</li>
+            </ul>
+          </div>
+
+          {error && (
+            <div className="mt-4 text-center p-3 bg-red-100 text-red-700 rounded-lg">
+              <p className="font-semibold">Erro ao processar pagamento</p>
+              <p className="text-sm">{error} Tente novamente.</p>
+            </div>
+          )}
+
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <button onClick={onClose} disabled={isLoading} className="flex-1 px-4 py-3 text-sm font-medium rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300">
+              Cancelar
             </button>
-            <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-800">Pagamento Seguro</h2>
-                <p className="text-gray-500 mt-2">Você está contratando <span className="font-semibold text-gray-700">{provider.name}</span> para o serviço de <span className="font-semibold text-gray-700">{job.category}</span>.</p>
-            </div>
-
-            <div className="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6 space-y-4">
-                <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Valor do serviço</span>
-                    <span className="font-semibold text-gray-800">{proposal.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-                </div>
-                 <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-500">Taxa de serviço SERVIO.AI (15%)</span>
-                    <span className="text-gray-600">{platformFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-                </div>
-                 <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-500">O profissional recebe</span>
-                    <span className="text-gray-600">{providerReceives.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-                </div>
-                <div className="pt-4 border-t border-slate-200 flex justify-between items-center">
-                    <span className="text-lg font-bold text-gray-900">Total a pagar</span>
-                    <span className="text-lg font-bold text-blue-600">{proposal.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-                </div>
-            </div>
-
-            <div className="mt-6 text-center bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="text-xs text-yellow-800">
-                        <span className="font-bold">Como funciona o Pagamento Seguro?</span> Seu pagamento fica retido com a SERVIO.AI e só é liberado para o profissional após você confirmar que o serviço foi concluído com sucesso.
-                    </p>
-            </div>
-
-            <div className="mt-8">
-                <button 
-                    onClick={handleConfirmPayment}
-                    disabled={isProcessing}
-                    className="w-full flex justify-center items-center py-4 px-6 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed"
-                >
-                    {isProcessing ? (
-                        <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        Processando Pagamento...
-                        </>
-                    ) : (
-                        `Pagar ${proposal.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} com Segurança`
-                    )}
-                </button>
-            </div>
+            <button onClick={handlePayment} disabled={isLoading} className="flex-1 px-4 py-3 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-300 flex items-center justify-center">
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Processando...
+                </>
+              ) : 'Pagar com Stripe'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
