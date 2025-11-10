@@ -27,16 +27,13 @@ const JobTimeline: React.FC<JobTimelineProps> = ({ job }) => {
     return null; 
   }
 
-  // The active step is the one matching the job's status
-  const activeIndex = currentStepIndex;
-
   return (
     <div>
         <h4 className="text-sm font-semibold text-gray-700 mb-3 text-center">Linha do Tempo do Serviço</h4>
         <div className="flex items-center justify-between">
         {STEPS.map((step, index) => {
-            const isCompleted = index < activeIndex;
-            const isActive = index === activeIndex;
+            const isCompleted = index < currentStepIndex;
+            const isActive = index === currentStepIndex;
 
             return (
             <React.Fragment key={step.status}>

@@ -20,9 +20,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, userType, onClose, onSwitch
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
-  // Para login, usar o tipo selecionado (userType) e não sempre 'cliente'.
-  const typeForSuccess = userType;
     
     if (!isLogin) {
       if (password !== confirmPassword) {
@@ -35,7 +32,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, userType, onClose, onSwitch
       }
     }
     
-    onSuccess(email, typeForSuccess);
+    onSuccess(email, userType);
   };
 
   return (

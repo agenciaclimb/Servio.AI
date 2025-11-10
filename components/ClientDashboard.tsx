@@ -128,7 +128,6 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
   const activeJobs = userJobs.filter(j => !['concluido', 'cancelado'].includes(j.status));
   const completedJobs = userJobs.filter(j => j.status === 'concluido');
   const profileComplete = Boolean(user.address && user.bio && user.bio.length > 20);
-  const onboardingStepsTotal = 4;
   const onboardingStepsDone = [profileComplete, userJobs.length > 0, maintainedItems.length > 0].filter(Boolean).length;
   const handleAcceptProposal = async (proposalId: string) => {
     const proposal = allProposals.find(p => p.id === proposalId);
@@ -1042,12 +1041,11 @@ const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ userName, userAdd
             <button
               type="button"
               onClick={() => {
-                const next = draftJobData;
                 const jobData: JobData = {
-                  description: next.description || 'Serviço solicitado',
-                  category: next.category || 'reparos',
-                  serviceType: next.serviceType || 'personalizado',
-                  urgency: next.urgency || '3dias'
+                  description: draftJobData.description || 'Serviço solicitado',
+                  category: draftJobData.category || 'reparos',
+                  serviceType: draftJobData.serviceType || 'personalizado',
+                  urgency: draftJobData.urgency || '3dias'
                 };
                 window.dispatchEvent(new CustomEvent('open-wizard-from-chat', { detail: jobData }));
                 setChatMessages(prev => [...prev, { role: 'ai', text: 'Abrindo assistente de criação de serviço...' }]);
