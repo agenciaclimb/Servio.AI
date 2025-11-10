@@ -31,7 +31,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({ result, onInvite, isInvited
             <div className='flex-grow'>
                 <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">{provider.service}</p>
                 <h3 className="block mt-1 text-xl leading-tight font-bold text-black">{provider.name}</h3>
-                <p className="mt-2 text-gray-500 text-sm">{provider.location}</p>
+                <p className="mt-2 text-gray-600 text-sm">{provider.location}</p>
             </div>
             <div className={`text-sm font-bold px-3 py-1 rounded-full ${scoreColorClass}`}>
                 {compatibilityScore}%

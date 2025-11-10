@@ -47,11 +47,11 @@ const ProposalModal: React.FC<ProposalModalProps> = ({ job, provider, onClose, o
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg m-4 transform transition-all" onClick={(e) => e.stopPropagation()}>
         <div className="relative p-8">
-            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-600">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Enviar Proposta</h2>
-            <p className="text-gray-500 mb-4">Para o job: <span className="font-semibold text-gray-700">{job.category}</span></p>
+            <p className="text-gray-600 mb-4">Para o job: <span className="font-semibold text-gray-700">{job.category}</span></p>
 
             <div className="bg-slate-50 p-4 rounded-lg mb-6 border border-slate-200">
               <p className="text-sm text-gray-600 line-clamp-3">{job.description}</p>
@@ -64,7 +64,7 @@ const ProposalModal: React.FC<ProposalModalProps> = ({ job, provider, onClose, o
                     </label>
                     <div className="relative mt-1 rounded-md shadow-sm">
                       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <span className="text-gray-500 sm:text-sm">R$</span>
+                        <span className="text-gray-600 sm:text-sm">R$</span>
                       </div>
                       <input 
                         type="number" 

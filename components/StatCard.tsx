@@ -18,7 +18,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, changeType, i
         </div>
         <div className="ml-5 w-0 flex-1">
           <dl>
-            <dt className="text-sm font-medium text-gray-500 truncate">{title}</dt>
+            <dt className="text-sm font-medium text-gray-600 truncate">{title}</dt>
             <dd>
               <div className="text-2xl font-bold text-gray-900">{value}</div>
               {change && (

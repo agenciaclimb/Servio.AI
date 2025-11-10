@@ -28,6 +28,26 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      build: {
+        sourcemap: true, // Habilitar sourcemaps para debugging
+        minify: 'terser', // Usar terser para minificação mais agressiva
+        terserOptions: {
+          compress: {
+            drop_console: true, // Remover console.log em produção
+            drop_debugger: true,
+          },
+        },
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              // Separar vendor chunks grandes para melhor caching
+              'react-vendor': ['react', 'react-dom'],
+              'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/messaging'],
+            }
+          }
+        },
+        chunkSizeWarningLimit: 600, // Aumentar limite para evitar warnings de chunks legítimos
       }
     };
 });

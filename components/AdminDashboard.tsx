@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Job, User, Proposal, FraudAlert, Escrow, Dispute, Notification } from '../types';
+import { useToast } from '../contexts/ToastContext';
 import AdminAnalyticsDashboard from './AdminAnalyticsDashboard';
 import AdminJobManagement from './AdminJobManagement';
 import AdminProviderManagement from './AdminProviderManagement';
 import AdminFinancials from './AdminFinancials';
-import SitemapGenerator from './SitemapGenerator';
 import AdminFraudAlerts from './AdminFraudAlerts';
-import AdminDisputeModal from './AdminDisputeModal'; // Import the new modal
+import DisputeDetailsModal from './DisputeDetailsModal'; // Substituindo o modal antigo
 import { serviceNameToCategory } from '../services/geminiService';
 import * as API from '../services/api';
 
@@ -17,8 +17,9 @@ interface AdminDashboardProps {
 type AdminTab = 'analytics' | 'jobs' | 'providers' | 'financials' | 'fraud';
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
+    const { addToast } = useToast();
+
     const [activeTab, setActiveTab] = useState<AdminTab>('providers');
-    const [isSitemapOpen, setIsSitemapOpen] = useState(false);
     const [mediatingJob, setMediatingJob] = useState<Job | null>(null);
 
     // Internal state for all data
@@ -69,35 +70,50 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     const openDisputesCount = allJobs.filter(j => j.status === 'em_disputa').length;
     const pendingVerificationsCount = allUsers.filter(u => u.type === 'prestador' && u.verificationStatus === 'pendente').length;
 
-    const handleResolveDispute = (
-        jobId: string, 
+    const handleResolveDispute = async (
         disputeId: string, 
         resolution: Dispute['resolution']
     ) => {
-        // Find the escrow for the job
-        const escrow = allEscrows.find(e => e.jobId === jobId);
-        if (!escrow) return;
+        const dispute = allDisputes.find(d => d.id === disputeId);
+        if (!dispute) return;
 
-        // 1. Update Escrow Status
-        setAllEscrows(prev => prev.map(e => e.id === escrow.id ? { ...e, status: resolution!.outcome === 'reembolsado' ? 'reembolsado' : 'liberado' } : e));
+        try {
+            // 1. Chamar API para resolver a disputa
+            await API.resolveDispute(disputeId, {
+                decision: resolution.outcome,
+                notes: resolution.reason
+            });
 
-        // 2. Update Dispute Status
-        setAllDisputes(prev => prev.map(d => d.id === disputeId ? { ...d, status: 'resolvida', resolution } : d));
+            // 2. Atualizar estado local
+            setAllDisputes(prev => prev.map(d => d.id === disputeId ? { ...d, status: 'resolvida', resolution } : d));
+            setAllJobs(prev => prev.map(j => j.id === dispute.jobId ? { ...j, status: 'concluido' } : j));
 
-        // 3. Update Job Status to Concluido
-        setAllJobs(prev => prev.map(j => j.id === jobId ? { ...j, status: 'concluido' } : j));
-        
-        setMediatingJob(null); // Close the modal
+            // 3. Notificar as partes (a API do backend deve fazer isso, mas podemos simular)
+            const job = allJobs.find(j => j.id === dispute.jobId);
+            if (job) {
+                await API.createNotification({ userId: job.clientId, text: `A disputa para o serviço "${job.category}" foi resolvida.`, isRead: false });
+                if (job.providerId) {
+                    await API.createNotification({ userId: job.providerId, text: `A disputa para o serviço "${job.category}" foi resolvida.`, isRead: false });
+                }
+            }
+            addToast('Disputa resolvida com sucesso!', 'success');
+        } catch (error) {
+            console.error("Falha ao resolver a disputa:", error);
+            addToast('Não foi possível resolver a disputa. Tente novamente.', 'error');
+        } finally {
+            setMediatingJob(null); // Fechar o modal
+        }
     };
 
     const handleSuspendProvider = async (userId: string) => {
         try {
             await API.updateUser(userId, { status: 'suspenso' });
             setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status: 'suspenso' } : u));
+            addToast('Prestador suspenso com sucesso!', 'success');
             console.log(`Provider ${userId} suspended.`);
         } catch (error) {
             console.error(`Failed to suspend provider ${userId}:`, error);
-            alert('Falha ao suspender o prestador.');
+            addToast('Falha ao suspender o prestador.', 'error');
         }
     };
 
@@ -131,10 +147,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     return (
         <div data-testid="admin-dashboard-root">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Painel do Administrador</h1>
-                 <button onClick={() => setIsSitemapOpen(true)} className="px-4 py-2 text-sm font-medium text-blue-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                    Simular Sitemap
-                </button>
             </div>
 
             <div className="border-b border-gray-200 mb-6" data-testid="admin-tabs">
@@ -144,7 +156,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
                             data-testid={`admin-tab-${tab.id}`}
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`${activeTab === tab.id ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+                            className={`${activeTab === tab.id ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300'}
                                 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2`}
                         >
                             <span>{tab.label}</span>
@@ -159,21 +171,29 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
             </div>
             <div data-testid="admin-active-tab-content">
                 {isLoading ? (
-                    <div className="p-4 text-sm text-gray-500" data-testid="admin-loading">Carregando dados administrativos...</div>
+                    <div className="p-4 text-sm text-gray-600" data-testid="admin-loading">Carregando dados administrativos...</div>
                 ) : (
                     renderTabContent()
                 )}
             </div>
-             {isSitemapOpen && <SitemapGenerator users={allUsers} serviceNameToCategory={serviceNameToCategory} onClose={() => setIsSitemapOpen(false)} />}
              {mediatingJob && (
-                <AdminDisputeModal 
-                    job={mediatingJob}
-                    dispute={allDisputes.find(d => d.id === mediatingJob.disputeId)!}
-                    client={allUsers.find(u => u.email === mediatingJob.clientId)!}
-                    provider={allUsers.find(u => u.email === mediatingJob.providerId)!}
-                    onClose={() => setMediatingJob(null)}
-                    onResolve={handleResolveDispute}
-                />
+                (() => {
+                    const dispute = allDisputes.find(d => d.jobId === mediatingJob.id);
+                    if (!dispute) return null;
+                    return (
+                        <DisputeDetailsModal
+                            isOpen={true}
+                            job={mediatingJob}
+                            dispute={dispute}
+                            currentUser={user}
+                            client={allUsers.find(u => u.email === mediatingJob.clientId)!}
+                            provider={allUsers.find(u => u.email === mediatingJob.providerId)!}
+                            onClose={() => setMediatingJob(null)}
+                            onSendMessage={() => { /* Admin não envia mensagens neste fluxo */ }}
+                            onResolve={(disputeId, resolution) => handleResolveDispute(disputeId, resolution)}
+                        />
+                    );
+                })()
              )}
         </div>
     );

@@ -40,7 +40,7 @@ const ClientJobCard: React.FC<ClientJobCardProps> = ({ job, proposals, onViewPro
         </div>
         <p className="mt-2 text-gray-700 text-sm flex-grow line-clamp-3">{job.description}</p>
          {job.address && (
-          <div className="mt-2 flex items-center text-xs text-gray-500">
+          <div className="mt-2 flex items-center text-xs text-gray-600">
             <svg className="w-4 h-4 mr-1.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.1.4-.22.655-.364C11.888 18.01 12.872 17.5 14 16.5c1.128-1 2-2.304 2-3.5V6.5a1 1 0 00-1-1h-1.414a1 1 0 00-.707.293L10 8.586 7.121 5.707A1 1 0 006.414 5.5H5a1 1 0 00-1 1v6.5c0 1.196.872 2.5 2 3.5 1.128 1 2.112 1.51 2.692 1.933z" clipRule="evenodd" />
             </svg>
@@ -88,11 +88,11 @@ const ClientJobCard: React.FC<ClientJobCardProps> = ({ job, proposals, onViewPro
             </button>
         )}
         {(job.status === 'concluido' || job.status === 'cancelado') && !job.review && (
-             <p className="text-xs text-center text-gray-500">Job finalizado sem avaliação.</p>
+             <p className="text-xs text-center text-gray-600">Job finalizado sem avaliação.</p>
         )}
          {(job.status === 'concluido') && job.review && (
             <div className="text-center">
-                 <p className="text-xs text-gray-500 mb-1">Sua avaliação:</p>
+                 <p className="text-xs text-gray-600 mb-1">Sua avaliação:</p>
                  <div className="flex items-center justify-center space-x-1">
                     {Array.from({ length: 5 }, (_, i) => (
                          <svg key={i} className={`w-4 h-4 ${i < job.review!.rating ? 'text-yellow-400' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>

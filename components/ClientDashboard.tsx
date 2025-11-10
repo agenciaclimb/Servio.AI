@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Job, User, Proposal, Message, Dispute, MaintainedItem, JobData, Escrow, Notification, ScheduledDateTime, DisputeMessage, Bid } from '../types';
+import { useToast } from '../contexts/ToastContext'; // 1. Importar o hook
 import { enhanceJobRequest } from '../services/geminiService';
 import * as API from '../services/api';
 import ClientJobCard from './ClientJobCard';
 import ProposalListModal from './ProposalListModal';
 import PaymentModal from './PaymentModal';
 import ReviewModal from './ReviewModal';
-import DisputeModal from './DisputeModal';
+import DisputeModal from '../doc/DisputeModal';
+import DisputeDetailsModal from './DisputeDetailsModal';
 import AddItemModal from './AddItemModal';
 import ItemCard from './ItemCard';
 import ItemDetailModal from './ItemDetailModal';
@@ -33,45 +35,65 @@ interface ClientDashboardProps {
   setMaintainedItems: React.Dispatch<React.SetStateAction<MaintainedItem[]>>;
   onNewJobFromItem: (prompt: string) => void;
   onUpdateUser: (userEmail: string, partial: Partial<User>) => void; // novo para edição de perfil do cliente
+  /**
+   * Quando true, desativa a exibição do skeleton inicial. Útil para testes unitários.
+   */
+  disableSkeleton?: boolean;
+  /**
+   * Props auxiliares para testes: permitem abrir modais diretamente.
+   */
+  viewingProposalsForJob?: Job | null;
+  proposalToPay?: Proposal | null;
+  initialUserJobs?: Job[];
 }
 
 const ClientDashboard: React.FC<ClientDashboardProps> = ({
   user, allUsers, allProposals, allMessages, maintainedItems, allDisputes, allBids,
   setAllProposals, setAllMessages, setAllNotifications, setAllEscrows, setAllDisputes, setMaintainedItems,
-  onViewProfile, onNewJobFromItem, onUpdateUser
+  onViewProfile, onNewJobFromItem, onUpdateUser, disableSkeleton = false,
+  viewingProposalsForJob: viewingProposalsForJobProp = null,
+  proposalToPay: proposalToPayProp = null,
+  initialUserJobs = []
 }) => {
-  const [userJobs, setUserJobs] = useState<Job[]>([]);
+  const { addToast } = useToast(); // 2. Inicializar o hook
+
+  const [userJobs, setUserJobs] = useState<Job[]>(initialUserJobs);
   const [isLoadingJobs, setIsLoadingJobs] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    // Simulate loading for skeleton screen visibility
+    if (disableSkeleton) {
+      setIsLoadingJobs(false);
+      return; // pula lógica de timer e carregamento
+    }
     const timer = setTimeout(() => {
       setIsLoadingJobs(false);
-    }, 1500); // Adjust time as needed
-    const loadJobs = async () => {
-      setIsLoadingJobs(true);
-      try {
-        const jobs = await API.fetchJobsForUser(user.email);
-        setUserJobs(jobs);
-      } catch (error) {
-        console.error("Failed to fetch user jobs:", error);
-      } finally {
-        setIsLoadingJobs(false);
-      }
-    };
-
-    // loadJobs(); // Temporarily disabled to show skeleton
-
+    }, 1500);
     return () => clearTimeout(timer);
-  }, [user.email]);
+  }, [user.email, disableSkeleton]);
+
+  // Efeito: permitir que testes injetem estados iniciais dos modais
+  useEffect(() => {
+    if (viewingProposalsForJobProp) {
+      setViewingProposalsForJob(viewingProposalsForJobProp);
+    }
+  }, [viewingProposalsForJobProp]);
+
+  useEffect(() => {
+    if (proposalToPayProp) {
+      setProposalToPay(proposalToPayProp);
+    }
+  }, [proposalToPayProp]);
 
   const [currentView, setCurrentView] = useState<'inicio' | 'servicos' | 'itens' | 'ajuda'>('inicio');
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [viewingProposalsForJob, setViewingProposalsForJob] = useState<Job | null>(null);
   const [viewingAuctionForJob, setViewingAuctionForJob] = useState<Job | null>(null);
+  const [proposalToPay, setProposalToPay] = useState<Proposal | null>(null);
   const [payingForProposal, setPayingForProposal] = useState<Proposal | null>(null);
   const [reviewingJob, setReviewingJob] = useState<Job | null>(null);
+  const [jobInFocus, setJobInFocus] = useState<{ job: Job; action: 'review' | 'dispute' | 'dispute-details' } | null>(null);
   const [viewingDisputeForJob, setViewingDisputeForJob] = useState<Job | null>(null);
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   const [viewingItem, setViewingItem] = useState<MaintainedItem | null>(null);
@@ -98,7 +120,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     }
   }, [chattingWithJob]);
 
-  if (isLoadingJobs) {
+  if (isLoadingJobs && !disableSkeleton) {
     return <ClientDashboardSkeleton />;
   }
 
@@ -114,13 +136,36 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
 
     const job = userJobs.find(j => j.id === proposal.jobId);
     if (!job) {
-      alert('Job não encontrado');
+      addToast('Job não encontrado', 'error');
       return;
     }
 
+    // Em vez de redirecionar imediatamente, abre o modal de confirmação de pagamento
+    setProposalToPay(proposal);
+  };
+
+  const handleClosePaymentModal = () => {
+    setProposalToPay(null);
+  };
+
+  const handleConfirmPayment = async (proposal: Proposal) => {
+    const job = userJobs.find(j => j.id === proposal.jobId);
+    if (!job) return;
+
     try {
-      // Create Stripe Checkout Session
-      const { id: sessionId } = await API.createCheckoutSession(job, proposal.price);
+      const result: any = await API.createCheckoutSession(job, proposal.price);
+      // Suporte a dois formatos: { url } e { id }
+      if (result?.url) {
+        (window as any).location.href = result.url;
+        return;
+      }
+      const sessionId = result?.id;
+      if (!sessionId) {
+        throw new Error('Sessão de checkout inválida');
+      }
+      
+      // Store proposal for later confirmation
+      setPayingForProposal(proposal);
       
       // Redirect to Stripe Checkout
       const stripe = (window as any).Stripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -128,11 +173,11 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       
       if (error) {
         console.error('Stripe redirect error:', error);
-        alert('Erro ao redirecionar para pagamento. Tente novamente.');
+        addToast('Erro ao redirecionar para pagamento. Tente novamente.', 'error'); // 3. Substituir alert()
       }
     } catch (error) {
       console.error('Failed to create checkout session:', error);
-      alert('Erro ao criar sessão de pagamento. Tente novamente.');
+      addToast('Erro ao criar sessão de pagamento. Tente novamente.', 'error'); // 3. Substituir alert()
     }
   };
 
@@ -189,62 +234,58 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       console.log('Proposal accepted and payment processed');
     } catch (error) {
       console.error('Failed to process payment:', error);
-      alert('Erro ao processar pagamento. Tente novamente.');
+      addToast('Erro ao processar pagamento. Tente novamente.', 'error'); // 3. Substituir alert()
     }
   };
   
   const handleFinalizeJob = async (reviewData: { rating: number, comment: string }) => {
-    if(!reviewingJob) return;
+    if(!jobInFocus || jobInFocus.action !== 'review') return;
 
     try {
       // Update Job with review and set status to 'concluido'
-      await API.updateJob(reviewingJob.id, {
+      await API.updateJob(jobInFocus.job.id, {
         status: 'concluido',
         review: { ...reviewData, authorId: user.email, createdAt: new Date().toISOString() }
       });
 
       // Release payment from escrow via API
-      const releaseResult = await API.releasePayment(reviewingJob.id);
+      const releaseResult = await API.releasePayment(jobInFocus.job.id);
       console.log('Payment release result:', releaseResult);
 
-      setUserJobs(prev => prev.map(j => 
-        j.id === reviewingJob.id ? { ...j, status: 'concluido', review: { ...reviewData, authorId: user.email, createdAt: new Date().toISOString() } } : j
+      setUserJobs(prev => prev.map(j =>
+        j.id === jobInFocus!.job.id ? { ...j, status: 'concluido', review: { ...reviewData, authorId: user.email, createdAt: new Date().toISOString() } } : j
       ));
 
       // Update escrow locally
       setAllEscrows(prev => prev.map(e => 
-        e.jobId === reviewingJob.id ? { ...e, status: 'liberado', releasedAt: new Date().toISOString() } : e
+        e.jobId === jobInFocus!.job.id ? { ...e, status: 'liberado', releasedAt: new Date().toISOString() } : e
       ));
       
-      setReviewingJob(null);
-      alert('✅ Serviço finalizado e pagamento liberado com sucesso!');
+      setJobInFocus(null);
+      addToast('Serviço finalizado e pagamento liberado com sucesso!', 'success'); // 3. Substituir alert()
       console.log('Job finalized with review and payment released');
     } catch (error) {
       console.error('Failed to finalize job:', error);
-      alert('Erro ao finalizar serviço. Tente novamente.');
+      addToast('Erro ao finalizar serviço. Tente novamente.', 'error'); // 3. Substituir alert()
     }
   };
 
-  const handleReportIssue = (job: Job) => {
-    const newDisputeId = `disp-${Date.now()}`;
-    const newDispute: Dispute = {
-        id: newDisputeId,
-        jobId: job.id,
-        initiatorId: user.email,
-        reason: "Cliente insatisfeito com o serviço prestado.",
-        status: 'aberta',
-        messages: [{
-            id: `msg-${Date.now()}`,
-            senderId: user.email,
-            text: `Estou abrindo uma disputa para o serviço "${job.description}" pois não estou satisfeito com o resultado.`,
-            createdAt: new Date().toISOString()
-        }],
-        createdAt: new Date().toISOString()
-    };
-    setAllDisputes(prev => [...prev, newDispute]);
-    setUserJobs(prev => prev.map(j => j.id === job.id ? {...j, status: 'em_disputa', disputeId: newDisputeId} : j));
-    setAllEscrows(prev => prev.map(e => e.jobId === job.id ? {...e, status: 'em_disputa'} : e));
-    setViewingDisputeForJob(job);
+  const handleOpenDispute = async (data: { reason: string; description: string }) => {
+    if (!jobInFocus || jobInFocus.action !== 'dispute') return;
+
+    await API.createDispute({
+      jobId: jobInFocus.job.id,
+      reporterId: user.email,
+      reporterRole: 'client',
+      reason: data.reason,
+      description: data.description,
+    });
+
+    setUserJobs(prev => prev.map(j => j.id === jobInFocus!.job.id ? { ...j, status: 'em_disputa' } : j));
+
+    // Idealmente, o backend notificaria o provider e o admin.
+    // Para fins de UI, podemos simular uma notificação local.
+    addToast('Disputa criada com sucesso. Nossa equipe de mediação entrará em contato.', 'success'); // 3. Substituir alert()
   };
 
     const handleSendDisputeMessage = (disputeId: string, text: string) => {
@@ -317,7 +358,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       console.log('Message sent and saved to Firestore');
     } catch (error) {
       console.error('Failed to send message:', error);
-      alert('Erro ao enviar mensagem. Tente novamente.');
+      addToast('Erro ao enviar mensagem. Tente novamente.', 'error'); // 3. Substituir alert()
     }
   };
   
@@ -366,8 +407,8 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       bio: String(formData.get('bio') || user.bio),
       location: String(formData.get('location') || user.location),
     };
-    if ((updated.bio || '').trim().length < 30) {
-      alert('Sua bio está muito curta. Escreva pelo menos 30 caracteres para ajudar os prestadores a te conhecer melhor.');
+    if ((updated.bio || '').trim().length < 30) { // Exemplo de alerta que pode ser mantido ou trocado
+      addToast('Sua bio está muito curta. Escreva pelo menos 30 caracteres.', 'warning');
       return;
     }
     onUpdateUser(user.email, updated);
@@ -376,8 +417,33 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
 
   return (
     <div className="flex h-screen bg-gray-50">
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="fixed top-4 left-4 z-50 md:hidden bg-white p-2 rounded-lg shadow-lg border border-gray-200"
+        aria-label="Toggle menu"
+      >
+        <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {isMobileMenuOpen ? (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          ) : (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          )}
+        </svg>
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+      <aside className={`w-64 bg-white border-r border-gray-200 flex flex-col fixed inset-y-0 left-0 z-40 transform transition-transform duration-200 md:relative md:translate-x-0 ${
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
         <div className="p-6 flex-1">
           <div className="flex items-center gap-2 mb-8">
             <span className="text-2xl">👋</span>
@@ -389,7 +455,10 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
 
           <nav className="space-y-1">
             <button
-              onClick={() => setCurrentView('inicio')}
+              onClick={() => {
+                setCurrentView('inicio');
+                setIsMobileMenuOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 currentView === 'inicio' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
               }`}
@@ -398,7 +467,10 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
               Início
             </button>
             <button
-              onClick={() => setCurrentView('servicos')}
+              onClick={() => {
+                setCurrentView('servicos');
+                setIsMobileMenuOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 currentView === 'servicos' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
               }`}
@@ -407,7 +479,10 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
               Meus Serviços
             </button>
             <button
-              onClick={() => setCurrentView('itens')}
+              onClick={() => {
+                setCurrentView('itens');
+                setIsMobileMenuOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 currentView === 'itens' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
               }`}
@@ -416,7 +491,10 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
               Meus Itens
             </button>
             <button
-              onClick={() => setCurrentView('ajuda')}
+              onClick={() => {
+                setCurrentView('ajuda');
+                setIsMobileMenuOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 currentView === 'ajuda' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
               }`}
@@ -432,8 +510,8 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="max-w-7xl mx-auto p-6 sm:p-8 space-y-6">
+      <main className="flex-1 overflow-y-auto pt-16 md:pt-0">
+        <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
           {currentView === 'inicio' && (
             <>
               {/* Card de Onboarding */}
@@ -571,8 +649,12 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                       proposals={allProposals.filter(p => p.jobId === job.id)}
                       onViewProposals={() => job.jobMode === 'leilao' ? setViewingAuctionForJob(job) : setViewingProposalsForJob(job)}
                       onChat={() => setChattingWithJob(job)}
-                      onFinalize={() => setReviewingJob(job)}
-                      onReportIssue={() => handleReportIssue(job)}
+                      onFinalize={() => setJobInFocus({ job, action: 'review' })}
+                      onReportIssue={() => {
+                        const existingDispute = allDisputes.find(d => d.jobId === job.id);
+                        if (existingDispute) setJobInFocus({ job, action: 'dispute-details' });
+                        else setJobInFocus({ job, action: 'dispute' });
+                      }}
                       onViewOnMap={setViewingJobOnMap}
                     />
                   ))}
@@ -581,7 +663,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                 <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
                   <span className="text-6xl mb-4 block">📋</span>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhum serviço ainda</h3>
-                  <p className="text-gray-500 mb-6">Solicite seu primeiro serviço com ajuda da IA</p>
+                  <p className="text-gray-600 mb-6">Solicite seu primeiro serviço com ajuda da IA</p>
                   <button
                     onClick={() => onNewJobFromItem('')}
                     className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
@@ -614,7 +696,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                 <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
                   <span className="text-6xl mb-4 block">📦</span>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhum item cadastrado</h3>
-                  <p className="text-gray-500 mb-6">Cadastre itens para facilitar manutenções futuras</p>
+                  <p className="text-gray-600 mb-6">Cadastre itens para facilitar manutenções futuras</p>
                   <button
                     onClick={() => setIsAddItemModalOpen(true)}
                     className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
@@ -644,8 +726,6 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
         </div>
       </main>
 
-      {/* AI Assistant Widget */}
-      <AIAssistantWidget userName={user.name.split(' ')[0]} userAddress={user.address} />
 
       {/* Modals */}
 
@@ -668,32 +748,48 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
               onPlaceBid={() => {}} // Client cannot place bids
           />
       )}
-      {payingForProposal && (
+      {proposalToPay && (
         <PaymentModal 
-            job={userJobs.find(j => j.id === payingForProposal.jobId)!}
-            proposal={payingForProposal}
-            provider={allUsers.find(u => u.email === payingForProposal.providerId)!}
-            onClose={() => setPayingForProposal(null)}
-            onPaymentSuccess={handlePaymentSuccess}
+            isOpen={!!proposalToPay}
+            job={userJobs.find(j => j.id === proposalToPay.jobId)!}
+            proposal={proposalToPay}
+            provider={allUsers.find(u => u.email === proposalToPay.providerId)!}
+            onClose={handleClosePaymentModal}
+            onConfirmPayment={handleConfirmPayment}
         />
       )}
-      {reviewingJob && (
+      {jobInFocus?.action === 'review' && (
         <ReviewModal
-            job={reviewingJob}
-            onClose={() => setReviewingJob(null)}
+            job={jobInFocus.job}
+            onClose={() => setJobInFocus(null)}
             onSubmit={handleFinalizeJob}
         />
       )}
-      {viewingDisputeForJob && (
+      {jobInFocus?.action === 'dispute' && (
         <DisputeModal
+            job={jobInFocus.job}
             user={user}
-            job={viewingDisputeForJob}
-            dispute={allDisputes.find(d => d.id === viewingDisputeForJob.id)!}
-            otherParty={allUsers.find(u => u.email === viewingDisputeForJob.providerId)}
-            onClose={() => setViewingDisputeForJob(null)}
-            onSendMessage={(text) => handleSendDisputeMessage(viewingDisputeForJob.disputeId!, text)}
+            isOpen={!!jobInFocus}
+            onClose={() => setJobInFocus(null)}
+            onSubmit={handleOpenDispute}
         />
       )}
+      {jobInFocus?.action === 'dispute-details' && (() => {
+        const dispute = allDisputes.find(d => d.jobId === jobInFocus.job.id);
+        if (!dispute) return null;
+        return (
+          <DisputeDetailsModal
+            isOpen={true}
+            job={jobInFocus.job}
+            dispute={dispute}
+            currentUser={user}
+            client={user}
+            provider={allUsers.find(u => u.email === jobInFocus.job.providerId)!}
+            onClose={() => setJobInFocus(null)}
+            onSendMessage={handleSendDisputeMessage}
+          />
+        );
+      })()}
       {isAddItemModalOpen && (
         <AddItemModal 
             onClose={() => setIsAddItemModalOpen(false)}
@@ -731,15 +827,15 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
         />
       )}
 
-      {/* AI Assistant Widget */}
-      <AIAssistantWidget userName={user.name.split(' ')[0]} userAddress={user.address} />
+  {/* AI Assistant Widget (single instance retained above) */}
+  {/* Duplicate instance removed to prevent double mounting */}
       {/* Modal simples de edição de perfil */}
       {isProfileModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <div className="bg-white w-full max-w-lg rounded-xl shadow-xl p-6 relative">
             <button
               onClick={() => setIsProfileModalOpen(false)}
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-600"
               aria-label="Fechar"
             >✕</button>
             <h3 className="text-lg font-bold mb-4">Completar Perfil</h3>
@@ -759,7 +855,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
                 <textarea name="bio" defaultValue={user.bio} rows={4} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
-                <p className="text-xs text-gray-500 mt-1">Dica: escreva ao menos 30 caracteres.</p>
+                <p className="text-xs text-gray-600 mt-1">Dica: escreva ao menos 30 caracteres.</p>
               </div>
               <div className="flex justify-end gap-3 pt-2">
                 <button type="button" onClick={() => setIsProfileModalOpen(false)} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-100 hover:bg-gray-200">Cancelar</button>
@@ -878,7 +974,7 @@ const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ userName, userAdd
               <div key={i} className={`px-3 py-2 rounded-lg whitespace-pre-line ${m.role === 'ai' ? 'bg-blue-50 text-blue-900' : 'bg-purple-50 text-purple-900 ml-auto'} max-w-[85%]`}>{m.text}</div>
             ))}
             {isConsultingAI && (<div className="text-xs text-blue-600 animate-pulse flex items-center gap-1"><span>🤖</span> Consultando IA...</div>)}
-            {isBuildingJob && (<div className="text-xs text-gray-500 animate-pulse">Gerando sugestão...</div>)}
+            {isBuildingJob && (<div className="text-xs text-gray-600 animate-pulse">Gerando sugestão...</div>)}
           </div>
           <form
             onSubmit={async (e) => {

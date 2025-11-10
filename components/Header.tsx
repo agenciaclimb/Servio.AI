@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ user, notifications, onLoginClick, onRe
           <div className="flex-shrink-0">
              <button onClick={() => onSetView('home')} className="flex items-center space-x-2">
                 <span className="text-2xl font-bold text-blue-600">SERVIO.AI</span>
-                <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">BETA</span>
+                <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">BETA</span>
             </button>
           </div>
           <nav className="hidden sm:flex sm:items-center sm:space-x-4">

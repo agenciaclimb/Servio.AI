@@ -14,7 +14,7 @@ const AdminVerificationCard: React.FC<AdminVerificationCardProps> = ({ provider,
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
                     <div>
                         <h4 className="font-bold text-gray-800">{provider.name}</h4>
-                        <p className="text-sm text-gray-500">{provider.email}</p>
+                        <p className="text-sm text-gray-600">{provider.email}</p>
                     </div>
                     <span className="mt-2 sm:mt-0 text-xs font-semibold px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">Pendente</span>
                 </div>
@@ -25,18 +25,18 @@ const AdminVerificationCard: React.FC<AdminVerificationCardProps> = ({ provider,
                            <img src={provider.documentImage} alt="Documento" className="w-full h-full object-contain" />
                         </div>
                     ) : (
-                        <div className="w-full h-40 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
+                        <div className="w-full h-40 bg-gray-200 rounded-lg flex items-center justify-center text-gray-600">
                            <span>Imagem não disponível</span>
                         </div>
                     )}
                     <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-sm space-y-2">
-                        <p className="font-semibold text-gray-500">Dados Extraídos pela IA:</p>
+                        <p className="font-semibold text-gray-600">Dados Extraídos pela IA:</p>
                         <div>
-                            <p className="text-xs text-gray-400">Nome Completo</p>
+                            <p className="text-xs text-gray-500">Nome Completo</p>
                             <p className="font-medium text-gray-800">{provider.name || 'N/A'}</p>
                         </div>
                          <div>
-                            <p className="text-xs text-gray-400">CPF</p>
+                            <p className="text-xs text-gray-500">CPF</p>
                             <p className="font-medium text-gray-800">{provider.cpf || 'N/A'}</p>
                         </div>
                     </div>

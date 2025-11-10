@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Job, User, Proposal, FraudAlert, Dispute, JobStatus, Notification, Message, ScheduledDateTime, DisputeMessage, Bid } from '../types';
+import { useToast } from '../contexts/ToastContext';
 import JobCard from './JobCard';
 import ProposalModal from './ProposalModal';
 import ProviderJobCard from './ProviderJobCard';
@@ -22,13 +23,21 @@ interface ProviderDashboardProps {
   user: User;
   onViewProfile: (userId: string) => void;
   onPlaceBid: (jobId: string, amount: number) => void;
+  /** Quando true, desativa o fluxo de onboarding. Útil para testes unitários. */
+  disableOnboarding?: boolean;
+  /** Quando true, desativa a exibição do skeleton inicial. Útil para testes unitários. */
+  disableSkeleton?: boolean;
 }
 
 const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   user,
   onViewProfile,
   onPlaceBid,
+  disableOnboarding = false,
+  disableSkeleton = false,
 }) => {
+  const { addToast } = useToast();
+
   const [proposingForJob, setProposingForJob] = useState<Job | null>(null);
   const [viewingAuctionForJob, setViewingAuctionForJob] = useState<Job | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -106,7 +115,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   }, [user.email, user.verificationStatus]);
 
 
-  if (user.verificationStatus !== 'verificado') {
+  if (user.verificationStatus !== 'verificado' && !disableOnboarding) {
     return <ProviderOnboarding user={user} />;
   }
 
@@ -166,7 +175,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
       }
     } catch (error) {
       console.error("Failed to send proposal:", error);
-      alert("Erro ao enviar proposta. Tente novamente.");
+      addToast("Erro ao enviar proposta. Tente novamente.", 'error');
       setProposingForJob(null);
     }
   };
@@ -228,7 +237,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         // In a real app, you'd send the email here.
         console.log(`Referral sent to ${friendEmail}`);
     } catch (error) {
-        alert("Failed to generate referral email.");
+        addToast("Falha ao gerar e-mail de indicação.", 'error');
     }
   };
 
@@ -258,7 +267,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
       console.log('Message sent and saved to Firestore');
     } catch (error) {
       console.error('Failed to send message:', error);
-      alert('Erro ao enviar mensagem. Tente novamente.');
+      addToast('Erro ao enviar mensagem. Tente novamente.', 'error');
     }
   };
 
@@ -333,7 +342,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         }
     };
 
-  if (isLoading) {
+  if (isLoading && !disableSkeleton) {
     return <ProviderDashboardSkeleton />;
   }
 

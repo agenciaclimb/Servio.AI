@@ -41,11 +41,11 @@ const AdminFinancials: React.FC<AdminFinancialsProps> = ({ allJobs, allProposals
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID da Transação</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job ID</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">ID da Transação</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Job ID</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Valor</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Data</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -53,7 +53,7 @@ const AdminFinancials: React.FC<AdminFinancialsProps> = ({ allJobs, allProposals
                                 const statusStyle = statusStyles[escrow.status];
                                 return (
                                     <tr key={escrow.id}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{escrow.id}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-mono">{escrow.id}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 font-mono">{escrow.jobId}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{formatCurrency(escrow.amount)}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">
@@ -61,7 +61,7 @@ const AdminFinancials: React.FC<AdminFinancialsProps> = ({ allJobs, allProposals
                                                 {escrow.status}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(escrow.createdAt).toLocaleDateString('pt-BR')}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{new Date(escrow.createdAt).toLocaleDateString('pt-BR')}</td>
                                     </tr>
                                 );
                             })}

@@ -57,11 +57,11 @@ const JobTimeline: React.FC<JobTimelineProps> = ({ job }) => {
                         {isCompleted ? (
                              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
                         ): (
-                            <span className={`${isActive ? 'text-white' : 'text-gray-500'}`}>{step.icon}</span>
+                            <span className={`${isActive ? 'text-white' : 'text-gray-600'}`}>{step.icon}</span>
                         )}
                        
                     </div>
-                    <p className={`mt-2 text-xs font-semibold ${isActive ? 'text-blue-600' : 'text-gray-500'}`}>
+                    <p className={`mt-2 text-xs font-semibold ${isActive ? 'text-blue-600' : 'text-gray-600'}`}>
                         {step.label}
                     </p>
                 </div>
