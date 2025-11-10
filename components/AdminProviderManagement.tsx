@@ -21,7 +21,7 @@ const AdminProviderManagement: React.FC<AdminProviderManagementProps> = ({ allUs
 
     const handleUpdateStatus = async (userId: string, status: UserStatus) => {
         // optimistic update
-        const prevUsers = allUsers;
+        const previousUsers = allUsers;
         setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status } : u));
         try {
             if (status === 'suspenso') {
@@ -34,13 +34,13 @@ const AdminProviderManagement: React.FC<AdminProviderManagementProps> = ({ allUs
         } catch (err) {
             console.error('Failed to persist provider status change:', err);
             // revert optimistic change on error
-            setAllUsers(prevUsers);
+            setAllUsers(previousUsers);
         }
     };
   
     const handleVerificationDecision = async (userId: string, decision: 'verificado' | 'recusado') => {
         // optimistic update
-        const prevUsers = allUsers;
+        const previousUsers = allUsers;
         setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, verificationStatus: decision } : u));
 
         const notificationText = decision === 'verificado'
@@ -55,7 +55,7 @@ const AdminProviderManagement: React.FC<AdminProviderManagementProps> = ({ allUs
         } catch (err) {
             console.error('Failed to persist verification decision:', err);
             // revert optimistic change on error, still show local notification to guide admin
-            setAllUsers(prevUsers);
+            setAllUsers(previousUsers);
             setAllNotifications(prev => [...prev, {
                 id: `notif-verify-${Date.now()}`,
                 userId: userId,
