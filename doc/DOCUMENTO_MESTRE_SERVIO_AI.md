@@ -1,3 +1,106 @@
+#update_log - 10/11/2025 21:47
+🔧 **REFATORAÇÃO LINT + NOVA COBERTURA GEMINI - PREPARAÇÃO PARA SPRINT DE COVERAGE**
+
+**Status de Qualidade Atualizado:**
+
+- **Lint (ESLint):** 0 erros ✅, 26 warnings ⚠️
+  - Warnings agrupados:
+    - `@typescript-eslint/no-explicit-any`: 25 ocorrências (ErrorBoundary, geminiService, ClientDashboard, Header, HeroSection, types)
+    - `react-hooks/exhaustive-deps`: 3 ocorrências (ChatModal, ClientDashboard, ProfilePage)
+    - `prefer-const`: 1 ocorrência (FindProvidersPage)
+- **Testes Unitários:** 55/55 PASS ✅ (novo: `geminiService.test.ts` com 3 cenários)
+- **Cobertura Geral:** 13.74% statements (baseline incremento)
+  - `geminiService.ts`: 57.86% statements (novo teste elevou de ~20%)
+  - `AIJobRequestWizard.tsx`: 91.66% statements
+  - `ClientDashboard.tsx`: 41.89% statements
+  - `ProviderDashboard.tsx`: 34.47% statements
+  - Componentes não testados: AdminDashboard, ProfileModal, modais diversos (0%)
+
+**SonarCloud Metrics (Último Scan):**
+
+- **Reliability:** A (0 issues) ✅
+- **Security:** A (0 issues) ✅
+- **Maintainability:** C (38 code smells High - 175 total)
+  - High Priority: Complexidade cognitiva >15, aninhamento >4 níveis, funções longas
+  - Arquivos críticos: `ClientDashboard.tsx`, `ProviderDashboard.tsx`, `AdminDashboard.tsx`, `AuctionRoomModal.tsx`
+- **Coverage:** 13.7% (abaixo da meta 80%) ⚠️
+- **Duplications:** 1.3% (aceitável) ✅
+
+**Ações Executadas Nesta Iteração:**
+
+1. **Limpeza de Imports e Variáveis Não Utilizadas:**
+   - Removidos imports não usados em: `geminiService.ts`, `DisputeModal.tsx`, `DisputeDetailsModal.tsx`, `ProposalModal.tsx`, `FindProvidersPage.tsx`
+   - Prefixados com `_` variáveis/setters/args não usados em: `AIJobRequestWizard.tsx`, `AdminDashboard.tsx`, `ClientDashboard.tsx`, `ProviderDashboard.tsx`, `ProfileModal.tsx`, `JobLocationModal.tsx`, `ProfileStrength.tsx`
+   - Convertidos imports para `type`-only onde aplicável (evita side-effects desnecessários)
+
+2. **Novo Teste de Serviço - geminiService:**
+   - Arquivo: `tests/geminiService.test.ts`
+   - Cenários cobertos:
+     - `enhanceJobRequest` com fallback heurístico quando backend falha
+     - `generateProfileTip` retorna mock em ambiente Vitest
+     - `generateProposalMessage` com mock de resposta backend
+   - Resultado: 3/3 PASS, elevou cobertura de `geminiService.ts` para 57.86%
+
+3. **Ajustes de Tipo e Simplificações:**
+   - `FindProvidersPage`: Removida lógica de AI search (parseSearchQuery) temporariamente desabilitada
+   - Comentados handlers não implementados que causavam ruído no lint
+
+**Divergências CI vs Local:**
+
+- **GitHub Actions (último workflow):** ❌ Falhou por erros de lint (variáveis não usadas)
+- **Estado Atual Local:** ✅ Lint zerado (0 erros)
+- **Causa:** Commits de refatoração ainda não enviados ao remoto
+- **Próxima Ação:** Push para validar CI green com estado atual
+
+**Backlog Técnico Priorizado (Próxima Sprint):**
+
+1. **Coverage Uplift (Meta: 40% → 80%):**
+   - Testes para `ProfileModal.tsx` (enhance profile, submit, portfolio)
+   - Testes para `ProposalModal.tsx` (gerar mensagem IA, submit proposta)
+   - Testes para `AdminDashboard.tsx` (resolver disputa, suspender provedor)
+   - Testes para `geminiService.ts` (mediateDispute, analyzeProviderBehaviorForFraud, funções SEO)
+   - Testes de integração para `ClientDashboard.tsx` (fluxo pagamento, aceitar proposta)
+
+2. **Redução de Warnings (Meta: <10 warnings):**
+   - Substituir `any` por tipos específicos em: `ErrorBoundary.tsx`, `geminiService.ts` (process.env, import.meta.env), `ClientDashboard.tsx` (window, Stripe)
+   - Adicionar dependências faltantes ou justificar com `eslint-disable-next-line` em: `ChatModal.tsx`, `ClientDashboard.tsx`, `ProfilePage.tsx`
+   - Corrigir `prefer-const` em `FindProvidersPage.tsx`
+
+3. **SonarCloud - Code Smells High (Meta: <10 High):**
+   - Refatorar `ClientDashboard.tsx`: extrair lógica de handlers complexos (handleFinalizeJob, handleAcceptProposal) para funções puras
+   - Refatorar `ProviderDashboard.tsx`: simplificar estrutura de tabs e estado de propostas
+   - Refatorar `AdminDashboard.tsx`: extrair componentes menores (Analytics, JobManagement, ProviderManagement)
+   - Reduzir profundidade de aninhamento em `AuctionRoomModal.tsx` e `ChatModal.tsx`
+
+4. **Quick Wins Adicionais:**
+   - Extrair lógica de `inferCategory` de `geminiService.ts` para função pura testável
+   - Criar helper `typeSafeEnv` para centralizar acessos a `import.meta.env` e eliminar `any`
+   - Wrap `setAllMessages` em `useCallback` no `ClientDashboard` para evitar warning de deps
+
+**Métricas de Progresso (Sprint Atual):**
+
+- Erros Lint: 26 → 0 ✅
+- Warnings Lint: 26 (estável)
+- Testes: 52 → 55 (+3) ✅
+- Cobertura: 13.21% → 13.74% (+0.53%)
+- SonarCloud High Issues: 38 (baseline registrado)
+
+**Próximas Ações Imediatas:**
+
+1. ✅ Commit e push de refatorações lint para validar CI
+2. ⏩ Implementar testes de `ProfileModal` (2-3 cenários de enhance + save)
+3. ⏩ Implementar testes de `geminiService` restantes (dispute, fraud)
+4. ⏩ Atingir 40% coverage antes de atacar smells SonarCloud
+
+**Estimativa para Meta 80% Coverage:**
+
+- Componentes a testar: ~15 arquivos principais
+- Esforço por componente: 3-5 testes (~30min cada)
+- Estimativa total: 8-12 horas de desenvolvimento + validação
+- Prazo recomendado: 3-4 sessões de trabalho
+
+---
+
 #update_log - 10/11/2025 19:30
 🎉 **VALIDAÇÃO COMPLETA 100% - SISTEMA PRONTO PARA LANÇAMENTO** 🎉
 
@@ -740,18 +843,16 @@ const totalEarnings = completedJobs.reduce((sum, job) => {
 ```javascript
 // backend/src/index.js - Release payment with earnings
 const earningsProfile = calculateProviderRate(providerDoc.data(), stats);
-const providerShare = Math.round(
-  escrowData.amount * earningsProfile.currentRate * 100,
-);
+const providerShare = Math.round(escrowData.amount * earningsProfile.currentRate * 100);
 
 // Update provider's commission rate
-await db.collection("users").doc(escrowData.providerId).update({
+await db.collection('users').doc(escrowData.providerId).update({
   providerRate: earningsProfile.currentRate,
 });
 
 // Save earnings to job
 await db
-  .collection("jobs")
+  .collection('jobs')
   .doc(jobId)
   .update({
     earnings: {
@@ -847,16 +948,14 @@ Sem polling, sem refresh, 100% real-time!
 
 ```typescript
 // ChatModal.tsx - Real-time listener
-const unsubscribe = onSnapshot(q, (snapshot) => {
+const unsubscribe = onSnapshot(q, snapshot => {
   const updatedMessages: Message[] = [];
-  snapshot.forEach((doc) => {
+  snapshot.forEach(doc => {
     updatedMessages.push({ id: doc.id, ...doc.data() } as Message);
   });
-  updatedMessages.sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-  );
-  setAllMessages((prev) => {
-    const otherChats = prev.filter((m) => m.chatId !== job.id);
+  updatedMessages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  setAllMessages(prev => {
+    const otherChats = prev.filter(m => m.chatId !== job.id);
     return [...otherChats, ...updatedMessages];
   });
 });

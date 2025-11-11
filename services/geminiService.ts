@@ -1,33 +1,25 @@
 // @google/genai API implementation
 import {
-  Job,
-  User,
-  Review,
-  MatchingResult,
-  EnhancedJobRequest,
-  FAQItem,
-  IdentifiedItem,
-  SEOProfileContent,
-  CategoryPageContent,
-  Message,
-  ScheduledDateTime,
-  ExtractedDocumentInfo,
-  DisputeMessage,
-  ServiceType,
-  Prospect,
-  ProviderProfile,
-  ParsedSearchQuery,
-  MaintainedItem,
-  MaintenanceSuggestion,
-  ChatSuggestion,
-  UserType,
-  Proposal,
-  FraudAlert,
+    Job,
+    User,
+    Review,
+    MatchingResult,
+    EnhancedJobRequest,
+    FAQItem,
+    IdentifiedItem,
+    SEOProfileContent,
+    CategoryPageContent,
+    Message,
+    ScheduledDateTime,
+    ExtractedDocumentInfo,
+    DisputeMessage,
+    ServiceType,
+    ParsedSearchQuery,
+    ChatSuggestion,
+    UserType,
 } from '../types';
-
 /**
  * NOTE FOR PRODUCTION ARCHITECTURE:
- * 
  * This service has been refactored to act as a client for a secure backend API.
  * The Gemini API key and the `@google/genai` SDK are NO LONGER USED on the frontend.
  * All AI logic is now presumed to be handled by a backend server, which this service communicates with via `fetch`.

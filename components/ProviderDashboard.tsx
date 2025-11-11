@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Job, User, Proposal, FraudAlert, Dispute, JobStatus, Notification, Message, ScheduledDateTime, DisputeMessage, Bid } from '../types';
+import type { Job, User, Proposal, FraudAlert, Dispute, JobStatus, Message, ScheduledDateTime, DisputeMessage, Bid } from '../types';
 import { useToast } from '../contexts/ToastContext';
 import JobCard from './JobCard';
 import ProposalModal from './ProposalModal';
@@ -21,7 +21,7 @@ import * as API from '../services/api';
 
 interface ProviderDashboardProps {
   user: User;
-  onViewProfile: (userId: string) => void;
+  // onViewProfile: (userId: string) => void; // removed (future feature placeholder)
   onPlaceBid: (jobId: string, amount: number) => void;
   /** Quando true, desativa o fluxo de onboarding. Útil para testes unitários. */
   disableOnboarding?: boolean;
@@ -31,7 +31,7 @@ interface ProviderDashboardProps {
 
 const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   user,
-  onViewProfile,
+  // onViewProfile,
   onPlaceBid,
   disableOnboarding = false,
   disableSkeleton = false,
@@ -76,7 +76,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   const [myBids, setMyBids] = useState<Bid[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [allDisputes, setAllDisputes] = useState<Dispute[]>([]);
-  const [allFraudAlerts, setAllFraudAlerts] = useState<FraudAlert[]>([]);
+  const [_allFraudAlerts, _setAllFraudAlerts] = useState<FraudAlert[]>([]); // unused for now
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -307,7 +307,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
     }
   };
   
-    const handleSendDisputeMessage = (disputeId: string, text: string) => {
+  const _handleSendDisputeMessage = (disputeId: string, text: string) => {
         const newMessage: DisputeMessage = {
             id: `d-msg-${Date.now()}`,
             senderId: user.email,

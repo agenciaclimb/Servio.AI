@@ -13,11 +13,7 @@ interface AIJobRequestWizardProps {
   initialData?: JobData;
 }
 
-const serviceTypeDetails: { [key in ServiceType]: { name: string, description: string, icon: string } } = {
-    'personalizado': { name: 'Personalizado', description: 'Ideal para jobs complexos que precisam de um orçamento sob medida.', icon: '📝' },
-    'tabelado': { name: 'Tabelado', description: 'Para serviços simples com um preço fixo e escopo bem definido.', icon: '💰' },
-    'diagnostico': { name: 'Diagnóstico', description: 'Quando o profissional precisa visitar o local para avaliar o problema.', icon: '🔍' },
-};
+// Removed unused serviceTypeDetails mapping (lint unused-var). If needed for future UI tooltips, reintroduce.
 
 const urgencyOptions: { id: 'hoje' | 'amanha' | '3dias' | '1semana', label: string }[] = [
     { id: 'hoje', label: 'Hoje' },
@@ -49,9 +45,9 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
   const [finalCategory, setFinalCategory] = useState(initialData?.category || '');
   const [finalServiceType, setFinalServiceType] = useState<ServiceType>(initialData?.serviceType || 'personalizado');
   const [finalUrgency, setFinalUrgency] = useState<'hoje' | 'amanha' | '3dias' | '1semana'>(initialData?.urgency || '3dias');
-  const [finalFixedPrice, setFinalFixedPrice] = useState(initialData?.fixedPrice?.toString() || '');
-  const [finalVisitFee, setFinalVisitFee] = useState(initialData?.visitFee?.toString() || '');
-  const [targetProviderId, setTargetProviderId] = useState<string | undefined>(initialData?.targetProviderId);
+  const [finalFixedPrice, _setFinalFixedPrice] = useState(initialData?.fixedPrice?.toString() || '');
+  const [finalVisitFee, _setFinalVisitFee] = useState(initialData?.visitFee?.toString() || '');
+  const [targetProviderId, _setTargetProviderId] = useState<string | undefined>(initialData?.targetProviderId);
   const [jobMode, setJobMode] = useState<JobMode>(initialData?.jobMode || 'normal');
   const [auctionDuration, setAuctionDuration] = useState<number>(initialData?.auctionDurationHours || 24);
 
