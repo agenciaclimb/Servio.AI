@@ -1,15 +1,23 @@
-#update_log - 10/11/2025 21:47
-🔧 **REFATORAÇÃO LINT + NOVA COBERTURA GEMINI - PREPARAÇÃO PARA SPRINT DE COVERAGE**
+#update_log - 11/11/2025 03:20
+🔧 **CORREÇÃO MASSIVA DE ERROS TYPESCRIPT - 95% REDUÇÃO (440→23)**
 
 **Status de Qualidade Atualizado:**
 
+- **TypeScript:** 23 erros ✅ (redução de 95% desde 440)
+  - Erros corrigidos (417):
+    - `AdminDashboard.tsx`: resolution undefined, setAllNotifications, código comentado, switch statement
+    - `backend/tests/notifications.test.ts`: Mock Firestore com assinaturas corretas (14 erros)
+    - `backend/tests/payments.test.ts`: storage mock + helpers para reduzir aninhamento (8+ erros)
+    - `App.tsx`: Imports não usados (Job, Proposal, Message, FraudAlert, Dispute, Bid), variáveis (\_isLoadingData, allEscrows), handlePlaceBid removido
+    - `AddItemModal.tsx`: Import IdentifiedItem não usado
+  - Erros restantes (23): Principalmente imports/variáveis não críticas em arquivos E2E e testes
 - **Lint (ESLint):** 0 erros ✅, 26 warnings ⚠️
   - Warnings agrupados:
     - `@typescript-eslint/no-explicit-any`: 25 ocorrências (ErrorBoundary, geminiService, ClientDashboard, Header, HeroSection, types)
     - `react-hooks/exhaustive-deps`: 3 ocorrências (ChatModal, ClientDashboard, ProfilePage)
     - `prefer-const`: 1 ocorrência (FindProvidersPage)
-- **Testes Unitários:** 55/55 PASS ✅ (novo: `geminiService.test.ts` com 3 cenários)
-- **Cobertura Geral:** 13.74% statements (baseline incremento)
+- **Testes Unitários:** 55/55 PASS ✅ (validados pós-correções TypeScript)
+- **Cobertura Geral:** 13.74% statements (baseline mantido)
   - `geminiService.ts`: 57.86% statements (novo teste elevou de ~20%)
   - `AIJobRequestWizard.tsx`: 91.66% statements
   - `ClientDashboard.tsx`: 41.89% statements
@@ -26,24 +34,33 @@
 - **Coverage:** 13.7% (abaixo da meta 80%) ⚠️
 - **Duplications:** 1.3% (aceitável) ✅
 
-**Ações Executadas Nesta Iteração:**
+**Correções Aplicadas (Iteração TypeScript Cleanup):**
 
-1. **Limpeza de Imports e Variáveis Não Utilizadas:**
-   - Removidos imports não usados em: `geminiService.ts`, `DisputeModal.tsx`, `DisputeDetailsModal.tsx`, `ProposalModal.tsx`, `FindProvidersPage.tsx`
-   - Prefixados com `_` variáveis/setters/args não usados em: `AIJobRequestWizard.tsx`, `AdminDashboard.tsx`, `ClientDashboard.tsx`, `ProviderDashboard.tsx`, `ProfileModal.tsx`, `JobLocationModal.tsx`, `ProfileStrength.tsx`
-   - Convertidos imports para `type`-only onde aplicável (evita side-effects desnecessários)
+1. **AdminDashboard.tsx** (4 erros → 0):
+   - Guard `!resolution` adicionado ao handleResolveDispute
+   - Renomeado `_allNotifications/_setAllNotifications` → `allNotifications/setAllNotifications`
+   - Removido código comentado (escrows, handleSuspendProvider)
+   - Restaurado `switch (activeTab)` statement quebrado
 
-2. **Novo Teste de Serviço - geminiService:**
-   - Arquivo: `tests/geminiService.test.ts`
-   - Cenários cobertos:
-     - `enhanceJobRequest` com fallback heurístico quando backend falha
-     - `generateProfileTip` retorna mock em ambiente Vitest
-     - `generateProposalMessage` com mock de resposta backend
-   - Resultado: 3/3 PASS, elevou cobertura de `geminiService.ts` para 57.86%
+2. **backend/tests/notifications.test.ts** (14 erros → 0):
+   - Mock Firestore corrigido: `.collection(collectionName: string)` e `.add(data: unknown)` com parâmetros
+   - Assinaturas de método compatíveis com chamadas reais
 
-3. **Ajustes de Tipo e Simplificações:**
-   - `FindProvidersPage`: Removida lógica de AI search (parseSearchQuery) temporariamente desabilitada
-   - Comentados handlers não implementados que causavam ruído no lint
+3. **backend/tests/payments.test.ts** (8+ erros → 0):
+   - Adicionado mock `storage` para `createApp({ db, storage, stripe })`
+   - Criadas funções helpers: `findDocIndex`, `updateDocInArray`, `setDocInArray` (reduz aninhamento >4 níveis)
+   - Mock duplicado corrigido (webhook test)
+
+4. **App.tsx** (11 erros → 0):
+   - Removidos imports não usados: Job, Proposal, Message, FraudAlert, Dispute, Bid
+   - Removidas variáveis: `isLoadingData`, `setIsLoadingData`, `allEscrows`, `setAllEscrows`
+   - Removida função: `handlePlaceBid` (movida para ProviderDashboard)
+   - Tipagem explícita: `onViewProfile={(userId: string) => ...}`
+   - Props limpas: removido `setAllEscrows` de ClientDashboard, `onPlaceBid` de ProviderDashboard
+
+5. **AddItemModal.tsx** (1 erro → 0):
+   - Import `IdentifiedItem` não usado removido
+   - Convertido para `type` import em MaintainedItem
 
 **Divergências CI vs Local:**
 

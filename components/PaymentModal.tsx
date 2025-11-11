@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
 import type { Job, Proposal, User } from '../types';
 
 interface PaymentModalProps {
@@ -31,8 +32,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ job, proposal, provider, is
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md m-4 transform transition-all" data-testid="payment-modal" onClick={(e) => e.stopPropagation()}>
+    <div {...getModalOverlayProps(onClose)} className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+      <div {...getModalContentProps()} className="bg-white rounded-2xl shadow-xl w-full max-w-md m-4 transform transition-all" data-testid="payment-modal">
         <div className="relative p-8 text-center">
           <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">&times;</button>
           

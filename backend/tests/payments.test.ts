@@ -13,6 +13,27 @@ const mockStripe = {
   checkout: { sessions: { create: stripeCheckoutSessionsCreate } },
 };
 
+// Helper functions to reduce nesting
+function findDocIndex(dataArray: any[], id: string): number {
+  return dataArray.findIndex((d) => d.id === id);
+}
+
+function updateDocInArray(dataArray: any[], id: string, partial: any): void {
+  const idx = findDocIndex(dataArray, id);
+  if (idx >= 0) {
+    dataArray[idx] = { ...dataArray[idx], ...partial };
+  }
+}
+
+function setDocInArray(dataArray: any[], id: string, val: any): void {
+  const idx = findDocIndex(dataArray, id);
+  if (idx >= 0) {
+    dataArray[idx] = val;
+  } else {
+    dataArray.push({ id, ...val });
+  }
+}
+
 // Minimal Firestore mock shape com suporte a where() encadeado
 function makeDb() {
   const data: Record<string, any[]> = {
@@ -47,10 +68,7 @@ function makeDb() {
         id: d.id,
         data: () => d,
         ref: {
-          update: async (partial: any) => {
-            const idx = data[this.name].findIndex((x) => x.id === d.id);
-            if (idx >= 0) data[this.name][idx] = { ...data[this.name][idx], ...partial };
-          },
+          update: async (partial: any) => updateDocInArray(data[this.name], d.id, partial),
         },
       }));
       return { empty: mapped.length === 0, docs: mapped };
@@ -62,22 +80,15 @@ function makeDb() {
       const _id = id || Math.random().toString(36).slice(2);
       return {
         id: _id,
-        set: async (val: any) => {
-          const idx = data[name].findIndex((d: any) => d.id === _id);
-          if (idx >= 0) data[name][idx] = val; else data[name].push({ id: _id, ...val });
-        },
+        set: async (val: any) => setDocInArray(data[name], _id, val),
         get: async () => {
           const found = data[name].find((d: any) => d.id === _id);
           return { exists: !!found, data: () => found };
         },
-        update: async (partial: any) => {
-          const idx = data[name].findIndex((d: any) => d.id === _id);
-          if (idx >= 0) data[name][idx] = { ...data[name][idx], ...partial };
+        update: async (partial: any) => updateDocInArray(data[name], _id, partial),
+        ref: { 
+          update: async (partial: any) => updateDocInArray(data[name], _id, partial)
         },
-        ref: { update: async (partial: any) => {
-          const idx = data[name].findIndex((d: any) => d.id === _id);
-          if (idx >= 0) data[name][idx] = { ...data[name][idx], ...partial };
-        }},
       };
     },
     where: (field: string, _op: string, value: any) => new Query(name).where(field, _op, value),
@@ -98,7 +109,9 @@ describe('Payments/Stripe integration (mocked)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     db = makeDb();
-    app = createApp({ db, stripe: mockStripe as any });
+    // Add mock storage to satisfy createApp signature
+    const mockStorage = { bucket: vi.fn(() => ({ file: vi.fn() })) };
+    app = createApp({ db, storage: mockStorage as any, stripe: mockStripe as any });
   });
 
   it('creates checkout session and escrow', async () => {
@@ -179,7 +192,8 @@ describe('Payments/Stripe integration (mocked)', () => {
     // seed escrow
     await db.collection('escrows').doc('esc1').set({ id: 'esc1', jobId: 'job1', status: 'em_espera' });
 
-    app = createApp({ db, stripe: stripeWithWebhook });
+    const mockStorage = { bucket: vi.fn(() => ({ file: vi.fn() })) };
+    app = createApp({ db, storage: mockStorage as any, stripe: stripeWithWebhook });
 
     // Act: enviar corpo bruto (string) e header de assinatura
     const res = await request(app)

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
 import type { Job, User, Dispute } from '../types';
 
 interface DisputeModalProps {
@@ -30,8 +31,8 @@ const DisputeModal: React.FC<DisputeModalProps> = ({ user, job, dispute, otherPa
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg m-4 transform transition-all h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+    <div {...getModalOverlayProps(onClose)} className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+      <div {...getModalContentProps()} className="bg-white rounded-2xl shadow-xl w-full max-w-lg m-4 transform transition-all h-[90vh] flex flex-col">
         <header className="relative p-4 border-b border-red-200 bg-red-50 flex-shrink-0">
             <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-600">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>

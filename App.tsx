@@ -25,19 +25,13 @@ const FindProvidersPage = lazy(() => import('./components/FindProvidersPage'));
 
 import {
   User,
-  Job,
-  Proposal,
-  Message,
   Notification,
   Escrow,
-  FraudAlert,
-  Dispute,
   MatchingResult,
   MaintainedItem,
   UserType,
   JobData,
   Prospect,
-  Bid,
 } from './types';
 import { getMatchingProviders, analyzeProviderBehaviorForFraud } from './services/geminiService';
 import { serviceNameToCategory } from './services/geminiService';
@@ -68,7 +62,6 @@ const App: React.FC = () => {
   // Data State - minimal global state
   const [maintainedItems, setMaintainedItems] = useState<MaintainedItem[]>([]);
   const [allNotifications, setAllNotifications] = useState<Notification[]>([]);
-  const [allEscrows, setAllEscrows] = useState<Escrow[]>([]);
   const [jobDataToCreate, setJobDataToCreate] = useState<JobData | null>(null);
   const [contactProviderAfterLogin, setContactProviderAfterLogin] = useState<string|null>(null);
 
@@ -303,13 +296,7 @@ const App: React.FC = () => {
       setWizardData({ prompt, data: { ...({} as JobData), targetProviderId: providerId } });
   };
   
-  const handlePlaceBid = async (jobId: string, amount: number) => {
-    if (!currentUser || currentUser.type !== 'prestador') return;
-    
-    // This function is now primarily handled within ProviderDashboard.
-    // The logic here could be removed if no longer used directly by App.
-    console.log("Placing bid from App.tsx - this might be deprecated", { jobId, amount });
-  };
+  // handlePlaceBid removed - functionality moved to ProviderDashboard
 
 
   const renderContent = () => {
@@ -323,8 +310,8 @@ const App: React.FC = () => {
         if (!currentUser) {
           return <div style={{padding: '2rem'}}>Carregando seu painel…</div>;
         }
-        if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allUsers={[]} allProposals={[]} allMessages={[]} maintainedItems={maintainedItems} allDisputes={[]} allBids={[]} setAllProposals={() => {}} setAllMessages={() => {}} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllEscrows={setAllEscrows} setAllDisputes={() => {}} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} onUpdateUser={handleUpdateUser} />;
-        if (currentUser.type === 'prestador') return <ProviderDashboard user={currentUser} onViewProfile={(userId) => handleSetView('profile', {userId})} onPlaceBid={() => {}} />;
+        if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allUsers={[]} allProposals={[]} allMessages={[]} maintainedItems={maintainedItems} allDisputes={[]} allBids={[]} setAllProposals={() => {}} setAllMessages={() => {}} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllDisputes={() => {}} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} onUpdateUser={handleUpdateUser} />;
+        if (currentUser.type === 'prestador') return <ProviderDashboard user={currentUser} onViewProfile={(userId: string) => handleSetView('profile', {userId})} />;
         if (currentUser.type === 'admin') return <AdminDashboard user={currentUser} />;
         return null;
       case 'profile':

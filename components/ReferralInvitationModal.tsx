@@ -1,4 +1,5 @@
 import React from 'react';
+import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
 
 interface ReferralInvitationModalProps {
   email: { subject: string; body: string };
@@ -7,8 +8,8 @@ interface ReferralInvitationModalProps {
 
 const ReferralInvitationModal: React.FC<ReferralInvitationModalProps> = ({ email, onClose }) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl m-4 transform transition-all max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+    <div {...getModalOverlayProps(onClose)} className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+      <div {...getModalContentProps()} className="bg-white rounded-2xl shadow-xl w-full max-w-2xl m-4 transform transition-all max-h-[90vh] flex flex-col">
         <header className="relative p-6 border-b border-gray-200 bg-slate-50 rounded-t-2xl">
             <h2 className="text-xl font-bold text-gray-800">Convite Enviado!</h2>
             <p className="text-sm text-gray-600 mt-1">A IA gerou a seguinte mensagem para seu colega:</p>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
 import { User, PortfolioItem } from '../types';
 import { enhanceProviderProfile } from '../services/geminiService';
 
@@ -101,8 +102,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, onClose, onSave }) =>
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl m-4 transform transition-all max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+    <div {...getModalOverlayProps(onClose)} className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div {...getModalContentProps()} className="bg-white rounded-2xl shadow-xl w-full max-w-2xl m-4 transform transition-all max-h-[90vh] flex flex-col">
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
           <div className="relative p-8 flex-grow overflow-y-auto">
             <button type="button" onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-600">

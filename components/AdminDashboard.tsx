@@ -29,7 +29,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     const [allFraudAlerts, setAllFraudAlerts] = useState<FraudAlert[]>([]);
     const [allEscrows] = useState<Escrow[]>([]);
     const [allDisputes, setAllDisputes] = useState<Dispute[]>([]);
-    const [_allNotifications, _setAllNotifications] = useState<Notification[]>([]); // currently unused
+    const [_allNotifications, setAllNotifications] = useState<Notification[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -55,7 +55,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
                 setAllUsers(users);
                 setAllProposals(proposals);
                 setAllFraudAlerts(fraudAlerts);
-                // setAllEscrows(escrows);
                 setAllDisputes(disputes);
             } catch (error) {
                 console.error("Failed to load admin dashboard data:", error);
@@ -75,7 +74,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
         resolution: Dispute['resolution']
     ) => {
         const dispute = allDisputes.find(d => d.id === disputeId);
-        if (!dispute) return;
+        if (!dispute || !resolution) return;
 
         try {
             // 1. Chamar API para resolver a disputa
@@ -104,19 +103,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
             setMediatingJob(null); // Fechar o modal
         }
     };
-
-    // const handleSuspendProvider = async (userId: string) => {
-    //     try {
-    //         await API.updateUser(userId, { status: 'suspenso' });
-    //         setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status: 'suspenso' } : u));
-    //         addToast('Prestador suspenso com sucesso!', 'success');
-    //         console.log(`Provider ${userId} suspended.`);
-    //     } catch (error) {
-    //         console.error(`Failed to suspend provider ${userId}:`, error);
-    //         addToast('Falha ao suspender o prestador.', 'error');
-    //     }
-    // };
-
 
     const renderTabContent = () => {
         switch (activeTab) {
