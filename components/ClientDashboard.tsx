@@ -92,9 +92,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
   const [viewingAuctionForJob, setViewingAuctionForJob] = useState<Job | null>(null);
   const [proposalToPay, setProposalToPay] = useState<Proposal | null>(null);
   const [payingForProposal, setPayingForProposal] = useState<Proposal | null>(null);
-  const [reviewingJob, setReviewingJob] = useState<Job | null>(null);
+  const [_reviewingJob, _setReviewingJob] = useState<Job | null>(null); // unused (future review feature)
   const [jobInFocus, setJobInFocus] = useState<{ job: Job; action: 'review' | 'dispute' | 'dispute-details' } | null>(null);
-  const [viewingDisputeForJob, setViewingDisputeForJob] = useState<Job | null>(null);
+  const [_viewingDisputeForJob, _setViewingDisputeForJob] = useState<Job | null>(null); // unused (future dispute detail view)
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   const [viewingItem, setViewingItem] = useState<MaintainedItem | null>(null);
   const [viewingJobOnMap, setViewingJobOnMap] = useState<Job | null>(null);
@@ -181,7 +181,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     }
   };
 
-  const handlePaymentSuccess = async () => {
+  const _handlePaymentSuccess = async () => {
     if (!payingForProposal) return;
     const { jobId, providerId, price, id: proposalId } = payingForProposal;
 
@@ -875,7 +875,7 @@ interface AIAssistantWidgetProps {
   userAddress?: string;
 }
 
-const AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ userName, userAddress }) => {
+const _AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ userName, userAddress }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [currentTip, setCurrentTip] = useState(0);
   const [isChatOpen, setIsChatOpen] = useState(false);

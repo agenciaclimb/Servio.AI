@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Job, User } from '../types';
 import { generateProposalMessage } from '../services/geminiService';
 

@@ -1,8 +1,8 @@
 // FIX: Create the FindProvidersPage component
-import React, { useState, useMemo, useEffect } from 'react';
-import { User, Job, ProviderProfile, ParsedSearchQuery } from '../types';
+import React, { useState, useMemo } from 'react';
+import type { User, Job } from '../types';
 import ProviderSearchResultCard from './ProviderSearchResultCard';
-import { parseSearchQuery } from '../services/geminiService';
+// import { parseSearchQuery } from '../services/geminiService';
 
 interface FindProvidersPageProps {
   allUsers: User[];
@@ -31,15 +31,8 @@ const FindProvidersPage: React.FC<FindProvidersPageProps> = ({ allUsers, allJobs
 
     setIsLoading(true);
     try {
-      const parsed = await parseSearchQuery(searchQuery);
-      setFilters(prev => ({
-        ...prev,
-        service: parsed.service || prev.service,
-        location: parsed.location || prev.location,
-        hasCertificates: parsed.attributes?.includes('certificado') || prev.hasCertificates,
-        isVerified: parsed.attributes?.includes('verificado') || prev.isVerified,
-        availability: parsed.attributes?.includes('imediata') || parsed.attributes?.includes('urgente') ? 'imediata' : prev.availability
-      }));
+      // AI parsing disabled (unused types). Simple fallback search only.
+      setFilters(prev => ({ ...prev, service: searchQuery }));
     } catch (error) {
       console.error("AI Search failed:", error);
       // Fallback to basic search if AI fails
@@ -92,7 +85,7 @@ const FindProvidersPage: React.FC<FindProvidersPageProps> = ({ allUsers, allJobs
 
 
   const filteredAndSortedProviders = useMemo(() => {
-    let results = providersWithStats.filter(user => {
+    const results = providersWithStats.filter(user => {
       const serviceLower = filters.service.toLowerCase();
       const locationLower = filters.location.toLowerCase();
       

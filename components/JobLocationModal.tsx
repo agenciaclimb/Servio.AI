@@ -9,7 +9,7 @@ interface JobLocationModalProps {
   onClose: () => void;
 }
 
-const JobLocationModal: React.FC<JobLocationModalProps> = ({ job, client, provider, onClose }) => {
+const JobLocationModal: React.FC<JobLocationModalProps> = ({ job: _job, client, provider, onClose }) => {
   
   const mapLocations = [
     { id: 'client', name: client.location, type: 'job' as const },

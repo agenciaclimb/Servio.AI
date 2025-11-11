@@ -23,7 +23,7 @@ const ProfileStrength: React.FC<ProfileStrengthProps> = ({ user, onEditProfile }
   const strengthPercentage = Math.round((completedCount / totalCount) * 100);
   
   const progressColor = strengthPercentage > 80 ? 'text-green-500' : strengthPercentage > 50 ? 'text-yellow-500' : 'text-red-500';
-  const progressBg = strengthPercentage > 80 ? 'bg-green-500' : strengthPercentage > 50 ? 'bg-yellow-500' : 'bg-red-500';
+  // const progressBg = strengthPercentage > 80 ? 'bg-green-500' : strengthPercentage > 50 ? 'bg-yellow-500' : 'bg-red-500'; // unused background variant
 
   return (
     <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-100">

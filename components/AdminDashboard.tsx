@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Job, User, Proposal, FraudAlert, Escrow, Dispute, Notification } from '../types';
+import type { Job, User, Proposal, FraudAlert, Escrow, Dispute, Notification } from '../types';
 import { useToast } from '../contexts/ToastContext';
 import AdminAnalyticsDashboard from './AdminAnalyticsDashboard';
 import AdminJobManagement from './AdminJobManagement';
@@ -7,7 +7,7 @@ import AdminProviderManagement from './AdminProviderManagement';
 import AdminFinancials from './AdminFinancials';
 import AdminFraudAlerts from './AdminFraudAlerts';
 import DisputeDetailsModal from './DisputeDetailsModal'; // Substituindo o modal antigo
-import { serviceNameToCategory } from '../services/geminiService';
+// import { serviceNameToCategory } from '../services/geminiService';
 import * as API from '../services/api';
 
 interface AdminDashboardProps {
@@ -27,9 +27,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     const [allUsers, setAllUsers] = useState<User[]>([]);
     const [allProposals, setAllProposals] = useState<Proposal[]>([]);
     const [allFraudAlerts, setAllFraudAlerts] = useState<FraudAlert[]>([]);
-    const [allEscrows, setAllEscrows] = useState<Escrow[]>([]);
+    const [allEscrows] = useState<Escrow[]>([]);
     const [allDisputes, setAllDisputes] = useState<Dispute[]>([]);
-    const [allNotifications, setAllNotifications] = useState<Notification[]>([]);
+    const [_allNotifications, _setAllNotifications] = useState<Notification[]>([]); // currently unused
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -105,17 +105,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
         }
     };
 
-    const handleSuspendProvider = async (userId: string) => {
-        try {
-            await API.updateUser(userId, { status: 'suspenso' });
-            setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status: 'suspenso' } : u));
-            addToast('Prestador suspenso com sucesso!', 'success');
-            console.log(`Provider ${userId} suspended.`);
-        } catch (error) {
-            console.error(`Failed to suspend provider ${userId}:`, error);
-            addToast('Falha ao suspender o prestador.', 'error');
-        }
-    };
+    // const handleSuspendProvider = async (userId: string) => {
+    //     try {
+    //         await API.updateUser(userId, { status: 'suspenso' });
+    //         setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status: 'suspenso' } : u));
+    //         addToast('Prestador suspenso com sucesso!', 'success');
+    //         console.log(`Provider ${userId} suspended.`);
+    //     } catch (error) {
+    //         console.error(`Failed to suspend provider ${userId}:`, error);
+    //         addToast('Falha ao suspender o prestador.', 'error');
+    //     }
+    // };
 
 
     const renderTabContent = () => {

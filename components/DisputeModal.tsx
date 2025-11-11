@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Job, DisputeMessage, User, Dispute } from '../types';
+import type { Job, User, Dispute } from '../types';
 
 interface DisputeModalProps {
   user: User;
