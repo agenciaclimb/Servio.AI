@@ -3,7 +3,7 @@ import { Job, Message, User, ScheduledDateTime, ChatSuggestion } from '../types'
 import { proposeScheduleFromChat, getChatAssistance } from '../services/geminiService';
 import AISchedulingAssistant from './AISchedulingAssistant';
 import { db } from '../firebaseConfig';
-import { collection, query, where, orderBy, onSnapshot, Unsubscribe } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, Unsubscribe } from 'firebase/firestore';
 
 interface ChatModalProps {
   job: Job;

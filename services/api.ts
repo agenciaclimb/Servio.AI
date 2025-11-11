@@ -9,7 +9,6 @@ import {
   Proposal,
   Message,
   Notification,
-  Escrow,
   FraudAlert,
   Dispute,
   MaintainedItem,

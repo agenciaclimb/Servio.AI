@@ -33,7 +33,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, onClose, onSave }) =>
   const [newPortfolioTitle, setNewPortfolioTitle] = useState('');
   const [newPortfolioDesc, setNewPortfolioDesc] = useState('');
   const [newPortfolioImage, setNewPortfolioImage] = useState<File | null>(null);
-  const [isAddingPortfolio, setIsAddingPortfolio] = useState(false);
+  const [_isAddingPortfolio, _setIsAddingPortfolio] = useState(false); // placeholder for future multi-step add flow
   const [portfolioError, setPortfolioError] = useState('');
 
 

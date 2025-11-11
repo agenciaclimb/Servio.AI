@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback } from 'react';
-import { IdentifiedItem, MaintainedItem } from '../types';
+// import { IdentifiedItem, MaintainedItem } from '../types';
 import { identifyItemFromImage } from '../services/geminiService';
 import LoadingSpinner from './LoadingSpinner';
 
