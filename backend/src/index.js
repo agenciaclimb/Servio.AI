@@ -434,17 +434,6 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
     try {
       event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
     } catch (err) {
-
-    // Lightweight diagnostics (safe: does NOT leak secrets)
-    // Returns whether STRIPE_WEBHOOK_SECRET is configured in the environment
-    app.get('/diag/stripe-webhook-secret', (req, res) => {
-      try {
-        const configured = Boolean(process.env.STRIPE_WEBHOOK_SECRET && process.env.STRIPE_WEBHOOK_SECRET.startsWith('whsec_'));
-        return res.status(200).json({ configured });
-      } catch (e) {
-        return res.status(200).json({ configured: false });
-      }
-    });
       console.log(`❌ Webhook signature verification failed.`, err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
@@ -469,6 +458,13 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
 
     // Return a 200 response to acknowledge receipt of the event
     res.json({received: true});
+  });
+
+  // Lightweight diagnostics (safe: does NOT leak secrets)
+  // Returns whether STRIPE_WEBHOOK_SECRET is configured in the environment
+  app.get('/diag/stripe-webhook-secret', (req, res) => {
+    const configured = Boolean(process.env.STRIPE_WEBHOOK_SECRET && process.env.STRIPE_WEBHOOK_SECRET.startsWith('whsec_'));
+    return res.status(200).json({ configured });
   });
 
 
