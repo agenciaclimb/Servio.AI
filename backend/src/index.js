@@ -434,6 +434,17 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
     try {
       event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
     } catch (err) {
+
+    // Lightweight diagnostics (safe: does NOT leak secrets)
+    // Returns whether STRIPE_WEBHOOK_SECRET is configured in the environment
+    app.get('/diag/stripe-webhook-secret', (req, res) => {
+      try {
+        const configured = Boolean(process.env.STRIPE_WEBHOOK_SECRET && process.env.STRIPE_WEBHOOK_SECRET.startsWith('whsec_'));
+        return res.status(200).json({ configured });
+      } catch (e) {
+        return res.status(200).json({ configured: false });
+      }
+    });
       console.log(`❌ Webhook signature verification failed.`, err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
@@ -1272,4 +1283,60 @@ if (require.main === module) {
   });
 }
 
-module.exports = { createApp, app, calculateProviderRate };
+/**
+ * Background processor to handle expirations and simple escalations.
+ * This is intentionally simple and side-effect free (no external calls),
+ * so it can be covered by unit tests and run on a scheduler/cron later.
+ *
+ * @param {object} options
+ * @param {object} options.db Firestore-like instance (supports collection().get(), doc(id).update())
+ * @param {Date} [options.now] Reference time (defaults to new Date())
+ * @param {number} [options.thresholdHours] Age threshold to escalate open jobs (default: 12h)
+ * @returns {Promise<{ expiredProposals: number, escalatedJobs: number }>}
+ */
+async function processScheduledJobs({ db, now = new Date(), thresholdHours = 12 } = {}) {
+  const nowTs = now.getTime();
+  const thresholdMs = thresholdHours * 60 * 60 * 1000;
+  let expiredProposals = 0;
+  let escalatedJobs = 0;
+
+  // 1) Expire proposals past expiresAt when status === 'pendente'
+  try {
+    const proposalsSnap = await db.collection('proposals').get();
+    const proposals = (proposalsSnap.docs || []).map(d => ({ id: d.id, ...(typeof d.data === 'function' ? d.data() : d.data) }));
+    for (const p of proposals) {
+      const expiresAt = p.expiresAt ? new Date(p.expiresAt).getTime() : undefined;
+      if (p.status === 'pendente' && expiresAt && expiresAt < nowTs) {
+        const ref = db.collection('proposals').doc(p.id);
+        await ref.update({ status: 'expirado', updatedAt: new Date(nowTs).toISOString() });
+        expiredProposals++;
+      }
+    }
+  } catch (err) {
+    console.error('processScheduledJobs: proposals pass failed', err);
+  }
+
+  // 2) Escalate open jobs with zero proposals older than threshold
+  try {
+    const jobsSnap = await db.collection('jobs').get();
+    const jobs = (jobsSnap.docs || []).map(d => ({ id: d.id, ...(typeof d.data === 'function' ? d.data() : d.data) }));
+    for (const j of jobs) {
+      if ((j.status === 'aberto' || j.status === 'open') && (Number(j.proposalsCount || 0) === 0)) {
+        const createdAtMs = j.createdAt ? new Date(j.createdAt).getTime() : undefined;
+        if (createdAtMs && (nowTs - createdAtMs) >= thresholdMs) {
+          const ref = db.collection('jobs').doc(j.id);
+          await ref.update({ escalation: 'no_proposals', notifiedAt: new Date(nowTs).toISOString() });
+          escalatedJobs++;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('processScheduledJobs: jobs pass failed', err);
+  }
+
+  return { expiredProposals, escalatedJobs };
+}
+
+module.exports = { createApp, app, calculateProviderRate, processScheduledJobs };
+// Provide a default export compatible with ESM import default used in tests
+module.exports.default = app;
