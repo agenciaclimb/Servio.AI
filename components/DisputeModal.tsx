@@ -16,7 +16,10 @@ const DisputeModal: React.FC<DisputeModalProps> = ({ user, job, dispute, otherPa
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Guard para ambientes de teste (JSDOM) onde scrollIntoView pode não existir
+    if (messagesEndRef.current && typeof messagesEndRef.current.scrollIntoView === 'function') {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   useEffect(() => {

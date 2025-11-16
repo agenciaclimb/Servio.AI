@@ -1,18 +1,26 @@
 import React from 'react';
 
-interface ErrorBoundaryState { hasError: boolean; error?: any; info?: any }
+interface ErrorInfo {
+  componentStack?: string;
+}
+
+interface ErrorBoundaryState { 
+  hasError: boolean; 
+  error?: Error; 
+  info?: ErrorInfo;
+}
 
 export default class ErrorBoundary extends React.Component<React.PropsWithChildren, ErrorBoundaryState> {
   state: ErrorBoundaryState = { hasError: false };
 
-  static getDerivedStateFromError(error: any): ErrorBoundaryState {
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: any, info: any) {
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
     // Centralizado para futura telemetria; console permitido
     console.error('[ErrorBoundary] Caught error:', error, info);
-    this.setState({ info });
+    this.setState({ info: { componentStack: info.componentStack || undefined } });
   }
 
   handleRetry = () => {

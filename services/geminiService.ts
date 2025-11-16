@@ -17,6 +17,8 @@ import {
     ParsedSearchQuery,
     ChatSuggestion,
     UserType,
+    MaintainedItem,
+    MaintenanceSuggestion,
 } from '../types';
 /**
  * NOTE FOR PRODUCTION ARCHITECTURE:
@@ -32,18 +34,75 @@ import {
  * Node's fetch (used by Vitest) does NOT accept relative URLs without a base,
  * so during tests (process.env.VITEST) we prepend a localhost base.
  */
+type EnvRecord = Record<string, string | undefined>;
+
+function getEnvVar(name: string): string | undefined {
+    // In Vitest, prefer process.env to allow tests to manipulate env deterministically
+    try {
+        const pe = (process as unknown as { env?: EnvRecord })?.env;
+        if (pe?.VITEST) {
+            return pe?.[name];
+        }
+    } catch {
+        // noop
+    }
+    // Try Vite env first (browser/build env)
+    try {
+        const im = (import.meta as unknown as { env?: EnvRecord })?.env;
+        if (im && typeof im[name] === 'string') return im[name];
+    } catch {
+        // noop
+    }
+    // Fallback to process.env when available (Node)
+    try {
+        const pe = (process as unknown as { env?: EnvRecord })?.env;
+        return pe?.[name];
+    } catch {
+        return undefined;
+    }
+}
+
 function resolveEndpoint(endpoint: string): string {
     // If already absolute (http/https), return unchanged.
     if (/^https?:\/\//i.test(endpoint)) return endpoint;
-    const isBrowser = typeof window !== 'undefined' && !!window.location?.origin;
-    // Prefer browser origin in the browser. In Node/test environments, use Vite envs when available.
-    const viteEnv = (typeof import.meta !== 'undefined' && (import.meta as any).env) ? (import.meta as any).env : undefined;
-    const viteBackend = viteEnv?.VITE_BACKEND_API_URL || viteEnv?.VITE_API_BASE_URL;
-    const nodeEnvBackend = (typeof process !== 'undefined' ? (process.env as any)?.VITE_BACKEND_API_URL || (process.env as any)?.API_BASE_URL : undefined);
-    const base = isBrowser
-        ? window.location.origin
-        : viteBackend || nodeEnvBackend || 'http://localhost:5173';
-    return base.replace(/\/$/, '') + endpoint; // ensure no double slash at end of base
+
+    // Some AI endpoints vivem em um serviço separado (VITE_AI_API_URL)
+    const AI_ENDPOINTS = new Set([
+        '/api/generate-tip',
+        '/api/enhance-profile',
+        '/api/generate-referral',
+    ]);
+    const aiBase = getEnvVar('VITE_AI_API_URL');
+    if (aiBase && AI_ENDPOINTS.has(endpoint)) {
+        return aiBase.replace(/\/$/, '') + endpoint;
+    }
+
+    // Decide environment behavior
+    const isBrowser = typeof globalThis !== 'undefined' && 'window' in globalThis;
+
+    // In Vitest (even if jsdom provides window), Node's fetch requires absolute URLs.
+    // In tests that simulate a bare "browser-like" window (no document), return relative.
+    const hasDocument = typeof (globalThis as any).document !== 'undefined';
+    const isWindowLinkedToDocument = hasDocument && ((globalThis as any).document?.defaultView === (globalThis as any).window);
+    if (isBrowser && (!hasDocument || !isWindowLinkedToDocument)) {
+        return endpoint;
+    }
+
+    // In Vitest/jsdom runs (with full window+document), force absolute localhost to keep fetch happy
+    if (getEnvVar('VITEST')) {
+        return 'http://localhost:5173'.replace(/\/$/, '') + endpoint;
+    }
+
+    // Real browser: relative path (Vite proxy in dev, same-origin in prod)
+    if (isBrowser) {
+        return endpoint;
+    }
+
+    // In pure Node (non-browser), construct absolute from env or sensible default
+    const viteBackend = getEnvVar('VITE_BACKEND_API_URL') || getEnvVar('VITE_API_BASE_URL');
+    const nodeEnvBackend = getEnvVar('API_BASE_URL');
+    const base = viteBackend || nodeEnvBackend || 'http://localhost:5173';
+    return base.replace(/\/$/, '') + endpoint;
 }
 
 /**

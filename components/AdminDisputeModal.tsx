@@ -47,15 +47,8 @@ const AdminDisputeModal: React.FC<AdminDisputeModalProps> = ({ job, dispute, cli
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4"
-      aria-modal="true"
-      role="dialog"
-      tabIndex={0}
-      onClick={onClose}
-      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') && onClose()}
-    >
-  <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl m-4 transform transition-all h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl m-4 transform transition-all h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
         <header className="relative p-4 border-b border-red-200 bg-red-50 flex-shrink-0">
             <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-600">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>

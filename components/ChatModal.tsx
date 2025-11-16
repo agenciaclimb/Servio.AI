@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
 import { Job, Message, User, ScheduledDateTime, ChatSuggestion } from '../types';
 import { proposeScheduleFromChat, getChatAssistance } from '../services/geminiService';
@@ -30,7 +30,10 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = messagesEndRef.current;
+    if (el && typeof (el as unknown as { scrollIntoView?: unknown }).scrollIntoView === 'function') {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   useEffect(() => {
@@ -67,16 +70,15 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
         return [...otherChats, ...updatedMessages];
       });
 
-      console.log(`📩 Real-time: ${updatedMessages.length} mensagens carregadas para chat ${job.id}`);
-    }, (error) => {
-      console.error('❌ Erro no onSnapshot:', error);
+    }, (_error) => {
+
     });
 
     // Cleanup subscription on unmount
     return () => unsubscribe();
   }, [job.id, setAllMessages]);
 
-  const checkForScheduleSuggestion = async () => {
+  const checkForScheduleSuggestion = useCallback(async () => {
       if (job.status !== 'proposta_aceita' && job.status !== 'agendado') return;
       if (messages.length < 2 || isCheckingForSchedule) return;
 
@@ -86,12 +88,10 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
           if (suggestion) {
               setSuggestedSchedule(suggestion);
           }
-      } catch (error) {
-          console.error("Failed to check for schedule suggestion:", error);
-      } finally {
+      } catch (error) { /* Intentionally ignored */ } finally {
           setIsCheckingForSchedule(false);
       }
-  };
+  }, [job.status, messages, isCheckingForSchedule]);
   
   const handleGetAssistance = async () => {
       setIsAssistantLoading(true);
@@ -101,9 +101,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
           if (suggestion) {
             setAssistantSuggestion(suggestion);
           }
-      } catch (error) {
-          console.error("Failed to get assistance:", error);
-      } finally {
+      } catch (error) { /* Intentionally ignored */ } finally {
         setIsAssistantLoading(false);
       }
   };
@@ -112,10 +110,20 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
     switch (suggestion.name) {
       case 'clarify_scope':
       case 'suggest_next_step':
-        setNewMessage(suggestion.args.suggestionText || suggestion.args.question);
+        {
+          const args = suggestion.args as Record<string, unknown>;
+          const candidate = (args['suggestionText'] ?? args['question']);
+          if (typeof candidate === 'string') setNewMessage(candidate);
+        }
         break;
       case 'summarize_agreement':
-        onSendMessage({ chatId: job.id, text: suggestion.args.summaryText, type: 'system_notification' });
+        {
+          const args = suggestion.args as Record<string, unknown>;
+            const summary = args['summaryText'];
+            if (typeof summary === 'string') {
+              onSendMessage({ chatId: job.id, text: summary, type: 'system_notification' });
+            }
+        }
         break;
     }
     setAssistantSuggestion(null);
@@ -141,8 +149,8 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
   };
   
   useEffect(() => {
-      checkForScheduleSuggestion();
-  }, [job, messages.length]);
+    checkForScheduleSuggestion();
+  }, [checkForScheduleSuggestion]);
   
   const handleConfirmAISchedule = () => {
       if (suggestedSchedule) {
@@ -289,3 +297,5 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
 };
 
 export default ChatModal;
+
+

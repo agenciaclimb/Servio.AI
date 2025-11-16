@@ -14,6 +14,7 @@ interface PaymentModalProps {
 const PaymentModal: React.FC<PaymentModalProps> = ({ job, proposal, provider, isOpen, onClose, onConfirmPayment }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
 
   if (!isOpen) {
     return null;
@@ -22,11 +23,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ job, proposal, provider, is
   const handlePayment = async () => {
     setIsLoading(true);
     setError(null);
+    setErrorCode(null);
     try {
       await onConfirmPayment(proposal);
       // A navegação será tratada pela função onConfirmPayment
     } catch (err) {
+      const code = (err as any)?.code as string | undefined;
       setError(err instanceof Error ? err.message : 'Ocorreu um erro desconhecido.');
+      if (code) setErrorCode(code);
       setIsLoading(false);
     }
   };
@@ -61,9 +65,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ job, proposal, provider, is
           </div>
 
           {error && (
-            <div className="mt-4 text-center p-3 bg-red-100 text-red-700 rounded-lg">
+            <div className="mt-4 text-left p-3 rounded-lg border"
+                 style={{ backgroundColor: '#FEF2F2', borderColor: '#FEE2E2', color: '#991B1B' }}>
               <p className="font-semibold">Erro ao processar pagamento</p>
-              <p className="text-sm">{error} Tente novamente.</p>
+              <p className="text-sm mt-1">{error}</p>
+              {(errorCode === 'E_TIMEOUT' || errorCode === 'E_NETWORK') && (
+                <p className="text-xs mt-1">Conexão instável ou tempo esgotado. Verifique sua internet e tente novamente.</p>
+              )}
             </div>
           )}
 
@@ -80,7 +88,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ job, proposal, provider, is
                   </svg>
                   Processando...
                 </>
-              ) : 'Pagar com Stripe'}
+              ) : (
+                error && (errorCode === 'E_TIMEOUT' || errorCode === 'E_NETWORK') ? 'Tentar novamente' : 'Pagar com Stripe'
+              )}
             </button>
           </div>
         </div>

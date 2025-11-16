@@ -277,4 +277,82 @@ describe('AIJobRequestWizard', () => {
       expect(screen.getByText(/Revise o seu Pedido/i)).toBeInTheDocument();
     });
   });
+
+  it('faz upload de arquivo e inclui media no onSubmit', async () => {
+    const mockEnhance = vi.mocked(geminiService.enhanceJobRequest);
+    // Não usamos enhance aqui porque vamos direto ao review com initialData
+    mockEnhance.mockReset();
+
+    const fetchMock = vi.fn()
+      // 1) gerar signed URL
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ signedUrl: 'https://upload.example', filePath: 'uploads/job123/foto.jpg' }) } as any)
+      // 2) upload PUT
+      .mockResolvedValueOnce({ ok: true } as any);
+    // @ts-expect-error sobrescrevendo global para teste
+    global.fetch = fetchMock;
+
+    const mockOnSubmit = vi.fn();
+    render(
+      <AIJobRequestWizard
+        onClose={mockOnClose}
+        onSubmit={mockOnSubmit}
+        initialData={{
+          description: 'Pintura externa',
+          category: 'pintor',
+          serviceType: 'personalizado',
+          urgency: '3dias',
+        }}
+      />
+    );
+
+    // Adiciona arquivo no passo review
+    const fileInput = screen.getByLabelText('Carregar arquivos') as HTMLInputElement;
+    const file = new File([new Uint8Array([1,2,3])], 'foto.jpg', { type: 'image/jpeg' });
+    await waitFor(() => expect(fileInput).toBeInTheDocument());
+    // fireEvent em inputs type=file precisa de target.files
+    await waitFor(() => {
+      // @ts-expect-error simular FileList
+      fireEvent.change(fileInput, { target: { files: [file] } });
+    });
+
+    // Publica
+    const publish = screen.getByTestId('wizard-publish-button');
+    fireEvent.click(publish);
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalled();
+      const payload = mockOnSubmit.mock.calls[0][0];
+      expect(payload.media).toEqual([
+        { name: 'foto.jpg', path: 'uploads/job123/foto.jpg', type: 'image' }
+      ]);
+    });
+  });
+
+  it('permite alterar endereço no review e envia no onSubmit', async () => {
+    const mockOnSubmit = vi.fn();
+    render(
+      <AIJobRequestWizard
+        onClose={mockOnClose}
+        onSubmit={mockOnSubmit}
+        initialData={{
+          description: 'Instalação de torneira',
+          category: 'encanador',
+          serviceType: 'tabelado',
+          urgency: 'amanha',
+          fixedPrice: 250,
+          // endereço inicial vazio
+        }}
+      />
+    );
+
+    const addressInput = screen.getByLabelText('Endereço do serviço', { selector: 'input#address-review' });
+    fireEvent.change(addressInput, { target: { value: 'Rua Azul, 456' } });
+
+    const publish = screen.getByTestId('wizard-publish-button');
+    fireEvent.click(publish);
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(expect.objectContaining({ address: 'Rua Azul, 456' }));
+    });
+  });
 });

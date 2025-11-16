@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       reason:
-        description: "Motivo da execução (opcional)"
+        description: 'Motivo da execução (opcional)'
         required: false
   schedule:
     # Rodar 12:00 UTC em dias úteis (ajuste se quiser outro horário)
-    - cron: "0 12 * * 1-5"
+    - cron: '0 12 * * 1-5'
 
 permissions:
   contents: write
@@ -17,6 +17,8 @@ permissions:
 jobs:
   agent:
     runs-on: ubuntu-latest
+    env:
+      PR_TOKEN: ${{ secrets.AI_BOT_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,7 +28,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
 
       - name: Executar agente (atualiza documento mestre)
         run: |
@@ -52,10 +54,11 @@ jobs:
           git push -u origin "$BRANCH"
           echo "branch=$BRANCH" >> $GITHUB_OUTPUT
 
-      - name: Abrir Pull Request
-        if: steps.commit.outputs.branch != ''
+      - name: Abrir Pull Request (se token disponível)
+        if: steps.commit.outputs.branch != '' && env.PR_TOKEN != ''
         uses: actions/github-script@v7
         with:
+          github-token: ${{ env.PR_TOKEN }}
           script: |
             const branch = `${{ steps.commit.outputs.branch }}`;
             const reason = (context.payload.inputs && context.payload.inputs.reason) ? context.payload.inputs.reason : "execução agendada";
@@ -72,6 +75,11 @@ jobs:
                 "- Atualização do `doc/DOCUMENTO_MESTRE_SERVIO_AI.md` com `#update_log`",
                 "",
                 "**Motivo**: " + reason
-              ].join("\\n")
+              ].join("\n")
             });
             core.info(`PR aberta: #${pr.number}`);
+
+      - name: Aviso quando token ausente
+        if: steps.commit.outputs.branch != '' && env.PR_TOKEN == ''
+        run: |
+          echo "PULANDO criação de PR: defina um PAT com permissão 'repo' em 'AI_BOT_TOKEN' nos Secrets do repositório para habilitar esta etapa."

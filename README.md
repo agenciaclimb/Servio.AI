@@ -1,8 +1,36 @@
-# Backend Service - SERVIO.AI (Firestore API)
+# 🚀 SERVIO.AI - Plataforma de Serviços
 
 [![CI](https://github.com/agenciaclimb/Servio.AI/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/agenciaclimb/Servio.AI/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=agenciaclimb_Servio.AI&metric=alert_status)](https://sonarcloud.io/project/overview?id=agenciaclimb_Servio.AI)
+[![Tests](https://img.shields.io/badge/tests-261%2F261-brightgreen)]()
+[![Coverage](https://img.shields.io/badge/coverage-48.36%25-brightgreen)]()
 
-Este diretório contém o serviço de backend principal da plataforma SERVIO.AI, responsável por toda a lógica de negócios, interações com o banco de dados Firestore e integrações com serviços externos como Stripe e Google Cloud Storage.
+## ✅ Status: PRONTO PARA PRODUÇÃO
+
+**Última validação**: 13/11/2025
+
+```
+✅ 261/261 testes unitários passando
+✅ 10/10 smoke tests E2E passando
+✅ 48.36% cobertura de código
+✅ 0 vulnerabilidades
+✅ 0 bugs críticos
+✅ 954ms carregamento
+✅ 0.69MB bundle
+```
+
+📖 **Ver**:
+
+- [SISTEMA_PRONTO_PRODUCAO.md](./SISTEMA_PRONTO_PRODUCAO.md) - Relatório completo
+- [DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md) - Procedimentos de deploy
+- [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md) - Métricas detalhadas
+- [SMOKE_TESTS_REPORT.md](./SMOKE_TESTS_REPORT.md) - Resultados dos testes
+
+---
+
+## 📋 Sobre o Projeto
+
+A **SERVIO.AI** é uma plataforma completa que conecta clientes a prestadores de serviços qualificados. Este repositório contém o serviço de backend e frontend, responsável por toda a lógica de negócios, interações com o banco de dados Firestore e integrações com serviços externos como Stripe e Google Cloud Storage.
 
 ## 🚀 Arquitetura
 

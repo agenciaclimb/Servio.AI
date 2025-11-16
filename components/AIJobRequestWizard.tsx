@@ -6,6 +6,7 @@ import { EnhancedJobRequest, ServiceType, JobData, JobMode } from '../types';
 import LoadingSpinner from './LoadingSpinner';
 import { auth } from '../firebaseConfig';
 import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
+import { formatErrorForToast, getErrorAction } from '../services/errorMessages';
 
 interface AIJobRequestWizardProps {
   onClose: () => void;
@@ -51,7 +52,6 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
   const [targetProviderId, _setTargetProviderId] = useState<string | undefined>(initialData?.targetProviderId);
   const [jobMode, setJobMode] = useState<JobMode>(initialData?.jobMode || 'normal');
   const [auctionDuration, setAuctionDuration] = useState<number>(initialData?.auctionDurationHours || 24);
-
   const handleAnalyze = async (prompt: string, address?: string, fileCount?: number) => {
     if (prompt.trim().length < 10) {
       setError('Por favor, descreva um pouco mais o que você precisa.');
@@ -65,7 +65,10 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
       setEnhancedRequest(result);
       setStep('review');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ocorreu um erro.');
+      const errorMsg = formatErrorForToast(err, 'ai');
+      const action = getErrorAction(err);
+      const hint = action === 'retry' ? ' Tente novamente.' : '';
+      setError(`${errorMsg}${hint}`);
       setStep('initial');
     }
   };
@@ -96,7 +99,7 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
         try {
           // 1. Get signed URL from our backend
           const token = await auth.currentUser?.getIdToken();
-          const backendBase = (import.meta as any).env?.VITE_BACKEND_API_URL || (window?.location?.origin ?? '');
+          const backendBase = import.meta.env?.VITE_BACKEND_API_URL as string | undefined || (window?.location?.origin ?? '');
           const urlResponse = await fetch(`${backendBase.replace(/\/$/, '')}/generate-upload-url`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json',
@@ -119,7 +122,8 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
         } catch (error) {
           console.error(error);
           // Graceful degradation: skip media on failure but allow the job request to continue
-          setError(`Não foi possível enviar o arquivo: ${file.name}. O pedido continuará sem este anexo.`);
+          const errorMsg = formatErrorForToast(error, 'job');
+          setError(`Não foi possível enviar o arquivo ${file.name}: ${errorMsg}. O pedido continuará sem este anexo.`);
         }
       }
       
@@ -159,10 +163,10 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
             <div className="space-y-6">
                 <div>
                     <label htmlFor="initial-request" className="block text-sm font-medium text-gray-700 mb-1">1. Descreva sua necessidade*</label>
-                    <textarea
+          <textarea
                         id="initial-request"
                         rows={4}
-                        className="block w-full rounded-lg border-gray-300 shadow-sm"
+            className="block w-full rounded-lg border-gray-300 shadow-sm text-gray-900 placeholder-gray-400"
                         placeholder="Ex: Meu chuveiro queimou e parou de esquentar. Preciso de um eletricista para consertar ou trocar o aparelho."
                         value={initialRequest}
                         onChange={(e) => setInitialRequest(e.target.value)}
@@ -170,7 +174,7 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
                 </div>
                 <div>
                     <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">2. Endereço do serviço</label>
-                    <input type="text" id="address" value={address} onChange={e => setAddress(e.target.value)} className="block w-full rounded-lg border-gray-300 shadow-sm" placeholder="Rua das Flores, 123, Bairro, Cidade - SP"/>
+                    <input type="text" id="address" value={address} onChange={e => setAddress(e.target.value)} className="block w-full rounded-lg border-gray-300 shadow-sm text-gray-900 placeholder-gray-400" placeholder="Rua das Flores, 123, Bairro, Cidade - SP"/>
                 </div>
                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">3. Fotos ou vídeos (opcional)</label>
@@ -225,12 +229,12 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
                         <div className="mt-1 text-xs text-blue-700 bg-blue-50 p-2 rounded-md border border-blue-200">
                           ✏️ **Ação necessária:** Por favor, preencha as informações marcadas com `[...]` abaixo para receber propostas mais precisas.
                         </div>
-                        <textarea id="service-description" rows={5} value={finalDescription} onChange={(e) => setFinalDescription(e.target.value)} className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3"/>
+                        <textarea id="service-description" rows={5} value={finalDescription} onChange={(e) => setFinalDescription(e.target.value)} className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3 text-gray-900 placeholder-gray-400"/>
                     </div>
                     {/* Add address and media upload here again for post-login flow */}
                      <div>
                         <label htmlFor="address-review" className="block text-sm font-medium text-gray-700 mb-1">Endereço do serviço</label>
-                        <input type="text" id="address-review" value={address} onChange={e => setAddress(e.target.value)} className="block w-full rounded-lg border-gray-300 shadow-sm" placeholder="Rua das Flores, 123, Bairro, Cidade - SP"/>
+                        <input type="text" id="address-review" value={address} onChange={e => setAddress(e.target.value)} className="block w-full rounded-lg border-gray-300 shadow-sm text-gray-900 placeholder-gray-400" placeholder="Rua das Flores, 123, Bairro, Cidade - SP"/>
                     </div>
                      <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Adicionar fotos, vídeos ou projetos</label>

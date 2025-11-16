@@ -4,7 +4,7 @@ type SchemaType = 'LocalBusiness' | 'Service' | 'Person';
 
 interface StructuredDataSEOProps {
   schemaType: SchemaType;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 const StructuredDataSEO: React.FC<StructuredDataSEOProps> = ({ schemaType, data }) => {

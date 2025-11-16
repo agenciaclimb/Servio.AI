@@ -10,7 +10,7 @@ interface HeaderProps {
   onLoginClick: (type: User['type']) => void;
   onRegisterClick: (type: User['type']) => void;
   onLogoutClick: () => void;
-  onSetView: (view: string, data?: any) => void;
+  onSetView: (view: "home" | "find-providers" | "provider-landing" | "dashboard" | "profile" | "service-landing" | "payment-success", data?: Record<string, unknown>) => void;
   onMarkAsRead: (id: string) => void;
   onMarkAllAsRead: () => void;
 }
@@ -85,3 +85,6 @@ const Header: React.FC<HeaderProps> = ({ user, notifications, onLoginClick, onRe
 };
 
 export default Header;
+
+
+

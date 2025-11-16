@@ -7,7 +7,6 @@ import LoadingSpinner from './LoadingSpinner';
 
 interface AddItemModalProps {
   onClose: () => void;
-  // FIX: Update `onSave` prop type to exclude `createdAt` as it is handled by the parent component.
   onSave: (newItemData: Omit<MaintainedItem, 'id' | 'clientId' | 'maintenanceHistory' | 'createdAt'>) => void;
 }
 
@@ -25,8 +24,6 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ onClose, onSave }) => {
   const [error, setError] = useState<string | null>(null);
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
 
-  // Form state for the review step
-  // FIX: Update the state type to exclude `createdAt` to match the onSave prop and fix type errors.
   const [formState, setFormState] = useState<Omit<MaintainedItem, 'id' | 'clientId' | 'maintenanceHistory' | 'createdAt'>>({
       name: '',
       category: '',

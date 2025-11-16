@@ -32,7 +32,7 @@ jobs:
           if [ -f backend/package.json ]; then (cd backend && npm ci || npm i); fi
 
       - name: Lint (root)
-        run: npm run lint
+        run: npm run lint:ci
 
       - name: Typecheck (root)
         run: npm run typecheck

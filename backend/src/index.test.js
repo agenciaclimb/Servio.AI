@@ -1,32 +1,43 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
-const { createApp } = await import('./index');
+import app from './index'; // Import the Express app
 
-function mockSnapshot(docs) {
+// Mock the entire firebase-admin library
+vi.mock('firebase-admin', () => {
+  const get = vi.fn();
+  const set = vi.fn();
+  const update = vi.fn();
+  const deleteFn = vi.fn();
+  const doc = vi.fn(() => ({ get, set, update, delete: deleteFn }));
+  const where = vi.fn(() => ({ get, limit: () => ({ get }) }));
+  const collection = vi.fn(() => ({ get, doc, where }));
+
   return {
-    docs: docs.map(d => ({ id: d.id, data: () => ({ ...d }) })),
-    empty: docs.length === 0,
+    initializeApp: vi.fn(),
+    firestore: () => ({
+      collection,
+      runTransaction: vi.fn(),
+    }),
   };
-}
+});
 
-let collectionMocks;
-let db;
-let app;
+// We need to import admin after the mock is defined
+const admin = await import('firebase-admin');
+const db = admin.firestore();
 
 describe('API Endpoints', () => {
   beforeEach(() => {
-    collectionMocks = {};
-    db = {
-      collection: vi.fn((name) => collectionMocks[name] || {}),
-      runTransaction: vi.fn(async () => {}),
-    };
-    app = createApp({ db });
+    vi.clearAllMocks();
   });
 
   describe('GET /users', () => {
     test('should return a list of users', async () => {
+      // Mock Firestore response
       const mockUsers = [{ id: 'user1', name: 'Test User' }];
-      collectionMocks['users'] = { get: vi.fn().mockResolvedValue(mockSnapshot(mockUsers)) };
+      const getMock = vi.fn().mockResolvedValue({
+        docs: mockUsers.map(user => ({ id: user.id, data: () => user })),
+      });
+      db.collection.mockReturnValue({ get: getMock });
 
       const response = await request(app).get('/users');
 
@@ -38,15 +49,16 @@ describe('API Endpoints', () => {
   });
 
   test('GET / should return a welcome message', async () => {
-    const response = await request(createApp({ db })).get('/');
+    const response = await request(app).get('/');
     expect(response.statusCode).toBe(200);
     expect(response.text).toBe('Hello from SERVIO.AI Backend (Firestore Service)!');
   });
 
   describe('POST /users', () => {
     test('should create a new user and return 201', async () => {
+      // Mock Firestore's set method
       const setMock = vi.fn().mockResolvedValue({ writeTime: 'some-time' });
-      collectionMocks['users'] = { doc: vi.fn(() => ({ set: setMock })) };
+      db.collection.mockReturnValue({ doc: () => ({ set: setMock }) });
 
       const newUser = { email: 'new.user@test.com', name: 'New User' };
 

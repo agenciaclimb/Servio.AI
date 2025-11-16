@@ -1,21 +1,38 @@
-import React from 'react';
-import { Job, User, UserStatus, Notification } from '../types';
+import React, { useState, useEffect } from 'react';
+import { Job, User, UserStatus } from '../types';
 import { suspendProvider, reactivateProvider, setVerificationStatus, createNotification } from '../services/api';
 import AdminVerificationCard from './AdminVerificationCard';
-
-interface AdminProviderManagementProps {
-  allUsers: User[];
-  allJobs: Job[];
-  setAllUsers: React.Dispatch<React.SetStateAction<User[]>>;
-  setAllNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
-}
+import * as API from '../services/api';
 
 const statusStyles: { [key in UserStatus]: { bg: string, text: string } } = {
   ativo: { bg: 'bg-green-100', text: 'text-green-800' },
   suspenso: { bg: 'bg-red-100', text: 'text-red-800' },
 };
 
-const AdminProviderManagement: React.FC<AdminProviderManagementProps> = ({ allUsers, allJobs, setAllUsers, setAllNotifications }) => {
+const AdminProviderManagement: React.FC = () => {
+  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [allJobs, setAllJobs] = useState<Job[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+        setIsLoading(true);
+        try {
+            const [users, jobs] = await Promise.all([
+                API.fetchAllUsers(),
+                API.fetchJobs(),
+            ]);
+            setAllUsers(users);
+            setAllJobs(jobs);
+        } catch (error) {
+            console.error("Failed to load provider management data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    loadData();
+  }, []);
+
   const providers = allUsers.filter(u => u.type === 'prestador');
   const pendingVerifications = providers.filter(p => p.verificationStatus === 'pendente');
 
@@ -49,20 +66,10 @@ const AdminProviderManagement: React.FC<AdminProviderManagementProps> = ({ allUs
 
         try {
             await setVerificationStatus(userId, decision);
-            // persist notification server-side; also reflect locally for instant UX
-            const created = await createNotification({ userId, text: notificationText, isRead: false });
-            setAllNotifications(prev => [...prev, created]);
+            await createNotification({ userId, text: notificationText, isRead: false });
         } catch (err) {
             console.error('Failed to persist verification decision:', err);
-            // revert optimistic change on error, still show local notification to guide admin
             setAllUsers(previousUsers);
-            setAllNotifications(prev => [...prev, {
-                id: `notif-verify-${Date.now()}`,
-                userId: userId,
-                text: notificationText,
-                isRead: false,
-                createdAt: new Date().toISOString(),
-            }]);
         }
     };
 
@@ -73,6 +80,8 @@ const AdminProviderManagement: React.FC<AdminProviderManagementProps> = ({ allUs
     const avgRating = reviews.length > 0 ? (reviews.reduce((acc, r) => acc + r!.rating, 0) / reviews.length).toFixed(1) : 'N/A';
     return { completed, avgRating };
   };
+
+  if (isLoading) return <div className="p-4 text-sm text-gray-600">Carregando prestadores...</div>;
 
   return (
     <div className="space-y-8">

@@ -21,7 +21,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('QA 360 - Painel Prestador', () => {
   
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page: _page }) => {
     await page.addInitScript(() => {
       window.localStorage.setItem('mockUser', JSON.stringify({
         uid: 'provider-qa-001',
@@ -44,7 +44,7 @@ test.describe('QA 360 - Painel Prestador', () => {
     });
   });
 
-  test('1. Onboarding - Cadastro completo', async ({ page }) => {
+  test('1. Onboarding - Cadastro completo', async ({ page: _page }) => {
     const profile = await page.evaluate(() => {
       return JSON.parse(window.localStorage.getItem('userProfile') || '{}');
     });
@@ -55,7 +55,7 @@ test.describe('QA 360 - Painel Prestador', () => {
     console.log('✅ Prestador cadastrado com especialidades');
   });
 
-  test('2. Matching IA - Receber jobs compatíveis', async ({ page }) => {
+  test('2. Matching IA - Receber jobs compatíveis', async ({ page: _page }) => {
     // Mock do endpoint match-providers
     await page.route('**/api/match-providers', async (route) => {
       await route.fulfill({
@@ -77,23 +77,24 @@ test.describe('QA 360 - Painel Prestador', () => {
     console.log('✅ Matching IA configurado');
   });
 
-  test.skip('3. Ver jobs abertos no dashboard', async ({ page }) => {
+  test.skip('3. Ver jobs abertos no dashboard', async ({ page: _page }) => {
     // TODO: Navegar ao dashboard, validar lista de jobs
   });
 
-  test.skip('4. Enviar proposta para job', async ({ page }) => {
+  test.skip('4. Enviar proposta para job', async ({ page: _page }) => {
     // TODO: Clicar em job, preencher proposta, enviar
   });
 
-  test.skip('5. Conectar Stripe Connect', async ({ page }) => {
+  test.skip('5. Conectar Stripe Connect', async ({ page: _page }) => {
     // TODO: Mock de redirect Stripe, validar salvamento de accountId
   });
 
-  test.skip('6. Ver histórico de jobs concluídos', async ({ page }) => {
+  test.skip('6. Ver histórico de jobs concluídos', async ({ page: _page }) => {
     // TODO: Validar jobs com status completed
   });
 
-  test.skip('7. Editar perfil e catálogo de serviços', async ({ page }) => {
+  test.skip('7. Editar perfil e catálogo de serviços', async ({ page: _page }) => {
     // TODO: Abrir modal de serviços, adicionar item, salvar
   });
 });
+

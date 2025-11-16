@@ -72,7 +72,7 @@ const ServiceCatalogModal: React.FC<ServiceCatalogModalProps> = ({ user, onClose
               className="block w-full rounded-md border-gray-300 dark:bg-gray-900 dark:border-gray-600 shadow-sm"
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <select value={newServiceType} onChange={e => setNewServiceType(e.target.value as any)} className="block w-full rounded-md border-gray-300 dark:bg-gray-900 dark:border-gray-600 shadow-sm">
+              <select value={newServiceType} onChange={e => setNewServiceType(e.target.value as 'personalizado' | 'tabelado' | 'diagnostico')} className="block w-full rounded-md border-gray-300 dark:bg-gray-900 dark:border-gray-600 shadow-sm">
                 <option value="personalizado">Personalizado (sob consulta)</option>
                 <option value="tabelado">Tabelado (preço fixo)</option>
                 <option value="diagnostico">Diagnóstico (taxa de visita)</option>
