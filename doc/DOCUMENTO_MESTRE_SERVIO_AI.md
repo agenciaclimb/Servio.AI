@@ -1,3 +1,641 @@
+#update_log - 16/11/2025 22:30 (PLANO DE CORREÇÕES COMPLETO - 100% FUNCIONAL)
+
+## 🎯 PLANO DE AÇÃO PARA 100% FUNCIONAL - REVISÃO TÉCNICA COMPLETA
+
+**STATUS ATUAL:** Sistema com 449 testes PASS (363 frontend + 76 backend + 10 E2E), porém 2 bugs críticos de segurança identificados + 17 endpoints AI sem fallback
+
+**ANÁLISE TÉCNICA DETALHADA:**
+
+### 📊 MÉTRICAS DE QUALIDADE ATUAIS
+
+**Testes:**
+
+- ✅ Frontend (Vitest): 363/363 PASS (53 arquivos, 63.42s)
+- ✅ Backend (Vitest): 76/76 PASS (ai-resilience, payments, disputes, security)
+- ✅ E2E (Playwright): 10/10 PASS (smoke tests, 27.6s)
+- ✅ Total: 449 testes (100% verdes)
+
+**Cobertura:**
+
+- Frontend: 53.3% statements (api.ts 68.31%, geminiService.ts 90.58%)
+- Backend: 37.64% statements (index.js)
+
+**Lint/TypeScript:**
+
+- ⚠️ Lint: 0 erros, ~50 warnings (não bloqueantes)
+  - `@typescript-eslint/no-explicit-any`: ~30 ocorrências
+  - `no-console`: ~20 ocorrências (E2E specs)
+  - `no-case-declarations`: 1 (errorTranslator.ts:170)
+- ✅ TypeCheck: 0 erros (frontend + backend)
+
+**Build:**
+
+- ✅ Produção: 9.69s, dist/ gerado com chunks otimizados
+- Bundle: main 71kB, firebase-vendor 479kB (438kB gzip), react-vendor 139kB
+
+### 🔴 ISSUES CRÍTICOS IDENTIFICADOS
+
+**1. SEGURANÇA - FIRESTORE RULES (P0 - BLOCKER)**
+
+❌ **Proposals Read - Bug de Segurança**
+
+```javascript
+// ANTES (ERRADO - linha ~76 firestore.rules):
+allow read: if isJobParticipant(request.resource.data.jobId);
+// ❌ Usa request.resource em READ (só existe em CREATE/UPDATE)
+
+// DEPOIS (CORRETO):
+allow read: if isJobParticipant(resource.data.jobId);
+// ✅ Usa resource (documento existente)
+```
+
+**2. SEGURANÇA - STORAGE RULES (P0 - BLOCKER)**
+
+❌ **Write Permissions Muito Permissivas**
+
+```javascript
+// ANTES (INSEGURO):
+match /jobs/{jobId}/{allPaths=**} {
+  allow read, write: if request.auth != null;
+}
+// ❌ Qualquer usuário autenticado pode escrever em qualquer job
+
+// DEPOIS (SEGURO):
+match /jobs/{jobId}/{allPaths=**} {
+  allow read: if request.auth != null;
+  allow write: if request.auth != null && isJobParticipant(jobId);
+}
+// ✅ Apenas participantes do job podem fazer upload
+```
+
+**Helper function necessária (adicionar em storage.rules):**
+
+```javascript
+function isJobParticipant(jobId) {
+  let job = firestore.get(/databases/(default)/documents/jobs/$(jobId)).data;
+  return request.auth != null
+      && (request.auth.uid == job.clientId
+       || request.auth.uid == job.providerId);
+}
+```
+
+**3. BACKEND API - FALTA DE FALLBACKS (P1 - ALTA)**
+
+⚠️ **17 de 19 endpoints AI retornam 503 quando GEMINI_API_KEY ausente**
+
+Endpoints SEM fallback (retornam 503):
+
+```
+- POST /api/generate-tip
+- POST /api/enhance-profile
+- POST /api/generate-referral
+- POST /api/generate-proposal
+- POST /api/generate-faq
+- POST /api/identify-item
+- POST /api/generate-seo
+- POST /api/summarize-reviews
+- POST /api/generate-comment
+- POST /api/generate-category-page
+- POST /api/suggest-maintenance
+- POST /api/propose-schedule
+- POST /api/get-chat-assistance
+- POST /api/parse-search
+- POST /api/extract-document
+- POST /api/mediate-dispute
+- POST /api/analyze-fraud
+```
+
+Endpoints COM fallback (resilientes):
+
+```
+✅ POST /api/enhance-job (buildStub heurístico)
+✅ POST /api/match-providers (try/catch)
+```
+
+**Padrão de correção necessário (baseado em /api/enhance-job):**
+
+```javascript
+// Padrão atual (ERRADO):
+app.post('/api/generate-tip', async (req, res) => {
+  if (!genAI) {
+    return res.status(503).json({ error: 'AI service not configured. Set GEMINI_API_KEY.' });
+  }
+  // ... código Gemini
+});
+
+// Padrão corrigido (CORRETO):
+app.post('/api/generate-tip', async (req, res) => {
+  if (!genAI) {
+    console.warn('[generate-tip] GEMINI_API_KEY not configured – returning generic tip');
+    return res.status(200).json({
+      tip: 'Complete seu perfil com foto e descrição detalhada para atrair mais clientes.',
+    });
+  }
+
+  try {
+    // ... código Gemini
+  } catch (error) {
+    console.error('[generate-tip] Gemini error, returning fallback:', error.message);
+    return res.status(200).json({
+      tip: 'Mantenha seu perfil atualizado e responda rapidamente às mensagens.',
+    });
+  }
+});
+```
+
+**4. LINT WARNINGS (P2 - MÉDIA)**
+
+⚠️ **~50 warnings não bloqueantes, mas reduzem qualidade do código**
+
+Distribuição:
+
+- `any` types: 30x (types.ts, geminiService.ts, ClientDashboard, tests)
+- `console.log`: 20x (E2E specs, debugging code)
+- `no-case-declarations`: 1x (errorTranslator.ts)
+
+### 📋 PLANO DE CORREÇÕES DETALHADO
+
+---
+
+## 🔴 **FASE 1: CORREÇÕES CRÍTICAS DE SEGURANÇA** (Estimativa: 1-2h)
+
+### **Tarefa 1.1: Corrigir Firestore Rules - Proposals Read**
+
+**Arquivo:** `firestore.rules`
+**Linha:** ~76
+**Prioridade:** 🔴 P0 - BLOCKER
+
+```javascript
+// LOCALIZAÇÃO: dentro de match /proposals/{proposalId}
+// TROCAR:
+allow read: if isJobParticipant(request.resource.data.jobId);
+
+// POR:
+allow read: if isJobParticipant(resource.data.jobId);
+```
+
+**Validação:**
+
+- [ ] Executar `firebase deploy --only firestore:rules`
+- [ ] Testar leitura de proposta com usuário participante (deve funcionar)
+- [ ] Testar leitura com usuário não-participante (deve bloquear)
+
+**Impacto:** Sem essa correção, usuários não conseguem ler suas próprias propostas (crash ao abrir propostas no dashboard).
+
+---
+
+### **Tarefa 1.2: Corrigir Storage Rules - Restringir Write**
+
+**Arquivo:** `storage.rules`
+**Linhas:** 1-10
+**Prioridade:** 🔴 P0 - BLOCKER
+
+**Passo 1:** Adicionar helper function no início do arquivo
+
+```javascript
+rules_version = '2';
+
+service firebase.storage {
+  // Helper function para validar participante do job
+  function isJobParticipant(jobId) {
+    let job = firestore.get(/databases/(default)/documents/jobs/$(jobId)).data;
+    return request.auth != null
+        && (request.auth.uid == job.clientId
+         || request.auth.uid == job.providerId);
+  }
+
+  match /b/{bucket}/o {
+    // ... resto das regras
+  }
+}
+```
+
+**Passo 2:** Atualizar regra de write
+
+```javascript
+// DENTRO de match /b/{bucket}/o
+match /jobs/{jobId}/{allPaths=**} {
+  allow read: if request.auth != null;
+  allow write: if isJobParticipant(jobId); // ✅ Restrito a participantes
+}
+```
+
+**Validação:**
+
+- [ ] Executar `firebase deploy --only storage:rules`
+- [ ] Testar upload de arquivo como cliente do job (deve funcionar)
+- [ ] Testar upload como cliente de outro job (deve bloquear)
+- [ ] Testar upload como usuário não-autenticado (deve bloquear)
+
+**Impacto:** Sem essa correção, qualquer usuário autenticado pode fazer upload de arquivos em jobs alheios (vazamento de dados, uploads maliciosos).
+
+---
+
+## 🟡 **FASE 2: RESILIÊNCIA BACKEND AI** (Estimativa: 3-4h)
+
+### **Tarefa 2.1: Implementar Fallbacks Determinísticos**
+
+**Arquivo:** `backend/src/index.js`
+**Linhas:** Multiple endpoints (~200-550)
+**Prioridade:** 🟡 P1 - ALTA
+
+**Padrão de implementação:**
+
+1. **Identificar padrão de resposta de cada endpoint**
+2. **Criar stub function com heurísticas simples**
+3. **Adicionar try/catch com fallback em caso de erro**
+
+**Exemplo: POST /api/generate-tip**
+
+```javascript
+app.post('/api/generate-tip', async (req, res) => {
+  const { userId, profileData } = req.body;
+
+  // Stub function
+  const buildGenericTip = profile => {
+    const tips = [];
+    if (!profile.photoURL) tips.push('Adicione uma foto profissional ao seu perfil.');
+    if (!profile.bio || profile.bio.length < 50)
+      tips.push('Complete sua biografia com detalhes sobre sua experiência.');
+    if (!profile.categories || profile.categories.length === 0)
+      tips.push('Adicione suas especialidades para receber mais jobs.');
+    if (tips.length === 0)
+      tips.push('Mantenha seu perfil atualizado e responda rapidamente às mensagens.');
+    return tips[Math.floor(Math.random() * tips.length)];
+  };
+
+  // Fallback se IA não configurada
+  if (!genAI) {
+    console.warn('[generate-tip] GEMINI_API_KEY not configured – returning generic tip');
+    return res.status(200).json({
+      tip: buildGenericTip(profileData || {}),
+    });
+  }
+
+  try {
+    // Código Gemini original aqui...
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+    const result = await model.generateContent(`...`);
+    const tip = result.response.text();
+
+    return res.status(200).json({ tip });
+  } catch (error) {
+    console.error('[generate-tip] Gemini error, returning fallback:', error.message);
+    return res.status(200).json({
+      tip: buildGenericTip(profileData || {}),
+    });
+  }
+});
+```
+
+**Endpoints a corrigir (17 no total):**
+
+**Grupo 1: Perfil/Onboarding (4 endpoints)**
+
+- [ ] `/api/generate-tip` - Dicas de melhoria de perfil
+- [ ] `/api/enhance-profile` - Melhorar bio/headline
+- [ ] `/api/generate-referral` - Email de indicação
+- [ ] `/api/generate-seo` - Meta description do perfil
+
+**Grupo 2: Jobs/Propostas (5 endpoints)**
+
+- [ ] `/api/generate-proposal` - Mensagem de proposta
+- [ ] `/api/generate-faq` - FAQ do serviço
+- [ ] `/api/identify-item` - Identificar item por imagem
+- [ ] `/api/suggest-maintenance` - Sugestões de manutenção
+- [ ] `/api/generate-category-page` - Landing page de categoria
+
+**Grupo 3: Chat/Comunicação (3 endpoints)**
+
+- [ ] `/api/propose-schedule` - Propor horário
+- [ ] `/api/get-chat-assistance` - Assistência em conversa
+- [ ] `/api/parse-search` - Interpretar busca natural
+
+**Grupo 4: Admin/Moderação (3 endpoints)**
+
+- [ ] `/api/mediate-dispute` - Mediação de disputas
+- [ ] `/api/analyze-fraud` - Análise de fraude
+- [ ] `/api/extract-document` - Extrair dados de documento
+
+**Grupo 5: Marketing (2 endpoints)**
+
+- [ ] `/api/summarize-reviews` - Resumo de avaliações
+- [ ] `/api/generate-comment` - Comentário de avaliação
+
+**Validação por endpoint:**
+
+- [ ] Teste com GEMINI_API_KEY ausente (deve retornar 200 com stub)
+- [ ] Teste com GEMINI_API_KEY inválido (deve retornar 200 com fallback após erro)
+- [ ] Teste com GEMINI_API_KEY válido (deve retornar resposta IA)
+- [ ] Adicionar teste unitário em `backend/tests/ai-resilience.test.ts`
+
+---
+
+## 🟢 **FASE 3: LIMPEZA DE CÓDIGO** (Estimativa: 2-3h)
+
+### **Tarefa 3.1: Reduzir Lint Warnings de 50 para <10**
+
+**Prioridade:** 🟢 P2 - MÉDIA
+
+**3.1.1: Substituir `any` por tipos específicos (30 ocorrências)**
+
+Arquivos principais:
+
+- `types.ts`: Definir tipos genéricos reutilizáveis
+- `services/geminiService.ts`: Tipar respostas da API
+- `components/ClientDashboard.tsx`: Tipar eventos Stripe
+- `tests/*.test.tsx`: Usar tipos explícitos
+
+Exemplo:
+
+```typescript
+// ANTES:
+const handleEvent = (e: any) => { ... }
+
+// DEPOIS:
+const handleEvent = (e: React.MouseEvent<HTMLButtonElement>) => { ... }
+```
+
+**3.1.2: Remover `console.log` de E2E specs (20 ocorrências)**
+
+Substituir por logging condicional:
+
+```typescript
+// ANTES:
+console.log('Test data:', data);
+
+// DEPOIS:
+if (process.env.DEBUG) console.log('Test data:', data);
+```
+
+Ou remover completamente (preferível em specs).
+
+**3.1.3: Wrap case declarations em blocos (1 ocorrência)**
+
+Arquivo: `services/errorTranslator.ts:170`
+
+```typescript
+// ANTES:
+case 'E_NETWORK':
+  const message = 'Erro de rede';
+  return message;
+
+// DEPOIS:
+case 'E_NETWORK': {
+  const message = 'Erro de rede';
+  return message;
+}
+```
+
+---
+
+## 🔵 **FASE 4: VALIDAÇÃO E DEPLOY** (Estimativa: 1-2h)
+
+### **Tarefa 4.1: Validar Correções Localmente**
+
+**Checklist:**
+
+- [ ] Executar `npm run lint` (deve ter <10 warnings)
+- [ ] Executar `npm run typecheck` (deve ter 0 erros)
+- [ ] Executar `npm test` (363/363 PASS)
+- [ ] Executar `cd backend && npm test` (76/76 PASS)
+- [ ] Executar `npm run e2e` (10/10 PASS)
+- [ ] Build produção: `npm run build` (deve gerar dist/)
+
+### **Tarefa 4.2: Commit e Push para Trigger Deploy**
+
+```bash
+git add firestore.rules storage.rules backend/src/index.js
+git commit -m "fix(security): Firestore proposals read + Storage write restricted to participants
+
+- Corrigido bug request.resource → resource em proposals read rule
+- Adicionado isJobParticipant helper em storage.rules
+- Restringido write de uploads apenas para participantes do job
+
+BREAKING CHANGE: Storage uploads agora requerem que usuário seja cliente ou prestador do job"
+
+git commit -m "feat(backend): Fallback determinístico em 17 endpoints AI
+
+- Implementado buildStub functions com heurísticas para cada endpoint
+- Nunca retorna 503 - sempre fornece resposta útil mesmo sem IA
+- Endpoints resilientes: generate-tip, enhance-profile, generate-proposal, etc.
+- Adicionados testes ai-resilience.test.ts para cada fallback"
+
+git push origin main
+```
+
+### **Tarefa 4.3: Monitorar Deploy GitHub Actions**
+
+**Workflow esperado:**
+
+1. ✅ Lint check (0 erros, <10 warnings)
+2. ✅ TypeScript check (0 erros)
+3. ✅ Frontend tests (363/363 PASS)
+4. ✅ Backend tests (76/76 PASS + 17 novos)
+5. ✅ Build produção (sem erros)
+6. ✅ Deploy Firebase Hosting (firestore.rules + storage.rules + frontend)
+7. ✅ Deploy Cloud Run backend (trigger via tag ou manual)
+
+**Validação pós-deploy:**
+
+- [ ] Verificar regras Firestore ativas: Console Firebase > Firestore > Rules
+- [ ] Verificar regras Storage ativas: Console Firebase > Storage > Rules
+- [ ] Testar endpoint com fallback: `curl https://servio-backend-XXX.run.app/api/generate-tip` (sem GEMINI_API_KEY deve retornar 200)
+
+---
+
+## 🔬 **FASE 5: ANÁLISE SONARQUBE + GITHUB** (Estimativa: 1h)
+
+### **Tarefa 5.1: Configurar SonarQube Analysis**
+
+**Opção 1: SonarCloud (Recomendado para projetos Open Source)**
+
+1. Acessar https://sonarcloud.io
+2. Conectar repositório GitHub
+3. Adicionar `sonar-project.properties` na raiz:
+
+```properties
+sonar.projectKey=servio-ai
+sonar.organization=YOUR_ORG
+sonar.sources=components,services,contexts,backend/src
+sonar.tests=tests,backend/tests
+sonar.javascript.lcov.reportPaths=coverage/lcov.info,backend/coverage/lcov.info
+sonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.ts,**/*.spec.ts
+```
+
+4. Adicionar step no `.github/workflows/ci.yml`:
+
+```yaml
+- name: SonarCloud Scan
+  uses: SonarSource/sonarcloud-github-action@master
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+```
+
+**Opção 2: GitHub Code Scanning (Nativo)**
+
+1. Acessar repo > Security > Code scanning
+2. Habilitar CodeQL analysis
+3. Configurar CodeQL para JavaScript/TypeScript
+
+### **Tarefa 5.2: Revisar Métricas de Qualidade**
+
+**Métricas a analisar:**
+
+**SonarQube:**
+
+- [ ] Bugs: Target 0 (A rating)
+- [ ] Vulnerabilities: Target 0 (A rating)
+- [ ] Code Smells: Target <50 (A rating)
+- [ ] Security Hotspots: Review all
+- [ ] Coverage: Target >60% (C rating)
+- [ ] Duplications: Target <3% (A rating)
+- [ ] Maintainability: Target A rating
+
+**GitHub:**
+
+- [ ] Dependabot alerts: 0 vulnerabilidades
+- [ ] Code scanning: 0 alertas críticos
+- [ ] Branch protection: Require PR reviews
+- [ ] Status checks: Require CI passing
+
+### **Tarefa 5.3: Gerar Relatório de Melhorias**
+
+**Template de relatório:**
+
+```markdown
+# Relatório de Análise - SERVIO.AI
+
+## Métricas Atuais
+
+- **Bugs:** X (Rating: Y)
+- **Vulnerabilities:** X (Rating: Y)
+- **Code Smells:** X (Rating: Y)
+- **Coverage:** X% (Rating: Y)
+- **Duplications:** X% (Rating: Y)
+
+## Issues Identificados
+
+1. **[CRITICAL]** Descrição do issue + localização
+2. **[HIGH]** ...
+3. **[MEDIUM]** ...
+
+## Recomendações
+
+1. **Imediatas (P0):** Corrigir vulnerabilidades X, Y
+2. **Curto prazo (P1):** Reduzir code smells em A, B, C
+3. **Médio prazo (P2):** Aumentar cobertura para 80%
+
+## Próximas Ações
+
+- [ ] Tarefa 1
+- [ ] Tarefa 2
+```
+
+---
+
+## 📊 CRONOGRAMA DE EXECUÇÃO
+
+| Fase       | Tarefas                               | Tempo Est. | Status          | Responsável |
+| ---------- | ------------------------------------- | ---------- | --------------- | ----------- |
+| **FASE 1** | Correções Segurança (2 bugs críticos) | 1-2h       | ⏳ Pendente     | -           |
+| 1.1        | Firestore Rules - Proposals           | 30min      | ⏳              | -           |
+| 1.2        | Storage Rules - Write Restriction     | 1h         | ⏳              | -           |
+| **FASE 2** | Resiliência Backend AI (17 endpoints) | 3-4h       | ⏳ Pendente     | -           |
+| 2.1        | Implementar fallbacks (Grupo 1-5)     | 3h         | ⏳              | -           |
+| 2.2        | Testes ai-resilience.test.ts          | 1h         | ⏳              | -           |
+| **FASE 3** | Limpeza Código (50 warnings)          | 2-3h       | ⏳ Pendente     | -           |
+| 3.1        | Substituir `any` types (30x)          | 1h         | ⏳              | -           |
+| 3.2        | Remover `console.log` (20x)           | 30min      | ⏳              | -           |
+| 3.3        | Wrap case declarations (1x)           | 30min      | ⏳              | -           |
+| **FASE 4** | Validação e Deploy                    | 1-2h       | ⏳ Pendente     | -           |
+| 4.1        | Testes locais (lint/type/unit/e2e)    | 30min      | ⏳              | -           |
+| 4.2        | Commit e push para CI/CD              | 15min      | ⏳              | -           |
+| 4.3        | Monitorar deploy + validação          | 30min      | ⏳              | -           |
+| **FASE 5** | Análise SonarQube + GitHub            | 1h         | ⏳ Pendente     | -           |
+| 5.1        | Configurar SonarCloud/CodeQL          | 30min      | ⏳              | -           |
+| 5.2        | Revisar métricas de qualidade         | 20min      | ⏳              | -           |
+| 5.3        | Gerar relatório de melhorias          | 10min      | ⏳              | -           |
+| **TOTAL**  | **5 fases, 11 tarefas**               | **8-12h**  | **0% completo** | -           |
+
+---
+
+## ✅ CRITÉRIOS DE SUCESSO
+
+### **Fase 1 (Segurança):**
+
+- [ ] 0 erros ao testar leitura de proposals no frontend
+- [ ] 0 uploads não-autorizados possíveis (testado manualmente)
+- [ ] Regras deployadas e ativas no Firebase Console
+
+### **Fase 2 (Resiliência):**
+
+- [ ] 17/17 endpoints retornam 200 mesmo sem GEMINI_API_KEY
+- [ ] 17 novos testes em ai-resilience.test.ts (total: 24/24 PASS)
+- [ ] 0 erros 503 em produção (monitorar Cloud Run logs)
+
+### **Fase 3 (Limpeza):**
+
+- [ ] Lint warnings: 50 → <10 (<80% redução)
+- [ ] TypeScript errors: 0 mantido
+- [ ] Build warnings: 0
+
+### **Fase 4 (Deploy):**
+
+- [ ] CI/CD green (100% checks passing)
+- [ ] Produção atualizada com correções
+- [ ] 0 regressões detectadas (E2E 10/10 PASS mantido)
+
+### **Fase 5 (Qualidade):**
+
+- [ ] SonarQube configurado e rodando
+- [ ] Métricas baselines registradas
+- [ ] Relatório de melhorias gerado
+- [ ] GitHub Security: 0 alertas críticos
+
+---
+
+## 🚨 RISCOS E MITIGAÇÕES
+
+| Risco                                      | Probabilidade | Impacto | Mitigação                                                 |
+| ------------------------------------------ | ------------- | ------- | --------------------------------------------------------- |
+| **Quebrar leitura de proposals em prod**   | Média         | Alto    | Testar em staging primeiro; rollback imediato se erro     |
+| **Fallbacks genéricos de baixa qualidade** | Alta          | Médio   | Iterar baseado em feedback; manter logs de fallback usage |
+| **Lint warnings causarem build failure**   | Baixa         | Médio   | Usar `--max-warnings` temporário; corrigir gradualmente   |
+| **SonarQube encontrar 100+ issues**        | Alta          | Baixo   | Priorizar P0/P1; criar backlog para P2/P3                 |
+| **Deploy demorar mais que esperado**       | Média         | Baixo   | Fazer deploy em partes (rules → backend → frontend)       |
+
+---
+
+## 📝 CHECKLIST FINAL (ANTES DE INICIAR)
+
+Preparação:
+
+- [ ] Ler plano completo e entender todas as tarefas
+- [ ] Garantir acesso ao Firebase Console (Firestore + Storage)
+- [ ] Garantir acesso ao Cloud Run (backend logs)
+- [ ] Backup de firestore.rules e storage.rules atuais
+- [ ] Branch de trabalho criada: `git checkout -b fix/security-and-resilience`
+
+Ferramentas prontas:
+
+- [ ] Editor de código aberto (VS Code)
+- [ ] Terminal com Node.js/npm funcionando
+- [ ] Firebase CLI autenticado (`firebase login`)
+- [ ] Git configurado para push
+
+Validações iniciais:
+
+- [ ] `npm run lint` executado (baseline: ~50 warnings)
+- [ ] `npm run typecheck` executado (baseline: 0 erros)
+- [ ] `npm test` executado (baseline: 363/363 PASS)
+- [ ] `cd backend && npm test` executado (baseline: 76/76 PASS)
+
+**Status de preparação:** ⏳ Aguardando início
+
+---
+
 #update_log - 16/11/2025 (Oitava Iteração - FASE 3 COMPLETA / Início FASE 4 SMOKE E2E) ✅ FASE 3 CONCLUÍDA / FASE 4 INICIADA
 
 ## 🎯 STATUS ATUAL: FASE 3 COMPLETA / FASE 4 (SMOKE E2E DE ERROS) EM ANDAMENTO
