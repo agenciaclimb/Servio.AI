@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { User } from '../types';
 import * as API from '../services/api';
+import { useToast } from '../contexts/ToastContext';
+import { formatErrorForToast, getErrorAction } from '../services/errorMessages';
 
 interface PaymentSetupCardProps {
   user: User;
@@ -8,27 +10,28 @@ interface PaymentSetupCardProps {
 
 const PaymentSetupCard: React.FC<PaymentSetupCardProps> = ({ user }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { addToast } = useToast();
 
   const handleOnboarding = async () => {
     setIsLoading(true);
     try {
-      let accountId = user.stripeAccountId;
-
       // 1. Create a connect account if it doesn't exist
-      if (!accountId) {
-        const accountResponse = await API.createStripeConnectAccount(user.email);
-        accountId = accountResponse.accountId;
+      if (!user.stripeAccountId) {
+        await API.createStripeConnectAccount(user.email);
       }
 
-      // 2. Create an account link
+      // 2. Create an account link (works for first-time onboarding or managing existing account)
       const linkResponse = await API.createStripeAccountLink(user.email);
 
       // 3. Redirect to Stripe
-      window.location.href = linkResponse.url;
-
-    } catch (error) {
-      console.error("Failed to start Stripe onboarding:", error);
-      alert("Ocorreu um erro ao iniciar a configuração de pagamentos. Tente novamente.");
+      globalThis.location.href = linkResponse.url;
+    } catch (error: unknown) {
+      console.error('Failed to start Stripe onboarding:', error);
+      const message = formatErrorForToast(error, 'payment');
+      const action = getErrorAction(error);
+      const actionHint = action === 'support' ? ' Entre em contato com o suporte se o problema persistir.' : '';
+      addToast(`${message}${actionHint}`, 'error');
+    } finally {
       setIsLoading(false);
     }
   };

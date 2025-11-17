@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
 import { Prospect } from '../types';
 
 interface ProspectingNotificationModalProps {
@@ -9,8 +10,8 @@ interface ProspectingNotificationModalProps {
 
 const ProspectingNotificationModal: React.FC<ProspectingNotificationModalProps> = ({ prospects, onClose }) => {
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg m-4 transform transition-all" onClick={(e) => e.stopPropagation()}>
+        <div {...getModalOverlayProps(onClose)} className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+            <div {...getModalContentProps()} className="bg-white rounded-2xl shadow-xl w-full max-w-lg m-4 transform transition-all">
                 <div className="p-8 text-center">
                     <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
                         <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

@@ -26,20 +26,13 @@ const FindProvidersPage = lazy(() => import('./components/FindProvidersPage'));
 import {
   User,
   Job,
-  Proposal,
-  Message,
   Notification,
-  Escrow,
-  FraudAlert,
-  Dispute,
   MatchingResult,
   MaintainedItem,
   UserType,
   JobData,
   Prospect,
-  Bid,
 } from './types';
-import { getMatchingProviders, analyzeProviderBehaviorForFraud } from './services/geminiService';
 import { serviceNameToCategory } from './services/geminiService';
 // API Service - loads from backend or falls back to mock data
 import * as API from './services/api';
@@ -57,18 +50,20 @@ const App: React.FC = () => {
   // State
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [view, setView] = useState<View>({ name: 'home' });
-  const [isLoadingData, setIsLoadingData] = useState(true);
 
   // Modals
   const [authModal, setAuthModal] = useState<{ mode: 'login' | 'register'; userType: UserType } | null>(null);
   const [wizardData, setWizardData] = useState<{ prompt?: string; data?: JobData } | null>(null);
   const [matchingResults, setMatchingResults] = useState<MatchingResult[] | null>(null);
   const [prospects, setProspects] = useState<Prospect[] | null>(null);
+  // Lightweight data for public search page
+  const [allUsersForSearch, setAllUsersForSearch] = useState<User[]>([]);
+  const [allJobsForSearch, setAllJobsForSearch] = useState<Job[]>([]);
+  const [isLoadingFindProviders, setIsLoadingFindProviders] = useState(false);
 
   // Data State - minimal global state
   const [maintainedItems, setMaintainedItems] = useState<MaintainedItem[]>([]);
   const [allNotifications, setAllNotifications] = useState<Notification[]>([]);
-  const [allEscrows, setAllEscrows] = useState<Escrow[]>([]);
   const [jobDataToCreate, setJobDataToCreate] = useState<JobData | null>(null);
   const [contactProviderAfterLogin, setContactProviderAfterLogin] = useState<string|null>(null);
 
@@ -91,19 +86,61 @@ const App: React.FC = () => {
     }
   }, []); // Só na montagem
 
+  // Handle dynamic import failures (stale HTML returned due to cache) by reloading with cache-buster
+  useEffect(() => {
+    const handler = (e: PromiseRejectionEvent) => {
+      const reason = e.reason as { message?: string } | string | undefined;
+      const msg = String(typeof reason === 'object' ? reason?.message : reason || '');
+      if (msg.includes('Failed to fetch dynamically imported module') || msg.includes('Importing a module script failed')) {
+        try {
+          const url = new URL(window.location.href);
+          url.searchParams.set('v', Date.now().toString());
+          window.location.replace(url.toString());
+        } catch {
+          window.location.reload();
+        }
+      }
+    };
+    window.addEventListener('unhandledrejection', handler);
+    return () => window.removeEventListener('unhandledrejection', handler);
+  }, []);
 
-  const handleSetView = (viewName: string, data?: any) => {
+
+  const handleSetView = (viewName: View['name'], data?: Record<string, unknown>) => {
     // Clear URL params when navigating away from a public page
     if (view.name === 'profile' || view.name === 'service-landing') {
         window.history.pushState({}, '', window.location.pathname);
     }
-    setView({ name: viewName as any, data });
+    setView({ name: viewName, data } as View);
   }
+
+  // Fetch data when navigating to public search page
+  useEffect(() => {
+    if (view.name !== 'find-providers') return;
+    let cancelled = false;
+    (async () => {
+      try {
+        setIsLoadingFindProviders(true);
+        const [users, jobs] = await Promise.all([
+          API.fetchAllUsers(),
+          API.fetchJobs(),
+        ]);
+        if (!cancelled) {
+          setAllUsersForSearch(users);
+          setAllJobsForSearch(jobs);
+        }
+      } catch {
+        // Non-blocking: page will handle empty state
+      } finally {
+        if (!cancelled) setIsLoadingFindProviders(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [view.name]);
 
   // Auth Handlers
   const handleAuthSuccess = async (email: string, type: UserType) => {
-    console.log('handleAuthSuccess', { email, type });
-    
+
     try {
       let user = await API.fetchUserById(email);
 
@@ -132,8 +169,7 @@ const App: React.FC = () => {
       // Setup foreground notification listener once per session
       onForegroundMessage((payload) => {
         if (payload?.notification) {
-          // Simple toast fallback - replace with UI component later
-          console.log('[FCM] Foreground message:', payload);
+
           alert(`🔔 ${payload.notification.title || 'Nova notificação'}\n${payload.notification.body || ''}`);
         }
       });
@@ -155,7 +191,7 @@ const App: React.FC = () => {
       }, 100);
       
     } catch (error) {
-      console.error('Erro no login:', error);
+
       alert('Erro ao fazer login. Por favor, tente novamente.');
       setAuthModal(null);
     }
@@ -220,7 +256,6 @@ const App: React.FC = () => {
       // Create job via API (saves to Firestore via backend)
       const newJob = await API.createJob(jobData, currentUser.email);
       setWizardData(null);
-      console.log('Job created successfully:', newJob);
 
       // If it was a direct invitation, notify the provider and redirect to dashboard
       if (jobData.targetProviderId) {
@@ -245,12 +280,11 @@ const App: React.FC = () => {
 
       // AI Matching automático (normal flow)
       try {
-        console.log('Starting automatic AI matching for job:', newJob.id);
+
         const matchingResults = await API.matchProvidersForJob(newJob.id);
         
         if (matchingResults && matchingResults.length > 0) {
-          console.log(`Found ${matchingResults.length} matching providers`);
-          
+
           // Notificar cada prestador sobre o novo job
           for (const match of matchingResults.slice(0, 5)) { // Notify top 5 matches
             try {
@@ -259,34 +293,32 @@ const App: React.FC = () => {
                 text: `Novo serviço disponível: ${newJob.category} - ${match.reason}`,
                 isRead: false,
               });
-            } catch (notifError) {
-              console.warn('Failed to notify provider:', match.provider.email, notifError);
-            }
+            } catch (notifError) { /* Intentionally ignored */ }
           }
           
           alert(`✅ Job "${newJob.category}" criado com sucesso!\n\n${matchingResults.length} prestadores qualificados foram notificados.\n\nVocê receberá propostas em breve.`);
         } else {
-          console.log('No matching providers found');
+
           alert(`✅ Job "${newJob.category}" criado!\n\nVamos buscar os melhores profissionais para você.`);
         }
       } catch (matchingError) {
-        console.error('Matching failed, but job was created:', matchingError);
+
         alert(`✅ Job "${newJob.category}" criado com sucesso!\n\nVocê receberá propostas em breve.`);
       }
       
       setView({ name: 'dashboard' });
       
     } catch (error) {
-      console.error("Failed to create job:", error);
+
       alert("Erro ao criar serviço. Por favor, tente novamente.");
       setWizardData(null);
     }
   };
   
-  const handleInviteProvider = (providerId: string) => {
+  const handleInviteProvider = (_providerId: string) => {
     // This logic needs a job context, which is no longer available globally.
     // This feature might need to be moved or re-thought.
-    console.warn("handleInviteProvider needs refactoring as allJobs is not global anymore.");
+
   };
   
   const handleLoginToContact = async (providerId: string) => {
@@ -303,19 +335,12 @@ const App: React.FC = () => {
       setWizardData({ prompt, data: { ...({} as JobData), targetProviderId: providerId } });
   };
   
-  const handlePlaceBid = async (jobId: string, amount: number) => {
-    if (!currentUser || currentUser.type !== 'prestador') return;
-    
-    // This function is now primarily handled within ProviderDashboard.
-    // The logic here could be removed if no longer used directly by App.
-    console.log("Placing bid from App.tsx - this might be deprecated", { jobId, amount });
-  };
+  // handlePlaceBid removed - functionality moved to ProviderDashboard
 
 
   const renderContent = () => {
     // Debug: logar estado do usuário e da view
-    console.log('renderContent', { currentUser, view });
-    
+
     switch (view.name) {
       case 'dashboard':
         // Evita redirecionar para 'home' enquanto o login está finalizando.
@@ -323,8 +348,8 @@ const App: React.FC = () => {
         if (!currentUser) {
           return <div style={{padding: '2rem'}}>Carregando seu painel…</div>;
         }
-        if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allUsers={[]} allProposals={[]} allMessages={[]} maintainedItems={maintainedItems} allDisputes={[]} allBids={[]} setAllProposals={() => {}} setAllMessages={() => {}} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllEscrows={setAllEscrows} setAllDisputes={() => {}} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} onUpdateUser={handleUpdateUser} />;
-        if (currentUser.type === 'prestador') return <ProviderDashboard user={currentUser} onViewProfile={(userId) => handleSetView('profile', {userId})} onPlaceBid={() => {}} />;
+        if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allUsers={[]} allProposals={[]} allMessages={[]} maintainedItems={maintainedItems} allDisputes={[]} allBids={[]} setAllProposals={() => {}} setAllMessages={() => {}} setAllEscrows={() => {}} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllDisputes={() => {}} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} onUpdateUser={handleUpdateUser} />;
+        if (currentUser.type === 'prestador') return <ProviderDashboard user={currentUser} onUpdateUser={handleUpdateUser} />;
         if (currentUser.type === 'admin') return <AdminDashboard user={currentUser} />;
         return null;
       case 'profile':
@@ -337,7 +362,16 @@ const App: React.FC = () => {
           return <ProviderLandingPage onRegisterClick={() => setAuthModal({mode: 'register', userType: 'prestador'})} />;
       // FIX: Add case for find-providers view
       case 'find-providers':
-          return <FindProvidersPage allUsers={[]} allJobs={[]} onViewProfile={(userId) => handleSetView('profile', { userId, isPublic: !currentUser })} onContact={handleLoginToContact} />;
+          return isLoadingFindProviders && allUsersForSearch.length === 0 ? (
+            <div className="p-8 text-center text-slate-600">Carregando profissionais…</div>
+          ) : (
+            <FindProvidersPage
+              allUsers={allUsersForSearch}
+              allJobs={allJobsForSearch}
+              onViewProfile={(userId) => handleSetView('profile', { userId, isPublic: !currentUser })}
+              onContact={handleLoginToContact}
+            />
+          );
       case 'payment-success':
         return <PaymentSuccessPage />;
       case 'home':
@@ -452,3 +486,5 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+

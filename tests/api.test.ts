@@ -273,4 +273,183 @@ describe('API Service', () => {
       expect(notification.text).toBe('Nova proposta recebida');
     });
   });
+
+  describe('Stripe Integration', () => {
+    it('deve criar conta Stripe Connect', async () => {
+      const mockResponse = { accountId: 'acct_123456' };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse,
+      });
+
+      const result = await API.createStripeConnectAccount('provider@test.com');
+
+      expect(result.accountId).toBe('acct_123456');
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/create-connect-account'),
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({ userId: 'provider@test.com' }),
+        })
+      );
+    });
+
+    it('deve gerar link de onboarding Stripe', async () => {
+      const mockResponse = { url: 'https://connect.stripe.com/setup/123' };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse,
+      });
+
+      const result = await API.createStripeAccountLink('provider@test.com');
+
+      expect(result.url).toContain('stripe.com');
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/create-account-link'),
+        expect.any(Object)
+      );
+    });
+
+    it('deve criar sessão de checkout', async () => {
+      const mockResponse = { sessionId: 'cs_123', url: 'https://checkout.stripe.com/123' };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse,
+      });
+
+      const result = await API.createCheckoutSession('job123', 'proposal456', 150);
+
+      expect(result.sessionId).toBe('cs_123');
+      expect(result.url).toContain('checkout.stripe.com');
+    });
+
+    it('deve liberar pagamento após conclusão', async () => {
+      const mockResponse = { success: true, message: 'Payment released' };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse,
+      });
+
+      const result = await API.releasePayment('job123');
+
+      expect(result.success).toBe(true);
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/release-payment'),
+        expect.objectContaining({
+          method: 'POST',
+        })
+      );
+    });
+  });
+
+  describe('Dispute Management', () => {
+    it('deve criar disputa', async () => {
+      const disputeData = {
+        jobId: 'job123',
+        reporterId: 'client@test.com',
+        reporterRole: 'client' as any,
+        reason: 'Trabalho incompleto',
+        description: 'O serviço não foi finalizado conforme acordado',
+      };
+
+      const mockResponse = {
+        id: 'dispute123',
+        ...disputeData,
+        status: 'aberta',
+        createdAt: new Date().toISOString(),
+        messages: [],
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse,
+      });
+
+      const dispute = await API.createDispute(disputeData);
+
+      expect(dispute.id).toBe('dispute123');
+      expect(dispute.status).toBe('aberta');
+      expect(dispute.reason).toBe('Trabalho incompleto');
+    });
+
+    it('deve resolver disputa com sucesso', async () => {
+      const resolutionData = {
+        decision: 'reembolsado' as any,
+        notes: 'Reembolso total aprovado',
+      };
+
+      const mockResponse = {
+        id: 'dispute123',
+        status: 'resolvida',
+        resolution: {
+          decidedBy: 'admin',
+          outcome: 'reembolsado',
+          reason: resolutionData.notes,
+        },
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse,
+      });
+
+      const dispute = await API.resolveDispute('dispute123', resolutionData);
+
+      expect(dispute.status).toBe('resolvida');
+      expect(dispute.resolution?.outcome).toBe('reembolsado');
+    });
+
+    it('deve buscar disputas do backend', async () => {
+      const mockDisputes = [
+        {
+          id: 'dispute1',
+          jobId: 'job1',
+          initiatorId: 'client@test.com',
+          status: 'aberta',
+          reason: 'Issue with service',
+        },
+      ];
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockDisputes,
+      });
+
+      const disputes = await API.fetchDisputes();
+
+      expect(Array.isArray(disputes)).toBe(true);
+      expect(disputes[0].status).toBe('aberta');
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('deve retornar mock data quando API retorna 404', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        statusText: 'Not Found',
+      });
+
+      const users = await API.fetchAllUsers();
+
+      expect(Array.isArray(users)).toBe(true);
+      expect(users.length).toBeGreaterThan(0); // Should fallback to MOCK_USERS
+    });
+
+    it('deve lançar erro em operações críticas sem fallback', async () => {
+      mockFetch.mockRejectedValueOnce(new Error('Network error'));
+
+      await expect(API.createJob({
+        description: 'Test',
+        category: 'reparos' as any,
+        serviceType: 'Encanador' as any,
+        urgency: '3dias' as any,
+        address: 'Test Address',
+        jobMode: 'normal' as any,
+      }, 'client@test.com')).rejects.toThrow();
+    });
+  });
 });

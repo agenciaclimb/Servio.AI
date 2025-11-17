@@ -130,6 +130,22 @@ describe('ClientDashboard', () => {
     expect(onNewJobFromItem).toHaveBeenCalledWith('');
   }, 15000);
 
+  test('botão "+ Novo Serviço" em "Meus Serviços" dispara callback', async () => {
+    const onNewJobFromItem = vi.fn();
+    renderDashboard({ onNewJobFromItem });
+
+    // Navega para a aba "Meus Serviços"
+    await userEvent.click(screen.getByRole('button', { name: /Meus Serviços/i }));
+
+    // Há dois botões "+ Novo Serviço" nessa view; clicar no primeiro já deve disparar o callback
+    const novoServicoButtons = screen.getAllByRole('button', { name: /\+ Novo Serviço/i });
+    expect(novoServicoButtons.length).toBeGreaterThanOrEqual(1);
+    await userEvent.click(novoServicoButtons[0]);
+
+    expect(onNewJobFromItem).toHaveBeenCalledTimes(1);
+    expect(onNewJobFromItem).toHaveBeenCalledWith('');
+  }, 15000);
+
   describe('Fluxo de Pagamento', () => {
     it('deve abrir o modal de pagamento ao aceitar uma proposta', async () => {
       const { props } = renderDashboard();

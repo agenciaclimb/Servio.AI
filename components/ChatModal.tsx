@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
 import { Job, Message, User, ScheduledDateTime, ChatSuggestion } from '../types';
 import { proposeScheduleFromChat, getChatAssistance } from '../services/geminiService';
 import AISchedulingAssistant from './AISchedulingAssistant';
@@ -29,7 +30,10 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = messagesEndRef.current;
+    if (el && typeof (el as unknown as { scrollIntoView?: unknown }).scrollIntoView === 'function') {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   useEffect(() => {
@@ -66,16 +70,15 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
         return [...otherChats, ...updatedMessages];
       });
 
-      console.log(`📩 Real-time: ${updatedMessages.length} mensagens carregadas para chat ${job.id}`);
-    }, (error) => {
-      console.error('❌ Erro no onSnapshot:', error);
+    }, (_error) => {
+
     });
 
     // Cleanup subscription on unmount
     return () => unsubscribe();
   }, [job.id, setAllMessages]);
 
-  const checkForScheduleSuggestion = async () => {
+  const checkForScheduleSuggestion = useCallback(async () => {
       if (job.status !== 'proposta_aceita' && job.status !== 'agendado') return;
       if (messages.length < 2 || isCheckingForSchedule) return;
 
@@ -85,12 +88,10 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
           if (suggestion) {
               setSuggestedSchedule(suggestion);
           }
-      } catch (error) {
-          console.error("Failed to check for schedule suggestion:", error);
-      } finally {
+      } catch (error) { /* Intentionally ignored */ } finally {
           setIsCheckingForSchedule(false);
       }
-  };
+  }, [job.status, messages, isCheckingForSchedule]);
   
   const handleGetAssistance = async () => {
       setIsAssistantLoading(true);
@@ -100,9 +101,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
           if (suggestion) {
             setAssistantSuggestion(suggestion);
           }
-      } catch (error) {
-          console.error("Failed to get assistance:", error);
-      } finally {
+      } catch (error) { /* Intentionally ignored */ } finally {
         setIsAssistantLoading(false);
       }
   };
@@ -111,10 +110,20 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
     switch (suggestion.name) {
       case 'clarify_scope':
       case 'suggest_next_step':
-        setNewMessage(suggestion.args.suggestionText || suggestion.args.question);
+        {
+          const args = suggestion.args as Record<string, unknown>;
+          const candidate = (args['suggestionText'] ?? args['question']);
+          if (typeof candidate === 'string') setNewMessage(candidate);
+        }
         break;
       case 'summarize_agreement':
-        onSendMessage({ chatId: job.id, text: suggestion.args.summaryText, type: 'system_notification' });
+        {
+          const args = suggestion.args as Record<string, unknown>;
+            const summary = args['summaryText'];
+            if (typeof summary === 'string') {
+              onSendMessage({ chatId: job.id, text: summary, type: 'system_notification' });
+            }
+        }
         break;
     }
     setAssistantSuggestion(null);
@@ -140,8 +149,8 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
   };
   
   useEffect(() => {
-      checkForScheduleSuggestion();
-  }, [job, messages.length]);
+    checkForScheduleSuggestion();
+  }, [checkForScheduleSuggestion]);
   
   const handleConfirmAISchedule = () => {
       if (suggestedSchedule) {
@@ -170,8 +179,8 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg m-4 transform transition-all h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+    <div {...getModalOverlayProps(onClose)} className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+      <div {...getModalContentProps()} className="bg-white rounded-2xl shadow-xl w-full max-w-lg m-4 transform transition-all h-[90vh] flex flex-col">
         <header className="relative p-4 border-b border-gray-200 flex-shrink-0">
             <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-600">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -288,3 +297,5 @@ const ChatModal: React.FC<ChatModalProps> = ({ job, currentUser, otherParty, mes
 };
 
 export default ChatModal;
+
+

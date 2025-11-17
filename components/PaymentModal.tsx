@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
 import type { Job, Proposal, User } from '../types';
 
 interface PaymentModalProps {
@@ -13,6 +14,7 @@ interface PaymentModalProps {
 const PaymentModal: React.FC<PaymentModalProps> = ({ job, proposal, provider, isOpen, onClose, onConfirmPayment }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
 
   if (!isOpen) {
     return null;
@@ -21,18 +23,21 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ job, proposal, provider, is
   const handlePayment = async () => {
     setIsLoading(true);
     setError(null);
+    setErrorCode(null);
     try {
       await onConfirmPayment(proposal);
       // A navegação será tratada pela função onConfirmPayment
     } catch (err) {
+      const code = (err as { code?: string })?.code;
       setError(err instanceof Error ? err.message : 'Ocorreu um erro desconhecido.');
+      if (code) setErrorCode(code);
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md m-4 transform transition-all" data-testid="payment-modal" onClick={(e) => e.stopPropagation()}>
+    <div {...getModalOverlayProps(onClose)} className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+      <div {...getModalContentProps()} className="bg-white rounded-2xl shadow-xl w-full max-w-md m-4 transform transition-all" data-testid="payment-modal">
         <div className="relative p-8 text-center">
           <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">&times;</button>
           
@@ -60,9 +65,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ job, proposal, provider, is
           </div>
 
           {error && (
-            <div className="mt-4 text-center p-3 bg-red-100 text-red-700 rounded-lg">
+            <div className="mt-4 text-left p-3 rounded-lg border"
+                 style={{ backgroundColor: '#FEF2F2', borderColor: '#FEE2E2', color: '#991B1B' }}>
               <p className="font-semibold">Erro ao processar pagamento</p>
-              <p className="text-sm">{error} Tente novamente.</p>
+              <p className="text-sm mt-1">{error}</p>
+              {(errorCode === 'E_TIMEOUT' || errorCode === 'E_NETWORK') && (
+                <p className="text-xs mt-1">Conexão instável ou tempo esgotado. Verifique sua internet e tente novamente.</p>
+              )}
             </div>
           )}
 
@@ -79,7 +88,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ job, proposal, provider, is
                   </svg>
                   Processando...
                 </>
-              ) : 'Pagar com Stripe'}
+              ) : (
+                error && (errorCode === 'E_TIMEOUT' || errorCode === 'E_NETWORK') ? 'Tentar novamente' : 'Pagar com Stripe'
+              )}
             </button>
           </div>
         </div>

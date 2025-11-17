@@ -150,3 +150,24 @@ export function computeAnalytics(
 export function formatCurrencyBRL(value: number): string {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
+
+// Gera série temporal de jobs e receita por dia ou mês
+export function computeTimeSeriesData(
+  jobs: Job[],
+  granularity: 'day' | 'month' = 'month'
+): Array<{ label: string; jobs: number; revenue: number }> {
+  const buckets = new Map<string, { jobs: number; revenue: number }>();
+  for (const j of jobs) {
+    const d = new Date(j.createdAt);
+    const key = granularity === 'day'
+      ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const bucket = buckets.get(key) || { jobs: 0, revenue: 0 };
+    bucket.jobs += 1;
+    if (j.earnings?.totalAmount) bucket.revenue += j.earnings.totalAmount;
+    buckets.set(key, bucket);
+  }
+  return Array.from(buckets.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([label, v]) => ({ label, jobs: v.jobs, revenue: v.revenue }));
+}

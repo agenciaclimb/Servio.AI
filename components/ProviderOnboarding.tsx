@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { User, ExtractedDocumentInfo } from '../types';
 import { auth } from '../firebaseConfig'; // Import auth for token
 import { extractInfoFromDocument } from '../services/geminiService';
@@ -7,6 +6,7 @@ import LoadingSpinner from './LoadingSpinner';
 
 interface ProviderOnboardingProps {
   user: User;
+  onComplete?: () => void; // Callback quando onboarding completa
 }
 
 const toBase64 = (file: File): Promise<string> => new Promise((resolve, reject) => {
@@ -16,12 +16,11 @@ const toBase64 = (file: File): Promise<string> => new Promise((resolve, reject) 
     reader.onerror = error => reject(error);
 });
 
-const ProviderOnboarding: React.FC<ProviderOnboardingProps> = ({ user }) => {
+const ProviderOnboarding: React.FC<ProviderOnboardingProps> = ({ user, onComplete }) => {
   const [step, setStep] = useState<'welcome' | 'upload' | 'loading' | 'review' | 'pending' | 'rejected'>('welcome');
   const [error, setError] = useState<string | null>(null);
   const [documentImage, setDocumentImage] = useState<string | null>(null); // base64 data URL
   const [extractedData, setExtractedData] = useState<ExtractedDocumentInfo>({ fullName: '', cpf: '' });
-  const navigate = useNavigate();
 
   // Initial state based on user's verification status
   React.useEffect(() => {
@@ -66,7 +65,8 @@ const ProviderOnboarding: React.FC<ProviderOnboardingProps> = ({ user }) => {
       };
 
       const token = await auth.currentUser?.getIdToken();
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_API_URL}/users/${user.email}`, {
+      const baseUrl = import.meta.env.VITE_BACKEND_API_URL || '';
+      const response = await fetch(`${baseUrl}/users/${user.email}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json',
                    'Authorization': `Bearer ${token}` },
@@ -76,7 +76,8 @@ const ProviderOnboarding: React.FC<ProviderOnboardingProps> = ({ user }) => {
       if (!response.ok) throw new Error('Falha ao enviar dados para verificação.');
 
       alert('Documentos enviados com sucesso! Sua conta está em análise.');
-      navigate('/dashboard'); // Redirect to dashboard to see the pending status
+      setStep('pending');
+      onComplete?.(); // Notifica o componente pai
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ocorreu um erro ao enviar.');
       setStep('review');

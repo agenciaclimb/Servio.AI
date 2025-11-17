@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import type { Job, User, Proposal, FraudAlert, Dispute, JobStatus, Message, ScheduledDateTime, DisputeMessage, Bid } from '../types';
+import React, { useState } from 'react';
+
+import type { Job, User, FraudAlert, JobStatus, Message, ScheduledDateTime } from '../types';
 import { useToast } from '../contexts/ToastContext';
 import JobCard from './JobCard';
 import ProposalModal from './ProposalModal';
@@ -16,13 +17,15 @@ import AuctionRoomModal from './AuctionRoomModal';
 import ProviderDashboardSkeleton from './skeletons/ProviderDashboardSkeleton';
 import PaymentSetupCard from './PaymentSetupCard';
 import ProviderEarningsCard from './ProviderEarningsCard';
+import { useProviderDashboardData } from './useProviderDashboardData';
 
 import * as API from '../services/api';
 
 interface ProviderDashboardProps {
   user: User;
   // onViewProfile: (userId: string) => void; // removed (future feature placeholder)
-  onPlaceBid: (jobId: string, amount: number) => void;
+  onPlaceBid?: (jobId: string, amount: number) => void;
+  onUpdateUser?: (userEmail: string, partial: Partial<User>) => void;
   /** Quando true, desativa o fluxo de onboarding. Útil para testes unitários. */
   disableOnboarding?: boolean;
   /** Quando true, desativa a exibição do skeleton inicial. Útil para testes unitários. */
@@ -33,95 +36,41 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   user,
   // onViewProfile,
   onPlaceBid,
+  onUpdateUser,
   disableOnboarding = false,
   disableSkeleton = false,
 }) => {
   const { addToast } = useToast();
+  const { data, setters, isLoading } = useProviderDashboardData(user);
+  const { availableJobs, myJobs, completedJobs, myProposals, myBids, allUsers, allMessages } = data;
+  const { setMyJobs, setMyProposals, setAllMessages } = setters;
 
   const [proposingForJob, setProposingForJob] = useState<Job | null>(null);
   const [viewingAuctionForJob, setViewingAuctionForJob] = useState<Job | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [referralEmail, setReferralEmail] = useState<{subject: string, body: string} | null>(null);
   const [chattingWithJob, setChattingWithJob] = useState<Job | null>(null);
-  const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [allMessages, setAllMessages] = useState<Message[]>([]);
-  // Component-specific data states
-  const [availableJobs, setAvailableJobs] = useState<Job[]>([]);
+  const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   // Filters for available jobs
   const [categoryFilter, setCategoryFilter] = useState<string>('Todos');
   const [locationFilter, setLocationFilter] = useState<string>('');
+  // Fraud alerts serão implementados posteriormente
+  const [_fraudAlerts, setAllFraudAlerts] = useState<FraudAlert[]>([]);
 
-  // Load messages from Firestore when chat is opened
-  useEffect(() => {
-    if (chattingWithJob) {
-      const loadMessages = async () => {
-        try {
-          const messages = await API.fetchMessages(chattingWithJob.id);
-          setAllMessages(prev => {
-            // Merge with existing messages, avoid duplicates
-            const existingIds = new Set(prev.map(m => m.id));
-            const newMessages = messages.filter(m => !existingIds.has(m.id));
-            return [...prev, ...newMessages];
-          });
-        } catch (error) {
-          console.error('Failed to load chat messages:', error);
-        }
-      };
-      loadMessages();
-    }
-  }, [chattingWithJob]);
-  const [myJobs, setMyJobs] = useState<Job[]>([]);
-  const [completedJobs, setCompletedJobs] = useState<Job[]>([]);
-  const [myProposals, setMyProposals] = useState<Proposal[]>([]);
-  const [myBids, setMyBids] = useState<Bid[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [allDisputes, setAllDisputes] = useState<Dispute[]>([]);
-  const [_allFraudAlerts, _setAllFraudAlerts] = useState<FraudAlert[]>([]); // unused for now
+  const handleOnboardingComplete = () => {
+    // Recarregar a página para atualizar o estado do usuário
+    globalThis.location.reload();
+  };
 
-  useEffect(() => {
-    const loadDashboardData = async () => {
-      setIsLoading(true);
-      try {
-        // Fetch all necessary data within the component
-        const [openJobs, providerJobs, proposals, bids, users, messages] = await Promise.all([
-          API.fetchOpenJobs(),
-          API.fetchJobsForProvider(user.email),
-          API.fetchProposalsForProvider(user.email),
-          API.fetchBidsForProvider(user.email),
-          API.fetchAllUsers(),
-          API.fetchMessages(),
-        ]);
-
-        setAvailableJobs(openJobs.filter(j => j.clientId !== user.email));
-        setMyJobs(providerJobs.filter(j => !['concluido', 'cancelado'].includes(j.status)));
-        setCompletedJobs(providerJobs.filter(j => j.status === 'concluido'));
-        setMyProposals(proposals);
-        setMyBids(bids);
-        setAllUsers(users);
-        setAllMessages(messages);
-        // Disputes and alerts would also be fetched here if needed globally in this component
-        // For now, they are passed as empty arrays or managed via props if still necessary elsewhere.
-
-      } catch (error) {
-        console.error("Failed to load provider dashboard data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (user.verificationStatus === 'verificado') {
-      loadDashboardData();
-    }
-  }, [user.email, user.verificationStatus]);
-
-
-  if (user.verificationStatus !== 'verificado' && !disableOnboarding) {
-    return <ProviderOnboarding user={user} />;
+  // Novo fluxo: permitir acesso ao dashboard, verificação acontece ao enviar proposta
+  // Se recusado, mostrar tela de onboarding para reenviar documentos
+  if (user.verificationStatus === 'recusado' && !disableOnboarding) {
+    return <ProviderOnboarding user={user} onComplete={handleOnboardingComplete} />;
   }
 
   // Jobs provider has proposed on
-  const proposedJobIds = myProposals.map(p => p.jobId);
-  const biddedJobIds = myBids.map(b => b.jobId);
+  const proposedJobIds = new Set(myProposals.map(p => p.jobId));
+  const biddedJobIds = new Set(myBids.map(b => b.jobId));
 
   // Filter available jobs
   const filteredJobs = availableJobs.filter(job => {
@@ -137,6 +86,14 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   
   const handleSendProposal = async (proposalData: { message: string; price: number }) => {
     if (!proposingForJob) return;
+
+    // Verificar se o usuário está verificado antes de enviar proposta
+    if (user.verificationStatus !== 'verificado') {
+      setProposingForJob(null);
+      addToast('Para enviar propostas, você precisa verificar sua identidade primeiro.', 'warning');
+      setShowVerificationPrompt(true);
+      return;
+    }
 
     try {
       // Create proposal via API
@@ -158,10 +115,9 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
       });
 
       setProposingForJob(null);
-      console.log('Proposal sent successfully:', newProposal);
 
       // Fraud check
-      const analysis = await analyzeProviderBehaviorForFraud(user, { type: 'proposal', data: newProposal });
+      const analysis = await analyzeProviderBehaviorForFraud(user, { type: 'proposal', data: newProposal as unknown as Record<string, unknown> });
       if (analysis?.isSuspicious) {
           const newAlert: FraudAlert = {
               id: `fra-${Date.now()}`,
@@ -171,10 +127,10 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
               status: 'novo',
               createdAt: new Date().toISOString(),
           };
-          setAllFraudAlerts(prev => [newAlert, ...prev]);
+          setAllFraudAlerts((prev: FraudAlert[]) => [newAlert, ...prev]);
       }
     } catch (error) {
-      console.error("Failed to send proposal:", error);
+
       addToast("Erro ao enviar proposta. Tente novamente.", 'error');
       setProposingForJob(null);
     }
@@ -182,12 +138,21 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   
   const handleSaveProfile = async (updatedData: Partial<User>) => {
     const updatedUser = { ...user, ...updatedData };
-    setAllUsers(prev => prev.map(u => u.email === user.email ? updatedUser : u));
-    setIsProfileModalOpen(false);
+    try {
+      await API.updateUser(user.email, updatedData);
+      // Atualizar o estado local do usuário se o callback foi fornecido
+      onUpdateUser?.(user.email, updatedData);
+      addToast('Perfil atualizado com sucesso.', 'success');
+      setIsProfileModalOpen(false);
+    } catch (e) {
+      console.error('Erro ao salvar perfil:', e);
+      addToast('Falha ao salvar seu perfil. Tente novamente em instantes.', 'error');
+      // Mantém o modal aberto para permitir nova tentativa
+    }
 
     // Fraud check
     try {
-        const analysis = await analyzeProviderBehaviorForFraud(updatedUser, { type: 'profile_update', data: updatedData });
+        const analysis = await analyzeProviderBehaviorForFraud(updatedUser, { type: 'profile_update', data: updatedData as unknown as Record<string, unknown> });
         if (analysis?.isSuspicious) {
             const newAlert: FraudAlert = {
                 id: `fra-${Date.now()}`,
@@ -199,9 +164,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
             };
             setAllFraudAlerts(prev => [newAlert, ...prev]);
         }
-    } catch (error) {
-        console.error("Fraud analysis failed during profile update:", error);
-    }
+    } catch (error) { /* Intentionally ignored - análise de fraude é best-effort */ }
   };
 
   const handleUpdateJobStatus = (jobId: string, newStatus: JobStatus) => {
@@ -235,7 +198,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         const emailContent = await generateReferralEmail(user.name, friendEmail);
         setReferralEmail(emailContent);
         // In a real app, you'd send the email here.
-        console.log(`Referral sent to ${friendEmail}`);
+
     } catch (error) {
         addToast("Falha ao gerar e-mail de indicação.", 'error');
     }
@@ -263,10 +226,9 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
           isRead: false,
         });
       }
-      
-      console.log('Message sent and saved to Firestore');
+
     } catch (error) {
-      console.error('Failed to send message:', error);
+
       addToast('Erro ao enviar mensagem. Tente novamente.', 'error');
     }
   };
@@ -307,33 +269,6 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
     }
   };
   
-  const _handleSendDisputeMessage = (disputeId: string, text: string) => {
-        const newMessage: DisputeMessage = {
-            id: `d-msg-${Date.now()}`,
-            senderId: user.email,
-            createdAt: new Date().toISOString(),
-            text,
-        };
-
-        setAllDisputes(prevDisputes =>
-            prevDisputes.map(d =>
-                d.id === disputeId
-                    ? { ...d, messages: [...d.messages, newMessage] }
-                    : d
-            )
-        );
-
-        const dispute = allDisputes.find(d => d.id === disputeId);
-        const job = myJobs.find(j => j.id === dispute?.jobId);
-        if (job) {
-            API.createNotification({
-              userId: job.clientId,
-              text: `Nova mensagem na disputa do job "${job.category}".`,
-              isRead: false,
-            });
-        }
-    };
-
     const handleJobClick = (job: Job) => {
         if (job.jobMode === 'leilao') {
             setViewingAuctionForJob(job);
@@ -346,6 +281,10 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
     return <ProviderDashboardSkeleton />;
   }
 
+  // Se usuário precisa verificação e o prompt foi acionado, mostrar onboarding
+  if (showVerificationPrompt && user.verificationStatus !== 'verificado') {
+    return <ProviderOnboarding user={user} onComplete={handleOnboardingComplete} />;
+  }
 
   // Calculate provider stats
   const totalJobs = completedJobs.length + myJobs.filter(j => j.status === 'concluido').length;
@@ -357,9 +296,57 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
 
   return (
     <div className="space-y-10">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Card de aviso sobre verificação pendente */}
+      {user.verificationStatus === 'pendente' && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg shadow-sm">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-yellow-700">
+                <strong>Análise em Andamento</strong> Seus documentos estão sendo analisados. Você poderá enviar propostas assim que a verificação for concluída (geralmente em até 24h).
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Card de call-to-action para verificação */}
+      {user.verificationStatus !== 'verificado' && user.verificationStatus !== 'pendente' && user.verificationStatus !== 'recusado' && (
+        <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg shadow-sm">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3 flex-1">
+              <p className="text-sm text-blue-700 mb-2">
+                <strong>Complete sua verificação:</strong> Para enviar propostas e começar a trabalhar, você precisa verificar sua identidade. É rápido e seguro!
+              </p>
+              <button
+                onClick={() => setShowVerificationPrompt(true)}
+                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Verificar Agora
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Exibe o card de Força do Perfil apenas se não estiver 100% completo */}
+      {((user.specialties?.length || 0) === 0 || !user.bio || !user.headline) && (
+        <div className="mb-6">
+          <ProfileStrength user={user} onEditProfile={() => setIsProfileModalOpen(true)} />
+        </div>
+      )}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <ProfileStrength user={user} onEditProfile={() => setIsProfileModalOpen(true)} />
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Meus Serviços em Andamento</h2>
           </div>
           <div className="flex flex-col space-y-4">
               <ProviderEarningsCard 
@@ -374,8 +361,6 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
           </div>
       </div>
 
-      <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Meus Serviços em Andamento</h2>
         {myJobs.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {myJobs.map(job => (
@@ -393,7 +378,6 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
             <p className="text-gray-600">Você não tem nenhum serviço em andamento.</p>
           </div>
         )}
-      </div>
 
       <div>
         <div className="flex justify-between items-center mb-4">
@@ -448,7 +432,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
                 job={job}
                 bids={myBids.filter(b => b.jobId === job.id)}
                 onProposeClick={() => handleJobClick(job)}
-                hasProposed={job.jobMode === 'leilao' ? biddedJobIds.includes(job.id) : proposedJobIds.includes(job.id)}
+                hasProposed={job.jobMode === 'leilao' ? biddedJobIds.has(job.id) : proposedJobIds.has(job.id)}
               />
             ))}
           </div>
@@ -477,7 +461,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
           currentUser={user}
           bids={myBids.filter(b => b.jobId === viewingAuctionForJob.id)}
           onClose={() => setViewingAuctionForJob(null)}
-          onPlaceBid={onPlaceBid}
+          onPlaceBid={onPlaceBid || (() => {})}
         />
       )}
       {isProfileModalOpen && (
@@ -507,3 +491,4 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
 };
 
 export default ProviderDashboard;
+

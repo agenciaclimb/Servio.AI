@@ -1,12 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Job, Proposal, Escrow, EscrowStatus } from '../types';
 import StatCard from './StatCard';
-
-interface AdminFinancialsProps {
-  allJobs: Job[];
-  allProposals: Proposal[];
-  allEscrows: Escrow[];
-}
+import * as API from '../services/api';
 
 const statusStyles: { [key in EscrowStatus]: { bg: string, text: string } } = {
   bloqueado: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
@@ -15,8 +10,32 @@ const statusStyles: { [key in EscrowStatus]: { bg: string, text: string } } = {
   em_disputa: { bg: 'bg-orange-100', text: 'text-orange-800' },
 };
 
+const AdminFinancials: React.FC = () => {
+    const [allJobs, setAllJobs] = useState<Job[]>([]);
+    const [allProposals, setAllProposals] = useState<Proposal[]>([]);
+    const [allEscrows, _setAllEscrows] = useState<Escrow[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-const AdminFinancials: React.FC<AdminFinancialsProps> = ({ allJobs, allProposals, allEscrows }) => {
+    useEffect(() => {
+        const loadData = async () => {
+            setIsLoading(true);
+            try {
+                const [jobs, proposals] = await Promise.all([
+                    API.fetchJobs(),
+                    API.fetchProposals(),
+                    // API.fetchEscrows(), // Supondo que exista um endpoint para isso
+                ]);
+                setAllJobs(jobs);
+                setAllProposals(proposals);
+                // setAllEscrows(escrows);
+            } catch (error) {
+                console.error("Failed to load financial data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        loadData();
+    }, []);
     
     const completedJobs = allJobs.filter(j => j.status === 'concluido');
     const completedJobProposals = allProposals.filter(p => completedJobs.some(j => j.id === p.jobId && p.status === 'aceita'));
@@ -26,6 +45,10 @@ const AdminFinancials: React.FC<AdminFinancialsProps> = ({ allJobs, allProposals
     const totalInEscrow = allEscrows.filter(e => e.status === 'bloqueado' || e.status === 'em_disputa').reduce((acc, e) => acc + e.amount, 0);
 
     const formatCurrency = (value: number) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    if (isLoading) {
+        return <div className="p-4 text-sm text-gray-600">Carregando dados financeiros...</div>;
+    }
   
     return (
         <div className="space-y-6">

@@ -13,7 +13,7 @@ interface Suggestion extends MaintenanceSuggestion {
 
 const SuggestionCard: React.FC<{ suggestion: Suggestion, onSuggestJob: (prompt: string) => void }> = ({ suggestion, onSuggestJob }) => (
     <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden flex flex-col sm:flex-row items-center p-4 min-w-[320px] sm:min-w-[400px] flex-shrink-0">
-        <img src={suggestion.item.imageUrl} alt={suggestion.item.name} className="w-24 h-24 object-cover rounded-lg flex-shrink-0" />
+        <img src={suggestion.item.imageUrl} alt={suggestion.item.name} className="w-24 h-24 object-cover rounded-lg flex-shrink-0" loading="lazy" width="96" height="96" />
         <div className="ml-0 mt-4 sm:ml-4 sm:mt-0 text-center sm:text-left flex-grow">
             <h4 className="font-bold text-indigo-800 bg-indigo-100 px-2 py-1 rounded-md inline-block text-sm">{suggestion.suggestionTitle}</h4>
             <p className="text-sm text-gray-600 mt-2">Nossa IA recomenda uma manutenção preventiva para seu <strong>{suggestion.item.name}</strong>.</p>

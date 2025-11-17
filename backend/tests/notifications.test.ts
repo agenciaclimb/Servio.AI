@@ -18,22 +18,25 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
  * - Notificações marcadas como read=false por padrão
  */
 
-// Mock Firestore
+// Mock Firestore with proper method signatures
 const createMockCollection = () => ({
-  add: vi.fn(() => Promise.resolve({ id: 'notif-001' })),
-  doc: vi.fn(() => ({
-    get: vi.fn(),
-    update: vi.fn()
+  add: vi.fn((data: unknown) => Promise.resolve({ id: 'notif-001', data })),
+  doc: vi.fn((id: string) => ({
+    get: vi.fn(() => Promise.resolve({ exists: true, id, data: () => ({ id }) })),
+    update: vi.fn((data: unknown) => Promise.resolve({ id, data }))
   })),
-  where: vi.fn(() => ({
-    get: vi.fn(() => Promise.resolve({ docs: [] }))
+  where: vi.fn((field: string, op: string, value: unknown) => ({
+    get: vi.fn(() => Promise.resolve({ docs: [], field, op, value }))
   }))
 });
 
 let mockCollection = createMockCollection();
 
 const mockFirestore = {
-  collection: vi.fn(() => mockCollection)
+  collection: vi.fn((collectionName: string) => {
+    // Return the mock collection when called with collection name
+    return mockCollection;
+  })
 };
 
 vi.mock('firebase-admin', () => ({

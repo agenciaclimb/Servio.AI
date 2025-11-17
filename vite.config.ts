@@ -12,7 +12,9 @@ export default defineConfig(({ mode }) => {
           // Proxy de desenvolvimento: direciona chamadas /api para o backend
           // Configure VITE_BACKEND_URL no .env.local para apontar ao Cloud Run quando necessário
           '/api': {
-            target: env.VITE_BACKEND_URL || 'http://localhost:8081',
+            // Prefer unified API base URL from .env.local
+            // Fall back to legacy VITE_BACKEND_URL or a local dev port
+            target: env.VITE_BACKEND_API_URL || env.VITE_BACKEND_URL || 'http://localhost:8081',
             changeOrigin: true,
             // Se o backend não usa prefixo /api, ajuste a regra abaixo
             // rewrite: (path) => path.replace(/^\/api/, '')
@@ -43,7 +45,9 @@ export default defineConfig(({ mode }) => {
             manualChunks: {
               // Separar vendor chunks grandes para melhor caching
               'react-vendor': ['react', 'react-dom'],
-              'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/messaging'],
+              // Firebase core: apenas Auth e Firestore no caminho crítico
+              'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+              // Lazy-loaded: Analytics e Storage carregados sob demanda
             }
           }
         },

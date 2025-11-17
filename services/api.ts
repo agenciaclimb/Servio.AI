@@ -35,15 +35,39 @@ const BACKEND_URL =
   'https://servio-backend-h5ogjon7aa-uw.a.run.app';
 const USE_MOCK = false; // Always try real backend first, fallback to mock on error
 
-console.log('API Service initialized:', { BACKEND_URL, USE_MOCK });
+// Optional debug flag to reduce noisy console.log in production builds
+const DEBUG = (import.meta as unknown as { env?: Record<string, string> })?.env?.VITE_DEBUG === 'true';
+if (DEBUG) console.warn('[api] Service initialized', { BACKEND_URL, USE_MOCK });
+
+// ----------------------------------------------------------------------------
+// Error catalog & helper
+// ----------------------------------------------------------------------------
+export interface ApiError extends Error { code: string; status?: number; details?: unknown }
+
+const ErrorCatalog = {
+  NETWORK: { code: 'E_NETWORK', message: 'Falha de rede. Verifique sua conexão.' },
+  TIMEOUT: { code: 'E_TIMEOUT', message: 'Tempo de resposta excedido. Tente novamente.' },
+  AUTH: { code: 'E_AUTH', message: 'Não autorizado. Faça login novamente.' },
+  NOT_FOUND: { code: 'E_NOT_FOUND', message: 'Recurso não encontrado.' },
+  SERVER: { code: 'E_SERVER', message: 'Erro interno do servidor. Tente mais tarde.' },
+  UNKNOWN: { code: 'E_UNKNOWN', message: 'Erro desconhecido.' },
+} as const;
+
+function makeApiError(key: keyof typeof ErrorCatalog, status?: number, details?: unknown): ApiError {
+  const base = ErrorCatalog[key] || ErrorCatalog.UNKNOWN;
+  const err = new Error(base.message) as ApiError;
+  err.code = base.code;
+  if (status) err.status = status;
+  if (details !== undefined) err.details = details;
+  return err;
+}
 
 /**
  * Generic API call helper
  */
-async function apiCall<T>(
-  endpoint: string,
-  options?: RequestInit
-): Promise<T> {
+async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000); // 15s safeguard
   try {
     const response = await fetch(`${BACKEND_URL}${endpoint}`, {
       ...options,
@@ -51,16 +75,32 @@ async function apiCall<T>(
         'Content-Type': 'application/json',
         ...options?.headers,
       },
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
 
     if (!response.ok) {
-      throw new Error(`API call failed: ${response.statusText}`);
+      let errKey: keyof typeof ErrorCatalog = 'SERVER';
+      if (response.status === 401 || response.status === 403) errKey = 'AUTH';
+      else if (response.status === 404) errKey = 'NOT_FOUND';
+      else if (response.status >= 500) errKey = 'SERVER';
+      const details = await response
+        .json()
+        .catch(() => ({ message: response.statusText }));
+      throw makeApiError(errKey, response.status, details);
     }
-
     return await response.json();
   } catch (error) {
-    console.error(`API call to ${endpoint} failed:`, error);
-    throw error;
+    clearTimeout(timeout);
+    if ((error as Error).name === 'AbortError') {
+      const apiErr = makeApiError('TIMEOUT');
+      console.warn(`[api] Timeout on ${endpoint}`, apiErr);
+      throw apiErr;
+    }
+    if (DEBUG) console.warn(`[api] call failed ${endpoint}`, error);
+    // If error already structured, rethrow
+    if ((error as ApiError)?.code) throw error as ApiError;
+    throw makeApiError('NETWORK');
   }
 }
 
@@ -70,8 +110,8 @@ async function apiCall<T>(
 
 export async function fetchAllUsers(): Promise<User[]> {
   if (USE_MOCK) {
-    console.log('Using mock users data');
-    return Promise.resolve(MOCK_USERS);
+  if (DEBUG) console.warn('[api] mock users');
+    return MOCK_USERS;
   }
 
   try {
@@ -84,8 +124,8 @@ export async function fetchAllUsers(): Promise<User[]> {
 
 export async function fetchProviders(): Promise<User[]> {
   if (USE_MOCK) {
-    console.log('Using mock providers data');
-    return Promise.resolve(MOCK_USERS.filter(u => u.type === 'prestador' && u.verificationStatus === 'verificado'));
+  if (DEBUG) console.warn('[api] mock providers');
+    return MOCK_USERS.filter(u => u.type === 'prestador' && u.verificationStatus === 'verificado');
   }
 
   try {
@@ -99,7 +139,7 @@ export async function fetchProviders(): Promise<User[]> {
 export async function fetchUserById(userId: string): Promise<User | null> {
   if (USE_MOCK) {
     const user = MOCK_USERS.find((u) => u.email === userId);
-    return Promise.resolve(user || null);
+    return user || null;
   }
 
   try {
@@ -118,8 +158,8 @@ export async function createUser(user: Omit<User, 'memberSince'>): Promise<User>
       memberSince: new Date().toISOString(),
     };
     MOCK_USERS.push(newUser);
-    console.log('Mock: Created user', newUser);
-    return Promise.resolve(newUser);
+  if (DEBUG) console.warn('[api] mock create user', newUser);
+    return newUser;
   }
 
   try {
@@ -135,10 +175,10 @@ export async function createUser(user: Omit<User, 'memberSince'>): Promise<User>
 
 export async function updateUser(userId: string, updates: Partial<User>): Promise<User> {
   if (USE_MOCK) {
-    console.log('Mock: Updated user', userId, updates);
+  if (DEBUG) console.warn('[api] mock update user', userId, updates);
     const existingUser = MOCK_USERS.find((u) => u.email === userId);
     if (!existingUser) throw new Error('User not found');
-    return Promise.resolve({ ...existingUser, ...updates });
+    return { ...existingUser, ...updates };
   }
 
   try {
@@ -158,13 +198,13 @@ export async function updateUser(userId: string, updates: Partial<User>): Promis
 
 export async function createStripeConnectAccount(userId: string): Promise<{ accountId: string }> {
   if (USE_MOCK) {
-    console.log('Mock: Creating Stripe Connect Account for', userId);
+  if (DEBUG) console.warn('[api] mock create stripe connect', userId);
     // In mock, we'll just pretend and update the user object
     const user = MOCK_USERS.find(u => u.email === userId);
     if (user) {
       user.stripeAccountId = `acct_mock_${Date.now()}`;
     }
-    return Promise.resolve({ accountId: `acct_mock_${Date.now()}` });
+    return { accountId: `acct_mock_${Date.now()}` };
   }
 
   return apiCall<{ accountId: string }>('/api/stripe/create-connect-account', {
@@ -175,8 +215,8 @@ export async function createStripeConnectAccount(userId: string): Promise<{ acco
 
 export async function createStripeAccountLink(userId: string): Promise<{ url: string }> {
   if (USE_MOCK) {
-    console.log('Mock: Creating Stripe Account Link for', userId);
-    return Promise.resolve({ url: 'https://mock.stripe.com/onboarding-link' });
+  if (DEBUG) console.warn('[api] mock create stripe account link', userId);
+    return { url: 'https://mock.stripe.com/onboarding-link' };
   }
 
   return apiCall<{ url: string }>('/api/stripe/create-account-link', {
@@ -194,8 +234,8 @@ export async function createCheckoutSession(
   amount: number
 ): Promise<{ id: string }> {
   if (USE_MOCK) {
-    console.log('Mock: Creating Stripe Checkout Session', { jobId: job.id, amount });
-    return Promise.resolve({ id: `cs_mock_${Date.now()}` });
+  if (DEBUG) console.warn('[api] mock create checkout', { jobId: job.id, amount });
+    return { id: `cs_mock_${Date.now()}` };
   }
 
   return apiCall<{ id: string }>('/create-checkout-session', {
@@ -206,8 +246,8 @@ export async function createCheckoutSession(
 
 export async function releasePayment(jobId: string): Promise<{ success: boolean; message: string }> {
   if (USE_MOCK) {
-    console.log('Mock: Releasing payment for job', jobId);
-    return Promise.resolve({ success: true, message: 'Pagamento liberado com sucesso (mock)' });
+  if (DEBUG) console.warn('[api] mock release payment', jobId);
+    return { success: true, message: 'Pagamento liberado com sucesso (mock)' };
   }
 
   return apiCall<{ success: boolean; message: string }>(`/jobs/${jobId}/release-payment`, {
@@ -222,8 +262,8 @@ export async function releasePayment(jobId: string): Promise<{ success: boolean;
 
 export async function fetchJobs(): Promise<Job[]> {
   if (USE_MOCK) {
-    console.log('Using mock jobs data');
-    return Promise.resolve(MOCK_JOBS);
+  if (DEBUG) console.warn('[api] mock jobs');
+    return MOCK_JOBS;
   }
 
   try {
@@ -236,8 +276,8 @@ export async function fetchJobs(): Promise<Job[]> {
 
 export async function fetchJobsForUser(userId: string): Promise<Job[]> {
   if (USE_MOCK) {
-    console.log(`Using mock jobs data for user ${userId}`);
-    return Promise.resolve(MOCK_JOBS.filter(job => job.clientId === userId));
+  if (DEBUG) console.warn('[api] mock jobs for user', userId);
+    return MOCK_JOBS.filter(job => job.clientId === userId);
   }
 
   try {
@@ -250,8 +290,8 @@ export async function fetchJobsForUser(userId: string): Promise<Job[]> {
 
 export async function fetchOpenJobs(): Promise<Job[]> {
   if (USE_MOCK) {
-    console.log('Using mock open jobs data');
-    return Promise.resolve(MOCK_JOBS.filter(job => job.status === 'ativo' || job.status === 'em_leilao'));
+  if (DEBUG) console.warn('[api] mock open jobs');
+    return MOCK_JOBS.filter(job => job.status === 'ativo' || job.status === 'em_leilao');
   }
 
   try {
@@ -267,8 +307,8 @@ export async function fetchOpenJobs(): Promise<Job[]> {
 
 export async function fetchJobsForProvider(providerId: string): Promise<Job[]> {
   if (USE_MOCK) {
-    console.log(`Using mock jobs data for provider ${providerId}`);
-    return Promise.resolve(MOCK_JOBS.filter(job => job.providerId === providerId));
+  if (DEBUG) console.warn('[api] mock jobs for provider', providerId);
+    return MOCK_JOBS.filter(job => job.providerId === providerId);
   }
 
   try {
@@ -282,7 +322,7 @@ export async function fetchJobsForProvider(providerId: string): Promise<Job[]> {
 export async function fetchJobById(jobId: string): Promise<Job | null> {
   if (USE_MOCK) {
     const job = MOCK_JOBS.find((j) => j.id === jobId);
-    return Promise.resolve(job || null);
+    return job || null;
   }
 
   try {
@@ -320,8 +360,8 @@ export async function createJob(jobData: JobData, clientId: string): Promise<Job
       id: `job-${Date.now()}`,
       createdAt: new Date().toISOString(),
     };
-    console.log('Mock: Created job', job);
-    return Promise.resolve(job);
+  if (DEBUG) console.warn('[api] mock create job', job);
+    return job;
   }
 
   try {
@@ -337,10 +377,10 @@ export async function createJob(jobData: JobData, clientId: string): Promise<Job
 
 export async function updateJob(jobId: string, updates: Partial<Job>): Promise<Job> {
   if (USE_MOCK) {
-    console.log('Mock: Updated job', jobId, updates);
+  if (DEBUG) console.warn('[api] mock update job', jobId, updates);
     const existingJob = MOCK_JOBS.find((j) => j.id === jobId);
     if (!existingJob) throw new Error('Job not found');
-    return Promise.resolve({ ...existingJob, ...updates });
+    return { ...existingJob, ...updates };
   }
 
   try {
@@ -360,7 +400,7 @@ export async function updateJob(jobId: string, updates: Partial<Job>): Promise<J
 
 export async function fetchProposals(): Promise<Proposal[]> {
   if (USE_MOCK) {
-    return Promise.resolve(MOCK_PROPOSALS);
+    return MOCK_PROPOSALS;
   }
 
   try {
@@ -373,8 +413,8 @@ export async function fetchProposals(): Promise<Proposal[]> {
 
 export async function fetchProposalsForProvider(providerId: string): Promise<Proposal[]> {
   if (USE_MOCK) {
-    console.log(`Using mock proposals data for provider ${providerId}`);
-    return Promise.resolve(MOCK_PROPOSALS.filter(p => p.providerId === providerId));
+  if (DEBUG) console.warn('[api] mock proposals for provider', providerId);
+    return MOCK_PROPOSALS.filter(p => p.providerId === providerId);
   }
 
   try {
@@ -392,8 +432,8 @@ export async function createProposal(proposal: Omit<Proposal, 'id' | 'createdAt'
       id: `prop-${Date.now()}`,
       createdAt: new Date().toISOString(),
     };
-    console.log('Mock: Created proposal', newProposal);
-    return Promise.resolve(newProposal);
+  if (DEBUG) console.warn('[api] mock create proposal', newProposal);
+    return newProposal;
   }
 
   try {
@@ -409,10 +449,10 @@ export async function createProposal(proposal: Omit<Proposal, 'id' | 'createdAt'
 
 export async function updateProposal(proposalId: string, updates: Partial<Proposal>): Promise<Proposal> {
   if (USE_MOCK) {
-    console.log('Mock: Updated proposal', proposalId, updates);
+  if (DEBUG) console.warn('[api] mock update proposal', proposalId, updates);
     const existing = MOCK_PROPOSALS.find((p) => p.id === proposalId);
     if (!existing) throw new Error('Proposal not found');
-    return Promise.resolve({ ...existing, ...updates });
+    return { ...existing, ...updates };
   }
 
   try {
@@ -432,7 +472,7 @@ export async function updateProposal(proposalId: string, updates: Partial<Propos
 
 export async function fetchMessages(chatId?: string): Promise<Message[]> {
   if (USE_MOCK) {
-    return Promise.resolve(chatId ? MOCK_MESSAGES.filter(m => m.chatId === chatId) : MOCK_MESSAGES);
+    return chatId ? MOCK_MESSAGES.filter(m => m.chatId === chatId) : MOCK_MESSAGES;
   }
 
   try {
@@ -451,8 +491,8 @@ export async function createMessage(message: Omit<Message, 'id' | 'createdAt'>):
       id: `msg-${Date.now()}`,
       createdAt: new Date().toISOString(),
     };
-    console.log('Mock: Created message', newMessage);
-    return Promise.resolve(newMessage);
+  if (DEBUG) console.warn('[api] mock create message', newMessage);
+    return newMessage;
   }
 
   try {
@@ -472,7 +512,7 @@ export async function createMessage(message: Omit<Message, 'id' | 'createdAt'>):
 
 export async function fetchMaintainedItems(clientId: string): Promise<MaintainedItem[]> {
   if (USE_MOCK) {
-    return Promise.resolve(MOCK_ITEMS.filter((item) => item.clientId === clientId));
+    return MOCK_ITEMS.filter((item) => item.clientId === clientId);
   }
 
   try {
@@ -491,8 +531,8 @@ export async function createMaintainedItem(item: Omit<MaintainedItem, 'id' | 'cr
       createdAt: new Date().toISOString(),
       maintenanceHistory: [],
     };
-    console.log('Mock: Created maintained item', newItem);
-    return Promise.resolve(newItem);
+  if (DEBUG) console.warn('[api] mock create maintained item', newItem);
+    return newItem;
   }
 
   try {
@@ -512,7 +552,7 @@ export async function createMaintainedItem(item: Omit<MaintainedItem, 'id' | 'cr
 
 export async function fetchNotifications(userId: string): Promise<Notification[]> {
   if (USE_MOCK) {
-    return Promise.resolve(MOCK_NOTIFICATIONS.filter((n) => n.userId === userId));
+    return MOCK_NOTIFICATIONS.filter((n) => n.userId === userId);
   }
 
   try {
@@ -530,8 +570,8 @@ export async function createNotification(notification: Omit<Notification, 'id' |
       id: `notif-${Date.now()}`,
       createdAt: new Date().toISOString(),
     };
-    console.log('Mock: Created notification', newNotification);
-    return Promise.resolve(newNotification);
+  if (DEBUG) console.warn('[api] mock create notification', newNotification);
+    return newNotification;
   }
 
   try {
@@ -551,7 +591,7 @@ export async function createNotification(notification: Omit<Notification, 'id' |
 
 export async function fetchBids(): Promise<Bid[]> {
   if (USE_MOCK) {
-    return Promise.resolve(MOCK_BIDS);
+    return MOCK_BIDS;
   }
 
   try {
@@ -564,8 +604,8 @@ export async function fetchBids(): Promise<Bid[]> {
 
 export async function fetchBidsForProvider(providerId: string): Promise<Bid[]> {
     if (USE_MOCK) {
-        console.log(`Using mock bids data for provider ${providerId}`);
-        return Promise.resolve(MOCK_BIDS.filter(b => b.providerId === providerId));
+  if (DEBUG) console.warn('[api] mock bids for provider', providerId);
+    return MOCK_BIDS.filter(b => b.providerId === providerId);
     }
 
     try {
@@ -582,8 +622,8 @@ export async function fetchBidsForProvider(providerId: string): Promise<Bid[]> {
 
 export async function fetchDisputes(): Promise<Dispute[]> {
     if (USE_MOCK) {
-        console.log('Using mock disputes data (empty array)');
-        return Promise.resolve([]);
+  if (DEBUG) console.warn('[api] mock disputes (empty array)');
+    return [];
     }
 
     try {
@@ -605,7 +645,7 @@ export async function fetchDisputes(): Promise<Dispute[]> {
  */
 export async function fetchSentimentAlerts(): Promise<FraudAlert[]> {
   if (USE_MOCK) {
-    return Promise.resolve(MOCK_FRAUD_ALERTS);
+    return MOCK_FRAUD_ALERTS;
   }
 
   try {
@@ -644,18 +684,16 @@ export interface MatchingProvider {
  */
 export async function matchProvidersForJob(jobId: string): Promise<MatchingProvider[]> {
   if (USE_MOCK) {
-    console.log('Mock: Matching providers locally for job', jobId);
+  if (DEBUG) console.warn('[api] mock match providers', jobId);
     // Basic mock matching - just return verified providers
     const providers = MOCK_USERS.filter(
       u => u.type === 'prestador' && u.verificationStatus === 'verificado'
     );
-    return Promise.resolve(
-      providers.map(p => ({
-        provider: p,
-        score: 0.8,
-        reason: 'Prestador verificado com experiência na categoria'
-      }))
-    );
+    return providers.map(p => ({
+      provider: p,
+      score: 0.8,
+      reason: 'Prestador verificado com experiência na categoria'
+    }));
   }
 
   try {

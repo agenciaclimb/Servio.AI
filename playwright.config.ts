@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 // Consolidated config (removed duplicate definitions).
 export default defineConfig({
-  testDir: './e2e',
+  testDir: './tests/e2e',
   timeout: 30_000,
   expect: { timeout: 5_000 },
   fullyParallel: true,

@@ -1,12 +1,7 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FraudAlert, User, FraudAlertStatus } from '../types';
-
-interface AdminFraudAlertsProps {
-  allAlerts: FraudAlert[];
-  allUsers: User[];
-  setAllAlerts: React.Dispatch<React.SetStateAction<FraudAlert[]>>;
-}
+import * as API from '../services/api';
 
 const statusStyles: { [key in FraudAlertStatus]: { bg: string, text: string } } = {
   novo: { bg: 'bg-red-100', text: 'text-red-800' },
@@ -15,12 +10,38 @@ const statusStyles: { [key in FraudAlertStatus]: { bg: string, text: string } } 
 };
 
 
-const AdminFraudAlerts: React.FC<AdminFraudAlertsProps> = ({ allAlerts, allUsers, setAllAlerts }) => {
+const AdminFraudAlerts: React.FC = () => {
+  const [allAlerts, setAllAlerts] = useState<FraudAlert[]>([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+        setIsLoading(true);
+        try {
+            const [alerts, users] = await Promise.all([
+                API.fetchSentimentAlerts(),
+                API.fetchAllUsers(),
+            ]);
+            setAllAlerts(alerts);
+            setAllUsers(users);
+        } catch (error) {
+            console.error("Failed to load fraud alerts data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    loadData();
+  }, []);
 
   const handleUpdateStatus = (alertId: string, status: FraudAlertStatus) => {
     setAllAlerts(prev => prev.map(a => a.id === alertId ? { ...a, status } : a));
   };
     
+  if (isLoading) {
+    return <div className="p-4 text-sm text-gray-600">Carregando alertas...</div>;
+  }
+
   if (allAlerts.length === 0) {
     return <div className="text-center bg-white p-10 rounded-lg shadow-sm border">
         <h3 className="text-lg font-medium text-gray-900">Tudo Certo!</h3>

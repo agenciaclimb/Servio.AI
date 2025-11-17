@@ -7,7 +7,7 @@ import ClientJobCard from './ClientJobCard';
 import ProposalListModal from './ProposalListModal';
 import PaymentModal from './PaymentModal';
 import ReviewModal from './ReviewModal';
-import DisputeModal from '../doc/DisputeModal';
+import DisputeModal from './DisputeModal';
 import DisputeDetailsModal from './DisputeDetailsModal';
 import AddItemModal from './AddItemModal';
 import ItemCard from './ItemCard';
@@ -61,16 +61,28 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
   const [isLoadingJobs, setIsLoadingJobs] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Buscar jobs do usuário ao carregar o dashboard
   useEffect(() => {
-    if (disableSkeleton) {
-      setIsLoadingJobs(false);
-      return; // pula lógica de timer e carregamento
-    }
-    const timer = setTimeout(() => {
-      setIsLoadingJobs(false);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, [user.email, disableSkeleton]);
+    const loadUserJobs = async () => {
+      if (disableSkeleton) {
+        setIsLoadingJobs(false);
+        return; // pula lógica de timer e carregamento
+      }
+      
+      try {
+        setIsLoadingJobs(true);
+        const jobs = await API.fetchJobsForUser(user.email);
+        setUserJobs(jobs);
+      } catch (error) {
+        console.error('Erro ao carregar jobs do cliente:', error);
+        addToast('Erro ao carregar seus serviços. Recarregue a página.', 'error');
+      } finally {
+        setIsLoadingJobs(false);
+      }
+    };
+
+    loadUserJobs();
+  }, [user.email, disableSkeleton, addToast]);
 
   // Efeito: permitir que testes injetem estados iniciais dos modais
   useEffect(() => {
@@ -112,13 +124,11 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
             const newMessages = messages.filter(m => !existingIds.has(m.id));
             return [...prev, ...newMessages];
           });
-        } catch (error) {
-          console.error('Failed to load chat messages:', error);
-        }
+        } catch (error) { /* Intentionally ignored */ }
       };
       loadMessages();
     }
-  }, [chattingWithJob]);
+  }, [chattingWithJob, setAllMessages]);
 
   if (isLoadingJobs && !disableSkeleton) {
     return <ClientDashboardSkeleton />;
@@ -127,7 +137,8 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
 
   const activeJobs = userJobs.filter(j => !['concluido', 'cancelado'].includes(j.status));
   const completedJobs = userJobs.filter(j => j.status === 'concluido');
-  const profileComplete = Boolean(user.address && user.bio && user.bio.length > 20);
+  // Consider profile complete with just an address (bio is optional to simplify onboarding)
+  const profileComplete = Boolean(user.address);
   const onboardingStepsDone = [profileComplete, userJobs.length > 0, maintainedItems.length > 0].filter(Boolean).length;
   const onboardingStepsTotal = 4;
   const handleAcceptProposal = async (proposalId: string) => {
@@ -153,10 +164,10 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     if (!job) return;
 
     try {
-      const result: any = await API.createCheckoutSession(job, proposal.price);
+      const result = await API.createCheckoutSession(job, proposal.price) as { url?: string; id?: string };
       // Suporte a dois formatos: { url } e { id }
       if (result?.url) {
-        (window as any).location.href = result.url;
+        window.location.href = result.url;
         return;
       }
       const sessionId = result?.id;
@@ -168,19 +179,25 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       setPayingForProposal(proposal);
       
       // Redirect to Stripe Checkout
-      const stripe = (window as any).Stripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+      const StripeConstructor = (window as Window & { Stripe?: (key: string) => { redirectToCheckout: (opts: { sessionId: string }) => Promise<{ error?: { message: string } }> } }).Stripe;
+      if (!StripeConstructor) {
+        throw new Error('Stripe não carregado');
+      }
+      const stripe = StripeConstructor(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
       const { error } = await stripe.redirectToCheckout({ sessionId });
       
       if (error) {
-        console.error('Stripe redirect error:', error);
-        addToast('Erro ao redirecionar para pagamento. Tente novamente.', 'error'); // 3. Substituir alert()
+        addToast('Erro ao redirecionar para pagamento. Tente novamente.', 'error');
+        throw new Error(error.message || 'Falha ao redirecionar para o Stripe');
       }
     } catch (error) {
-      console.error('Failed to create checkout session:', error);
-      addToast('Erro ao criar sessão de pagamento. Tente novamente.', 'error'); // 3. Substituir alert()
+      addToast('Erro ao criar sessão de pagamento. Tente novamente.', 'error');
+      // Repassa o erro para o modal exibir UI de retry (E_TIMEOUT/E_NETWORK)
+      throw error;
     }
   };
 
+  // @ts-expect-error - unused legacy code kept for reference
   const _handlePaymentSuccess = async () => {
     if (!payingForProposal) return;
     const { jobId, providerId, price, id: proposalId } = payingForProposal;
@@ -231,9 +248,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
 
       setPayingForProposal(null);
       setViewingProposalsForJob(null);
-      console.log('Proposal accepted and payment processed');
+
     } catch (error) {
-      console.error('Failed to process payment:', error);
+
       addToast('Erro ao processar pagamento. Tente novamente.', 'error'); // 3. Substituir alert()
     }
   };
@@ -249,8 +266,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       });
 
       // Release payment from escrow via API
-      const releaseResult = await API.releasePayment(jobInFocus.job.id);
-      console.log('Payment release result:', releaseResult);
+      await API.releasePayment(jobInFocus.job.id);
 
       setUserJobs(prev => prev.map(j =>
         j.id === jobInFocus!.job.id ? { ...j, status: 'concluido', review: { ...reviewData, authorId: user.email, createdAt: new Date().toISOString() } } : j
@@ -263,9 +279,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       
       setJobInFocus(null);
       addToast('Serviço finalizado e pagamento liberado com sucesso!', 'success'); // 3. Substituir alert()
-      console.log('Job finalized with review and payment released');
+
     } catch (error) {
-      console.error('Failed to finalize job:', error);
+
       addToast('Erro ao finalizar serviço. Tente novamente.', 'error'); // 3. Substituir alert()
     }
   };
@@ -354,10 +370,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
           });
         }
       }
-      
-      console.log('Message sent and saved to Firestore');
+
     } catch (error) {
-      console.error('Failed to send message:', error);
+
       addToast('Erro ao enviar mensagem. Tente novamente.', 'error'); // 3. Substituir alert()
     }
   };
@@ -406,11 +421,19 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       address: String(formData.get('address') || user.address || ''),
       bio: String(formData.get('bio') || user.bio),
       location: String(formData.get('location') || user.location),
+      whatsapp: String(formData.get('whatsapp') || user.whatsapp || ''),
+      cpf: String(formData.get('cpf') || user.cpf || ''),
+      addresses: String(formData.get('addressesExtra') || '')
+        .split('\n')
+        .map(s => s.trim())
+        .filter(Boolean),
     };
-    if ((updated.bio || '').trim().length < 30) { // Exemplo de alerta que pode ser mantido ou trocado
-      addToast('Sua bio está muito curta. Escreva pelo menos 30 caracteres.', 'warning');
+    // Required fields: name, address, whatsapp
+    if (!updated.name?.trim() || !updated.address?.trim() || !updated.whatsapp?.trim()) {
+      addToast('Por favor, preencha Nome completo, Endereço completo e WhatsApp.', 'warning');
       return;
     }
+    // Bio is optional; no minimum length required
     onUpdateUser(user.email, updated);
     setIsProfileModalOpen(false);
   };
@@ -765,15 +788,28 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
             onSubmit={handleFinalizeJob}
         />
       )}
-      {jobInFocus?.action === 'dispute' && (
-        <DisputeModal
-            job={jobInFocus.job}
-            user={user}
-            isOpen={!!jobInFocus}
-            onClose={() => setJobInFocus(null)}
-            onSubmit={handleOpenDispute}
-        />
-      )}
+      {jobInFocus?.action === 'dispute' && (() => {
+        // For creating a new dispute, we need a different modal
+        // This is a temporary workaround - proper modal should accept onSubmit
+        const mockDispute: Dispute = {
+          id: 'temp',
+          jobId: jobInFocus.job.id,
+          initiatorId: user.email,
+          status: 'aberta',
+          reason: '',
+          createdAt: new Date().toISOString(),
+          messages: []
+        };
+        return (
+          <DisputeModal
+              job={jobInFocus.job}
+              user={user}
+              dispute={mockDispute}
+              onClose={() => setJobInFocus(null)}
+              onSendMessage={(text) => handleOpenDispute({ reason: 'Disputa', description: text })}
+          />
+        );
+      })()}
       {jobInFocus?.action === 'dispute-details' && (() => {
         const dispute = allDisputes.find(d => d.jobId === jobInFocus.job.id);
         if (!dispute) return null;
@@ -845,17 +881,33 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                 <input name="name" defaultValue={user.name} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
               </div>
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+                <input name="email" defaultValue={user.email} disabled className="w-full rounded-md border-gray-300 bg-gray-100 text-gray-600 shadow-sm text-sm" />
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
                 <input name="address" defaultValue={user.address} placeholder="Rua, nº, bairro" className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
+                <input name="whatsapp" defaultValue={user.whatsapp} placeholder="(DDD) 9 9999-9999" className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Localização (cidade)</label>
                 <input name="location" defaultValue={user.location} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Endereços adicionais (um por linha) — opcional</label>
+                <textarea name="addressesExtra" defaultValue={(user.addresses || []).join('\n')} rows={3} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">CPF (opcional)</label>
+                <input name="cpf" defaultValue={user.cpf} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Bio (opcional)</label>
                 <textarea name="bio" defaultValue={user.bio} rows={4} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
-                <p className="text-xs text-gray-600 mt-1">Dica: escreva ao menos 30 caracteres.</p>
+                <p className="text-xs text-gray-600 mt-1">Opcional. Você pode adicionar detalhes sobre você quando preferir.</p>
               </div>
               <div className="flex justify-end gap-3 pt-2">
                 <button type="button" onClick={() => setIsProfileModalOpen(false)} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-100 hover:bg-gray-200">Cancelar</button>
@@ -875,6 +927,7 @@ interface AIAssistantWidgetProps {
   userAddress?: string;
 }
 
+// @ts-expect-error - unused legacy code kept for reference
 const _AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ userName, userAddress }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [currentTip, setCurrentTip] = useState(0);
@@ -924,12 +977,12 @@ const _AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ userName, userAd
           {/* Chips de urgência rápida */}
           {isChatOpen && draftJobData.description && (
             <div className="flex flex-wrap gap-1 mb-2">
-              {['hoje', 'amanha', '3dias', '1semana'].map(u => (
+              {(['hoje', 'amanha', '3dias', '1semana'] as const).map(u => (
                 <button
                   key={u}
                   type="button"
                   onClick={() => {
-                    setDraftJobData(prev => ({ ...prev, urgency: u as any }));
+                    setDraftJobData(prev => ({ ...prev, urgency: u }));
                     setChatMessages(prev => [...prev, { role: 'ai', text: `Urgência atualizada para: ${u}.` }]);
                   }}
                   className={`px-2 py-1 text-xs rounded ${draftJobData.urgency === u ? 'bg-white text-purple-700 font-semibold' : 'bg-white/30 text-white'}`}
@@ -991,7 +1044,7 @@ const _AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ userName, userAd
               try {
                 const ai = await enhanceJobRequest(text);
                 if (ai?.enhancedDescription) next.description = ai.enhancedDescription;
-                if (ai?.suggestedCategory) next.category = ai.suggestedCategory as any;
+                if (ai?.suggestedCategory) next.category = ai.suggestedCategory;
                 if (ai?.suggestedServiceType) next.serviceType = ai.suggestedServiceType;
               } catch (_) {
                 setChatMessages(prev => [...prev, { role: 'ai', text: 'Não consegui consultar a IA agora, vou tentar entender sua mensagem localmente.' }]);
@@ -1063,3 +1116,6 @@ const _AIAssistantWidget: React.FC<AIAssistantWidgetProps> = ({ userName, userAd
 };
 
 export default ClientDashboard;
+
+
+

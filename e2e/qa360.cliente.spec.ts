@@ -21,7 +21,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('QA 360 - Painel Cliente', () => {
   
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page: _page }) => {
     // Setup: mock de autenticação Firebase para todos os testes
     await page.addInitScript(() => {
       // Mock Firebase Auth
@@ -44,7 +44,7 @@ test.describe('QA 360 - Painel Cliente', () => {
     });
   });
 
-  test('1. Login via email/senha e navegação ao dashboard', async ({ page }) => {
+  test('1. Login via email/senha e navegação ao dashboard', async ({ page: _page }) => {
     await page.goto('/');
     
     // Como já temos mock, verificar se está autenticado
@@ -58,7 +58,7 @@ test.describe('QA 360 - Painel Cliente', () => {
     console.log('✅ Cliente autenticado via mock');
   });
 
-  test('2. IA Prospecção - Wizard com enhance-job', async ({ page }) => {
+  test('2. IA Prospecção - Wizard com enhance-job', async ({ page: _page }) => {
     // Mock da resposta da IA
     await page.route('**/api/enhance-job', async (route) => {
       await route.fulfill({
@@ -86,23 +86,24 @@ test.describe('QA 360 - Painel Cliente', () => {
     console.log('⚠️  Wizard IA - Requer ajuste no App.tsx para aceitar mock de auth');
   });
 
-  test.skip('3. Criar job via wizard (fim-a-fim)', async ({ page }) => {
+  test.skip('3. Criar job via wizard (fim-a-fim)', async ({ page: _page }) => {
     // TODO: Implementar após wizard aceitar mock auth
   });
 
-  test.skip('4. Receber proposta de prestador', async ({ page }) => {
+  test.skip('4. Receber proposta de prestador', async ({ page: _page }) => {
     // TODO: Mock de proposta no Firestore e validar notificação
   });
 
-  test.skip('5. Aceitar proposta e iniciar job', async ({ page }) => {
+  test.skip('5. Aceitar proposta e iniciar job', async ({ page: _page }) => {
     // TODO: Clicar em aceitar, validar transição de status
   });
 
-  test.skip('6. Chat com prestador durante job', async ({ page }) => {
+  test.skip('6. Chat com prestador durante job', async ({ page: _page }) => {
     // TODO: Enviar mensagem, validar recebimento
   });
 
-  test.skip('7. Avaliar prestador pós-serviço', async ({ page }) => {
+  test.skip('7. Avaliar prestador pós-serviço', async ({ page: _page }) => {
     // TODO: Abrir modal de review, dar nota e comentário
   });
 });
+

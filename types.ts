@@ -44,7 +44,11 @@ export interface User {
   avgResponseTimeMinutes?: number;
   completionRate?: number;
   address?: string;
+  // Contact & identity
+  whatsapp?: string; // E.164 preferred, but free text allowed for now
   cpf?: string;
+  // Multi-address support (additional addresses beyond primary "address")
+  addresses?: string[];
   verificationStatus?: 'pendente' | 'verificado' | 'recusado';
   documentImage?: string; // base64 data URL
   portfolio?: PortfolioItem[];
@@ -306,6 +310,6 @@ export interface MaintenanceSuggestion {
 
 export interface ChatSuggestion {
     name: 'clarify_scope' | 'propose_schedule' | 'summarize_agreement' | 'suggest_next_step';
-    args: { [key: string]: any };
+  args: Record<string, unknown>;
     displayText: string;
 }
