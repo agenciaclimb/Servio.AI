@@ -87,7 +87,8 @@ describe('QA 360 - Disputas & Fraude', () => {
   });
 
   it('2. Admin vê disputa no painel', async () => {
-    mockFirestore.collection().where().get.mockResolvedValue({
+    const mockWhere = vi.fn().mockReturnThis();
+    const mockGet = vi.fn().mockResolvedValue({
       docs: [
         {
           id: 'dispute-001',
@@ -100,6 +101,11 @@ describe('QA 360 - Disputas & Fraude', () => {
       ]
     });
 
+    mockFirestore.collection = vi.fn().mockReturnValue({
+      where: mockWhere,
+      get: mockGet
+    });
+
     const snapshot = await mockFirestore.collection('disputes')
       .where('status', '==', 'open')
       .get();
@@ -110,6 +116,15 @@ describe('QA 360 - Disputas & Fraude', () => {
   });
 
   it('3. Resolve disputa - Cliente ganha (escrow para cliente)', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(undefined);
+    const mockDocInstance = {
+      update: mockUpdate
+    };
+
+    mockFirestore.collection = vi.fn(() => ({
+      doc: vi.fn(() => mockDocInstance)
+    })) as unknown as typeof mockFirestore.collection;
+
     const resolveDispute = async (disputeId: string, winner: 'client' | 'provider') => {
       // Mock lógica de resolução
       const disputeRef = mockFirestore.collection('disputes').doc(disputeId);
@@ -131,13 +146,22 @@ describe('QA 360 - Disputas & Fraude', () => {
 
     await resolveDispute('dispute-001', 'client');
 
-    expect(mockDoc.update).toHaveBeenCalledWith(
+    expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'resolved', winner: 'client' })
     );
     console.log('✅ Disputa resolvida a favor do cliente');
   });
 
   it('4. Resolve disputa - Prestador ganha', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(undefined);
+    const mockDocInstance = {
+      update: mockUpdate
+    };
+
+    mockFirestore.collection = vi.fn(() => ({
+      doc: vi.fn(() => mockDocInstance)
+    })) as unknown as typeof mockFirestore.collection;
+
     const resolveDispute = async (disputeId: string, winner: 'client' | 'provider') => {
       const disputeRef = mockFirestore.collection('disputes').doc(disputeId);
       await disputeRef.update({
@@ -157,13 +181,22 @@ describe('QA 360 - Disputas & Fraude', () => {
 
     await resolveDispute('dispute-001', 'provider');
 
-    expect(mockDoc.update).toHaveBeenCalledWith(
+    expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'resolved', winner: 'provider' })
     );
     console.log('✅ Disputa resolvida a favor do prestador');
   });
 
   it('5. Resolve disputa - Divisão 50/50', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(undefined);
+    const mockDocInstance = {
+      update: mockUpdate
+    };
+
+    mockFirestore.collection = vi.fn(() => ({
+      doc: vi.fn(() => mockDocInstance)
+    })) as unknown as typeof mockFirestore.collection;
+
     const resolveDispute = async (disputeId: string, split: number) => {
       const disputeRef = mockFirestore.collection('disputes').doc(disputeId);
       await disputeRef.update({
@@ -182,13 +215,22 @@ describe('QA 360 - Disputas & Fraude', () => {
 
     await resolveDispute('dispute-001', 0.5);
 
-    expect(mockDoc.update).toHaveBeenCalledWith(
+    expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'resolved', split: 0.5 })
     );
     console.log('✅ Disputa resolvida com divisão 50/50');
   });
 
   it('6. FraudAlertCount incrementa ao resolver contra prestador', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(undefined);
+    const mockDocInstance = {
+      update: mockUpdate
+    };
+
+    mockFirestore.collection = vi.fn(() => ({
+      doc: vi.fn(() => mockDocInstance)
+    })) as unknown as typeof mockFirestore.collection;
+
     const incrementFraudAlert = async (providerId: string) => {
       const providerRef = mockFirestore.collection('providers').doc(providerId);
       await providerRef.update({
@@ -198,13 +240,22 @@ describe('QA 360 - Disputas & Fraude', () => {
 
     await incrementFraudAlert('prestador@servio.ai');
 
-    expect(mockDoc.update).toHaveBeenCalledWith({
+    expect(mockUpdate).toHaveBeenCalledWith({
       fraudAlertCount: 1
     });
     console.log('✅ FraudAlertCount incrementado');
   });
 
   it('7. Suspensão automática após 3 alertas', async () => {
+    const mockUpdate = vi.fn().mockResolvedValue(undefined);
+    const mockDocInstance = {
+      update: mockUpdate
+    };
+
+    mockFirestore.collection = vi.fn(() => ({
+      doc: vi.fn(() => mockDocInstance)
+    })) as unknown as typeof mockFirestore.collection;
+
     const checkAndSuspend = async (providerId: string, fraudAlertCount: number) => {
       if (fraudAlertCount >= 3) {
         const providerRef = mockFirestore.collection('providers').doc(providerId);
@@ -220,7 +271,7 @@ describe('QA 360 - Disputas & Fraude', () => {
     const result = await checkAndSuspend('prestador@servio.ai', 3);
 
     expect(result.suspended).toBe(true);
-    expect(mockDoc.update).toHaveBeenCalledWith(
+    expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'suspended' })
     );
     console.log('✅ Prestador suspenso após 3 alertas');
