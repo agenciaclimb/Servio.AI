@@ -140,8 +140,10 @@ const App: React.FC = () => {
 
   // Auth Handlers
   const handleAuthSuccess = async (email: string, type: UserType) => {
-
     try {
+      // Mostrar feedback imediato
+      setAuthModal(null);
+      
       let user = await API.fetchUserById(email);
 
       if (!user) {
@@ -159,9 +161,9 @@ const App: React.FC = () => {
         user = await API.createUser(newUserPayload);
       }
       
-      // IMPORTANTE: Primeiro atualiza o usuário, DEPOIS redireciona
+      // Atualizar usuário e ir para dashboard imediatamente
       setCurrentUser(user);
-      setAuthModal(null);
+      setView({ name: 'dashboard' });
 
       // Attempt FCM token registration (non-blocking)
       registerUserFcmToken(email).catch(() => {});
@@ -169,29 +171,22 @@ const App: React.FC = () => {
       // Setup foreground notification listener once per session
       onForegroundMessage((payload) => {
         if (payload?.notification) {
-
           alert(`🔔 ${payload.notification.title || 'Nova notificação'}\n${payload.notification.body || ''}`);
         }
       });
 
-      // Pequeno delay para garantir que o estado foi atualizado
+      // Abrir wizard se havia job pendente (após pequeno delay para renderizar dashboard)
       setTimeout(() => {
-        // Redirecionar para o painel correto após login
-        setView({ name: 'dashboard' });
-
-        // Se o usuário queria contatar um provedor, faz isso agora
         if (contactProviderAfterLogin) {
             handleLoginToContact(contactProviderAfterLogin);
             setContactProviderAfterLogin(null);
         } else if (jobDataToCreate) {
-            // Se havia um job sendo criado, abre o wizard agora
             setWizardData({ data: jobDataToCreate });
             setJobDataToCreate(null);
         }
-      }, 100);
+      }, 300);
       
     } catch (error) {
-
       alert('Erro ao fazer login. Por favor, tente novamente.');
       setAuthModal(null);
     }

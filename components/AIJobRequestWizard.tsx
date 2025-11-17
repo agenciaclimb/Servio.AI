@@ -6,7 +6,7 @@ import { EnhancedJobRequest, ServiceType, JobData, JobMode } from '../types';
 import LoadingSpinner from './LoadingSpinner';
 import { auth } from '../firebaseConfig';
 import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
-import { formatErrorForToast, getErrorAction } from '../services/errorMessages';
+import { formatErrorForToast } from '../services/errorMessages';
 
 interface AIJobRequestWizardProps {
   onClose: () => void;
@@ -63,24 +63,29 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
     try {
       const result = await enhanceJobRequest(prompt, address, fileCount);
       setEnhancedRequest(result);
+      // Populate form fields immediately
+      setFinalDescription(result.enhancedDescription || prompt);
+      setFinalCategory(result.suggestedCategory || 'geral');
+      setFinalServiceType(result.suggestedServiceType || 'personalizado');
       setStep('review');
     } catch (err) {
-      const errorMsg = formatErrorForToast(err, 'ai');
-      const action = getErrorAction(err);
-      const hint = action === 'retry' ? ' Tente novamente.' : '';
-      setError(`${errorMsg}${hint}`);
-      setStep('initial');
+      // Even on error, allow user to proceed with heuristic fallback
+      console.warn('[Wizard] AI error, using fallback:', err);
+      setEnhancedRequest({
+        enhancedDescription: prompt,
+        suggestedCategory: 'geral',
+        suggestedServiceType: 'personalizado'
+      });
+      setFinalDescription(prompt);
+      setFinalCategory('geral');
+      setFinalServiceType('personalizado');
+      setStep('review');
+      setError('A IA não está disponível no momento, mas você pode continuar com sua descrição.');
     }
   };
 
 
-  useEffect(() => {
-    if (enhancedRequest) {
-      setFinalDescription(enhancedRequest.enhancedDescription);
-      setFinalCategory(enhancedRequest.suggestedCategory);
-      setFinalServiceType(enhancedRequest.suggestedServiceType);
-    }
-  }, [enhancedRequest]);
+  // Removed redundant useEffect - fields are now set directly in handleAnalyze
 
   useEffect(() => {
     if (step === 'loading' && initialPrompt) {
@@ -212,8 +217,17 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
         );
       case 'loading':
         return (
-            <div className="p-8">
+            <div className="p-8 text-center">
                 <LoadingSpinner />
+                <div className="mt-6 space-y-3">
+                  <p className="text-lg font-semibold text-gray-800">✨ Analisando sua solicitação...</p>
+                  <p className="text-sm text-gray-600">Nossa IA está organizando os detalhes e sugerindo melhorias para você receber propostas mais precisas.</p>
+                  <div className="mt-4 flex justify-center items-center space-x-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                  </div>
+                </div>
             </div>
         );
       case 'review':
@@ -225,11 +239,21 @@ const AIJobRequestWizard: React.FC<AIJobRequestWizardProps> = ({ onClose, onSubm
                 <p className="text-gray-600 mb-6">A IA aprimorou sua solicitação. Você pode editar todos os detalhes antes de publicar.</p>
                 <div className="space-y-6">
                     <div>
-                        <label htmlFor="service-description" className="block text-sm font-medium text-gray-700">Descrição do Serviço</label>
-                        <div className="mt-1 text-xs text-blue-700 bg-blue-50 p-2 rounded-md border border-blue-200">
-                          ✏️ **Ação necessária:** Por favor, preencha as informações marcadas com `[...]` abaixo para receber propostas mais precisas.
-                        </div>
-                        <textarea id="service-description" rows={5} value={finalDescription} onChange={(e) => setFinalDescription(e.target.value)} className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3 text-gray-900 placeholder-gray-400"/>
+                        <label htmlFor="service-description" className="block text-sm font-medium text-gray-700">Descrição do Serviço*</label>
+                        {finalDescription.includes('[...]') && (
+                          <div className="mt-1 text-xs text-blue-700 bg-blue-50 p-2 rounded-md border border-blue-200">
+                            ✏️ **Ação necessária:** Por favor, preencha as informações marcadas com `[...]` abaixo para receber propostas mais precisas.
+                          </div>
+                        )}
+                        <textarea 
+                          id="service-description" 
+                          rows={5} 
+                          value={finalDescription} 
+                          onChange={(e) => setFinalDescription(e.target.value)} 
+                          className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3 text-gray-900 placeholder-gray-400"
+                          placeholder="Descreva o serviço que você precisa em detalhes..."
+                          required
+                        />
                     </div>
                     {/* Add address and media upload here again for post-login flow */}
                      <div>
