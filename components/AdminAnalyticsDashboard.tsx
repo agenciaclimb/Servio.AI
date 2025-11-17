@@ -1,24 +1,30 @@
-import React, { useMemo } from 'react';
-import { Job, User, Dispute, FraudAlert } from '../types';
-import { computeAnalytics } from '../src/analytics/adminMetrics';
+import React, { useMemo, useState } from 'react';
+import { computeAnalytics, computeTimeSeriesData } from '../src/analytics/adminMetrics';
+import AnalyticsTimeSeriesChart from './admin/AnalyticsTimeSeriesChart';
+import { useAdminAnalyticsData } from './useAdminAnalyticsData';
+import TimePeriodFilter, { TimePeriod } from './TimePeriodFilter';
 
-interface AdminAnalyticsDashboardProps {
-  allJobs: Job[];
-  allUsers: User[];
-  allDisputes: Dispute[];
-  allFraudAlerts: FraudAlert[];
-}
+const AdminAnalyticsDashboard: React.FC = () => {
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>(90);
+  const { jobs, allUsers, disputes, allFraudAlerts, isLoading } = useAdminAnalyticsData(timePeriod);
 
-const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = ({
-  allJobs,
-  allUsers,
-  allDisputes,
-  allFraudAlerts,
-}) => {
-  const analytics = useMemo(() => computeAnalytics(allJobs, allUsers, allDisputes, allFraudAlerts), [allJobs, allUsers, allDisputes, allFraudAlerts]);
+  // Determina a granularidade e o título do gráfico com base no período selecionado
+  const chartGranularity = timePeriod === 30 ? 'day' : 'month';
+  const chartTitle = timePeriod === 30 ? 'Crescimento Diário (Últimos 30 dias)' : 'Crescimento Mensal';
+
+  const analytics = useMemo(() => computeAnalytics(jobs, allUsers, disputes, allFraudAlerts), [jobs, allUsers, disputes, allFraudAlerts]);
+  const timeSeries = useMemo(() => computeTimeSeriesData(jobs, chartGranularity), [jobs, chartGranularity]);
+
+  if (isLoading) {
+    return <div className="p-4 text-sm text-gray-600">Carregando métricas...</div>;
+  }
 
   return (
     <div className="space-y-6">
+      <div className="max-w-md">
+        <TimePeriodFilter selectedPeriod={timePeriod} onSelectPeriod={setTimePeriod} />
+      </div>
+      <AnalyticsTimeSeriesChart data={timeSeries} title={chartTitle} />
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Users */}

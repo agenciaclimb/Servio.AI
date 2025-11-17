@@ -1,14 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Job, User, JobStatus } from '../types';
+import * as API from '../services/api';
 
-interface AdminJobManagementProps {
-  allJobs: Job[];
-  allUsers: User[];
-  onMediateClick: (job: Job) => void;
-}
-const statusStyles: { [key in JobStatus]: { bg: string, text: string } } = {
+const statusStyles: { [key in JobStatus]: { bg: string; text: string } } = {
     ativo: { bg: 'bg-blue-100', text: 'text-blue-800' },
-    // FIX: Added 'em_leilao' to satisfy the JobStatus type.
     em_leilao: { bg: 'bg-orange-100', text: 'text-orange-800' },
     proposta_aceita: { bg: 'bg-green-100', text: 'text-green-800' },
     agendado: { bg: 'bg-indigo-100', text: 'text-indigo-800' },
@@ -20,11 +15,38 @@ const statusStyles: { [key in JobStatus]: { bg: string, text: string } } = {
     cancelado: { bg: 'bg-red-100', text: 'text-red-800' },
 };
 
-const AdminJobManagement: React.FC<AdminJobManagementProps> = ({ allJobs, allUsers, onMediateClick }) => {
+interface AdminJobManagementProps {
+  onMediateClick: (job: Job) => void;
+}
+
+const AdminJobManagement: React.FC<AdminJobManagementProps> = ({ onMediateClick }) => {
   const [filter, setFilter] = useState<JobStatus | 'all'>('all');
+  const [allJobs, setAllJobs] = useState<Job[]>([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+        setIsLoading(true);
+        try {
+            const [jobs, users] = await Promise.all([
+                API.fetchJobs(),
+                API.fetchAllUsers(),
+            ]);
+            setAllJobs(jobs);
+            setAllUsers(users);
+        } catch (error) {
+            console.error("Failed to load job management data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    loadData();
+  }, []);
 
   const filteredJobs = (filter === 'all' ? allJobs : allJobs.filter(j => j.status === filter))
     .sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  if (isLoading) return <div className="p-4 text-sm text-gray-600">Carregando jobs...</div>;
 
   return (
      <div className="bg-white shadow-sm border rounded-lg overflow-hidden">

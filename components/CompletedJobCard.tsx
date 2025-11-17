@@ -42,9 +42,9 @@ const CompletedJobCard: React.FC<CompletedJobCardProps> = ({ job, client }) => {
                          <p className="text-sm font-medium text-gray-600">Avaliação Recebida:</p>
                         <div className="flex items-center justify-start sm:justify-end space-x-1 mt-1">
                             {Array.from({ length: 5 }, (_, i) => (
-                                <StarIcon key={i} filled={i < job.review.rating} />
+                                <StarIcon key={i} filled={i < (job.review?.rating || 0)} />
                             ))}
-                            <span className="text-sm font-bold text-gray-700">({job.review.rating.toFixed(1)})</span>
+                            <span className="text-sm font-bold text-gray-700">({(job.review?.rating || 0).toFixed(1)})</span>
                         </div>
                     </div>
                 )}

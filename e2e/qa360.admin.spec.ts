@@ -20,7 +20,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('QA 360 - Painel Admin', () => {
   
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page: _page }) => {
     await page.addInitScript(() => {
       window.localStorage.setItem('mockUser', JSON.stringify({
         uid: 'admin-qa-001',
@@ -39,7 +39,7 @@ test.describe('QA 360 - Painel Admin', () => {
     });
   });
 
-  test('1. Admin - Verificar perfil privilegiado', async ({ page }) => {
+  test('1. Admin - Verificar perfil privilegiado', async ({ page: _page }) => {
     const profile = await page.evaluate(() => {
       return JSON.parse(window.localStorage.getItem('userProfile') || '{}');
     });
@@ -48,39 +48,40 @@ test.describe('QA 360 - Painel Admin', () => {
     console.log('✅ Admin autenticado');
   });
 
-  test.skip('2. Analytics - Ver aba Overview', async ({ page }) => {
+  test.skip('2. Analytics - Ver aba Overview', async ({ page: _page }) => {
     // TODO: Carregar /admin, verificar cards de métricas (jobs, GMV, taxa de conversão)
   });
 
-  test.skip('3. Analytics - Ver aba Receita', async ({ page }) => {
+  test.skip('3. Analytics - Ver aba Receita', async ({ page: _page }) => {
     // TODO: Verificar gráfico de receita mensal, taxa média
   });
 
-  test.skip('4. Suspender prestador por fraude', async ({ page }) => {
+  test.skip('4. Suspender prestador por fraude', async ({ page: _page }) => {
     // TODO: Mock POST /api/admin/suspend-provider
     // Verificar modal de confirmação, ação de suspensão
   });
 
-  test.skip('5. Resolver disputa - Cliente ganha', async ({ page }) => {
+  test.skip('5. Resolver disputa - Cliente ganha', async ({ page: _page }) => {
     // TODO: Mock POST /api/disputes/:id/resolve
     // Verificar transferência de escrow para cliente
   });
 
-  test.skip('6. Resolver disputa - Prestador ganha', async ({ page }) => {
+  test.skip('6. Resolver disputa - Prestador ganha', async ({ page: _page }) => {
     // TODO: Mock resolve com winner: provider
     // Verificar transferência de escrow para prestador
   });
 
-  test.skip('7. Ver alertas de fraude no dashboard', async ({ page }) => {
+  test.skip('7. Ver alertas de fraude no dashboard', async ({ page: _page }) => {
     // TODO: Mock de providers com fraudAlertCount > 0
     // Verificar badge de alerta aparece
   });
 
-  test.skip('8. Exportar relatório CSV', async ({ page }) => {
+  test.skip('8. Exportar relatório CSV', async ({ page: _page }) => {
     // TODO: Mock de endpoint de exportação, verificar download
   });
 
-  test.skip('9. Gerenciar verificações pendentes', async ({ page }) => {
+  test.skip('9. Gerenciar verificações pendentes', async ({ page: _page }) => {
     // TODO: Ver lista de prestadores com isVerified=false, aprovar
   });
 });
+

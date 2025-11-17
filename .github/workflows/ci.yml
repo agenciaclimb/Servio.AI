@@ -32,7 +32,7 @@ jobs:
           if [ -f backend/package.json ]; then (cd backend && npm ci || npm i); fi
 
       - name: Lint (root)
-        run: npm run lint
+        run: npm run lint:ci
 
       - name: Typecheck (root)
         run: npm run typecheck
@@ -92,3 +92,10 @@ jobs:
           gitleaks version || true
           # Keep scanning but never fail CI while we stabilize
           gitleaks detect --source . --redact --config .gitleaks.toml --exit-code 0 || true
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

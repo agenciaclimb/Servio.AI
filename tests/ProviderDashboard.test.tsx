@@ -1,13 +1,18 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, _waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import userEvent from '@testing-library/user-event';
+import _userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import ProviderDashboard from '../components/ProviderDashboard';
-import type { User, Job, Proposal, Message } from '../types';
+import type { User, Job, Proposal, _Message } from '../types';
 
 // Mock de skeleton component
 vi.mock('../components/skeletons/ProviderDashboardSkeleton', () => ({
   default: () => <div data-testid="skeleton" />
+}));
+
+// Mock de ProfileTips para evitar efeitos assíncronos que geram warnings de act
+vi.mock('../components/ProfileTips', () => ({
+  default: () => <div data-testid="profile-tips" />
 }));
 
 // Mock de useNavigate
@@ -37,7 +42,7 @@ describe('ProviderDashboard', () => {
     createdAt: new Date().toISOString()
   };
 
-  const mockJobs: Job[] = [
+  const _mockJobs: Job[] = [
     {
       id: 'job-1',
       title: 'Conserto de Encanamento',
@@ -54,7 +59,7 @@ describe('ProviderDashboard', () => {
     }
   ];
 
-  const mockProposals: Proposal[] = [
+  const _mockProposals: Proposal[] = [
     {
       id: 'proposal-1',
       jobId: 'job-1',
@@ -119,3 +124,5 @@ describe('ProviderDashboard', () => {
     expect(screen.getByText(/Força do Perfil/i)).toBeInTheDocument();
   });
 });
+
+

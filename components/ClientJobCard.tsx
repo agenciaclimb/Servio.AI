@@ -27,7 +27,7 @@ const statusDetails: { [key in JobStatus]: { text: string; className: string; } 
 const ClientJobCard: React.FC<ClientJobCardProps> = ({ job, proposals, onViewProposals, onChat, onFinalize, onReportIssue, onViewOnMap }) => {
   const status = statusDetails[job.status];
   const proposalCount = proposals.filter(p => p.status === 'pendente').length;
-  // const isAuction = job.jobMode === 'leilao';
+
 
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 flex flex-col h-full">

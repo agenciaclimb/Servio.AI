@@ -70,7 +70,8 @@ service cloud.firestore {
 
     match /proposals/{proposalId} {
       // Only job participants can read proposals for that job
-      allow read: if isJobParticipant(request.resource.data.jobId);
+      // FIXED: Changed request.resource.data.jobId to resource.data.jobId (resource = existing document)
+      allow read: if isJobParticipant(resource.data.jobId);
       
       // Only a verified provider can create a proposal for themselves
       allow create: if isProvider() 

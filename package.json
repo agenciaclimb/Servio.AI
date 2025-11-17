@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
@@ -34,7 +34,11 @@
     "security:audit": "npm audit --audit-level=moderate",
     "security:fix": "npm audit fix",
     "deps:check": "npx depcheck",
-    "deps:update": "npx npm-check-updates -i"
+    "deps:update": "npx npm-check-updates -i",
+    "lint:ci": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings=1000",
+    "e2e:smoke": "playwright test tests/e2e/smoke/basic-smoke.spec.ts",
+    "e2e:critical": "playwright test tests/e2e/smoke/critical-flows.spec.ts",
+    "validate:prod": "npm run typecheck && npm test && npm run e2e:smoke && npm run build"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^2.7.1",
@@ -64,6 +68,7 @@
     "husky": "^9.1.6",
     "jsdom": "^27.1.0",
     "lint-staged": "^15.2.10",
+    "msw": "^2.12.1",
     "postcss": "^8.4.38",
     "prettier": "^3.3.3",
     "start-server-and-test": "^2.1.2",
