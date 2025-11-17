@@ -45,7 +45,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
     mockApi.fetchProviders.mockResolvedValue([]);
   });
 
-  it('1️⃣ CADASTRO: Prestador consegue se cadastrar escolhendo o papel correto', async () => {
+  it('. CADASTRO: Prestador consegue se cadastrar escolhendo o papel correto', async () => {
     render(
       <BrowserRouter>
         <AppProvider>
@@ -55,8 +55,8 @@ describe('🎯 Jornada Completa do Prestador', () => {
     );
 
     // Clicar no botão "Seja um Prestador"
-    const sejaPresta dorButton = await screen.findByRole('button', { name: /seja um prestador|quero prestar/i });
-    await user.click(sejaPresta dorButton);
+    const sejaPrestadorButton = await screen.findByRole('button', { name: /seja um prestador|quero prestar/i });
+    await user.click(sejaPrestadorButton);
 
     // Modal de autenticação deve abrir com opção de prestador
     const modal = await screen.findByRole('dialog', { name: /autenticação|cadastro/i });
@@ -104,7 +104,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
     });
   });
 
-  it('2️⃣ ONBOARDING PASSO 1: Completar perfil básico', async () => {
+  it('. ONBOARDING PASSO 1: Completar perfil básico', async () => {
     // Mock prestador logado (status pending)
     const mockProvider = {
       id: 'prov-123',
@@ -160,7 +160,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
     });
   });
 
-  it('3️⃣ ONBOARDING PASSO 2: Adicionar especialidades', async () => {
+  it('. ONBOARDING PASSO 2: Adicionar especialidades', async () => {
     // Mock prestador no passo 2
     const mockProvider = {
       id: 'prov-123',
@@ -211,7 +211,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
     });
   });
 
-  it('4️⃣ ONBOARDING PASSO 3: Adicionar biografia', async () => {
+  it('. ONBOARDING PASSO 3: Adicionar biografia', async () => {
     // Mock prestador no passo 3
     const mockProvider = {
       id: 'prov-123',
@@ -266,7 +266,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
     });
   });
 
-  it('5️⃣ ONBOARDING PASSO 4: Stripe Connect', async () => {
+  it('. ONBOARDING PASSO 4: Stripe Connect', async () => {
     // Mock prestador no passo 4
     const mockProvider = {
       id: 'prov-123',
@@ -315,7 +315,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
     });
   });
 
-  it('6️⃣ APROVAÇÃO ADMIN: Aguardar aprovação do admin', async () => {
+  it('. APROVAÇÃO ADMIN: Aguardar aprovação do admin', async () => {
     // Mock prestador com onboarding completo, aguardando aprovação
     const mockProvider = {
       id: 'prov-123',
@@ -342,7 +342,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
     expect(screen.queryByText(/jobs abertos|ver serviços/i)).not.toBeInTheDocument();
   });
 
-  it('7️⃣ VER JOBS: Prestador aprovado vê jobs disponíveis', async () => {
+  it('. VER JOBS: Prestador aprovado vê jobs disponíveis', async () => {
     // Mock prestador aprovado
     const mockProvider = {
       id: 'prov-123',
@@ -412,7 +412,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
     });
   });
 
-  it('8️⃣ PROPOR SERVIÇO: Prestador envia proposta personalizada', async () => {
+  it('. PROPOR SERVIÇO: Prestador envia proposta personalizada', async () => {
     // Mock prestador aprovado
     const mockProvider = {
       id: 'prov-123',
@@ -499,7 +499,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
     });
   });
 
-  it('9️⃣ PROPOSTA ACEITA: Prestador recebe notificação e job aparece em "Meus Jobs"', async () => {
+  it('. PROPOSTA ACEITA: Prestador recebe notificação e job aparece em "Meus Jobs"', async () => {
     // Mock prestador com proposta aceita
     const mockProvider = {
       id: 'prov-123',
@@ -638,7 +638,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
     });
   });
 
-  it('1️⃣1️⃣ RECEBER PAGAMENTO: Prestador vê ganhos após avaliação', async () => {
+  it('.1️⃣ RECEBER PAGAMENTO: Prestador vê ganhos após avaliação', async () => {
     // Mock prestador
     const mockProvider = {
       id: 'prov-123',
@@ -702,7 +702,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
     expect(totalGanhos).toBeInTheDocument();
   });
 
-  it('1️⃣2️⃣ LEILÃO: Prestador participa de leilão e ganha job', async () => {
+  it('.2️⃣ LEILÃO: Prestador participa de leilão e ganha job', async () => {
     // Mock prestador
     const mockProvider = {
       id: 'prov-123',

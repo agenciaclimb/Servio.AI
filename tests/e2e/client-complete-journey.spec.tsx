@@ -51,7 +51,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
     });
   });
 
-  it('1️⃣ CADASTRO E LOGIN: Cliente consegue se cadastrar e fazer login', async () => {
+  it('CADASTRO E LOGIN: Cliente consegue se cadastrar e fazer login', async () => {
     render(
       <BrowserRouter>
         <AppProvider>
@@ -99,7 +99,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
     });
   });
 
-  it('2️⃣ CRIAR SERVIÇO COM IA: Cliente consegue criar serviço usando wizard com IA', async () => {
+  it('. CRIAR SERVIÇO COM IA: Cliente consegue criar serviço usando wizard com IA', async () => {
     // Mock usuário logado
     const mockUser = {
       id: 'client-123',
@@ -184,7 +184,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
     });
   });
 
-  it('3️⃣ RECEBER E ACEITAR PROPOSTAS: Cliente vê propostas e aceita uma', async () => {
+  it('. RECEBER E ACEITAR PROPOSTAS: Cliente vê propostas e aceita uma', async () => {
     // Mock usuário e job
     const mockUser = { id: 'client-123', role: 'client', status: 'active' };
     const mockJob = {
@@ -274,7 +274,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
     });
   });
 
-  it('4️⃣ PAGAMENTO STRIPE: Cliente processa pagamento com sucesso', async () => {
+  it('. PAGAMENTO STRIPE: Cliente processa pagamento com sucesso', async () => {
     // Mock usuário, job com proposta aceita
     const mockUser = { id: 'client-123', role: 'client', status: 'active' };
     const mockJob = {
@@ -339,7 +339,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
     });
   });
 
-  it('5️⃣ ACOMPANHAMENTO: Cliente acompanha status e conversa via chat', async () => {
+  it('. ACOMPANHAMENTO: Cliente acompanha status e conversa via chat', async () => {
     // Mock usuário e job em andamento
     const mockUser = { id: 'client-123', role: 'client', status: 'active' };
     const mockJob = {
@@ -416,7 +416,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
     });
   });
 
-  it('6️⃣ AVALIAÇÃO: Cliente avalia serviço concluído', async () => {
+  it('. AVALIAÇÃO: Cliente avalia serviço concluído', async () => {
     // Mock usuário e job aguardando avaliação
     const mockUser = { id: 'client-123', role: 'client', status: 'active' };
     const mockJob = {
@@ -495,7 +495,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
     });
   });
 
-  it('7️⃣ DISPUTA: Cliente pode abrir disputa se necessário', async () => {
+  it('. DISPUTA: Cliente pode abrir disputa se necessário', async () => {
     // Mock usuário e job em andamento
     const mockUser = { id: 'client-123', role: 'client', status: 'active' };
     const mockJob = {
@@ -558,7 +558,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
     });
   });
 
-  it('8️⃣ GERENCIAR ITENS: Cliente pode cadastrar e gerenciar itens', async () => {
+  it('. GERENCIAR ITENS: Cliente pode cadastrar e gerenciar itens', async () => {
     // Mock usuário
     const mockUser = { id: 'client-123', role: 'client', status: 'active' };
     mockApi.fetchUser.mockResolvedValue(mockUser);
