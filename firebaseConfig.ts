@@ -45,9 +45,11 @@ export const getAnalyticsIfSupported = async (): Promise<Analytics | null> => {
 
 // Legacy export for backward compatibility (will lazy-load on first access)
 export const storage = new Proxy({} as FirebaseStorage, {
-  get: (_target, prop) => {
+  get: (_target, prop: string | symbol) => {
+    // Keep a single warning to guide developers to the preferred API
     console.warn('⚠️ Direct storage access deprecated. Use getStorageInstance() instead.');
-    return getStorageInstance().then(s => (s as Record<string, unknown>)[prop]);
+    // Use Reflect.get to safely support symbol keys and avoid TS index errors
+    return getStorageInstance().then(s => Reflect.get(s as object, prop));
   }
 });
 
