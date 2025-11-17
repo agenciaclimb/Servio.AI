@@ -57,7 +57,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch }) => {
           {['Eletricista', 'Encanador', 'Pintor', 'Marceneiro', 'Pedreiro', 'Jardineiro', 'Técnico de TI', 'Chaveiro'].map((service) => (
             <button
               key={service}
-              onClick={() => { setPrompt(`Preciso de um ${service}`); handleSubmit(new Event('submit') as any); }}
+              onClick={() => { setPrompt(`Preciso de um ${service}`); handleSubmit(new Event('submit') as unknown as React.FormEvent<HTMLFormElement>); }}
               className="p-4 bg-white rounded-lg shadow hover:shadow-md transition border border-gray-200 text-gray-700 font-medium hover:bg-blue-50 hover:border-blue-300"
             >
               {service}

@@ -85,4 +85,49 @@ describe('AuthModal', () => {
     fireEvent.click(screen.getByTestId('auth-modal-close'));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it('renderiza título correto para cadastro de cliente', () => {
+    renderModal({ mode: 'register', userType: 'cliente' });
+    expect(screen.getByText('Crie sua conta Cliente')).toBeInTheDocument();
+    expect(screen.getByText('É rápido e fácil.')).toBeInTheDocument();
+  });
+
+  it('permite alternar de cadastro para login', () => {
+    const { onSwitchMode } = renderModal({ mode: 'register', userType: 'cliente' });
+    const toggle = screen.getByText('Faça login');
+    fireEvent.click(toggle);
+    expect(onSwitchMode).toHaveBeenCalledWith('login');
+  });
+
+  it('em login com prestador, dispara onSuccess com tipo correto', () => {
+    const { onSuccess } = renderModal({ mode: 'login', userType: 'prestador' });
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'pro@teste.com' } });
+    fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'senhaOk' } });
+    fireEvent.click(screen.getByTestId('auth-submit-button'));
+    expect(onSuccess).toHaveBeenCalledWith('pro@teste.com', 'prestador');
+  });
+
+  it('limpa mensagem de erro quando usuário corrige as senhas', () => {
+    renderModal({ mode: 'register', userType: 'cliente' });
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'c@t.com' } });
+    fireEvent.change(screen.getByLabelText('Senha'), { target: { value: '12345' } });
+    fireEvent.change(screen.getByLabelText('Confirmar Senha'), { target: { value: '99999' } });
+    fireEvent.click(screen.getByTestId('auth-submit-button'));
+    expect(screen.getByText(/As senhas não coincidem/i)).toBeInTheDocument();
+
+    // Corrige para senhas iguais mas ainda curtas
+    fireEvent.change(screen.getByLabelText('Confirmar Senha'), { target: { value: '12345' } });
+    fireEvent.click(screen.getByTestId('auth-submit-button'));
+
+    // Mensagem de senhas diferentes some e exibe erro de tamanho mínimo
+    expect(screen.queryByText(/As senhas não coincidem/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/A senha deve ter pelo menos 6 caracteres/i)).toBeInTheDocument();
+  });
+
+  it('fecha ao clicar fora do conteúdo (overlay)', () => {
+    const { onClose } = renderModal({ mode: 'login', userType: 'cliente' });
+    // O overlay possui data-testid="auth-modal" e fecha ao clicar nele
+    fireEvent.click(screen.getByTestId('auth-modal'));
+    expect(onClose).toHaveBeenCalled();
+  });
 });

@@ -1,0 +1,232 @@
+import React from 'react';
+import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import DisputeModal from '../components/DisputeModal';
+import type { Dispute, Job, User } from '../types';
+
+const baseUser: User = {
+  email: 'client@example.com',
+  name: 'Cliente Teste',
+  type: 'cliente',
+  bio: '',
+  location: 'SP',
+  memberSince: '2024-01-01T00:00:00.000Z',
+  status: 'ativo',
+};
+
+const baseProvider: User = {
+  email: 'provider@example.com',
+  name: 'Prestador Teste',
+  type: 'prestador',
+  bio: '',
+  location: 'SP',
+  memberSince: '2024-01-01T00:00:00.000Z',
+  status: 'ativo',
+};
+
+const baseJob: Job = {
+  id: 'job-1',
+  clientId: baseUser.email,
+  providerId: baseProvider.email,
+  category: 'Hidráulica',
+  description: 'Vazamento na pia',
+  status: 'em_disputa',
+  createdAt: '2025-11-11T12:00:00.000Z',
+  serviceType: 'personalizado',
+  urgency: 'hoje',
+};
+
+function makeDispute(messages: Dispute['messages'] = []): Dispute {
+  return {
+    id: 'disp-1',
+    jobId: baseJob.id,
+    initiatorId: baseUser.email,
+    reason: 'Serviço não concluído',
+    status: 'aberta',
+    messages,
+    createdAt: '2025-11-11T12:00:00.000Z',
+  };
+}
+
+describe('DisputeModal', () => {
+  test('renderiza título e informações do job/parte contrária', () => {
+    render(
+      <DisputeModal
+        user={baseUser}
+        job={baseJob}
+        dispute={makeDispute()}
+        otherParty={baseProvider}
+        onClose={vi.fn()}
+        onSendMessage={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText('Disputa em Aberto')).toBeInTheDocument();
+    expect(screen.getByText(/Job: Hidráulica/)).toBeInTheDocument();
+    expect(screen.getByText(/Prestador Teste/)).toBeInTheDocument();
+    // Texto está dividido por elementos <span>, então validamos partes
+    expect(screen.getByText(/O pagamento está/i)).toBeInTheDocument();
+    expect(screen.getByText(/pausado/i)).toBeInTheDocument();
+  });
+
+  test('alinha e estiliza mensagens de acordo com o remetente', () => {
+    const messages = [
+      {
+        id: 'm1',
+        senderId: baseUser.email,
+        text: 'Mensagem do cliente',
+        createdAt: '2025-11-11T12:10:00.000Z',
+      },
+      {
+        id: 'm2',
+        senderId: baseProvider.email,
+        text: 'Mensagem do prestador',
+        createdAt: '2025-11-11T12:11:00.000Z',
+      },
+    ];
+
+    render(
+      <DisputeModal
+        user={baseUser}
+        job={baseJob}
+        dispute={makeDispute(messages)}
+        otherParty={baseProvider}
+        onClose={vi.fn()}
+        onSendMessage={vi.fn()}
+      />
+    );
+
+    const clientMsg = screen.getByText('Mensagem do cliente');
+    const providerMsg = screen.getByText('Mensagem do prestador');
+
+    // Bolhas têm classes distintas: cliente -> bg-blue-600, outro -> bg-gray-200
+    expect(clientMsg.parentElement).toHaveClass('bg-blue-600');
+    expect(providerMsg.parentElement).toHaveClass('bg-gray-200');
+  });
+
+  test('envia mensagem ao pressionar Enter e limpa o input', async () => {
+    const user = userEvent.setup();
+    const handleSend = vi.fn();
+
+    render(
+      <DisputeModal
+        user={baseUser}
+        job={baseJob}
+        dispute={makeDispute()}
+        otherParty={baseProvider}
+        onClose={vi.fn()}
+        onSendMessage={handleSend}
+      />
+    );
+
+    const input = screen.getByPlaceholderText('Digite sua mensagem para a disputa...') as HTMLInputElement;
+    await user.type(input, 'Olá, gostaria de resolver{enter}');
+
+    expect(handleSend).toHaveBeenCalledTimes(1);
+    expect(handleSend).toHaveBeenCalledWith('Olá, gostaria de resolver');
+    expect(input.value).toBe('');
+  });
+
+  test('não envia quando mensagem vazia ou apenas espaços', async () => {
+    const user = userEvent.setup();
+    const handleSend = vi.fn();
+
+    render(
+      <DisputeModal
+        user={baseUser}
+        job={baseJob}
+        dispute={makeDispute()}
+        otherParty={baseProvider}
+        onClose={vi.fn()}
+        onSendMessage={handleSend}
+      />
+    );
+
+    const input = screen.getByPlaceholderText('Digite sua mensagem para a disputa...');
+    await user.type(input, '   {enter}');
+    expect(handleSend).not.toHaveBeenCalled();
+  });
+
+  test('não envia quando otherParty está ausente', async () => {
+    const user = userEvent.setup();
+    const handleSend = vi.fn();
+
+    render(
+      <DisputeModal
+        user={baseUser}
+        job={baseJob}
+        dispute={makeDispute()}
+        onClose={vi.fn()}
+        onSendMessage={handleSend}
+      />
+    );
+
+    const input = screen.getByPlaceholderText('Digite sua mensagem para a disputa...');
+    await user.type(input, 'Sem outra parte{enter}');
+    expect(handleSend).not.toHaveBeenCalled();
+  });
+
+  test('botão fechar aciona onClose', async () => {
+    const user = userEvent.setup();
+    const handleClose = vi.fn();
+
+    const { container } = render(
+      <DisputeModal
+        user={baseUser}
+        job={baseJob}
+        dispute={makeDispute()}
+        otherParty={baseProvider}
+        onClose={handleClose}
+        onSendMessage={vi.fn()}
+      />
+    );
+
+    const header = container.querySelector('header') as HTMLElement;
+    const closeBtn = within(header).getByRole('button');
+    await user.click(closeBtn);
+    expect(handleClose).toHaveBeenCalledTimes(1);
+  });
+
+  test('scrollIntoView é chamado ao renderizar e ao adicionar novas mensagens', async () => {
+    const scrollSpy = vi.fn();
+    Object.defineProperty(global.Element.prototype, 'scrollIntoView', {
+      writable: true,
+      value: scrollSpy,
+    });
+
+    const initial = [
+      { id: 'm1', senderId: baseUser.email, text: 'Oi', createdAt: '2025-11-11T12:00:00.000Z' },
+    ];
+
+    const { rerender } = render(
+      <DisputeModal
+        user={baseUser}
+        job={baseJob}
+        dispute={makeDispute(initial)}
+        otherParty={baseProvider}
+        onClose={vi.fn()}
+        onSendMessage={vi.fn()}
+      />
+    );
+
+    expect(scrollSpy).toHaveBeenCalled();
+
+    const next = [
+      ...initial,
+      { id: 'm2', senderId: baseProvider.email, text: 'Olá!', createdAt: '2025-11-11T12:01:00.000Z' },
+    ];
+
+    rerender(
+      <DisputeModal
+        user={baseUser}
+        job={baseJob}
+        dispute={makeDispute(next)}
+        otherParty={baseProvider}
+        onClose={vi.fn()}
+        onSendMessage={vi.fn()}
+      />
+    );
+
+    expect(scrollSpy).toHaveBeenCalledTimes(2);
+  });
+});

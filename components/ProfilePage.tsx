@@ -63,7 +63,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId, onBackToDashboard, is
 
   // Effect for fetching SEO content
   useEffect(() => {
-    if (user.type === 'prestador') {
+    if (user && user.type === 'prestador') {
         const fetchSEOContent = async () => {
             setIsSeoLoading(true);
             try {
@@ -77,7 +77,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId, onBackToDashboard, is
         };
         fetchSEOContent();
     }
-  }, [user, reviews.length]); // Re-run if user or number of reviews changes
+    }, [user, reviews]); // Re-run if user or reviews list changes
 
   // Effect for updating the document head with SEO content
   useEffect(() => {

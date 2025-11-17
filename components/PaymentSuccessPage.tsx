@@ -13,9 +13,9 @@ const PaymentSuccessPage: React.FC = () => {
         try {
           // Simula a confirmação do webhook e a criação do escrow no backend
           await API.confirmPayment(jobId, sessionId);
-          console.log(`Pagamento para job ${jobId} confirmado com sucesso.`);
+
         } catch (error) {
-          console.error("Erro ao confirmar o pagamento no backend:", error);
+
           // Idealmente, mostrar um erro para o usuário
         }
       }

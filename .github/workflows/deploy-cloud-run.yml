@@ -5,13 +5,13 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: "Branch ou tag para deploy"
+        description: 'Branch ou tag para deploy'
         required: false
-        default: "feature/full-implementation"
+        default: 'feature/full-implementation'
       service:
-        description: "Serviço para deploy (ai, backend, ou both)"
+        description: 'Serviço para deploy (ai, backend, ou both)'
         required: false
-        default: "both"
+        default: 'both'
         type: choice
         options:
           - both
@@ -20,7 +20,7 @@ on:
   # (Opcional) Publique versões marcadas com tag v*
   push:
     tags:
-      - "v*"
+      - 'v*'
 
 env:
   # ✅ CORRIGIDO: Projeto correto (ID: 1000250760228)
@@ -51,6 +51,7 @@ jobs:
           GH_FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
           GH_GCP_STORAGE_BUCKET: ${{ secrets.GCP_STORAGE_BUCKET }}
           GH_STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          GH_STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
         run: |
           set -euo pipefail
           missing=()
@@ -64,6 +65,7 @@ jobs:
           [[ -z "${GH_FRONTEND_URL:-}" ]] && app_missing+=("FRONTEND_URL")
           [[ -z "${GH_GCP_STORAGE_BUCKET:-}" ]] && app_missing+=("GCP_STORAGE_BUCKET")
           [[ -z "${GH_STRIPE_SECRET_KEY:-}" ]] && app_missing+=("STRIPE_SECRET_KEY")
+          [[ -z "${GH_STRIPE_WEBHOOK_SECRET:-}" ]] && app_missing+=("STRIPE_WEBHOOK_SECRET")
 
           if (( ${#missing[@]} > 0 )); then
             echo "::error::Secrets obrigatórios ausentes: ${missing[*]}"
@@ -85,7 +87,7 @@ jobs:
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2
         with:
-          version: ">= 462.0.0"
+          version: '>= 462.0.0'
 
       - name: Activate service account in gcloud (explicit)
         run: |
@@ -228,4 +230,4 @@ jobs:
             --platform=managed \
             --allow-unauthenticated \
             --port=8081 \
-            --set-env-vars="GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }},FRONTEND_URL=${{ secrets.FRONTEND_URL }},GCP_STORAGE_BUCKET=${{ secrets.GCP_STORAGE_BUCKET }}"
+            --set-env-vars="GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }},STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }},FRONTEND_URL=${{ secrets.FRONTEND_URL }},GCP_STORAGE_BUCKET=${{ secrets.GCP_STORAGE_BUCKET }}"
