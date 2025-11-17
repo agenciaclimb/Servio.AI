@@ -46,7 +46,7 @@ const SitemapGenerator: React.FC<SitemapGeneratorProps> = ({ users, serviceNameT
         </header>
         
         <main className="flex-grow overflow-y-auto p-6 font-mono text-sm bg-gray-50">
-            <p className="text-gray-600 mb-4">// Total de {allUrls.length} URLs geradas</p>
+            <p className="text-gray-600 mb-4">{`// Total de ${allUrls.length} URLs geradas`}</p>
             <div className="space-y-2">
                 {allUrls.map(url => (
                     <div key={url} className="text-blue-700 break-words">
