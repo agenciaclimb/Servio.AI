@@ -198,18 +198,43 @@ Responda APENAS com o JSON, sem markdown ou texto adicional.`;
 
   // POST /api/suggest-maintenance - Suggest maintenance for an item
   app.post("/api/suggest-maintenance", async (req, res) => {
-    if (!genAI) {
-      return res.status(503).json({ error: "AI service not configured. Set GEMINI_API_KEY." });
-    }
-
     const { item } = req.body;
     if (!item || !item.name) {
       return res.status(400).json({ error: "Item data is required." });
     }
 
-    try {
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+    // Deterministic fallback: suggest maintenance based on heuristics
+    const buildMaintenanceStub = (item) => {
+      const name = (item.name || '').toLowerCase();
+      const category = (item.category || '').toLowerCase();
       
+      // Heuristic: check if item suggests needing maintenance
+      const needsMaintenance = /eletro|geladeira|ar.condicionado|máquina|motor|carro|veículo/i.test(name + ' ' + category);
+      
+      if (!needsMaintenance) return null;
+      
+      // Check urgency based on last maintenance
+      let urgency = 'media';
+      if (item.lastMaintenance) {
+        const lastDate = new Date(item.lastMaintenance);
+        const daysSince = (Date.now() - lastDate.getTime()) / (1000 * 60 * 60 * 24);
+        if (daysSince > 365) urgency = 'alta';
+        else if (daysSince > 180) urgency = 'media';
+        else return null; // Too recent
+      }
+      
+      return {
+        title: `Manutenção preventiva recomendada para ${item.name}`,
+        description: `Verificar componentes, realizar limpeza e ajustes necessários para garantir o bom funcionamento do equipamento.`,
+        urgency,
+        estimatedCost: urgency === 'alta' ? 300 : 200
+      };
+    };
+
+    const model = getModel();
+    if (!model) return res.json(buildMaintenanceStub(item));
+
+    try {
       const systemPrompt = `Você é um assistente de manutenção preventiva. Analise o item e sugira manutenção se necessário.
 
 Item: ${item.name}
@@ -241,8 +266,8 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
       const suggestion = JSON.parse(jsonMatch[0]);
       res.json(suggestion);
     } catch (error) {
-      console.error("Error suggesting maintenance:", error);
-      res.status(500).json({ error: "Failed to suggest maintenance." });
+      console.warn("AI error /api/suggest-maintenance fallback:", error);
+      return res.json(buildMaintenanceStub(item));
     }
   });
 
