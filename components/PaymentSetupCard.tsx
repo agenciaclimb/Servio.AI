@@ -25,7 +25,7 @@ const PaymentSetupCard: React.FC<PaymentSetupCardProps> = ({ user }) => {
 
       // 3. Redirect to Stripe
       globalThis.location.href = linkResponse.url;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to start Stripe onboarding:', error);
       const message = formatErrorForToast(error, 'payment');
       const action = getErrorAction(error);

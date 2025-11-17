@@ -47,7 +47,7 @@ export const getAnalyticsIfSupported = async (): Promise<Analytics | null> => {
 export const storage = new Proxy({} as FirebaseStorage, {
   get: (_target, prop) => {
     console.warn('⚠️ Direct storage access deprecated. Use getStorageInstance() instead.');
-    return getStorageInstance().then(s => (s as any)[prop]);
+    return getStorageInstance().then(s => (s as Record<string, unknown>)[prop]);
   }
 });
 

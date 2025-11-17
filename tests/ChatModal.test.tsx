@@ -7,7 +7,7 @@ import * as geminiService from '../services/geminiService';
 
 // jsdom não implementa scrollIntoView; mock para evitar TypeError em efeitos de montagem
 beforeAll(() => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   (HTMLElement.prototype as any).scrollIntoView = vi.fn();
 });
 

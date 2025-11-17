@@ -89,7 +89,8 @@ const App: React.FC = () => {
   // Handle dynamic import failures (stale HTML returned due to cache) by reloading with cache-buster
   useEffect(() => {
     const handler = (e: PromiseRejectionEvent) => {
-      const msg = String((e as any)?.reason?.message || (e as any)?.reason || '');
+      const reason = e.reason as { message?: string } | string | undefined;
+      const msg = String(typeof reason === 'object' ? reason?.message : reason || '');
       if (msg.includes('Failed to fetch dynamically imported module') || msg.includes('Importing a module script failed')) {
         try {
           const url = new URL(window.location.href);

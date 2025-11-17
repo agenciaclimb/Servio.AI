@@ -166,12 +166,13 @@ export function getPaymentErrorMessage(error: ApiError | Error): string {
         return 'O processamento do pagamento está demorando. Aguarde ou tente novamente.';
       case 'E_AUTH':
         return 'Sua sessão expirou. Faça login para continuar o pagamento.';
-      case 'E_SERVER':
+      case 'E_SERVER': {
         const details = (error as ApiError).details as { error?: string } | undefined;
         if (details?.error?.includes('Stripe')) {
           return 'Erro ao processar pagamento. Verifique seus dados de pagamento.';
         }
         return message;
+      }
       default:
         return message;
     }

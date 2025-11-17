@@ -82,8 +82,9 @@ function resolveEndpoint(endpoint: string): string {
 
     // In Vitest (even if jsdom provides window), Node's fetch requires absolute URLs.
     // In tests that simulate a bare "browser-like" window (no document), return relative.
-    const hasDocument = typeof (globalThis as any).document !== 'undefined';
-    const isWindowLinkedToDocument = hasDocument && ((globalThis as any).document?.defaultView === (globalThis as any).window);
+    const hasDocument = typeof (globalThis as { document?: unknown }).document !== 'undefined';
+    const globalWithWindow = globalThis as { document?: { defaultView?: unknown }; window?: unknown };
+    const isWindowLinkedToDocument = hasDocument && (globalWithWindow.document?.defaultView === globalWithWindow.window);
     if (isBrowser && (!hasDocument || !isWindowLinkedToDocument)) {
         return endpoint;
     }
@@ -250,7 +251,7 @@ export async function generateReviewComment(rating: number, category: string, de
 
 export async function generateProfileTip(user: User): Promise<string> {
     // In test environment, avoid network dependency by returning a deterministic mock.
-    const isVitest = typeof process !== 'undefined' && (process.env as any)?.VITEST;
+    const isVitest = typeof process !== 'undefined' && (process.env as Record<string, string | undefined>)?.VITEST;
     if (isVitest) {
         return '[mock-tip] Complete seu perfil adicionando uma boa foto profissional.';
     }
@@ -290,6 +291,6 @@ export async function mediateDispute(messages: DisputeMessage[], clientName: str
     return fetchFromBackend<{ summary: string; analysis: string; suggestion: string; }>('/api/mediate-dispute', { messages, clientName, providerName });
 }
 
-export async function analyzeProviderBehaviorForFraud(provider: User, context: { type: 'proposal' | 'bid' | 'profile_update', data: any }): Promise<{ isSuspicious: boolean; riskScore: number; reason: string } | null> {
+export async function analyzeProviderBehaviorForFraud(provider: User, context: { type: 'proposal' | 'bid' | 'profile_update', data: Record<string, unknown> }): Promise<{ isSuspicious: boolean; riskScore: number; reason: string } | null> {
     return fetchFromBackend<{ isSuspicious: boolean; riskScore: number; reason: string } | null>('/api/analyze-fraud', { provider, context });
 }

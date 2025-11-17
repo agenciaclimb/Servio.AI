@@ -40,9 +40,9 @@ export async function registerUserFcmToken(userEmail: string): Promise<string | 
   if (!token) return null;
   try {
     await API.updateUser(userEmail, { fcmToken: token });
-    console.info('[FCM] Token registered for user', userEmail);
+    // Token registered successfully
   } catch (e) {
-    console.warn('[FCM] Failed to save token to backend', e);
+    // Failed to save token - will retry on next login
   }
   return token;
 }

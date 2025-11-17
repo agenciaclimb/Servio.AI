@@ -30,7 +30,7 @@ const ProviderOnboarding: React.FC<ProviderOnboardingProps> = ({ user, onOnboard
     specialties: user.profile?.specialties || [],
   });
 
-  const handleUpdate = (field: string, value: any) => {
+  const handleUpdate = (field: string, value: string | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

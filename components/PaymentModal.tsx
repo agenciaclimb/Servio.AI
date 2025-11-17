@@ -28,7 +28,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ job, proposal, provider, is
       await onConfirmPayment(proposal);
       // A navegação será tratada pela função onConfirmPayment
     } catch (err) {
-      const code = (err as any)?.code as string | undefined;
+      const code = (err as { code?: string })?.code;
       setError(err instanceof Error ? err.message : 'Ocorreu um erro desconhecido.');
       if (code) setErrorCode(code);
       setIsLoading(false);
