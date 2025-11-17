@@ -38,7 +38,7 @@ describe('🎯 Jornada Completa do Admin', () => {
     vi.clearAllMocks();
   });
 
-  it('1️⃣ LOGIN ADMIN: Admin consegue fazer login e acessar dashboard', async () => {
+  it('. LOGIN ADMIN: Admin consegue fazer login e acessar dashboard', async () => {
     render(
       <BrowserRouter>
         <AppProvider>
@@ -81,7 +81,7 @@ describe('🎯 Jornada Completa do Admin', () => {
     });
   });
 
-  it('2️⃣ DASHBOARD: Admin vê métricas gerais e KPIs', async () => {
+  it('. DASHBOARD: Admin vê métricas gerais e KPIs', async () => {
     // Mock admin logado
     const mockAdmin = {
       id: 'admin-123',
@@ -134,7 +134,7 @@ describe('🎯 Jornada Completa do Admin', () => {
     expect(screen.getByText(/3.*disputas abertas/i)).toBeInTheDocument();
   });
 
-  it('3️⃣ APROVAR PRESTADORES: Admin aprova prestador pendente', async () => {
+  it('. APROVAR PRESTADORES: Admin aprova prestador pendente', async () => {
     // Mock admin
     const mockAdmin = { id: 'admin-123', role: 'admin', status: 'active' };
     mockApi.fetchUser.mockResolvedValue(mockAdmin);
@@ -221,7 +221,7 @@ describe('🎯 Jornada Completa do Admin', () => {
     expect(screen.getByText(/prestador aprovado com sucesso/i)).toBeInTheDocument();
   });
 
-  it('4️⃣ GERENCIAR USUÁRIOS: Admin lista, busca e filtra usuários', async () => {
+  it('. GERENCIAR USUÁRIOS: Admin lista, busca e filtra usuários', async () => {
     // Mock admin
     const mockAdmin = { id: 'admin-123', role: 'admin', status: 'active' };
     mockApi.fetchUser.mockResolvedValue(mockAdmin);
@@ -283,7 +283,7 @@ describe('🎯 Jornada Completa do Admin', () => {
     });
   });
 
-  it('5️⃣ SUSPENDER USUÁRIO: Admin suspende usuário com motivo', async () => {
+  it('. SUSPENDER USUÁRIO: Admin suspende usuário com motivo', async () => {
     // Mock admin
     const mockAdmin = { id: 'admin-123', role: 'admin', status: 'active' };
     mockApi.fetchUser.mockResolvedValue(mockAdmin);
@@ -358,7 +358,7 @@ describe('🎯 Jornada Completa do Admin', () => {
     });
   });
 
-  it('6️⃣ MEDIAR DISPUTAS: Admin resolve disputa entre cliente e prestador', async () => {
+  it('. MEDIAR DISPUTAS: Admin resolve disputa entre cliente e prestador', async () => {
     // Mock admin
     const mockAdmin = { id: 'admin-123', role: 'admin', status: 'active' };
     mockApi.fetchUser.mockResolvedValue(mockAdmin);
@@ -489,7 +489,7 @@ describe('🎯 Jornada Completa do Admin', () => {
     });
   });
 
-  it('7️⃣ ANALYTICS: Admin visualiza gráficos e tendências', async () => {
+  it('. ANALYTICS: Admin visualiza gráficos e tendências', async () => {
     // Mock admin
     const mockAdmin = { id: 'admin-123', role: 'admin', status: 'active' };
     mockApi.fetchUser.mockResolvedValue(mockAdmin);
@@ -566,7 +566,7 @@ describe('🎯 Jornada Completa do Admin', () => {
     });
   });
 
-  it('8️⃣ GERENCIAR JOBS: Admin cancela job se necessário', async () => {
+  it('. GERENCIAR JOBS: Admin cancela job se necessário', async () => {
     // Mock admin
     const mockAdmin = { id: 'admin-123', role: 'admin', status: 'active' };
     mockApi.fetchUser.mockResolvedValue(mockAdmin);
@@ -642,7 +642,7 @@ describe('🎯 Jornada Completa do Admin', () => {
     });
   });
 
-  it('9️⃣ REATIVAR USUÁRIO: Admin pode reativar usuário suspenso', async () => {
+  it('. REATIVAR USUÁRIO: Admin pode reativar usuário suspenso', async () => {
     // Mock admin
     const mockAdmin = { id: 'admin-123', role: 'admin', status: 'active' };
     mockApi.fetchUser.mockResolvedValue(mockAdmin);
