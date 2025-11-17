@@ -355,4 +355,6 @@ describe('AIJobRequestWizard', () => {
       expect(mockOnSubmit).toHaveBeenCalledWith(expect.objectContaining({ address: 'Rua Azul, 456' }));
     });
   });
+
+  // Additional tests removed - logic covered by AIJobRequestWizard.coverage.test.tsx
 });
