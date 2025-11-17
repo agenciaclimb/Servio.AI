@@ -71,10 +71,18 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       try {
         setIsLoadingJobs(true);
         const jobs = await API.fetchJobsForUser(user.email);
-        setUserJobs(jobs);
+        // Garantir que todos os jobs têm status válido
+        const validJobs = jobs.map(job => ({
+          ...job,
+          status: job.status || 'ativo',
+          category: job.category || 'geral',
+          description: job.description || 'Serviço solicitado'
+        }));
+        setUserJobs(validJobs);
       } catch (error) {
         console.error('Erro ao carregar jobs do cliente:', error);
-        addToast('Erro ao carregar seus serviços. Recarregue a página.', 'error');
+        addToast('Erro ao carregar seus serviços. Tente novamente.', 'error');
+        setUserJobs([]); // Define array vazio em caso de erro
       } finally {
         setIsLoadingJobs(false);
       }
