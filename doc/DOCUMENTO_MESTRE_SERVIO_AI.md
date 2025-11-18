@@ -1,3 +1,58 @@
+#update_log - 17/11/2025 10:35 (COBERTURA AMPLIADA - QUALITY GATE EM VERIFICAÇÃO)
+
+## 🎯 EVOLUÇÃO DA COBERTURA DE TESTES - DASHBOARDS E BRANCHES CRÍTICOS
+
+**STATUS ATUAL:** 461 testes PASS | SonarCloud Quality Gate: new_coverage 72.71% (meta: ≥80%)
+
+**AÇÕES REALIZADAS:**
+
+1. ✅ **ProviderDashboard**: Adicionados 6 testes de ações (filtros, proposta, leilão, chat, agendamento, indicação)
+2. ✅ **AdminDashboard**: Adicionados 2 testes de orquestração (alternância de abas, mediação de disputa)
+3. ✅ **ProviderDashboard Verificação**: Adicionados 3 testes de fluxos de verificação (pendente, CTA, recusado → onboarding)
+4. ✅ **AdminDashboard Erros**: Adicionados 2 testes de tratamento de exceções (catch, finally, toasts de erro)
+5. ✅ **ProviderDashboard ProfileStrength**: Teste de caminho de análise de fraude suspeita
+
+**COMMITS:**
+
+- SHA `f8978f1`: test: add ProviderDashboard and AdminDashboard action coverage
+- SHA `9d627f5`: test: add verification, fraud, and error path coverage for dashboards
+
+**MÉTRICAS LOCAIS:**
+
+- Statements: 61.81% (subida de ~53.3% anterior)
+- AdminDashboard.tsx: 93.33% stmts / 76% branches / 75% funcs
+- ProviderDashboard.tsx: 83.59% stmts / 74.64% branches / 56.52% funcs
+- Testes executados: 461 passando (incluindo 11 novos testes de dashboard)
+
+**MÉTRICAS SONARCLOUD:**
+
+- Project Key: `agenciaclimb_Servio.AI`
+- Coverage global: 64.3%
+- **new_coverage (período): 72.71%** ⚠️ (threshold: ≥80%) — STATUS: ERROR
+- Quality Gate: ERROR (apenas new_coverage falhou; demais condições OK)
+- Security Hotspots: 100% reviewed ✅
+- Duplications: 0% ✅
+- Reliability/Maintainability/Security Ratings: A (novos) ✅
+
+**ANÁLISE:**
+
+- Cobertura de código novo subiu de 70.66% → 72.71% (+2.05pp)
+- 8 novos testes focados em branches condicionais (verification statuses, error paths, fraud analysis, modal flows)
+- Restam ~7.29pp para atingir 80%; estimativa de 15-20 testes direcionados necessários para fechar gap
+
+**PRÓXIMOS PASSOS:**
+
+- Aguardar conclusão da análise SonarCloud após commit `9d627f5`
+- Se persistir abaixo de 80%, identificar linhas não cobertas no período de "new code" via API component_tree
+- Criar micro-testes para branches não exercidos (ex: caminhos de erro de proposta não verificada, fallback de skeleton, ramos else de filtros)
+
+**IMPACTO ESPERADO:**
+
+- Objetivo: Quality Gate PASS (new_coverage ≥80%)
+- Benefício: Liberação para deploy com confiança total no novo código (segurança + estabilidade)
+
+---
+
 #update_log - 16/11/2025 22:30 (PLANO DE CORREÇÕES COMPLETO - 100% FUNCIONAL)
 
 ## 🎯 PLANO DE AÇÃO PARA 100% FUNCIONAL - REVISÃO TÉCNICA COMPLETA
