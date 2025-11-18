@@ -94,7 +94,6 @@ jobs:
           gitleaks detect --source . --redact --config .gitleaks.toml --exit-code 0 || true
 
       - name: SonarCloud Scan
-        if: secrets.SONAR_TOKEN != ''
         uses: SonarSource/sonarcloud-github-action@ffc3010689be73b8e5ae0c57ce35968afd7909e8 # v5.0.0
         continue-on-error: true
         env:
