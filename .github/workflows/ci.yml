@@ -46,7 +46,7 @@ jobs:
         run: npm run test:all || echo "⚠️ Testes falharam (pode ser falta de secrets) - continuando CI"
 
       - name: Upload frontend coverage
-        if: always()
+        if: always() && hashFiles('coverage/**') != ''
         uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
         with:
           name: coverage-frontend
@@ -54,7 +54,7 @@ jobs:
           retention-days: 7
 
       - name: Upload backend coverage
-        if: always()
+        if: always() && hashFiles('backend/coverage/**') != ''
         uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
         with:
           name: coverage-backend
@@ -94,6 +94,7 @@ jobs:
           gitleaks detect --source . --redact --config .gitleaks.toml --exit-code 0 || true
 
       - name: SonarCloud Scan
+        if: ${{ secrets.SONAR_TOKEN != '' }}
         uses: SonarSource/sonarcloud-github-action@ffc3010689be73b8e5ae0c57ce35968afd7909e8 # v5.0.0
         continue-on-error: true
         env:
