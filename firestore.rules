@@ -86,7 +86,9 @@ service cloud.firestore {
 
     match /messages/{messageId} {
       // Only participants of the chat (job) can read or create messages
-      allow read, create: if isJobParticipant(request.resource.data.chatId);
+      // READ must use resource.data (existing document); CREATE uses request.resource.data
+      allow read: if isJobParticipant(resource.data.chatId);
+      allow create: if isJobParticipant(request.resource.data.chatId);
       allow update, delete: if false;
     }
 
@@ -128,7 +130,8 @@ service cloud.firestore {
 
     match /bids/{bidId} {
       // Similar to proposals
-      allow read: if isJobParticipant(request.resource.data.jobId);
+      // READ: switch to resource.data for existing document access
+      allow read: if isJobParticipant(resource.data.jobId);
       allow create: if isProvider() && isOwner(request.resource.data.providerId);
       allow update, delete: if false;
     }
