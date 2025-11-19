@@ -215,6 +215,8 @@ jobs:
           push: true
           provenance: false
           sbom: false
+          build-args: |
+            CACHEBUST=${{ github.sha }}
           tags: |
             ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/backend:${{ github.sha }}
             ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/backend:latest
