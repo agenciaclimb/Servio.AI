@@ -105,6 +105,15 @@ function createApp({
     res.send("Hello from SERVIO.AI Backend (Firestore Service)!");
   });
 
+  // Health check endpoint for load balancers and monitoring
+  app.get("/health", (req, res) => {
+    res.status(200).json({ 
+      status: "healthy", 
+      timestamp: new Date().toISOString(),
+      service: "servio-backend"
+    });
+  });
+
   // =================================================================
   // AI ENDPOINTS (GEMINI)
   // =================================================================
