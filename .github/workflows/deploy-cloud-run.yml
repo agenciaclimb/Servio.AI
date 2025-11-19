@@ -219,6 +219,7 @@ jobs:
           push: true
           provenance: false
           sbom: false
+          no-cache: true
           build-args: |
             CACHEBUST=${{ github.sha }}
           tags: |
