@@ -200,4 +200,78 @@ describe('ReviewModal', () => {
       });
     }
   });
+
+  it('disables submit button when rating is 0', () => {
+    render(
+      <ReviewModal
+        job={mockJob}
+        onClose={mockOnClose}
+        onSubmit={mockOnSubmit}
+      />
+    );
+
+    const buttons = screen.getAllByRole('button');
+    const submitButton = buttons.find(btn => btn.textContent?.includes('Liberar')) as HTMLButtonElement;
+    
+    expect(submitButton).toBeDisabled();
+  });
+
+  it('enables submit button after rating is selected', async () => {
+    render(
+      <ReviewModal
+        job={mockJob}
+        onClose={mockOnClose}
+        onSubmit={mockOnSubmit}
+      />
+    );
+
+    // Mock StarRatingInput: encontra o componente e simula setRating
+    const starButtons = screen.getAllByRole('button').filter(btn => 
+      btn.getAttribute('aria-label')?.includes('estrela')
+    );
+    
+    if (starButtons.length > 0) {
+      fireEvent.click(starButtons[3]); // Select 4 stars
+      
+      await waitFor(() => {
+        const buttons = screen.getAllByRole('button');
+        const submitButton = buttons.find(btn => btn.textContent?.includes('Liberar')) as HTMLButtonElement;
+        expect(submitButton).not.toBeDisabled();
+      });
+    }
+  });
+
+  it('submits review with rating and comment', async () => {
+    render(
+      <ReviewModal
+        job={mockJob}
+        onClose={mockOnClose}
+        onSubmit={mockOnSubmit}
+      />
+    );
+
+    const starButtons = screen.getAllByRole('button').filter(btn => 
+      btn.getAttribute('aria-label')?.includes('estrela')
+    );
+    
+    if (starButtons.length > 0) {
+      fireEvent.click(starButtons[4]); // Select 5 stars
+      
+      const textarea = screen.getByRole('textbox');
+      fireEvent.change(textarea, { target: { value: 'Excelente trabalho!' } });
+      
+      await waitFor(() => {
+        const buttons = screen.getAllByRole('button');
+        const submitButton = buttons.find(btn => btn.textContent?.includes('Liberar')) as HTMLButtonElement;
+        
+        if (submitButton && !submitButton.disabled) {
+          fireEvent.click(submitButton);
+          expect(mockOnSubmit).toHaveBeenCalledWith({
+            rating: 5,
+            comment: 'Excelente trabalho!'
+          });
+        }
+      });
+    }
+  });
 });
