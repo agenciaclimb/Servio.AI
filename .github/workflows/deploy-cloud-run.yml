@@ -7,7 +7,7 @@ on:
       ref:
         description: 'Branch ou tag para deploy'
         required: false
-        default: 'feature/full-implementation'
+        default: 'main'
       service:
         description: 'Serviço para deploy (ai, backend, ou both)'
         required: false
