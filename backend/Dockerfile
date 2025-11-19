@@ -10,8 +10,8 @@ COPY package*.json ./
 # Install production dependencies only
 RUN npm ci --only=production
 
-# Cache buster to force rebuild when source code changes
-ARG CACHEBUST=1
+# Copy build version file to bust cache on every commit
+COPY .build-version /tmp/.build-version
 
 # Copy source code
 COPY src/ ./src/
