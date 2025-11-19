@@ -102,7 +102,7 @@ function createApp({
 
   // Basic "Hello World" endpoint for the backend service
   app.get("/", (req, res) => {
-    res.send("Hello from SERVIO.AI Backend (Firestore Service)!");
+    res.send("SERVIO.AI Backend v2.0 - Health endpoint enabled!");
   });
 
   // Health check endpoint for load balancers and monitoring
