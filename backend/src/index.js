@@ -100,9 +100,12 @@ function createApp({
     return express.json()(req, res, next);
   });
 
+  // Debug log to verify code deployment
+  console.log('[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"');
+  
   // Basic "Hello World" endpoint for the backend service
   app.get("/", (req, res) => {
-    res.send("SERVIO.AI Backend v2.0 - Health endpoint enabled!");
+    res.send("SERVIO.AI Backend v3.0 with Health check");
   });
 
   // Health check endpoint for load balancers and monitoring
