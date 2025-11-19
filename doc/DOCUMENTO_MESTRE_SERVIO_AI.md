@@ -107,10 +107,10 @@ try {
 - [x] Firestore rules corrigidas (proposals, messages, bids) – PENDENTE deploy validação
 - [x] Storage rules restritas (write somente participantes) – PENDENTE deploy validação
 - [x] 17 endpoints IA com fallback + testes de falha (verificados)
-- [ ] Lint warnings < 10
+- [x] Lint warnings < 10 (atualmente 0 warnings)
+- [x] Pipeline validação completo (lint + typecheck + tests + build) PASS
 - [ ] E2E full suite PASS pós-mudanças
 - [ ] README atualizado (segurança + fallback IA)
-- [ ] Pipeline CI completo PASS
 - [ ] Smoke em produção (login, criar job, proposta, pagamento, disputa)
 
 ### Progresso 18/11/2025 19:30
