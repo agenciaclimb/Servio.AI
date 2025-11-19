@@ -117,6 +117,15 @@ function createApp({
     });
   });
 
+  // Health check alias for API prefix compatibility
+  app.get("/api/health", (req, res) => {
+    res.status(200).json({ 
+      status: "healthy", 
+      timestamp: new Date().toISOString(),
+      service: "servio-backend"
+    });
+  });
+
   // =================================================================
   // AI ENDPOINTS (GEMINI)
   // =================================================================

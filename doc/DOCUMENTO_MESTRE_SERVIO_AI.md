@@ -144,21 +144,64 @@ curl https://servio-backend-1000250760228.us-west1.run.app/health
 
 ---
 
-### ✅ [ ] 1.2 Configurar Domínio e DNS
+### ✅ [x] 1.2 Configurar Domínio e DNS
 
-**Status:** 🔴 BLOQUEADOR CRÍTICO  
+**Status:** ✅ CONCLUÍDO (SSL principal ativo; www/api provisionando)  
 **Responsável:** DevOps + Product Owner  
 **Tempo Estimado:** 2-4 horas  
-**Iniciado em:** **\_**  
-**Concluído em:** **\_**
+**Iniciado em:** 19/11/2025 11:30  
+**Concluído em:** 19/11/2025 12:04
 
-**Subtarefas:**
+**URLs dos Serviços (Produção):**
 
-- [ ] 1.2.1 Registrar domínio
-  - Opções: servio.ai, servio.app, servioai.com
-  - Registrador sugerido: Google Domains ou Cloudflare
-  - Domínio escolhido: **\_**
-  - Status: **\_**
+- Frontend/AI: https://servio-ai.com (mapeado)
+- Frontend/AI (www): https://www.servio-ai.com (SSL provisionando)
+- Backend API: https://api.servio-ai.com (SSL provisionando)
+
+**Configuração DNS:**
+
+```text
+A / AAAA apex: 216.239.32.21, 216.239.34.21, 216.239.36.21, 216.239.38.21 / IPv6 bloco Google
+CNAME www → ghs.googlehosted.com.
+CNAME api → ghs.googlehosted.com.
+Zone: servio-ai-com (Cloud DNS)
+```
+
+**Cloud Run Domain Mappings:**
+
+```bash
+gcloud beta run domain-mappings create --service=servio-ai --domain=servio-ai.com --region=us-west1  # já existia
+gcloud beta run domain-mappings create --service=servio-ai --domain=www.servio-ai.com --region=us-west1
+gcloud beta run domain-mappings create --service=servio-backend --domain=api.servio-ai.com --region=us-west1
+```
+
+**Firebase Auth Domínios Autorizados:**
+
+- servio-ai.com / www.servio-ai.com / api.servio-ai.com (adicionados)
+
+**Variáveis de Ambiente Atualizadas:**
+
+```bash
+servio-ai: VITE_BACKEND_API_URL=https://api.servio-ai.com, VITE_FRONTEND_URL=https://servio-ai.com
+servio-backend: FRONTEND_URL=https://servio-ai.com
+```
+
+**Verificações:**
+
+```bash
+curl -I https://servio-ai.com        # 200 OK, certificado válido
+curl -I https://www.servio-ai.com    # aguardando certificado
+curl -I https://api.servio-ai.com/health  # aguardando certificado
+gcloud beta run domain-mappings list --region=us-west1 # mostra + / . status
+```
+
+**Próximos Passos:**
+
+- [ ] Verificar ativação SSL para www e api (reteste em ~15 min)
+- [ ] Atualizar GitHub Secrets (FRONTEND_URL, BACKEND_URL) se ainda não feito
+- [ ] Adicionar redirects (opcional) www → apex
+
+**Documentação Detalhada:** Ver `doc/PRODUCTION_DOMAIN_CONFIG.md`
 
 - [ ] 1.2.2 Configurar DNS
   - [ ] Apontar apex (@) para Cloud Run
@@ -214,7 +257,7 @@ curl https://servio-backend-1000250760228.us-west1.run.app/health
 
 - [ ] 1.3.3 Configurar webhooks produção
   - [ ] Endpoint: https://[DOMINIO]/api/stripe-webhook
-  - [ ] Eventos: payment_intent._, charge._, customer.\*
+  - [ ] Eventos: payment*intent.*, charge.\_, customer.\*
   - [ ] Obter whsec\_... (webhook secret)
   - Status: **\_**
 
