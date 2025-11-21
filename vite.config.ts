@@ -48,7 +48,11 @@ export default defineConfig(({ mode }) => {
               // Firebase core: apenas Auth e Firestore no caminho crítico
               'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
               // Lazy-loaded: Analytics e Storage carregados sob demanda
-            }
+            },
+            // Usar nomes de arquivo com hash para cache-busting automático
+            entryFileNames: 'assets/[name]-[hash].js',
+            chunkFileNames: 'assets/[name]-[hash].js',
+            assetFileNames: 'assets/[name]-[hash].[ext]'
           }
         },
         chunkSizeWarningLimit: 600, // Aumentar limite para evitar warnings de chunks legítimos

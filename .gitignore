@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+.env.local
+.env.production
+.env.production.example
+.env.*.backup
 
 # Test coverage
 coverage/

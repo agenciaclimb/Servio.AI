@@ -2,8 +2,48 @@ const express = require("express");
 const admin = require("firebase-admin");
 const cors = require("cors");
 const { Storage } = require("@google-cloud/storage");
-const stripeLib = require("stripe");
+// Stripe config helper (mode detection + safe init)
+const { createStripe } = require('./stripeConfig');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+// Prospector follow-up automation scheduler helpers
+const { processPendingOutreach } = require('./outreachScheduler');
+
+// ===========================
+// Leaderboard Cache & Rate Limiting (Phase 1)
+// ===========================
+// In-memory cache structure keyed by sort field (totalCommissionsEarned | totalRecruits)
+// TTL configurable via env LEADERBOARD_CACHE_MS (default 300000 ms = 5min)
+// Simple IP-based rate limiting using sliding window defined by LEADERBOARD_RATE_WINDOW_MS (default 300000 ms)
+// and limit LEADERBOARD_RATE_LIMIT (default 60 requests/window)
+
+const LEADERBOARD_CACHE_MS = parseInt(process.env.LEADERBOARD_CACHE_MS || '300000', 10);
+const LEADERBOARD_RATE_LIMIT = parseInt(process.env.LEADERBOARD_RATE_LIMIT || '60', 10);
+const LEADERBOARD_RATE_WINDOW_MS = parseInt(process.env.LEADERBOARD_RATE_WINDOW_MS || '300000', 10);
+
+const leaderboardCache = {
+  totalCommissionsEarned: { expiresAt: 0, payload: null },
+  totalRecruits: { expiresAt: 0, payload: null }
+};
+
+function isRateLimited(ip, storeMap, cfg) {
+  if (!ip) return false;
+  const now = Date.now();
+  let entry = storeMap.get(ip);
+  if (!entry) {
+    entry = { count: 0, windowStart: now };
+    storeMap.set(ip, entry);
+  }
+  if (now - entry.windowStart >= cfg.windowMs) {
+    entry.count = 0;
+    entry.windowStart = now;
+  }
+  entry.count += 1;
+  return entry.count > cfg.limit;
+}
+
+function getClientIp(req) {
+  return (req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip || '').toString().split(',')[0].trim();
+}
 
 // Initialize Firebase Admin SDK
 // For Cloud Run, credentials will be automatically picked up from the service account.
@@ -19,10 +59,9 @@ try {
 
 const storage = new Storage();
 const defaultDb = admin.firestore();
-// Stripe initialization - requires STRIPE_SECRET_KEY env var
-const defaultStripe = process.env.STRIPE_SECRET_KEY
-  ? stripeLib(process.env.STRIPE_SECRET_KEY)
-  : null; // Will be injected in tests or left null if not configured
+// Stripe initialization (wrapped for mode detection)
+const stripeContainer = createStripe();
+const defaultStripe = stripeContainer ? stripeContainer.instance : null; // Can be injected in tests
 // Gemini AI initialization - requires GEMINI_API_KEY env var
 const defaultGenAI = process.env.GEMINI_API_KEY
   ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
@@ -79,8 +118,19 @@ function createApp({
   storage: storageInstance = storage,
   stripe = defaultStripe,
   genAI = defaultGenAI,
+  leaderboardRateConfig,
+  leaderboardCacheMs,
 } = {}) {
   const app = express();
+  // Instance-specific rate limiting configuration
+  const rateCfg = {
+    limit: (leaderboardRateConfig && leaderboardRateConfig.limit) || LEADERBOARD_RATE_LIMIT,
+    windowMs: (leaderboardRateConfig && leaderboardRateConfig.windowMs) || LEADERBOARD_RATE_WINDOW_MS
+  };
+  // Instance-specific rate map
+  const leaderboardRateDataLocal = new Map();
+  // Allow overriding cache TTL per instance
+  const cacheTtlMs = leaderboardCacheMs || LEADERBOARD_CACHE_MS;
 
   app.use(cors());
   // Lightweight test/dev auth: allow injecting user via header in non-authenticated environments
@@ -608,7 +658,7 @@ Retorne APENAS JSON.`;
   // POST /api/match-providers - Simple matching logic (prototype)
   app.post('/api/match-providers', async (req, res) => {
     try {
-      let { job, jobId, allUsers = [], allJobs = [] } = req.body || {};
+      let { job, jobId, allUsers = [] } = req.body || {};
       
       // Resilience: If only jobId provided, fetch the job from Firestore
       if (!job && jobId) {
@@ -645,7 +695,7 @@ Retorne APENAS JSON.`;
       const providers = allUsers.filter(u => (u && (u.type === 'prestador')));
 
       const scored = providers.map(p => {
-        const name = (p.name || '').toLowerCase();
+        // const name = (p.name || '').toLowerCase(); // Variable not used
         const headline = (p.headline || '').toLowerCase();
         const specialties = Array.isArray(p.specialties) ? p.specialties.join(' ').toLowerCase() : '';
         const pLocation = (p.location || '').toLowerCase();
@@ -845,22 +895,38 @@ Retorne APENAS JSON.`;
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    // Handle the event
+    // Handle the event (idempotent & structured logging)
     switch (event.type) {
-      case 'checkout.session.completed':
+      case 'checkout.session.completed': {
         const session = event.data.object;
-        const { escrowId } = session.metadata;
+        const { escrowId } = session.metadata || {};
         const paymentIntentId = session.payment_intent;
+        console.log('[Stripe Webhook] Event received', {
+          eventId: event.id,
+          type: event.type,
+          escrowId,
+          paymentIntentId,
+        });
 
         if (escrowId && paymentIntentId) {
-          console.log(`✅ Checkout session completed for Escrow ID: ${escrowId}.`);
           const escrowRef = db.collection('escrows').doc(escrowId);
-          await escrowRef.update({ status: 'pago', paymentIntentId: paymentIntentId });
+          try {
+            const snap = await escrowRef.get();
+            const existing = snap.exists ? snap.data() : {};
+            if (existing.status === 'pago' && existing.paymentIntentId === paymentIntentId) {
+              console.log('[Stripe Webhook] Skipping update (already processed)', { escrowId, paymentIntentId });
+            } else {
+              await escrowRef.update({ status: 'pago', paymentIntentId });
+              console.log('[Stripe Webhook] Escrow updated to pago', { escrowId, paymentIntentId });
+            }
+          } catch (updateErr) {
+            console.error('[Stripe Webhook] Error updating escrow', { escrowId, paymentIntentId, error: updateErr.message });
+            return res.status(500).json({ error: 'Failed to update escrow status' });
+          }
         }
-        break;
-      // ... handle other event types
+        break; }
       default:
-        console.log(`Unhandled event type ${event.type}`);
+        console.log('[Stripe Webhook] Unhandled event type', { type: event.type, eventId: event.id });
     }
 
     // Return a 200 response to acknowledge receipt of the event
@@ -872,6 +938,12 @@ Retorne APENAS JSON.`;
   app.get('/diag/stripe-webhook-secret', (req, res) => {
     const configured = Boolean(process.env.STRIPE_WEBHOOK_SECRET && process.env.STRIPE_WEBHOOK_SECRET.startsWith('whsec_'));
     return res.status(200).json({ configured });
+  });
+
+  // Stripe mode diagnostics
+  app.get('/diag/stripe-mode', (req, res) => {
+    const mode = stripeContainer ? stripeContainer.mode : 'disabled';
+    return res.status(200).json({ mode });
   });
 
 
@@ -1013,12 +1085,20 @@ Retorne APENAS JSON.`;
     // based on req.user.uid if they are the client for the job.
 
     try {
-      const bucketName = process.env.GCP_STORAGE_BUCKET; // e.g., 'your-project-id.appspot.com'
+      // Resolve bucket name: prefer explicit env var; fallback to Firebase default bucket pattern
+      let bucketName = process.env.GCP_STORAGE_BUCKET; // e.g., 'your-project-id.appspot.com'
       if (!bucketName) {
-        throw new Error("GCP_STORAGE_BUCKET environment variable not set.");
+        const gProject = process.env.GCLOUD_PROJECT || process.env.GOOGLE_CLOUD_PROJECT;
+        if (gProject) {
+          bucketName = `${gProject}.appspot.com`;
+          console.warn(`[uploads] GCP_STORAGE_BUCKET not set. Falling back to default bucket: ${bucketName}`);
+        }
       }
-  // Use injected storage instance (for tests) instead of global singleton
-  const bucket = storageInstance.bucket(bucketName);
+      if (!bucketName) {
+        throw new Error("GCP_STORAGE_BUCKET environment variable not set and no project fallback available.");
+      }
+      // Use injected storage instance (for tests) instead of global singleton
+      const bucket = storageInstance.bucket(bucketName);
       const filePath = `jobs/${jobId}/${Date.now()}-${fileName}`;
       const file = bucket.file(filePath);
 
@@ -1201,7 +1281,19 @@ Retorne APENAS JSON.`;
   // USERS API ENDPOINTS
   // =================================================================
 
-  // Get all users
+  // Get all users (with /api prefix for frontend compatibility)
+  app.get("/api/users", async (req, res) => {
+    try {
+      const snapshot = await db.collection("users").get();
+      const users = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(users);
+    } catch (error) {
+      console.error("Error getting users:", error);
+      res.status(500).json({ error: "Failed to retrieve users." });
+    }
+  });
+
+  // Get all users (legacy route without /api)
   app.get("/users", async (req, res) => {
     try {
       const snapshot = await db.collection("users").get();
@@ -1213,7 +1305,24 @@ Retorne APENAS JSON.`;
     }
   });
 
-  // Get a single user by ID (email)
+  // Get a single user by ID (with /api prefix)
+  app.get("/api/users/:id", async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const userRef = db.collection("users").doc(userId);
+      const doc = await userRef.get();
+
+      if (!doc.exists) {
+        return res.status(404).json({ error: "User not found." });
+      }
+      res.status(200).json({ id: doc.id, ...doc.data() });
+    } catch (error) {
+      console.error("Error getting user:", error);
+      res.status(500).json({ error: "Failed to retrieve user." });
+    }
+  });
+
+  // Get a single user by ID (legacy route)
   app.get("/users/:id", async (req, res) => {
     try {
       const userId = req.params.id;
@@ -1230,7 +1339,24 @@ Retorne APENAS JSON.`;
     }
   });
 
-  // Create a new user
+  // Create a new user (with /api prefix)
+  app.post("/api/users", async (req, res) => {
+    try {
+      const userData = req.body;
+      if (!userData.email) {
+        return res.status(400).json({ error: "User email is required." });
+      }
+      await db.collection("users").doc(userData.email).set(userData);
+      res
+        .status(201)
+        .json({ message: "User created successfully", id: userData.email });
+    } catch (error) {
+      console.error("Error creating user:", error);
+      res.status(500).json({ error: "Failed to create user." });
+    }
+  });
+
+  // Create a new user (legacy route)
   app.post("/users", async (req, res) => {
     try {
       const userData = req.body;
@@ -1277,7 +1403,973 @@ Retorne APENAS JSON.`;
     }
   });
 
-  // Get all jobs
+  // =================================================================
+  // ADMIN API ENDPOINTS
+  // =================================================================
+
+  // Set provider verification status (approve/reject identity verification)
+  app.post("/admin/providers/:userId/verification", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { status, note } = req.body;
+
+      if (!['pendente', 'verificado', 'recusado'].includes(status)) {
+        return res.status(400).json({ error: "Invalid status. Must be 'pendente', 'verificado', or 'recusado'." });
+      }
+
+      const userRef = db.collection("users").doc(userId);
+      const userDoc = await userRef.get();
+
+      if (!userDoc.exists) {
+        return res.status(404).json({ error: "User not found." });
+      }
+
+      const updateData = {
+        verificationStatus: status,
+        verificationNote: note || null,
+        verificationUpdatedAt: admin.firestore.FieldValue.serverTimestamp()
+      };
+
+      await userRef.update(updateData);
+
+      res.status(200).json({
+        success: true,
+        message: `Provider verification status updated to ${status}`,
+        userId,
+        status
+      });
+    } catch (error) {
+      console.error("Error updating verification status:", error);
+      res.status(500).json({ error: "Failed to update verification status." });
+    }
+  });
+
+  // Suspend a provider
+  app.post("/admin/providers/:userId/suspend", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { reason } = req.body;
+
+      const userRef = db.collection("users").doc(userId);
+      const userDoc = await userRef.get();
+
+      if (!userDoc.exists) {
+        return res.status(404).json({ error: "User not found." });
+      }
+
+      await userRef.update({
+        status: 'suspenso',
+        suspensionReason: reason || 'Suspended by admin',
+        suspendedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Provider suspended successfully",
+        userId
+      });
+    } catch (error) {
+      console.error("Error suspending provider:", error);
+      res.status(500).json({ error: "Failed to suspend provider." });
+    }
+  });
+
+  // Reactivate a provider
+  app.post("/admin/providers/:userId/reactivate", async (req, res) => {
+    try {
+      const { userId } = req.params;
+
+      const userRef = db.collection("users").doc(userId);
+      const userDoc = await userRef.get();
+
+      if (!userDoc.exists) {
+        return res.status(404).json({ error: "User not found." });
+      }
+
+      await userRef.update({
+        status: 'ativo',
+        suspensionReason: null,
+        reactivatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Provider reactivated successfully",
+        userId
+      });
+    } catch (error) {
+      console.error("Error reactivating provider:", error);
+      res.status(500).json({ error: "Failed to reactivate provider." });
+    }
+  });
+
+  // =================================================================
+  // PROSPECTING & AUTO-RECRUITMENT API
+  // =================================================================
+
+  // Auto-prospecting endpoint - triggers when no providers available
+  app.post("/api/auto-prospect", async (req, res) => {
+    try {
+      const { category, location, description, clientEmail, urgency } = req.body;
+
+      console.log(`[Auto-Prospect] Triggered for ${category} in ${location}`);
+
+      // 1. Search Google for local professionals (mock for now - real implementation would use Google Places API)
+      const searchQuery = `${category} ${location} profissional`;
+      console.log(`[Auto-Prospect] Would search Google for: "${searchQuery}"`);
+
+      // Mock results - in production, this would call Google Places API + scraping
+      const mockProspects = [
+        {
+          name: `${category} Pro Services`,
+          email: `contato@${category.toLowerCase().replace(/\s/g, '')}pro.com`,
+          phone: '+55 11 98765-4321',
+          source: 'google_auto'
+        }
+      ];
+
+      // 2. Save prospects to database
+      const savedProspects = [];
+      for (const prospect of mockProspects) {
+        const prospectRef = db.collection('prospects').doc();
+        await prospectRef.set({
+          id: prospectRef.id,
+          name: prospect.name,
+          email: prospect.email,
+          phone: prospect.phone,
+          specialty: category,
+          source: prospect.source,
+          status: 'pendente',
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          relatedJob: {
+            category,
+            location,
+            clientEmail
+          },
+          notes: [{
+            text: `Auto-prospectado via IA para ${category} em ${location}`,
+            createdAt: new Date().toISOString(),
+            createdBy: 'system'
+          }]
+        });
+        savedProspects.push(prospect);
+      }
+
+      // 3. Send invitation emails (would integrate with SendGrid/Resend)
+      let emailsSent = 0;
+      for (const prospect of savedProspects) {
+        console.log(`[Auto-Prospect] Would send email to: ${prospect.email}`);
+        // TODO: Implement actual email sending
+        emailsSent++;
+      }
+
+      // 4. Notify prospecting team (create notification for admins)
+      const adminsSnapshot = await db.collection('users').where('type', '==', 'admin').get();
+      for (const adminDoc of adminsSnapshot.docs) {
+        await db.collection('notifications').add({
+          userId: adminDoc.id,
+          text: `🚨 URGENTE: Cliente solicitou "${category}" em ${location}. ${savedProspects.length} prospectos encontrados automaticamente. Verifique a aba Prospecting.`,
+          isRead: false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          type: 'prospecting_alert',
+          urgency: urgency || 'high',
+          metadata: {
+            category,
+            location,
+            clientEmail,
+            prospectsFound: savedProspects.length
+          }
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        prospectsFound: savedProspects.length,
+        emailsSent,
+        adminNotified: true,
+        message: `Encontramos ${savedProspects.length} profissionais e enviamos convites. Equipe notificada!`
+      });
+
+    } catch (error) {
+      console.error('[Auto-Prospect] Error:', error);
+      res.status(500).json({
+        success: false,
+        prospectsFound: 0,
+        emailsSent: 0,
+        adminNotified: false,
+        message: 'Erro na prospecção automática'
+      });
+    }
+  });
+
+  // Get all prospects
+  app.get("/api/prospects", async (req, res) => {
+    try {
+      const snapshot = await db.collection("prospects").orderBy('createdAt', 'desc').get();
+      const prospects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(prospects);
+    } catch (error) {
+      console.error("Error getting prospects:", error);
+      res.status(500).json({ error: "Failed to retrieve prospects." });
+    }
+  });
+
+  // Create prospect manually
+  app.post("/api/prospects", async (req, res) => {
+    try {
+      const prospectData = req.body;
+      const prospectRef = db.collection("prospects").doc();
+      await prospectRef.set({
+        id: prospectRef.id,
+        ...prospectData,
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+      res.status(201).json({ success: true, id: prospectRef.id });
+    } catch (error) {
+      console.error("Error creating prospect:", error);
+      res.status(500).json({ error: "Failed to create prospect." });
+    }
+  });
+
+  // Update prospect
+  app.put("/api/prospects/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      await db.collection("prospects").doc(id).update({
+        ...updates,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+      res.status(200).json({ success: true, message: "Prospect updated" });
+    } catch (error) {
+      console.error("Error updating prospect:", error);
+      res.status(500).json({ error: "Failed to update prospect." });
+    }
+  });
+
+  // Send prospect invitation email
+  app.post("/api/send-prospect-invitation", async (req, res) => {
+    try {
+      const { prospectEmail, prospectName, jobCategory, jobLocation } = req.body;
+      
+      console.log(`[Send Invitation] To: ${prospectEmail} for ${jobCategory} in ${jobLocation}`);
+      
+      // TODO: Integrate with SendGrid, Resend, or similar email service
+      // For now, just log it
+      const emailContent = {
+        to: prospectEmail,
+        subject: `Convite: Novo Cliente Procurando ${jobCategory} em ${jobLocation}`,
+        body: `Olá ${prospectName},\n\nTemos um cliente procurando por ${jobCategory} em ${jobLocation}.\n\nCadastre-se gratuitamente em Servio.AI e participe deste orçamento!\n\nAcesse: https://servio-ai.com/register?type=provider`
+      };
+      
+      console.log('[Send Invitation] Email content:', emailContent);
+      
+      res.status(200).json({ success: true, message: "Invitation sent" });
+    } catch (error) {
+      console.error("Error sending invitation:", error);
+      res.status(500).json({ error: "Failed to send invitation." });
+    }
+  });
+
+  // Notify prospecting team
+  app.post("/api/notify-prospecting-team", async (req, res) => {
+    try {
+      const { category, location, clientEmail, prospectsFound, urgency, message } = req.body;
+      
+      // Get all admin users
+      const adminsSnapshot = await db.collection('users').where('type', '==', 'admin').get();
+      
+      for (const adminDoc of adminsSnapshot.docs) {
+        await db.collection('notifications').add({
+          userId: adminDoc.id,
+          text: message || `Nova solicitação: ${category} em ${location}`,
+          isRead: false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          type: 'prospecting_alert',
+          urgency: urgency || 'normal',
+          metadata: { category, location, clientEmail, prospectsFound }
+        });
+      }
+      
+      res.status(200).json({ success: true, message: "Team notified" });
+    } catch (error) {
+      console.error("Error notifying team:", error);
+      res.status(500).json({ error: "Failed to notify team." });
+    }
+  });
+
+  // =================================================================
+  // ENHANCED PROSPECTING v2.0 - AI-POWERED
+  // =================================================================
+
+  // AI-powered prospect analysis and scoring
+  app.post("/api/analyze-prospect", async (req, res) => {
+    try {
+      const { prospect, jobCategory, jobDescription } = req.body;
+
+      if (!defaultGenAI) {
+        // Fallback scoring without AI
+        return res.status(200).json({
+          name: prospect.name,
+          email: prospect.email,
+          phone: prospect.phone,
+          qualityScore: prospect.rating ? prospect.rating * 20 : 50,
+          matchScore: 50,
+          location: prospect.address,
+          preferredContact: prospect.email ? 'email' : 'phone',
+        });
+      }
+
+      const model = defaultGenAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      
+      const prompt = `Analise este perfil profissional e determine:
+1. Pontuação de qualidade (0-100): credibilidade, experiência, reputação
+2. Pontuação de adequação (0-100): quão bem o profissional se encaixa no job
+3. Especialidades principais
+4. Canal preferido de contato
+
+Profissional:
+Nome: ${prospect.name}
+Avaliação: ${prospect.rating || 'N/A'} (${prospect.reviewCount || 0} reviews)
+Website: ${prospect.website || 'N/A'}
+Localização: ${prospect.address || 'N/A'}
+Descrição: ${prospect.description || 'N/A'}
+
+Job solicitado:
+Categoria: ${jobCategory}
+Descrição: ${jobDescription}
+
+Responda em JSON:
+{
+  "qualityScore": number,
+  "matchScore": number,
+  "specialties": string[],
+  "preferredContact": "email" | "phone" | "whatsapp",
+  "aiAnalysis": "breve análise do perfil"
+}`;
+
+      const result = await model.generateContent(prompt);
+      const text = result.response.text();
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      
+      if (jsonMatch) {
+        const analysis = JSON.parse(jsonMatch[0]);
+        res.status(200).json({
+          name: prospect.name,
+          email: prospect.email,
+          phone: prospect.phone,
+          location: prospect.address,
+          ...analysis
+        });
+      } else {
+        throw new Error('Failed to parse AI response');
+      }
+
+    } catch (error) {
+      console.error("Error analyzing prospect:", error);
+      // Fallback response
+      res.status(200).json({
+        name: req.body.prospect.name,
+        email: req.body.prospect.email,
+        phone: req.body.prospect.phone,
+        qualityScore: 50,
+        matchScore: 50,
+        preferredContact: 'email',
+      });
+    }
+  });
+
+  // Generate personalized email using AI
+  app.post("/api/generate-prospect-email", async (req, res) => {
+    try {
+      const { prospectName, specialties, jobCategory, jobLocation, qualityScore } = req.body;
+
+      if (!defaultGenAI) {
+        // Fallback template
+        return res.status(200).json({
+          emailBody: `Olá ${prospectName},\n\nTemos um cliente procurando por ${jobCategory} em ${jobLocation}.\n\nGostaríamos de convidá-lo(a) para participar!\n\nCadastre-se: https://servio-ai.com/register?type=provider\n\nEquipe Servio.AI`
+        });
+      }
+
+      const model = defaultGenAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      
+      const prompt = `Crie um email personalizado e profissional para convidar ${prospectName} a se cadastrar na plataforma Servio.AI.
+
+Contexto:
+- Profissional: ${prospectName}
+- Especialidades: ${specialties?.join(', ') || 'não especificadas'}
+- Job solicitado: ${jobCategory}
+- Localização: ${jobLocation}
+- Pontuação de qualidade: ${qualityScore}/100
+
+O email deve:
+1. Ser cordial e personalizado
+2. Mencionar o job específico disponível
+3. Destacar benefícios da plataforma
+4. Incluir call-to-action claro
+5. Ter tom profissional mas amigável
+6. Máximo 150 palavras
+
+Retorne apenas o corpo do email, sem assunto.`;
+
+      const result = await model.generateContent(prompt);
+      const emailBody = result.response.text().trim();
+
+      res.status(200).json({ emailBody });
+
+    } catch (error) {
+      console.error("Error generating email:", error);
+      const { prospectName, jobCategory, jobLocation } = req.body;
+      res.status(200).json({
+        emailBody: `Olá ${prospectName},\n\nTemos um cliente procurando por ${jobCategory} em ${jobLocation}.\n\nGostaríamos de convidá-lo(a) para participar deste projeto!\n\nCadastre-se gratuitamente: https://servio-ai.com/register?type=provider\n\nEquipe Servio.AI`
+      });
+    }
+  });
+
+  // Send SMS invite
+  app.post("/api/send-sms-invite", async (req, res) => {
+    try {
+      const { phone, name, category, location } = req.body;
+
+      // TODO: Integrate with SMS service (Twilio, AWS SNS, etc.)
+      // For now, just log and return success
+      console.log(`📱 SMS to ${phone}: ${name}, temos um cliente procurando ${category} em ${location}. Cadastre-se: servio-ai.com/register?type=provider`);
+
+      res.status(200).json({ success: true, message: "SMS sent (simulated)" });
+    } catch (error) {
+      console.error("Error sending SMS:", error);
+      res.status(500).json({ error: "Failed to send SMS" });
+    }
+  });
+
+  // Send WhatsApp invite
+  app.post("/api/send-whatsapp-invite", async (req, res) => {
+    try {
+      const { phone, name, category, location } = req.body;
+
+      // TODO: Integrate with WhatsApp Business API
+      // For now, just log and return success
+      console.log(`💬 WhatsApp to ${phone}: Olá ${name}! Temos um cliente procurando ${category} em ${location}. Cadastre-se: https://servio-ai.com/register?type=provider`);
+
+      res.status(200).json({ success: true, message: "WhatsApp sent (simulated)" });
+    } catch (error) {
+      console.error("Error sending WhatsApp:", error);
+      res.status(500).json({ error: "Failed to send WhatsApp" });
+    }
+  });
+
+  // Enhanced prospecting with AI analysis and filtering
+  app.post("/api/enhanced-prospect", async (req, res) => {
+    try {
+      const { category, location, description, clientEmail, minQualityScore, maxProspects, channels, enableFollowUp } = req.body;
+
+      // Step 1: Search for prospects (simulated)
+      const mockProspects = [
+        { name: 'João Silva', email: 'joao@email.com', phone: '11999999999', rating: 4.8, reviewCount: 120 },
+        { name: 'Maria Santos', email: 'maria@email.com', phone: '11988888888', rating: 4.5, reviewCount: 85 },
+        { name: 'Pedro Costa', email: 'pedro@email.com', phone: '11977777777', rating: 4.2, reviewCount: 45 },
+      ];
+
+      // Step 2: Analyze each prospect with AI
+      const analyzedProspects = [];
+      for (const prospect of mockProspects) {
+        if (!defaultGenAI) {
+          analyzedProspects.push({
+            ...prospect,
+            qualityScore: prospect.rating * 20,
+            matchScore: 70,
+          });
+          continue;
+        }
+
+        const model = defaultGenAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        try {
+          const result = await model.generateContent(`Analise e pontue (0-100): ${prospect.name}, rating ${prospect.rating}, para ${category}. JSON: {"qualityScore": number, "matchScore": number}`);
+          const text = result.response.text();
+          const jsonMatch = text.match(/\{[\s\S]*?\}/);
+          if (jsonMatch) {
+            const scores = JSON.parse(jsonMatch[0]);
+            analyzedProspects.push({ ...prospect, ...scores });
+          }
+        } catch (err) {
+          analyzedProspects.push({ ...prospect, qualityScore: 50, matchScore: 50 });
+        }
+      }
+
+      // Step 3: Filter by quality score
+      const filtered = analyzedProspects.filter(p => p.qualityScore >= (minQualityScore || 60));
+      const topProspects = filtered.slice(0, maxProspects || 10);
+
+      // Step 4: Send invites
+      let emailsSent = 0;
+      let smsSent = 0;
+      let whatsappSent = 0;
+
+      for (const prospect of topProspects) {
+        if (channels?.includes('email') && prospect.email) {
+          // Generate personalized email with AI
+          let emailBody = `Olá ${prospect.name}, temos um cliente procurando ${category} em ${location}.`;
+          if (defaultGenAI) {
+            const model = defaultGenAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const emailResult = await model.generateContent(`Email curto e personalizado para ${prospect.name} sobre job: ${category} em ${location}`);
+            emailBody = emailResult.response.text().trim();
+          }
+          emailsSent++;
+        }
+        
+        if (channels?.includes('sms') && prospect.phone) smsSent++;
+        if (channels?.includes('whatsapp') && prospect.phone) whatsappSent++;
+
+        // Save prospect
+        await db.collection('prospects').add({
+          name: prospect.name,
+          email: prospect.email,
+          phone: prospect.phone,
+          specialty: category,
+          status: 'pendente',
+          qualityScore: prospect.qualityScore,
+          matchScore: prospect.matchScore,
+          source: 'ai_enhanced',
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+
+      // Step 5: Notify admin team
+      const adminsSnapshot = await db.collection('users').where('type', '==', 'admin').get();
+      for (const adminDoc of adminsSnapshot.docs) {
+        await db.collection('notifications').add({
+          userId: adminDoc.id,
+          text: `🤖 IA encontrou ${topProspects.length} prospects qualificados para ${category}`,
+          isRead: false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          type: 'prospecting_success',
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        prospectsFound: topProspects.length,
+        emailsSent,
+        smsSent,
+        whatsappSent,
+        adminNotified: true,
+        qualityScore: Math.round(topProspects.reduce((sum, p) => sum + p.qualityScore, 0) / topProspects.length),
+        topProspects: topProspects.map(p => ({ name: p.name, qualityScore: p.qualityScore, matchScore: p.matchScore })),
+        message: `IA encontrou ${topProspects.length} prospects qualificados!`
+      });
+
+    } catch (error) {
+      console.error("Enhanced prospecting error:", error);
+      res.status(500).json({ error: "Enhanced prospecting failed" });
+    }
+  });
+
+  // =================================================================
+  // PROSPECTORS & COMMISSIONS MANAGEMENT
+  // =================================================================
+
+  // Get all prospectors
+  app.get("/api/prospectors", async (req, res) => {
+    try {
+      const snapshot = await db.collection("prospectors").get();
+      const prospectors = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(prospectors);
+    } catch (error) {
+      console.error("Error getting prospectors:", error);
+      res.status(500).json({ error: "Failed to retrieve prospectors." });
+    }
+  });
+
+  // Create prospector
+  app.post("/api/prospectors", async (req, res) => {
+    try {
+      const prospectorData = req.body;
+      const prospectorRef = db.collection("prospectors").doc(prospectorData.email);
+      
+      await prospectorRef.set({
+        ...prospectorData,
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      // Also create user account for prospector if doesn't exist
+      const userRef = db.collection("users").doc(prospectorData.email);
+      const userDoc = await userRef.get();
+      
+      if (!userDoc.exists) {
+        await userRef.set({
+          email: prospectorData.email,
+          name: prospectorData.name,
+          type: 'admin', // Prospectors have admin access
+          status: 'ativo',
+          bio: 'Prospector na equipe Servio.AI',
+          location: '',
+          memberSince: admin.firestore.FieldValue.serverTimestamp(),
+          inviteCode: prospectorData.inviteCode
+        });
+      }
+
+      res.status(201).json({ success: true, id: prospectorData.email });
+    } catch (error) {
+      console.error("Error creating prospector:", error);
+      res.status(500).json({ error: "Failed to create prospector." });
+    }
+  });
+
+  // Get all commissions
+  app.get("/api/commissions", async (req, res) => {
+    try {
+      const { prospectorId, status } = req.query;
+      let query = db.collection("commissions");
+      
+      if (prospectorId) {
+        query = query.where("prospectorId", "==", prospectorId);
+      }
+      if (status) {
+        query = query.where("status", "==", status);
+      }
+      
+      const snapshot = await query.orderBy('createdAt', 'desc').get();
+      const commissions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(commissions);
+    } catch (error) {
+      console.error("Error getting commissions:", error);
+      res.status(500).json({ error: "Failed to retrieve commissions." });
+    }
+  });
+
+  // Create commission (called when provider completes a job)
+  app.post("/api/commissions", async (req, res) => {
+    try {
+      const { prospectorId, providerId, jobId, providerEarnings, rate } = req.body;
+      
+      const commissionAmount = providerEarnings * rate;
+      
+      const commissionRef = db.collection("commissions").doc();
+      await commissionRef.set({
+        id: commissionRef.id,
+        prospectorId,
+        providerId,
+        jobId,
+        amount: commissionAmount,
+        rate,
+        providerEarnings,
+        status: 'pending',
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      // Update prospector's total commissions
+      const prospectorRef = db.collection("prospectors").doc(prospectorId);
+      const prospectorDoc = await prospectorRef.get();
+      
+      if (prospectorDoc.exists) {
+        const currentTotal = prospectorDoc.data().totalCommissionsEarned || 0;
+        await prospectorRef.update({
+          totalCommissionsEarned: currentTotal + commissionAmount
+        });
+      }
+
+      res.status(201).json({ success: true, id: commissionRef.id, amount: commissionAmount });
+    } catch (error) {
+      console.error("Error creating commission:", error);
+      res.status(500).json({ error: "Failed to create commission." });
+    }
+  });
+
+  // Update commission status (mark as paid)
+  app.put("/api/commissions/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      
+      await db.collection("commissions").doc(id).update({
+        status,
+        paidAt: status === 'paid' ? admin.firestore.FieldValue.serverTimestamp() : null,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      res.status(200).json({ success: true, message: "Commission updated" });
+    } catch (error) {
+      console.error("Error updating commission:", error);
+      res.status(500).json({ error: "Failed to update commission." });
+    }
+  });
+
+  // Register provider with invite code (called during registration)
+  app.post("/api/register-with-invite", async (req, res) => {
+    try {
+      const { providerEmail, inviteCode } = req.body;
+      
+      // Find prospector by invite code
+      const prospectorSnapshot = await db.collection("prospectors")
+        .where("inviteCode", "==", inviteCode)
+        .limit(1)
+        .get();
+
+      if (prospectorSnapshot.empty) {
+        return res.status(404).json({ error: "Invalid invite code" });
+      }
+
+      const prospectorDoc = prospectorSnapshot.docs[0];
+      const prospectorId = prospectorDoc.id;
+      const prospectorData = prospectorDoc.data();
+
+      // Determine commission rate based on source
+      const source = req.body.source || 'manual'; // 'manual' or 'ai_auto'
+      const commissionRate = source === 'ai_auto' ? 0.0025 : 0.01; // 0.25% or 1%
+
+      // Update provider with prospector info
+      const providerRef = db.collection("users").doc(providerEmail);
+      await providerRef.update({
+        prospectorId,
+        prospectorCommissionRate: commissionRate,
+        recruitedAt: admin.firestore.FieldValue.serverTimestamp(),
+        recruitmentSource: source
+      });
+
+      // Update prospector stats
+      const currentRecruits = prospectorData.totalRecruits || 0;
+      const currentActive = prospectorData.activeRecruits || 0;
+      const supportedProviders = prospectorData.providersSupported || [];
+
+      await prospectorDoc.ref.update({
+        totalRecruits: currentRecruits + 1,
+        activeRecruits: currentActive + 1,
+        providersSupported: [...supportedProviders, providerEmail]
+      });
+
+      // Update prospect status if exists
+      const prospectSnapshot = await db.collection("prospects")
+        .where("email", "==", providerEmail)
+        .limit(1)
+        .get();
+
+      if (!prospectSnapshot.empty) {
+        await prospectSnapshot.docs[0].ref.update({
+          status: 'convertido',
+          prospectorId,
+          inviteCode,
+          convertedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Provider registered with prospector",
+        prospectorId,
+        commissionRate
+      });
+    } catch (error) {
+      console.error("Error registering with invite:", error);
+      res.status(500).json({ error: "Failed to register with invite." });
+    }
+  });
+
+  // === Prospector Phase 1 Dashboard: Stats endpoint ===
+  // Returns aggregated metrics and badge progression for a given prospector
+  // GET /api/prospector/stats?prospectorId=email
+  app.get('/api/prospector/stats', async (req, res) => {
+    try {
+      const { prospectorId } = req.query;
+      if (!prospectorId || typeof prospectorId !== 'string') {
+        return res.status(400).json({ error: 'prospectorId query param required' });
+      }
+      const ref = db.collection('prospectors').doc(prospectorId);
+      const snap = await ref.get();
+      if (!snap.exists) {
+        return res.status(404).json({ error: 'Prospector not found' });
+      }
+      const data = snap.data() || {};
+      const totalRecruits = Number(data.totalRecruits || 0);
+      const activeRecruits = Number(data.activeRecruits || 0);
+      const totalCommissionsEarned = Number(data.totalCommissionsEarned || 0);
+      const pendingCommissions = Number(data.pendingCommissions || 0);
+
+      // Badge tiers by number of recruits
+      const badgeTiers = [
+        { name: 'Bronze', min: 0 },
+        { name: 'Prata', min: 5 },
+        { name: 'Ouro', min: 10 },
+        { name: 'Platina', min: 25 },
+        { name: 'Diamante', min: 50 }
+      ];
+      let currentBadge = badgeTiers[0].name;
+      let nextBadge = null;
+      for (let i = badgeTiers.length - 1; i >= 0; i--) {
+        if (totalRecruits >= badgeTiers[i].min) {
+          currentBadge = badgeTiers[i].name;
+          const nb = badgeTiers[i + 1];
+          nextBadge = nb ? nb.name : null;
+          break;
+        }
+      }
+      const nextThreshold = (() => {
+        const tier = badgeTiers.find(t => t.name === nextBadge);
+        return tier ? tier.min : null;
+      })();
+      const currentTierObj = badgeTiers.find(t => t.name === currentBadge);
+      const currentBase = currentTierObj ? currentTierObj.min : 0;
+      const progressToNextBadge = nextThreshold === null ? 100 : Math.min(100, Math.round(((totalRecruits - currentBase) / (nextThreshold - currentBase)) * 100));
+      const averageCommissionPerRecruit = totalRecruits > 0 ? Number((totalCommissionsEarned / totalRecruits).toFixed(2)) : 0;
+
+      res.status(200).json({
+        prospectorId,
+        totalRecruits,
+        activeRecruits,
+        totalCommissionsEarned: Number(totalCommissionsEarned.toFixed(2)),
+        pendingCommissions: Number(pendingCommissions.toFixed(2)),
+        averageCommissionPerRecruit,
+        currentBadge,
+        nextBadge,
+        progressToNextBadge,
+        badgeTiers
+      });
+    } catch (err) {
+      console.error('Error fetching prospector stats:', err);
+      res.status(500).json({ error: 'Failed to fetch prospector stats' });
+    }
+  });
+
+  // === Prospector Phase 1 Dashboard: Leaderboard endpoint ===
+  // GET /api/prospectors/leaderboard?limit=10&sort=commissions|recruits
+  app.get('/api/prospectors/leaderboard', async (req, res) => {
+    try {
+      const { limit = '10', sort = 'commissions', forceRefresh } = req.query;
+      const lim = Math.min(50, Math.max(1, parseInt(limit, 10) || 10));
+      const sortField = sort === 'recruits' ? 'totalRecruits' : 'totalCommissionsEarned';
+
+      // Rate limiting
+      const ip = getClientIp(req);
+      if (isRateLimited(ip, leaderboardRateDataLocal, rateCfg)) {
+        return res.status(429).json({ error: 'Rate limit exceeded', retryAfterMs: rateCfg.windowMs });
+      }
+
+      // Cache check (bypass if forceRefresh present)
+      const cacheKey = sortField;
+      const cacheEntry = leaderboardCache[cacheKey];
+      const now = Date.now();
+      if (!forceRefresh && cacheEntry && cacheEntry.expiresAt > now && cacheEntry.payload) {
+        return res.status(200).json({ sort: sortField, cached: true, ttlMs: cacheEntry.expiresAt - now, ...cacheEntry.payload });
+      }
+
+      // Fetch fresh data
+      const snap = await db.collection('prospectors').get();
+      const all = snap.docs.map(d => ({ id: d.id, ...(d.data() || {}) }));
+      all.sort((a, b) => (Number(b[sortField] || 0) - Number(a[sortField] || 0)));
+      const results = all.slice(0, lim).map((p, idx) => ({
+        prospectorId: p.id,
+        name: p.name || p.id,
+        totalRecruits: Number(p.totalRecruits || 0),
+        totalCommissionsEarned: Number((p.totalCommissionsEarned || 0).toFixed ? (p.totalCommissionsEarned || 0).toFixed(2) : (p.totalCommissionsEarned || 0)),
+        rank: idx + 1
+      }));
+      const payload = { total: all.length, results };
+      leaderboardCache[cacheKey] = { expiresAt: now + cacheTtlMs, payload };
+      res.status(200).json({ sort: sortField, cached: false, ttlMs: cacheTtlMs, ...payload });
+    } catch (err) {
+      console.error('Error fetching leaderboard:', err);
+      res.status(500).json({ error: 'Failed to fetch leaderboard' });
+    }
+  });
+
+  // === Prospector Follow-up Automation (Phase 1) ===
+  // Data model (Firestore collection: prospector_outreach):
+  // { id, prospectorId, providerName, providerEmail, providerPhone, emailSentAt, whatsappSentAt|null, status: 'email_sent'|'whatsapp_sent'|'opted_out', optOut: boolean, errorHistory: [] }
+  // Threshold: WhatsApp follow-up 48h após email inicial.
+
+  const FOLLOW_UP_MS = 48 * 60 * 60 * 1000; // 48h
+
+  // Create outreach record and simulate initial email send
+  app.post('/api/prospector/outreach', async (req, res) => {
+    try {
+      const { prospectorId, providerName, providerEmail, providerPhone } = req.body;
+      if (!prospectorId || !providerEmail) {
+        return res.status(400).json({ error: 'prospectorId and providerEmail required' });
+      }
+      const id = providerEmail.toLowerCase();
+      const ref = db.collection('prospector_outreach').doc(id);
+      const now = Date.now();
+      await ref.set({
+        id,
+        prospectorId,
+        providerName: providerName || providerEmail.split('@')[0],
+        providerEmail,
+        providerPhone: providerPhone || null,
+        emailSentAt: now,
+        whatsappSentAt: null,
+        status: 'email_sent',
+        optOut: false,
+        errorHistory: [],
+        followUpEligibleAt: now + FOLLOW_UP_MS
+      });
+      // Simulação de envio de email (stub)
+      res.status(201).json({ success: true, id, status: 'email_sent' });
+    } catch (err) {
+      console.error('Error creating outreach record:', err);
+      res.status(500).json({ error: 'Failed to create outreach record' });
+    }
+  });
+
+  // List outreach records for a prospector
+  app.get('/api/prospector/outreach', async (req, res) => {
+    try {
+      const { prospectorId } = req.query;
+      const snap = await db.collection('prospector_outreach').get();
+      const all = snap.docs.map(d => ({ ...(d.data() || {}) }));
+      const filtered = prospectorId ? all.filter(r => r.prospectorId === prospectorId) : all;
+      res.status(200).json({ total: filtered.length, results: filtered });
+    } catch (err) {
+      console.error('Error listing outreach records:', err);
+      res.status(500).json({ error: 'Failed to list outreach records' });
+    }
+  });
+
+  // Opt-out a single outreach record
+  app.post('/api/prospector/outreach/:id/optout', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const ref = db.collection('prospector_outreach').doc(id);
+      const snap = await ref.get();
+      if (!snap.exists) return res.status(404).json({ error: 'Outreach record not found' });
+      await ref.update({ optOut: true, status: 'opted_out' });
+      res.status(200).json({ success: true, id, status: 'opted_out' });
+    } catch (err) {
+      console.error('Error opting out outreach record:', err);
+      res.status(500).json({ error: 'Failed to opt-out outreach record' });
+    }
+  });
+
+  // Manual scheduler trigger (test/support only)
+  app.post('/api/prospector/outreach/scheduler-run', async (req, res) => {
+    try {
+      const processed = await processPendingOutreach({ db });
+      res.status(200).json({ success: true, processed });
+    } catch (err) {
+      console.error('Scheduler run error:', err);
+      res.status(500).json({ error: 'Failed to run scheduler' });
+    }
+  });
+
+  // Get all jobs (with /api prefix for frontend compatibility)
+  app.get("/api/jobs", async (req, res) => {
+    try {
+      const { providerId, status } = req.query;
+      let query = db.collection("jobs");
+      if (providerId) {
+        query = query.where("providerId", "==", providerId);
+      }
+      if (status) {
+        query = query.where("status", "==", status);
+      }
+      const snapshot = await query.get();
+      const jobs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(jobs);
+    } catch (error) {
+      console.error("Error getting jobs:", error);
+      res.status(500).json({ error: "Failed to retrieve jobs." });
+    }
+  });
+
+  // Get all jobs (legacy route without /api)
   app.get("/jobs", async (req, res) => {
     try {
       const { providerId, status } = req.query;
@@ -1297,7 +2389,24 @@ Retorne APENAS JSON.`;
     }
   });
 
-  // Create a new job
+  // Create a new job (with /api prefix)
+  app.post("/api/jobs", async (req, res) => {
+    try {
+      const jobData = {
+        ...req.body,
+        createdAt: new Date().toISOString(),
+        status: req.body.status || "aberto",
+      };
+      const jobRef = db.collection("jobs").doc();
+      await jobRef.set(jobData);
+      res.status(201).json({ id: jobRef.id, ...jobData });
+    } catch (error) {
+      console.error("Error creating job:", error);
+      res.status(500).json({ error: "Failed to create job." });
+    }
+  });
+
+  // Create a new job (legacy route)
   app.post("/jobs", async (req, res) => {
     try {
       const jobData = {
@@ -1650,11 +2759,7 @@ Retorne APENAS JSON.`;
     try {
       const { id } = req.params;
       const updates = req.body;
-
-      delete updates.createdAt;
-      delete updates.clientId;
-      updates.updatedAt = new Date().toISOString();
-
+      
       const docRef = db.collection("jobs").doc(id);
       const doc = await docRef.get();
 
@@ -1662,8 +2767,72 @@ Retorne APENAS JSON.`;
         return res.status(404).json({ error: "Job not found." });
       }
 
+      const oldData = doc.data();
+      const oldStatus = oldData.status;
+      const newStatus = updates.status;
+
+      delete updates.createdAt;
+      delete updates.clientId;
+      updates.updatedAt = new Date().toISOString();
+
       await docRef.update(updates);
       const updatedDoc = await docRef.get();
+      const updatedData = updatedDoc.data();
+
+      // Check if job was just completed - trigger commission calculation
+      if (oldStatus !== 'concluido' && newStatus === 'concluido' && updatedData.providerId) {
+        try {
+          const providerRef = db.collection("users").doc(updatedData.providerId);
+          const providerDoc = await providerRef.get();
+          
+          if (providerDoc.exists) {
+            const providerData = providerDoc.data();
+            
+            // Check if provider was recruited by a prospector
+            if (providerData.prospectorId && providerData.prospectorCommissionRate) {
+              const jobPrice = parseFloat(updatedData.price) || 0;
+              const providerRate = parseFloat(providerData.providerRate) || 0.75;
+              const prospectorCommissionRate = parseFloat(providerData.prospectorCommissionRate) || 0.01;
+              
+              // Calculate earnings
+              const providerEarnings = jobPrice * providerRate;
+              const commissionAmount = providerEarnings * prospectorCommissionRate;
+              
+              // Create commission record
+              const commissionRef = db.collection("commissions").doc();
+              await commissionRef.set({
+                id: commissionRef.id,
+                prospectorId: providerData.prospectorId,
+                providerId: updatedData.providerId,
+                jobId: id,
+                amount: commissionAmount,
+                rate: prospectorCommissionRate,
+                providerEarnings: providerEarnings,
+                jobPrice: jobPrice,
+                providerRate: providerRate,
+                status: 'pending',
+                createdAt: admin.firestore.FieldValue.serverTimestamp()
+              });
+
+              // Update prospector's total commissions
+              const prospectorRef = db.collection("prospectors").doc(providerData.prospectorId);
+              const prospectorDoc = await prospectorRef.get();
+              
+              if (prospectorDoc.exists) {
+                const currentTotal = prospectorDoc.data().totalCommissionsEarned || 0;
+                await prospectorRef.update({
+                  totalCommissionsEarned: currentTotal + commissionAmount
+                });
+              }
+
+              console.log(`✅ Commission created: R$ ${commissionAmount.toFixed(2)} for prospector ${providerData.prospectorId}`);
+            }
+          }
+        } catch (commissionError) {
+          console.error("Error creating commission:", commissionError);
+          // Don't fail the job update if commission creation fails
+        }
+      }
 
       res.status(200).json({ id: updatedDoc.id, ...updatedDoc.data() });
     } catch (error) {

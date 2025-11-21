@@ -6,6 +6,10 @@ import AdminJobManagement from './AdminJobManagement';
 import AdminProviderManagement from './AdminProviderManagement';
 import AdminFinancials from './AdminFinancials';
 import AdminFraudAlerts from './AdminFraudAlerts';
+import AdminUserManagement from './AdminUserManagement';
+import AdminProspecting from './AdminProspecting';
+import AdminMarketing from './AdminMarketing';
+import AdminProspectorManagement from './AdminProspectorManagement';
 import DisputeDetailsModal from './DisputeDetailsModal';
 import * as API from '../services/api';
 
@@ -13,7 +17,7 @@ interface AdminDashboardProps {
   user: User;
 }
 
-type AdminTab = 'analytics' | 'jobs' | 'providers' | 'financials' | 'fraud';
+type AdminTab = 'analytics' | 'jobs' | 'providers' | 'financials' | 'fraud' | 'users' | 'prospecting' | 'marketing' | 'prospectors';
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     const { addToast } = useToast();
@@ -86,6 +90,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
                 return <AdminFinancials />;
             case 'fraud':
                 return <AdminFraudAlerts />;
+            case 'users':
+                return <AdminUserManagement />;
+            case 'prospecting':
+                return <AdminProspecting />;
+            case 'marketing':
+                return <AdminMarketing />;
+            case 'prospectors':
+                return <AdminProspectorManagement />;
             default:
                 return null;
         }
@@ -98,7 +110,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
 
             <div className="border-b border-gray-200 mb-6" data-testid="admin-tabs">
                 <nav className="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
-                    {['analytics', 'jobs', 'providers', 'financials', 'fraud'].map(tabId => (
+                    {['analytics', 'jobs', 'providers', 'financials', 'fraud', 'users', 'prospecting', 'marketing', 'prospectors'].map(tabId => (
                         <button
                             data-testid={`admin-tab-${tabId}`}
                             key={tabId}

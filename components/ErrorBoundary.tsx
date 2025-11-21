@@ -21,6 +21,18 @@ export default class ErrorBoundary extends React.Component<React.PropsWithChildr
     // Centralizado para futura telemetria; console permitido
     console.error('[ErrorBoundary] Caught error:', error, info);
     this.setState({ info: { componentStack: info.componentStack || undefined } });
+    
+    // Se for erro de chunk loading, recarregar automaticamente
+    const hasReloaded = sessionStorage.getItem('hasReloadedForChunkError');
+    const errorMsg = error.message || '';
+    if ((errorMsg.includes('Failed to fetch dynamically imported module') ||
+         errorMsg.includes('Importing a module script failed') ||
+         errorMsg.includes('Failed to load module script') ||
+         errorMsg.includes('Loading chunk')) && !hasReloaded) {
+      console.log('[ErrorBoundary] Detectado erro de chunk loading, recarregando página...');
+      sessionStorage.setItem('hasReloadedForChunkError', 'true');
+      setTimeout(() => window.location.reload(), 100);
+    }
   }
 
   handleRetry = () => {

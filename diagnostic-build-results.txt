@@ -1,0 +1,33 @@
+
+> servio-ai-frontend@0.0.0 build
+> tsc && vite build
+
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32mÔ£ô[39m 134 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                                       [39m[1m[2m  2.74 kB[22m[1m[22m[2m Ôöé gzip:   1.01 kB[22m
+[2mdist/[22m[35massets/index-BeprWe0G.css                        [39m[1m[2m 60.07 kB[22m[1m[22m[2m Ôöé gzip:  10.13 kB[22m
+[2mdist/[22m[36massets/SkeletonBlock-6KjJWEek.js                 [39m[1m[2m  0.32 kB[22m[1m[22m[2m Ôöé gzip:   0.26 kB[22m[2m Ôöé map:     0.56 kB[22m
+[2mdist/[22m[36massets/LoadingSpinner-DcszDf5q.js                [39m[1m[2m  1.85 kB[22m[1m[22m[2m Ôöé gzip:   0.83 kB[22m[2m Ôöé map:     3.11 kB[22m
+[2mdist/[22m[36massets/LocationMap-D54UF_82.js                   [39m[1m[2m  2.18 kB[22m[1m[22m[2m Ôöé gzip:   0.90 kB[22m[2m Ôöé map:     3.83 kB[22m
+[2mdist/[22m[36massets/errorMessages-C-MRLIHv.js                 [39m[1m[2m  2.53 kB[22m[1m[22m[2m Ôöé gzip:   1.09 kB[22m[2m Ôöé map:    10.39 kB[22m
+[2mdist/[22m[36massets/PaymentSuccessPage-7m7CnOYm.js            [39m[1m[2m  2.64 kB[22m[1m[22m[2m Ôöé gzip:   1.01 kB[22m[2m Ôöé map:     3.90 kB[22m
+[2mdist/[22m[36massets/ServiceLandingPage-DEFw3_P6.js            [39m[1m[2m  3.39 kB[22m[1m[22m[2m Ôöé gzip:   1.00 kB[22m[2m Ôöé map:     5.22 kB[22m
+[2mdist/[22m[36massets/ProspectingNotificationModal-C9ZlM3em.js  [39m[1m[2m  3.90 kB[22m[1m[22m[2m Ôöé gzip:   1.18 kB[22m[2m Ôöé map:     4.95 kB[22m
+[2mdist/[22m[36massets/DisputeDetailsModal-B8SFXTkM.js           [39m[1m[2m  6.59 kB[22m[1m[22m[2m Ôöé gzip:   1.84 kB[22m[2m Ôöé map:     9.67 kB[22m
+[2mdist/[22m[36massets/MatchingResultsModal-C0yko1-2.js          [39m[1m[2m  8.20 kB[22m[1m[22m[2m Ôöé gzip:   2.14 kB[22m[2m Ôöé map:    11.67 kB[22m
+[2mdist/[22m[36massets/ProviderLandingPage-Bksskoof.js           [39m[1m[2m 12.06 kB[22m[1m[22m[2m Ôöé gzip:   2.50 kB[22m[2m Ôöé map:    12.74 kB[22m
+[2mdist/[22m[36massets/index.esm-DZ-Ltxy1.js                     [39m[1m[2m 15.70 kB[22m[1m[22m[2m Ôöé gzip:   4.74 kB[22m[2m Ôöé map:   150.37 kB[22m
+[2mdist/[22m[36massets/FindProvidersPage-BSkhjAlB.js             [39m[1m[2m 18.58 kB[22m[1m[22m[2m Ôöé gzip:   3.79 kB[22m[2m Ôöé map:    28.06 kB[22m
+[2mdist/[22m[36massets/ProfilePage-CF2oefC7.js                   [39m[1m[2m 22.96 kB[22m[1m[22m[2m Ôöé gzip:   4.84 kB[22m[2m Ôöé map:    36.87 kB[22m
+[2mdist/[22m[36massets/AIJobRequestWizard-DDG0X8mp.js            [39m[1m[2m 25.71 kB[22m[1m[22m[2m Ôöé gzip:   5.10 kB[22m[2m Ôöé map:    38.58 kB[22m
+[2mdist/[22m[36massets/AuctionRoomModal-vp01pucL.js              [39m[1m[2m 27.03 kB[22m[1m[22m[2m Ôöé gzip:   5.60 kB[22m[2m Ôöé map:    47.98 kB[22m
+[2mdist/[22m[36massets/AdminDashboard-CldiF4cz.js                [39m[1m[2m 65.37 kB[22m[1m[22m[2m Ôöé gzip:   9.02 kB[22m[2m Ôöé map:   103.62 kB[22m
+[2mdist/[22m[36massets/ProviderDashboard-2w1I4LWY.js             [39m[1m[2m 99.65 kB[22m[1m[22m[2m Ôöé gzip:  17.07 kB[22m[2m Ôöé map:   156.86 kB[22m
+[2mdist/[22m[36massets/ClientDashboard-XDOcddHL.js               [39m[1m[2m110.83 kB[22m[1m[22m[2m Ôöé gzip:  17.45 kB[22m[2m Ôöé map:   168.29 kB[22m
+[2mdist/[22m[36massets/index-CGcI0wT6.js                         [39m[1m[2m116.12 kB[22m[1m[22m[2m Ôöé gzip:  28.64 kB[22m[2m Ôöé map:   332.86 kB[22m
+[2mdist/[22m[36massets/react-vendor-DbXGO6ox.js                  [39m[1m[2m301.75 kB[22m[1m[22m[2m Ôöé gzip:  91.62 kB[22m[2m Ôöé map: 1,591.92 kB[22m
+[2mdist/[22m[36massets/firebase-vendor-BfDqZCqG.js               [39m[1m[2m438.07 kB[22m[1m[22m[2m Ôöé gzip: 102.71 kB[22m[2m Ôöé map: 2,177.10 kB[22m
+[32mÔ£ô built in 19.25s[39m

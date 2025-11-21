@@ -2,7 +2,15 @@
   "recommendations": [
     "google.geminicodeassist",
     "github.copilot",
-    "github.copilot-chat"
+    "github.copilot-chat",
+    "googlecloudcode.cloudcode",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
   ],
-  "unwantedRecommendations": []
+  "unwantedRecommendations": [],
+  
+  // Se o Gemini travar, desabilite temporariamente extensões pesadas:
+  // Ctrl+Shift+X → Encontre a extensão → Engrenagem → Disable (Workspace)
+  // Candidatas: SonarLint, GitLens, Docker, Azure, etc.
+  "_troubleshooting": "Para destravar IA: 1) Feche terminais extras, 2) Developer: Reload Window, 3) Desabilite SonarLint temporariamente"
 }
