@@ -45,7 +45,7 @@ export interface LinkAnalytics {
 }
 
 const BASE_URL = import.meta.env.VITE_APP_URL || 'https://servio-ai.com';
-const SHORT_DOMAIN = 'servio.link'; // Could use a URL shortener service
+// const SHORT_DOMAIN = 'servio.link'; // Could use a URL shortener service (future implementation)
 
 /**
  * Generate unique referral link for a prospector
@@ -108,7 +108,7 @@ export async function generateReferralLink(
     createdAt: new Date(),
   });
 
-  console.log(`[ReferralLink] Generated for ${prospectorName}: ${shortUrl}`);
+  // Link generated successfully
   return referralLink;
 }
 
@@ -136,7 +136,7 @@ export async function trackClick(
     timestamp: Timestamp.now(),
   });
 
-  console.log(`[ReferralLink] Click tracked for prospector ${prospectorId} from ${source}`);
+  // Click tracked successfully
 }
 
 /**
@@ -160,7 +160,7 @@ export async function trackConversion(
     timestamp: Timestamp.now(),
   });
 
-  console.log(`[ReferralLink] Conversion tracked: ${prospectorId} → ${providerId}`);
+  // Conversion tracked successfully
 }
 
 /**
@@ -288,7 +288,7 @@ function generateShortCode(prospectorId: string): string {
 /**
  * Get leaderboard of top performing referral links
  */
-export async function getTopReferralLinks(limit: number = 10): Promise<Array<{
+export async function getTopReferralLinks(_limit: number = 10): Promise<Array<{
   prospectorId: string;
   prospectorName: string;
   clicks: number;
@@ -313,6 +313,6 @@ export async function bulkGenerateReferralLinks(
     links.push(link);
   }
 
-  console.log(`[ReferralLink] Bulk generated ${links.length} links`);
+  // Bulk generation complete
   return links;
 }

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { fetchProspectorStats, fetchProspectorLeaderboard, ProspectorStats, LeaderboardEntry, computeBadgeProgress } from '../services/api';
 import ReferralLinkGenerator from '../src/components/ReferralLinkGenerator';
 import MessageTemplateSelector from '../src/components/MessageTemplateSelector';
+import NotificationSettings from '../src/components/NotificationSettings';
 
 const loadingClass = 'animate-pulse bg-gray-200 rounded h-6 w-32';
 
-type TabType = 'overview' | 'links' | 'templates';
+type TabType = 'overview' | 'links' | 'templates' | 'notifications';
 
 const ProgressBar: React.FC<{ value: number }> = ({ value }) => (
   <div className="w-full bg-gray-200 rounded h-3 overflow-hidden">
@@ -101,6 +102,16 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
           >
             📝 Templates de Mensagens
           </button>
+          <button
+            onClick={() => setActiveTab('notifications')}
+            className={`px-6 py-3 font-medium transition-colors ${
+              activeTab === 'notifications'
+                ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+            }`}
+          >
+            🔔 Notificações
+          </button>
         </div>
       </div>
       {/* Tab Content: Overview */}
@@ -183,6 +194,11 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
       {/* Tab Content: Message Templates */}
       {activeTab === 'templates' && (
         <MessageTemplateSelector referralLink={referralLink} />
+      )}
+
+      {/* Tab Content: Notifications */}
+      {activeTab === 'notifications' && (
+        <NotificationSettings prospectorId={prospectorId} />
       )}
     </div>
   );
