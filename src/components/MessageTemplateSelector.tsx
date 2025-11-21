@@ -8,7 +8,6 @@
 import React, { useState } from 'react';
 import {
   getTemplates,
-  getTemplateById,
   formatTemplate,
   getCategories,
   getPlatforms,

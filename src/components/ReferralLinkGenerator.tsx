@@ -8,7 +8,6 @@ import {
   type ReferralLink,
   type LinkAnalytics,
 } from '../services/referralLinkService';
-import { useAppContext } from '../contexts/AppContext';
 
 interface ReferralLinkGeneratorProps {
   prospectorId: string;
@@ -22,7 +21,11 @@ export default function ReferralLinkGenerator({ prospectorId, onLinkGenerated }:
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   useEffect(() => {
-    loadReferralLink();
+    async function load() {
+      await loadReferralLink();
+    }
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prospectorId]);
 
   async function loadReferralLink() {
