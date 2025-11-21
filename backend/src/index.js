@@ -7,6 +7,9 @@ const { createStripe } = require('./stripeConfig');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 // Prospector follow-up automation scheduler helpers
 const { processPendingOutreach } = require('./outreachScheduler');
+// Follow-up email processing service & Gmail integration
+const gmailService = require('./gmailService');
+const followUpService = require('./followUpService');
 
 // ===========================
 // Leaderboard Cache & Rate Limiting (Phase 1)
@@ -2838,6 +2841,73 @@ Retorne apenas o corpo do email, sem assunto.`;
     } catch (error) {
       console.error("Error updating job:", error);
       res.status(500).json({ error: "Failed to update job." });
+    }
+  });
+
+  // =================================================================
+  // FOLLOW-UP EMAIL SCHEDULING ENDPOINTS (Prospectors Phase 1)
+  // =================================================================
+
+  // POST /api/followups - create a new follow-up schedule for a prospect
+  app.post('/api/followups', async (req, res) => {
+    try {
+      const { prospectorId, prospectName, prospectEmail, referralLink } = req.body || {};
+      if (!prospectorId || !prospectName || !prospectEmail) {
+        return res.status(400).json({ error: 'prospectorId, prospectName e prospectEmail são obrigatórios' });
+      }
+      const schedule = await followUpService.createFollowUpSchedule({
+        db,
+        prospectorId,
+        prospectName,
+        prospectEmail,
+        referralLink: referralLink || null
+      });
+      res.status(201).json(schedule);
+    } catch (err) {
+      console.error('Error creating follow-up schedule:', err);
+      res.status(500).json({ error: 'Failed to create follow-up schedule' });
+    }
+  });
+
+  // GET /api/followups/:prospectorId - list schedules for a prospector
+  app.get('/api/followups/:prospectorId', async (req, res) => {
+    try {
+      const { prospectorId } = req.params;
+      const schedules = await followUpService.listSchedules({ db, prospectorId });
+      res.json({ items: schedules });
+    } catch (err) {
+      console.error('Error listing follow-up schedules:', err);
+      res.status(500).json({ error: 'Failed to list schedules' });
+    }
+  });
+
+  // PATCH /api/followups/:id - pause, resume or opt-out a schedule
+  app.patch('/api/followups/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { action } = req.body || {};
+      if (!action || !['pause','resume','optout'].includes(action)) {
+        return res.status(400).json({ error: 'Invalid action. Use pause | resume | optout' });
+      }
+      let updated;
+      if (action === 'pause') updated = await followUpService.pauseSchedule({ db, scheduleId: id });
+      else if (action === 'resume') updated = await followUpService.resumeSchedule({ db, scheduleId: id });
+      else updated = await followUpService.optOutSchedule({ db, scheduleId: id });
+      res.json(updated);
+    } catch (err) {
+      console.error('Error updating follow-up schedule:', err);
+      res.status(500).json({ error: 'Failed to update schedule' });
+    }
+  });
+
+  // POST /api/followups/run - manually trigger due email processing (cron replacement)
+  app.post('/api/followups/run', async (_req, res) => {
+    try {
+      const result = await followUpService.processDueEmails({ db, gmailService });
+      res.json(result);
+    } catch (err) {
+      console.error('Error processing follow-up emails:', err);
+      res.status(500).json({ error: 'Failed processing follow-up emails' });
     }
   });
 
