@@ -10,6 +10,7 @@ import AuthModal from './components/AuthModal';
 const ClientDashboard = lazy(() => import('./components/ClientDashboard'));
 const ProviderDashboard = lazy(() => import('./components/ProviderDashboard'));
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
+const ProspectorDashboard = lazy(() => import('./components/ProspectorDashboard'));
 
 // Code-splitting: lazy load modals e wizards
 const AIJobRequestWizard = lazy(() => import('./components/AIJobRequestWizard'));
@@ -88,21 +89,43 @@ const App: React.FC = () => {
 
   // Handle dynamic import failures (stale HTML returned due to cache) by reloading with cache-buster
   useEffect(() => {
+    const hasReloaded = sessionStorage.getItem('hasReloadedForChunkError');
+    
     const handler = (e: PromiseRejectionEvent) => {
       const reason = e.reason as { message?: string } | string | undefined;
       const msg = String(typeof reason === 'object' ? reason?.message : reason || '');
-      if (msg.includes('Failed to fetch dynamically imported module') || msg.includes('Importing a module script failed')) {
-        try {
-          const url = new URL(window.location.href);
-          url.searchParams.set('v', Date.now().toString());
-          window.location.replace(url.toString());
-        } catch {
-          window.location.reload();
-        }
+      if ((msg.includes('Failed to fetch dynamically imported module') || 
+           msg.includes('Importing a module script failed') ||
+           msg.includes('Failed to load module script')) && !hasReloaded) {
+        console.log('[App] Detectado erro de chunk loading, recarregando página...');
+        sessionStorage.setItem('hasReloadedForChunkError', 'true');
+        window.location.reload();
       }
     };
+    
+    const errorHandler = (e: ErrorEvent) => {
+      if ((e.message.includes('Failed to fetch dynamically imported module') ||
+           e.message.includes('Importing a module script failed') ||
+           e.message.includes('Failed to load module script')) && !hasReloaded) {
+        console.log('[App] Detectado erro de chunk loading (error event), recarregando página...');
+        sessionStorage.setItem('hasReloadedForChunkError', 'true');
+        window.location.reload();
+      }
+    };
+    
     window.addEventListener('unhandledrejection', handler);
-    return () => window.removeEventListener('unhandledrejection', handler);
+    window.addEventListener('error', errorHandler);
+    
+    // Limpar flag após 5 segundos (página carregou com sucesso)
+    const timeout = setTimeout(() => {
+      sessionStorage.removeItem('hasReloadedForChunkError');
+    }, 5000);
+    
+    return () => {
+      window.removeEventListener('unhandledrejection', handler);
+      window.removeEventListener('error', errorHandler);
+      clearTimeout(timeout);
+    };
   }, []);
 
 
@@ -139,7 +162,7 @@ const App: React.FC = () => {
   }, [view.name]);
 
   // Auth Handlers
-  const handleAuthSuccess = async (email: string, type: UserType) => {
+  const handleAuthSuccess = async (email: string, type: UserType, inviteCode?: string) => {
     try {
       // Mostrar feedback imediato
       setAuthModal(null);
@@ -159,6 +182,17 @@ const App: React.FC = () => {
         };
         // The 'id' should be the same as the email for consistency in our app model
         user = await API.createUser(newUserPayload);
+        
+        // If provider registration with invite code, register with prospector
+        if (type === 'prestador' && inviteCode) {
+          try {
+            await API.registerWithInvite(email, inviteCode);
+            console.log('✨ Cadastro com convite realizado! Seu prospector receberá comissão pelos seus serviços.');
+          } catch (inviteError) {
+            console.error('Error registering with invite:', inviteError);
+            console.warn('⚠️ Código de convite inválido, mas seu cadastro foi realizado.');
+          }
+        }
       }
       
       // Atualizar usuário e ir para dashboard imediatamente
@@ -293,8 +327,24 @@ const App: React.FC = () => {
           
           alert(`✅ Job "${newJob.category}" criado com sucesso!\n\n${matchingResults.length} prestadores qualificados foram notificados.\n\nVocê receberá propostas em breve.`);
         } else {
+          // NENHUM PRESTADOR DISPONÍVEL - TRIGGER AUTO-PROSPECTING
+          console.log('[App] No providers found, triggering auto-prospecting...');
+          
+          // Import prospecting service dynamically
+          import('./services/prospectingService').then(async (prospecting) => {
+            const prospectingResult = await prospecting.triggerAutoProspecting(
+              newJob,
+              currentUser?.email || ''
+            );
+            
+            if (prospectingResult.success && prospectingResult.prospectsFound > 0) {
+              console.log(`[App] Auto-prospecting found ${prospectingResult.prospectsFound} prospects`);
+            }
+          }).catch(err => {
+            console.error('[App] Auto-prospecting failed:', err);
+          });
 
-          alert(`✅ Job "${newJob.category}" criado!\n\nVamos buscar os melhores profissionais para você.`);
+          alert(`✅ Job "${newJob.category}" criado!\n\n🔍 Não encontramos prestadores cadastrados nesta categoria ainda.\n\nNossa IA está buscando profissionais qualificados para você agora mesmo!\n\nVocê receberá uma notificação assim que encontrarmos.`);
         }
       } catch (matchingError) {
 
@@ -345,6 +395,7 @@ const App: React.FC = () => {
         }
         if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allUsers={[]} allProposals={[]} allMessages={[]} maintainedItems={maintainedItems} allDisputes={[]} allBids={[]} setAllProposals={() => {}} setAllMessages={() => {}} setAllEscrows={() => {}} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllDisputes={() => {}} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} onUpdateUser={handleUpdateUser} />;
         if (currentUser.type === 'prestador') return <ProviderDashboard user={currentUser} onUpdateUser={handleUpdateUser} />;
+        if (currentUser.type === 'prospector') return <ProspectorDashboard />;
         if (currentUser.type === 'admin') return <AdminDashboard user={currentUser} />;
         return null;
       case 'profile':

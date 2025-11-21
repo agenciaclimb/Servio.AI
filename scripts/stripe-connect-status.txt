@@ -1,0 +1,23 @@
+STRIPE CONNECT - STATUS
+Gerado em: 2025-11-19 19:56:52
+
+WEBHOOK:
+- ID: we_1SVJo4JEyu4utIB8YxuJEX4H
+- URL: https://servio-backend-1000250760228.us-west1.run.app/api/stripe-webhook
+- Status: enabled
+
+CONTAS CONNECT:
+- Total: 0
+
+ÚLTIMOS EVENTOS:
+- person.updated - 11/13/2025 18:18:31
+- capability.updated - 11/13/2025 18:18:31
+- capability.updated - 11/13/2025 18:18:31
+- capability.updated - 11/13/2025 18:18:31
+- account.updated - 11/13/2025 18:18:31
+
+
+AÇÃO NECESSÁRIA:
+1. Configure Platform Profile no Dashboard
+2. Adicione Redirect URIs
+3. Teste onboarding de prestador

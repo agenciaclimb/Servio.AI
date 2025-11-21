@@ -1,4 +1,4 @@
-export type UserType = 'cliente' | 'prestador' | 'admin';
+export type UserType = 'cliente' | 'prestador' | 'admin' | 'prospector';
 export type UserStatus = 'ativo' | 'suspenso';
 
 export interface ProviderService {
@@ -45,6 +45,7 @@ export interface User {
   completionRate?: number;
   address?: string;
   // Contact & identity
+  phone?: string; // General phone number
   whatsapp?: string; // E.164 preferred, but free text allowed for now
   cpf?: string;
   // Multi-address support (additional addresses beyond primary "address")
@@ -55,6 +56,12 @@ export interface User {
   serviceCatalog?: ProviderService[];
   seo?: SEOProfile;
   providerRate?: number; // Commission rate for provider (0.0 - 1.0), e.g., 0.85 = provider gets 85%
+  // Prospecting & Referral System
+  prospectorId?: string; // Email of the prospector who recruited this provider
+  prospectorCommissionRate?: number; // Commission rate for prospector (0.01 = 1% or 0.0025 = 0.25%)
+  inviteCode?: string; // Unique invite code for this prospector (if they recruit others)
+  recruitedAt?: string; // ISO Date when provider was recruited
+  recruitmentSource?: 'manual' | 'ai_auto' | 'organic'; // How the provider joined
   fcmToken?: string; // Firebase Cloud Messaging token for push notifications
   notificationPreferences?: {
     newMessage?: boolean;
@@ -231,9 +238,48 @@ export interface MatchingResult {
   justification: string;
 }
 
-export interface Prospect {
+export interface Prospector {
+  id: string; // email
   name: string;
-  specialty: string;
+  email: string;
+  inviteCode: string; // Unique code for recruiting (e.g., "JOAO2025")
+  totalRecruits: number; // Total providers recruited
+  activeRecruits: number; // Providers currently active
+  totalCommissionsEarned: number; // Total R$ earned in commissions
+  commissionRate: number; // Default 0.01 (1%) for manual, 0.0025 (0.25%) for AI
+  providersSupported: string[]; // Array of provider emails this prospector supports
+  createdAt: string;
+}
+
+export interface Commission {
+  id: string;
+  prospectorId: string; // Email of prospector
+  providerId: string; // Email of provider
+  jobId: string; // Job that generated the commission
+  amount: number; // Commission amount in R$
+  rate: number; // Rate used (0.01 or 0.0025)
+  providerEarnings: number; // How much provider earned from this job
+  status: 'pending' | 'paid' | 'cancelled';
+  paidAt?: string;
+  createdAt: string;
+}
+
+export interface Prospect {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  specialty?: string;
+  source?: string;
+  prospectorId?: string; // Email of prospector who found this prospect
+  inviteCode?: string; // Invite code used (if any)
+  status: 'pendente' | 'contactado' | 'convertido' | 'perdido';
+  notes?: Array<{
+    text: string;
+    createdAt: string;
+    createdBy: string;
+  }>;
+  createdAt: string;
 }
 
 export interface MaintainedItem {

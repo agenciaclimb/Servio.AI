@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage",
+    "prod:check": "node scripts/stripe_readiness.mjs"
   },
   "dependencies": {
     "@google-cloud/storage": "^7.13.0",

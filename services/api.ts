@@ -14,6 +14,8 @@ import {
   MaintainedItem,
   Bid,
   JobData,
+  Prospect,
+  Prospector,
 } from '../types';
 
 import {
@@ -192,7 +194,234 @@ export async function updateUser(userId: string, updates: Partial<User>): Promis
   }
 }
 
+export async function deleteUser(userId: string): Promise<void> {
+  if (USE_MOCK) {
+    if (DEBUG) console.warn('[api] mock delete user', userId);
+    const index = MOCK_USERS.findIndex((u) => u.email === userId);
+    if (index > -1) MOCK_USERS.splice(index, 1);
+    return;
+  }
+
+  try {
+    await apiCall<void>(`/users/${userId}`, {
+      method: 'DELETE',
+    });
+  } catch (error) {
+    console.error('Failed to delete user:', error);
+    throw error;
+  }
+}
+
 // ============================================================================
+// PROSPECTS & MARKETING
+// ============================================================================
+
+export async function fetchProspects(): Promise<Prospect[]> {
+  if (USE_MOCK) {
+    if (DEBUG) console.warn('[api] mock fetch prospects');
+    return [];
+  }
+
+  try {
+    return await apiCall<Prospect[]>('/prospects');
+  } catch (error) {
+    console.error('Failed to fetch prospects:', error);
+    return [];
+  }
+}
+
+export async function updateProspect(prospectId: string, updates: Partial<Prospect>): Promise<Prospect> {
+  if (USE_MOCK) {
+    if (DEBUG) console.warn('[api] mock update prospect', prospectId, updates);
+    return { id: prospectId, ...updates } as Prospect;
+  }
+
+  try {
+    return await apiCall<Prospect>(`/prospects/${prospectId}`, {
+      method: 'PUT',
+      body: JSON.stringify(updates),
+    });
+  } catch (error) {
+    console.error('Failed to update prospect:', error);
+    throw error;
+  }
+}
+
+export async function fetchCampaigns(): Promise<any[]> {
+  if (USE_MOCK) {
+    if (DEBUG) console.warn('[api] mock fetch campaigns');
+    return [];
+  }
+
+  try {
+    return await apiCall<any[]>('/campaigns');
+  } catch (error) {
+    console.error('Failed to fetch campaigns:', error);
+    return [];
+  }
+}
+
+// ============================================================================
+// PROSPECTORS & COMMISSIONS
+// ============================================================================
+
+export async function fetchProspectors(): Promise<Prospector[]> {
+  if (USE_MOCK) {
+    if (DEBUG) console.warn('[api] mock fetch prospectors');
+    return [];
+  }
+
+  try {
+    return await apiCall<Prospector[]>('/prospectors');
+  } catch (error) {
+    console.error('Failed to fetch prospectors:', error);
+    return [];
+  }
+}
+
+export async function createProspector(prospector: Omit<Prospector, 'id'>): Promise<Prospector> {
+  if (USE_MOCK) {
+    if (DEBUG) console.warn('[api] mock create prospector', prospector);
+    return { id: `prospector_${Date.now()}`, ...prospector } as Prospector;
+  }
+
+  try {
+    return await apiCall<Prospector>('/prospectors', {
+      method: 'POST',
+      body: JSON.stringify(prospector),
+    });
+  } catch (error) {
+    console.error('Failed to create prospector:', error);
+    throw error;
+  }
+}
+
+export async function fetchCommissions(): Promise<any[]> {
+  if (USE_MOCK) {
+    if (DEBUG) console.warn('[api] mock fetch commissions');
+    return [];
+  }
+
+  try {
+    return await apiCall<any[]>('/commissions');
+  } catch (error) {
+    console.error('Failed to fetch commissions:', error);
+    return [];
+  }
+}
+
+export async function registerWithInvite(providerEmail: string, inviteCode: string): Promise<void> {
+  if (USE_MOCK) {
+    if (DEBUG) console.warn('[api] mock register with invite');
+    return;
+  }
+
+  try {
+    await apiCall('/register-with-invite', {
+      method: 'POST',
+      body: JSON.stringify({ providerEmail, inviteCode, source: 'manual' })
+    });
+  } catch (error) {
+    console.error('Failed to register with invite:', error);
+    throw error;
+  }
+}
+
+// ============================================================================
+// PROSPECTOR DASHBOARD (Phase 1)
+// ============================================================================
+
+export interface ProspectorStats {
+  prospectorId: string;
+  totalRecruits: number;
+  activeRecruits: number;
+  totalCommissionsEarned: number;
+  pendingCommissions: number;
+  averageCommissionPerRecruit: number;
+  currentBadge: string;
+  nextBadge: string | null;
+  progressToNextBadge: number; // 0-100
+  badgeTiers: { name: string; min: number }[];
+}
+
+export async function fetchProspectorStats(prospectorId: string): Promise<ProspectorStats | null> {
+  if (!prospectorId) return null;
+  if (USE_MOCK) {
+    return {
+      prospectorId,
+      totalRecruits: 12,
+      activeRecruits: 10,
+      totalCommissionsEarned: 120,
+      pendingCommissions: 0,
+      averageCommissionPerRecruit: 10,
+      currentBadge: 'Ouro',
+      nextBadge: 'Platina',
+      progressToNextBadge: 13,
+      badgeTiers: [
+        { name: 'Bronze', min: 0 },
+        { name: 'Prata', min: 5 },
+        { name: 'Ouro', min: 10 },
+        { name: 'Platina', min: 25 },
+        { name: 'Diamante', min: 50 }
+      ]
+    };
+  }
+  try {
+    return await apiCall<ProspectorStats>(`/prospector/stats?prospectorId=${encodeURIComponent(prospectorId)}`);
+  } catch (e) {
+    console.error('Failed to fetch prospector stats', e);
+    return null;
+  }
+}
+
+export interface LeaderboardEntry {
+  prospectorId: string;
+  name: string;
+  totalRecruits: number;
+  totalCommissionsEarned: number;
+  rank: number;
+}
+
+export async function fetchProspectorLeaderboard(sort: 'commissions' | 'recruits' = 'commissions', limit = 10): Promise<LeaderboardEntry[]> {
+  if (USE_MOCK) {
+    return [
+      { prospectorId: 'c@example.com', name: 'Carol', totalRecruits: 30, totalCommissionsEarned: 450, rank: 1 },
+      { prospectorId: 'a@example.com', name: 'Alice', totalRecruits: 12, totalCommissionsEarned: 120, rank: 2 },
+      { prospectorId: 'b@example.com', name: 'Bob', totalRecruits: 4, totalCommissionsEarned: 40, rank: 3 }
+    ];
+  }
+  try {
+    const resp = await apiCall<{ sort: string; total: number; results: LeaderboardEntry[] }>(`/prospectors/leaderboard?sort=${sort}&limit=${limit}`);
+    return resp.results || [];
+  } catch (e) {
+    console.error('Failed to fetch prospector leaderboard', e);
+    return [];
+  }
+}
+
+// Simple badge computation utility (mirrors backend logic for optimistic UI)
+export function computeBadgeProgress(totalRecruits: number) {
+  const tiers = [
+    { name: 'Bronze', min: 0 },
+    { name: 'Prata', min: 5 },
+    { name: 'Ouro', min: 10 },
+    { name: 'Platina', min: 25 },
+    { name: 'Diamante', min: 50 }
+  ];
+  let current = tiers[0].name;
+  let next: string | null = null;
+  for (let i = tiers.length - 1; i >= 0; i--) {
+    if (totalRecruits >= tiers[i].min) {
+      current = tiers[i].name;
+      next = tiers[i + 1] ? tiers[i + 1].name : null;
+      break;
+    }
+  }
+  const nextThreshold = next ? tiers.find(t => t.name === next)!.min : null;
+  const currentBase = tiers.find(t => t.name === current)!.min;
+  const progress = nextThreshold === null ? 100 : Math.min(100, Math.round(((totalRecruits - currentBase) / (nextThreshold - currentBase)) * 100));
+  return { currentBadge: current, nextBadge: next, progressToNextBadge: progress, tiers };
+}
 // STRIPE CONNECT
 // ============================================================================
 

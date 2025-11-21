@@ -24,16 +24,19 @@ const AdminJobManagement: React.FC<AdminJobManagementProps> = ({ onMediateClick 
   const [allJobs, setAllJobs] = useState<Job[]>([]);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 50;
 
   useEffect(() => {
     const loadData = async () => {
         setIsLoading(true);
         try {
-            const [jobs, users] = await Promise.all([
-                API.fetchJobs(),
-                API.fetchAllUsers(),
-            ]);
+            // Carregar jobs primeiro (mais importante)
+            const jobs = await API.fetchJobs();
             setAllJobs(jobs);
+            
+            // Carregar usuários depois para não bloquear
+            const users = await API.fetchAllUsers();
             setAllUsers(users);
         } catch (error) {
             console.error("Failed to load job management data:", error);
@@ -46,6 +49,10 @@ const AdminJobManagement: React.FC<AdminJobManagementProps> = ({ onMediateClick 
 
   const filteredJobs = (filter === 'all' ? allJobs : allJobs.filter(j => j.status === filter))
     .sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  
+  const totalPages = Math.ceil(filteredJobs.length / ITEMS_PER_PAGE);
+  const paginatedJobs = filteredJobs.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  
   if (isLoading) return <div className="p-4 text-sm text-gray-600">Carregando jobs...</div>;
 
   return (
@@ -79,7 +86,7 @@ const AdminJobManagement: React.FC<AdminJobManagementProps> = ({ onMediateClick 
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredJobs.map(job => {
+                    {paginatedJobs.map(job => {
                         const client = allUsers.find(u => u.email === job.clientId);
                         const provider = allUsers.find(u => u.email === job.providerId);
                         const statusStyle = statusStyles[job.status];
@@ -110,6 +117,32 @@ const AdminJobManagement: React.FC<AdminJobManagementProps> = ({ onMediateClick 
                 </tbody>
             </table>
         </div>
+        {totalPages > 1 && (
+            <div className="px-4 py-3 bg-gray-50 border-t flex items-center justify-between">
+                <div className="text-sm text-gray-700">
+                    Mostrando {((page - 1) * ITEMS_PER_PAGE) + 1} a {Math.min(page * ITEMS_PER_PAGE, filteredJobs.length)} de {filteredJobs.length} jobs
+                </div>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                        className="px-3 py-1 text-sm border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Anterior
+                    </button>
+                    <span className="px-3 py-1 text-sm">
+                        Página {page} de {totalPages}
+                    </span>
+                    <button
+                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages}
+                        className="px-3 py-1 text-sm border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Próxima
+                    </button>
+                </div>
+            </div>
+        )}
     </div>
   );
 };

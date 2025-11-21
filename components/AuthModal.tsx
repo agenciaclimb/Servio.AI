@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User } from '../types';
 import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
 
@@ -7,7 +7,7 @@ interface AuthModalProps {
   userType: User['type'];
   onClose: () => void;
   onSwitchMode: (mode: 'login' | 'register') => void;
-  onSuccess: (email: string, type: User['type']) => void;
+  onSuccess: (email: string, type: User['type'], inviteCode?: string) => void;
 }
 
 const AuthModal: React.FC<AuthModalProps> = ({ mode, userType, onClose, onSwitchMode, onSuccess }) => {
@@ -15,8 +15,20 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, userType, onClose, onSwitch
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [inviteCode, setInviteCode] = useState<string | null>(null);
 
   const isLogin = mode === 'login';
+
+  // Capture invite code from URL
+  useEffect(() => {
+    if (!isLogin && userType === 'prestador') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('invite');
+      if (code) {
+        setInviteCode(code);
+      }
+    }
+  }, [isLogin, userType]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +45,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, userType, onClose, onSwitch
       }
     }
     
-    onSuccess(email, userType);
+    if (inviteCode) {
+      onSuccess(email, userType, inviteCode);
+    } else {
+      onSuccess(email, userType);
+    }
   };
 
   return (
@@ -49,6 +65,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, userType, onClose, onSwitch
             <p className="text-center text-gray-600 mb-6">
                 {isLogin ? 'Acesse para continuar.' : 'É rápido e fácil.'}
             </p>
+
+            {inviteCode && !isLogin && (
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800 text-center">
+                  🎉 Você foi convidado por um membro da equipe Servio.AI!
+                </p>
+                <p className="text-xs text-blue-600 text-center mt-1">
+                  Código: <strong>{inviteCode}</strong>
+                </p>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
