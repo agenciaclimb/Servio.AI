@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Job, User, UserStatus } from '../types';
-import { suspendProvider, reactivateProvider, setVerificationStatus, createNotification } from '../services/api';
+import { Job, User } from '../types';
 import AdminVerificationCard from './AdminVerificationCard';
 import * as API from '../services/api';
 
@@ -45,18 +44,16 @@ const AdminProviderManagement: React.FC = () => {
   const totalPages = Math.ceil(providers.length / ITEMS_PER_PAGE);
   const paginatedProviders = providers.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-    const handleUpdateStatus = async (userId: string, status: UserStatus) => {
+    const handleUpdateStatus = async (userId: string, status: string) => {
         // optimistic update
         const previousUsers = allUsers;
         setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status } : u));
         try {
-            if (status === 'suspenso') {
-                await suspendProvider(userId, 'Suspended by admin via dashboard');
-                await createNotification({ userId, text: 'Sua conta foi suspensa. Entre em contato com o suporte.', isRead: false });
-            } else {
-                await reactivateProvider(userId);
-                await createNotification({ userId, text: 'Sua conta foi reativada. Você já pode voltar a trabalhar.', isRead: false });
-            }
+            await API.updateUser(userId, { status });
+            const notificationText = status === 'suspenso' 
+                ? 'Sua conta foi suspensa. Entre em contato com o suporte.'
+                : 'Sua conta foi reativada. Você já pode voltar a trabalhar.';
+            await API.createNotification(userId, 'Status da Conta', notificationText);
         } catch (err) {
             console.error('Failed to persist provider status change:', err);
             // revert optimistic change on error
@@ -74,8 +71,8 @@ const AdminProviderManagement: React.FC = () => {
             : 'Houve um problema com sua verificação de identidade. Por favor, envie seus documentos novamente.';
 
         try {
-            await setVerificationStatus(userId, decision);
-            await createNotification({ userId, text: notificationText, isRead: false });
+            await API.updateUser(userId, { verificationStatus: decision });
+            await API.createNotification(userId, 'Verificação de Identidade', notificationText);
         } catch (err) {
             console.error('Failed to persist verification decision:', err);
             setAllUsers(previousUsers);

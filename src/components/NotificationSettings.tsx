@@ -18,7 +18,7 @@ import {
   setupForegroundMessageListener,
   type NotificationPreferences,
   type PushNotification,
-} from '../services/notificationService';
+} from '../services/fcmService';
 
 interface NotificationSettingsProps {
   prospectorId: string;
@@ -36,7 +36,7 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ pros
     checkPermissionStatus();
 
     // Setup foreground message listener
-    const unsubscribe = setupForegroundMessageListener((payload) => {
+    const unsubscribe = setupForegroundMessageListener((_payload) => {
       // Refresh notifications when new one arrives
       loadNotifications();
     });
