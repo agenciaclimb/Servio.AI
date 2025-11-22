@@ -12,7 +12,7 @@
  * - Click tracking and analytics
  */
 
-import { db } from '../firebaseConfig';
+import { db } from '../../firebaseConfig';
 import { collection, doc, getDoc, setDoc, updateDoc, increment, Timestamp } from 'firebase/firestore';
 
 export interface ReferralLink {

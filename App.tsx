@@ -395,7 +395,7 @@ const App: React.FC = () => {
         }
         if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allUsers={[]} allProposals={[]} allMessages={[]} maintainedItems={maintainedItems} allDisputes={[]} allBids={[]} setAllProposals={() => {}} setAllMessages={() => {}} setAllEscrows={() => {}} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllDisputes={() => {}} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} onUpdateUser={handleUpdateUser} />;
         if (currentUser.type === 'prestador') return <ProviderDashboard user={currentUser} onUpdateUser={handleUpdateUser} />;
-        if (currentUser.type === 'prospector') return <ProspectorDashboard />;
+        if (currentUser.type === 'prospector') return <ProspectorDashboard userId={currentUser.uid} />;
         if (currentUser.type === 'admin') return <AdminDashboard user={currentUser} />;
         return null;
       case 'profile':
