@@ -49,3 +49,8 @@ build/
 
 # Bloquear credenciais sensíveis (Service Account JSON)
 doc/gen-lang-client-0737507616-*.json
+
+# Stripe sensitive configuration
+STRIPE_CONFIGURACAO_COMPLETA.txt
+STRIPE_FINAL_STATUS.md
+scripts/test-stripe-connect.ps1
