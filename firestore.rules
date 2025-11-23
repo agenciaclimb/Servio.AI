@@ -135,5 +135,67 @@ service cloud.firestore {
       allow create: if isProvider() && isOwner(request.resource.data.providerId);
       allow update, delete: if false;
     }
+
+    // =================================
+    // Prospecting Module Rules
+    // =================================
+    
+    function isProspector() {
+      return isSignedIn() && getUserData(request.auth.uid).type == 'prospector';
+    }
+
+    match /referral_links/{prospectorId} {
+      // Prospector can read/write their own referral link
+      allow read, create, update: if isOwner(prospectorId) || isProspector();
+      // Admin can read all referral links
+      allow read: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /link_clicks/{clickId} {
+      // Anyone can create click tracking (anonymous visitor clicks)
+      allow create: if true;
+      // Prospector can read their own link clicks
+      allow read: if isSignedIn() && resource.data.prospectorId == request.auth.uid;
+      // Admin can read all clicks
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    match /link_analytics/{prospectorId} {
+      // Prospector can read their own analytics
+      allow read: if isOwner(prospectorId);
+      // System can write analytics
+      allow write: if isAdmin();
+    }
+
+    match /message_templates/{templateId} {
+      // All signed-in users can read templates
+      allow read: if isSignedIn();
+      // Only admin can create/update templates
+      allow create, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /notification_settings/{userId} {
+      // User can read/write their own notification settings
+      allow read, write: if isOwner(userId);
+    }
+
+    match /prospector_stats/{prospectorId} {
+      // Prospector can read their own stats
+      allow read: if isOwner(prospectorId) || isProspector();
+      // Admin can read all stats
+      allow read: if isAdmin();
+      // System updates stats
+      allow write: if isAdmin();
+    }
+
+    match /prospector_leaderboard/{entryId} {
+      // Anyone signed in can read leaderboard
+      allow read: if isSignedIn();
+      // Only system can write
+      allow write: if isAdmin();
+    }
   }
 }

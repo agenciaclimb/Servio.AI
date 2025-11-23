@@ -18,6 +18,7 @@ export default function ReferralLinkGenerator({ prospectorId, onLinkGenerated }:
   const [referralLink, setReferralLink] = useState<ReferralLink | null>(null);
   const [analytics, setAnalytics] = useState<LinkAnalytics | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export default function ReferralLinkGenerator({ prospectorId, onLinkGenerated }:
     if (!prospectorId) return;
 
     setLoading(true);
+    setError(null);
     try {
       // Try to get existing link
       let link = await getReferralLink(prospectorId);
@@ -51,8 +53,9 @@ export default function ReferralLinkGenerator({ prospectorId, onLinkGenerated }:
       // Load analytics
       const stats = await getLinkAnalytics(prospectorId);
       setAnalytics(stats);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading referral link:', error);
+      setError(error.message || 'Erro ao carregar link de indicação');
     } finally {
       setLoading(false);
     }
@@ -78,14 +81,27 @@ export default function ReferralLinkGenerator({ prospectorId, onLinkGenerated }:
     return (
       <div className="flex items-center justify-center p-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        <p className="ml-3 text-gray-600">Carregando link de indicação...</p>
       </div>
     );
   }
 
-  if (!referralLink) {
+  if (error || !referralLink) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-800">Erro ao carregar link de indicação. Tente novamente.</p>
+      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+        <div className="flex items-center mb-4">
+          <svg className="w-6 h-6 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 className="text-lg font-semibold text-red-800">Erro ao carregar link de indicação</h3>
+        </div>
+        <p className="text-red-700 mb-4">{error || 'Não foi possível gerar seu link personalizado.'}</p>
+        <button
+          onClick={() => loadReferralLink()}
+          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+          🔄 Tentar Novamente
+        </button>
       </div>
     );
   }
