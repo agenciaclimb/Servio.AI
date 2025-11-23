@@ -17,17 +17,32 @@ import ProspectorDashboard from '../components/ProspectorDashboard';
 import * as api from '../services/api';
 import * as smartActionsService from '../src/services/smartActionsService';
 
-// Mock Firestore
+// Mock Firebase Firestore
 vi.mock('firebase/firestore', () => ({
   collection: vi.fn(),
   query: vi.fn(),
   where: vi.fn(),
-  getDocs: vi.fn(() => Promise.resolve({ docs: [] })),
+  orderBy: vi.fn(),
+  limit: vi.fn(),
+  getDocs: vi.fn(() => Promise.resolve({ 
+    docs: [],
+    empty: true,
+    size: 0
+  })),
+  getDoc: vi.fn(() => Promise.resolve({ 
+    exists: () => false,
+    data: () => ({})
+  })),
+  doc: vi.fn(),
+  Timestamp: {
+    now: vi.fn(() => ({ seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 })),
+  },
 }));
 
+// Mock firebaseConfig
 vi.mock('../firebaseConfig', () => ({
   db: {},
-  auth: {},
+  auth: { currentUser: null },
   storage: {},
 }));
 
