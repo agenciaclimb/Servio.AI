@@ -10,7 +10,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DroppableStateSnapshot, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
 import { db } from '../../firebaseConfig';
 import { collection, query, where, getDocs, addDoc, updateDoc, doc, Timestamp } from 'firebase/firestore';
 
@@ -288,7 +288,7 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {STAGES.map(stage => (
             <Droppable key={stage.id} droppableId={stage.id}>
-              {(provided, snapshot) => (
+              {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
@@ -306,7 +306,7 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
                   <div className="space-y-2">
                     {getLeadsByStage(stage.id).map((lead, index) => (
                       <Draggable key={lead.id} draggableId={lead.id} index={index}>
-                        {(provided, snapshot) => (
+                        {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}

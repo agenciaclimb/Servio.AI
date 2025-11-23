@@ -43,9 +43,12 @@
   "dependencies": {
     "@stripe/react-stripe-js": "^2.7.1",
     "@stripe/stripe-js": "^3.5.0",
+    "@types/react-beautiful-dnd": "^13.1.8",
     "firebase": "^12.5.0",
     "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
+    "react-joyride": "^2.9.3",
     "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
