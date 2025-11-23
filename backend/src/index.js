@@ -1409,6 +1409,30 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
         return res.status(400).json({ error: "User email is required." });
       }
       await db.collection("users").doc(userData.email).set(userData);
+
+      // Se é prestador cadastrado via link de referência, notificar prospector
+      if (userData.type === 'prestador' && userData.referredBy) {
+        const { notifyProspector } = require('./notificationService');
+        await notifyProspector({
+          db,
+          prospectorId: userData.referredBy,
+          type: 'conversion',
+          data: {
+            providerName: userData.name || 'Novo prestador',
+            providerEmail: userData.email,
+            category: userData.categories?.[0] || 'Não especificada',
+          }
+        }).catch(err => console.error('[Prospector Notification] Error:', err));
+
+        // Atualizar stats do prospector
+        const prospectorRef = db.collection('prospector_stats').doc(userData.referredBy);
+        await prospectorRef.set({
+          totalRecruits: admin.firestore.FieldValue.increment(1),
+          activeRecruits: admin.firestore.FieldValue.increment(1),
+          lastRecruitAt: admin.firestore.Timestamp.now(),
+        }, { merge: true });
+      }
+
       res
         .status(201)
         .json({ message: "User created successfully", id: userData.email });
@@ -2888,6 +2912,20 @@ Retorne apenas o corpo do email, sem assunto.`;
               }
 
               console.log(`✅ Commission created: R$ ${commissionAmount.toFixed(2)} for prospector ${providerData.prospectorId}`);
+
+              // Notify prospector about commission
+              const { notifyProspector } = require('./notificationService');
+              await notifyProspector({
+                db,
+                prospectorId: providerData.prospectorId,
+                type: 'commission',
+                data: {
+                  providerName: providerData.name || 'Prestador',
+                  amount: commissionAmount,
+                  jobId: id,
+                  jobTitle: updatedData.description?.substring(0, 50) || 'Job concluído',
+                }
+              }).catch(err => console.error('[Commission Notification] Error:', err));
             }
           }
         } catch (commissionError) {
