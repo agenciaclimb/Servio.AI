@@ -606,15 +606,74 @@ Retorne APENAS JSON.`;
 
   // POST /api/get-chat-assistance
   app.post('/api/get-chat-assistance', async (req, res) => {
-    const { messages = [], currentUserType } = req.body || {};
-    const last = messages[messages.length - 1]?.text?.toLowerCase() || '';
-    if (/quando|data|horário|agendar/.test(last)) {
-      return res.json({ name: 'propose_schedule', args: {}, displayText: 'Sugerir horário para o serviço' });
+    try {
+      const { messages = [], currentUserType } = req.body || {};
+      
+      if (!GEMINI_API_KEY) {
+        console.error('[get-chat-assistance] Gemini API key not configured');
+        return res.status(500).json({ error: 'IA não configurada' });
+      }
+
+      // Build conversation history for context
+      const conversationHistory = messages.map(msg => ({
+        role: msg.senderId === 'ai' ? 'model' : 'user',
+        parts: [{ text: msg.text }]
+      }));
+
+      // Get user's last message
+      const lastMessage = messages[messages.length - 1]?.text || '';
+
+      // Build context-aware system prompt based on user type
+      const systemPrompt = currentUserType === 'prospector' 
+        ? `Você é um assistente especializado em prospecção B2B para a plataforma Servio.AI.
+Ajude o prospector com:
+- Estratégias de abordagem de prestadores de serviço
+- Templates de mensagens para WhatsApp, Email e redes sociais
+- Análise de prospects qualificados
+- Dicas de follow-up e conversão
+- Como usar o sistema de comissões
+
+Seja direto, prático e forneça exemplos concretos. Responda em português brasileiro.`
+        : `Você é um assistente para prestadores de serviço da Servio.AI.
+Ajude com:
+- Melhorar perfil e portfolio
+- Estratégias de precificação
+- Como responder propostas
+- Dicas de atendimento ao cliente
+- Crescimento na plataforma
+
+Seja direto, prático e motivador. Responda em português brasileiro.`;
+
+      const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      const result = await model.generateContent({
+        contents: [
+          { role: 'user', parts: [{ text: systemPrompt }] },
+          ...conversationHistory
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 500,
+        }
+      });
+
+      const response = result.response;
+      const text = response.text();
+
+      return res.json({ 
+        name: 'chat_response', 
+        args: {}, 
+        displayText: text || 'Desculpe, não consegui gerar uma resposta. Tente reformular sua pergunta.'
+      });
+
+    } catch (error) {
+      console.error('[get-chat-assistance] Error:', error);
+      return res.status(500).json({ 
+        error: 'Erro ao processar assistência',
+        displayText: 'Desculpe, ocorreu um erro. Por favor, tente novamente.' 
+      });
     }
-    if (/resumo|acordo/.test(last)) {
-      return res.json({ name: 'summarize_agreement', args: {}, displayText: 'Gerar resumo do acordo' });
-    }
-    return res.json({ name: 'clarify_scope', args: {}, displayText: 'Pedir mais detalhes do serviço' });
   });
 
   // POST /api/parse-search
