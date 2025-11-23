@@ -1,3 +1,48 @@
+#update_log - 2025-11-23 18:45
+✅ **MÓDULO DE PROSPECÇÃO - CORREÇÕES CRÍTICAS APLICADAS**
+
+**Problema Identificado:**
+Painel do Prospector com múltiplos erros em produção:
+
+- ❌ "Erro ao carregar link de indicação"
+- ❌ "Missing or insufficient permissions" (Firestore)
+- ❌ Console com 404s e erros de permissão
+- ❌ Componentes ReferralLinkGenerator, MessageTemplateSelector, NotificationSettings não funcionando
+
+**Causa Raiz:**
+Firestore rules não tinham regras para as collections de prospecção (referral_links, link_clicks, message_templates, notification_settings)
+
+**Correções Aplicadas (Commit 897a13d):**
+
+1. **Firestore Rules Adicionadas:**
+   - `referral_links`: Prospector pode ler/criar próprio link
+   - `link_clicks`: Tracking anônimo permitido (visitor clicks)
+   - `link_analytics`: Somente owner pode ler
+   - `message_templates`: Leitura pública, escrita admin
+   - `notification_settings`: Owner read/write
+   - `prospector_stats`: Owner e admin podem ler
+   - `prospector_leaderboard`: Leitura autenticada
+
+2. **Error Handling Melhorado (ReferralLinkGenerator):**
+   - Estado de erro explícito com mensagens descritivas
+   - Botão "🔄 Tentar Novamente" quando falhar
+   - Loading state mais claro ("Carregando link de indicação...")
+   - Fallback gracioso para erros de rede/permissão
+
+3. **Deploy Completo:**
+   - ✅ Código: `git push` commit 897a13d
+   - ✅ Firestore Rules: `firebase deploy --only firestore:rules`
+   - ✅ CI: Passed (workflow ci success)
+
+**Status Atual:**
+
+- 🚀 Produção: Regras deployadas, aguardando validação manual
+- 📊 CI/CD: 100% operacional
+- 🔗 Domínio: servio-ai.com funcionando
+- ⏭️ Próximo: Testar painel do prospector em produção
+
+---
+
 #update_log - 2025-11-23 16:15
 🔴 **CI BLOQUEADO - DECISÃO NECESSÁRIA: Quality Gate SonarQube**
 
