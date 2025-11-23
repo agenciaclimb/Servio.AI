@@ -1,0 +1,14 @@
+# robots.txt para SERVIO.AI
+# Permite indexação de páginas públicas e bloqueia áreas privadas
+
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://gen-lang-client-0737507616.web.app/sitemap.xml
+
+# Crawl-delay para evitar sobrecarga
+Crawl-delay: 1

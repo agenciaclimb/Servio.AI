@@ -44,7 +44,7 @@ const AdminProviderManagement: React.FC = () => {
   const totalPages = Math.ceil(providers.length / ITEMS_PER_PAGE);
   const paginatedProviders = providers.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-    const handleUpdateStatus = async (userId: string, status: string) => {
+    const handleUpdateStatus = async (userId: string, status: 'ativo' | 'suspenso' | 'pendente' | 'inativo') => {
         // optimistic update
         const previousUsers = allUsers;
         setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status } : u));

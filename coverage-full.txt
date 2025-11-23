@@ -1,0 +1,699 @@
+
+> servio-ai-frontend@0.0.0 test
+> vitest run --coverage
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/JE/servio.ai[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32mÔ£ô[39m tests/coverage-boost.test.ts [2m([22m[2m21 tests[22m[2m)[22m[90m 80[2mms[22m[39m
+ [32mÔ£ô[39m tests/prospectorMaterialKit.test.ts [2m([22m[2m35 tests[22m[2m)[22m[90m 57[2mms[22m[39m
+ [32mÔ£ô[39m tests/critical-components-coverage.test.ts [2m([22m[2m28 tests[22m[2m)[22m[90m 116[2mms[22m[39m
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m01 creates admin, client, provider users
+[22m[39m
+[TEST 1] Setup admin authentication...
+
+ [32mÔ£ô[39m tests/errorTranslator.test.ts [2m([22m[2m31 tests[22m[2m)[22m[90m 108[2mms[22m[39m
+ [32mÔ£ô[39m tests/adminMetrics.test.ts [2m([22m[2m16 tests[22m[2m)[22m[90m 207[2mms[22m[39m
+stderr | tests/prospecting.enhanced.test.ts > Enhanced Prospecting Service > analyzeProspectWithAI > should fallback to basic scoring if AI fails
+[ProspectingService] AI analysis failed: Error: AI service down
+    at C:\Users\JE\servio.ai\tests\prospecting.enhanced.test.ts:68:51
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+ [32mÔ£ô[39m tests/prospecting.enhanced.test.ts [2m([22m[2m12 tests[22m[2m)[22m[90m 165[2mms[22m[39m
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+
+stderr | tests/prospecting.enhanced.test.ts > Enhanced Prospecting Service > analyzeProspectWithAI > should handle prospect without rating
+[ProspectingService] AI analysis failed: Error: No rating
+    at C:\Users\JE\servio.ai\tests\prospecting.enhanced.test.ts:87:51
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+
+stderr | tests/prospecting.enhanced.test.ts > Enhanced Prospecting Service > generatePersonalizedEmail > should fallback to basic template if AI fails
+[ProspectingService] Email generation failed: Error: AI unavailable
+    at C:\Users\JE\servio.ai\tests\prospecting.enhanced.test.ts:145:51
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+
+stderr | tests/prospecting.enhanced.test.ts > Enhanced Prospecting Service > sendMultiChannelInvite > should handle channel failures gracefully
+[ProspectingService] WhatsApp failed: Error: WhatsApp service down
+    at C:\Users\JE\servio.ai\tests\prospecting.enhanced.test.ts:288:32
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m01 creates admin, client, provider users
+[22m[39mÔ£ô Admin created: admin-test-1763823954054@servio.test
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m01 creates admin, client, provider users
+[22m[39mÔ£ô Client created: client-analytics-1763823955039@servio.test
+
+stderr | tests/api.errorHandling.test.ts > apiCall - Error Handling > E_TIMEOUT - AbortController > deve lan├ºar E_TIMEOUT quando AbortError ocorre
+[api] Timeout on /api/stripe/create-connect-account Error: Tempo de resposta excedido. Tente novamente.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:60:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:98:22)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  code: 'E_TIMEOUT'
+}
+
+ [32mÔ£ô[39m tests/api.errorHandling.test.ts [2m([22m[2m14 tests[22m[2m)[22m[90m 64[2mms[22m[39m
+stderr | tests/api.test.ts > API Service > Error Handling > deve lan├ºar erro em opera├º├Áes cr├¡ticas sem fallback
+Failed to create job: Error: Falha de rede. Verifique sua conex├úo.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:60:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:105:11)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Module.createJob (C:\Users\JE\servio.ai\services\api.ts:613:12) {
+  code: 'E_NETWORK'
+}
+
+ [32mÔ£ô[39m tests/api.test.ts [2m([22m[2m19 tests[22m[2m)[22m[90m 118[2mms[22m[39m
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m01 creates admin, client, provider users
+[22m[39mÔ£ô Provider created: provider-analytics-1763823955396@servio.test
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m02 lists users including test subset
+[22m[39m
+[TEST 2] Fetch all users for analytics...
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m02 lists users including test subset
+[22m[39mÔ£ô Fetched 941 users (test subset: 929) successfully
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m03 creates and completes job with earnings
+[22m[39m
+[TEST 3] Create job for analytics data...
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m03 creates and completes job with earnings
+[22m[39mÔ£ô Job created: NIFTVXEhyMHYPAyoECaq
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m03 creates and completes job with earnings
+[22m[39mÔ£ô Job completed with earnings
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m04 aggregates revenue metrics
+[22m[39m
+[TEST 4] Verify analytics includes revenue data...
+
+stderr | tests/ProspectorDashboard.branches.test.tsx > ProspectorDashboard - Branches Adicionais > exibe leaderboard vazio quando n├úo h├í dados (branch tern├írio aninhado)
+Warning: Cannot update a component (`ProspectorDashboard`) while rendering a different component (`default`). To locate the bad setState() call inside `default`, follow the stack trace as described in https://reactjs.org/link/setstate-in-render
+    at default (C:\Users\JE\servio.ai\tests\ProspectorDashboard.branches.test.tsx:30:15)
+    at div
+    at div
+    at div
+    at div
+    at ProspectorDashboard (C:\Users\JE\servio.ai\components\ProspectorDashboard.tsx:59:32)
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m04 aggregates revenue metrics
+[22m[39mÔ£ô Total revenue: R$ 46050.00
+Ô£ô Platform revenue: R$ 9187.50
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m05-08 dispute flow (skipped if endpoint missing)
+[22m[39m
+[TEST 5] Create dispute for resolution testing...
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m05-08 dispute flow (skipped if endpoint missing)
+[22m[39mÔ£ô Dispute created: 4QKnPhOiKbLvRotCmECN
+
+[TEST 6] Fetch disputes for analytics...
+
+stderr | tests/ProspectorDashboard.branches.test.tsx > ProspectorDashboard - Branches Adicionais > mostra mensagem quando smart actions est├í vazio (branch alternativo)
+[ProspectorDashboard] SmartActions fallback: Cannot read properties of undefined (reading 'docs')
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m05-08 dispute flow (skipped if endpoint missing)
+[22m[39mÔ£ô Total disputes: 287
+Ô£ô Open disputes: 287
+Ô£ô Resolved disputes: 0
+
+[TEST 6b] Seed escrow for job (optional)...
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m05-08 dispute flow (skipped if endpoint missing)
+[22m[39mÔåÀ Skipped: test-utils escrow seeding not available
+
+[TEST 7] Resolve dispute as admin...
+
+ [32mÔ£ô[39m tests/AIJobRequestWizard.test.tsx [2m([22m[2m13 tests[22m[2m)[22m[33m 1972[2mms[22m[39m
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m05-08 dispute flow (skipped if endpoint missing)
+[22m[39mÔåÀ Resolution skipped: 404 - {"error":"Escrow record not found for this job."}
+  (Endpoint requer escrow configurado - teste manual necess├írio)
+
+[TEST 8] Verify dispute resolution in analytics...
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m05-08 dispute flow (skipped if endpoint missing)
+[22m[39mÔåÀ Skipped: dispute resolution was not completed (requires escrow setup)
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m09 creates sentiment alert
+[22m[39m
+[TEST 9] Create fraud alert for analytics...
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m09 creates sentiment alert
+[22m[39mÔ£ô Fraud alert created with risk score: 8
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m10 lists sentiment alerts
+[22m[39m
+[TEST 10] Fetch fraud alerts for analytics...
+
+[90mstdout[2m | tests/e2e_admin_dashboard.test.mjs[2m > [22m[2mAdmin Dashboard E2E (API integration)[2m > [22m[2m10 lists sentiment alerts
+[22m[39mÔ£ô Total fraud alerts: 303
+Ô£ô New alerts: 303
+Ô£ô High risk alerts: 303
+
+stderr | tests/ProspectorDashboardUnified.test.tsx > ProspectorDashboard - Unified Layout > should render Column 2 - Referral Link and Templates
+[ProspectorDashboard] SmartActions fallback: Missing or insufficient permissions.
+[ProspectorDashboard] SmartActions fallback: Missing or insufficient permissions.
+[ProspectorDashboard] SmartActions fallback: Missing or insufficient permissions.
+
+ [32mÔ£ô[39m tests/e2e_admin_dashboard.test.mjs [2m([22m[2m7 tests[22m[2m)[22m[33m 7056[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Admin Dashboard E2E (API integration)[2m > [22m01 creates admin, client, provider users [33m1621[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Admin Dashboard E2E (API integration)[2m > [22m02 lists users including test subset [33m932[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Admin Dashboard E2E (API integration)[2m > [22m03 creates and completes job with earnings [33m688[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Admin Dashboard E2E (API integration)[2m > [22m04 aggregates revenue metrics [33m742[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Admin Dashboard E2E (API integration)[2m > [22m05-08 dispute flow (skipped if endpoint missing) [33m2142[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Admin Dashboard E2E (API integration)[2m > [22m10 lists sentiment alerts [33m641[2mms[22m[39m
+stderr | tests/ProspectorDashboardUnified.test.tsx > ProspectorDashboard - Unified Layout > should render Column 3 - Smart Actions
+[ProspectorDashboard] SmartActions fallback: Missing or insufficient permissions.
+[ProspectorDashboard] SmartActions fallback: Missing or insufficient permissions.
+
+stderr | tests/ProspectorDashboardUnified.test.tsx > ProspectorDashboard - Unified Layout > should render Column 3 - Smart Actions
+[ProspectorDashboard] SmartActions fallback: Missing or insufficient permissions.
+
+stderr | tests/ProspectorDashboardUnified.test.tsx > ProspectorDashboard - Unified Layout > should render Column 3 - Smart Actions
+[ProspectorDashboard] SmartActions fallback: Missing or insufficient permissions.
+
+ [32mÔ£ô[39m tests/ProspectorDashboard.branches.test.tsx [2m([22m[2m12 tests[22m[2m)[22m[33m 5285[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Branches Adicionais[2m > [22mexibe leaderboard vazio quando n├úo h├í dados (branch tern├írio aninhado) [33m383[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Branches Adicionais[2m > [22mexibe leaderboard populado com ranking e comiss├Áes formatadas [33m344[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Branches Adicionais[2m > [22mexibe smart actions quando dispon├¡veis [33m495[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Branches Adicionais[2m > [22malterna entre tabs Dashboard e CRM [33m2053[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProviderDashboard.actions.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 4898[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderDashboard ÔÇô a├º├Áes e fluxos principais[2m > [22mpermite avan├ºar status de job e abrir chat [33m2040[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderDashboard ÔÇô a├º├Áes e fluxos principais[2m > [22mabre modal de proposta para job normal e envia proposta [33m786[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderDashboard ÔÇô a├º├Áes e fluxos principais[2m > [22mfiltra dispon├¡veis por categoria e localiza├º├úo e limpa filtros [33m541[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderDashboard ÔÇô a├º├Áes e fluxos principais[2m > [22menvia mensagem e confirma agendamento via ChatModal [33m740[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderDashboard ÔÇô a├º├Áes e fluxos principais[2m > [22mgera email de indica├º├úo e exibe modal de convite [33m698[2mms[22m[39m
+stderr | tests/ProspectorDashboardUnified.test.tsx > ProspectorDashboard - Unified Layout > should render Quick Actions when stats and link available
+[ProspectorDashboard] SmartActions fallback: Missing or insufficient permissions.
+[ProspectorDashboard] SmartActions fallback: Missing or insufficient permissions.
+
+stderr | tests/ProspectorDashboardUnified.test.tsx > ProspectorDashboard - Unified Layout > should display error message when API fails
+[ProspectorDashboard] SmartActions fallback: Missing or insufficient permissions.
+[ProspectorDashboard] SmartActions fallback: Missing or insufficient permissions.
+
+ [32mÔ£ô[39m tests/AdminDashboard.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 6046[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AdminDashboard[2m > [22mdeve renderizar o dashboard do admin com loading inicial [33m340[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AdminDashboard[2m > [22mdeve exibir analytics ap├│s carregamento [33m505[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AdminDashboard[2m > [22mdeve filtrar jobs por status [33m2000[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AdminDashboard[2m > [22mdeve permitir suspender um provedor [33m1045[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AdminDashboard[2m > [22mdeve chamar media├º├úo de disputa ao clicar em "Mediar" [33m1208[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AdminDashboard[2m > [22mdeve navegar entre abas do dashboard [33m809[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProspectorDashboardUnified.test.tsx [2m([22m[2m16 tests[22m[2m)[22m[33m 6723[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Unified Layout[2m > [22mshould render unified 3-column layout without tabs [33m495[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Unified Layout[2m > [22mshould render Column 1 - Stats Cards [33m1692[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Unified Layout[2m > [22mshould render Column 1 - Badge Progress section [33m317[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Unified Layout[2m > [22mshould render Column 1 - Mini Leaderboard (Top 5) [33m487[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Unified Layout[2m > [22mshould render Column 3 - Smart Actions [33m1191[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Unified Layout[2m > [22mshould render Column 3 - Performance metrics [33m332[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Unified Layout[2m > [22mshould render Column 3 - Weekly Goals [33m332[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Unified Layout[2m > [22mshould render Column 3 - Notification Settings [33m307[2mms[22m[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:51:16)
+[ProspectorDashboard] SmartActions fallback: Missing or insufficient permissions.
+
+stderr | tests/errorMessages.test.ts > errorMessages > createErrorHandler > cria handler que retorna mensagem e a├º├úo
+[Error] {
+  timestamp: '2025-11-22T15:06:06.097Z',
+  context: 'payment',
+  code: 'E_NETWORK',
+  message: 'Network error',
+  status: undefined,
+  details: undefined,
+  stack: undefined
+}
+
+stderr | tests/errorMessages.test.ts > errorMessages > createErrorHandler > chama callback de retry quando a├º├úo ├® executada
+[Error] {
+  timestamp: '2025-11-22T15:06:06.128Z',
+  context: 'unknown',
+  code: 'E_NETWORK',
+  message: 'Network error',
+  status: undefined,
+  details: undefined,
+  stack: undefined
+}
+
+stderr | tests/errorMessages.test.ts > errorMessages > createErrorHandler > chama callback de auth quando a├º├úo ├® login
+[Error] {
+  timestamp: '2025-11-22T15:06:06.132Z',
+  context: 'unknown',
+  code: 'E_AUTH',
+  message: 'Unauthorized',
+  status: undefined,
+  details: undefined,
+  stack: undefined
+}
+
+ [32mÔ£ô[39m tests/errorMessages.test.ts [2m([22m[2m22 tests[22m[2m)[22m[90m 82[2mms[22m[39m
+ [32mÔ£ô[39m tests/api.edgecases.test.ts [2m([22m[2m17 tests[22m[2m)[22m[90m 292[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProspectorQuickActions.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[33m 1360[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorQuickActions[2m > [22mshould render quick actions bar with all buttons [33m367[2mms[22m[39m
+ [32mÔ£ô[39m tests/PaymentModal.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 5721[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m PaymentModal[2m > [22mchama onClose quando clicar no bot├úo Cancelar [33m1297[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m PaymentModal[2m > [22mchama onClose quando clicar no bot├úo X [33m738[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m PaymentModal[2m > [22mchama onConfirmPayment e exibe loading ao clicar em Pagar [33m684[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m PaymentModal[2m > [22mexibe mensagem de erro quando onConfirmPayment falha [33m663[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m PaymentModal[2m > [22mdesabilita bot├Áes durante loading [33m530[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m PaymentModal[2m > [22mmostra a├º├úo de Tentar novamente quando erro for E_TIMEOUT e permite retry [33m756[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m PaymentModal[2m > [22mmostra a├º├úo de Tentar novamente quando erro for E_NETWORK [33m817[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/ReviewModal.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[33m 6153[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mshows error when submitting without rating [33m1727[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mallows user to enter comment [33m587[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mcalls onClose when cancel button is clicked [33m683[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mgenerates AI comment when button is clicked [33m411[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mshows error when AI generation fails [33m410[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mshows error when trying to generate AI comment without rating [33m485[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mdisables submit button when rating is 0 [33m498[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22menables submit button after rating is selected [33m431[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22msubmits review with rating and comment [33m723[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProposalModal.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 7760[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProposalModal[2m > [22mrenderiza modal com informa├º├Áes do job [33m323[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProposalModal[2m > [22mfecha modal ao clicar no X [33m1587[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProposalModal[2m > [22mpermite enviar proposta com pre├ºo e mensagem [33m2157[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProposalModal[2m > [22mexibe erro quando pre├ºo ├® inv├ílido [33m1158[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProposalModal[2m > [22mgera mensagem com IA quando bot├úo ├® clicado [33m731[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProposalModal[2m > [22mexibe erro quando IA falha ao gerar mensagem [33m579[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProposalModal[2m > [22mpermite submeter proposta sem mensagem [33m1102[2mms[22m[39m
+ [32mÔ£ô[39m tests/DisputeModal.unit.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 7626[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m DisputeModal (unit)[2m > [22mrenderiza cabe├ºalho e nota de pagamento pausado [33m582[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m DisputeModal (unit)[2m > [22menvia mensagem ao submeter quando h├í texto e outra parte [33m2617[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m DisputeModal (unit)[2m > [22mn├úo envia quando mensagem vazia ou s├│ espa├ºos [33m1325[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m DisputeModal (unit)[2m > [22mn├úo envia se otherParty estiver ausente [33m1207[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m DisputeModal (unit)[2m > [22mfecha ao clicar no bot├úo de fechar [33m543[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m DisputeModal (unit)[2m > [22menvia mensagem ao pressionar Enter [33m905[2mms[22m[39m
+ [32mÔ£ô[39m tests/ClientDashboard.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 18029[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard[2m > [22mrenderiza tabs e sauda├º├úo ap├│s o loading [33m5282[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard[2m > [22maltern├óncia de tabs e estados vazios (servi├ºos/itens/ajuda) [33m3311[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard[2m > [22ma├º├úo r├ípida "Solicitar Servi├ºo" dispara callback [33m1475[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard[2m > [22mbot├úo "+ Novo Servi├ºo" em "Meus Servi├ºos" dispara callback [33m2327[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard[2m > [22mFluxo de Pagamento[2m > [22mdeve abrir o modal de pagamento ao aceitar uma proposta [33m458[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard[2m > [22mFluxo de Pagamento[2m > [22mdeve chamar a API de checkout e redirecionar ao confirmar o pagamento [33m2572[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard[2m > [22mFluxo de Pagamento[2m > [22mdeve fechar o modal de pagamento ao clicar em cancelar [33m2585[2mms[22m[39m
+ [32mÔ£ô[39m tests/api.usersAndMessages.test.ts [2m([22m[2m9 tests[22m[2m)[22m[90m 46[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/ProposalListModal.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 2417[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProposalListModal[2m > [22mchama onClose ao clicar no bot├úo fechar [33m1156[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProposalListModal[2m > [22mrepassa onAcceptProposal para ProposalDetailCard [33m515[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProposalListModal[2m > [22mrepassa onViewProfile para ProposalDetailCard [33m496[2mms[22m[39m
+ [32mÔ£ô[39m tests/AuthModal.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 1034[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AuthModal[2m > [22mrenderiza t├¡tulo de login e envia credenciais [33m333[2mms[22m[39m
+ [32mÔ£ô[39m tests/ChatModal.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 11577[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ChatModal[2m > [22mrenderiza cabe├ºalho e mensagens b├ísicas [33m535[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ChatModal[2m > [22mbloqueia envio quando outra parte n├úo existe [33m2964[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ChatModal[2m > [22menvia mensagem de texto e limpa input [33m2273[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ChatModal[2m > [22mmostra sugest├úo da IA e envia resumo como notifica├º├úo de sistema [33m2400[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ChatModal[2m > [22mexibe sugest├úo de agendamento via IA (proposeScheduleFromChat) e confirma [33m912[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ChatModal[2m > [22mpermite sugerir agendamento manual e envia schedule_proposal [33m2040[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ChatModal[2m > [22mmostra proposta de agendamento recebida e permite confirmar [33m427[2mms[22m[39m
+ [32mÔ£ô[39m tests/ReviewModal.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 9505[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mrenderiza modal com t├¡tulo e campos [33m1952[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mfecha modal ao clicar no bot├úo X [33m790[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mn├úo permite submeter quando rating ├® 0 (bot├úo desabilitado) [33m649[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mpermite selecionar rating e submeter review [33m1908[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mpermite submeter review sem coment├írio [33m999[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mgera coment├írio com IA quando bot├úo ├® clicado [33m725[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mexibe erro quando IA falha ao gerar coment├írio [33m876[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mdesabilita bot├úo de gerar IA quando rating n├úo foi selecionado [33m678[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mexibe mensagem de erro ao tentar gerar IA sem rating [33m531[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ReviewModal[2m > [22mdesabilita bot├úo submit quando rating ├® 0 [33m385[2mms[22m[39m
+ [32mÔ£ô[39m tests/AuctionRoomModal.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 3949[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AuctionRoomModal[2m > [22mvalida e envia lance menor que o menor existente [33m3344[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/DisputeDetailsModal.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 2153[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m DisputeDetailsModal[2m > [22mfecha modal ao clicar no bot├úo X [33m1647[2mms[22m[39m
+ [32mÔ£ô[39m tests/modals.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 3545[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Modals Suite[2m > [22mDisputeModal[2m > [22mrenderiza mensagens existentes e envia nova mensagem [33m349[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Modals Suite[2m > [22mDisputeModal[2m > [22mn├úo envia mensagem vazia [33m1029[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Modals Suite[2m > [22mReviewModal[2m > [22menvia avalia├º├úo com rating e coment├írio [33m760[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Modals Suite[2m > [22mServiceCatalogModal[2m > [22madiciona e remove servi├ºo do cat├ílogo [33m1247[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/AddItemModal.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 4577[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AddItemModal[2m > [22mrenderiza modal no step upload inicial [33m328[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AddItemModal[2m > [22mchama onClose ao clicar no bot├úo fechar [33m1168[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AddItemModal[2m > [22mexibe erro quando arquivo ├® maior que 4MB [33m1498[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AddItemModal[2m > [22mchama onSave com dados corretos ao salvar [33m958[2mms[22m[39m
+stderr | tests/ProspectorOnboarding.test.tsx > ProspectorOnboarding > should save completion state to localStorage when tour is finished
+[2025-11-22T15:06:26.419Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x696bdbd4 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ProspectorOnboarding.test.tsx > ProspectorOnboarding > should save skip state to localStorage when tour is skipped
+[2025-11-22T15:06:26.833Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x696bdbd5 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [31mÔØ»[39m tests/ProspectorOnboarding.test.tsx [2m([22m[2m9 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 2682[2mms[22m[39m
+[31m   [31m├ù[31m ProspectorOnboarding[2m > [22mshould render tour when user has not seen it[33m 1210[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element by: [data-testid="joyride-tour"]
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div />[31m
+[36m</body>[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorOnboarding[2m > [22mshould save completion state to localStorage when tour is finished [33m761[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorOnboarding[2m > [22mshould save skip state to localStorage when tour is skipped [33m582[2mms[22m[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:51:16)
+[2025-11-22T15:06:27.634Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x696bdbd6 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+stderr | Console.console.error (C:\Users\JE\servio.ai\tests\setup.ts:56:17)
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ClientDashboard.scheduleAndChat.test.tsx > ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve) > mostra aviso ao tentar salvar perfil sem campos obrigat├│rios
+[2025-11-22T15:06:28.554Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Listen' stream 0x88a7efb0 error. Code: 5 Message: 5 NOT_FOUND: Target id not found: 2
+
+ [32mÔ£ô[39m tests/api.payments.test.ts [2m([22m[2m9 tests[22m[2m)[22m[90m 58[2mms[22m[39m
+ [32mÔ£ô[39m tests/JobCard.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 3347[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m JobCard[2m > [22mrenderiza informa├º├Áes b├ísicas e pre├ºo fixo quando tabelado [33m1341[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m JobCard[2m > [22mmostra bot├úo de FAQ e abre modal com FAQ gerada [33m737[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m JobCard[2m > [22mem servi├ºo n├úo-leil├úo, com proposta enviada, mant├®m bot├úo habilitado e altera o texto [33m508[2mms[22m[39m
+ [32mÔ£ô[39m tests/api.more.test.ts [2m([22m[2m9 tests[22m[2m)[22m[90m 85[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/ClientJobCard.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 3475[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientJobCard[2m > [22mchama onViewProposals ao clicar em Ver Propostas [33m1184[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientJobCard[2m > [22mexibe bot├úo de leil├úo quando status ├® em_leilao [33m318[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientJobCard[2m > [22mexibe bot├Áes Chat e Mapa quando status ├® proposta_aceita [33m754[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientJobCard[2m > [22mexibe bot├úo Finalizar e Avaliar quando status ├® pagamento_pendente [33m339[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProviderOnboarding.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 4925[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderOnboarding[2m > [22mdeve exibir um erro de valida├º├úo e n├úo avan├ºar se a biografia for muito curta [33m1897[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderOnboarding[2m > [22mdeve avan├ºar para a pr├│xima etapa e chamar a API de atualiza├º├úo ao preencher os dados corretamente [33m1581[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderOnboarding[2m > [22mdeve chamar as APIs do Stripe e redirecionar na etapa de pagamento [33m1215[2mms[22m[39m
+stderr | tests/api.proposals.test.ts > Proposal Management > createProposal > valida pre├ºo m├¡nimo na proposta
+Failed to create proposal: Error: Erro interno do servidor. Tente mais tarde.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:60:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:92:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Module.createProposal (C:\Users\JE\servio.ai\services\api.ts:685:12)
+    at C:\Users\JE\servio.ai\tests\api.proposals.test.ts:50:7
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15) {
+  code: 'E_SERVER',
+  details: { error: 'Pre├ºo m├¡nimo ├® R$ 50' }
+}
+
+stderr | tests/api.proposals.test.ts > Proposal Management > createProposal > valida descri├º├úo obrigat├│ria
+Failed to create proposal: Error: Falha de rede. Verifique sua conex├úo.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:60:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:105:11)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Module.createProposal (C:\Users\JE\servio.ai\services\api.ts:685:12) {
+  code: 'E_NETWORK'
+}
+
+stderr | tests/api.proposals.test.ts > Proposal Management > createProposal > previne duplicata de proposta do mesmo provider
+Failed to create proposal: Error: Erro interno do servidor. Tente mais tarde.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:60:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:92:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Module.createProposal (C:\Users\JE\servio.ai\services\api.ts:685:12)
+    at C:\Users\JE\servio.ai\tests\api.proposals.test.ts:71:7
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15) {
+  code: 'E_SERVER',
+  details: { error: 'Proposta j├í existe para este job' }
+}
+
+ [32mÔ£ô[39m tests/api.proposals.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 99[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/Pagination.test.tsx [2m([22m[2m13 tests[22m[2m)[22m[33m 415[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/ConfirmDialog.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 512[2mms[22m[39m
+ [32mÔ£ô[39m tests/ClientDashboard.scheduleAndChat.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 13085[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve)[2m > [22mconfirma agendamento a partir de uma proposta recebida no chat [33m6813[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve)[2m > [22mmostra aviso ao tentar salvar perfil sem campos obrigat├│rios [33m3494[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve)[2m > [22mexibe toast de erro ao falhar envio de mensagem [33m2763[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/DisputeModal.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 2620[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m DisputeModal[2m > [22mcalls onClose when close button is clicked [33m982[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m DisputeModal[2m > [22msends message when form is submitted [33m332[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m DisputeModal[2m > [22mdoes not send empty message [33m342[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m DisputeModal[2m > [22mdoes not send message when otherParty is undefined [33m334[2mms[22m[39m
+ [32mÔ£ô[39m tests/App.integration.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 3167[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m App ÔÇô integra├º├úo leve de rotas e auth[2m > [22mrenderiza home com HeroSection por padr├úo [33m391[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m App ÔÇô integra├º├úo leve de rotas e auth[2m > [22mnavega para "Encontrar Profissionais" e carrega dados [33m2108[2mms[22m[39m
+ [32mÔ£ô[39m tests/api.matchProviders.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 52[2mms[22m[39m
+ [32mÔ£ô[39m tests/AIJobRequestWizard.coverage.test.tsx [2m([22m[2m15 tests[22m[2m)[22m[90m 30[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/ProgressBar.test.tsx [2m([22m[2m17 tests[22m[2m)[22m[33m 1652[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProgressBar[2m > [22mrenderiza barra de progresso com valor correto [33m997[2mms[22m[39m
+ [32mÔ£ô[39m tests/Header.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 2897[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Header[2m > [22mchama onLoginClick ao clicar em "Entrar" [33m933[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Header[2m > [22mchama onRegisterClick ao clicar em "Cadastre-se" [33m375[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Header[2m > [22mchama onLogoutClick ao clicar em "Sair" [33m455[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Header[2m > [22mchama onSetView ao clicar no logo [33m305[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/Avatar.test.tsx [2m([22m[2m16 tests[22m[2m)[22m[33m 352[2mms[22m[39m
+ [32mÔ£ô[39m tests/analytics.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 29[2mms[22m[39m
+ [32mÔ£ô[39m tests/ClientDashboard.coverage.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 22[2mms[22m[39m
+stderr | tests/components/PaymentSetupCard.test.tsx > PaymentSetupCard > shows toast on API error
+Failed to start Stripe onboarding: Error: network
+    at C:\Users\JE\servio.ai\tests\components\PaymentSetupCard.test.tsx:71:64
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+ [32mÔ£ô[39m tests/components/PaymentSetupCard.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 2375[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m PaymentSetupCard[2m > [22mrenders setup button and triggers account creation flow [33m1737[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m PaymentSetupCard[2m > [22mshows toast on API error [33m334[2mms[22m[39m
+ [32mÔ£ô[39m tests/FindProvidersPage.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 3356[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m FindProvidersPage[2m > [22mmostra contagem e lista resultados com filtros e ordena├º├úo [33m2419[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m FindProvidersPage[2m > [22mexecuta busca com IA (fallback) via formul├írio superior [33m931[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/Tooltip.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 436[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProviderDashboard.profileStrength.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 503[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderDashboard ÔÇô ProfileStrength e salvar perfil[2m > [22mabre modal de perfil e salva altera├º├Áes, incluindo ramo de fraude suspeita [33m495[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/ItemCard.complete.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 1981[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ItemCard - Complete Functionality[2m > [22mcalls onClick when card is clicked [33m991[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ItemCard - Complete Functionality[2m > [22mhas correct styling classes [33m312[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProviderDashboard.verify.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 1718[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderDashboard ÔÇô verifica├º├úo & onboarding[2m > [22mmostra CTA de verifica├º├úo e abre fluxo ao clicar em Verificar Agora [33m1350[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProviderDashboard.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 1185[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderDashboard[2m > [22mrenderiza dashboard do provedor sem erros [33m680[2mms[22m[39m
+ [32mÔ£ô[39m tests/AdminDashboard.navigation.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 1880[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AdminDashboard Tab Navigation[2m > [22mdeve navegar para a aba "Jobs" e exibir seu conte├║do ao ser clicada [33m971[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AdminDashboard Tab Navigation[2m > [22mdeve navegar entre m├║ltiplas abas corretamente [33m601[2mms[22m[39m
+stderr | tests/AdminDashboard.errors.test.tsx > AdminDashboard ÔÇô cen├írios de erro > exibe toast de erro ao falhar resolver disputa e fecha modal no finally
+Falha ao resolver a disputa: Error: fail
+    at C:\Users\JE\servio.ai\tests\AdminDashboard.errors.test.tsx:49:57
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+ [32mÔ£ô[39m tests/ProviderJobCard.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 2854[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderJobCard[2m > [22mchama onUpdateStatus para a_caminho quando status agendado [33m1422[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderJobCard[2m > [22mchama onUpdateStatus para em_progresso quando status a_caminho [33m550[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderJobCard[2m > [22mmostra bot├úo para abrir chat com cliente e chama onChat [33m418[2mms[22m[39m
+ [32mÔ£ô[39m tests/AdminDashboard.errors.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 377[2mms[22m[39m
+ [32mÔ£ô[39m tests/AdminDashboard.actions.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 463[2mms[22m[39m
+ [32mÔ£ô[39m tests/OnboardingStepProfile.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 5080[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m OnboardingStepProfile[2m > [22mdeve renderizar o t├¡tulo e o campo de input corretamente [33m1352[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m OnboardingStepProfile[2m > [22mdeve permitir ao usu├írio adicionar uma nova especialidade [33m1135[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m OnboardingStepProfile[2m > [22mdeve limpar o input ap├│s adicionar uma especialidade [33m1026[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m OnboardingStepProfile[2m > [22mdeve permitir remover uma especialidade existente [33m347[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m OnboardingStepProfile[2m > [22mn├úo deve adicionar uma especialidade duplicada ou vazia [33m1191[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/EmptyState.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 355[2mms[22m[39m
+ [32mÔ£ô[39m tests/geminiService.resolveEndpoint.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 32[2mms[22m[39m
+ [32mÔ£ô[39m tests/NotificationsBell.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 3717[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m NotificationsBell[2m > [22mexibe badge com contador de n├úo lidas e abre o popover ao clicar [33m1975[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m NotificationsBell[2m > [22mmarca todas como lidas e fecha o popover [33m890[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m NotificationsBell[2m > [22mfecha o popover ao clicar fora [33m840[2mms[22m[39m
+ [32mÔ£ô[39m tests/a11yHelpers.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 23[2mms[22m[39m
+stderr | tests/e2e/error-handling.test.ts > [E2E-SMOKE] Error Handling API > Timeout ÔåÆ retorna lista b├ísica de providers (fallback)
+[api] Timeout on /api/match-providers Error: Tempo de resposta excedido. Tente novamente.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:60:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:98:22)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Module.matchProvidersForJob (C:\Users\JE\servio.ai\services\api.ts:945:12)
+    at C:\Users\JE\servio.ai\tests\e2e\error-handling.test.ts:42:23
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5) {
+  code: 'E_TIMEOUT'
+}
+
+ [32mÔ£ô[39m tests/e2e/error-handling.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 131[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/ItemCard.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 1541[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ItemCard[2m > [22mrenderiza item com imagem [33m317[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ItemCard[2m > [22maciona onClick quando clicado [33m1081[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/SitemapGenerator.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 2198[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m SitemapGenerator[2m > [22mrenders base, provider, service and service-location URLs [33m1885[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m SitemapGenerator[2m > [22mcalls onClose when close button clicked [33m307[2mms[22m[39m
+ [32mÔ£ô[39m tests/NotificationsPopover.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 1825[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m NotificationsPopover[2m > [22mrenderiza lista e bot├úo de marcar todas quando h├í n├úo lidas [33m1251[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m NotificationsPopover[2m > [22maciona onMarkAsRead ao clicar em item [33m464[2mms[22m[39m
+ [32mÔ£ô[39m tests/ErrorBoundary.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 1489[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ErrorBoundary[2m > [22mexibe bot├úo "Tentar novamente" quando h├í erro [33m1095[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/ServiceRequestForm.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 7460[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ServiceRequestForm[2m > [22mstarts with disabled submit [33m3470[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ServiceRequestForm[2m > [22menables submit after description and category selected then calls onSubmit [33m2263[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ServiceRequestForm[2m > [22mshows loading state and disables submit when isLoading true [33m1700[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/StatusBadge.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 2243[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m StatusBadge[2m > [22mrenderiza badge com status success [33m1264[2mms[22m[39m
+ [32mÔ£ô[39m tests/geminiService.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 356[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m geminiService[2m > [22menhanceJobRequest falls back to heuristic on backend failure [33m342[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/MaintenanceSuggestions.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 1273[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m MaintenanceSuggestions[2m > [22mrenders suggestions and triggers onSuggestJob [33m1234[2mms[22m[39m
+stderr | tests/components/ServiceLandingPage.test.tsx > ServiceLandingPage > shows error on API failure
+Error: network
+    at C:\Users\JE\servio.ai\tests\components\ServiceLandingPage.test.tsx:38:59
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+ [32mÔ£ô[39m tests/components/ServiceLandingPage.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 569[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ServiceLandingPage[2m > [22mshows empty state when no providers match category [33m369[2mms[22m[39m
+stderr | tests/geminiService.more.test.ts > geminiService ÔÇô resilience and URL resolution > getMatchingProviders falls back to [] on persistent failure
+[match-providers] Fallback to empty list due to backend error: Error: first fail
+    at fetchFromBackend (C:\Users\JE\servio.ai\services\geminiService.ts:143:19)
+    at Module.getMatchingProviders (C:\Users\JE\servio.ai\services\geminiService.ts:205:16)
+    at C:\Users\JE\servio.ai\tests\geminiService.more.test.ts:35:17
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+ [32mÔ£ô[39m tests/geminiService.more.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 674[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m geminiService ÔÇô resilience and URL resolution[2m > [22mgenerateJobFAQ retries once after network error and succeeds [33m330[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m geminiService ÔÇô resilience and URL resolution[2m > [22mgetMatchingProviders falls back to [] on persistent failure [33m336[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProfileTips.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 1837[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProfileTips[2m > [22mexibe loading e depois a dica gerada pela IA [33m301[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProfileTips[2m > [22mdispara onEditProfile ao clicar em Editar Perfil [33m1479[2mms[22m[39m
+ [32mÔ£ô[39m tests/api.coverage.bump.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 32[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/Spinner.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[90m 273[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProfileStrength.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 2022[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProfileStrength[2m > [22mrenderiza indicador de for├ºa do perfil [33m443[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProfileStrength[2m > [22mmostra bot├úo para completar perfil quando incompleto [33m1459[2mms[22m[39m
+ [32mÔ£ô[39m tests/api.positivePaths.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 30[2mms[22m[39m
+ [32mÔ£ô[39m tests/ItemCard.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 2239[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ItemCard[2m > [22mrenderiza com imagem quando imageUrl est├í presente [33m1359[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ItemCard[2m > [22maciona onClick ao clicar [33m828[2mms[22m[39m
+stderr | tests/e2e/stripe-timeout-retry.test.ts > [E2E-SMOKE] Stripe Timeout + Retry > createCheckoutSession: 1┬¬ tentativa E_TIMEOUT ÔåÆ 2┬¬ tentativa sucesso
+[api] Timeout on /create-checkout-session Error: Tempo de resposta excedido. Tente novamente.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:60:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:98:22)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  code: 'E_TIMEOUT'
+}
+
+ [32mÔ£ô[39m tests/e2e/stripe-timeout-retry.test.ts [2m([22m[2m1 test[22m[2m)[22m[90m 49[2mms[22m[39m
+ [32mÔ£ô[39m tests/firebaseConfig.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 22[2mms[22m[39m
+ [32mÔ£ô[39m tests/api.admin.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 27[2mms[22m[39m
+ [32mÔ£ô[39m tests/CompletedJobCard.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[90m 268[2mms[22m[39m
+ [32mÔ£ô[39m tests/e2e/ai-fallback.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 511[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m [E2E-SMOKE] AI Fallback[2m > [22menhanceJobRequest ÔåÆ retorna objeto heur├¡stico quando backend falha [33m445[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProviderSearchResultCard.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 1715[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProviderSearchResultCard[2m > [22mrenderiza infos e estrelas e dispara callbacks [33m1710[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/PortfolioGallery.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 1900[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m PortfolioGallery[2m > [22mopens lightbox on click and closes on overlay click [33m1648[2mms[22m[39m
+ [32mÔ£ô[39m tests/LocationMap.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 343[2mms[22m[39m
+ [32mÔ£ô[39m tests/e2e/payment-errors.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 32[2mms[22m[39m
+ [32mÔ£ô[39m tests/badgeUtils.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 16[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/TimePeriodFilter.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 1559[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m TimePeriodFilter[2m > [22mmarks selected period and calls onSelectPeriod on click [33m1553[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/LocationMap.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 149[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProfileModal.save.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 1635[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProfileModal[2m > [22msubmits parsed specialties and calls onSave [33m1630[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/StructuredDataSEO.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 124[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/AISchedulingAssistant.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 179[2mms[22m[39m
+ [32mÔ£ô[39m tests/smoke.test.ts [2m([22m[2m1 test[22m[2m)[22m[90m 18[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/PublicContactCTA.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 673[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m PublicContactCTA[2m > [22mrenders provider name and triggers click [33m671[2mms[22m[39m
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Tests 1 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+ FAIL  tests/ProspectorOnboarding.test.tsx > ProspectorOnboarding > should render tour when user has not seen it
+TestingLibraryElementError: Unable to find an element by: [data-testid="joyride-tour"]
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+ ÔØ» Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ÔØ» tests/ProspectorOnboarding.test.tsx:48:11
+     46|     render(<ProspectorOnboarding userId={TEST_USER_ID} />);
+     47| 
+     48|     await waitFor(() => {
+       |           ^
+     49|       expect(screen.getByTestId('joyride-tour')).toBeInTheDocument();
+     50|     });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1/1]ÔÄ»
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m99 passed[39m[22m[90m (100)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m732 passed[39m[22m[90m (733)[39m
+[2m   Start at [22m 12:05:42
+[2m   Duration [22m 98.10s[2m (transform 34.32s, setup 226.34s, collect 73.84s, tests 219.96s, environment 604.33s, prepare 97.11s)[22m
+

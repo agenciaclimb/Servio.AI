@@ -62,7 +62,7 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
     nextBadge: stats.nextBadge,
     progressToNextBadge: stats.progressToNextBadge,
     tiers: stats.badgeTiers
-  } : computeBadgeProgress(stats?.totalRecruits || 0);
+  } : computeBadgeProgress(0);
 
   return (
     <div className="max-w-6xl mx-auto p-6 flex flex-col gap-6">

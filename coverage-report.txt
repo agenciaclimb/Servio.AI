@@ -1,0 +1,19 @@
+
+> servio-ai-frontend@0.0.0 test
+> vitest run --coverage --run --coverage
+
+file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/cac.CB_9Zo9Q.js:1341
+      throw new Error(
+            ^
+
+Error: Expected a single value for option "--coverage ", received [true, true]
+    at transform (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/cac.CB_9Zo9Q.js:1341:13)
+    at setDotProp (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/cac.CB_9Zo9Q.js:206:22)
+    at CAC.mri (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/cac.CB_9Zo9Q.js:590:9)
+    at CAC.parse (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/cac.CB_9Zo9Q.js:507:27)
+    at file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/cli.js:8:13
+    at ModuleJob.run (node:internal/modules/esm/module_job:345:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:651:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.19.0
