@@ -70,23 +70,24 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
   }, [prospectorId]);
 
   async function createSampleLead() {
-    const sampleLead: Partial<ProspectLead> = {
+    const now = new Date();
+    const sampleLead = {
       prospectorId,
       name: 'João Silva (Exemplo)',
       phone: '(11) 98765-4321',
       email: 'joao.silva@email.com',
-      source: 'referral',
-      stage: 'new',
+      source: 'referral' as const,
+      stage: 'new' as const,
       category: 'Eletricista',
       location: 'São Paulo, SP',
       notes: 'Lead de exemplo - recomendado por cliente satisfeito. Interessado em trabalhos residenciais.',
-      createdAt: Timestamp.now(),
-      updatedAt: Timestamp.now(),
+      createdAt: Timestamp.fromDate(now),
+      updatedAt: Timestamp.fromDate(now),
       activities: [
         {
-          type: 'note',
+          type: 'note' as const,
           description: 'Lead criado como exemplo - você pode editá-lo ou excluí-lo',
-          timestamp: Timestamp.now()
+          timestamp: Timestamp.fromDate(now)
         }
       ]
     };
