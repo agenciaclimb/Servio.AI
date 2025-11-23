@@ -1,48 +1,42 @@
-// Setup global para testes - Mocks do Firebase
-import { vi } from 'vitest';
+// Setup global para testes
+// Este arquivo é carregado antes de cada teste (via vitest.config.ts)
+// 
+// NOTA: Não adicione vi.mock() aqui pois eles precisam ser hoisted e podem
+// conflitar com mocks específicos de cada teste.
+// 
+// Use este arquivo apenas para:
+// - Configurações globais
+// - Polyfills
+// - Setup de ambiente de teste
 
-// Mock completo do Firebase Firestore
-vi.mock('firebase/firestore', () => ({
-  collection: vi.fn(),
-  query: vi.fn(),
-  where: vi.fn(),
-  orderBy: vi.fn(),
-  limit: vi.fn(),
-  getDocs: vi.fn(() => Promise.resolve({ 
-    docs: [],
-    empty: true,
-    size: 0
-  })),
-  getDoc: vi.fn(() => Promise.resolve({ 
-    exists: () => false,
-    data: () => ({})
-  })),
-  setDoc: vi.fn(() => Promise.resolve()),
-  updateDoc: vi.fn(() => Promise.resolve()),
-  deleteDoc: vi.fn(() => Promise.resolve()),
-  addDoc: vi.fn(() => Promise.resolve({ id: 'mock-id' })),
-  doc: vi.fn(),
-  getFirestore: vi.fn(() => ({})),
-  initializeFirestore: vi.fn(() => ({})),
-  Timestamp: {
-    now: vi.fn(() => ({ seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 })),
-    fromDate: vi.fn((date) => ({ seconds: Math.floor(date.getTime() / 1000), nanoseconds: 0 })),
-  },
-}));
+// Silenciar warnings de console esperados em testes
+const originalConsoleError = console.error;
+const originalConsoleWarn = console.warn;
 
-// Mock do Firebase Auth
-vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn(() => ({})),
-  onAuthStateChanged: vi.fn(),
-  signInWithEmailAndPassword: vi.fn(),
-  signOut: vi.fn(),
-  createUserWithEmailAndPassword: vi.fn(),
-}));
+beforeAll(() => {
+  // Silenciar erros esperados do Firebase em testes
+  console.error = (...args: any[]) => {
+    const message = args[0]?.toString() || '';
+    if (
+      message.includes('PERMISSION_DENIED') ||
+      message.includes('Missing or insufficient permissions') ||
+      message.includes('Firebase')
+    ) {
+      return; // Silenciar
+    }
+    originalConsoleError(...args);
+  };
 
-// Mock do Firebase Storage
-vi.mock('firebase/storage', () => ({
-  getStorage: vi.fn(() => ({})),
-  ref: vi.fn(),
-  uploadBytes: vi.fn(),
-  getDownloadURL: vi.fn(() => Promise.resolve('https://mock-url.com/file.jpg')),
-}));
+  console.warn = (...args: any[]) => {
+    const message = args[0]?.toString() || '';
+    if (message.includes('Firebase') || message.includes('Firestore')) {
+      return; // Silenciar
+    }
+    originalConsoleWarn(...args);
+  };
+});
+
+afterAll(() => {
+  console.error = originalConsoleError;
+  console.warn = originalConsoleWarn;
+});
