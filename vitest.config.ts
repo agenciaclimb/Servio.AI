@@ -12,6 +12,8 @@ export default defineConfig({
     hookTimeout: 10000,
     exclude: ['backend/**', 'doc/**', 'node_modules/**'],
     coverage: {
+      enabled: true,
+      reportOnFailure: true,
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: 'coverage',

@@ -16,6 +16,8 @@ export default defineConfig({
       'src/index.test.js'
     ],
     coverage: {
+      enabled: true,
+      reportOnFailure: true,
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: 'coverage',
