@@ -18,7 +18,7 @@ import {
   setupForegroundMessageListener,
   type NotificationPreferences,
   type PushNotification,
-} from '../services/fcmService';
+} from '../services/notificationService';
 
 interface NotificationSettingsProps {
   prospectorId: string;

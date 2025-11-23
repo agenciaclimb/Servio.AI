@@ -1,0 +1,45 @@
+# Dependências (serão reinstaladas no container)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testes
+coverage/
+*.test.js
+*.spec.js
+tests/
+__tests__/
+
+# Configuração local
+.env
+.env.local
+.env.*.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentação
+README.md
+*.md
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Build artifacts
+dist/
+build/
+*.log
