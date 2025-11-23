@@ -12,9 +12,12 @@ import { extractInfoFromDocument } from '../../services/geminiService';
 // Temporary types until proper types are defined
 interface Certification {
   id: string;
-  title: string;
+  name: string;
+  title?: string;
   issuer: string;
-  date: string;
+  date?: string;
+  issueDate?: string;
+  expiryDate?: string;
   verified: boolean;
 }
 
@@ -218,7 +221,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
   const handleCertificationImageUpload = async (id: string, file: File) => {
     try {
       setLoading(true);
-      const _base64 = await fileToBase64(file);
+      await fileToBase64(file);
       // TODO: Implement validateCertification service
       const result = {
         valid: true,
@@ -316,7 +319,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const _base64 = await fileToBase64(file);
+        await fileToBase64(file);
         const dataUrl = URL.createObjectURL(file);
 
         // TODO: Implement analyzePortfolioImage service
@@ -391,7 +394,18 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
       const token = await auth.currentUser?.getIdToken();
       const baseUrl = import.meta.env.VITE_BACKEND_API_URL || '';
 
-      const updatedUser: Partial<User> & { providerType?: string; cnpj?: string } = {
+      const updatedUser: Partial<User> & { 
+        providerType?: string; 
+        cnpj?: string; 
+        companyName?: string;
+        yearsOfExperience?: number;
+        certifications?: any[];
+        serviceAreas?: string[];
+        teamSize?: number;
+        teams?: any[];
+        differentials?: string[];
+        aiGeneratedBio?: boolean;
+      } = {
         providerType: data.providerType,
         companyName: data.companyName,
         cnpj: data.providerType === 'empresa' ? extractedDocData.cnpj : undefined,

@@ -44,16 +44,16 @@ const AdminProviderManagement: React.FC = () => {
   const totalPages = Math.ceil(providers.length / ITEMS_PER_PAGE);
   const paginatedProviders = providers.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-    const handleUpdateStatus = async (userId: string, status: 'ativo' | 'suspenso' | 'pendente' | 'inativo') => {
+    const handleUpdateStatus = async (userId: string, status: string) => {
         // optimistic update
         const previousUsers = allUsers;
-        setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status } : u));
+        setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status: status as any } : u));
         try {
-            await API.updateUser(userId, { status });
+            await API.updateUser(userId, { status: status as any });
             const notificationText = status === 'suspenso' 
                 ? 'Sua conta foi suspensa. Entre em contato com o suporte.'
                 : 'Sua conta foi reativada. Você já pode voltar a trabalhar.';
-            await API.createNotification(userId, 'Status da Conta', notificationText);
+            await API.createNotification({ userId, text: notificationText, isRead: false });
         } catch (err) {
             console.error('Failed to persist provider status change:', err);
             // revert optimistic change on error
@@ -72,7 +72,7 @@ const AdminProviderManagement: React.FC = () => {
 
         try {
             await API.updateUser(userId, { verificationStatus: decision });
-            await API.createNotification(userId, 'Verificação de Identidade', notificationText);
+            await API.createNotification({ userId, text: notificationText, isRead: false });
         } catch (err) {
             console.error('Failed to persist verification decision:', err);
             setAllUsers(previousUsers);
