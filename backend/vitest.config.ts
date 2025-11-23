@@ -13,8 +13,7 @@ export default defineConfig({
       'node_modules/**',
       'dist/**',
       'coverage/**',
-      'src/index.test.js',
-      'tests/ai.test.ts'
+      'src/index.test.js'
     ],
     coverage: {
       provider: 'v8',
