@@ -10,7 +10,7 @@
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "npx tsc -p tsconfig.build.json --noEmit",
     "test": "vitest run --coverage",
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",
