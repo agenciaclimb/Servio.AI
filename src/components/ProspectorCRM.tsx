@@ -123,42 +123,6 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
     }
   }
 
-  async function loadLeads() {
-    try {
-      const q = query(
-        collection(db, 'prospector_prospects'),
-        where('prospectorId', '==', prospectorId)
-      );
-      const snapshot = await getDocs(q);
-      const loadedLeads = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate() || new Date(),
-        updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-        lastActivity: doc.data().lastActivity?.toDate(),
-        lastEmailSentAt: doc.data().lastEmailSentAt?.toDate(),
-        nextFollowUpAt: doc.data().nextFollowUpAt?.toDate(),
-        activities: (doc.data().activities || []).map((a: { type: string; description: string; timestamp?: { toDate(): Date } }) => ({
-          ...a,
-          timestamp: a.timestamp?.toDate() || new Date()
-        }))
-      })) as ProspectLead[];
-      
-      // Calculate scores for all leads
-      const leadsWithScores = loadedLeads.map(lead => ({
-        ...lead,
-        ...calculateLeadScore(lead),
-        selected: false
-      }));
-      
-      setLeads(leadsWithScores);
-    } catch (error) {
-      console.error('Error loading leads:', error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   async function moveLeadToStage(leadId: string, newStage: ProspectLead['stage']) {
     const lead = leads.find(l => l.id === leadId);
     if (!lead || lead.stage === newStage) return;
@@ -688,7 +652,7 @@ function getPriorityFromScore(score: number): 'high' | 'medium' | 'low' {
 }
 
 // Helper: Calculate lead score automatically
-function calculateLeadScore(lead: ProspectLead): Pick<ProspectLead, 'score' | 'temperature' | 'priority'> {
+function _calculateLeadScore(lead: ProspectLead): Pick<ProspectLead, 'score' | 'temperature' | 'priority'> {
   let score = 50; // Base score
 
   // Add recency points
