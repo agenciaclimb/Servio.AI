@@ -74,12 +74,35 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
         where('prospectorId', '==', prospectorId)
       );
       const snapshot = await getDocs(q);
-      const loadedLeads = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate() || new Date(),
-        lastContact: doc.data().lastContact?.toDate()
-      })) as ProspectLead[];
+      const loadedLeads = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          prospectorId,
+          name: data.name || '',
+          phone: data.phone || '',
+          email: data.email,
+          source: data.source || 'manual',
+          stage: data.stage || 'new',
+          category: data.category,
+          notes: data.notes,
+          createdAt: data.createdAt?.toDate() || new Date(),
+          updatedAt: data.updatedAt?.toDate() || new Date(),
+          lastContact: data.lastContact?.toDate(),
+          lastActivity: data.lastActivity?.toDate(),
+          lastEmailSentAt: data.lastEmailSentAt?.toDate(),
+          nextFollowUpAt: data.nextFollowUpAt?.toDate(),
+          emailsOpened: data.emailsOpened || 0,
+          score: data.score || 50,
+          temperature: data.temperature || 'cold',
+          priority: data.priority || 'low',
+          activities: (data.activities || []).map((a: { type: string; description: string; timestamp?: { toDate(): Date } }) => ({
+            ...a,
+            timestamp: a.timestamp?.toDate() || new Date()
+          })),
+          selected: false
+        } as ProspectLead;
+      });
       setLeads(loadedLeads);
     } catch (error) {
       console.error('[ProspectorCRM] Error loading leads:', error);
@@ -615,70 +638,6 @@ function formatRelativeTime(date: Date): string {
   if (seconds < 3600) return `${Math.floor(seconds / 60)}min atrás`;
   if (seconds < 86400) return `${Math.floor(seconds / 3600)}h atrás`;
   return `${Math.floor(seconds / 86400)}d atrás`;
-}
-
-// Helper: Calculate recency score
-function calculateRecencyScore(lastActivity?: Date): number {
-  if (!lastActivity) return 0;
-  const daysSinceActivity = (Date.now() - lastActivity.getTime()) / (1000 * 60 * 60 * 24);
-  if (daysSinceActivity < 1) return 30;
-  if (daysSinceActivity < 3) return 20;
-  if (daysSinceActivity < 7) return 10;
-  if (daysSinceActivity > 14) return -20;
-  return 0;
-}
-
-// Helper: Calculate stage score
-function calculateStageScore(stage: string): number {
-  if (stage === 'won') return 50; // Will be capped at 100
-  if (stage === 'lost') return -50; // Will be capped at 0
-  if (stage === 'negotiating') return 25;
-  if (stage === 'contacted') return 15;
-  return 0;
-}
-
-// Helper: Determine temperature from score
-function getTemperatureFromScore(score: number): 'hot' | 'warm' | 'cold' {
-  if (score >= 70) return 'hot';
-  if (score >= 40) return 'warm';
-  return 'cold';
-}
-
-// Helper: Determine priority from score
-function getPriorityFromScore(score: number): 'high' | 'medium' | 'low' {
-  if (score >= 70) return 'high';
-  if (score >= 40) return 'medium';
-  return 'low';
-}
-
-// Helper: Calculate lead score automatically
-function _calculateLeadScore(lead: ProspectLead): Pick<ProspectLead, 'score' | 'temperature' | 'priority'> {
-  let score = 50; // Base score
-
-  // Add recency points
-  score += calculateRecencyScore(lead.lastActivity);
-
-  // Add email engagement points
-  const emailCount = lead.emailsOpened || 0;
-  const emailScore = emailCount > 2 ? 25 : emailCount > 0 ? 15 : 0;
-  score += emailScore;
-
-  // Add stage progression points
-  score += calculateStageScore(lead.stage);
-
-  // Add activity count points
-  const activityCount = lead.activities.length;
-  const activityScore = activityCount > 5 ? 15 : activityCount > 3 ? 10 : 0;
-  score += activityScore;
-
-  // Cap score between 0-100
-  const finalScore = Math.max(0, Math.min(100, score));
-
-  return {
-    score: Math.round(finalScore),
-    temperature: getTemperatureFromScore(finalScore),
-    priority: getPriorityFromScore(finalScore)
-  };
 }
 
 // Helper: Generate WhatsApp template
