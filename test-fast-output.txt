@@ -1,0 +1,15 @@
+
+> servio-ai-frontend@0.0.0 test:fast
+> vitest run --config vitest.fast.config.ts --coverage tests/AdminDashboard*.test.tsx tests/ClientDashboard.scheduleAndChat.test.tsx tests/ProspectorDashboardUnified.test.tsx tests/ProspectorDashboard.branches.test.tsx
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/JE/servio.ai[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32mÔ£ô[39m tests/ClientDashboard.scheduleAndChat.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 3753[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve)[2m > [22mconfirma agendamento a partir de uma proposta recebida no chat [33m1843[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve)[2m > [22mmostra aviso ao tentar salvar perfil sem campos obrigat├│rios [33m747[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve)[2m > [22mexibe toast de erro ao falhar envio de mensagem [33m1160[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProspectorDashboardUnified.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 1133[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Unified Layout[2m > [22mshould display loading state initially dentro da aba Estat├¡sticas [33m766[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Unified Layout[2m > [22mshould display error message when API fails [33m366[2mms[22m[39m
