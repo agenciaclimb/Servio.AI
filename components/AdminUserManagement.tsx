@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { User, UserType, UserStatus } from '../types';
 import * as API from '../services/api';
 import { useToast } from '../contexts/ToastContext';
+import { logError } from '../utils/logger';
 
 const AdminUserManagement: React.FC = () => {
   const { addToast } = useToast();
@@ -23,22 +24,22 @@ const AdminUserManagement: React.FC = () => {
     cpf: '',
   });
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
-
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await API.fetchAllUsers();
       setUsers(data);
     } catch (error) {
-      console.error('Error loading users:', error);
+      logError('Error loading users:', error);
       addToast('Erro ao carregar usuários', 'error');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [addToast]);
+
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   const handleCreateUser = async () => {
     try {
@@ -66,7 +67,7 @@ const AdminUserManagement: React.FC = () => {
       resetForm();
       await loadUsers();
     } catch (error) {
-      console.error('Error creating user:', error);
+      logError('Error creating user:', error);
       addToast('Erro ao criar usuário', 'error');
     }
   };
@@ -81,7 +82,7 @@ const AdminUserManagement: React.FC = () => {
       resetForm();
       await loadUsers();
     } catch (error) {
-      console.error('Error updating user:', error);
+      logError('Error updating user:', error);
       addToast('Erro ao atualizar usuário', 'error');
     }
   };
@@ -94,7 +95,7 @@ const AdminUserManagement: React.FC = () => {
       addToast('Usuário excluído com sucesso!', 'success');
       await loadUsers();
     } catch (error) {
-      console.error('Error deleting user:', error);
+      logError('Error deleting user:', error);
       addToast('Erro ao excluir usuário', 'error');
     }
   };
@@ -157,10 +158,11 @@ const AdminUserManagement: React.FC = () => {
       <div className="bg-white shadow-sm border rounded-lg p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="user-search" className="block text-sm font-medium text-gray-700 mb-2">
               Buscar
             </label>
             <input
+              id="user-search"
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -169,10 +171,11 @@ const AdminUserManagement: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="user-type-filter" className="block text-sm font-medium text-gray-700 mb-2">
               Tipo de Usuário
             </label>
             <select
+              id="user-type-filter"
               value={filterType}
               onChange={(e) => setFilterType(e.target.value as UserType | 'all')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -322,10 +325,11 @@ const AdminUserManagement: React.FC = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="modal-email" className="block text-sm font-medium text-gray-700 mb-1">
                   Email *
                 </label>
                 <input
+                  id="modal-email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
@@ -335,10 +339,11 @@ const AdminUserManagement: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="modal-name" className="block text-sm font-medium text-gray-700 mb-1">
                   Nome *
                 </label>
                 <input
+                  id="modal-name"
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -347,10 +352,11 @@ const AdminUserManagement: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="modal-type" className="block text-sm font-medium text-gray-700 mb-1">
                   Tipo *
                 </label>
                 <select
+                  id="modal-type"
                   value={formData.type}
                   onChange={(e) => setFormData({...formData, type: e.target.value as UserType})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -362,10 +368,11 @@ const AdminUserManagement: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="modal-status" className="block text-sm font-medium text-gray-700 mb-1">
                   Status
                 </label>
                 <select
+                  id="modal-status"
                   value={formData.status}
                   onChange={(e) => setFormData({...formData, status: e.target.value as UserStatus})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -376,10 +383,11 @@ const AdminUserManagement: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="modal-phone" className="block text-sm font-medium text-gray-700 mb-1">
                   Telefone
                 </label>
                 <input
+                  id="modal-phone"
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({...formData, phone: e.target.value})}
@@ -388,10 +396,11 @@ const AdminUserManagement: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="modal-cpf" className="block text-sm font-medium text-gray-700 mb-1">
                   CPF
                 </label>
                 <input
+                  id="modal-cpf"
                   type="text"
                   value={formData.cpf}
                   onChange={(e) => setFormData({...formData, cpf: e.target.value})}

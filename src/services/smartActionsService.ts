@@ -13,6 +13,12 @@
 import type { ProspectorStats } from '../../services/api';
 import type { ProspectLead } from '../components/ProspectorCRM';
 
+export interface RecentActivity {
+  type: string;
+  description?: string;
+  timestamp: Date | string;
+}
+
 export interface SmartAction {
   id: string;
   icon: string;
@@ -20,7 +26,7 @@ export interface SmartAction {
   description: string;
   priority: 'high' | 'medium' | 'low';
   actionType: 'follow_up' | 'share' | 'engage' | 'goal' | 'badge';
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -31,7 +37,7 @@ export async function generateSmartActions(
   _prospectorId: string,
   stats: ProspectorStats,
   leads: ProspectLead[] = [],
-  recentActivity: any[] = []
+  recentActivity: RecentActivity[] = []
 ): Promise<SmartAction[]> {
   try {
     // Call backend endpoint for AI-powered or rule-based actions
@@ -79,7 +85,7 @@ export async function generateSmartActions(
 function generateRuleBasedActions(
   stats: ProspectorStats,
   leads: ProspectLead[],
-  recentActivity: any[]
+  recentActivity: RecentActivity[]
 ): SmartAction[] {
   const actions: SmartAction[] = [];
 
@@ -103,7 +109,8 @@ function generateRuleBasedActions(
 
   // Rule 2: Share referral link
   const lastShare = recentActivity.find(a => a.type === 'referral_share');
-  const daysSinceShare = lastShare ? Math.floor((Date.now() - lastShare.timestamp.getTime()) / (24 * 60 * 60 * 1000)) : 999;
+  const lastShareTime = lastShare ? (lastShare.timestamp instanceof Date ? lastShare.timestamp : new Date(lastShare.timestamp)) : null;
+  const daysSinceShare = lastShareTime ? Math.floor((Date.now() - lastShareTime.getTime()) / (24 * 60 * 60 * 1000)) : 999;
   
   if (daysSinceShare >= 3) {
     actions.push({
@@ -158,8 +165,8 @@ function generateRuleBasedActions(
   }
 
   // Sort by priority and return top 3
-  const priorityOrder = { high: 0, medium: 1, low: 2 };
-  return actions
+  const priorityOrder: Record<string, number> = { high: 0, medium: 1, low: 2 };
+  return [...actions]
     .sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority])
     .slice(0, 3);
 }

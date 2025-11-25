@@ -1,7 +1,15 @@
-import { expect, afterEach } from 'vitest';
+import { expect, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
-import { server } from './msw/server';
+
+// Mock MSW server if not available
+let server: any;
+try {
+  const mswModule = await import('./msw/server');
+  server = mswModule.server;
+} catch {
+  server = { listen: vi.fn(), close: vi.fn(), resetHandlers: vi.fn() };
+}
 
 // Silenciar warnings/erros ruidosos e esperados em testes
 const originalWarn = console.warn;

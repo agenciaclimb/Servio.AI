@@ -16,6 +16,7 @@ import {
   JobData,
   Prospect,
   Prospector,
+  Commission,
 } from '../types';
 
 import {
@@ -247,14 +248,29 @@ export async function updateProspect(prospectId: string, updates: Partial<Prospe
   }
 }
 
-export async function fetchCampaigns(): Promise<any[]> {
+export interface MarketingCampaign {
+  id: string;
+  name: string;
+  type: 'email' | 'sms' | 'push';
+  status: 'draft' | 'scheduled' | 'sent' | 'active';
+  targetAudience: 'all' | 'clients' | 'providers';
+  subject?: string;
+  message: string;
+  scheduledFor?: string;
+  createdAt: string;
+  sentCount?: number;
+  openRate?: number;
+  clickRate?: number;
+}
+
+export async function fetchCampaigns(): Promise<MarketingCampaign[]> {
   if (USE_MOCK) {
     if (DEBUG) console.warn('[api] mock fetch campaigns');
     return [];
   }
 
   try {
-    return await apiCall<any[]>('/campaigns');
+    return await apiCall<MarketingCampaign[]>('/campaigns');
   } catch (error) {
     console.error('Failed to fetch campaigns:', error);
     return [];
@@ -296,14 +312,14 @@ export async function createProspector(prospector: Omit<Prospector, 'id'>): Prom
   }
 }
 
-export async function fetchCommissions(): Promise<any[]> {
+export async function fetchCommissions(): Promise<Commission[]> {
   if (USE_MOCK) {
     if (DEBUG) console.warn('[api] mock fetch commissions');
     return [];
   }
 
   try {
-    return await apiCall<any[]>('/commissions');
+    return await apiCall<Commission[]>('/commissions');
   } catch (error) {
     console.error('Failed to fetch commissions:', error);
     return [];

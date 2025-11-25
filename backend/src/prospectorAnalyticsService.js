@@ -91,10 +91,10 @@ async function calculateProspectorMetrics({ db, prospectorId, timePeriod = 90 })
     .get();
 
   const clicksBySource = {};
-  clicksSnap.docs.forEach(doc => {
+  for (const doc of clicksSnap.docs) {
     const source = doc.data().source || 'web';
     clicksBySource[source] = (clicksBySource[source] || 0) + 1;
-  });
+  }
 
   return {
     totalRecruits,
@@ -148,7 +148,7 @@ function calculateBadges(metrics) {
   }
 
   // Conversion rate badges
-  const rate = parseFloat(metrics.conversionRate);
+  const rate = Number.parseFloat(metrics.conversionRate);
   if (rate >= 50) {
     badges.push({ name: 'Conversion Master', tier: 'platinum', icon: '🎯', description: '50%+ taxa de conversão' });
   } else if (rate >= 30) {
@@ -229,7 +229,7 @@ async function generateReport({ db, prospectorId, period = 'week' }) {
       recruits: metrics.totalRecruits,
       earnings: metrics.totalCommissions,
       conversionRate: metrics.conversionRate,
-      activeProv iders: metrics.activeRecruits,
+      activeProviders: metrics.activeRecruits,
     },
     recentActivity: metrics.recentActivity,
     topProviders: metrics.topProviders,

@@ -293,7 +293,7 @@ function personalizeTemplate(template, data) {
   };
 
   for (const [placeholder, value] of Object.entries(replacements)) {
-    personalized = personalized.replace(new RegExp(placeholder, 'g'), value);
+    personalized = personalized.replaceAll(placeholder, value);
   }
 
   return personalized;

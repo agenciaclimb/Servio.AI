@@ -9,10 +9,16 @@
  * - Activity timeline per lead
  */
 
-import { useState, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DroppableStateSnapshot, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
+import { useState, useEffect, useCallback } from 'react';
 import { db } from '../../firebaseConfig';
 import { collection, query, where, getDocs, addDoc, updateDoc, doc, Timestamp } from 'firebase/firestore';
+import type { LeadStage, LeadTemperature, LeadPriority, LeadSource, ActivityType } from '../../types';
+
+export interface Activity {
+  type: ActivityType;
+  description: string;
+  timestamp: Date;
+}
 
 export interface ProspectLead {
   id: string;
@@ -20,8 +26,8 @@ export interface ProspectLead {
   name: string;
   phone: string;
   email?: string;
-  source: 'referral' | 'direct' | 'event' | 'social' | 'other';
-  stage: 'new' | 'contacted' | 'negotiating' | 'won' | 'lost';
+  source: LeadSource;
+  stage: LeadStage;
   category?: string;
   location?: string;
   notes?: string;
@@ -36,16 +42,10 @@ export interface ProspectLead {
   emailsOpened?: number;
   // Lead scoring
   score?: number; // 0-100
-  temperature?: 'hot' | 'warm' | 'cold';
-  priority?: 'high' | 'medium' | 'low';
+  temperature?: LeadTemperature;
+  priority?: LeadPriority;
   // Selection for bulk actions
   selected?: boolean;
-}
-
-interface Activity {
-  type: 'call' | 'message' | 'email' | 'note' | 'stage_change';
-  description: string;
-  timestamp: Date;
 }
 
 interface ProspectorCRMProps {
@@ -64,10 +64,33 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
   const [leads, setLeads] = useState<ProspectLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddLead, setShowAddLead] = useState(false);
+  const [editingLead, setEditingLead] = useState<ProspectLead | null>(null);
+  const [aiAssistLead, setAiAssistLead] = useState<ProspectLead | null>(null);
+
+  const loadLeads = useCallback(async () => {
+    try {
+      const q = query(
+        collection(db, 'prospector_prospects'),
+        where('prospectorId', '==', prospectorId)
+      );
+      const snapshot = await getDocs(q);
+      const loadedLeads = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        lastContact: doc.data().lastContact?.toDate()
+      })) as ProspectLead[];
+      setLeads(loadedLeads);
+    } catch (error) {
+      console.error('[ProspectorCRM] Error loading leads:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [prospectorId]);
 
   useEffect(() => {
     loadLeads();
-  }, [prospectorId]);
+  }, [loadLeads]);
 
   async function createSampleLead() {
     const now = new Date();
@@ -94,7 +117,7 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
 
     try {
       await addDoc(collection(db, 'prospector_prospects'), sampleLead);
-      loadLeads();
+      await loadLeads();
     } catch (error) {
       console.error('[ProspectorCRM] Error creating sample lead:', error);
     }
@@ -115,7 +138,7 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
         lastActivity: doc.data().lastActivity?.toDate(),
         lastEmailSentAt: doc.data().lastEmailSentAt?.toDate(),
         nextFollowUpAt: doc.data().nextFollowUpAt?.toDate(),
-        activities: (doc.data().activities || []).map((a: any) => ({
+        activities: (doc.data().activities || []).map((a: { type: string; description: string; timestamp?: { toDate(): Date } }) => ({
           ...a,
           timestamp: a.timestamp?.toDate() || new Date()
         }))
@@ -136,26 +159,19 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
     }
   }
 
-  async function handleDragEnd(result: DropResult) {
-    if (!result.destination) return;
+  async function moveLeadToStage(leadId: string, newStage: ProspectLead['stage']) {
+    const lead = leads.find(l => l.id === leadId);
+    if (!lead || lead.stage === newStage) return;
 
-    const { source, destination, draggableId } = result;
-    
-    if (source.droppableId === destination.droppableId) return;
-
-    // Update lead stage
-    const leadId = draggableId;
-    const newStage = destination.droppableId as ProspectLead['stage'];
-    
     // Optimistic update
-    setLeads(prev => prev.map(lead => 
-      lead.id === leadId 
+    setLeads(prev => prev.map(l => 
+      l.id === leadId 
         ? { 
-            ...lead, 
+            ...l, 
             stage: newStage,
             lastActivity: new Date(),
             activities: [
-              ...lead.activities,
+              ...l.activities,
               {
                 type: 'stage_change',
                 description: `Movido para ${STAGES.find(s => s.id === newStage)?.title}`,
@@ -163,20 +179,25 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
               }
             ]
           }
-        : lead
+        : l
     ));
 
     // Update Firestore
     try {
+      const updatedActivities = [
+        ...lead.activities,
+        {
+          type: 'stage_change' as const,
+          description: `Movido para ${STAGES.find(s => s.id === newStage)?.title}`,
+          timestamp: Timestamp.now()
+        }
+      ];
+
       await updateDoc(doc(db, 'prospector_prospects', leadId), {
         stage: newStage,
         lastActivity: Timestamp.now(),
         updatedAt: Timestamp.now(),
-        activities: leads.find(l => l.id === leadId)?.activities.concat({
-          type: 'stage_change',
-          description: `Movido para ${STAGES.find(s => s.id === newStage)?.title}`,
-          timestamp: new Date()
-        }) || []
+        activities: updatedActivities
       });
     } catch (error) {
       console.error('Error updating lead:', error);
@@ -211,6 +232,69 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
     } catch (error) {
       console.error('Error adding lead:', error);
     }
+  }
+
+  async function updateLead(leadId: string, updates: Partial<ProspectLead>) {
+    try {
+      await updateDoc(doc(db, 'prospector_prospects', leadId), {
+        ...updates,
+        updatedAt: Timestamp.now()
+      });
+      loadLeads();
+      setEditingLead(null);
+    } catch (error) {
+      console.error('Error updating lead:', error);
+    }
+  }
+
+  async function addActivity(leadId: string, activity: Activity) {
+    const lead = leads.find(l => l.id === leadId);
+    if (!lead) return;
+
+    try {
+      const updatedActivities = [...lead.activities, activity];
+      await updateDoc(doc(db, 'prospector_prospects', leadId), {
+        activities: updatedActivities,
+        lastActivity: Timestamp.now(),
+        updatedAt: Timestamp.now()
+      });
+      loadLeads();
+    } catch (error) {
+      console.error('Error adding activity:', error);
+    }
+  }
+
+  function handleCallClick(lead: ProspectLead) {
+    window.open(`tel:${lead.phone}`);
+    addActivity(lead.id, {
+      type: 'call',
+      description: 'Chamada telefônica realizada',
+      timestamp: new Date()
+    });
+  }
+
+  function handleEmailClick(lead: ProspectLead) {
+    if (!lead.email) return;
+    const subject = encodeURIComponent(`Oportunidade Servio.AI - ${lead.category || 'Parceria'}`);
+    const body = encodeURIComponent(generateEmailTemplate(lead));
+    window.open(`mailto:${lead.email}?subject=${subject}&body=${body}`);
+    addActivity(lead.id, {
+      type: 'email',
+      description: 'Email enviado',
+      timestamp: new Date()
+    });
+  }
+
+  function handleWhatsAppClick(lead: ProspectLead) {
+    const message = generateWhatsAppTemplate(lead);
+    const encodedMessage = encodeURIComponent(message);
+    const phone = lead.phone.replaceAll(/\D/g, '');
+    globalThis.open(`https://wa.me/55${phone}?text=${encodedMessage}`, '_blank');
+    addActivity(lead.id, {
+      type: 'message',
+      description: 'Mensagem WhatsApp enviada',
+      timestamp: new Date()
+    });
   }
 
   const getLeadsByStage = (stage: string) => leads.filter(lead => lead.stage === stage);
@@ -385,123 +469,137 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
       )}
 
       {/* Kanban Board */}
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {STAGES.map(stage => (
-            <Droppable key={stage.id} droppableId={stage.id}>
-              {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {STAGES.map(stage => (
+          <div
+            key={stage.id}
+            className={`rounded-lg border-2 p-3 min-h-[500px] ${stage.color}`}
+          >
+            {/* Stage Header */}
+            <div className="mb-3 pb-2 border-b border-gray-300">
+              <h3 className="font-semibold text-sm text-gray-800">{stage.title}</h3>
+              <span className="text-xs text-gray-600">{getLeadsByStage(stage.id).length} leads</span>
+            </div>
+
+            {/* Lead Cards */}
+            <div className="space-y-2">
+              {getLeadsByStage(stage.id).map((lead) => (
                 <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className={`rounded-lg border-2 p-3 min-h-[500px] transition-colors ${
-                    snapshot.isDraggingOver ? 'border-blue-400 bg-blue-50' : stage.color
+                  key={lead.id}
+                  className={`bg-white p-3 rounded border shadow-sm hover:shadow-md transition-all ${
+                    lead.selected ? 'ring-2 ring-indigo-500' : ''
                   }`}
                 >
-                  {/* Stage Header */}
-                  <div className="mb-3 pb-2 border-b border-gray-300">
-                    <h3 className="font-semibold text-sm text-gray-800">{stage.title}</h3>
-                    <span className="text-xs text-gray-600">{getLeadsByStage(stage.id).length} leads</span>
+                  {/* Header com checkbox e score */}
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-start gap-2 flex-1">
+                      <input
+                        type="checkbox"
+                        checked={lead.selected || false}
+                        onChange={() => toggleSelectLead(lead.id)}
+                        className="mt-0.5"
+                      />
+                      <div className="flex-1">
+                        <div className="font-medium text-sm text-gray-800">{lead.name}</div>
+                      </div>
+                    </div>
+                    {/* Score Badge */}
+                    {lead.temperature && (
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${getTemperatureBadgeClass(lead.temperature)}`}>
+                        {getTemperatureEmoji(lead.temperature)}
+                        {lead.score || 0}
+                      </span>
+                    )}
                   </div>
 
-                  {/* Lead Cards */}
-                  <div className="space-y-2">
-                    {getLeadsByStage(stage.id).map((lead, index) => (
-                      <Draggable key={lead.id} draggableId={lead.id} index={index}>
-                        {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            className={`bg-white p-3 rounded border shadow-sm hover:shadow-md transition-all ${
-                              snapshot.isDragging ? 'rotate-2 shadow-lg' : ''
-                            } ${lead.selected ? 'ring-2 ring-indigo-500' : ''}`}
-                          >
-                            {/* Header com checkbox e score */}
-                            <div className="flex items-start justify-between mb-2">
-                              <div className="flex items-start gap-2 flex-1">
-                                <input
-                                  type="checkbox"
-                                  checked={lead.selected || false}
-                                  onChange={() => toggleSelectLead(lead.id)}
-                                  className="mt-0.5"
-                                  onClick={(e) => e.stopPropagation()}
-                                />
-                                <div {...provided.dragHandleProps} className="flex-1 cursor-grab">
-                                  <div className="font-medium text-sm text-gray-800">{lead.name}</div>
-                                </div>
-                              </div>
-                              {/* Score Badge */}
-                              {lead.temperature && (
-                                <span className={`text-xs px-2 py-0.5 rounded-full ${getTemperatureBadgeClass(lead.temperature)}`}>
-                                  {getTemperatureEmoji(lead.temperature)}
-                                  {lead.score || 0}
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Contact Info */}
-                            <div className="text-xs text-gray-600 space-y-0.5 mb-2">
-                              {lead.phone && <div>📱 {lead.phone}</div>}
-                              {lead.email && <div>✉️ {lead.email}</div>}
-                              {lead.category && <div className="text-[10px] text-gray-500">🏷️ {lead.category}</div>}
-                            </div>
-
-                            {/* Follow-up Timeline */}
-                            {lead.nextFollowUpAt && (
-                              <div className="text-[10px] bg-purple-50 text-purple-700 px-2 py-1 rounded mb-2">
-                                📅 Próximo follow-up: {formatRelativeTime(lead.nextFollowUpAt)}
-                              </div>
-                            )}
-                            {lead.lastEmailSentAt && !lead.nextFollowUpAt && (
-                              <div className="text-[10px] bg-green-50 text-green-700 px-2 py-1 rounded mb-2">
-                                ✅ Email enviado {formatRelativeTime(lead.lastEmailSentAt)}
-                              </div>
-                            )}
-
-                            {/* Last Activity */}
-                            {lead.lastActivity && (
-                              <div className="text-[10px] text-gray-400 mb-2">
-                                Última atividade: {formatRelativeTime(lead.lastActivity)}
-                              </div>
-                            )}
-                            
-                            {/* Quick Actions */}
-                            <div className="flex gap-1">
-                              <button
-                                onClick={(e) => { e.stopPropagation(); window.open(`tel:${lead.phone}`); }}
-                                className="flex-1 text-xs py-1 px-2 bg-green-100 text-green-700 rounded hover:bg-green-200"
-                                title="Ligar"
-                              >
-                                📞
-                              </button>
-                              <button
-                                onClick={(e) => { e.stopPropagation(); sendWhatsAppTemplate(lead); }}
-                                className="flex-1 text-xs py-1 px-2 bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200"
-                                title="WhatsApp com template"
-                              >
-                                💬
-                              </button>
-                              {lead.email && (
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); window.open(`mailto:${lead.email}`); }}
-                                  className="flex-1 text-xs py-1 px-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
-                                  title="Email"
-                                >
-                                  ✉️
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
+                  {/* Contact Info */}
+                  <div className="text-xs text-gray-600 space-y-0.5 mb-2">
+                    {lead.phone && <div>📱 {lead.phone}</div>}
+                    {lead.email && <div>✉️ {lead.email}</div>}
+                    {lead.category && <div className="text-[10px] text-gray-500">🏷️ {lead.category}</div>}
                   </div>
+
+                  {/* Follow-up Timeline */}
+                  {lead.nextFollowUpAt && (
+                    <div className="text-[10px] bg-purple-50 text-purple-700 px-2 py-1 rounded mb-2">
+                      📅 Próximo follow-up: {formatRelativeTime(lead.nextFollowUpAt)}
+                    </div>
+                  )}
+                  {lead.lastEmailSentAt && !lead.nextFollowUpAt && (
+                    <div className="text-[10px] bg-green-50 text-green-700 px-2 py-1 rounded mb-2">
+                      ✅ Email enviado {formatRelativeTime(lead.lastEmailSentAt)}
+                    </div>
+                  )}
+
+                  {/* Last Activity */}
+                  {lead.lastActivity && (
+                    <div className="text-[10px] text-gray-400 mb-2">
+                      Última atividade: {formatRelativeTime(lead.lastActivity)}
+                    </div>
+                  )}
+                  
+                  {/* Move Stage Buttons */}
+                  {stage.id !== lead.stage && (
+                    <div className="mb-2">
+                      <select
+                        value={lead.stage}
+                        onChange={(e) => moveLeadToStage(lead.id, e.target.value as ProspectLead['stage'])}
+                        className="w-full text-xs px-2 py-1 border rounded bg-gray-50 hover:bg-gray-100"
+                      >
+                        {STAGES.map(s => (
+                          <option key={s.id} value={s.id}>{s.title}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  
+                  {/* Quick Actions */}
+                  <div className="grid grid-cols-4 gap-1 mb-1">
+                    <button
+                      onClick={() => handleCallClick(lead)}
+                      className="text-xs py-1.5 px-1 bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                      title="Ligar"
+                    >
+                      📞
+                    </button>
+                    <button
+                      onClick={() => handleWhatsAppClick(lead)}
+                      className="text-xs py-1.5 px-1 bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 transition-colors"
+                      title="WhatsApp"
+                    >
+                      💬
+                    </button>
+                    {lead.email && (
+                      <button
+                        onClick={() => handleEmailClick(lead)}
+                        className="text-xs py-1.5 px-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+                        title="Email"
+                      >
+                        ✉️
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setAiAssistLead(lead)}
+                      className="text-xs py-1.5 px-1 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors"
+                      title="Assistente IA"
+                    >
+                      🤖
+                    </button>
+                  </div>
+                  
+                  {/* Edit Button */}
+                  <button
+                    onClick={() => setEditingLead(lead)}
+                    className="w-full text-xs py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors"
+                  >
+                    ✏️ Editar
+                  </button>
                 </div>
-              )}
-            </Droppable>
-          ))}
-        </div>
-      </DragDropContext>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* Add Lead Modal */}
       {showAddLead && (
@@ -510,19 +608,37 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
           onAdd={addLead}
         />
       )}
+
+      {/* Edit Lead Modal */}
+      {editingLead && (
+        <EditLeadModal
+          lead={editingLead}
+          onClose={() => setEditingLead(null)}
+          onSave={(updates) => updateLead(editingLead.id, updates)}
+        />
+      )}
+
+      {/* AI Assistant Modal */}
+      {aiAssistLead && (
+        <AIAssistantModal
+          lead={aiAssistLead}
+          onClose={() => setAiAssistLead(null)}
+          onAddActivity={(activity) => addActivity(aiAssistLead.id, activity)}
+        />
+      )}
     </div>
   );
 }
 
 // Helper: Format relative time
 // Helper functions for temperature badges
-function getTemperatureBadgeClass(temperature?: 'hot' | 'warm' | 'cold'): string {
+function getTemperatureBadgeClass(temperature?: LeadTemperature): string {
   if (temperature === 'hot') return 'bg-red-100 text-red-700';
   if (temperature === 'warm') return 'bg-yellow-100 text-yellow-700';
   return 'bg-blue-100 text-blue-700';
 }
 
-function getTemperatureEmoji(temperature?: 'hot' | 'warm' | 'cold'): string {
+function getTemperatureEmoji(temperature?: LeadTemperature): string {
   if (temperature === 'hot') return '🔥';
   if (temperature === 'warm') return '☀️';
   return '❄️';
@@ -579,14 +695,16 @@ function calculateLeadScore(lead: ProspectLead): Pick<ProspectLead, 'score' | 't
   score += calculateRecencyScore(lead.lastActivity);
 
   // Add email engagement points
-  const emailScore = (lead.emailsOpened || 0) > 2 ? 25 : (lead.emailsOpened || 0) > 0 ? 15 : 0;
+  const emailCount = lead.emailsOpened || 0;
+  const emailScore = emailCount > 2 ? 25 : emailCount > 0 ? 15 : 0;
   score += emailScore;
 
   // Add stage progression points
   score += calculateStageScore(lead.stage);
 
   // Add activity count points
-  const activityScore = lead.activities.length > 5 ? 15 : lead.activities.length > 3 ? 10 : 0;
+  const activityCount = lead.activities.length;
+  const activityScore = activityCount > 5 ? 15 : activityCount > 3 ? 10 : 0;
   score += activityScore;
 
   // Cap score between 0-100
@@ -599,9 +717,9 @@ function calculateLeadScore(lead: ProspectLead): Pick<ProspectLead, 'score' | 't
   };
 }
 
-// Helper: Send WhatsApp with template
-function sendWhatsAppTemplate(lead: ProspectLead) {
-  const template = `Olá ${lead.name}! 👋
+// Helper: Generate WhatsApp template
+function generateWhatsAppTemplate(lead: ProspectLead): string {
+  return `Olá ${lead.name}! 👋
 
 Sou prospector da Servio.AI, a plataforma que conecta profissionais qualificados a clientes.
 
@@ -610,12 +728,30 @@ ${lead.category ? `Vi que você trabalha com ${lead.category}. ` : ''}Temos uma 
 ✅ Sem taxas de cadastro
 ✅ Pagamento garantido
 ✅ Flexibilidade total
+✅ Suporte dedicado
 
-Quer saber mais? 🚀`;
+Quer saber mais sobre como funciona? 🚀`;
+}
 
-  const encodedMessage = encodeURIComponent(template);
-  const phone = lead.phone.replaceAll(/\D/g, '');
-  window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+// Helper: Generate Email template
+function generateEmailTemplate(lead: ProspectLead): string {
+  return `Olá ${lead.name},
+
+Meu nome é [SEU NOME] e sou prospector da Servio.AI - a plataforma que está revolucionando a forma como profissionais ${lead.category ? `de ${lead.category}` : 'autônomos'} encontram clientes.
+
+${lead.category ? `Percebi sua expertise em ${lead.category} e ` : ''}Gostaria de apresentar uma oportunidade exclusiva:
+
+• Clientes pré-qualificados
+• Pagamento garantido pela plataforma
+• Sem mensalidades ou taxas ocultas
+• Você define sua agenda e valores
+
+Tenho alguns projetos disponíveis na sua região que podem ser interessantes.
+
+Podemos agendar uma conversa de 15 minutos para eu explicar melhor?
+
+Atenciosamente,
+Equipe Servio.AI`;
 }
 
 // Helper: Export leads to CSV
@@ -665,9 +801,16 @@ function AddLeadModal({ onClose, onAdd }: Readonly<AddLeadModalProps>) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-md w-full p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Novo Lead</h3>
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" 
+      onClick={onClose}
+      onKeyDown={(e) => e.key === 'Escape' && onClose()}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="add-lead-title"
+    >
+      <div className="bg-white rounded-lg max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
+        <h3 id="add-lead-title" className="text-xl font-bold text-gray-800 mb-4">Novo Lead</h3>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -764,4 +907,402 @@ function AddLeadModal({ onClose, onAdd }: Readonly<AddLeadModalProps>) {
       </div>
     </div>
   );
+}
+
+// Edit Lead Modal
+interface EditLeadModalProps {
+  lead: ProspectLead;
+  onClose: () => void;
+  onSave: (updates: Partial<ProspectLead>) => void;
+}
+
+function EditLeadModal({ lead, onClose, onSave }: Readonly<EditLeadModalProps>) {
+  const [formData, setFormData] = useState<Partial<ProspectLead>>({
+    name: lead.name,
+    phone: lead.phone,
+    email: lead.email,
+    category: lead.category,
+    location: lead.location,
+    notes: lead.notes,
+    source: lead.source
+  });
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    onSave(formData);
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <h3 className="text-xl font-bold text-gray-800 mb-4">✏️ Editar Lead</h3>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
+            <input
+              type="text"
+              required
+              value={formData.name || ''}
+              onChange={e => setFormData({...formData, name: e.target.value})}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Telefone *</label>
+            <input
+              type="tel"
+              required
+              value={formData.phone || ''}
+              onChange={e => setFormData({...formData, phone: e.target.value})}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input
+              type="email"
+              value={formData.email || ''}
+              onChange={e => setFormData({...formData, email: e.target.value})}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+            <input
+              type="text"
+              value={formData.category || ''}
+              onChange={e => setFormData({...formData, category: e.target.value})}
+              placeholder="Ex: Encanador, Eletricista..."
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Localização</label>
+            <input
+              type="text"
+              value={formData.location || ''}
+              onChange={e => setFormData({...formData, location: e.target.value})}
+              placeholder="Cidade, Estado"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Origem</label>
+            <select
+              value={formData.source}
+              onChange={e => setFormData({...formData, source: e.target.value as any})}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="referral">Indicação</option>
+              <option value="direct">Contato Direto</option>
+              <option value="event">Evento</option>
+              <option value="social">Redes Sociais</option>
+              <option value="other">Outro</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Notas</label>
+            <textarea
+              value={formData.notes || ''}
+              onChange={e => setFormData({...formData, notes: e.target.value})}
+              rows={4}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="border-t pt-4">
+            <h4 className="font-semibold text-sm text-gray-700 mb-2">📝 Últimas Atividades</h4>
+            <div className="space-y-2 max-h-32 overflow-y-auto">
+              {lead.activities.slice(-5).reverse().map((activity, idx) => (
+                <div key={idx} className="text-xs bg-gray-50 p-2 rounded">
+                  <div className="flex items-center gap-2">
+                    <span>{getActivityEmoji(activity.type)}</span>
+                    <span className="font-medium">{activity.description}</span>
+                  </div>
+                  <div className="text-gray-500 text-[10px] mt-0.5">
+                    {new Date(activity.timestamp).toLocaleString('pt-BR')}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Salvar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// AI Assistant Modal
+interface AIAssistantModalProps {
+  lead: ProspectLead;
+  onClose: () => void;
+  onAddActivity: (activity: Activity) => void;
+}
+
+function AIAssistantModal({ lead, onClose, onAddActivity }: Readonly<AIAssistantModalProps>) {
+  const [suggestions] = useState<string[]>(() => {
+    const stageSuggestions: Record<string, string[]> = {
+      new: [
+        `Envie mensagem de boas-vindas via WhatsApp`,
+        `Pergunte sobre disponibilidade para conversa`,
+        `Compartilhe cases de sucesso da plataforma`
+      ],
+      contacted: [
+        `Agende follow-up para daqui a 2 dias`,
+        `Envie materiais sobre pagamento e garantias`,
+        `Pergunte sobre objeções ou dúvidas`
+      ],
+      negotiating: [
+        `Ofereça tour guiado pela plataforma`,
+        `Apresente depoimentos de profissionais`,
+        `Discuta primeiros serviços disponíveis`
+      ],
+      won: [
+        `Envie mensagem de boas-vindas oficial`,
+        `Agende treinamento de onboarding`,
+        `Solicite documentos para cadastro`
+      ],
+      lost: [
+        `Pergunte motivo da desistência`,
+        `Agende follow-up para 1 mês`,
+        `Mantenha contato com conteúdo relevante`
+      ]
+    };
+    return stageSuggestions[lead.stage] || stageSuggestions.new;
+  });
+  
+  const [script] = useState<string>(() => generateConversationScript(lead));
+
+  function copyScript() {
+    navigator.clipboard.writeText(script);
+    alert('✅ Script copiado!');
+  }
+
+  function applySuggestion(suggestion: string) {
+    onAddActivity({
+      type: 'note',
+      description: `IA sugeriu: ${suggestion}`,
+      timestamp: new Date()
+    });
+    onClose();
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold text-gray-800">🤖 Assistente IA - {lead.name}</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-2xl leading-none">×</button>
+        </div>
+
+        <div className="space-y-6">
+          {/* Lead Summary */}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
+            <h4 className="font-semibold text-sm text-gray-800 mb-2">📊 Análise do Lead</h4>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <span className="text-gray-600">Estágio:</span>
+                <span className="ml-2 font-medium">{getStageLabel(lead.stage)}</span>
+              </div>
+              <div>
+                <span className="text-gray-600">Score:</span>
+                <span className="ml-2 font-medium">{lead.score || 50}/100</span>
+              </div>
+              <div>
+                <span className="text-gray-600">Temperatura:</span>
+                <span className="ml-2 font-medium">{getTemperatureLabel(lead.temperature)}</span>
+              </div>
+              <div>
+                <span className="text-gray-600">Atividades:</span>
+                <span className="ml-2 font-medium">{lead.activities.length}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* AI Suggestions */}
+          <div>
+            <h4 className="font-semibold text-gray-800 mb-3">💡 Próximas Ações Recomendadas</h4>
+            <div className="space-y-2">
+              {suggestions.map((suggestion, idx) => (
+                <div key={idx} className="flex items-start gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
+                  <div className="flex-1 text-sm text-gray-700">{suggestion}</div>
+                  <button
+                    onClick={() => applySuggestion(suggestion)}
+                    className="text-xs px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 whitespace-nowrap"
+                  >
+                    Aplicar
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Script */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="font-semibold text-gray-800">📝 Script de Abordagem</h4>
+              <button
+                onClick={copyScript}
+                className="text-xs px-3 py-1.5 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+              >
+                📋 Copiar
+              </button>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 text-sm text-gray-700 whitespace-pre-line max-h-64 overflow-y-auto">
+              {script}
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="border-t pt-4">
+            <h4 className="font-semibold text-gray-800 mb-3">⚡ Enviar Agora</h4>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => {
+                  globalThis.open(`https://wa.me/55${lead.phone.replaceAll(/\D/g, '')}?text=${encodeURIComponent(script)}`, '_blank');
+                  onAddActivity({ type: 'message', description: 'Script IA enviado via WhatsApp', timestamp: new Date() });
+                  onClose();
+                }}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+              >
+                💬 WhatsApp
+              </button>
+              <button
+                onClick={() => {
+                  if (lead.email) {
+                    window.open(`mailto:${lead.email}?subject=Oportunidade Servio.AI&body=${encodeURIComponent(script)}`);
+                    onAddActivity({ type: 'email', description: 'Script IA enviado via email', timestamp: new Date() });
+                    onClose();
+                  } else {
+                    alert('Lead sem email cadastrado');
+                  }
+                }}
+                disabled={!lead.email}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-sm font-medium"
+              >
+                ✉️ Email
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Helper functions
+function getActivityEmoji(type: Activity['type']): string {
+  const emojis: Record<Activity['type'], string> = {
+    call: '📞',
+    message: '💬',
+    email: '✉️',
+    note: '📝',
+    stage_change: '🔄'
+  };
+  return emojis[type] || '•';
+}
+
+function getStageLabel(stage: string): string {
+  const labels: Record<string, string> = {
+    new: '🆕 Novo',
+    contacted: '📞 Contatado',
+    negotiating: '🤝 Negociando',
+    won: '✅ Convertido',
+    lost: '❌ Perdido'
+  };
+  return labels[stage] || stage;
+}
+
+function getTemperatureLabel(temp?: string): string {
+  if (temp === 'hot') return '🔥 Quente';
+  if (temp === 'warm') return '☀️ Morno';
+  return '❄️ Frio';
+}
+
+function generateConversationScript(lead: ProspectLead): string {
+  const category = lead.category || 'sua área';
+  const name = lead.name.split(' ')[0];
+
+  const scripts: Record<string, string> = {
+    new: `Olá ${name}! 👋
+
+Descobri seu perfil profissional de ${category}.
+
+Trabalho com a Servio.AI - plataforma que conecta profissionais como você a clientes que precisam dos seus serviços.
+
+Principais benefícios:
+• Clientes pré-qualificados
+• Pagamento garantido
+• Sem mensalidades
+• Você define agenda e valores
+
+Podemos conversar 5 minutos?`,
+
+    contacted: `Oi ${name}!
+
+Conseguiu ver a proposta da Servio.AI?
+
+Recapitulando os benefícios:
+• Clientes esperando por ${category}
+• Pagamento 100% garantido
+• Você define preços e agenda
+• Zero taxas mensais
+
+Alguma dúvida que posso esclarecer?`,
+
+    negotiating: `${name}, ótimo ter você interessado! 🎉
+
+Próximos passos:
+1. Contrato da plataforma
+2. Jobs disponíveis na sua região
+3. Depoimentos de outros profissionais
+
+Depois do cadastro, já conecto você com 2-3 clientes.
+
+Pronto para começar?`,
+
+    won: `Parabéns ${name}! Bem-vindo! 🚀
+
+Cadastro aprovado!
+
+Próximos passos:
+1. Complete perfil com fotos
+2. Defina categorias principais
+3. Configure raio de atendimento
+
+Já tenho jobs na fila. Quer que eu libere?`,
+
+    lost: `${name}, entendo sua decisão.
+
+Pode me contar o principal motivo? Isso me ajuda a melhorar.
+
+Se mudar de ideia ou conhecer alguém interessado, me chame!
+
+Sucesso! 💪`
+  };
+
+  return scripts[lead.stage] || scripts.new;
 }

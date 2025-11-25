@@ -1,0 +1,211 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // =================================
+    // Helper Functions
+    // =================================
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    // Email-based helpers (documents keyed by email instead of auth.uid)
+    function authEmail() {
+      return isSignedIn() ? request.auth.token.email : null;
+    }
+    function isOwnerEmail(docId) {
+      return isSignedIn() && authEmail() == docId;
+    }
+    
+    function getUserData(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && getUserData(request.auth.uid).type == 'admin';
+    }
+    
+    function isClient() {
+      return isSignedIn() && getUserData(request.auth.uid).type == 'cliente';
+    }
+
+    function isProvider() {
+      return isSignedIn() && getUserData(request.auth.uid).type == 'prestador';
+    }
+    
+    function isJobParticipant(jobId) {
+      let job = get(/databases/$(database)/documents/jobs/$(jobId)).data;
+      return isSignedIn() && (request.auth.uid == job.clientId || request.auth.uid == job.providerId);
+    }
+
+    // =================================
+    // Collection Rules
+    // =================================
+
+    match /users/{userId} {
+      // Anyone can read a public profile
+      allow read: if true; 
+      
+      // Only the user themselves can create their own document with valid data
+      allow create: if isOwner(userId)
+                    && request.resource.data.email == userId
+                    && request.resource.data.type in ['cliente', 'prestador']
+                    && request.resource.data.name is string;
+
+      // User can update their own profile. Admin can update any profile.
+      allow update: if isOwner(userId) || isAdmin();
+      
+      // Deletion is disallowed for now.
+      allow delete: if false;
+    }
+
+    match /jobs/{jobId} {
+      // Anyone signed in can read job details
+      allow read: if isSignedIn();
+      
+      // Only a client can create a job for themselves
+      allow create: if isClient() && isOwner(request.resource.data.clientId);
+      
+      // Only a job participant or an admin can update a job
+      allow update: if isJobParticipant(jobId) || isAdmin();
+      
+      allow delete: if false;
+    }
+
+    match /proposals/{proposalId} {
+      // Only job participants can read proposals for that job
+      // FIXED: Changed request.resource.data.jobId to resource.data.jobId (resource = existing document)
+      allow read: if isJobParticipant(resource.data.jobId);
+      
+      // Only a verified provider can create a proposal for themselves
+      allow create: if isProvider() 
+                    && getUserData(request.auth.uid).verificationStatus == 'verificado'
+                    && isOwner(request.resource.data.providerId);
+                    
+      // Only the client can update the proposal (to accept it)
+      allow update: if get(/databases/$(database)/documents/jobs/$(request.resource.data.jobId)).data.clientId == request.auth.uid;
+      
+      allow delete: if false;
+    }
+
+    match /messages/{messageId} {
+      // Only participants of the chat (job) can read or create messages
+      // READ must use resource.data (existing document); CREATE uses request.resource.data
+      allow read: if isJobParticipant(resource.data.chatId);
+      allow create: if isJobParticipant(request.resource.data.chatId);
+      allow update, delete: if false;
+    }
+
+    match /notifications/{notificationId} {
+      // Only the recipient can read or update (mark as read) their notifications
+      allow read, update: if isOwner(resource.data.userId);
+      // Only the system (backend) can create notifications, so client writes are disallowed
+      allow create, delete: if false;
+    }
+
+    match /escrows/{escrowId} {
+      // Only participants or admins can read escrow details
+      allow read: if isJobParticipant(resource.data.jobId) || isAdmin();
+      // Only the system (backend) can create or update escrows
+      allow create, update, delete: if false;
+    }
+
+    match /fraud_alerts/{alertId} {
+      // Only admins can read/update fraud alerts
+      allow read, update: if isAdmin();
+      // Only the system (backend) can create alerts
+      allow create, delete: if false;
+    }
+
+    match /disputes/{disputeId} {
+      // Only the initiator, the other job participant, or an admin can read
+      allow read: if isJobParticipant(resource.data.jobId) || isAdmin();
+      // A job participant can create a dispute
+      allow create: if isJobParticipant(request.resource.data.jobId);
+      // Only an admin can resolve (update) a dispute
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /maintained_items/{itemId} {
+      // Only the owner of the item can manage it
+      allow read, create, update, delete: if isOwner(resource.data.clientId);
+    }
+
+    match /bids/{bidId} {
+      // Similar to proposals
+      // READ: switch to resource.data for existing document access
+      allow read: if isJobParticipant(resource.data.jobId);
+      allow create: if isProvider() && isOwner(request.resource.data.providerId);
+      allow update, delete: if false;
+    }
+
+    // =================================
+    // Prospecting Module Rules
+    // =================================
+    
+    function isProspector() {
+      return isSignedIn() && getUserData(request.auth.uid).type == 'prospector';
+    }
+    function isProspectorByEmail() {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(authEmail())).data.type == 'prospector';
+    }
+
+    match /referral_links/{prospectorId} {
+      // Prospector can read/write their own referral link (email-based id) or if identified via UID
+      allow read, create, update: if isOwner(prospectorId) || isOwnerEmail(prospectorId) || isProspector() || isProspectorByEmail();
+      // Admin can read all referral links
+      allow read: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /link_clicks/{clickId} {
+      // Anyone can create click tracking (anonymous visitor clicks)
+      allow create: if true;
+      // Prospector can read their own link clicks (supports both uid and email stored as prospectorId)
+      allow read: if isSignedIn() && (resource.data.prospectorId == request.auth.uid || resource.data.prospectorId == authEmail());
+      // Admin can read all clicks
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    match /link_analytics/{prospectorId} {
+      // Prospector can read their own analytics (supports email-based id)
+      allow read: if isOwner(prospectorId) || isOwnerEmail(prospectorId);
+      // System (admin/backend) can write analytics
+      allow write: if isAdmin();
+    }
+
+    match /message_templates/{templateId} {
+      // All signed-in users can read templates
+      allow read: if isSignedIn();
+      // Only admin can create/update templates
+      allow create, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /notification_settings/{userId} {
+      // User can read/write their own notification settings
+      allow read, write: if isOwner(userId);
+    }
+
+    match /prospector_stats/{prospectorId} {
+      // Prospector can read their own stats (supports email-based id and prospectors by email)
+      allow read: if isOwner(prospectorId) || isOwnerEmail(prospectorId) || isProspector() || isProspectorByEmail();
+      // Admin can read all stats
+      allow read: if isAdmin();
+      // System updates stats (admin/backend)
+      allow write: if isAdmin();
+    }
+
+    match /prospector_leaderboard/{entryId} {
+      // Anyone signed in can read leaderboard
+      allow read: if isSignedIn();
+      // Only system can write
+      allow write: if isAdmin();
+    }
+  }
+}

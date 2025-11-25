@@ -22,12 +22,17 @@ export function useAdminAnalyticsData(period: TimePeriod) {
           API.fetchDisputes(),
           API.fetchSentimentAlerts(),
         ]);
-        setAllJobs(jobs);
-        setAllUsers(users);
-        setAllDisputes(disputes);
-        setAllFraudAlerts(fraudAlerts);
+        setAllJobs(Array.isArray(jobs) ? jobs : []);
+        setAllUsers(Array.isArray(users) ? users : []);
+        setAllDisputes(Array.isArray(disputes) ? disputes : []);
+        setAllFraudAlerts(Array.isArray(fraudAlerts) ? fraudAlerts : []);
       } catch (error) {
         console.error("Failed to load admin analytics data:", error);
+        // Mantém estado consistente mesmo em falhas para evitar erros em componentes dependentes
+        setAllJobs([]);
+        setAllUsers([]);
+        setAllDisputes([]);
+        setAllFraudAlerts([]);
       } finally {
         setIsLoading(false);
         setInitialLoadComplete(true);
@@ -37,27 +42,27 @@ export function useAdminAnalyticsData(period: TimePeriod) {
   }, []);
 
   const filteredJobs = useMemo(() => {
-    if (period === 'all') return allJobs;
+    if (period === 'all') return allJobs ?? [];
     const now = new Date();
     const startDate = new Date(now.setDate(now.getDate() - period));
-    return allJobs.filter(job => new Date(job.createdAt) >= startDate);
+    return (allJobs ?? []).filter(job => new Date(job.createdAt) >= startDate);
   }, [allJobs, period]);
 
   // As outras métricas podem ou não ser filtradas por tempo.
   // Por exemplo, disputas e usuários geralmente são contados no total,
   // mas poderíamos criar versões filtradas se necessário.
   const filteredDisputes = useMemo(() => {
-    if (period === 'all') return allDisputes;
+    if (period === 'all') return allDisputes ?? [];
     const now = new Date();
     const startDate = new Date(now.setDate(now.getDate() - period));
-    return allDisputes.filter(d => new Date(d.createdAt) >= startDate);
+    return (allDisputes ?? []).filter(d => new Date(d.createdAt) >= startDate);
   }, [allDisputes, period]);
 
   return {
     jobs: filteredJobs,
-    allUsers,
+    allUsers: allUsers ?? [],
     disputes: filteredDisputes,
-    allFraudAlerts,
+    allFraudAlerts: allFraudAlerts ?? [],
     isLoading: isLoading && !initialLoadComplete, // Só mostra loading na carga inicial
   };
 }

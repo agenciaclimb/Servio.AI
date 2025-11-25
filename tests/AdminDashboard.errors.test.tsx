@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import AdminDashboard from '../components/AdminDashboard';
@@ -43,7 +42,7 @@ describe('AdminDashboard – cenários de erro', () => {
   });
 
   it('exibe toast de erro ao falhar resolver disputa e fecha modal no finally', async () => {
-    vi.mocked(API.fetchDisputes).mockResolvedValueOnce([{ id:'disp1', jobId:'job123', status:'aberta' }]);
+    vi.mocked(API.fetchDisputes).mockResolvedValueOnce([{ id:'disp1', jobId:'job123', initiatorId:'client1', reason:'teste', status:'aberta', messages:[], createdAt: new Date().toISOString() }]);
     vi.mocked(API.fetchUserById).mockResolvedValueOnce({ email:'cli@ex.com', name:'Cliente', type:'cliente' } as any);
     vi.mocked(API.fetchUserById).mockResolvedValueOnce({ email:'prov@ex.com', name:'Prestador', type:'prestador' } as any);
     vi.mocked(API.resolveDispute).mockRejectedValueOnce(new Error('fail'));

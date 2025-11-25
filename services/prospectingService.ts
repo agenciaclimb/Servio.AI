@@ -9,6 +9,7 @@
  */
 
 import { JobData } from '../types';
+import { logInfo, logError } from '../utils/logger';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_API_URL || 'https://api.servio-ai.com';
 
@@ -67,7 +68,7 @@ export async function triggerAutoProspecting(
   clientEmail: string
 ): Promise<ProspectingResult> {
   try {
-    console.log('[ProspectingService] Triggering auto-prospecting for:', jobData.category);
+    logInfo('[ProspectingService] Triggering auto-prospecting for:', jobData.category);
 
     const response = await fetch(`${BACKEND_URL}/api/auto-prospect`, {
       method: 'POST',
@@ -89,11 +90,11 @@ export async function triggerAutoProspecting(
 
     const result: ProspectingResult = await response.json();
     
-    console.log('[ProspectingService] Auto-prospecting completed:', result);
+    logInfo('[ProspectingService] Auto-prospecting completed:', result);
     return result;
 
   } catch (error) {
-    console.error('[ProspectingService] Auto-prospecting failed:', error);
+    logError('[ProspectingService] Auto-prospecting failed:', error);
     return {
       success: false,
       prospectsFound: 0,
@@ -128,7 +129,7 @@ export async function searchGoogleForProviders(
     return results;
 
   } catch (error) {
-    console.error('[ProspectingService] Google search failed:', error);
+    logError('[ProspectingService] Google search failed:', error);
     return [];
   }
 }
@@ -159,7 +160,7 @@ export async function sendProspectInvitation(
     return response.ok;
 
   } catch (error) {
-    console.error('[ProspectingService] Failed to send invitation:', error);
+    logError('[ProspectingService] Failed to send invitation:', error);
     return false;
   }
 }
@@ -192,7 +193,7 @@ export async function notifyProspectingTeam(
     return response.ok;
 
   } catch (error) {
-    console.error('[ProspectingService] Failed to notify team:', error);
+    logError('[ProspectingService] Failed to notify team:', error);
     return false;
   }
 }
@@ -247,7 +248,7 @@ export async function analyzeProspectWithAI(
   jobDescription: string
 ): Promise<ProspectProfile> {
   try {
-    const response = await fetch('${BACKEND_URL}/api/analyze-prospect', {
+    const response = await fetch(`${BACKEND_URL}/api/analyze-prospect`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -288,7 +289,7 @@ export async function generatePersonalizedEmail(
   jobLocation: string
 ): Promise<string> {
   try {
-    const response = await fetch('${BACKEND_URL}/api/generate-prospect-email', {
+    const response = await fetch(`${BACKEND_URL}/api/generate-prospect-email`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -328,7 +329,7 @@ export async function sendMultiChannelInvite(
 
   if (channels.includes('sms') && prospect.phone) {
     try {
-      const response = await fetch('${BACKEND_URL}/api/send-sms-invite', {
+      const response = await fetch(`${BACKEND_URL}/api/send-sms-invite`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: prospect.phone, name: prospect.name, category: jobCategory, location: jobLocation }),
@@ -339,7 +340,7 @@ export async function sendMultiChannelInvite(
 
   if (channels.includes('whatsapp') && prospect.phone) {
     try {
-      const response = await fetch('${BACKEND_URL}/api/send-whatsapp-invite', {
+      const response = await fetch(`${BACKEND_URL}/api/send-whatsapp-invite`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: prospect.phone, name: prospect.name, category: jobCategory, location: jobLocation }),

@@ -1,4 +1,5 @@
 import React from 'react';
+import { logError, logInfo } from '../utils/logger';
 
 interface ErrorInfo {
   componentStack?: string;
@@ -18,8 +19,8 @@ export default class ErrorBoundary extends React.Component<React.PropsWithChildr
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    // Centralizado para futura telemetria; console permitido
-    console.error('[ErrorBoundary] Caught error:', error, info);
+    // Centralizado para futura telemetria; logger garante silêncio em produção
+    logError('[ErrorBoundary] Caught error:', error, info);
     this.setState({ info: { componentStack: info.componentStack || undefined } });
     
     // Se for erro de chunk loading, recarregar automaticamente
@@ -29,9 +30,13 @@ export default class ErrorBoundary extends React.Component<React.PropsWithChildr
          errorMsg.includes('Importing a module script failed') ||
          errorMsg.includes('Failed to load module script') ||
          errorMsg.includes('Loading chunk')) && !hasReloaded) {
-      console.log('[ErrorBoundary] Detectado erro de chunk loading, recarregando página...');
+      logInfo('[ErrorBoundary] Detectado erro de chunk loading, recarregando página...');
       sessionStorage.setItem('hasReloadedForChunkError', 'true');
-      setTimeout(() => window.location.reload(), 100);
+      setTimeout(() => {
+        if (globalThis.location) {
+          globalThis.location.reload();
+        }
+      }, 100);
     }
   }
 

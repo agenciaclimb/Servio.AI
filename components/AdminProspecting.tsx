@@ -1,32 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Prospect } from '../types';
 import * as API from '../services/api';
 import { useToast } from '../contexts/ToastContext';
+import { logError } from '../utils/logger';
 
 const AdminProspecting: React.FC = () => {
   const { addToast } = useToast();
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filterStatus, setFilterStatus] = useState<'all' | 'pendente' | 'contactado' | 'convertido' | 'perdido'>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | Prospect['status']>('all');
   const [page, setPage] = useState(1);
   const ITEMS_PER_PAGE = 50;
 
-  useEffect(() => {
-    loadProspects();
-  }, []);
-
-  const loadProspects = async () => {
+  const loadProspects = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await API.fetchProspects();
       setProspects(data);
     } catch (error) {
-      console.error('Error loading prospects:', error);
+      logError('Error loading prospects:', error);
       addToast('Erro ao carregar prospectos', 'error');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [addToast]);
+
+  useEffect(() => {
+    loadProspects();
+  }, [loadProspects]);
 
   const handleUpdateProspectStatus = async (prospectId: string, status: Prospect['status']) => {
     try {
@@ -34,7 +35,7 @@ const AdminProspecting: React.FC = () => {
       addToast('Status atualizado com sucesso!', 'success');
       await loadProspects();
     } catch (error) {
-      console.error('Error updating prospect:', error);
+      logError('Error updating prospect:', error);
       addToast('Erro ao atualizar status', 'error');
     }
   };
@@ -57,7 +58,7 @@ const AdminProspecting: React.FC = () => {
       addToast('Nota adicionada com sucesso!', 'success');
       await loadProspects();
     } catch (error) {
-      console.error('Error adding note:', error);
+      logError('Error adding note:', error);
       addToast('Erro ao adicionar nota', 'error');
     }
   };
@@ -116,12 +117,13 @@ const AdminProspecting: React.FC = () => {
 
       {/* Filter */}
       <div className="bg-white shadow-sm border rounded-lg p-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="prospect-filter" className="block text-sm font-medium text-gray-700 mb-2">
           Filtrar por Status
         </label>
         <select
+          id="prospect-filter"
           value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value as any)}
+          onChange={(e) => setFilterStatus(e.target.value as 'all' | Prospect['status'])}
           className="w-full md:w-64 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="all">Todos</option>
@@ -177,6 +179,7 @@ const AdminProspecting: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select
+                        aria-label={`Atualizar status de ${prospect.name}`}
                         value={prospect.status}
                         onChange={(e) => handleUpdateProspectStatus(prospect.id, e.target.value as Prospect['status'])}
                         className={`px-2 text-xs leading-5 font-semibold rounded-full border-0 focus:ring-2 focus:ring-blue-500 ${

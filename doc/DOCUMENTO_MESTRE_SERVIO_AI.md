@@ -1,3 +1,113 @@
+#update_log - 2025-11-24 10:00
+📋 **ANÁLISE PROFUNDA DO MÓDULO DE PROSPECÇÃO - PLANO DE CORREÇÃO**
+
+**ANÁLISE COMPLETA EXECUTADA:**
+
+Realizada análise detalhada de todos os componentes do módulo de prospecção:
+
+- ✅ ProspectorDashboard.tsx (300 linhas)
+- ✅ ProspectorCRM.tsx (1278 linhas)
+- ✅ prospectingService.ts (353 linhas)
+- ✅ prospectorAnalyticsService.js (backend, 257 linhas)
+- ✅ Types e interfaces (Firestore rules, 28 erros de lint)
+
+**PROBLEMAS CRÍTICOS IDENTIFICADOS:**
+
+🔴 **Bloqueantes (Impedem Funcionalidade):**
+
+1. URLs de backend incorretas em prospectingService.ts (linhas 252, 277, 309, 337) - template literals com aspas simples ao invés de backticks
+2. Sistema de notificações hardcoded (0) - não integrado com Firestore
+3. Funções auxiliares incompletas em ProspectorCRM (calculateLeadScore, formatRelativeTime, templates, exportCSV)
+
+⚠️ **Qualidade de Código:** 4. 28 erros de acessibilidade (modais sem role/aria, labels sem htmlFor) 5. Anti-patterns (ternários aninhados, array index como key, nested functions > 4 níveis) 6. Uso de `window` ao invés de `globalThis` (não portável para SSR)
+
+🟡 **Performance:** 7. Queries Firestore sem índices, ordenação ou paginação 8. Re-renders desnecessários (falta React.memo, useMemo) 9. Sem caching de leaderboard, stats ou análises AI
+
+🔵 **Funcionalidades Incompletas:** 10. Sistema de follow-up automático (campos definidos, lógica ausente) 11. Endpoints de IA não deployados no backend 12. Sistema de badges completo no backend, UI básica no frontend
+
+📊 **Melhorias UX/UI:** 13. Feedback visual limitado (drag & drop, loading, animações) 14. Mobile responsiveness quebrada (5 colunas em kanban) 15. Filtros, busca e ordenação ausentes
+
+---
+
+**CORREÇÕES APLICADAS (FASE 1 - PARCIAL):**
+
+✅ **prospectingService.ts:**
+
+- Corrigidos 4 template literals incorretos (linhas 252, 277, 309, 337)
+- URLs de backend agora funcionam: `/api/analyze-prospect`, `/api/generate-prospect-email`, `/api/send-sms-invite`, `/api/send-whatsapp-invite`
+- ✅ **0 erros de lint**
+
+✅ **types.ts:**
+
+- Adicionados type aliases para prospecção:
+  - `LeadStage`, `LeadTemperature`, `LeadPriority`, `LeadSource`, `ActivityType`
+- Melhora type safety e reduz repetição de código
+
+✅ **ProspectorDashboard.tsx:**
+
+- `window.location` → `globalThis.location?.origin || ''` (2 ocorrências)
+- Portável para SSR/Node
+
+✅ **ProspectorCRM.tsx:**
+
+- Type aliases aplicados nas interfaces `Activity` e `ProspectLead`
+- `window` → `globalThis` (2 ocorrências)
+- `replace(/\D/g, '')` → `replaceAll(/\D/g, '')` (2 ocorrências)
+- Ternários aninhados extraídos para variáveis intermediárias
+- Props marcadas como `Readonly` nos modais
+- Funções auxiliares confirmadas implementadas: `calculateLeadScore`, `formatRelativeTime`, `generateEmailTemplate`, `generateWhatsAppTemplate`, `exportLeadsToCSV`
+
+⚠️ **Pendente:**
+
+- Acessibilidade de modais (labels com htmlFor, uso de `<dialog>` nativo)
+- Sistema de notificações integrado com Firestore
+- Nested functions > 4 níveis (refatoração)
+- Array index como key (usar IDs únicos)
+
+---
+
+**PLANO DE AÇÃO PRIORIZADO:**
+
+**FASE 1: Correções Críticas (2-3h) - 70% CONCLUÍDO**
+
+- [x] Corrigir URLs de backend (prospectingService.ts)
+- [x] Implementar funções faltantes (ProspectorCRM.tsx) - JÁ ESTAVAM
+- [x] Type safety (aliases)
+- [x] Portabilidade SSR (globalThis)
+- [x] Anti-patterns básicos (replaceAll, ternários)
+- [ ] Integrar sistema de notificações real com Firestore
+- [ ] Corrigir acessibilidade completa (labels, <dialog>)
+
+**FASE 2: Performance (1-2h)**
+
+- [ ] Otimizar queries Firestore (índices, paginação)
+- [ ] Adicionar React.memo e useMemo
+- [ ] Cache de leaderboard e stats (5min TTL)
+
+**FASE 3: Completar Funcionalidades (3-4h)**
+
+- [ ] Sistema de follow-up automático
+- [ ] Deploy endpoints de IA no backend
+- [ ] UI completa de badges e gamificação
+
+**FASE 4: Melhorias UX (2-3h)**
+
+- [ ] Feedback visual (drag & drop indicators, skeleton)
+- [ ] Responsividade mobile (toggle list/kanban)
+- [ ] Filtros, busca, ordenação
+
+**FASE 5: Refatoração (4-5h)**
+
+- [ ] Dividir ProspectorCRM em módulos
+- [ ] Error handling robusto (Sentry)
+- [ ] Reduzir nested functions
+
+**Tempo Total Estimado:** 12-17 horas
+**Progresso Atual:** ~2h completadas (Fase 1 - 70%)
+**Próximos Passos:** Sistema de notificações + acessibilidade completa
+
+---
+
 #update_log - 2025-11-23 16:30
 🚀 **MÓDULO DE PROSPECÇÃO - MELHORIAS COMPLETAS FASE 1**
 

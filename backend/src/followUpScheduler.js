@@ -27,7 +27,7 @@ async function run() {
 }
 
 if (require.main === module) {
-  run();
+  await run();
 }
 
 module.exports = { run };

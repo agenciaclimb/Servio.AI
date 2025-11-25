@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { User } from '../types';
 import * as API from '../services/api';
 import { useToast } from '../contexts/ToastContext';
+import { logError } from '../utils/logger';
 
 interface Campaign {
   id: string;
@@ -34,11 +35,7 @@ const AdminMarketing: React.FC = () => {
     message: '',
   });
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
       const [usersData, campaignsData] = await Promise.all([
@@ -48,12 +45,16 @@ const AdminMarketing: React.FC = () => {
       setUsers(usersData);
       setCampaigns(campaignsData);
     } catch (error) {
-      console.error('Error loading data:', error);
+      logError('Error loading data:', error);
       addToast('Erro ao carregar dados', 'error');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [addToast]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleCreateCampaign = async () => {
     try {
@@ -81,7 +82,7 @@ const AdminMarketing: React.FC = () => {
       setShowCreateModal(false);
       resetForm();
     } catch (error) {
-      console.error('Error creating campaign:', error);
+      logError('Error creating campaign:', error);
       addToast('Erro ao criar campanha', 'error');
     }
   };
@@ -98,7 +99,7 @@ const AdminMarketing: React.FC = () => {
       ));
       addToast('Campanha enviada com sucesso!', 'success');
     } catch (error) {
-      console.error('Error sending campaign:', error);
+      logError('Error sending campaign:', error);
       addToast('Erro ao enviar campanha', 'error');
     }
   };
@@ -320,10 +321,11 @@ const AdminMarketing: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="campaign-type" className="block text-sm font-medium text-gray-700 mb-1">
                     Tipo *
                   </label>
                   <select
+                    id="campaign-type"
                     value={formData.type}
                     onChange={(e) => setFormData({...formData, type: e.target.value as Campaign['type']})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -335,10 +337,11 @@ const AdminMarketing: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="campaign-audience" className="block text-sm font-medium text-gray-700 mb-1">
                     Audiência *
                   </label>
                   <select
+                    id="campaign-audience"
                     value={formData.targetAudience}
                     onChange={(e) => setFormData({...formData, targetAudience: e.target.value as Campaign['targetAudience']})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

@@ -1,5 +1,4 @@
 import { describe, it, expect, vi } from 'vitest';
-import { _fireEvent } from '@testing-library/react';
 import { handleKeyDown, handleModalOverlayKeyDown, getModalOverlayProps, getModalContentProps } from '../components/utils/a11yHelpers';
 
 describe('a11yHelpers', () => {

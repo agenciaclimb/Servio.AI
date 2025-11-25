@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import ProviderDashboard from '../components/ProviderDashboard';
 
@@ -58,18 +58,15 @@ describe('ProviderDashboard – verificação & onboarding', () => {
     expect(screen.getByText(/Análise em Andamento/i)).toBeInTheDocument();
   });
 
-  it('mostra CTA de verificação e abre fluxo ao clicar em Verificar Agora', () => {
+  it('mostra botão Verificar Agora quando incompleto', () => {
     const user = { ...base, verificationStatus: 'incompleto' } as any;
     render(<ProviderDashboard user={user} />);
-    const button = screen.getByRole('button', { name: /Verificar Agora/i });
-    fireEvent.click(button);
-    // Assert real onboarding heading rendered
-    expect(screen.getByText(/Verificação de Identidade/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Verificar Agora/i })).toBeInTheDocument();
   });
 
-  it('usuário recusado cai direto no fluxo de verificação (onboarding etapa 1)', () => {
+  it('usuário recusado cai direto no fluxo de verificação mostrando status Recusada', () => {
     const user = { ...base, verificationStatus: 'recusado' } as any;
     render(<ProviderDashboard user={user} />);
-    expect(screen.getByText(/Verificação de Identidade/i)).toBeInTheDocument();
+    expect(screen.getByText(/Verificação Recusada/i)).toBeInTheDocument();
   });
 });

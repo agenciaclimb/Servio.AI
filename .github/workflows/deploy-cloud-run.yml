@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     # Evita execuções concorrentes que causam erros de IAM/Cloud Build
     concurrency:
-      group: deploy-${{ github.ref_name }}
+      group: 'deploy-${{ github.ref_name }}'
       cancel-in-progress: true
 
     steps:
