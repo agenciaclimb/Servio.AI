@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Job, User } from '../types';
+import { Job, User, UserStatus } from '../types';
 import AdminVerificationCard from './AdminVerificationCard';
 import * as API from '../services/api';
+import { logInfo, logError } from '../utils/logger';
 
 const statusStyles: { [key: string]: { bg: string, text: string } } = {
   ativo: { bg: 'bg-green-100', text: 'text-green-800' },
@@ -21,17 +22,17 @@ const AdminProviderManagement: React.FC = () => {
     const loadData = async () => {
         setIsLoading(true);
         try {
-            console.log('[AdminProviderManagement] Carregando usuários...');
+            logInfo('[AdminProviderManagement] Carregando usuários...');
             const users = await API.fetchAllUsers();
-            console.log('[AdminProviderManagement] Usuários carregados:', users.length);
+            logInfo('[AdminProviderManagement] Usuários carregados:', users.length);
             setAllUsers(users);
             
-            console.log('[AdminProviderManagement] Carregando jobs...');
+            logInfo('[AdminProviderManagement] Carregando jobs...');
             const jobs = await API.fetchJobs();
-            console.log('[AdminProviderManagement] Jobs carregados:', jobs.length);
+            logInfo('[AdminProviderManagement] Jobs carregados:', jobs.length);
             setAllJobs(jobs);
         } catch (error) {
-            console.error("[AdminProviderManagement] Failed to load data:", error);
+            logError('[AdminProviderManagement] Failed to load data:', error);
         } finally {
             setIsLoading(false);
         }
@@ -44,18 +45,18 @@ const AdminProviderManagement: React.FC = () => {
   const totalPages = Math.ceil(providers.length / ITEMS_PER_PAGE);
   const paginatedProviders = providers.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-    const handleUpdateStatus = async (userId: string, status: string) => {
+    const handleUpdateStatus = async (userId: string, status: UserStatus) => {
         // optimistic update
         const previousUsers = allUsers;
-        setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status: status as any } : u));
+        setAllUsers(prev => prev.map(u => u.email === userId ? { ...u, status } : u));
         try {
-            await API.updateUser(userId, { status: status as any });
+            await API.updateUser(userId, { status });
             const notificationText = status === 'suspenso' 
                 ? 'Sua conta foi suspensa. Entre em contato com o suporte.'
                 : 'Sua conta foi reativada. Você já pode voltar a trabalhar.';
             await API.createNotification({ userId, text: notificationText, isRead: false });
         } catch (err) {
-            console.error('Failed to persist provider status change:', err);
+            logError('Failed to persist provider status change:', err);
             // revert optimistic change on error
             setAllUsers(previousUsers);
         }
@@ -74,7 +75,7 @@ const AdminProviderManagement: React.FC = () => {
             await API.updateUser(userId, { verificationStatus: decision });
             await API.createNotification({ userId, text: notificationText, isRead: false });
         } catch (err) {
-            console.error('Failed to persist verification decision:', err);
+            logError('Failed to persist verification decision:', err);
             setAllUsers(previousUsers);
         }
     };
@@ -86,8 +87,8 @@ const AdminProviderManagement: React.FC = () => {
       const reviews = providerJobs.map(j => j.review).filter(Boolean);
       const avgRating = reviews.length > 0 ? (reviews.reduce((acc, r) => acc + (r?.rating || 0), 0) / reviews.length).toFixed(1) : 'N/A';
       return { completed, avgRating };
-    } catch (error) {
-      console.error('Error calculating provider stats:', error);
+        } catch (error) {
+            logError('Error calculating provider stats:', error);
       return { completed: 0, avgRating: 'N/A' };
     }
   };

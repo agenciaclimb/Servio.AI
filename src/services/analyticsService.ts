@@ -10,13 +10,18 @@
 
 import { db } from '../../firebaseConfig';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { logInfo, logError } from '../../utils/logger';
+
+export type AnalyticsProperties = Record<string, unknown> & {
+  prospectorId?: string;
+};
 
 export interface AnalyticsEvent {
   eventName: string;
   userId: string;
   prospectorId?: string;
   timestamp: Date;
-  properties?: Record<string, any>;
+  properties?: AnalyticsProperties;
   sessionId?: string;
 }
 
@@ -35,7 +40,8 @@ function getSessionId(): string {
   }
 
   // Create new session
-  const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const randomSegment = Math.random().toString(36).slice(2, 11);
+  const newSessionId = `session_${Date.now()}_${randomSegment}`;
   sessionStorage.setItem(SESSION_KEY, JSON.stringify({
     id: newSessionId,
     timestamp: Date.now()
@@ -50,16 +56,17 @@ function getSessionId(): string {
 export async function trackEvent(
   eventName: string,
   userId: string,
-  properties?: Record<string, any>
+  properties?: AnalyticsProperties
 ): Promise<void> {
   try {
+    const prospectorIdOverride = typeof properties?.prospectorId === 'string' ? properties.prospectorId : undefined;
     const event: AnalyticsEvent = {
       eventName,
       userId,
-      prospectorId: properties?.prospectorId || userId,
+      prospectorId: prospectorIdOverride || userId,
       timestamp: new Date(),
       sessionId: getSessionId(),
-      properties: properties || {}
+      properties: properties ?? {}
     };
 
     await addDoc(collection(db, 'analytics_events'), {
@@ -67,9 +74,9 @@ export async function trackEvent(
       timestamp: Timestamp.fromDate(event.timestamp)
     });
 
-    console.log(`[Analytics] Event tracked: ${eventName}`, properties);
+    logInfo(`[Analytics] Event tracked: ${eventName}`, properties);
   } catch (error) {
-    console.error('[Analytics] Failed to track event:', error);
+    logError('[Analytics] Failed to track event:', error);
   }
 }
 

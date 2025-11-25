@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Prospector, Commission } from '../types';
 import * as API from '../services/api';
 import { useToast } from '../contexts/ToastContext';
+import { logError } from '../utils/logger';
 
 const AdminProspectorManagement: React.FC = () => {
   const { addToast } = useToast();
@@ -16,11 +17,7 @@ const AdminProspectorManagement: React.FC = () => {
     name: '',
   });
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
       const [prospectorsData, commissionsData] = await Promise.all([
@@ -30,12 +27,16 @@ const AdminProspectorManagement: React.FC = () => {
       setProspectors(prospectorsData);
       setCommissions(commissionsData);
     } catch (error) {
-      console.error('Error loading prospectors:', error);
+      logError('Error loading prospectors:', error);
       addToast('Erro ao carregar prospectores', 'error');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [addToast]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const generateInviteCode = (name: string): string => {
     const cleanName = name.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6);
@@ -70,7 +71,7 @@ const AdminProspectorManagement: React.FC = () => {
       resetForm();
       await loadData();
     } catch (error) {
-      console.error('Error creating prospector:', error);
+      logError('Error creating prospector:', error);
       addToast('Erro ao criar prospector', 'error');
     }
   };

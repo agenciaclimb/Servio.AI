@@ -113,20 +113,19 @@ async function getDueSteps({ db, now = Date.now() }) {
 
 /** Send email for a step */
 async function sendEmailForStep({ gmailService, schedule, step }) {
-  const { prospectorId, prospectName, prospectEmail, referralLink } = schedule;
-  const daysSince = Math.round((Date.now() - schedule.createdAt)/(24*60*60*1000));
+  const { prospectName, prospectEmail, referralLink } = schedule;
   let result;
   try {
     if (step.key === 'day0') {
       // Treat as invite to prospect (use generic sendEmail)
       const subject = `Convite Servio.AI - ${prospectName}`;
       const html = `<p>Olá ${prospectName},</p><p>Você foi convidado a conhecer a Servio.AI - plataforma inteligente de serviços.</p><p>Cadastre-se: <a href="${referralLink || 'https://servio-ai.com'}">${referralLink || 'https://servio-ai.com'}</a></p>`;
-      result = await gmailService.sendEmail({ to: prospectEmail, subject, html, text: html.replace(/<[^>]+>/g,'') });
+      result = await gmailService.sendEmail({ to: prospectEmail, subject, html, text: html.replaceAll(/<[^>]+>/g,'') });
     } else {
       // Follow-up reminder to prospector (internal) optional extension
       const subject = `Follow-up pendente: ${prospectName}`;
       const html = `<p>Lembrete de follow-up (Etapa ${step.key}). Prospect: <strong>${prospectName}</strong>.</p>`;
-      result = await gmailService.sendEmail({ to: prospectEmail, subject, html, text: html.replace(/<[^>]+>/g,'') });
+      result = await gmailService.sendEmail({ to: prospectEmail, subject, html, text: html.replaceAll(/<[^>]+>/g,'') });
     }
   } catch (err) {
     return { success:false, error: err.message };

@@ -1,19 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { fetchProspectorStats, fetchProspectorLeaderboard, ProspectorStats, LeaderboardEntry, computeBadgeProgress } from '../services/api';
 import ReferralLinkGenerator from '../src/components/ReferralLinkGenerator';
-import MessageTemplateSelector from '../src/components/MessageTemplateSelector';
 import NotificationSettings from '../src/components/NotificationSettings';
 import ProspectorMaterials from '../src/components/ProspectorMaterials';
+// Novos componentes IA
+import QuickPanel from '../src/components/prospector/QuickPanel';
+import QuickActionsBar from '../src/components/prospector/QuickActionsBar';
+import ProspectorCRMEnhanced from '../src/components/prospector/ProspectorCRMEnhanced';
+import OnboardingTour from '../src/components/prospector/OnboardingTour';
 
 const loadingClass = 'animate-pulse bg-gray-200 rounded h-6 w-32';
 
-type TabType = 'overview' | 'links' | 'templates' | 'notifications' | 'materials';
+type TabType = 'dashboard' | 'crm' | 'links' | 'templates' | 'notifications' | 'materials' | 'overview';
 
-const ProgressBar: React.FC<{ value: number }> = ({ value }) => (
-  <div className="w-full bg-gray-200 rounded h-3 overflow-hidden">
-    <div className="h-3 bg-gradient-to-r from-indigo-500 to-purple-600" style={{ width: `${value}%` }} />
-  </div>
-);
+const ProgressBar: React.FC<{ value: number }> = ({ value }) => {
+  const clampedValue = Math.min(100, Math.max(0, value));
+  return (
+    <progress
+      value={clampedValue}
+      max={100}
+      className="prospector-progress"
+      aria-label={`Progresso do badge: ${clampedValue}%`}
+    >
+      {clampedValue}%
+    </progress>
+  );
+};
 
 const StatCard: React.FC<{ label: string; value: React.ReactNode; sub?: string }> = ({ label, value, sub }) => (
   <div className="p-4 bg-white rounded border shadow-sm flex flex-col gap-1">
@@ -33,8 +45,10 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<TabType>('overview');
+  const [activeTab, setActiveTab] = useState<TabType>('dashboard'); // Novo padrão: dashboard IA
   const [referralLink, setReferralLink] = useState<string>('');
+  const [showAddLeadModal, setShowAddLeadModal] = useState(false);
+  const [showNotificationsModal, setShowNotificationsModal] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -48,8 +62,9 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
         ]);
         setStats(s);
         setLeaderboard(lb);
-      } catch (e: any) {
-        setError(e.message || 'Falha ao carregar');
+      } catch (e) {
+        const message = e instanceof Error ? e.message : 'Falha ao carregar';
+        setError(message);
       } finally {
         setLoading(false);
       }
@@ -66,66 +81,99 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
   } : computeBadgeProgress(0);
 
   return (
-    <div className="max-w-6xl mx-auto p-6 flex flex-col gap-6">
-      <h1 className="text-2xl font-bold text-gray-800">Painel do Prospector</h1>
-      {error && <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded">{error}</div>}
-      
-      {/* Tabs Navigation */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="flex border-b border-gray-200">
-          <button
-            onClick={() => setActiveTab('overview')}
-            className={`px-6 py-3 font-medium transition-colors ${
-              activeTab === 'overview'
-                ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
-          >
-            📊 Visão Geral
-          </button>
-          <button
-            onClick={() => setActiveTab('links')}
-            className={`px-6 py-3 font-medium transition-colors ${
-              activeTab === 'links'
-                ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
-          >
-            🔗 Links de Indicação
-          </button>
-          <button
-            onClick={() => setActiveTab('templates')}
-            className={`px-6 py-3 font-medium transition-colors ${
-              activeTab === 'templates'
-                ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
-          >
-            📝 Templates de Mensagens
-          </button>
-          <button
-            onClick={() => setActiveTab('notifications')}
-            className={`px-6 py-3 font-medium transition-colors ${
-              activeTab === 'notifications'
-                ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
-          >
-            🔔 Notificações
-          </button>
-          <button
-            onClick={() => setActiveTab('materials')}
-            className={`px-6 py-3 font-medium transition-colors ${
-              activeTab === 'materials'
-                ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
-          >
-            📚 Materiais
-          </button>
+    <div className="min-h-screen bg-gray-50">
+      {/* Onboarding Tour */}
+      <OnboardingTour prospectorId={prospectorId} prospectorName={'Prospector'} />
+
+      {/* Quick Actions Bar */}
+      <QuickActionsBar
+        prospectorId={prospectorId}
+        prospectorName={'Prospector'}
+        referralLink={referralLink || `${globalThis.location?.origin || ''}/cadastro?ref=${prospectorId}`}
+        unreadNotifications={0} // Feature planned for Sprint 2: real-time notifications integration
+        onAddLead={() => setShowAddLeadModal(true)}
+        onOpenNotifications={() => setShowNotificationsModal(true)}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {error && <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded mb-4">{error}</div>}
+        
+        {/* Tabs Navigation Simplificada */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+          <div className="flex overflow-x-auto">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`px-6 py-3 font-medium transition-colors whitespace-nowrap ${
+                activeTab === 'dashboard'
+                  ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              ⚡ Dashboard IA
+            </button>
+            <button
+              onClick={() => setActiveTab('crm')}
+              className={`px-6 py-3 font-medium transition-colors whitespace-nowrap ${
+                activeTab === 'crm'
+                  ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+              data-tour="crm-board"
+            >
+              🎯 Pipeline CRM
+            </button>
+            <button
+              onClick={() => setActiveTab('links')}
+              className={`px-6 py-3 font-medium transition-colors whitespace-nowrap ${
+                activeTab === 'links'
+                  ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+              data-tour="referral-link"
+            >
+              🔗 Links
+            </button>
+            <button
+              onClick={() => setActiveTab('materials')}
+              className={`px-6 py-3 font-medium transition-colors whitespace-nowrap ${
+                activeTab === 'materials'
+                  ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+              data-tour="materials"
+            >
+              📚 Materiais
+            </button>
+            <button
+              onClick={() => setActiveTab('overview')}
+              className={`px-6 py-3 font-medium transition-colors whitespace-nowrap ${
+                activeTab === 'overview'
+                  ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              📊 Estatísticas
+            </button>
+          </div>
         </div>
-      </div>
-      {/* Tab Content: Overview */}
+        {/* Tab Content: Dashboard IA (Novo Padrão) */}
+        {activeTab === 'dashboard' && (
+          <QuickPanel
+            prospectorId={prospectorId}
+            stats={stats}
+          />
+        )}
+
+        {/* Tab Content: CRM Enhanced */}
+        {activeTab === 'crm' && (
+          <ProspectorCRMEnhanced
+            prospectorId={prospectorId}
+            prospectorName={'Prospector'}
+            referralLink={referralLink || `${globalThis.location?.origin || ''}/cadastro?ref=${prospectorId}`}
+          />
+        )}
+
+      {/* Tab Content: Overview Legado */}
       {activeTab === 'overview' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -167,18 +215,22 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
             </tr>
           </thead>
           <tbody>
-            {loading ? (
-              <tr><td colSpan={4} className="py-6 text-center text-gray-500">Carregando...</td></tr>
-            ) : leaderboard.length === 0 ? (
-              <tr><td colSpan={4} className="py-6 text-center text-gray-500">Sem dados ainda</td></tr>
-            ) : leaderboard.map(row => (
-              <tr key={row.prospectorId} className="border-b last:border-0">
-                <td className="py-2 font-medium">{row.rank}</td>
-                <td className="py-2">{row.name}</td>
-                <td className="py-2">{row.totalRecruits}</td>
-                <td className="py-2">{Number(row.totalCommissionsEarned).toFixed(2)}</td>
-              </tr>
-            ))}
+            {(() => {
+              if (loading) {
+                return <tr><td colSpan={4} className="py-6 text-center text-gray-500">Carregando...</td></tr>;
+              }
+              if (leaderboard.length === 0) {
+                return <tr><td colSpan={4} className="py-6 text-center text-gray-500">Sem dados ainda</td></tr>;
+              }
+              return leaderboard.map(row => (
+                <tr key={row.prospectorId} className="border-b last:border-0">
+                  <td className="py-2 font-medium">{row.rank}</td>
+                  <td className="py-2">{row.name}</td>
+                  <td className="py-2">{row.totalRecruits}</td>
+                  <td className="py-2">{Number(row.totalCommissionsEarned).toFixed(2)}</td>
+                </tr>
+              ));
+            })()}
           </tbody>
         </table>
       </div>
@@ -202,19 +254,52 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
         />
       )}
 
-      {/* Tab Content: Message Templates */}
-      {activeTab === 'templates' && (
-        <MessageTemplateSelector referralLink={referralLink} />
-      )}
-
-      {/* Tab Content: Notifications */}
-      {activeTab === 'notifications' && (
-        <NotificationSettings prospectorId={prospectorId} />
-      )}
-
       {/* Tab Content: Marketing Materials */}
       {activeTab === 'materials' && (
         <ProspectorMaterials />
+      )}
+      </div>
+
+      {/* Modals */}
+      {showAddLeadModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold">➕ Adicionar Lead</h3>
+              <button onClick={() => setShowAddLeadModal(false)} className="text-gray-500 hover:text-gray-700 text-2xl">
+                ×
+              </button>
+            </div>
+            <p className="text-sm text-gray-600 mb-4">
+              Esta funcionalidade será integrada com o CRM em breve. Por enquanto, use a aba "Pipeline CRM" para gerenciar seus leads.
+            </p>
+            <button
+              onClick={() => {
+                setShowAddLeadModal(false);
+                setActiveTab('crm');
+              }}
+              className="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+            >
+              Ir para CRM
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showNotificationsModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+              <h3 className="text-xl font-bold">🔔 Notificações</h3>
+              <button onClick={() => setShowNotificationsModal(false)} className="text-gray-500 hover:text-gray-700 text-2xl">
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              <NotificationSettings prospectorId={prospectorId} />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

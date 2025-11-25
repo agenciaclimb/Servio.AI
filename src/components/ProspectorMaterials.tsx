@@ -104,8 +104,8 @@ Prospector Servio.AI`,
     title: 'Post Instagram - Chamada',
     description: 'Imagem para stories/feed do Instagram',
     category: 'social',
-    url: 'https://via.placeholder.com/1080x1080/667eea/ffffff?text=Servio.AI+%7C+Cadastre-se+Agr%C3%A1tis',
-    preview: 'https://via.placeholder.com/300x300/667eea/ffffff?text=Preview',
+    url: '/materials/social/post-instagram-chamada.png',
+    preview: '/materials/social/previews/post-instagram-chamada-preview.png',
   },
   {
     id: 'social-2',
@@ -113,8 +113,8 @@ Prospector Servio.AI`,
     title: 'Banner Facebook',
     description: 'Banner para posts no Facebook',
     category: 'social',
-    url: 'https://via.placeholder.com/1200x630/764ba2/ffffff?text=Servio.AI+%7C+Conectando+Profissionais',
-    preview: 'https://via.placeholder.com/300x157/764ba2/ffffff?text=Preview',
+    url: '/materials/social/banner-facebook.png',
+    preview: '/materials/social/previews/banner-facebook-preview.png',
   },
   // PDFs
   {
@@ -140,8 +140,8 @@ Prospector Servio.AI`,
     title: 'Pitch 60 segundos',
     description: 'Vídeo curto apresentando a Servio.AI',
     category: 'presentation',
-    url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', // Placeholder
-    preview: 'https://via.placeholder.com/300x169/f687b3/ffffff?text=Video',
+    url: '/materials/videos/pitch-60s.mp4',
+    preview: '/materials/videos/previews/pitch-60s-preview.jpg',
   },
 ];
 

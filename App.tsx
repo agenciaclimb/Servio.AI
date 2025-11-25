@@ -5,12 +5,14 @@ import { registerUserFcmToken, onForegroundMessage } from './services/messagingS
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import AuthModal from './components/AuthModal';
+import { logInfo, logWarn, logError } from './utils/logger';
 
 // Code-splitting: lazy load dashboards (componentes pesados)
 const ClientDashboard = lazy(() => import('./components/ClientDashboard'));
 const ProviderDashboard = lazy(() => import('./components/ProviderDashboard'));
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 const ProspectorDashboard = lazy(() => import('./components/ProspectorDashboard'));
+const AIInternalChat = lazy(() => import('./components/AIInternalChat'));
 
 // Code-splitting: lazy load modals e wizards
 const AIJobRequestWizard = lazy(() => import('./components/AIJobRequestWizard'));
@@ -23,6 +25,16 @@ const ServiceLandingPage = lazy(() => import('./components/ServiceLandingPage'))
 const ProviderLandingPage = lazy(() => import('./components/ProviderLandingPage'));
 const PaymentSuccessPage = lazy(() => import('./components/PaymentSuccessPage'));
 const FindProvidersPage = lazy(() => import('./components/FindProvidersPage'));
+
+// Loading fallback component para Suspense
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <div className="text-center">
+      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+      <p className="text-slate-600">Carregando...</p>
+    </div>
+  </div>
+);
 
 import {
   User,
@@ -75,7 +87,7 @@ const App: React.FC = () => {
 
   // Simple URL-based routing effect (apenas na montagem)
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(globalThis.location.search);
     const profileId = params.get('profile');
     const serviceCategory = params.get('servico');
     const serviceLocation = params.get('local');
@@ -97,9 +109,9 @@ const App: React.FC = () => {
       if ((msg.includes('Failed to fetch dynamically imported module') || 
            msg.includes('Importing a module script failed') ||
            msg.includes('Failed to load module script')) && !hasReloaded) {
-        console.log('[App] Detectado erro de chunk loading, recarregando página...');
+        logInfo('[App] Detectado erro de chunk loading, recarregando página...');
         sessionStorage.setItem('hasReloadedForChunkError', 'true');
-        window.location.reload();
+        globalThis.location.reload();
       }
     };
     
@@ -107,14 +119,14 @@ const App: React.FC = () => {
       if ((e.message.includes('Failed to fetch dynamically imported module') ||
            e.message.includes('Importing a module script failed') ||
            e.message.includes('Failed to load module script')) && !hasReloaded) {
-        console.log('[App] Detectado erro de chunk loading (error event), recarregando página...');
+        logInfo('[App] Detectado erro de chunk loading (error event), recarregando página...');
         sessionStorage.setItem('hasReloadedForChunkError', 'true');
-        window.location.reload();
+        globalThis.location.reload();
       }
     };
     
-    window.addEventListener('unhandledrejection', handler);
-    window.addEventListener('error', errorHandler);
+    globalThis.addEventListener('unhandledrejection', handler);
+    globalThis.addEventListener('error', errorHandler);
     
     // Limpar flag após 5 segundos (página carregou com sucesso)
     const timeout = setTimeout(() => {
@@ -122,8 +134,8 @@ const App: React.FC = () => {
     }, 5000);
     
     return () => {
-      window.removeEventListener('unhandledrejection', handler);
-      window.removeEventListener('error', errorHandler);
+      globalThis.removeEventListener('unhandledrejection', handler);
+      globalThis.removeEventListener('error', errorHandler);
       clearTimeout(timeout);
     };
   }, []);
@@ -132,7 +144,7 @@ const App: React.FC = () => {
   const handleSetView = (viewName: View['name'], data?: Record<string, unknown>) => {
     // Clear URL params when navigating away from a public page
     if (view.name === 'profile' || view.name === 'service-landing') {
-        window.history.pushState({}, '', window.location.pathname);
+        globalThis.history.pushState({}, '', globalThis.location.pathname);
     }
     setView({ name: viewName, data } as View);
   }
@@ -187,10 +199,10 @@ const App: React.FC = () => {
         if (type === 'prestador' && inviteCode) {
           try {
             await API.registerWithInvite(email, inviteCode);
-            console.log('✨ Cadastro com convite realizado! Seu prospector receberá comissão pelos seus serviços.');
+            logInfo('✨ Cadastro com convite realizado! Seu prospector receberá comissão pelos seus serviços.');
           } catch (inviteError) {
-            console.error('Error registering with invite:', inviteError);
-            console.warn('⚠️ Código de convite inválido, mas seu cadastro foi realizado.');
+            logError('Error registering with invite:', inviteError);
+            logWarn('⚠️ Código de convite inválido, mas seu cadastro foi realizado.');
           }
         }
       }
@@ -200,7 +212,9 @@ const App: React.FC = () => {
       setView({ name: 'dashboard' });
 
       // Attempt FCM token registration (non-blocking)
-      registerUserFcmToken(email).catch(() => {});
+      registerUserFcmToken(email).catch((err) => {
+        logWarn('Falha ao registrar token FCM:', err);
+      });
 
       // Setup foreground notification listener once per session
       onForegroundMessage((payload) => {
@@ -221,6 +235,7 @@ const App: React.FC = () => {
       }, 300);
       
     } catch (error) {
+      logError('Erro ao fazer login:', error);
       alert('Erro ao fazer login. Por favor, tente novamente.');
       setAuthModal(null);
     }
@@ -233,19 +248,20 @@ const App: React.FC = () => {
   };
 
   const handleSmartSearch = (prompt: string) => {
-    if (!currentUser) {
-      // Se não estiver logado, salvar o prompt e abrir modal de login
-      setJobDataToCreate({ 
-        description: prompt, 
-        category: 'reparos', 
-        serviceType: 'personalizado', 
-        urgency: '3dias' 
-      } as JobData);
-      setAuthModal({ mode: 'login', userType: 'cliente' });
-    } else {
+    if (currentUser) {
       // Se já estiver logado, abrir wizard diretamente
       setWizardData({ prompt });
+      return;
     }
+    
+    // Se não estiver logado, salvar o prompt e abrir modal de login
+    setJobDataToCreate({ 
+      description: prompt, 
+      category: 'reparos', 
+      serviceType: 'personalizado', 
+      urgency: '3dias' 
+    } as JobData);
+    setAuthModal({ mode: 'login', userType: 'cliente' });
   };
   
   const handleNewJobFromItem = (prompt: string) => {
@@ -255,7 +271,9 @@ const App: React.FC = () => {
   const handleUpdateUser = (userEmail: string, partial: Partial<User>) => {
     // This now calls the API directly.
     // The local state update will happen inside the component that needs it.
-    API.updateUser(userEmail, partial).catch(err => console.error("Failed to update user via API", err));
+    API.updateUser(userEmail, partial).catch(err => 
+      logError('Falha ao atualizar usuário via API:', err)
+    );
 
     if (currentUser?.email === userEmail) {
       setCurrentUser(prev => prev ? { ...prev, ...partial } : prev);
@@ -291,7 +309,7 @@ const App: React.FC = () => {
           const provider = await API.fetchUserById(jobData.targetProviderId);
           if (provider) {
             await API.createNotification({
-              userId: jobData.targetProviderId!,
+              userId: jobData.targetProviderId,
               text: `Você recebeu um convite direto de ${currentUser.name} para o job "${newJob.category}".`,
               isRead: false,
             });
@@ -322,13 +340,15 @@ const App: React.FC = () => {
                 text: `Novo serviço disponível: ${newJob.category} - ${match.reason}`,
                 isRead: false,
               });
-            } catch (notifError) { /* Intentionally ignored */ }
+            } catch (notifError) { 
+              logWarn('Falha ao criar notificação para provedor:', notifError);
+            }
           }
           
           alert(`✅ Job "${newJob.category}" criado com sucesso!\n\n${matchingResults.length} prestadores qualificados foram notificados.\n\nVocê receberá propostas em breve.`);
         } else {
           // NENHUM PRESTADOR DISPONÍVEL - TRIGGER AUTO-PROSPECTING
-          console.log('[App] No providers found, triggering auto-prospecting...');
+          logInfo('[App] No providers found, triggering auto-prospecting...');
           
           // Import prospecting service dynamically
           import('./services/prospectingService').then(async (prospecting) => {
@@ -338,23 +358,23 @@ const App: React.FC = () => {
             );
             
             if (prospectingResult.success && prospectingResult.prospectsFound > 0) {
-              console.log(`[App] Auto-prospecting found ${prospectingResult.prospectsFound} prospects`);
+              logInfo(`[App] Auto-prospecting found ${prospectingResult.prospectsFound} prospects`);
             }
           }).catch(err => {
-            console.error('[App] Auto-prospecting failed:', err);
+            logError('[App] Auto-prospecting failed:', err);
           });
 
           alert(`✅ Job "${newJob.category}" criado!\n\n🔍 Não encontramos prestadores cadastrados nesta categoria ainda.\n\nNossa IA está buscando profissionais qualificados para você agora mesmo!\n\nVocê receberá uma notificação assim que encontrarmos.`);
         }
       } catch (matchingError) {
-
+        logWarn('Erro ao buscar prestadores correspondentes:', matchingError);
         alert(`✅ Job "${newJob.category}" criado com sucesso!\n\nVocê receberá propostas em breve.`);
       }
       
       setView({ name: 'dashboard' });
       
     } catch (error) {
-
+      logError('Erro ao criar serviço:', error);
       alert("Erro ao criar serviço. Por favor, tente novamente.");
       setWizardData(null);
     }
@@ -391,7 +411,7 @@ const App: React.FC = () => {
         // Evita redirecionar para 'home' enquanto o login está finalizando.
         // Quando o usuário fizer login, setCurrentUser será atualizado e o painel renderiza.
         if (!currentUser) {
-          return <div style={{padding: '2rem'}}>Carregando seu painel…</div>;
+          return <div className="loading-container">Carregando seu painel…</div>;
         }
         if (currentUser.type === 'cliente') return <ClientDashboard user={currentUser} allUsers={[]} allProposals={[]} allMessages={[]} maintainedItems={maintainedItems} allDisputes={[]} allBids={[]} setAllProposals={() => {}} setAllMessages={() => {}} setAllEscrows={() => {}} setAllNotifications={setAllNotifications} onViewProfile={(userId) => handleSetView('profile', {userId})} setAllDisputes={() => {}} setMaintainedItems={setMaintainedItems} onNewJobFromItem={handleNewJobFromItem} onUpdateUser={handleUpdateUser} />;
         if (currentUser.type === 'prestador') return <ProviderDashboard user={currentUser} onUpdateUser={handleUpdateUser} />;
@@ -421,12 +441,6 @@ const App: React.FC = () => {
       case 'payment-success':
         return <PaymentSuccessPage />;
       case 'home':
-        return (
-          <div>
-            <HeroSection onSmartSearch={handleSmartSearch} />
-          </div>
-        );
-
       default:
         return (
           <div>
@@ -444,19 +458,9 @@ const App: React.FC = () => {
       const custom = e as CustomEvent<JobData>;
       setWizardData({ data: custom.detail });
     };
-    window.addEventListener('open-wizard-from-chat', handler as EventListener);
-    return () => window.removeEventListener('open-wizard-from-chat', handler as EventListener);
+    globalThis.addEventListener('open-wizard-from-chat', handler as EventListener);
+    return () => globalThis.removeEventListener('open-wizard-from-chat', handler as EventListener);
   }, []);
-
-  // Loading fallback component para Suspense
-  const LoadingFallback = () => (
-    <div className="flex items-center justify-center min-h-[400px]">
-      <div className="text-center">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-        <p className="text-slate-600">Carregando...</p>
-      </div>
-    </div>
-  );
 
   return (
     <ToastProvider> {/* Envolver a aplicação com o ToastProvider */}
@@ -526,11 +530,39 @@ const App: React.FC = () => {
             />
           </Suspense>
         )}
+
+        {/* Floating AI Internal Chat trigger for prospector & prestador */}
+        {currentUser && (currentUser.type === 'prospector' || currentUser.type === 'prestador') && (
+          <Suspense fallback={null}>
+            <AIChatFloatingTrigger currentUser={currentUser} />
+          </Suspense>
+        )}
       </div>
     </ToastProvider>
   );
 };
 
 export default App;
+
+// Separate component to avoid re-renders of App large tree
+const AIChatFloatingTrigger: React.FC<{ currentUser: User }> = ({ currentUser }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="fixed bottom-6 right-6 z-50 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg w-14 h-14 flex items-center justify-center text-white hover:from-indigo-700 hover:to-purple-700 transition"
+        aria-label="Abrir Assistente IA"
+      >
+        <span className="text-xl">🤖</span>
+      </button>
+      {open && (
+        <Suspense fallback={null}>
+          <AIInternalChat currentUser={currentUser} onClose={() => setOpen(false)} />
+        </Suspense>
+      )}
+    </>
+  );
+};
 
 

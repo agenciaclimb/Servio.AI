@@ -1,5 +1,6 @@
 import { getMessaging, getToken, onMessage, Messaging, MessagePayload } from 'firebase/messaging';
 import { getApp } from 'firebase/app';
+import { logInfo, logWarn, logError } from '../../utils/logger';
 
 const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY || 'BKuUCO3Txjcom91NDIbwHDOn4VlDFsf8S_1QvcRRF5cUjw4RpKtEZj2dMs65i02IBxCv2jM4Y6tXnJDCeGAqphk';
 
@@ -32,7 +33,7 @@ function getMessagingInstance(): Messaging | null {
     messagingInstance = getMessaging(app);
     return messagingInstance;
   } catch (error) {
-    console.error('Failed to initialize Firebase Messaging:', error);
+    logError('Failed to initialize Firebase Messaging:', error);
     return null;
   }
 }
@@ -98,7 +99,7 @@ export async function requestNotificationPermission(userId: string): Promise<{
 
     return { success: true, token };
   } catch (error) {
-    console.error('Error requesting notification permission:', error);
+    logError('Error requesting notification permission:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -112,12 +113,12 @@ export async function requestNotificationPermission(userId: string): Promise<{
 export function setupForegroundListener(): () => void {
   const messaging = getMessagingInstance();
   if (!messaging) {
-    console.warn('FCM not initialized, skipping foreground listener');
+    logWarn('FCM not initialized, skipping foreground listener');
     return () => {};
   }
 
   const unsubscribe = onMessage(messaging, (payload: MessagePayload) => {
-    console.log('FCM message received:', payload);
+    logInfo('FCM message received:', payload);
 
     const { notification, data } = payload;
 
@@ -144,30 +145,22 @@ export function setupForegroundListener(): () => void {
 /**
  * Hook para escutar eventos de notificação
  */
+type ProspectorNotificationDetail = Record<string, unknown>;
+
 export function useProspectorNotifications(
-  onNotification: (type: string, data: any) => void
+  onNotification: (type: string, data: ProspectorNotificationDetail) => void
 ) {
   if (globalThis.window === undefined) return;
 
-  const handleClick = (e: Event) => {
-    const event = e as CustomEvent;
-    onNotification('click', event.detail);
+  const forwardEvent = (type: string) => (e: Event) => {
+    const event = e as CustomEvent<ProspectorNotificationDetail>;
+    onNotification(type, event.detail ?? {});
   };
 
-  const handleConversion = (e: Event) => {
-    const event = e as CustomEvent;
-    onNotification('conversion', event.detail);
-  };
-
-  const handleCommission = (e: Event) => {
-    const event = e as CustomEvent;
-    onNotification('commission', event.detail);
-  };
-
-  const handleBadge = (e: Event) => {
-    const event = e as CustomEvent;
-    onNotification('badge', event.detail);
-  };
+  const handleClick = forwardEvent('click');
+  const handleConversion = forwardEvent('conversion');
+  const handleCommission = forwardEvent('commission');
+  const handleBadge = forwardEvent('badge');
 
   globalThis.addEventListener('prospector-click', handleClick);
   globalThis.addEventListener('prospector-conversion', handleConversion);
@@ -195,7 +188,7 @@ export async function revokeNotificationPermission(userId: string): Promise<void
       body: JSON.stringify({ prospectorId: userId }),
     });
   } catch (error) {
-    console.error('Error revoking FCM token:', error);
+    logError('Error revoking FCM token:', error);
   }
 }
 

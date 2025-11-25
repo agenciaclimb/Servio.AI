@@ -6,7 +6,7 @@
     "module": "ESNext",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
-    "types": ["node"],
+    "types": ["node", "vitest/globals", "@testing-library/jest-dom"],
     "moduleResolution": "bundler",
     "isolatedModules": true,
     "moduleDetection": "force",
@@ -34,6 +34,24 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["*.ts", "*.tsx", "src/**/*", "components/**/*", "services/**/*", "contexts/**/*"],
-  "exclude": ["node_modules", "dist", "build", ".next", ".vercel", "coverage"]
+  "include": [
+    "*.ts",
+    "*.tsx",
+    "src/**/*",
+    "components/**/*",
+    "services/**/*",
+    "contexts/**/*",
+    "tests/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    ".vercel",
+    "coverage",
+    "backend/**",
+    "doc/**",
+    "scripts/**"
+  ]
 }

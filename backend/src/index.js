@@ -19,9 +19,9 @@ const followUpService = require('./followUpService');
 // Simple IP-based rate limiting using sliding window defined by LEADERBOARD_RATE_WINDOW_MS (default 300000 ms)
 // and limit LEADERBOARD_RATE_LIMIT (default 60 requests/window)
 
-const LEADERBOARD_CACHE_MS = parseInt(process.env.LEADERBOARD_CACHE_MS || '300000', 10);
-const LEADERBOARD_RATE_LIMIT = parseInt(process.env.LEADERBOARD_RATE_LIMIT || '60', 10);
-const LEADERBOARD_RATE_WINDOW_MS = parseInt(process.env.LEADERBOARD_RATE_WINDOW_MS || '300000', 10);
+const LEADERBOARD_CACHE_MS = Number.parseInt(process.env.LEADERBOARD_CACHE_MS || '300000', 10);
+const LEADERBOARD_RATE_LIMIT = Number.parseInt(process.env.LEADERBOARD_RATE_LIMIT || '60', 10);
+const LEADERBOARD_RATE_WINDOW_MS = Number.parseInt(process.env.LEADERBOARD_RATE_WINDOW_MS || '300000', 10);
 
 const leaderboardCache = {
   totalCommissionsEarned: { expiresAt: 0, payload: null },
@@ -56,8 +56,9 @@ try {
   if (!admin.apps || admin.apps.length === 0) {
     admin.initializeApp();
   }
-} catch (_) {
+} catch (error_) {
   // Allow running without firebase credentials locally
+  console.warn('Firebase initialization warning:', error_);
 }
 
 const storage = new Storage();
@@ -91,7 +92,16 @@ function calculateProviderRate(provider = {}, stats = {}) {
   // Bonuses according to tests' expectations
   const profileComplete = headline && verificationStatus === 'verificado' ? 0.02 : 0;
   const highRating = averageRating >= 4.8 ? 0.02 : 0;
-  const volumeTier = totalRevenue >= 11000 ? 0.03 : totalRevenue >= 6000 ? 0.02 : totalRevenue >= 1500 ? 0.01 : 0;
+  
+  // Calculate volume tier bonus based on revenue
+  const getVolumeTier = (revenue) => {
+    if (revenue >= 11000) return 0.03;
+    if (revenue >= 6000) return 0.02;
+    if (revenue >= 1500) return 0.01;
+    return 0;
+  };
+  const volumeTier = getVolumeTier(totalRevenue);
+  
   const lowDisputeRate = totalJobs > 0 && totalDisputes / totalJobs < 0.05 ? 0.01 : 0;
 
   let rate = baseRate + profileComplete + highRating + volumeTier + lowDisputeRate;
@@ -193,30 +203,46 @@ function createApp({
     // Deterministic stub used when Gemini isn't configured or fails
     const buildStub = () => {
       const p = String(prompt || '').toLowerCase();
-      const cat = /eletric|luz|tomada|fio/.test(p) ? 'reparos'
-        : /pintur|parede|tinta/.test(p) ? 'reparos'
-        : /encan|vazam|torneira|cano/.test(p) ? 'reparos'
-        : /design|logo|marca|arte/.test(p) ? 'design'
-        : /comput|notebook|formata|ti/.test(p) ? 'ti'
-        : /limp|faxin|higien/.test(p) ? 'limpeza'
-        : 'outro';
+      
+      // Determine category from keywords
+      const getCategoryFromText = (text) => {
+        if (/eletric|luz|tomada|fio/.test(text)) return 'reparos';
+        if (/pintur|parede|tinta/.test(text)) return 'reparos';
+        if (/encan|vazam|torneira|cano/.test(text)) return 'reparos';
+        if (/design|logo|marca|arte/.test(text)) return 'design';
+        if (/comput|notebook|formata|ti/.test(text)) return 'ti';
+        if (/limp|faxin|higien/.test(text)) return 'limpeza';
+        return 'outro';
+      };
+      const cat = getCategoryFromText(p);
 
-      const serviceType = /instal|trocar|montar|pintar|formatar|limpar/.test(p) ? 'tabelado'
-        : /diagnost|avaliar|inspecionar/.test(p) ? 'diagnostico'
-        : 'personalizado';
+      // Determine service type
+      const getServiceType = (text) => {
+        if (/instal|trocar|montar|pintar|formatar|limpar/.test(text)) return 'tabelado';
+        if (/diagnost|avaliar|inspecionar/.test(text)) return 'diagnostico';
+        return 'personalizado';
+      };
+      const serviceType = getServiceType(p);
 
-      const urgency = /hoje|urgente/.test(p) ? 'hoje'
-        : /amanh[ãa]/.test(p) ? 'amanha'
-        : /semana/.test(p) ? 'semana'
-        : 'flexivel';
+      // Determine urgency level
+      const getUrgency = (text) => {
+        if (/hoje|urgente/.test(text)) return 'hoje';
+        if (/amanh[ãa]/.test(text)) return 'amanha';
+        if (/semana/.test(text)) return 'semana';
+        return 'flexivel';
+      };
+      const urgency = getUrgency(p);
 
       // very rough budget heuristic just to avoid blocking the flow
-      const estimatedBudget = /pintur|parede/.test(p) ? 350
-        : /eletric|tomada/.test(p) ? 200
-        : /encan|vazam/.test(p) ? 250
-        : /design|logo/.test(p) ? 500
-        : /comput|notebook|ti/.test(p) ? 180
-        : 300;
+      const getEstimatedBudget = (text) => {
+        if (/pintur|parede/.test(text)) return 350;
+        if (/eletric|tomada/.test(text)) return 200;
+        if (/encan|vazam/.test(text)) return 250;
+        if (/design|logo/.test(text)) return 500;
+        if (/comput|notebook|ti/.test(text)) return 180;
+        return 300;
+      };
+      const estimatedBudget = getEstimatedBudget(p);
 
       return {
         description: prompt.trim(),
@@ -293,8 +319,8 @@ Responda APENAS com o JSON, sem markdown ou texto adicional.`;
         const lastDate = new Date(item.lastMaintenance);
         const daysSince = (Date.now() - lastDate.getTime()) / (1000 * 60 * 60 * 24);
         if (daysSince > 365) urgency = 'alta';
-        else if (daysSince > 180) urgency = 'media';
-        else return null; // Too recent
+        // daysSince > 180 already covered by default 'media'
+        else if (daysSince <= 180) return null; // Too recent
       }
       
       return {
@@ -484,7 +510,7 @@ Cada item: {"question":"...","answer":"..."}`;
 
   // POST /api/identify-item
   app.post('/api/identify-item', async (req, res) => {
-    const { base64Image, mimeType } = req.body || {};
+    const { base64Image } = req.body || {};
     // For now just stub deterministic identification
     const stub = { itemName: 'Item Genérico', category: 'geral', brand: 'Desconhecida', model: 'N/D', serialNumber: 'N/D' };
     if (!base64Image) return res.status(400).json({ error: 'Imagem é obrigatória.' });
@@ -621,7 +647,7 @@ Retorne APENAS JSON.`;
       }));
 
       // Get user's last message
-      const lastMessage = messages[messages.length - 1]?.text || '';
+      // Last message available at messages[messages.length - 1]?.text if needed
 
       // Build context-aware system prompt based on user type
       const systemPrompt = currentUserType === 'prospector' 
@@ -680,9 +706,24 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   app.post('/api/parse-search', async (req, res) => {
     const { query = '' } = req.body || {};
     const lower = query.toLowerCase();
+    
+    // Parse service type from query
+    const getService = (text) => {
+      if (/eletric|luz|tomada/.test(text)) return 'eletricista';
+      if (/pintur|parede/.test(text)) return 'pintura';
+      return undefined;
+    };
+    
+    // Parse location from query
+    const getLocation = (text) => {
+      if (/são paulo|sp/.test(text)) return 'São Paulo';
+      if (/rio de janeiro|rj/.test(text)) return 'Rio de Janeiro';
+      return undefined;
+    };
+    
     const parsed = {
-      service: /eletric|luz|tomada/.test(lower) ? 'eletricista' : /pintur|parede/.test(lower) ? 'pintura' : undefined,
-      location: /são paulo|sp/.test(lower) ? 'São Paulo' : /rio de janeiro|rj/.test(lower) ? 'Rio de Janeiro' : undefined,
+      service: getService(lower),
+      location: getLocation(lower),
       attributes: ['verificado'].filter(a => lower.includes(a))
     };
     return res.json(parsed);
@@ -690,7 +731,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
 
   // POST /api/extract-document
   app.post('/api/extract-document', async (req, res) => {
-    const { base64Image, mimeType } = req.body || {};
+    const { base64Image } = req.body || {};
     if (!base64Image) return res.status(400).json({ error: 'Imagem é obrigatória.' });
     // Stub parse
     return res.json({ fullName: 'Fulano de Tal', cpf: '000.111.222-33' });
@@ -757,7 +798,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       const providers = allUsers.filter(u => (u && (u.type === 'prestador')));
 
       const scored = providers.map(p => {
-        // const name = (p.name || '').toLowerCase(); // Variable not used
+
         const headline = (p.headline || '').toLowerCase();
         const specialties = Array.isArray(p.specialties) ? p.specialties.join(' ').toLowerCase() : '';
         const pLocation = (p.location || '').toLowerCase();
@@ -805,7 +846,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
 
       // Stripe not configured? Provide deterministic stub so frontend flows don't break.
       if (!stripe) {
-        const stubAccountId = `acct_stub_${userId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12)}`;
+        const stubAccountId = `acct_stub_${userId.replaceAll(/[^a-zA-Z0-9]/g, '').slice(0, 12)}`;
         await userRef.update({ stripeAccountId: stubAccountId, stripeAccountStub: true });
         return res.status(200).json({ accountId: stubAccountId, stub: true });
       }
@@ -981,8 +1022,8 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
               await escrowRef.update({ status: 'pago', paymentIntentId });
               console.log('[Stripe Webhook] Escrow updated to pago', { escrowId, paymentIntentId });
             }
-          } catch (updateErr) {
-            console.error('[Stripe Webhook] Error updating escrow', { escrowId, paymentIntentId, error: updateErr.message });
+          } catch (error_) {
+            console.error('[Stripe Webhook] Error updating escrow', { escrowId, paymentIntentId, error: error_.message });
             return res.status(500).json({ error: 'Failed to update escrow status' });
           }
         }
@@ -1596,7 +1637,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   // Auto-prospecting endpoint - triggers when no providers available
   app.post("/api/auto-prospect", async (req, res) => {
     try {
-      const { category, location, description, clientEmail, urgency } = req.body;
+      const { category, location, urgency } = req.body;
 
       console.log(`[Auto-Prospect] Triggered for ${category} in ${location}`);
 
@@ -1608,7 +1649,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       const mockProspects = [
         {
           name: `${category} Pro Services`,
-          email: `contato@${category.toLowerCase().replace(/\s/g, '')}pro.com`,
+          email: `contato@${category.toLowerCase().replaceAll(/\s/g, '')}pro.com`,
           phone: '+55 11 98765-4321',
           source: 'google_auto'
         }
@@ -1947,7 +1988,7 @@ Retorne apenas o corpo do email, sem assunto.`;
   // Enhanced prospecting with AI analysis and filtering
   app.post("/api/enhanced-prospect", async (req, res) => {
     try {
-      const { category, location, description, clientEmail, minQualityScore, maxProspects, channels, enableFollowUp } = req.body;
+      const { category, location, minQualityScore, maxProspects, channels } = req.body;
 
       // Step 1: Search for prospects (simulated)
       const mockProspects = [
@@ -1978,6 +2019,7 @@ Retorne apenas o corpo do email, sem assunto.`;
             analyzedProspects.push({ ...prospect, ...scores });
           }
         } catch (err) {
+          console.warn('Erro ao analisar prospect, usando valores padrão:', err);
           analyzedProspects.push({ ...prospect, qualityScore: 50, matchScore: 50 });
         }
       }
@@ -2000,6 +2042,7 @@ Retorne apenas o corpo do email, sem assunto.`;
             const emailResult = await model.generateContent(`Email curto e personalizado para ${prospect.name} sobre job: ${category} em ${location}`);
             emailBody = emailResult.response.text().trim();
           }
+          console.log(`[Enhanced-Prospect] Email generated for ${prospect.email}:`, emailBody.substring(0, 100) + '...');
           emailsSent++;
         }
         
@@ -2320,7 +2363,7 @@ Retorne apenas o corpo do email, sem assunto.`;
   app.get('/api/prospectors/leaderboard', async (req, res) => {
     try {
       const { limit = '10', sort = 'commissions', forceRefresh } = req.query;
-      const lim = Math.min(50, Math.max(1, parseInt(limit, 10) || 10));
+      const lim = Math.min(50, Math.max(1, Number.parseInt(limit, 10) || 10));
       const sortField = sort === 'recruits' ? 'totalRecruits' : 'totalCommissionsEarned';
 
       // Rate limiting
@@ -2732,7 +2775,7 @@ Retorne apenas o corpo do email, sem assunto.`;
       const snapshot = await db
         .collection("messages")
         .where("chatId", "==", chatId)
-        .limit(parseInt(limit))
+        .limit(Number.parseInt(limit))
         .get();
 
       const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -2876,9 +2919,9 @@ Retorne apenas o corpo do email, sem assunto.`;
             
             // Check if provider was recruited by a prospector
             if (providerData.prospectorId && providerData.prospectorCommissionRate) {
-              const jobPrice = parseFloat(updatedData.price) || 0;
-              const providerRate = parseFloat(providerData.providerRate) || 0.75;
-              const prospectorCommissionRate = parseFloat(providerData.prospectorCommissionRate) || 0.01;
+              const jobPrice = Number.parseFloat(updatedData.price) || 0;
+              const providerRate = Number.parseFloat(providerData.providerRate) || 0.75;
+              const prospectorCommissionRate = Number.parseFloat(providerData.prospectorCommissionRate) || 0.01;
               
               // Calculate earnings
               const providerEarnings = jobPrice * providerRate;

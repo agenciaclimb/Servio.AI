@@ -1,0 +1,33 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "env.d.ts",
+    "vitest.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "services/**/*.ts",
+    "services/**/*.tsx",
+    "contexts/**/*.ts",
+    "contexts/**/*.tsx",
+    "firebaseConfig.ts",
+    "types.ts",
+    "mockData.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    ".vercel",
+    "coverage",
+    "backend/**",
+    "doc/**",
+    "scripts/**",
+    "tests/**",
+    "**/*.test.*",
+    "**/__tests__/**",
+    "**/*.spec.*"
+  ]
+}

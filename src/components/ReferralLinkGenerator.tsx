@@ -53,9 +53,10 @@ export default function ReferralLinkGenerator({ prospectorId, onLinkGenerated }:
       // Load analytics
       const stats = await getLinkAnalytics(prospectorId);
       setAnalytics(stats);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error loading referral link:', error);
-      setError(error.message || 'Erro ao carregar link de indicação');
+      const message = error instanceof Error ? error.message : 'Erro ao carregar link de indicação';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -143,11 +144,12 @@ export default function ReferralLinkGenerator({ prospectorId, onLinkGenerated }:
 
         {/* Short Link */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="ref-link-short" className="block text-sm font-medium text-gray-700 mb-2">
             Link Curto (Recomendado)
           </label>
           <div className="flex gap-2">
             <input
+              id="ref-link-short"
               type="text"
               value={referralLink.shortUrl}
               readOnly
@@ -164,11 +166,12 @@ export default function ReferralLinkGenerator({ prospectorId, onLinkGenerated }:
 
         {/* Full Link */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="ref-link-full" className="block text-sm font-medium text-gray-700 mb-2">
             Link Completo (com UTM)
           </label>
           <div className="flex gap-2">
             <input
+              id="ref-link-full"
               type="text"
               value={referralLink.fullUrl}
               readOnly
@@ -186,7 +189,7 @@ export default function ReferralLinkGenerator({ prospectorId, onLinkGenerated }:
         {/* QR Code */}
         <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">QR Code (para materiais impressos)</label>
+            <p className="text-sm font-medium text-gray-700">QR Code (para materiais impressos)</p>
             <button
               onClick={downloadQRCode}
               className="text-sm text-blue-600 hover:text-blue-700 font-medium"

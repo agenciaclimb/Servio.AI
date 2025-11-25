@@ -1,6 +1,13 @@
 export type UserType = 'cliente' | 'prestador' | 'admin' | 'prospector';
 export type UserStatus = 'ativo' | 'suspenso';
 
+// Prospecting Module Type Aliases
+export type LeadStage = 'new' | 'contacted' | 'negotiating' | 'won' | 'lost';
+export type LeadTemperature = 'hot' | 'warm' | 'cold';
+export type LeadPriority = 'high' | 'medium' | 'low';
+export type LeadSource = 'referral' | 'direct' | 'event' | 'social' | 'other';
+export type ActivityType = 'call' | 'message' | 'email' | 'note' | 'stage_change';
+
 export interface ProviderService {
   id: string;
   name: string;

@@ -399,10 +399,10 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
         cnpj?: string; 
         companyName?: string;
         yearsOfExperience?: number;
-        certifications?: any[];
+        certifications?: Array<{ name: string; year: number }>;
         serviceAreas?: string[];
         teamSize?: number;
-        teams?: any[];
+        teams?: Array<{ role: string; count: number }>;
         differentials?: string[];
         aiGeneratedBio?: boolean;
       } = {
