@@ -1,0 +1,13 @@
+{
+  "sonarScanProperties": {
+    "sonar.projectKey": "agenciaclimb_Servio.AI",
+    "sonar.organization": "agenciaclimb130850",
+    "sonar.sources": "src,components,services,contexts",
+    "sonar.tests": "tests,backend/tests",
+    "sonar.javascript.lcov.reportPaths": "coverage/lcov.info",
+    "sonar.coverage.exclusions": "**/*.test.ts,**/*.test.tsx,**/*.test.js,**/*.spec.ts,**/*.spec.tsx,**/*.spec.js,**/tests/**,**/mocks/**,**/node_modules/**",
+    "sonar.exclusions": "**/node_modules/**,**/dist/**,**/coverage/**,**/doc/**,**/*.test.ts,**/*.test.tsx,**/*.test.js,**/*.spec.ts,**/*.spec.tsx,**/*.spec.js",
+    "sonar.qualitygate.wait": "true",
+    "sonar.qualitygate.timeout": "300"
+  }
+}
