@@ -34,15 +34,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "*.ts",
-    "*.tsx",
-    "src/**/*",
-    "components/**/*",
-    "services/**/*",
-    "contexts/**/*",
-    "tests/**/*"
-  ],
+  "include": ["*.ts", "*.tsx", "src/**/*", "components/**/*", "services/**/*", "contexts/**/*"],
   "exclude": [
     "node_modules",
     "dist",
