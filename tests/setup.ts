@@ -2,6 +2,30 @@ import { expect, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
 
+// Vitest/jsdom não expõe Notification por padrão, então mockamos o básico para destravar fluxos Prospector
+if (typeof globalThis.Notification === 'undefined') {
+  class NotificationMock {
+    static permission: NotificationPermission = 'granted';
+    title: string;
+    options?: NotificationOptions;
+
+    constructor(title: string, options?: NotificationOptions) {
+      this.title = title;
+      this.options = options;
+    }
+
+    static async requestPermission(): Promise<NotificationPermission> {
+      return NotificationMock.permission;
+    }
+
+    close() {
+      /* noop */
+    }
+  }
+
+  (globalThis as any).Notification = NotificationMock;
+}
+
 // Mock MSW server if not available
 let server: any;
 try {

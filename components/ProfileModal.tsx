@@ -74,28 +74,31 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, onClose, onSave }) =>
 
   const handleAddPortfolioItem = async () => {
     if (!newPortfolioTitle || !newPortfolioImage) {
-        setPortfolioError('Título e imagem são obrigatórios.');
-        return;
+      setPortfolioError('Título e imagem são obrigatórios.');
+      return;
     }
+
     setPortfolioError('');
+
     try {
-        const imageUrl = await toBase64(newPortfolioImage);
-        const newItem: PortfolioItem = {
-            id: `port-${Date.now()}`,
-            title: newPortfolioTitle,
-            description: newPortfolioDesc,
-            imageUrl,
-        };
-        setPortfolio(prev => [...prev, newItem]);
-        // Reset form
-        setNewPortfolioTitle('');
-        setNewPortfolioDesc('');
-        setNewPortfolioImage(null);
-  } catch (error: unknown) {
-    console.error('Erro ao processar imagem do portfólio:', error);
-    const errorMsg = getErrorMessage(error, 'profile');
-    setPortfolioError(errorMsg.message || 'Falha ao processar a imagem.');
-  }
+      const imageUrl = await toBase64(newPortfolioImage);
+      const newItem: PortfolioItem = {
+        id: `port-${Date.now()}`,
+        title: newPortfolioTitle,
+        description: newPortfolioDesc,
+        imageUrl,
+      };
+
+      setPortfolio(prev => [...prev, newItem]);
+
+      setNewPortfolioTitle('');
+      setNewPortfolioDesc('');
+      setNewPortfolioImage(null);
+    } catch (error: unknown) {
+      console.error('Erro ao processar imagem do portfólio:', error);
+      const errorMsg = getErrorMessage(error, 'profile');
+      setPortfolioError(errorMsg.message || 'Falha ao processar a imagem.');
+    }
   };
 
   const handleRemovePortfolioItem = (id: string) => {
