@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import AIJobRequestWizard from '../components/AIJobRequestWizard';
+import AIJobRequestWizard from '../../components/AIJobRequestWizard';
 
 // Mock do Firebase Auth
-vi.mock('../firebaseConfig', () => ({
+vi.mock('../../firebaseConfig', () => ({
   auth: {
     currentUser: {
       getIdToken: vi.fn().mockResolvedValue('test-token'),
@@ -13,7 +13,7 @@ vi.mock('../firebaseConfig', () => ({
 }));
 
 // Mock do Gemini Service
-vi.mock('../services/geminiService', () => ({
+vi.mock('../../services/geminiService', () => ({
   enhanceJobRequest: vi.fn().mockResolvedValue({
     enhancedDescription: 'Enhanced description for the job',
     suggestedCategory: 'eletrica',
@@ -22,18 +22,18 @@ vi.mock('../services/geminiService', () => ({
 }));
 
 // Mock do LoadingSpinner
-vi.mock('../components/LoadingSpinner', () => ({
+vi.mock('../../components/LoadingSpinner', () => ({
   default: () => <div data-testid="loading-spinner">Loading...</div>,
 }));
 
 // Mock do a11yHelpers
-vi.mock('../components/utils/a11yHelpers', () => ({
+vi.mock('../../components/utils/a11yHelpers', () => ({
   getModalOverlayProps: vi.fn(() => ({})),
   getModalContentProps: vi.fn(() => ({})),
 }));
 
 // Mock do errorMessages
-vi.mock('../services/errorMessages', () => ({
+vi.mock('../../services/errorMessages', () => ({
   formatErrorForToast: vi.fn(() => 'Error message'),
 }));
 
