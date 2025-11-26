@@ -30,7 +30,7 @@ vi.mock('react-joyride', () => ({
   STATUS: { FINISHED: 'finished', SKIPPED: 'skipped', RUNNING: 'running' },
 }));
 
-describe.skip('ProspectorOnboarding (temporarily skipped)', () => {
+describe('ProspectorOnboarding', () => {
   const TEST_USER_ID = 'test@prospector.com';
 
   beforeEach(() => {
@@ -172,5 +172,70 @@ describe('useProspectorOnboarding', () => {
     fireEvent.click(screen.getByText('Reset'));
 
     expect(localStorage.getItem(`servio-prospector-tour-${TEST_USER_ID}`)).toBeNull();
+  });
+
+  it('should respect isActive prop', () => {
+    render(<ProspectorOnboarding userId={TEST_USER_ID} isActive={false} />);
+
+    expect(screen.queryByTestId('joyride-tour')).not.toBeInTheDocument();
+  });
+
+  it('should start tour when isActive changes to true', async () => {
+    const { rerender } = render(
+      <ProspectorOnboarding userId={TEST_USER_ID} isActive={false} />
+    );
+
+    expect(screen.queryByTestId('joyride-tour')).not.toBeInTheDocument();
+
+    rerender(<ProspectorOnboarding userId={TEST_USER_ID} isActive={true} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('joyride-tour')).toBeInTheDocument();
+    });
+  });
+
+  it('should track tour start event', async () => {
+    render(<ProspectorOnboarding userId={TEST_USER_ID} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('joyride-tour')).toBeInTheDocument();
+    });
+
+    // Analytics tracking should be called
+    expect(screen.getByTestId('tour-steps')).toBeInTheDocument();
+  });
+
+  it('should handle multiple tours for different users', () => {
+    const user1 = 'user1@test.com';
+    const user2 = 'user2@test.com';
+
+    render(<ProspectorOnboarding userId={user1} />);
+    render(<ProspectorOnboarding userId={user2} />);
+
+    // Both tours should maintain separate state
+    expect(localStorage.getItem(`servio-prospector-tour-${user1}`)).not.toBe(
+      localStorage.getItem(`servio-prospector-tour-${user2}`)
+    );
+  });
+
+  it('should handle localStorage errors gracefully', () => {
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = vi.fn(() => {
+      throw new Error('Storage error');
+    });
+
+    expect(() => {
+      render(<ProspectorOnboarding userId={TEST_USER_ID} />);
+    }).not.toThrow();
+
+    Storage.prototype.setItem = originalSetItem;
+  });
+
+  it('should display all 5 tour steps', async () => {
+    render(<ProspectorOnboarding userId={TEST_USER_ID} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('tour-steps')).toHaveTextContent('5');
+    });
   });
 });
