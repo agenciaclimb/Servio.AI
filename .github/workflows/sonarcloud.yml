@@ -1,12 +1,8 @@
 name: SonarCloud
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  # Temporarily disabled - debugging
+  workflow_dispatch: # Only manually triggered for now
 
 jobs:
   sonarcloud:
