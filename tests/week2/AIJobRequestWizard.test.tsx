@@ -177,7 +177,7 @@ describe('AIJobRequestWizard Component', () => {
     });
 
     it('should handle AI service errors gracefully', async () => {
-      const geminiService = await import('../services/geminiService');
+      const geminiService = await import('../../services/geminiService');
       vi.mocked(geminiService.enhanceJobRequest).mockRejectedValueOnce(new Error('API Error'));
       
       const user = userEvent.setup();
@@ -515,7 +515,7 @@ describe('AIJobRequestWizard Component', () => {
     });
 
     it('should auto-analyze initialPrompt', async () => {
-      const geminiService = await import('../services/geminiService');
+      const geminiService = await import('../../services/geminiService');
       
       render(
         <AIJobRequestWizard 
