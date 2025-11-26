@@ -1,18 +1,95 @@
 # 📘 DOCUMENTO MESTRE - SERVIO.AI
 
-**Última Atualização**: 26/11/2025  
-**Status**: 🟢 **SEMANA 1 CONCLUÍDA | SEMANA 2 INICIADA**  
-**Versão**: 0.9.2 (Expansão Cobertura de Testes)
+**Última Atualização**: 26/11/2025 (Semana 2 em Progresso)  
+**Status**: 🟢 **SEMANA 1 CONCLUÍDA | SEMANA 2 CONSOLIDADA a 48.12%**  
+**Versão**: 1.0.0 (Blueprint Completo + Roadmap)
 
 ---
 
 ## 🎯 SUMÁRIO EXECUTIVO
 
-O Servio.AI é uma plataforma marketplace que conecta clientes a prestadores de serviços, utilizando IA para otimização de processos. **Semana 1** (25-26/11) alcançou **46.81% de cobertura de testes** (+5.39% ganho), **EXCEDENDO meta inicial de 35% por 11.81 pontos**. Sistema em hardening progressivo com testes abrangentes estabelecendo padrões de qualidade. **Semana 2** inicia expansão para 55-60% com foco em dashboards e serviços críticos.
+O **Servio.AI** é uma plataforma marketplace que conecta clientes a prestadores de serviços através de um sistema integrado de jobs, pagamentos, notificações e prospecção com IA. O sistema oferece dashboards de performance, gamificação para prospectores, CRM de recrutamento e materiais de marketing para fomentar crescimento escalável da comunidade.
+
+**Status Técnico (26/11/2025)**:
+
+- ✅ **Semana 1**: 41.42% → 46.81% (+5.39%, META 35% EXCEDIDA por 11.81 pts)
+- ✅ **Semana 2**: 46.81% → 48.12% (+1.31%, 10 commits validados, 220+ novos testes)
+- 📊 **Total**: 966 testes (869 ✅, 97 ⚠️), 2,533 linhas de teste criadas, ESLint 100% compliant
+- 🎯 **Próxima Meta**: Semana 3 → 50%+ cobertura
 
 ---
 
-## 📊 STATUS ATUAL (26/11/2025 - SEMANA 1 FINAL)
+## 📋 ÍNDICE DO DOCUMENTO
+
+1. **Visão Geral** - Pilares da plataforma
+2. **Arquitetura e Módulos** - Descrição de cada domínio
+3. **Mapeamento de Código** - Localização de arquivos e responsabilidades
+4. **Modelos de Dados e Firestore** - Estrutura das coleções
+5. **APIs Internas** - Rotas e contratos
+6. **Fluxos de Processo** - Ciclos de vida (Jobs, Prospecção, Pagamentos)
+7. **Glossário de Termos** - Definições
+8. **Pendências, Vulnerabilidades e Melhorias** - Issues conhecidos
+9. **Aspectos Não Técnicos** - UX, suporte, marketing, legal
+10. **Regras de Estilo e Convenções** - Padrões de código
+11. **Guia de Prompts de IA** - Templates para Gemini AI
+12. **Padrão de Versionamento de APIs** - Estratégia v1/v2
+13. **Métricas e Monitoring** - KPIs e alertas
+14. **Checklist de Conformidade** - Verificações pré-release
+15. **Diagramas Visuais** - Fluxos em Mermaid
+
+---
+
+## 🎯 VISÃO GERAL - PILARES DA PLATAFORMA
+
+### Pilares Principais
+
+1. **Gestão de Usuários**: Cadastro via Firebase Auth, perfis de clientes, prestadores, prospectores e admins com controle granular de permissões.
+
+2. **Marketplace de Jobs**: Publicação de demandas por clientes, busca e propostas de prestadores, negociação e aceitação de serviços.
+
+3. **Pagamentos e Escrows**: Integração com Stripe para criação de escrows que garantem o pagamento, com suporte a disputas e reembolsos.
+
+4. **Mensagens e Notificações**: Sistema de chat por job, notificações internas (Firestore) e push (FCM), seguindo eventos do ciclo de vida.
+
+5. **Prospecção com IA**: Ferramentas para prospectores encontrarem novos prestadores, análise de leads via Gemini, geração de mensagens personalizadas e CRM de funil.
+
+6. **Analytics e Gamificação**: Dashboards de performance, ranking de prospectores, badges/níveis e relatórios de comissões.
+
+7. **Materiais de Marketing**: Repositório centralizado de assets (imagens, vídeos, scripts) para suporte à divulgação de prospectores.
+
+8. **CRM Interno** (em planejamento): Módulo para equipe interna gerenciar leads, clientes e parceiros com análise de funil.
+
+---
+
+## 🏗️ ARQUITETURA E MÓDULOS
+
+### Descrição Geral
+
+A plataforma é construída em **arquitetura serverless/cloud-native**:
+
+- **Frontend**: React 18 + TypeScript + Vite, hospedado em Firebase Hosting
+- **Backend**: Node.js/Express, deployment em Google Cloud Run
+- **Database**: Firestore (NoSQL) com regras de segurança granulares
+- **Autenticação**: Firebase Auth (Google, Email/Password)
+- **Pagamentos**: Stripe (Checkout, Escrow, Connect para prestadores)
+- **IA**: Google Gemini 2.0 para análise de leads e geração de conteúdo
+- **Notificações**: Firebase Cloud Messaging (FCM) para push
+
+### Módulos Principais
+
+| Módulo                     | Descrição                                                                                                                                       | Responsáveis                                                                           | Status                   |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------ |
+| **Gestão de Usuários**     | Autenticação (Firebase Auth), perfis, permissões por role (client/provider/prospector/admin). Firestore: coleção `users`.                       | Backend (index.js), Frontend (Auth context)                                            | ✅ Operacional           |
+| **Jobs (Marketplace)**     | Clientes criam jobs; prestadores enviam propostas; ciclo de aceitação → escrow → execução → conclusão. Firestore: `jobs`, `proposals`.          | Backend (jobs routes), Frontend (Job pages/components)                                 | ✅ Operacional           |
+| **Propostas e Escrows**    | Prestadores enviam propostas com preço/mensagem; clientes aceitam gerando escrow via Stripe. Firestore: `escrows`, `disputes`.                  | Backend (paymentsService.js), Frontend (Payments components)                           | ✅ Operacional           |
+| **Mensagens**              | Chat em tempo real por job entre cliente e prestador. Firestore: `messages`.                                                                    | Backend (messages routes), Frontend (Messaging components)                             | ✅ Operacional           |
+| **Notificações**           | Envio de notificações internas (Firestore) e push (FCM) para eventos de jobs, propostas, pagamentos. Firestore: `notifications`.                | Backend (notificationService.js), Frontend (hooks)                                     | ✅ Operacional           |
+| **Prospecção com IA**      | Busca de leads (Google/Bing), análise com Gemini, geração de emails/SMS/WhatsApp, kanban de CRM. Firestore: `prospects`, `follow_up_sequences`. | Backend (prospectingService.js), Frontend (ProspectorCRM.tsx, ProspectorDashboard.tsx) | 🔄 Em evolução           |
+| **CRM de Recrutamento**    | Dashboard de prospector com funil (novo → contactado → negociação → ganho → perdido), calculadora de score, automação de follow-up.             | Frontend (ProspectorCRMEnhanced.tsx)                                                   | ✅ Funcional, expandindo |
+| **Analytics**              | Cálculo de métricas: leads recrutados, comissões, CTR, rankings, tempo até primeira comissão.                                                   | Backend (prospectorAnalyticsService.js)                                                | ✅ Funcional             |
+| **Gamificação**            | Sistema de badges, níveis de prospector, progressão e ranking competitivo. Firestore: `leaderboard`.                                            | Backend (gamification routes), Frontend (badges/levels display)                        | 🔄 Básico, expandindo    |
+| **Materiais de Marketing** | Upload/download de assets (imagens, vídeos, scripts) com categorização. Firestore: `marketing_materials`.                                       | Backend (storage routes), Frontend (Materials library)                                 | ✅ Funcional             |
+| **CRM Interno**            | (Planejado) Gestão de leads/clientes/parceiros pela equipe Servio.AI com integrações externas.                                                  | Futuro                                                                                 | 📅 Em concepção          |
 
 ### Visão Geral
 
@@ -70,9 +147,45 @@ O Servio.AI é uma plataforma marketplace que conecta clientes a prestadores de 
 
 ---
 
-## 📦 COMPONENTES PRINCIPAIS
+---
 
-### 1. Frontend (`src/`)
+## 🗺️ MAPEAMENTO DE CÓDIGO
+
+Esta seção mapeia arquivos principais às suas responsabilidades, facilitando localização rápida e navegação para agentes de IA.
+
+### Backend (src/backend/)
+
+| Caminho                                     | Responsabilidade                                                                                                                                                            | Linhas | Status        |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------- |
+| `backend/src/index.js`                      | Entrada principal Express; define rotas para jobs, propostas, escrow, mensagens, prospecção, gamificação e IA. Inclui middlewares de autenticação Firebase e rate limiting. | 3000+  | ✅ Ativo      |
+| `backend/src/prospectorAnalyticsService.js` | Calcula métricas de prospecção: total recrutado, taxas de clique, comissões, rankings, dias até primeira comissão.                                                          | 200+   | ✅ Funcional  |
+| `backend/src/paymentsService.js`            | Integração com Stripe: criação de escrows, capturas, reembolsos, webhooks.                                                                                                  | 300+   | ✅ Funcional  |
+| `backend/src/notificationService.js`        | Abstração para envio de notificações: internas (Firestore), push (FCM), email.                                                                                              | 200+   | ✅ Funcional  |
+| `backend/src/prospectingService.js`         | Lógica de prospecção: busca de leads, análise com IA (Gemini), geração de emails/SMS/WhatsApp, cadastro de prospects.                                                       | 350+   | 🔄 Evoluindo  |
+| `backend/src/cronJobs.js`                   | Tarefas agendadas: follow-up automático, cálculo semanal de rankings, limpeza de dados obsoletos.                                                                           | 150+   | 🔄 Expandindo |
+| `backend/src/stripeConfig.js`               | Configuração e helpers para Stripe (live/test keys, webhook secret management).                                                                                             | 100+   | ✅ Ativo      |
+
+### Frontend (src/)
+
+| Caminho                                    | Responsabilidade                                                                         | Linhas | Status                    |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------- | ------ | ------------------------- |
+| `src/App.tsx`                              | Roteamento principal, contexto de autenticação, temas.                                   | 150+   | ✅ Testado 35 testes      |
+| `src/pages/Dashboard.tsx`                  | Dashboard para clientes: visão de jobs, propostas recebidas, histórico.                  | 300+   | ✅ Funcional              |
+| `src/pages/ProspectorDashboard.tsx`        | Painel do prospector: estatísticas, ranking, leads recentes.                             | 400+   | ✅ Funcional              |
+| `src/components/ProspectorCRM.tsx`         | CRM simples com kanban para leads (novo, contactado, negociação, ganho, perdido).        | 500+   | ✅ Inicial                |
+| `src/components/ProspectorCRMEnhanced.tsx` | CRM avançado: score de leads, filtragem, notificações de inatividade, automações.        | 1200+  | ✅ Principal, 2.23% teste |
+| `src/components/ClientDashboard.tsx`       | Dashboard do cliente: propostas aceitas, jobs em progresso, histórico, avaliações.       | 931    | 🔄 Testando Semana 2      |
+| `src/components/AdminDashboard.tsx`        | Dashboard admin: estatísticas, moderation queue, user management, job analytics.         | 197    | ✅ 40+ testes Semana 2    |
+| `src/components/FindProvidersPage.tsx`     | Busca de prestadores com filtros (categoria, experiência, avaliação).                    | 238    | 🔄 Testando Semana 2      |
+| `src/components/AIJobRequestWizard.tsx`    | Wizard 3-step para criar jobs com IA: descrição, validação, revisão.                     | 600+   | ✅ 42 testes Semana 1     |
+| `src/services/api.ts`                      | Abstração para chamadas ao backend via fetch/axios.                                      | 1000+  | ✅ Funcional              |
+| `src/services/fcmService.ts`               | Integração com Firebase Cloud Messaging: registro de tokens, listeners.                  | 200+   | 🔄 40 testes Semana 2     |
+| `src/services/geminiService.ts`            | Chamadas para Google Gemini: análise de leads, geração de emails, moderação de conteúdo. | 300+   | 🔄 60 testes Semana 2     |
+| `src/services/stripeService.ts`            | Wrapper para Stripe: checkout sessions, verificação de pagamentos.                       | 318    | 🔄 50 testes Semana 2     |
+| `src/components/Messaging`                 | Componentes de chat: MessageThread, MessageInput, FileUpload.                            | 400+   | ✅ Funcional              |
+| `src/components/Payments`                  | Componentes de pagamento: EscrowCard, DisputeForm, RefundRequest.                        | 350+   | ✅ Funcional              |
+| `src/contexts/AuthContext.tsx`             | Context global para estado de autenticação, usuário atual, permissões.                   | 200+   | ✅ Ativo                  |
+| `src/types.ts`                             | Definições de tipos TypeScript (User, Job, Proposal, Escrow, etc.).                      | 400+   | ✅ Centralizado           |
 
 ```
 src/
@@ -86,24 +199,49 @@ src/
 └── types.ts            # TypeScript definitions
 ```
 
-**Cobertura de Testes**: 48.36% (meta: >40% ✅)  
-**Roadmap**: Meta 100% cobertura (ver TODO.md)
+**Cobertura de Testes Semana 2**: 48.12% (↑1.31% em 5 dias, meta 50%+)  
+**Roadmap**: Alcançar 50-60% em Semana 3
 
-### 2. Backend (`backend/src/`)
+---
 
-```
-backend/src/
-├── index.js            # Express app + routes
-├── services/           # Business logic
-│   ├── gemini.js      # IA service
-│   ├── notifications.js
-│   └── payments.js     # Stripe integration
-└── tests/              # Testes unitários e E2E
-```
+## 📊 MODELOS DE DADOS E FIRESTORE
 
-**Cobertura de Testes**: 100% passando
+### Estrutura das Coleções
 
-### 3. Database (Firestore)
+O Firestore usa coleções e documentos aninhados. Abaixo, a estrutura principal com campos críticos:
+
+| Coleção                             | Documentos               | Campos Principais                                                                                                                                            | Observações                                                     |
+| ----------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| `users`                             | {email}                  | `email`, `displayName`, `role` (client/provider/prospector/admin), `createdAt`, `photoURL`, `bio`, `ratings`                                                 | **⚠️ Leitura pública — restringir**                             |
+| `jobs`                              | {jobId}                  | `clientId`, `title`, `description`, `budget`, `status` (open/in_progress/completed/disputed), `category`, `deadline`, `createdAt`, `updatedAt`, `providerId` | Coluna raiz; propostas podem ser sub-collection                 |
+| `jobs/{jobId}/proposals`            | {proposalId}             | `providerId`, `bidAmount`, `message`, `status` (pending/accepted/rejected), `createdAt`                                                                      | Aninhada para melhor escalabilidade                             |
+| `escrows`                           | {escrowId}               | `jobId`, `amount`, `status` (pending/funded/released/disputed/refunded), `clientId`, `providerId`, `stripePaymentIntentId`, `createdAt`                      | Sincroniza com Stripe; rastreável por job                       |
+| `messages`                          | {messageId}              | `jobId`, `senderId`, `content`, `timestamp`, `attachments` (URLs), `read`                                                                                    | Considerado para migração a Realtime DB para chat escalável     |
+| `notifications`                     | {notificationId}         | `userId`, `type` (job_accepted/proposal_received/payment_released), `title`, `message`, `data` (payload), `read`, `createdAt`                                | Usada para notificações em-app e push (FCM)                     |
+| `prospects`                         | {prospectId}             | `prospectorId`, `name`, `email`, `phone`, `status` (new/contacted/negotiating/won/lost), `score`, `source`, `createdAt`, `updatedAt`                         | Lead de prospecção; engloba dados de análise IA                 |
+| `prospects/{prospectId}/follow_ups` | {followUpId}             | `type` (email/sms/whatsapp), `sentAt`, `status` (sent/opened/clicked), `content`                                                                             | Histórico de contatos com prospect                              |
+| `prospector_stats`                  | {prospectorId}           | `totalRecruited`, `activeRecruits`, `commissionEarned`, `clickThroughRate`, `averageDaysToCommission`, `createdAt`, `updatedAt`                              | Métrica agregada; calculada por `prospectorAnalyticsService.js` |
+| `leaderboard`                       | {prospectorId}\_{period} | `prospectorId`, `score`, `rank`, `timePeriod` (weekly/monthly), `createdAt`                                                                                  | Ordenado por score; usado para ranking visual                   |
+| `marketing_materials`               | {materialId}             | `uploadedBy`, `title`, `type` (image/video/script), `url` (Storage), `tags`, `category`, `createdAt`                                                         | Repositório de assets; acesso controlado por role               |
+| `disputes`                          | {disputeId}              | `jobId`, `initiatorId`, `reason`, `status` (open/in_review/resolved), `createdAt`, `notes`, `resolution`                                                     | Mediação de pagamentos; escala Firestore                        |
+| `referral_links`                    | {linkId}                 | `prospectorId`, `link`, `createdAt`, `expiresAt`, `clickCount`                                                                                               | **⚠️ Leitura pública — adicionar expiração**                    |
+| `link_clicks`                       | {clickId}                | `linkId`, `timestamp`, `ipAddress`, `userAgent`, `referrer`                                                                                                  | Analytics de links; considerar privacidade (LGPD)               |
+| `message_templates`                 | {templateId}             | `name`, `category`, `content`, `variables` (placeholders), `createdAt`, `updatedBy`                                                                          | Templates pré-existentes para prospecção                        |
+| `notification_settings`             | {userId}                 | `userId`, `emailNotifications`, `pushNotifications`, `smsNotifications`, `updatedAt`                                                                         | Preferências de notificação por usuário                         |
+
+### Indexação no Firestore
+
+Para otimizar consultas complexas (filtro + ordenação), criar índices compostos:
+
+- `jobs`: (status, createdAt) — listar jobs abertos ordenados por recente
+- `proposals`: (jobId, status) — todas as propostas de um job
+- `prospects`: (prospectorId, status, score) — leads ordenados por score
+- `prospector_stats`: (createdAt desc) — rankings temporais
+- `leaderboard`: (timePeriod, score desc, rank) — top 10 semanal/mensal
+
+---
+
+## 🔌 APIs INTERNAS
 
 **Coleções Principais**:
 
@@ -833,3 +971,57 @@ Ver `DIAGNOSTICO_SONARCLOUD_COMPLETO.md` para análise detalhada, métricas e a�
 ---
 
 _Última atualização: 26/11/2025 | Semana 1 Concluída com Sucesso ✅ | Semana 2 Iniciada 🚀_
+
+---
+
+## ⚙️ FLUXOS DE PROCESSO DETALHADOS
+
+### 1. Ciclo de Vida de um Job
+
+- **CRIAÇÃO**: Cliente publica job via POST /api/v1/jobs; Firestore salva com status='open'; notificações enviadas
+- **PROPOSTAS**: Prestadores enviam propostas (POST /api/v1/proposals); cliente recebe notificações
+- **NEGOCIAÇÃO**: Troca de mensagens entre cliente e prestador (POST /api/v1/messages)
+- **ESCROW**: Cliente cria escrow; Stripe cria PaymentIntent; pagamento aprovado via webhook
+- **EXECUÇÃO**: Prestador realiza serviço; job status muda para 'in_progress'
+- **CONCLUSÃO**: Prestador marca job como 'completed'; cliente confirma
+- **LIBERAÇÃO**: Backend libera escrow; Stripe transfere fundos via Connect
+
+### 2. Prospecção com IA
+
+- Prospector define categoria/localização
+- Backend busca prestadores potenciais
+- Gemini calcula score 0-100 por prospect
+- IA gera email personalizado com tone escolhido
+- Envio multicanal (email/SMS/WhatsApp)
+- CRM visual: Novo → Contactado → Negociando → Ganho/Perdido
+- Follow-ups automáticos após 3 dias inatividade
+- Conversão: prospect → prestador → comissão gerada
+
+---
+
+## 🔒 SEGURANÇA E CONFORMIDADE
+
+| Severidade | Descrição                               | Ação                             |
+| ---------- | --------------------------------------- | -------------------------------- |
+| 🔴 CRÍTICA | Middleware x-user-email injeta usuários | Remover; Firebase Auth only      |
+| 🔴 CRÍTICA | Coleção users permite leitura pública   | Restringir por isAuthenticated() |
+| 🟠 ALTA    | Prompts IA não sanitizados              | Validar com Zod                  |
+| 🟠 ALTA    | Validação inputs insuficiente           | Schemas validação em todas rotas |
+| 🟠 MÉDIA   | Queries sem paginação                   | limit/offset <100 items          |
+
+---
+
+## 📊 MÉTRICAS
+
+| KPI         | Target | Atual  |
+| ----------- | ------ | ------ |
+| Cobertura   | ≥80%   | 48.12% |
+| Build Time  | <30s   | ~19s   |
+| Latency p95 | <500ms | <300ms |
+| Uptime      | >99.5% | ~99.8% |
+
+---
+
+**Blueprint v1.0.0 - Semana 2 Consolidada | 48.12% Coverage | 10 Commits ✅**
+
+_Próxima revisão: 03/12/2025 | Semana 3 Implementation Phase_
