@@ -1,6 +1,6 @@
 
 > servio-ai-frontend@0.0.0 test
-> vitest run --coverage NotificationSettings.test.tsx
+> vitest run --coverage tests/NotificationSettings.test.tsx --run
 
 
 [1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/JE/servio.ai[39m
@@ -8,7 +8,7 @@
 
 stderr | tests/NotificationSettings.test.tsx > NotificationSettings > handles errors when loading preferences
 Error loading notification data: Error: Load failed
-    at C:\Users\JE\servio.ai\tests\NotificationSettings.test.tsx:369:7
+    at C:\Users\JE\servio.ai\tests\NotificationSettings.test.tsx:372:7
     at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
     at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
     at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
@@ -19,8 +19,378 @@ Error loading notification data: Error: Load failed
     at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
     at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
 
- [31mÔØ»[39m tests/NotificationSettings.test.tsx [2m([22m[2m30 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[33m 7166[2mms[22m[39m
-[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays notification types section[33m 1021[2mms[22m[31m[39m
+ [31mÔØ»[39m tests/NotificationSettings.test.tsx [2m([22m[2m30 tests[22m[2m | [22m[31m7 failed[39m[2m)[22m[33m 8047[2mms[22m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays push notifications preference[33m 1028[2mms[22m[31m[39m
+[31m     ÔåÆ expected '­ƒöö Configura├º├Áes de Notifica├º├ÁesGerenÔÇª' to include /notifica├º├úo|notification/i
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"w-full max-w-4xl mx-auto space-y-6"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"bg-white rounded-lg shadow-sm border border-gray-200 p-6"[31m
+        [36m>[31m
+          [36m<h2[31m
+            [33mclass[31m=[32m"text-2xl font-bold text-gray-900 mb-2"[31m
+          [36m>[31m
+            [0m­ƒöö Configura├º├Áes de Notifica├º├Áes[0m
+          [36m</h2>[31m
+          [36m<p[31m
+            [33mclass[31m=[32m"text-gray-600"[31m
+          [36m>[31m
+            [0mGerencie como voc├¬ recebe alertas sobre suas indica├º├Áes[0m
+          [36m</p>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"bg-white rounded-lg shadow-sm border border-gray-200 p-6"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex items-center justify-between mb-4"[31m
+          [36m>[31m
+            [36m<div>[31m
+              [36m<h3[31m
+                [33mclass[31m=[32m"text-lg font-semibold text-gray-900"[31m
+              [36m>[31m
+                [0mStatus das Notifica├º├Áes[0m
+              [36m</h3>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-sm text-gray-600 mt-1"[31m
+              [36m>[31m
+                [0mÔ£à Notifica├º├Áes ativadas[0m
+              [36m</p>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"bg-white rounded-lg shadow-sm border border-gray-200 p-6"[31m
+        [36m>[31m
+          [36m<h3[31m
+            [33mclass[31m=[32m"text-lg font-semibold text-gray-900 mb-4"[31m
+          [36m>[31m
+            [0mTipos de Notifica├º├úo[0m
+          [36m</h3>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"space-y-4"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"flex items-center justify-between pb-4 border-b"[31m
+            [36m>[31m
+              [36m<div>[31m
+                [36m<p[31m
+                  [33mclass[31m=[32m"font-medium text-gray-900"[31m
+                [36m>[31m
+                  [0mNotifica├º├Áes Push[0m
+                [36m</p>[31m
+                [36m<p[31m
+                  [33mclass[31m=[32m"text-sm text-gray-600"[31m
+                [36m>[31m
+                  [0mAtivar/desativar todas as notifica├º├Áes[0m
+                [36m</p>[31m
+              [36m</div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"relative inline-flex items-center cursor-pointer"[31m
+              [36m>[31m
+                [36m<input[31m
+                  [33mchecked[31m=[32m""[31m
+                  [33mclass[31m=[32m"sr-only peer"[31m
+                  [33mtype[31m=[32m"checkbox"[31m
+                [36m/>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"[31m
+                [36m/>[31m
+              [36m</label>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"flex items-center justify-between py-3"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center gap-3"[31m
+              [36m>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"text-2xl"[31m
+                [36m>[31m
+                  [0m­ƒÄ»[0m
+                [36m</span>[31m
+                [36m<div>[31m
+                  [36m<p[31m
+                    [33mclass[31m=[32m"font-medium text-gray-900"[31m
+                  [36m>[31m
+                    [0mCliques no Link[0m
+                  [36m</p>[31m
+                  [36m<p[31m
+                    [33mclass[31m=[32m"text-sm text-gray-600"[31m
+                  [36m>[31m
+                    [0mQuando algu├®m clica no seu link de indica├º├úo[0m
+                  [36m</p>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"relative inline-flex items-center cursor-pointer"[31m
+              [36m>[31m
+                [36m<input[31m
+                  [33mchecked[31m=[32m""[31m
+                  [33mclass[31m=[32m"sr-only peer"[31m
+                  [33mtype[31m=[32m"checkbox"[31m
+                [36m/>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"[31m
+                [36m/>[31m
+              [36m</label>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"flex items-center justify-between py-3"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center gap-3"[31m
+              [36m>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"text-2xl"[31m
+                [36m>[31m
+                  [0m­ƒÄë[0m
+                [36m</span>[31m
+                [36m<div>[31m
+                  [36m<p[31m
+                    [33mclass[31m=[32m"font-medium text-gray-900"[31m
+                  [36m>[31m
+                    [0mConvers├Áes[0m
+                  [36m</p>[31m
+                  [36m<p[31m
+                    [33mclass[31m=[32m"text-sm text-gray-600"[31m
+                  [36m>[31m
+                    [0mQuando um prospect se cadastra atrav├®s do seu link[0m
+                  [36m</p>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"relative inline-flex items-center cursor-pointer"[31m
+              [36m>[31m
+                [36m<input[31m
+                  [33mchecked[31m=[32m""[31m
+                  [33mclass[31m=[32m"sr-only peer"[31m
+                  [33mtype[31m=[32m"checkbox"[31m
+                [36m/>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"[31m
+                [36m/>[31m
+              [36m</label>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"flex items-center justify-between py-3"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center gap-3"[31m
+              [36m>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"text-2xl"[31m
+                [36m>[31m
+                  [0m­ƒÆ░[0m
+                [36m</span>[31m
+                [36m<div>[31m
+                  [36m<p[31m
+                    [33mclass[31m=[32m"font-medium text-gray-900"[31m
+                  [36m>[31m
+                    [0mComiss├Áes[0m
+                  [36m</p>[31m
+                  [36m<p[31m
+                    [33mclass[31m=[32m"text-sm text-gray-600"[31m
+                  [36m>[31m
+                    [0mQuando voc├¬ ganha uma comiss├úo[0m
+                  [36m</p>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"relative inline-flex items-center cursor-pointer"[31m
+              [36m>[31m
+                [36m<input[31m
+                  [33mchecked[31m=[32m""[31m
+                  [33mclass[31m=[32m"sr-only peer"[31m
+                  [33mtype[31m=[32m"checkbox"[31m
+                [36m/>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"[31m
+                [36m/>[31m
+              [36m</label>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"flex items-center justify-between py-3"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center gap-3"[31m
+              [36m>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"text-2xl"[31m
+                [36m>[31m
+                  [0m­ƒô×[0m
+                [36m</span>[31m
+                [36m<div>[31m
+                  [36m<p[31m
+                    [33mclass[31m=[32m"font-medium text-gray-900"[31m
+                  [36m>[31m
+                    [0mLembretes de Follow-up[0m
+                  [36m</p>[31m
+                  [36m<p[31m
+                    [33mclass[31m=[32m"text-sm text-gray-600"[31m
+                  [36m>[31m
+                    [0mQuando voc├¬ precisa fazer follow-up com prospects[0m
+                  [36m</p>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"relative inline-flex items-center cursor-pointer"[31m
+              [36m>[31m
+                [36m<input[31m
+                  [33mchecked[31m=[32m""[31m
+                  [33mclass[31m=[32m"sr-only peer"[31m
+                  [33mtype[31m=[32m"checkbox"[31m
+                [36m/>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"[31m
+                [36m/>[31m
+              [36m</label>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"bg-white rounded-lg shadow-sm border border-gray-200 p-6"[31m
+        [36m>[31m
+          [36m<h3[31m
+            [33mclass[31m=[32m"text-lg font-semibold text-gray-900 mb-4"[31m
+          [36m>[31m
+            [0mNotifica├º├Áes Recentes ([0m
+            [0m2[0m
+            [0m)[0m
+          [36m</h3>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"space-y-3"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"flex items-start justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex-1"[31m
+              [36m>[31m
+                [36m<p[31m
+                  [33mclass[31m=[32m"font-medium text-gray-900"[31m
+                [36m>[31m
+                  [0mNew Lead[0m
+                [36m</p>[31m
+                [36m<p[31m
+                  [33mclass[31m=[32m"text-sm text-gray-600 mt-1"[31m
+                [36m>[31m
+                  [0mJo├úo Silva is interested[0m
+                [36m</p>[31m
+                [36m<p[31m
+                  [33mclass[31m=[32m"text-xs text-gray-500 mt-2"[31m
+                [36m>[31m
+                  [0m25/11/2025, 10:00:00[0m
+                [36m</p>[31m
+              [36m</div>[31m
+              [36m<button[31m
+                [33mclass[31m=[32m"ml-4 text-sm text-blue-600 hover:text-blue-700 font-medium"[31m
+              [36m>[31m
+                [0mMarcar como lida[0m
+              [36m</button>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"flex items-start justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex-1"[31m
+              [36m>[31m
+                [36m<p[31m
+                  [33mclass[31m=[32m"font-medium text-gray-900"[31m
+                [36m>[31m
+                  [0mMessage[0m
+                [36m</p>[31m
+                [36m<p[31m
+                  [33mclass[31m=[32m"text-sm text-gray-600 mt-1"[31m
+                [36m>[31m
+                  [0mYou have a new message[0m
+                [36m</p>[31m
+                [36m<p[31m
+                  [33mclass[31m=[32m"text-xs text-gray-500 mt-2"[31m
+                [36m>[31m
+                  [0m25/11/2025, 09:00:00[0m
+                [36m</p>[31m
+              [36m</div>[31m
+              [36m<button[31m
+                [33mclass[31m=[32m"ml-4 text-sm text-blue-600 hover:text-blue-700 font-medium"[31m
+              [36m>[31m
+                [0mMarcar como lida[0m
+              [36m</button>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6"[31m
+        [36m>[31m
+          [36m<h3[31m
+            [33mclass[31m=[32m"text-lg font-semibold text-gray-900 mb-3"[31m
+          [36m>[31m
+            [0m­ƒÆí Dicas sobre Notifica├º├Áes[0m
+          [36m</h3>[31m
+          [36m<ul[31m
+            [33mclass[31m=[32m"space-y-2 text-gray-700 text-sm"[31m
+          [36m>[31m
+            [36m<li[31m
+              [33mclass[31m=[32m"flex items-start gap-2"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-green-600 font-bold"[31m
+              [36m>[31m
+                [0mÔ£ô[0m
+              [36m</span>[31m
+              [36m<span>[31m
+                [0mNotifica├º├Áes funcionam mesmo quando a aba est├í fechada[0m
+              [36m</span>[31m
+            [36m</li>[31m
+            [36m<li[31m
+              [33mclass[31m=[32m"flex items-start gap-2"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-green-600 font-bold"[31m
+              [36m>[31m
+                [0mÔ£ô[0m
+              [36m</span>[31m
+              [36m<span>[31m
+                [0mVoc├¬ ser├í notificado em tempo real sobre cliques e convers├Áes[0m
+              [36m</span>[31m
+            [36m</li>[31m
+            [36m<li[31m
+              [33mclass[31m=[32m"flex items-start gap-2"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-green-600 font-bold"[31m
+              [36m>[31m
+                [0mÔ£ô[0m
+              [36m</span>[31m
+              [36m<span>[31m
+                [0mDesative tipos espec├¡ficos se receber muitas notifica├º├Áes[0m
+              [36m</span>[31m
+            [36m</li>[31m
+            [36m<li[31m
+              [33mclass[31m=[32m"flex items-start gap-2"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-green-600 font-bold"[31m
+              [36m>[31m
+                [0mÔ£ô[0m
+              [36m</span>[31m
+              [36m<span>[31m
+                [0mClique na notifica├º├úo para abrir o dashboard automaticamente[0m
+              [36m</span>[31m
+            [36m</li>[31m
+          [36m</ul>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays notification types section[33m 1023[2mms[22m[31m[39m
 [31m     ÔåÆ expected '­ƒöö Configura├º├Áes de Notifica├º├ÁesGerenÔÇª' to include /tipo|type|Cliques|Convers├Áes|Comiss├ÁÔÇª/i
 
 Ignored nodes: comments, script, style
@@ -390,7 +760,7 @@ Ignored nodes: comments, script, style
     [36m</div>[31m
   [36m</body>[31m
 [36m</html>[31m[39m
-[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays click notification toggle[33m 1037[2mms[22m[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays click notification toggle[33m 1013[2mms[22m[31m[39m
 [31m     ÔåÆ expected '­ƒöö Configura├º├Áes de Notifica├º├ÁesGerenÔÇª' to include /clique|click/i
 
 Ignored nodes: comments, script, style
@@ -760,7 +1130,7 @@ Ignored nodes: comments, script, style
     [36m</div>[31m
   [36m</body>[31m
 [36m</html>[31m[39m
-[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays recent notifications section[33m 1012[2mms[22m[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays recent notifications section[33m 1023[2mms[22m[31m[39m
 [31m     ÔåÆ expected '­ƒöö Configura├º├Áes de Notifica├º├ÁesGerenÔÇª' to include /recente|recent|├║ltimas/i
 
 Ignored nodes: comments, script, style
@@ -1130,7 +1500,7 @@ Ignored nodes: comments, script, style
     [36m</div>[31m
   [36m</body>[31m
 [36m</html>[31m[39m
-[31m   [31m├ù[31m NotificationSettings[2m > [22mshows recent notification items[33m 1017[2mms[22m[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mshows recent notification items[33m 1023[2mms[22m[31m[39m
 [31m     ÔåÆ expected '­ƒöö Configura├º├Áes de Notifica├º├ÁesGerenÔÇª' to include /New Lead|Message/
 
 Ignored nodes: comments, script, style
@@ -1500,7 +1870,7 @@ Ignored nodes: comments, script, style
     [36m</div>[31m
   [36m</body>[31m
 [36m</html>[31m[39m
-[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays tips section[33m 1011[2mms[22m[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays tips section[33m 1026[2mms[22m[31m[39m
 [31m     ÔåÆ expected '­ƒöö Configura├º├Áes de Notifica├º├ÁesGerenÔÇª' to include /dica|tip|follow|lembrete|reminder/i
 
 Ignored nodes: comments, script, style
@@ -1870,7 +2240,7 @@ Ignored nodes: comments, script, style
     [36m</div>[31m
   [36m</body>[31m
 [36m</html>[31m[39m
-[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays test notification button[33m 1012[2mms[22m[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays test notification button[33m 1015[2mms[22m[31m[39m
 [31m     ÔåÆ expected null to be truthy
 
 Ignored nodes: comments, script, style
@@ -2241,7 +2611,390 @@ Ignored nodes: comments, script, style
   [36m</body>[31m
 [36m</html>[31m[39m
 
-ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Tests 6 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Tests 7 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays push notifications preference
+AssertionError: expected '­ƒöö Configura├º├Áes de Notifica├º├ÁesGerenÔÇª' to include /notifica├º├úo|notification/i
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div>
+      <div
+        class="w-full max-w-4xl mx-auto space-y-6"
+      >
+        <div
+          class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+        >
+          <h2
+            class="text-2xl font-bold text-gray-900 mb-2"
+          >
+            ­ƒöö Configura├º├Áes de Notifica├º├Áes
+          </h2>
+          <p
+            class="text-gray-600"
+          >
+            Gerencie como voc├¬ recebe alertas sobre suas indica├º├Áes
+          </p>
+        </div>
+        <div
+          class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+        >
+          <div
+            class="flex items-center justify-between mb-4"
+          >
+            <div>
+              <h3
+                class="text-lg font-semibold text-gray-900"
+              >
+                Status das Notifica├º├Áes
+              </h3>
+              <p
+                class="text-sm text-gray-600 mt-1"
+              >
+                Ô£à Notifica├º├Áes ativadas
+              </p>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+        >
+          <h3
+            class="text-lg font-semibold text-gray-900 mb-4"
+          >
+            Tipos de Notifica├º├úo
+          </h3>
+          <div
+            class="space-y-4"
+          >
+            <div
+              class="flex items-center justify-between pb-4 border-b"
+            >
+              <div>
+                <p
+                  class="font-medium text-gray-900"
+                >
+                  Notifica├º├Áes Push
+                </p>
+                <p
+                  class="text-sm text-gray-600"
+                >
+                  Ativar/desativar todas as notifica├º├Áes
+                </p>
+              </div>
+              <label
+                class="relative inline-flex items-center cursor-pointer"
+              >
+                <input
+                  checked=""
+                  class="sr-only peer"
+                  type="checkbox"
+                />
+                <div
+                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                />
+              </label>
+            </div>
+            <div
+              class="flex items-center justify-between py-3"
+            >
+              <div
+                class="flex items-center gap-3"
+              >
+                <span
+                  class="text-2xl"
+                >
+                  ­ƒÄ»
+                </span>
+                <div>
+                  <p
+                    class="font-medium text-gray-900"
+                  >
+                    Cliques no Link
+                  </p>
+                  <p
+                    class="text-sm text-gray-600"
+                  >
+                    Quando algu├®m clica no seu link de indica├º├úo
+                  </p>
+                </div>
+              </div>
+              <label
+                class="relative inline-flex items-center cursor-pointer"
+              >
+                <input
+                  checked=""
+                  class="sr-only peer"
+                  type="checkbox"
+                />
+                <div
+                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+              </label>
+            </div>
+            <div
+              class="flex items-center justify-between py-3"
+            >
+              <div
+                class="flex items-center gap-3"
+              >
+                <span
+                  class="text-2xl"
+                >
+                  ­ƒÄë
+                </span>
+                <div>
+                  <p
+                    class="font-medium text-gray-900"
+                  >
+                    Convers├Áes
+                  </p>
+                  <p
+                    class="text-sm text-gray-600"
+                  >
+                    Quando um prospect se cadastra atrav├®s do seu link
+                  </p>
+                </div>
+              </div>
+              <label
+                class="relative inline-flex items-center cursor-pointer"
+              >
+                <input
+                  checked=""
+                  class="sr-only peer"
+                  type="checkbox"
+                />
+                <div
+                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+              </label>
+            </div>
+            <div
+              class="flex items-center justify-between py-3"
+            >
+              <div
+                class="flex items-center gap-3"
+              >
+                <span
+                  class="text-2xl"
+                >
+                  ­ƒÆ░
+                </span>
+                <div>
+                  <p
+                    class="font-medium text-gray-900"
+                  >
+                    Comiss├Áes
+                  </p>
+                  <p
+                    class="text-sm text-gray-600"
+                  >
+                    Quando voc├¬ ganha uma comiss├úo
+                  </p>
+                </div>
+              </div>
+              <label
+                class="relative inline-flex items-center cursor-pointer"
+              >
+                <input
+                  checked=""
+                  class="sr-only peer"
+                  type="checkbox"
+                />
+                <div
+                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+              </label>
+            </div>
+            <div
+              class="flex items-center justify-between py-3"
+            >
+              <div
+                class="flex items-center gap-3"
+              >
+                <span
+                  class="text-2xl"
+                >
+                  ­ƒô×
+                </span>
+                <div>
+                  <p
+                    class="font-medium text-gray-900"
+                  >
+                    Lembretes de Follow-up
+                  </p>
+                  <p
+                    class="text-sm text-gray-600"
+                  >
+                    Quando voc├¬ precisa fazer follow-up com prospects
+                  </p>
+                </div>
+              </div>
+              <label
+                class="relative inline-flex items-center cursor-pointer"
+              >
+                <input
+                  checked=""
+                  class="sr-only peer"
+                  type="checkbox"
+                />
+                <div
+                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+              </label>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+        >
+          <h3
+            class="text-lg font-semibold text-gray-900 mb-4"
+          >
+            Notifica├º├Áes Recentes (
+            2
+            )
+          </h3>
+          <div
+            class="space-y-3"
+          >
+            <div
+              class="flex items-start justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+            >
+              <div
+                class="flex-1"
+              >
+                <p
+                  class="font-medium text-gray-900"
+                >
+                  New Lead
+                </p>
+                <p
+                  class="text-sm text-gray-600 mt-1"
+                >
+                  Jo├úo Silva is interested
+                </p>
+                <p
+                  class="text-xs text-gray-500 mt-2"
+                >
+                  25/11/2025, 10:00:00
+                </p>
+              </div>
+              <button
+                class="ml-4 text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
+                Marcar como lida
+              </button>
+            </div>
+            <div
+              class="flex items-start justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+            >
+              <div
+                class="flex-1"
+              >
+                <p
+                  class="font-medium text-gray-900"
+                >
+                  Message
+                </p>
+                <p
+                  class="text-sm text-gray-600 mt-1"
+                >
+                  You have a new message
+                </p>
+                <p
+                  class="text-xs text-gray-500 mt-2"
+                >
+                  25/11/2025, 09:00:00
+                </p>
+              </div>
+              <button
+                class="ml-4 text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
+                Marcar como lida
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6"
+        >
+          <h3
+            class="text-lg font-semibold text-gray-900 mb-3"
+          >
+            ­ƒÆí Dicas sobre Notifica├º├Áes
+          </h3>
+          <ul
+            class="space-y-2 text-gray-700 text-sm"
+          >
+            <li
+              class="flex items-start gap-2"
+            >
+              <span
+                class="text-green-600 font-bold"
+              >
+                Ô£ô
+              </span>
+              <span>
+                Notifica├º├Áes funcionam mesmo quando a aba est├í fechada
+              </span>
+            </li>
+            <li
+              class="flex items-start gap-2"
+            >
+              <span
+                class="text-green-600 font-bold"
+              >
+                Ô£ô
+              </span>
+              <span>
+                Voc├¬ ser├í notificado em tempo real sobre cliques e convers├Áes
+              </span>
+            </li>
+            <li
+              class="flex items-start gap-2"
+            >
+              <span
+                class="text-green-600 font-bold"
+              >
+                Ô£ô
+              </span>
+              <span>
+                Desative tipos espec├¡ficos se receber muitas notifica├º├Áes
+              </span>
+            </li>
+            <li
+              class="flex items-start gap-2"
+            >
+              <span
+                class="text-green-600 font-bold"
+              >
+                Ô£ô
+              </span>
+              <span>
+                Clique na notifica├º├úo para abrir o dashboard automaticamente
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+ ÔØ» tests/NotificationSettings.test.tsx:138:20
+    136|       const text = document.body.textContent;
+    137|       // Component displays notification preferences
+    138|       expect(text).toContain(/notifica├º├úo|notification/i);
+       |                    ^
+    139|     });
+    140|   });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1/7]ÔÄ»
 
  FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays notification types section
 AssertionError: expected '­ƒöö Configura├º├Áes de Notifica├º├ÁesGerenÔÇª' to include /tipo|type|Cliques|Convers├Áes|Comiss├ÁÔÇª/i
@@ -2613,18 +3366,18 @@ Ignored nodes: comments, script, style
     </div>
   </body>
 </html>
- ÔØ» tests/NotificationSettings.test.tsx:156:20
-    154|     await waitFor(() => {
-    155|       const text = document.body.textContent;
-    156|       expect(text).toContain(/tipo|type|Cliques|Convers├Áes|Comiss├Áes/iÔÇª
+ ÔØ» tests/NotificationSettings.test.tsx:159:20
+    157|     await waitFor(() => {
+    158|       const text = document.body.textContent;
+    159|       expect(text).toContain(/tipo|type|Cliques|Convers├Áes|Comiss├Áes/iÔÇª
        |                    ^
-    157|     });
-    158|   });
+    160|     });
+    161|   });
  ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
  ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
  ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
 
-ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1/6]ÔÄ»
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[2/7]ÔÄ»
 
  FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays click notification toggle
 AssertionError: expected '­ƒöö Configura├º├Áes de Notifica├º├ÁesGerenÔÇª' to include /clique|click/i
@@ -2996,18 +3749,18 @@ Ignored nodes: comments, script, style
     </div>
   </body>
 </html>
- ÔØ» tests/NotificationSettings.test.tsx:165:20
-    163|     await waitFor(() => {
-    164|       const text = document.body.textContent;
-    165|       expect(text).toContain(/clique|click/i);
+ ÔØ» tests/NotificationSettings.test.tsx:168:20
+    166|     await waitFor(() => {
+    167|       const text = document.body.textContent;
+    168|       expect(text).toContain(/clique|click/i);
        |                    ^
-    166|     });
-    167|   });
+    169|     });
+    170|   });
  ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
  ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
  ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
 
-ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[2/6]ÔÄ»
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[3/7]ÔÄ»
 
  FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays recent notifications section
 AssertionError: expected '­ƒöö Configura├º├Áes de Notifica├º├ÁesGerenÔÇª' to include /recente|recent|├║ltimas/i
@@ -3379,18 +4132,18 @@ Ignored nodes: comments, script, style
     </div>
   </body>
 </html>
- ÔØ» tests/NotificationSettings.test.tsx:207:20
-    205|       const text = document.body.textContent;
-    206|       // Component displays recent notifications heading
-    207|       expect(text).toContain(/recente|recent|├║ltimas/i);
+ ÔØ» tests/NotificationSettings.test.tsx:210:20
+    208|       const text = document.body.textContent;
+    209|       // Component displays recent notifications heading
+    210|       expect(text).toContain(/recente|recent|├║ltimas/i);
        |                    ^
-    208|     });
-    209|   });
+    211|     });
+    212|   });
  ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
  ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
  ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
 
-ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[3/6]ÔÄ»
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[4/7]ÔÄ»
 
  FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > shows recent notification items
 AssertionError: expected '­ƒöö Configura├º├Áes de Notifica├º├ÁesGerenÔÇª' to include /New Lead|Message/
@@ -3762,18 +4515,18 @@ Ignored nodes: comments, script, style
     </div>
   </body>
 </html>
- ÔØ» tests/NotificationSettings.test.tsx:216:41
-    214|     await waitFor(() => {
-    215|       // Component shows notification titles from mock data
-    216|       expect(document.body.textContent).toContain(/New Lead|Message/);
+ ÔØ» tests/NotificationSettings.test.tsx:219:41
+    217|     await waitFor(() => {
+    218|       // Component shows notification titles from mock data
+    219|       expect(document.body.textContent).toContain(/New Lead|Message/);
        |                                         ^
-    217|     });
-    218|   });
+    220|     });
+    221|   });
  ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
  ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
  ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
 
-ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[4/6]ÔÄ»
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[5/7]ÔÄ»
 
  FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays tips section
 AssertionError: expected '­ƒöö Configura├º├Áes de Notifica├º├ÁesGerenÔÇª' to include /dica|tip|follow|lembrete|reminder/i
@@ -4145,18 +4898,18 @@ Ignored nodes: comments, script, style
     </div>
   </body>
 </html>
- ÔØ» tests/NotificationSettings.test.tsx:251:20
-    249|       const text = document.body.textContent;
-    250|       // Component displays tips/help section
-    251|       expect(text).toContain(/dica|tip|follow|lembrete|reminder/i);
+ ÔØ» tests/NotificationSettings.test.tsx:254:20
+    252|       const text = document.body.textContent;
+    253|       // Component displays tips/help section
+    254|       expect(text).toContain(/dica|tip|follow|lembrete|reminder/i);
        |                    ^
-    252|     });
-    253|   });
+    255|     });
+    256|   });
  ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
  ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
  ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
 
-ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[5/6]ÔÄ»
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[6/7]ÔÄ»
 
  FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays test notification button
 AssertionError: expected null to be truthy
@@ -4535,23 +5288,23 @@ true
 + Received: 
 null
 
- ÔØ» tests/NotificationSettings.test.tsx:275:26
-    273|     await waitFor(() => {
-    274|       const testButton = screen.queryByText(/teste|test|enviar/i);
-    275|       expect(testButton).toBeTruthy();
+ ÔØ» tests/NotificationSettings.test.tsx:278:26
+    276|     await waitFor(() => {
+    277|       const testButton = screen.queryByText(/teste|test|enviar/i);
+    278|       expect(testButton).toBeTruthy();
        |                          ^
-    276|     });
-    277|   });
+    279|     });
+    280|   });
  ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
  ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
  ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
 
-ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[6/6]ÔÄ»
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[7/7]ÔÄ»
 
 [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (30)[39m
-[2m   Start at [22m 09:26:24
-[2m   Duration [22m 13.25s[2m (transform 252ms, setup 706ms, collect 520ms, tests 7.17s, environment 1.94s, prepare 319ms)[22m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m23 passed[39m[22m[90m (30)[39m
+[2m   Start at [22m 09:20:27
+[2m   Duration [22m 15.32s[2m (transform 406ms, setup 1.01s, collect 662ms, tests 8.05s, environment 1.93s, prepare 212ms)[22m
 
 [34m % [39m[2mCoverage report from [22m[33mv8[39m
 -------------------|---------|----------|---------|---------|-------------------
