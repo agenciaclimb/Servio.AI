@@ -937,7 +937,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   // STRIPE PAYMENT ENDPOINTS
   // =================================================================
 
-  app.post("/create-checkout-session", async (req, res) => {
+  app.post("/create-checkout-session", requireAuth, async (req, res) => {
     const { job, amount } = req.body;
     const YOUR_DOMAIN = process.env.FRONTEND_URL || "http://localhost:5173"; // Your frontend domain
 
@@ -1087,7 +1087,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
 
-  app.post("/jobs/:jobId/release-payment", async (req, res) => {
+  app.post("/jobs/:jobId/release-payment", requireJobParticipant, async (req, res) => {
     const { jobId } = req.params;
 
     try {
@@ -1271,7 +1271,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   // =================================================================
 
   // Get all disputes
-  app.get("/disputes", async (req, res) => {
+  app.get("/disputes", requireAuth, async (req, res) => {
     try {
       const snapshot = await db.collection("disputes").orderBy('createdAt', 'desc').get();
       const disputes = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -1300,7 +1300,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // Resolve a dispute (admin only)
-  app.post("/disputes/:disputeId/resolve", async (req, res) => {
+  app.post("/disputes/:disputeId/resolve", requireDisputeParticipant, async (req, res) => {
     const { disputeId } = req.params;
     const { resolution, comment } = req.body; // resolution: 'release_to_provider' or 'refund_client'
 
@@ -1446,7 +1446,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // Get a single user by ID (with /api prefix)
-  app.get("/api/users/:id", async (req, res) => {
+  app.get("/api/users/:id", requireOwnership('id'), async (req, res) => {
     try {
       const userId = req.params.id;
       const userRef = db.collection("users").doc(userId);
@@ -1463,7 +1463,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // Get a single user by ID (legacy route)
-  app.get("/users/:id", async (req, res) => {
+  app.get("/users/:id", requireOwnership('id'), async (req, res) => {
     try {
       const userId = req.params.id;
       const userRef = db.collection("users").doc(userId);
@@ -1554,7 +1554,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // Delete a user
-  app.delete("/users/:id", async (req, res) => {
+  app.delete("/users/:id", requireOwnership('id'), async (req, res) => {
     try {
       const userId = req.params.id;
       await db.collection("users").doc(userId).delete();
@@ -1639,7 +1639,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // Reactivate a provider
-  app.post("/admin/providers/:userId/reactivate", async (req, res) => {
+  app.post("/admin/providers/:userId/reactivate", requireAdmin, async (req, res) => {
     try {
       const { userId } = req.params;
 
@@ -1767,7 +1767,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // Get all prospects
-  app.get("/api/prospects", async (req, res) => {
+  app.get("/api/prospects", requireRole('admin', 'prospector'), async (req, res) => {
     try {
       const snapshot = await db.collection("prospects").orderBy('createdAt', 'desc').get();
       const prospects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -1779,7 +1779,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // Create prospect manually
-  app.post("/api/prospects", async (req, res) => {
+  app.post("/api/prospects", requireRole('admin', 'prospector'), async (req, res) => {
     try {
       const prospectData = req.body;
       const prospectRef = db.collection("prospects").doc();
@@ -1812,7 +1812,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // Send prospect invitation email
-  app.post("/api/send-prospect-invitation", async (req, res) => {
+  app.post("/api/send-prospect-invitation", requireRole('admin', 'prospector'), async (req, res) => {
     try {
       const { prospectEmail, prospectName, jobCategory, jobLocation } = req.body;
       
@@ -1836,7 +1836,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // Notify prospecting team
-  app.post("/api/notify-prospecting-team", async (req, res) => {
+  app.post("/api/notify-prospecting-team", requireAdmin, async (req, res) => {
     try {
       const { category, location, clientEmail, prospectsFound, urgency, message } = req.body;
       
@@ -2516,7 +2516,7 @@ Retorne apenas o corpo do email, sem assunto.`;
   });
 
   // Get all jobs (with /api prefix for frontend compatibility)
-  app.get("/api/jobs", async (req, res) => {
+  app.get("/api/jobs", requireAuth, async (req, res) => {
     try {
       const { providerId, status } = req.query;
       let query = db.collection("jobs");
@@ -2536,7 +2536,7 @@ Retorne apenas o corpo do email, sem assunto.`;
   });
 
   // Get all jobs (legacy route without /api)
-  app.get("/jobs", async (req, res) => {
+  app.get("/jobs", requireAuth, async (req, res) => {
     try {
       const { providerId, status } = req.query;
       let query = db.collection("jobs");
@@ -2862,7 +2862,7 @@ Retorne apenas o corpo do email, sem assunto.`;
   // =================================================================
 
   // GET /jobs/:id - Get single job by ID
-  app.get("/jobs/:id", async (req, res) => {
+  app.get("/jobs/:id", requireJobParticipant, async (req, res) => {
     try {
       const { id } = req.params;
       const docRef = db.collection("jobs").doc(id);
