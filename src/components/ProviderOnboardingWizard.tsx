@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { User, PortfolioItem } from '../../types';
+import { User, PortfolioItem, ExtractedDocumentInfo } from '../../types';
 // import { 
 //   generateProviderBio, 
 //   analyzePortfolioImage, 
@@ -91,7 +91,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
 
   // Estados temporários para cada step
   const [documentImage, setDocumentImage] = useState<string | null>(user.documentImage || null);
-  const [extractedDocData, setExtractedDocData] = useState({ fullName: user.name, cpf: user.cpf || '', cnpj: (user as any).cnpj || '' });
+  const [extractedDocData, setExtractedDocData] = useState({ fullName: user.name, cpf: user.cpf || '', cnpj: '' });
   const [bioInput, setBioInput] = useState('');
   const [generatingBio, setGeneratingBio] = useState(false);
   const [uploadingPortfolio, setUploadingPortfolio] = useState(false);
@@ -137,7 +137,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
       setExtractedDocData({
         fullName: extracted.fullName || user.name,
         cpf: extracted.cpf || '',
-        cnpj: (extracted as any).cnpj || '',
+        cnpj: (extracted as ExtractedDocumentInfo & { cnpj?: string }).cnpj || '',
       });
 
       updateData({ documentVerified: false }); // Aguarda revisão
@@ -167,7 +167,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
       if (data.providerType === 'autonomo') {
         updatedData.cpf = extractedDocData.cpf;
       } else {
-        (updatedData as any).cnpj = extractedDocData.cnpj;
+        (updatedData as Partial<User> & { cnpj?: string }).cnpj = extractedDocData.cnpj;
       }
 
       const response = await fetch(`${baseUrl}/users/${user.email}`, {
