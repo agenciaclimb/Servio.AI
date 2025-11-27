@@ -1,6 +1,7 @@
 const express = require("express");
 const admin = require("firebase-admin");
 const cors = require("cors");
+const helmet = require("helmet");
 const { Storage } = require("@google-cloud/storage");
 // Stripe config helper (mode detection + safe init)
 const { createStripe } = require('./stripeConfig');
@@ -144,6 +145,32 @@ function createApp({
   const leaderboardRateDataLocal = new Map();
   // Allow overriding cache TTL per instance
   const cacheTtlMs = leaderboardCacheMs || LEADERBOARD_CACHE_MS;
+
+  // ===========================
+  // Security Middleware (Helmet)
+  // ===========================
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "https:", "data:"],
+        connectSrc: ["'self'", "https://firebaseinstallations.googleapis.com", "https://*.googleapis.com"],
+        fontSrc: ["'self'", "https:", "data:"],
+        objectSrc: ["'none'"],
+        mediaSrc: ["'self'"],
+        frameSrc: ["'none'"],
+      }
+    },
+    frameguard: { action: 'deny' },                    // X-Frame-Options: DENY
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    hsts: { maxAge: 31536000, includeSubDomains: true }, // 1 year
+    noSniff: true,                                      // X-Content-Type-Options: nosniff
+    xssFilter: true,                                    // X-XSS-Protection: 1; mode=block
+    permittedCrossDomainPolicies: false,               // X-Permitted-Cross-Domain-Policies: none
+    dnsPrefetchControl: { allow: false }               // X-DNS-Prefetch-Control: off
+  }));
 
   app.use(cors());
   // Lightweight test/dev auth: allow injecting user via header in non-authenticated environments
