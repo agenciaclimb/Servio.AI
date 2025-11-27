@@ -5,6 +5,16 @@ const helmet = require("helmet");
 const { Storage } = require("@google-cloud/storage");
 // Stripe config helper (mode detection + safe init)
 const { createStripe } = require('./stripeConfig');
+// Authorization middleware for granular permission checking
+const { 
+  requireAuth, 
+  requireRole, 
+  requireAdmin,
+  requireOwnership,
+  requireJobParticipant,
+  requireDisputeParticipant,
+  validateBody
+} = require('./authorizationMiddleware');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 // Prospector follow-up automation scheduler helpers
 const { processPendingOutreach } = require('./outreachScheduler');
@@ -1562,7 +1572,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   // =================================================================
 
   // Set provider verification status (approve/reject identity verification)
-  app.post("/admin/providers/:userId/verification", async (req, res) => {
+  app.post("/admin/providers/:userId/verification", requireAdmin, async (req, res) => {
     try {
       const { userId } = req.params;
       const { status, note } = req.body;
@@ -1599,7 +1609,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // Suspend a provider
-  app.post("/admin/providers/:userId/suspend", async (req, res) => {
+  app.post("/admin/providers/:userId/suspend", requireAdmin, async (req, res) => {
     try {
       const { userId } = req.params;
       const { reason } = req.body;
