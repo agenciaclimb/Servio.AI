@@ -21,6 +21,11 @@ const { processPendingOutreach } = require('./outreachScheduler');
 // Follow-up email processing service & Gmail integration
 const gmailService = require('./gmailService');
 const followUpService = require('./followUpService');
+// WhatsApp Business API service
+const WhatsAppService = require('./whatsappService');
+const whatsappRouter = require('./routes/whatsapp');
+const whatsappMultiRoleService = require('./whatsappMultiRoleService');
+const whatsappMultiRoleRouter = require('./routes/whatsappMultiRole');
 
 // ===========================
 // Leaderboard Cache & Rate Limiting (Phase 1)
@@ -2009,13 +2014,30 @@ Retorne apenas o corpo do email, sem assunto.`;
   // Send WhatsApp invite
   app.post("/api/send-whatsapp-invite", async (req, res) => {
     try {
-      const { phone, name, category, location } = req.body;
+      const { phone, name, category, location, prospectorId } = req.body;
 
-      // TODO: Integrate with WhatsApp Business API
-      // For now, just log and return success
-      console.log(`💬 WhatsApp to ${phone}: Olá ${name}! Temos um cliente procurando ${category} em ${location}. Cadastre-se: https://servio-ai.com/register?type=provider`);
+      // Use WhatsApp Business API to send invite message
+      const whatsappService = new WhatsAppService();
+      if (!whatsappService.isConfigured()) {
+        return res.status(503).json({ 
+          success: false, 
+          message: "WhatsApp service not configured. Using simulated mode." 
+        });
+      }
 
-      res.status(200).json({ success: true, message: "WhatsApp sent (simulated)" });
+      const inviteMessage = `Olá ${name}! Temos um cliente procurando ${category} em ${location}. Cadastre-se: https://servio-ai.com/register?type=provider`;
+      const result = await whatsappService.sendMessage(phone, inviteMessage);
+
+      if (!result.success) {
+        console.warn(`WhatsApp send failed: ${result.error}`);
+        return res.status(400).json({ success: false, error: result.error });
+      }
+
+      res.status(200).json({ 
+        success: true, 
+        message: "WhatsApp invite sent",
+        messageId: result.messageId 
+      });
     } catch (error) {
       console.error("Error sending WhatsApp:", error);
       res.status(500).json({ error: "Failed to send WhatsApp" });
@@ -3088,6 +3110,18 @@ Retorne apenas o corpo do email, sem assunto.`;
     }
   });
 
+  // =================================================================
+  // WHATSAPP BUSINESS API INTEGRATION
+  // =================================================================
+  // WhatsApp router handles all messaging, webhook verification, and status checking
+  // Routes: POST /api/whatsapp/send, POST /api/whatsapp/webhook, GET /api/whatsapp/webhook,
+  //         GET /api/whatsapp/status, POST /api/whatsapp/template
+  // Database: Records all messages in Firestore whatsapp_messages collection
+  app.use('/api/whatsapp', whatsappRouter);
+
+  // Multi-role WhatsApp messaging for all user types
+  // Routes: /api/whatsapp/client/*, /api/whatsapp/provider/*, /api/whatsapp/prospector/*, /api/whatsapp/admin/*
+  app.use('/api/whatsapp/multi-role', whatsappMultiRoleRouter);
 
   return app;
 }
