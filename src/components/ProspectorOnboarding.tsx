@@ -129,7 +129,7 @@ export function ProspectorOnboarding({
       trackTourSkipped(userId, index);
       onSkip?.();
     }
-  }, [storageKey, onComplete, onSkip]);
+  }, [storageKey, onComplete, onSkip, userId]);
 
   // Função pública para reiniciar tour
   const restartTour = useCallback(() => {
@@ -141,7 +141,7 @@ export function ProspectorOnboarding({
   // Expor função de restart via window para debug
   useEffect(() => {
     if (globalThis.window !== undefined) {
-      (globalThis as any).restartProspectorTour = restartTour;
+      (globalThis as typeof globalThis & {restartProspectorTour?: () => void}).restartProspectorTour = restartTour;
     }
     return undefined;
   }, [restartTour]);

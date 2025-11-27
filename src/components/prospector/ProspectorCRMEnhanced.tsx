@@ -41,14 +41,7 @@ export default function ProspectorCRMEnhanced({
   const [selectedLead, setSelectedLead] = useState<ProspectLead | null>(null);
   const [filter, setFilter] = useState<'all' | 'hot' | 'warm' | 'cold'>('all');
 
-  useEffect(() => {
-    loadLeads();
-    // Auto-refresh a cada 30s
-    const interval = setInterval(loadLeads, 30000);
-    return () => clearInterval(interval);
-  }, [prospectorId]);
-
-  async function loadLeads() {
+  const loadLeads = useCallback(async () => {
     try {
       const q = query(
         collection(db, 'prospector_prospects'),
@@ -85,7 +78,13 @@ export default function ProspectorCRMEnhanced({
     } finally {
       setLoading(false);
     }
-  }
+  }, [prospectorId]);
+
+  useEffect(() => {
+    loadLeads();
+    const interval = setInterval(loadLeads, 30000);
+    return () => clearInterval(interval);
+  }, [loadLeads]);
 
   function calculateAILeadScore(lead: ProspectLead): Pick<ProspectLead, 'score' | 'temperature' | 'priority'> {
     let score = 50; // Base score
