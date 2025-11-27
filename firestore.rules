@@ -54,46 +54,60 @@ service cloud.firestore {
     // =================================
 
     match /users/{userId} {
-      // Anyone can read a public profile
-      allow read: if true; 
+      // Only own profile or admin can read (PREVENT PII EXPOSURE)
+      allow read: if isOwnerEmail(userId) || isAdmin();
       
-      // User can create their own document (userId = email)
+      // User can create their own document (userId = email) with required fields
       allow create: if isOwnerEmail(userId)
                     && request.resource.data.email == userId
-                    && request.resource.data.type in ['cliente', 'prestador', 'prospector']
-                    && request.resource.data.name is string;
+                    && request.resource.data.type in ['cliente', 'prestador', 'prospector', 'admin']
+                    && request.resource.data.name is string
+                    && request.resource.data.email is string;
 
       // User can update their own profile (email-based). Admin can update any profile.
-      allow update: if isOwnerEmail(userId) || isAdmin();
+      // Prevent privilege escalation: regular users cannot change their type
+      allow update: if (isOwnerEmail(userId) && request.resource.data.type == resource.data.type)
+                    || isAdmin();
       
       // Deletion is disallowed for now.
       allow delete: if false;
     }
 
     match /jobs/{jobId} {
-      // Anyone signed in can read job details
-      allow read: if isSignedIn();
+      // Only job participants or admin can read job details (PREVENT DATA EXPOSURE)
+      allow read: if isJobParticipant(jobId) || isAdmin();
       
-      // Client can create job (clientId = email)
-      allow create: if isClient() && isOwnerEmail(request.resource.data.clientId);
+      // Client can create job (clientId = email, must match auth)
+      allow create: if isClient() 
+                    && isOwnerEmail(request.resource.data.clientId)
+                    && request.resource.data.title is string
+                    && request.resource.data.description is string
+                    && request.resource.data.category is string;
       
-      // Only a job participant or an admin can update a job
-      allow update: if isJobParticipant(jobId) || isAdmin();
+      // Only a job participant or an admin can update a job (PREVENT UNAUTHORIZED UPDATES)
+      // Regular participants can only update certain fields (not status/payments without admin)
+      allow update: if (isJobParticipant(jobId) && !('status' in request.resource.data.diff.changedKeys()))
+                    || isAdmin();
       
       allow delete: if false;
     }
 
     match /proposals/{proposalId} {
-      // Only job participants can read proposals for that job
+      // Only job participants can read proposals for that job (PREVENT INFORMATION LEAK)
       allow read: if isJobParticipant(resource.data.jobId);
       
-      // Provider can create proposal (providerId = email)
+      // Provider can create proposal with valid required fields
       allow create: if isProvider() 
                     && getUserByEmail().verificationStatus == 'verificado'
-                    && isOwnerEmail(request.resource.data.providerId);
+                    && isOwnerEmail(request.resource.data.providerId)
+                    && isJobParticipant(request.resource.data.jobId)
+                    && request.resource.data.amount is number
+                    && request.resource.data.amount > 0
+                    && request.resource.data.jobId is string;
                     
-      // Client can update proposal (to accept it)
-      allow update: if get(/databases/$(database)/documents/jobs/$(request.resource.data.jobId)).data.clientId == authEmail();
+      // Client can update proposal to accept/reject it (must own the job)
+      allow update: if get(/databases/$(database)/documents/jobs/$(resource.data.jobId)).data.clientId == authEmail()
+                    && (request.resource.data.status in ['accepted', 'rejected']);
       
       allow delete: if false;
     }
@@ -101,7 +115,11 @@ service cloud.firestore {
     match /messages/{messageId} {
       // Only participants of the chat (job) can read or create messages
       allow read: if isJobParticipant(resource.data.chatId);
-      allow create: if isJobParticipant(request.resource.data.chatId);
+      // Sender must be a job participant and must set their email as sender
+      allow create: if isJobParticipant(request.resource.data.chatId)
+                    && isOwnerEmail(request.resource.data.sender)
+                    && request.resource.data.text is string
+                    && request.resource.data.createdAt is timestamp;
       allow update, delete: if false;
     }
 
@@ -142,9 +160,14 @@ service cloud.firestore {
     }
 
     match /bids/{bidId} {
-      // Similar to proposals
+      // Similar to proposals - only job participants can read
       allow read: if isJobParticipant(resource.data.jobId);
-      allow create: if isProvider() && isOwnerEmail(request.resource.data.providerId);
+      // Provider can create bid with valid data
+      allow create: if isProvider() 
+                    && isOwnerEmail(request.resource.data.providerId)
+                    && isJobParticipant(request.resource.data.jobId)
+                    && request.resource.data.amount is number
+                    && request.resource.data.amount > 0;
       allow update, delete: if false;
     }
 
@@ -162,25 +185,25 @@ service cloud.firestore {
 
     match /referral_links/{prospectorId} {
       // Prospector can read/write their own referral link (email-based id) or if identified via UID
-      allow read, create, update: if isOwner(prospectorId) || isOwnerEmail(prospectorId) || isProspector() || isProspectorByEmail();
-      // Admin can read all referral links
-      allow read: if isAdmin();
+      // Prevent other users from accessing
+      allow read, create, update: if isOwnerEmail(prospectorId) || isOwner(prospectorId) || isAdmin();
       allow delete: if false;
     }
 
     match /link_clicks/{clickId} {
-      // Anyone can create click tracking (anonymous visitor clicks)
-      allow create: if true;
       // Prospector can read their own link clicks (supports both uid and email stored as prospectorId)
       allow read: if isSignedIn() && (resource.data.prospectorId == request.auth.uid || resource.data.prospectorId == authEmail());
       // Admin can read all clicks
       allow read: if isAdmin();
+      // Client click tracking: only backend/server can write via authenticated request with special validation
+      // Frontend analytics cannot write directly - must go through backend endpoint
+      allow create: if false;
       allow update, delete: if false;
     }
 
     match /link_analytics/{prospectorId} {
-      // Prospector can read their own analytics (supports email-based id)
-      allow read: if isOwner(prospectorId) || isOwnerEmail(prospectorId);
+      // Only the prospector owner or admin can read their analytics (prevent snooping)
+      allow read: if isOwnerEmail(prospectorId) || isOwner(prospectorId) || isAdmin();
       // System (admin/backend) can write analytics
       allow write: if isAdmin();
     }
@@ -199,11 +222,9 @@ service cloud.firestore {
     }
 
     match /prospector_stats/{prospectorId} {
-      // Prospector can read their own stats (supports email-based id and prospectors by email)
-      allow read: if isOwner(prospectorId) || isOwnerEmail(prospectorId) || isProspector() || isProspectorByEmail();
-      // Admin can read all stats
-      allow read: if isAdmin();
-      // System updates stats (admin/backend)
+      // Only prospector themselves or admin can read their stats (prevent disclosure)
+      allow read: if isOwnerEmail(prospectorId) || isOwner(prospectorId) || isAdmin();
+      // System updates stats (admin/backend only)
       allow write: if isAdmin();
     }
 
@@ -212,6 +233,13 @@ service cloud.firestore {
       allow read: if isSignedIn();
       // Only system can write
       allow write: if isAdmin();
+    }
+
+    match /admin_logs/{logId} {
+      // Only admin can read logs
+      allow read: if isAdmin();
+      // Only backend/admin can create logs
+      allow create, update, delete: if false;
     }
   }
 }
