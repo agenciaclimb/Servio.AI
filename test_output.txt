@@ -1,0 +1,1914 @@
+
+> servio-ai-frontend@0.0.0 test
+> vitest run --coverage tests/NotificationSettings.test.tsx --run
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/JE/servio.ai[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > renders without crashing
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > loads notification preferences on mount
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > loads recent notifications on mount
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > displays settings title
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > displays push notifications toggle
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > can enable/disable push notifications
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > requests notification permission when enabling
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > displays email notification toggle
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > can toggle email notifications
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > displays lead notification toggle
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > displays message notification toggle
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > displays system notification toggle
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > displays recent notifications section
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > shows recent notification items
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > can mark notification as read
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > displays unread notification badge
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > displays daily digest toggle
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > can toggle daily digest
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > displays test notification button
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > shows loading state while saving
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > updates preferences successfully
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > checks notification permission status
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > sets up foreground message listener on mount
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > handles errors when loading preferences
+Error loading notification data: Error: Load failed
+    at C:\Users\JE\servio.ai\tests\NotificationSettings.test.tsx:349:7
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+stderr | tests/NotificationSettings.test.tsx > NotificationSettings > handles errors when updating preferences
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+    at C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:286:42
+    at Array.map (<anonymous>)
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:277:28)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at updateFunctionComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:19617:20)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+The above error occurred in the <NotificationSettings> component:
+
+    at NotificationSettings (C:\Users\JE\servio.ai\src\components\NotificationSettings.tsx:8:33)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+ [31mÔØ»[39m tests/NotificationSettings.test.tsx [2m([22m[2m28 tests[22m[2m | [22m[31m14 failed[39m[2m)[22m[33m 12290[2mms[22m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays settings title[33m 1022[2mms[22m[31m[39m
+[31m     ÔåÆ expected null to be truthy
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mrequests notification permission when enabling[33m 1010[2mms[22m[31m[39m
+[31m     ÔåÆ expected null to be truthy
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays email notification toggle[33m 1015[2mms[22m[31m[39m
+[31m     ÔåÆ expected '' to include /email|e-mail/i
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays lead notification toggle[33m 1006[2mms[22m[31m[39m
+[31m     ÔåÆ expected '' to include /lead|leads/i
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays message notification toggle[33m 1014[2mms[22m[31m[39m
+[31m     ÔåÆ expected '' to include /mensagem|message/i
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays system notification toggle[33m 1010[2mms[22m[31m[39m
+[31m     ÔåÆ expected '' to include /system|sistema/i
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays recent notifications section[33m 1011[2mms[22m[31m[39m
+[31m     ÔåÆ expected '' to include /recente|recent|hist├│rico/i
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mshows recent notification items[33m 1018[2mms[22m[31m[39m
+[31m     ÔåÆ expected '' to be truthy
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays unread notification badge[33m 1009[2mms[22m[31m[39m
+[31m     ÔåÆ expected '' to be truthy
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays daily digest toggle[33m 1013[2mms[22m[31m[39m
+[31m     ÔåÆ expected '' to include /digest|di├írio|resumo/i
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mdisplays test notification button[33m 1011[2mms[22m[31m[39m
+[31m     ÔåÆ expected null to be truthy
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22msends test notification when button clicked[90m 2[2mms[22m[31m[39m
+[31m     ÔåÆ Cannot read properties of undefined (reading 'mockResolvedValue')[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mchecks notification permission status[33m 1016[2mms[22m[31m[39m
+[31m     ÔåÆ undefined is not a spy or a call to a spy!
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m NotificationSettings[2m > [22mshows permission denied message when denied[90m 1[2mms[22m[31m[39m
+[31m     ÔåÆ Cannot read properties of undefined (reading 'mockResolvedValue')[39m
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Tests 14 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays settings title
+AssertionError: expected null to be truthy
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+
+- Expected: 
+true
+
++ Received: 
+null
+
+ ÔØ» tests/NotificationSettings.test.tsx:85:77
+     83| 
+     84|     await waitFor(() => {
+     85|       expect(screen.queryByText(/notifica├º├Áes|notification|prefer├¬nciaÔÇª
+       |                                                                             ^
+     86|     });
+     87|   });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1/14]ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > requests notification permission when enabling
+AssertionError: expected null to be truthy
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+
+- Expected: 
+true
+
++ Received: 
+null
+
+ ÔØ» tests/NotificationSettings.test.tsx:121:64
+    119|     await waitFor(() => {
+    120|       // Component should be functional
+    121|       expect(screen.queryByText(/notifica├º├Áes|notification/i)).toBeTruÔÇª
+       |                                                                ^
+    122|     });
+    123|   });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[2/14]ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays email notification toggle
+AssertionError: expected '' to include /email|e-mail/i
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+ ÔØ» tests/NotificationSettings.test.tsx:134:20
+    132|     await waitFor(() => {
+    133|       const text = document.body.textContent;
+    134|       expect(text).toContain(/email|e-mail/i);
+       |                    ^
+    135|     });
+    136|   });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[3/14]ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays lead notification toggle
+AssertionError: expected '' to include /lead|leads/i
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+ ÔØ» tests/NotificationSettings.test.tsx:155:20
+    153|     await waitFor(() => {
+    154|       const text = document.body.textContent;
+    155|       expect(text).toContain(/lead|leads/i);
+       |                    ^
+    156|     });
+    157|   });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[4/14]ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays message notification toggle
+AssertionError: expected '' to include /mensagem|message/i
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+ ÔØ» tests/NotificationSettings.test.tsx:164:20
+    162|     await waitFor(() => {
+    163|       const text = document.body.textContent;
+    164|       expect(text).toContain(/mensagem|message/i);
+       |                    ^
+    165|     });
+    166|   });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[5/14]ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays system notification toggle
+AssertionError: expected '' to include /system|sistema/i
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+ ÔØ» tests/NotificationSettings.test.tsx:173:20
+    171|     await waitFor(() => {
+    172|       const text = document.body.textContent;
+    173|       expect(text).toContain(/system|sistema/i);
+       |                    ^
+    174|     });
+    175|   });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[6/14]ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays recent notifications section
+AssertionError: expected '' to include /recente|recent|hist├│rico/i
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+ ÔØ» tests/NotificationSettings.test.tsx:186:20
+    184|     await waitFor(() => {
+    185|       const text = document.body.textContent;
+    186|       expect(text).toContain(/recente|recent|hist├│rico/i);
+       |                    ^
+    187|     });
+    188|   });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[7/14]ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > shows recent notification items
+AssertionError: expected '' to be truthy
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+
+- Expected: 
+true
+
++ Received: 
+""
+
+ ÔØ» tests/NotificationSettings.test.tsx:195:41
+    193|     await waitFor(() => {
+    194|       // Should display notification titles or content
+    195|       expect(document.body.textContent).toBeTruthy();
+       |                                         ^
+    196|     });
+    197|   });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[8/14]ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays unread notification badge
+AssertionError: expected '' to be truthy
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+
+- Expected: 
+true
+
++ Received: 
+""
+
+ ÔØ» tests/NotificationSettings.test.tsx:216:41
+    214|     await waitFor(() => {
+    215|       // Should show count of unread notifications
+    216|       expect(document.body.textContent).toBeTruthy();
+       |                                         ^
+    217|     });
+    218|   });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[9/14]ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays daily digest toggle
+AssertionError: expected '' to include /digest|di├írio|resumo/i
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+ ÔØ» tests/NotificationSettings.test.tsx:229:20
+    227|     await waitFor(() => {
+    228|       const text = document.body.textContent;
+    229|       expect(text).toContain(/digest|di├írio|resumo/i);
+       |                    ^
+    230|     });
+    231|   });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[10/14]ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > displays test notification button
+AssertionError: expected null to be truthy
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+
+- Expected: 
+true
+
++ Received: 
+null
+
+ ÔØ» tests/NotificationSettings.test.tsx:253:26
+    251|     await waitFor(() => {
+    252|       const testButton = screen.queryByText(/teste|test|enviar/i);
+    253|       expect(testButton).toBeTruthy();
+       |                          ^
+    254|     });
+    255|   });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[11/14]ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > sends test notification when button clicked
+TypeError: Cannot read properties of undefined (reading 'mockResolvedValue')
+ ÔØ» tests/NotificationSettings.test.tsx:258:55
+    256| 
+    257|   it('sends test notification when button clicked', async () => {
+    258|     vi.mocked(notificationService.sendTestNotification).mockResolvedVaÔÇª
+       |                                                       ^
+    259|     
+    260|     render(<NotificationSettings prospectorId="prospector1" />);
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[12/14]ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > checks notification permission status
+TypeError: undefined is not a spy or a call to a spy!
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div />
+  </body>
+</html>
+ ÔØ» tests/NotificationSettings.test.tsx:304:63
+    302| 
+    303|     await waitFor(() => {
+    304|       expect(notificationService.checkNotificationPermission).toHaveBeÔÇª
+       |                                                               ^
+    305|     });
+    306|   });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[13/14]ÔÄ»
+
+ FAIL  tests/NotificationSettings.test.tsx > NotificationSettings > shows permission denied message when denied
+TypeError: Cannot read properties of undefined (reading 'mockResolvedValue')
+ ÔØ» tests/NotificationSettings.test.tsx:309:62
+    307| 
+    308|   it('shows permission denied message when denied', async () => {
+    309|     vi.mocked(notificationService.checkNotificationPermission).mockResÔÇª
+       |                                                              ^
+    310|     
+    311|     render(<NotificationSettings prospectorId="prospector1" />);
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[14/14]ÔÄ»
+
+[31mÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1m[7m Unhandled Errors [27m[22mÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[39m
+[31m[1m
+Vitest caught 24 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "renders without crashing". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "loads notification preferences on mount". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "loads recent notifications on mount". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "displays settings title". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "displays push notifications toggle". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "can enable/disable push notifications". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "requests notification permission when enabling". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "displays email notification toggle". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "can toggle email notifications". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "displays lead notification toggle". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "displays message notification toggle". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "displays system notification toggle". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "displays recent notifications section". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "shows recent notification items". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "can mark notification as read". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "displays unread notification badge". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "displays daily digest toggle". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "can toggle daily digest". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "displays test notification button". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "shows loading state while saving". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "updates preferences successfully". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "checks notification permission status". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "sets up foreground message listener on mount". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Uncaught Exception ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+TypeError: Cannot read properties of undefined (reading 'toLocaleString')
+ ÔØ» src/components/NotificationSettings.tsx:286:42
+    284|                   <p className="text-sm text-gray-600 mt-1">{notificatÔÇª
+    285|                   <p className="text-xs text-gray-500 mt-2">
+    286|                     {notification.sentAt.toLocaleString('pt-BR')}
+       |                                          ^
+    287|                   </p>
+    288|                 </div>
+ ÔØ» NotificationSettings src/components/NotificationSettings.tsx:277:28
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» updateFunctionComponent node_modules/react-dom/cjs/react-dom.development.js:19617:20
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21640:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+This error originated in "tests/NotificationSettings.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "handles errors when updating preferences". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+[31mÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[39m
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m14 failed[39m[22m[2m | [22m[1m[32m14 passed[39m[22m[90m (28)[39m
+[2m     Errors [22m [1m[31m24 errors[39m[22m
+[2m   Start at [22m 07:09:22
+[2m   Duration [22m 19.51s[2m (transform 559ms, setup 1.20s, collect 776ms, tests 12.29s, environment 2.10s, prepare 763ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |    1.24 |     9.65 |    1.98 |    1.24 |                   
+ servio.ai         |    4.61 |        0 |       0 |    4.61 |                   
+  App.tsx          |       0 |        0 |       0 |       0 | 1-566             
+  ...baseConfig.ts |   55.26 |      100 |       0 |   55.26 | 28-33,36-44,50-53 
+  types.ts         |       0 |        0 |       0 |       0 | 1                 
+ ....ai/components |       0 |        0 |       0 |       0 |                   
+  ...ernalChat.tsx |       0 |        0 |       0 |       0 | 1-266             
+  ...estWizard.tsx |       0 |        0 |       0 |       0 | 1-354             
+  ...Assistant.tsx |       0 |        0 |       0 |       0 | 1-50              
+  AddItemModal.tsx |       0 |        0 |       0 |       0 | 1-190             
+  ...Analytics.tsx |       0 |        0 |       0 |       0 | 1-46              
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-197             
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-146             
+  ...puteModal.tsx |       0 |        0 |       0 |       0 | 1-118             
+  ...inancials.tsx |       0 |        0 |       0 |       0 | 1-99              
+  ...audAlerts.tsx |       0 |        0 |       0 |       0 | 1-103             
+  ...anagement.tsx |       0 |        0 |       0 |       0 | 1-150             
+  ...Marketing.tsx |       0 |        0 |       0 |       0 | 1-421             
+  ...ospecting.tsx |       0 |        0 |       0 |       0 | 1-256             
+  ...anagement.tsx |       0 |        0 |       0 |       0 | 1-417             
+  ...anagement.tsx |       0 |        0 |       0 |       0 | 1-212             
+  ...anagement.tsx |       0 |        0 |       0 |       0 | 1-437             
+  ...ationCard.tsx |       0 |        0 |       0 |       0 | 1-57              
+  ...RoomModal.tsx |       0 |        0 |       0 |       0 | 1-193             
+  AuthModal.tsx    |       0 |        0 |       0 |       0 | 1-117             
+  Avatar.tsx       |       0 |        0 |       0 |       0 | 1-69              
+  Chart.tsx        |       0 |        0 |       0 |       0 | 1-34              
+  ChatModal.tsx    |       0 |        0 |       0 |       0 | 1-299             
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-931             
+  ...ntJobCard.tsx |       0 |        0 |       0 |       0 | 1-108             
+  ...edJobCard.tsx |       0 |        0 |       0 |       0 | 1-64              
+  ...irmDialog.tsx |       0 |        0 |       0 |       0 | 1-71              
+  Dashboard.tsx    |       0 |        0 |       0 |       0 | 1-113             
+  ...ailsModal.tsx |       0 |        0 |       0 |       0 | 1-113             
+  DisputeModal.tsx |       0 |        0 |       0 |       0 | 1-84              
+  EmptyState.tsx   |       0 |        0 |       0 |       0 | 1-44              
+  ...rBoundary.tsx |       0 |        0 |       0 |       0 | 1-62              
+  ...idersPage.tsx |       0 |        0 |       0 |       0 | 1-238             
+  Header.tsx       |       0 |        0 |       0 |       0 | 1-87              
+  HeroSection.tsx  |       0 |        0 |       0 |       0 | 1-84              
+  ItemCard.tsx     |       0 |        0 |       0 |       0 | 1-35              
+  ...tailModal.tsx |       0 |        0 |       0 |       0 | 1-69              
+  JobCard.tsx      |       0 |        0 |       0 |       0 | 1-113             
+  JobFAQModal.tsx  |       0 |        0 |       0 |       0 | 1-71              
+  ...tionModal.tsx |       0 |        0 |       0 |       0 | 1-44              
+  JobTimeline.tsx  |       0 |        0 |       0 |       0 | 1-73              
+  ...ngSpinner.tsx |       0 |        0 |       0 |       0 | 1-40              
+  LocationMap.tsx  |       0 |        0 |       0 |       0 | 1-64              
+  ...ggestions.tsx |       0 |        0 |       0 |       0 | 1-80              
+  ...ultsModal.tsx |       0 |        0 |       0 |       0 | 1-58              
+  ...tionsBell.tsx |       0 |        0 |       0 |       0 | 1-66              
+  ...nsPopover.tsx |       0 |        0 |       0 |       0 | 1-70              
+  Pagination.tsx   |       0 |        0 |       0 |       0 | 1-106             
+  PaymentModal.tsx |       0 |        0 |       0 |       0 | 1-102             
+  ...SetupCard.tsx |       0 |        0 |       0 |       0 | 1-56              
+  ...ccessPage.tsx |       0 |        0 |       0 |       0 | 1-47              
+  ...ioGallery.tsx |       0 |        0 |       0 |       0 | 1-40              
+  ProfileModal.tsx |       0 |        0 |       0 |       0 | 1-264             
+  ProfilePage.tsx  |       0 |        0 |       0 |       0 | 1-264             
+  ...eStrength.tsx |       0 |        0 |       0 |       0 | 1-85              
+  ProfileTips.tsx  |       0 |        0 |       0 |       0 | 1-54              
+  ProgressBar.tsx  |       0 |        0 |       0 |       0 | 1-69              
+  ...etailCard.tsx |       0 |        0 |       0 |       0 | 1-73              
+  ...ListModal.tsx |       0 |        0 |       0 |       0 | 1-63              
+  ...osalModal.tsx |       0 |        0 |       0 |       0 | 1-136             
+  ...tionModal.tsx |       0 |        0 |       0 |       0 | 1-48              
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-308             
+  ProviderCard.tsx |       0 |        0 |       0 |       0 | 1-75              
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-493             
+  ...ningsCard.tsx |       0 |        0 |       0 |       0 | 1-142             
+  ...erJobCard.tsx |       0 |        0 |       0 |       0 | 1-56              
+  ...ndingPage.tsx |       0 |        0 |       0 |       0 | 1-127             
+  ...nboarding.tsx |       0 |        0 |       0 |       0 | 1-164             
+  ...esultCard.tsx |       0 |        0 |       0 |       0 | 1-77              
+  ...ontactCTA.tsx |       0 |        0 |       0 |       0 | 1-31              
+  ...tionModal.tsx |       0 |        0 |       0 |       0 | 1-41              
+  ...alProgram.tsx |       0 |        0 |       0 |       0 | 1-47              
+  ReviewModal.tsx  |       0 |        0 |       0 |       0 | 1-108             
+  ...ndingPage.tsx |       0 |        0 |       0 |       0 | 1-68              
+  ...questForm.tsx |       0 |        0 |       0 |       0 | 1-100             
+  ...Generator.tsx |       0 |        0 |       0 |       0 | 1-72              
+  Spinner.tsx      |       0 |        0 |       0 |       0 | 1-44              
+  ...tingInput.tsx |       0 |        0 |       0 |       0 | 1-50              
+  StatCard.tsx     |       0 |        0 |       0 |       0 | 1-37              
+  StatusBadge.tsx  |       0 |        0 |       0 |       0 | 1-40              
+  ...edDataSEO.tsx |       0 |        0 |       0 |       0 | 1-25              
+  ...iodFilter.tsx |       0 |        0 |       0 |       0 | 1-31              
+  Toast.tsx        |       0 |        0 |       0 |       0 | 1-67              
+  ...Container.tsx |       0 |        0 |       0 |       0 | 1-20              
+  Tooltip.tsx      |       0 |        0 |       0 |       0 | 1-51              
+  ...lyticsData.ts |       0 |        0 |       0 |       0 | 1-68              
+  ...hboardData.ts |       0 |        0 |       0 |       0 | 1-65              
+ ...mponents/admin |       0 |        0 |       0 |       0 |                   
+  ...riesChart.tsx |       0 |        0 |       0 |       0 | 1-57              
+ ...ents/skeletons |       0 |        0 |       0 |       0 |                   
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-34              
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-51              
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-15              
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-32              
+  ...etonBlock.tsx |       0 |        0 |       0 |       0 | 1-5               
+ ...mponents/utils |       0 |        0 |       0 |       0 |                   
+  a11yHelpers.ts   |       0 |        0 |       0 |       0 | 1-67              
+ ...io.ai/services |       0 |        0 |       0 |       0 |                   
+  api.ts           |       0 |        0 |       0 |       0 | 1-1032            
+  errorMessages.ts |       0 |        0 |       0 |       0 | 1-286             
+  ...Translator.ts |       0 |        0 |       0 |       0 | 1-249             
+  geminiService.ts |       0 |        0 |       0 |       0 | 1-296             
+  ...ingService.ts |       0 |        0 |       0 |       0 | 1-57              
+  ...ingService.ts |       0 |        0 |       0 |       0 | 1-353             
+  ...appService.ts |       0 |        0 |       0 |       0 | 1-29              
+ .../src/analytics |       0 |        0 |       0 |       0 |                   
+  adminMetrics.ts  |       0 |        0 |       0 |       0 | 1-173             
+ ...src/components |    5.65 |    46.66 |   14.28 |    5.65 |                   
+  ...eSelector.tsx |       0 |        0 |       0 |       0 | 1-283             
+  ...nSettings.tsx |   65.31 |    60.86 |   21.42 |   65.31 | ...92-200,337-355 
+  ...pectorCRM.tsx |       0 |        0 |       0 |       0 | 1-1231            
+  ...Materials.tsx |       0 |        0 |       0 |       0 | 1-310             
+  ...nboarding.tsx |       0 |        0 |       0 |       0 | 1-244             
+  ...ckActions.tsx |       0 |        0 |       0 |       0 | 1-205             
+  ...ingWizard.tsx |       0 |        0 |       0 |       0 | 1-1310            
+  ...Generator.tsx |       0 |        0 |       0 |       0 | 1-279             
+ ...nts/prospector |       0 |        0 |       0 |       0 |                   
+  ...Generator.tsx |       0 |        0 |       0 |       0 | 1-312             
+  ...rdingTour.tsx |       0 |        0 |       0 |       0 | 1-463             
+  ...MEnhanced.tsx |       0 |        0 |       0 |       0 | 1-471             
+  ...ctionsBar.tsx |       0 |        0 |       0 |       0 | 1-302             
+  QuickPanel.tsx   |       0 |        0 |       0 |       0 | 1-342             
+ ...io.ai/src/data |       0 |        0 |       0 |       0 |                   
+  ...eTemplates.ts |       0 |        0 |       0 |       0 | 1-355             
+ servio.ai/src/lib |       0 |        0 |       0 |       0 |                   
+  firebaseLazy.ts  |       0 |        0 |       0 |       0 | 1-89              
+ ...i/src/services |    0.39 |        0 |       0 |    0.39 |                   
+  ...icsService.ts |       0 |        0 |       0 |       0 | 1-227             
+  fcmService.ts    |       0 |        0 |       0 |       0 | 1-201             
+  ...ionService.ts |    1.47 |        0 |       0 |    1.47 | 45-172,178-308    
+  ...inkService.ts |       0 |        0 |       0 |       0 | 1-318             
+  ...onsService.ts |       0 |        0 |       0 |       0 | 1-172             
+-------------------|---------|----------|---------|---------|-------------------
+ERROR: Coverage for lines (1.24%) does not meet global threshold (80%)
+ERROR: Coverage for functions (1.98%) does not meet global threshold (80%)
+ERROR: Coverage for statements (1.24%) does not meet global threshold (80%)
+ERROR: Coverage for branches (9.65%) does not meet global threshold (75%)
