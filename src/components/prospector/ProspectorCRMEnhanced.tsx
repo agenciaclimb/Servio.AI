@@ -9,7 +9,7 @@
  * - Notificações automáticas de follow-up
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { db } from '../../../firebaseConfig';
 import { collection, query, where, getDocs, updateDoc, doc, Timestamp } from 'firebase/firestore';
