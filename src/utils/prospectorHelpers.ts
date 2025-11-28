@@ -2,7 +2,6 @@
  * Pure utility functions extracted from ProspectorCRM
  * These functions have no dependencies and can be tested independently
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 
 export type LeadTemperature = 'hot' | 'warm' | 'cold';
 
@@ -14,6 +13,7 @@ export interface ProspectLead {
   category?: string;
   temperature?: LeadTemperature;
   lastContacted?: Date;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
