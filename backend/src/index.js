@@ -2203,6 +2203,135 @@ Retorne apenas o corpo do email, sem assunto.`;
     }
   });
 
+  // =================================================================
+  // Prospector Smart Actions (AI / Rule-based suggestions)
+  // =================================================================
+
+  /**
+   * POST /api/prospector/smart-actions
+   * Body: { stats, leads, recentActivity }
+   * Returns: { actions: SmartAction[] }
+   *
+   * Para produção, se o Gemini (genAI) estiver configurado, podemos evoluir
+   * para geração via IA. Neste primeiro passo, usamos apenas regras
+   * determinísticas, espelhando o fallback do frontend para evitar 404.
+   */
+  app.post("/api/prospector/smart-actions", async (req, res) => {
+    try {
+      const { stats = {}, leads = [], recentActivity = [] } = req.body || {};
+
+      const safeStats = {
+        totalRecruits: Number(stats.totalRecruits || 0),
+        activeRecruits: Number(stats.activeRecruits || 0),
+        totalCommissionsEarned: Number(stats.totalCommissionsEarned || 0),
+        currentBadge: stats.currentBadge || null,
+        nextBadge: stats.nextBadge || null,
+        progressToNextBadge: Number(stats.progressToNextBadge || 0)
+      };
+
+      const normalizedLeads = Array.isArray(leads) ? leads : [];
+      const normalizedActivity = Array.isArray(recentActivity) ? recentActivity : [];
+
+      const actions = [];
+
+      // Regra 1: Leads inativos (7+ dias sem atividade)
+      const now = Date.now();
+      const inactiveLeads = normalizedLeads.filter(l => {
+        if (!l || l.stage === 'won' || l.stage === 'lost' || !l.lastActivity) return false;
+        const ts = typeof l.lastActivity === 'string' ? Date.parse(l.lastActivity) : Number(l.lastActivity);
+        if (!Number.isFinite(ts)) return false;
+        return now - ts > 7 * 24 * 60 * 60 * 1000;
+      });
+
+      if (inactiveLeads.length > 0) {
+        actions.push({
+          id: 'rule-inactive',
+          icon: '👥',
+          title: 'Contatar recrutados inativos',
+          description: `${inactiveLeads.length} ${inactiveLeads.length === 1 ? 'lead inativo' : 'leads inativos'} há 7+ dias`,
+          priority: 'high',
+          actionType: 'follow_up',
+          metadata: { leads: inactiveLeads.map(l => l.id).filter(Boolean) }
+        });
+      }
+
+      // Regra 2: Compartilhamento de link de indicação
+      const lastShare = normalizedActivity.find(a => a && a.type === 'referral_share');
+      let daysSinceShare = 999;
+      if (lastShare && lastShare.timestamp) {
+        const ts = lastShare.timestamp instanceof Date
+          ? lastShare.timestamp.getTime()
+          : Date.parse(lastShare.timestamp);
+        if (Number.isFinite(ts)) {
+          daysSinceShare = Math.floor((now - ts) / (24 * 60 * 60 * 1000));
+        }
+      }
+
+      if (daysSinceShare >= 3) {
+        actions.push({
+          id: 'rule-share',
+          icon: '📢',
+          title: 'Compartilhar no WhatsApp',
+          description: `Seu último compartilhamento foi há ${daysSinceShare} dias`,
+          priority: daysSinceShare >= 7 ? 'high' : 'medium',
+          actionType: 'share'
+        });
+      }
+
+      // Regra 3: Progresso para o próximo badge
+      if (Number.isFinite(safeStats.progressToNextBadge) && safeStats.progressToNextBadge > 70) {
+        const remaining = 100 - safeStats.progressToNextBadge;
+        actions.push({
+          id: 'rule-badge',
+          icon: '🏆',
+          title: `Próximo ao badge ${safeStats.nextBadge || ''}`.trim(),
+          description: `Apenas ${remaining}% restantes para desbloquear`,
+          priority: remaining < 20 ? 'high' : 'medium',
+          actionType: 'badge'
+        });
+      }
+
+      // Regra 4: Leads quentes em negociação
+      const hotLeads = normalizedLeads.filter(l => l && l.stage === 'negotiating');
+      if (hotLeads.length > 0) {
+        actions.push({
+          id: 'rule-hot',
+          icon: '🔥',
+          title: 'Fechar negociações pendentes',
+          description: `${hotLeads.length} ${hotLeads.length === 1 ? 'lead' : 'leads'} em negociação`,
+          priority: 'high',
+          actionType: 'follow_up',
+          metadata: { leads: hotLeads.map(l => l.id).filter(Boolean) }
+        });
+      }
+
+      // Regra 5: Meta semanal em risco (placeholder simples)
+      const weeklyGoal = 5;
+      const weeklyRecruits = Number(safeStats.weeklyRecruits || 2);
+      if (weeklyRecruits < weeklyGoal) {
+        actions.push({
+          id: 'rule-goal',
+          icon: '🎯',
+          title: 'Meta semanal em risco',
+          description: `Faltam ${weeklyGoal - weeklyRecruits} recrutas para bater a meta`,
+          priority: 'medium',
+          actionType: 'goal'
+        });
+      }
+
+      // Ordenar por prioridade e limitar a 3 ações
+      const priorityOrder = { high: 0, medium: 1, low: 2 };
+      const sorted = actions
+        .sort((a, b) => (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2))
+        .slice(0, 3);
+
+      return res.status(200).json({ actions: sorted });
+    } catch (error) {
+      console.error('[ProspectorSmartActions] Error generating actions:', error);
+      return res.status(500).json({ error: 'Failed to generate smart actions' });
+    }
+  });
+
   // Get all commissions
   app.get("/api/commissions", async (req, res) => {
     try {
