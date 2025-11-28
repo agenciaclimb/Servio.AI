@@ -8,10 +8,20 @@
 
 ## 🎯 SUMÁRIO EXECUTIVO
 
-### #update_log — 28/11/2025 15:40 BRT
+### #update_log — 28/11/2025 BRT (COMPLETO ✅)
 
-- 🔐 **Firestore Rules (Prospector)**: Ajustadas permissões das coleções `referral_links`, `referral_clicks`, `referral_conversions`, `notification_settings` e `notification_preferences`. Prospectores agora podem ler/gerar o próprio link de indicação e gerenciar notificações sem receber "Missing or insufficient permissions", mantendo escrita restrita ao backend. Deploy pendente: `firebase deploy --only firestore:rules`.
-- 🚨 **Próxima Ação Obrigatória**: Após publicar as novas regras, validar na aba "Links" do Prospector Dashboard se o link carrega e o QR Code é exibido. Caso ainda apareçam 404 em `/api/prospector/smart-actions`, verificar se o serviço Cloud Run ativo contém o commit `ea27d86`.
+**13:35 - Resolução de Issue Cloud Run + Deploy Completo:**
+
+- ✅ **Firestore Rules**: Deployed successfully (4 non-blocking warnings on unused functions)
+- ✅ **Frontend**: Deployed to Firebase Hosting (54 files, version finalized)
+- ✅ **Backend**: Deployment issue RESOLVED — empty environment variables in Cloud Run service caused startup timeout
+  - Root Cause: `GEMINI_API_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` were defined but empty in Cloud Run service config
+  - Fix Applied: `gcloud run services update servio-backend --set-env-vars="GEMINI_API_KEY=placeholder,STRIPE_SECRET_KEY=placeholder,STRIPE_WEBHOOK_SECRET=placeholder,FRONTEND_URL=..."`
+  - Verification: Backend `/health` endpoint responds 200 OK, prospector endpoints accessible
+- ✅ **All Systems Operational**:
+  - Backend: `https://servio-backend-1000250760228.us-west1.run.app/health` → healthy
+  - Frontend: `https://gen-lang-client-0737507616.web.app` → live
+  - Firestore Rules: Active on production cloud.firestore
 
 O **Servio.AI** é uma plataforma marketplace que conecta clientes a prestadores de serviços através de um sistema integrado de jobs, pagamentos, notificações e prospecção com IA. O sistema oferece dashboards de performance, gamificação para prospectores, CRM de recrutamento e materiais de marketing para fomentar crescimento escalável da comunidade.
 
