@@ -184,28 +184,26 @@ service cloud.firestore {
     }
 
     match /referral_links/{prospectorId} {
-      // Prospector can read/write their own referral link (email-based id) or if identified via UID
-      // Prevent other users from accessing
-      allow read, create, update: if isOwnerEmail(prospectorId) || isOwner(prospectorId) || isAdmin();
+      // Prospector pode ler/gravar apenas o próprio link de indicação (ID = email)
+      // Admin mantém acesso total para suporte/ajustes manuais
+      allow read, create, update: if isOwnerEmail(prospectorId) || isAdmin();
       allow delete: if false;
     }
 
-    match /link_clicks/{clickId} {
-      // Prospector can read their own link clicks (supports both uid and email stored as prospectorId)
-      allow read: if isSignedIn() && (resource.data.prospectorId == request.auth.uid || resource.data.prospectorId == authEmail());
-      // Admin can read all clicks
+    match /referral_clicks/{clickId} {
+      // Prospector pode ler apenas cliques relacionados ao seu próprio link
+      allow read: if isSignedIn() && resource.data.prospectorId == authEmail();
+      // Admin pode ler tudo para analytics globais
       allow read: if isAdmin();
-      // Client click tracking: only backend/server can write via authenticated request with special validation
-      // Frontend analytics cannot write directly - must go through backend endpoint
-      allow create: if false;
-      allow update, delete: if false;
+      // Escrita somente via backend (Cloud Run / Functions) – front não grava direto
+      allow create, update, delete: if false;
     }
 
-    match /link_analytics/{prospectorId} {
-      // Only the prospector owner or admin can read their analytics (prevent snooping)
-      allow read: if isOwnerEmail(prospectorId) || isOwner(prospectorId) || isAdmin();
-      // System (admin/backend) can write analytics
-      allow write: if isAdmin();
+    match /referral_conversions/{conversionId} {
+      // Somente admin e o próprio prospector podem ler conversões ligadas ao seu link
+      allow read: if isAdmin() || (isSignedIn() && resource.data.prospectorId == authEmail());
+      // Escrita apenas via backend (registro de conversão)
+      allow create, update, delete: if false;
     }
 
     match /message_templates/{templateId} {
@@ -217,8 +215,13 @@ service cloud.firestore {
     }
 
     match /notification_settings/{userId} {
-      // User can read/write their own notification settings
-      allow read, write: if isOwner(userId);
+      // User pode ler/gravar as próprias configurações (ID = UID ou email)
+      allow read, write: if isOwner(userId) || isOwnerEmail(userId);
+    }
+
+    match /notification_preferences/{prospectorId} {
+      // Preferências de notificação específicas de prospector (coleção usada por notificationService.ts)
+      allow read, write: if isOwnerEmail(prospectorId) || isAdmin();
     }
 
     match /prospector_stats/{prospectorId} {

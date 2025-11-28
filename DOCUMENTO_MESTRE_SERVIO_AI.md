@@ -8,6 +8,11 @@
 
 ## 🎯 SUMÁRIO EXECUTIVO
 
+### #update_log — 28/11/2025 15:40 BRT
+
+- 🔐 **Firestore Rules (Prospector)**: Ajustadas permissões das coleções `referral_links`, `referral_clicks`, `referral_conversions`, `notification_settings` e `notification_preferences`. Prospectores agora podem ler/gerar o próprio link de indicação e gerenciar notificações sem receber "Missing or insufficient permissions", mantendo escrita restrita ao backend. Deploy pendente: `firebase deploy --only firestore:rules`.
+- 🚨 **Próxima Ação Obrigatória**: Após publicar as novas regras, validar na aba "Links" do Prospector Dashboard se o link carrega e o QR Code é exibido. Caso ainda apareçam 404 em `/api/prospector/smart-actions`, verificar se o serviço Cloud Run ativo contém o commit `ea27d86`.
+
 O **Servio.AI** é uma plataforma marketplace que conecta clientes a prestadores de serviços através de um sistema integrado de jobs, pagamentos, notificações e prospecção com IA. O sistema oferece dashboards de performance, gamificação para prospectores, CRM de recrutamento e materiais de marketing para fomentar crescimento escalável da comunidade.
 
 **Status Técnico (27/11/2025)**:
