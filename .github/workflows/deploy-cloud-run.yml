@@ -256,13 +256,13 @@ jobs:
           if [ "$status_code" != "200" ]; then
             echo "::error::Health check failed with status ${status_code}"; exit 1
           fi
+          echo "✅ Health check passed (status $status_code)"
           # Prospector smart-actions
-          read -r -d '' BODY << 'JSON'
-          {"stats":{"inactiveLeads":2,"hotLeads":1},"leads":[],"recentActivity":[]}
-          JSON
+          BODY='{"stats":{"inactiveLeads":2,"hotLeads":1},"leads":[],"recentActivity":[]}'
           status_code=$(curl -s -o /tmp/smart.json -w "%{http_code}" -H "Content-Type: application/json" -d "$BODY" "${HOSTING_URL}/api/prospector/smart-actions")
           cat /tmp/smart.json
           if [ "$status_code" != "200" ]; then
             echo "::error::Smart actions failed with status ${status_code}"; exit 1
           fi
-          echo "Smoke tests passed ✅"
+          echo "✅ Smart actions passed (status $status_code)"
+          echo "🎉 All smoke tests passed!"
