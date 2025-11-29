@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import type { FirebaseStorage } from 'firebase/storage';
 import type { Analytics } from 'firebase/analytics';
@@ -19,6 +19,11 @@ const app = initializeApp(firebaseConfig);
 // Critical path: Auth and Firestore loaded immediately
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// Google Auth provider helper
+export const googleProvider = new GoogleAuthProvider();
+
+export const signInWithGoogle = () => signInWithPopup(auth, googleProvider);
 
 // Lazy-loaded modules: Storage and Analytics
 let storageInstance: FirebaseStorage | null = null;

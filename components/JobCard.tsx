@@ -20,10 +20,11 @@ const categoryDetails: { [key: string]: { name: string, icon: string } } = {
 };
 
 const serviceTypeDetails: { [key in ServiceType]: { text: string, className: string, icon: string } } = {
-    'personalizado': { text: 'Personalizado', className: 'bg-purple-100 text-purple-800', icon: '📝' },
-    'tabelado': { text: 'Tabelado', className: 'bg-green-100 text-green-800', icon: '💰' },
-    'diagnostico': { text: 'Diagnóstico', className: 'bg-yellow-100 text-yellow-800', icon: '🔍' },
+  'personalizado': { text: 'Personalizado', className: 'bg-purple-100 text-purple-800', icon: '📝' },
+  'tabelado': { text: 'Tabelado', className: 'bg-green-100 text-green-800', icon: '💰' },
+  'diagnostico': { text: 'Diagnóstico', className: 'bg-yellow-100 text-yellow-800', icon: '🔍' },
 };
+const defaultServiceType = { text: 'Personalizado', className: 'bg-purple-100 text-purple-800', icon: '📝' };
 
 const timeAgo = (dateIso: string): string => {
   const date = new Date(dateIso);
@@ -40,7 +41,8 @@ const timeAgo = (dateIso: string): string => {
 const JobCard: React.FC<JobCardProps> = ({ job, bids, onProposeClick, hasProposed }) => {
   const [isFaqOpen, setIsFaqOpen] = useState(false);
   const category = categoryDetails[job.category] || categoryDetails['default'];
-  const serviceType = serviceTypeDetails[job.serviceType];
+  // Fallback defensivo: caso job.serviceType esteja ausente ou inválido
+  const serviceType = (job && job.serviceType && serviceTypeDetails[job.serviceType as ServiceType]) || defaultServiceType;
   const isAuction = job.jobMode === 'leilao';
 
   const lowestBid = isAuction && bids.length > 0

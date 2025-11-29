@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { User } from '../types';
 import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
+import { signInWithGoogle, auth } from '../firebaseConfig';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
 interface AuthModalProps {
   mode: 'login' | 'register';
@@ -30,7 +32,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, userType, onClose, onSwitch
     }
   }, [isLogin, userType]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
@@ -45,10 +47,51 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, userType, onClose, onSwitch
       }
     }
     
-    if (inviteCode) {
-      onSuccess(email, userType, inviteCode);
-    } else {
-      onSuccess(email, userType);
+    try {
+      if (isLogin) {
+        // Autenticar com Firebase Auth
+        await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        // Criar conta no Firebase Auth
+        await createUserWithEmailAndPassword(auth, email, password);
+      }
+      
+      // Chamar callback de sucesso
+      if (inviteCode) {
+        onSuccess(email, userType, inviteCode);
+      } else {
+        onSuccess(email, userType);
+      }
+    } catch (err: unknown) {
+      console.error('Erro de autenticação:', err);
+      const errorCode = (err as { code?: string }).code;
+      if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/wrong-password' || errorCode === 'auth/user-not-found') {
+        setError('Email ou senha incorretos.');
+      } else if (errorCode === 'auth/email-already-in-use') {
+        setError('Este email já está em uso.');
+      } else {
+        setError('Erro ao autenticar. Tente novamente.');
+      }
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setError('');
+    try {
+      const result = await signInWithGoogle();
+      const userEmail = result.user?.email;
+      if (!userEmail) {
+        setError('Não foi possível obter o email da conta Google.');
+        return;
+      }
+      if (inviteCode) {
+        onSuccess(userEmail, userType, inviteCode);
+      } else {
+        onSuccess(userEmail, userType);
+      }
+    } catch (err: unknown) {
+      console.error('Erro ao entrar com Google', err);
+      setError('Não foi possível entrar com Google. Tente novamente.');
     }
   };
 
@@ -99,6 +142,25 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, userType, onClose, onSwitch
                     {isLogin ? 'Entrar' : 'Criar Conta'}
                 </button>
             </form>
+
+            {isLogin && (
+              <div className="mt-4">
+                <div className="flex items-center mb-3">
+                  <div className="flex-1 h-px bg-gray-200" />
+                  <span className="px-2 text-xs text-gray-400">ou</span>
+                  <div className="flex-1 h-px bg-gray-200" />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleGoogleLogin}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  data-testid="auth-google-button"
+                >
+                  <span className="text-lg">G</span>
+                  <span>Entrar com Google</span>
+                </button>
+              </div>
+            )}
 
             <div className="text-center mt-6">
                 <p className="text-sm text-gray-600">

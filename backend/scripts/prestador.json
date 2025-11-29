@@ -1,0 +1,13 @@
+{
+  "email": "e2e-prestador@servio.ai",
+  "name": "E2E Prestador",
+  "type": "prestador",
+  "bio": "",
+  "location": "Sao Paulo",
+  "memberSince": "2025-11-28T22:38:00.000Z",
+  "status": "ativo",
+  "headline": "Prestador E2E",
+  "specialties": ["limpeza", "reparos"],
+  "verificationStatus": "verificado",
+  "providerRate": 0.85
+}
