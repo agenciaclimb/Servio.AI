@@ -216,21 +216,49 @@ function createApp({
     res.send("SERVIO.AI Backend v3.0 with Health check");
   });
 
+  // Enhanced health check with version and routes count for production diagnostics
+  const computeHealthData = () => {
+    let buildVersion = 'unknown';
+    try {
+      const fs = require('fs');
+      buildVersion = fs.readFileSync('/tmp/.build-version', 'utf8').trim();
+    } catch (_) { /* ignore */ }
+    
+    let routeCount = 0;
+    try {
+      const stack = app._router && app._router.stack ? app._router.stack : [];
+      stack.forEach((layer) => {
+        if (layer.route) routeCount++;
+        else if (layer.name === 'router' && layer.handle && layer.handle.stack) {
+          layer.handle.stack.forEach((rl) => { if (rl.route) routeCount++; });
+        }
+      });
+    } catch (_) { /* ignore */ }
+    
+    return { buildVersion, routeCount };
+  };
+
   // Health check endpoint for load balancers and monitoring
   app.get("/health", (req, res) => {
+    const { buildVersion, routeCount } = computeHealthData();
     res.status(200).json({ 
       status: "healthy", 
       timestamp: new Date().toISOString(),
-      service: "servio-backend"
+      service: "servio-backend",
+      version: buildVersion,
+      routes: routeCount
     });
   });
 
   // Health check alias for API prefix compatibility
   app.get("/api/health", (req, res) => {
+    const { buildVersion, routeCount } = computeHealthData();
     res.status(200).json({ 
       status: "healthy", 
       timestamp: new Date().toISOString(),
-      service: "servio-backend"
+      service: "servio-backend",
+      version: buildVersion,
+      routes: routeCount
     });
   });
 
@@ -239,9 +267,11 @@ function createApp({
     try {
       const fs = require('fs');
       const ver = fs.readFileSync('/tmp/.build-version', 'utf8').trim();
+      console.log('[/api/version] Responding with version:', ver);
       return res.status(200).json({ version: ver || 'unknown' });
-    } catch (_) {
-      return res.status(200).json({ version: 'unknown' });
+    } catch (err) {
+      console.error('[/api/version] Error reading version file:', err);
+      return res.status(200).json({ version: 'unknown', error: err.message });
     }
   });
 
@@ -265,8 +295,10 @@ function createApp({
           });
         }
       });
+      console.log('[/api/routes] Responding with', routes.length, 'routes');
       return res.status(200).json({ total: routes.length, routes });
     } catch (e) {
+      console.error('[/api/routes] Error enumerating routes:', e);
       return res.status(500).json({ error: 'Failed to enumerate routes', message: e && e.message });
     }
   });
@@ -3448,6 +3480,39 @@ if (require.main === module) {
   console.log('[SERVER] Starting server on port', port);
   console.log('[SERVER] require.main:', require.main.filename);
   console.log('[SERVER] module:', module.filename);
+  
+  // Enumerate and log all registered routes on startup
+  const enumerateRoutes = () => {
+    const routes = [];
+    const stack = app._router && app._router.stack ? app._router.stack : [];
+    stack.forEach((layer) => {
+      if (layer.route && layer.route.path) {
+        const methods = Object.keys(layer.route.methods || {}).filter(Boolean).map(m => m.toUpperCase());
+        routes.push({ path: layer.route.path, methods });
+      } else if (layer.name === 'router' && layer.handle && layer.handle.stack) {
+        layer.handle.stack.forEach((rl) => {
+          if (rl.route && rl.route.path) {
+            const methods = Object.keys(rl.route.methods || {}).filter(Boolean).map(m => m.toUpperCase());
+            routes.push({ path: rl.route.path, methods });
+          }
+        });
+      }
+    });
+    return routes;
+  };
+
+  const allRoutes = enumerateRoutes();
+  console.log('[SERVER] Registered routes:', allRoutes.length);
+  allRoutes.slice(0, 30).forEach(r => console.log(`  ${r.methods.join(',')} ${r.path}`));
+  if (allRoutes.length > 30) console.log(`  ... and ${allRoutes.length - 30} more`);
+  
+  // Explicitly log presence of smart-actions route
+  const smartActionsRoute = allRoutes.find(r => r.path === '/api/prospector/smart-actions');
+  if (smartActionsRoute) {
+    console.log('[SERVER] ✅ CONFIRMED: POST /api/prospector/smart-actions is registered');
+  } else {
+    console.error('[SERVER] ❌ WARNING: POST /api/prospector/smart-actions NOT FOUND in route list');
+  }
   
   try {
     const host = '0.0.0.0'; // Listen on all interfaces (IPv4)
