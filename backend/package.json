@@ -1,6 +1,7 @@
 {
   "name": "servio-ai-backend",
   "version": "1.0.0",
+  "type": "commonjs",
   "description": "Backend for SERVIO.AI Cloud Run service",
   "main": "src/index.js",
   "scripts": {
