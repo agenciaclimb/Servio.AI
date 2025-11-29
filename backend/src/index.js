@@ -234,6 +234,43 @@ function createApp({
     });
   });
 
+  // Lightweight version endpoint to confirm deployed revision
+  app.get('/api/version', (_req, res) => {
+    try {
+      const fs = require('fs');
+      const ver = fs.readFileSync('/tmp/.build-version', 'utf8').trim();
+      return res.status(200).json({ version: ver || 'unknown' });
+    } catch (_) {
+      return res.status(200).json({ version: 'unknown' });
+    }
+  });
+
+  // List registered routes (safe diagnostics, no secrets)
+  app.get('/api/routes', (_req, res) => {
+    try {
+      const routes = [];
+      const stack = app._router && app._router.stack ? app._router.stack : [];
+      stack.forEach((layer) => {
+        if (layer.route && layer.route.path) {
+          const methods = Object.keys(layer.route.methods || {}).filter(Boolean);
+          routes.push({ path: layer.route.path, methods });
+        } else if (layer.name === 'router' && layer.handle && layer.handle.stack) {
+          layer.handle.stack.forEach((rl) => {
+            if (rl.route && rl.route.path) {
+              const methods = Object.keys(rl.route.methods || {}).filter(Boolean);
+              // Attempt to reconstruct nested mount path
+              const mount = (layer.regexp && layer.regexp.source) ? layer.regexp.source : '';
+              routes.push({ path: rl.route.path, methods, mount });
+            }
+          });
+        }
+      });
+      return res.status(200).json({ total: routes.length, routes });
+    } catch (e) {
+      return res.status(500).json({ error: 'Failed to enumerate routes', message: e && e.message });
+    }
+  });
+
   // =================================================================
   // AI ENDPOINTS (GEMINI)
   // =================================================================
