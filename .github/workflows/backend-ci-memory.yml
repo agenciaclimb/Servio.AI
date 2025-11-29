@@ -30,7 +30,7 @@ jobs:
         env:
           # Não definir GOOGLE_CLOUD_PROJECT força memória
           NODE_ENV: test
-        run: npm test -- --run --coverage
+        run: npm test -- --run
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
