@@ -9,8 +9,8 @@
  */
 
 const express = require('express');
-const whatsappMultiRoleService = require('./whatsappMultiRoleService');
-const logger = require('./logger');
+const whatsappMultiRoleService = require('../whatsappMultiRoleService');
+const logger = require('../logger');
 
 const router = express.Router();
 

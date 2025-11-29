@@ -5,6 +5,8 @@ const helmet = require("helmet");
 const { Storage } = require("@google-cloud/storage");
 // Stripe config helper (mode detection + safe init)
 const { createStripe } = require('./stripeConfig');
+// Database wrapper com fallback em memória
+const { createDbWrapper, fieldValueHelpers } = require('./dbWrapper');
 // Authorization middleware for granular permission checking
 const { 
   requireAuth, 
@@ -78,7 +80,8 @@ try {
 }
 
 const storage = new Storage();
-const defaultDb = admin.firestore();
+// DB Wrapper com fallback em memória se Firestore falhar
+const defaultDb = createDbWrapper();
 // Stripe initialization (wrapped for mode detection)
 const stripeContainer = createStripe();
 const defaultStripe = stripeContainer ? stripeContainer.instance : null; // Can be injected in tests
@@ -1491,7 +1494,8 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       if (!userData.email) {
         return res.status(400).json({ error: "User email is required." });
       }
-      await db.collection("users").doc(userData.email).set(userData);
+      // Use merge:true to avoid overwriting existing docs
+      await db.collection("users").doc(userData.email).set(userData, { merge: true });
 
       // Se é prestador cadastrado via link de referência, notificar prospector
       if (userData.type === 'prestador' && userData.referredBy) {
@@ -1510,9 +1514,9 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
         // Atualizar stats do prospector
         const prospectorRef = db.collection('prospector_stats').doc(userData.referredBy);
         await prospectorRef.set({
-          totalRecruits: admin.firestore.FieldValue.increment(1),
-          activeRecruits: admin.firestore.FieldValue.increment(1),
-          lastRecruitAt: admin.firestore.Timestamp.now(),
+          totalRecruits: fieldValueHelpers.increment(1),
+          activeRecruits: fieldValueHelpers.increment(1),
+          lastRecruitAt: fieldValueHelpers.serverTimestamp(),
         }, { merge: true });
       }
 
@@ -1532,7 +1536,8 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       if (!userData.email) {
         return res.status(400).json({ error: "User email is required." });
       }
-      await db.collection("users").doc(userData.email).set(userData);
+      // Use merge:true to avoid overwriting existing docs
+      await db.collection("users").doc(userData.email).set(userData, { merge: true });
       res
         .status(201)
         .json({ message: "User created successfully", id: userData.email });
@@ -1596,7 +1601,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       const updateData = {
         verificationStatus: status,
         verificationNote: note || null,
-        verificationUpdatedAt: admin.firestore.FieldValue.serverTimestamp()
+        verificationUpdatedAt: fieldValueHelpers.serverTimestamp()
       };
 
       await userRef.update(updateData);
@@ -1629,7 +1634,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       await userRef.update({
         status: 'suspenso',
         suspensionReason: reason || 'Suspended by admin',
-        suspendedAt: admin.firestore.FieldValue.serverTimestamp()
+        suspendedAt: fieldValueHelpers.serverTimestamp()
       });
 
       res.status(200).json({
@@ -1658,7 +1663,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       await userRef.update({
         status: 'ativo',
         suspensionReason: null,
-        reactivatedAt: admin.firestore.FieldValue.serverTimestamp()
+        reactivatedAt: fieldValueHelpers.serverTimestamp()
       });
 
       res.status(200).json({
@@ -1709,7 +1714,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
           specialty: category,
           source: prospect.source,
           status: 'pendente',
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          createdAt: fieldValueHelpers.serverTimestamp(),
           relatedJob: {
             category,
             location,
@@ -1739,7 +1744,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
           userId: adminDoc.id,
           text: `🚨 URGENTE: Cliente solicitou "${category}" em ${location}. ${savedProspects.length} prospectos encontrados automaticamente. Verifique a aba Prospecting.`,
           isRead: false,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          createdAt: fieldValueHelpers.serverTimestamp(),
           type: 'prospecting_alert',
           urgency: urgency || 'high',
           metadata: {
@@ -1791,7 +1796,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       await prospectRef.set({
         id: prospectRef.id,
         ...prospectData,
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
+        createdAt: fieldValueHelpers.serverTimestamp()
       });
       res.status(201).json({ success: true, id: prospectRef.id });
     } catch (error) {
@@ -1807,7 +1812,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       const updates = req.body;
       await db.collection("prospects").doc(id).update({
         ...updates,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        updatedAt: fieldValueHelpers.serverTimestamp()
       });
       res.status(200).json({ success: true, message: "Prospect updated" });
     } catch (error) {
@@ -1853,7 +1858,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
           userId: adminDoc.id,
           text: message || `Nova solicitação: ${category} em ${location}`,
           isRead: false,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          createdAt: fieldValueHelpers.serverTimestamp(),
           type: 'prospecting_alert',
           urgency: urgency || 'normal',
           metadata: { category, location, clientEmail, prospectsFound }
@@ -2118,7 +2123,7 @@ Retorne apenas o corpo do email, sem assunto.`;
           qualityScore: prospect.qualityScore,
           matchScore: prospect.matchScore,
           source: 'ai_enhanced',
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          createdAt: fieldValueHelpers.serverTimestamp(),
         });
       }
 
@@ -2129,7 +2134,7 @@ Retorne apenas o corpo do email, sem assunto.`;
           userId: adminDoc.id,
           text: `🤖 IA encontrou ${topProspects.length} prospects qualificados para ${category}`,
           isRead: false,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          createdAt: fieldValueHelpers.serverTimestamp(),
           type: 'prospecting_success',
         });
       }
@@ -2176,7 +2181,7 @@ Retorne apenas o corpo do email, sem assunto.`;
       
       await prospectorRef.set({
         ...prospectorData,
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
+        createdAt: fieldValueHelpers.serverTimestamp()
       });
 
       // Also create user account for prospector if doesn't exist
@@ -2191,7 +2196,7 @@ Retorne apenas o corpo do email, sem assunto.`;
           status: 'ativo',
           bio: 'Prospector na equipe Servio.AI',
           location: '',
-          memberSince: admin.firestore.FieldValue.serverTimestamp(),
+          memberSince: fieldValueHelpers.serverTimestamp(),
           inviteCode: prospectorData.inviteCode
         });
       }
@@ -2371,7 +2376,7 @@ Retorne apenas o corpo do email, sem assunto.`;
         rate,
         providerEarnings,
         status: 'pending',
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
+        createdAt: fieldValueHelpers.serverTimestamp()
       });
 
       // Update prospector's total commissions
@@ -2400,8 +2405,8 @@ Retorne apenas o corpo do email, sem assunto.`;
       
       await db.collection("commissions").doc(id).update({
         status,
-        paidAt: status === 'paid' ? admin.firestore.FieldValue.serverTimestamp() : null,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        paidAt: status === 'paid' ? fieldValueHelpers.serverTimestamp() : null,
+        updatedAt: fieldValueHelpers.serverTimestamp()
       });
 
       res.status(200).json({ success: true, message: "Commission updated" });
@@ -2439,7 +2444,7 @@ Retorne apenas o corpo do email, sem assunto.`;
       await providerRef.update({
         prospectorId,
         prospectorCommissionRate: commissionRate,
-        recruitedAt: admin.firestore.FieldValue.serverTimestamp(),
+        recruitedAt: fieldValueHelpers.serverTimestamp(),
         recruitmentSource: source
       });
 
@@ -2465,7 +2470,7 @@ Retorne apenas o corpo do email, sem assunto.`;
           status: 'convertido',
           prospectorId,
           inviteCode,
-          convertedAt: admin.firestore.FieldValue.serverTimestamp()
+          convertedAt: fieldValueHelpers.serverTimestamp()
         });
       }
 
@@ -3128,7 +3133,7 @@ Retorne apenas o corpo do email, sem assunto.`;
                 jobPrice: jobPrice,
                 providerRate: providerRate,
                 status: 'pending',
-                createdAt: admin.firestore.FieldValue.serverTimestamp()
+                createdAt: fieldValueHelpers.serverTimestamp()
               });
 
               // Update prospector's total commissions
@@ -3258,13 +3263,6 @@ Retorne apenas o corpo do email, sem assunto.`;
 // Create default app instance
 const app = createApp();
 
-// Start the server only if the file is run directly
-if (require.main === module) {
-  app.listen(port, () => {
-    console.log(`Firestore Backend Service listening on port ${port}`);
-  });
-}
-
 /**
  * Background processor to handle expirations and simple escalations.
  * This is intentionally simple and side-effect free (no external calls),
@@ -3319,6 +3317,140 @@ async function processScheduledJobs({ db, now = new Date(), thresholdHours = 12 
   return { expiredProposals, escalatedJobs };
 }
 
+// =================================================================
+// DEVELOPMENT ENDPOINTS (apenas em ambiente não-produção)
+// =================================================================
+if (process.env.NODE_ENV !== 'production') {
+  // POST /dev/seed-e2e-users - Criar usuários de teste E2E
+  app.post('/dev/seed-e2e-users', async (req, res) => {
+    try {
+      const db = defaultDb; // Usar defaultDb
+      const users = [
+        {
+          email: 'e2e-cliente@servio.ai',
+          name: 'E2E Cliente',
+          type: 'cliente',
+          bio: '',
+          location: 'São Paulo',
+          memberSince: new Date().toISOString(),
+          status: 'ativo',
+        },
+        {
+          email: 'e2e-prestador@servio.ai',
+          name: 'E2E Prestador',
+          type: 'prestador',
+          bio: '',
+          location: 'São Paulo',
+          memberSince: new Date().toISOString(),
+          status: 'ativo',
+          headline: 'Prestador E2E',
+          specialties: ['limpeza', 'reparos'],
+          verificationStatus: 'verificado',
+          providerRate: 0.85,
+        },
+        {
+          email: 'admin@servio.ai',
+          name: 'E2E Admin',
+          type: 'admin',
+          bio: '',
+          location: 'São Paulo',
+          memberSince: new Date().toISOString(),
+          status: 'ativo',
+        },
+        {
+          email: 'e2e-prospector@servio.ai',
+          name: 'E2E Prospector',
+          type: 'prospector',
+          bio: 'Prospector de teste para E2E',
+          location: 'São Paulo',
+          memberSince: new Date().toISOString(),
+          status: 'ativo',
+          prospectorStats: {
+            totalRecruits: 0,
+            activeRecruits: 0,
+            totalCommissions: 0,
+            level: 1,
+            badges: []
+          }
+        }
+      ];
+
+      const results = [];
+      for (const userData of users) {
+        await db.collection('users').doc(userData.email).set(userData, { merge: true });
+        results.push(userData.email);
+      }
+
+      console.log('[DEV] E2E users seeded:', results);
+      res.status(200).json({ 
+        message: 'E2E users seeded successfully',
+        users: results,
+        mode: db.isMemoryMode ? db.isMemoryMode() : 'firestore'
+      });
+    } catch (error) {
+      console.error('Error seeding E2E users:', error);
+      res.status(500).json({ 
+        error: 'Failed to seed E2E users', 
+        details: error.message,
+        stack: error.stack 
+      });
+    }
+  });  // GET /dev/db-status - Verificar modo de armazenamento
+  app.get('/dev/db-status', (req, res) => {
+    const db = defaultDb; // Usar defaultDb ao invés de db local
+    res.json({
+      mode: db.isMemoryMode ? (db.isMemoryMode() ? 'memory' : 'firestore') : 'unknown',
+      environment: process.env.NODE_ENV || 'development',
+      data: db._exportMemory ? db._exportMemory() : null
+    });
+  });
+}
+
+// Start the server only if the file is run directly
+if (require.main === module) {
+  console.log('[SERVER] Starting server on port', port);
+  console.log('[SERVER] require.main:', require.main.filename);
+  console.log('[SERVER] module:', module.filename);
+  
+  try {
+    const host = '0.0.0.0'; // Listen on all interfaces (IPv4)
+    const server = app.listen(port, host, () => {
+      console.log(`[SERVER] ✅ Firestore Backend Service listening on ${host}:${port}`);
+      console.log('[SERVER] Server address:', server.address());
+    });
+    
+    server.on('error', (err) => {
+      console.error('[SERVER] ❌ Error:', err);
+      process.exit(1);
+    });
+    
+    server.on('close', () => {
+      console.log('[SERVER] Server closed');
+    });
+    
+    // Keep process alive
+    process.on('SIGTERM', () => {
+      console.log('[SERVER] SIGTERM signal received: closing HTTP server');
+      server.close(() => {
+        console.log('[SERVER] HTTP server closed');
+      });
+    });
+    
+    console.log('[SERVER] Setup complete, server should be running...');
+    
+    // Heartbeat to keep terminal alive
+    setInterval(() => {
+      console.log('[SERVER] Heartbeat - Server running on port', port);
+    }, 30000); // Every 30 seconds
+  } catch (err) {
+    console.error('[SERVER] Fatal error starting server:', err);
+    process.exit(1);
+  }
+} else {
+  console.log('[SERVER] Module loaded as dependency, not starting server');
+}
+
 module.exports = { createApp, app, calculateProviderRate, processScheduledJobs };
 // Provide a default export compatible with ESM import default used in tests
 module.exports.default = app;
+

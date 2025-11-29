@@ -1,0 +1,3595 @@
+
+> servio-ai-frontend@0.0.0 test
+> vitest run --coverage
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/JE/servio.ai[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32mÔ£ô[39m tests/week3/ProspectorDashboard.expansion.test.tsx [2m([22m[2m56 tests[22m[2m)[22m[33m 8132[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Expansion Test Suite[2m > [22mTab Navigation[2m > [22mshould render tab buttons for all sections [33m408[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Expansion Test Suite[2m > [22mLoading States[2m > [22mshould handle slow API responses [33m610[2mms[22m[39m
+ [32mÔ£ô[39m tests/week3/ServiceIntegration.gemini.test.tsx [2m([22m[2m25 tests[22m[2m)[22m[90m 14[2mms[22m[39m
+ [32mÔ£ô[39m tests/week3/ProviderDashboard.expansion.test.tsx [2m([22m[2m68 tests[22m[2m)[22m[33m 429[2mms[22m[39m
+ [32mÔ£ô[39m tests/services/geminiService.test.ts [2m([22m[2m26 tests[22m[2m)[22m[90m 19[2mms[22m[39m
+ [32mÔ£ô[39m tests/services/stripeService.test.ts [2m([22m[2m34 tests[22m[2m)[22m[90m 20[2mms[22m[39m
+ [32mÔ£ô[39m tests/week3/ServiceIntegration.fcm.test.tsx [2m([22m[2m26 tests[22m[2m)[22m[90m 113[2mms[22m[39m
+ [32mÔ£ô[39m tests/week3/ServiceIntegration.stripe.test.tsx [2m([22m[2m27 tests[22m[2m)[22m[90m 12[2mms[22m[39m
+stderr | tests/analyticsService.test.ts > analyticsService tracking functions > trackTemplateUsed > should not throw for valid template name
+[Analytics] Failed to track event: [FirebaseError: Function addDoc() called with invalid data. Unsupported field value: undefined (found in field properties.platform in document analytics_events/eOuUmmenRnVqBnQLCD7g)] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/analyticsService.test.ts > analyticsService tracking functions > trackTemplateUsed > should handle different template names
+[Analytics] Failed to track event: [FirebaseError: Function addDoc() called with invalid data. Unsupported field value: undefined (found in field properties.platform in document analytics_events/fNip6J3xLTdz93Yi0Jf9)] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+[Analytics] Failed to track event: [FirebaseError: Function addDoc() called with invalid data. Unsupported field value: undefined (found in field properties.platform in document analytics_events/pzdH0mmurperNeFbHwJR)] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+[Analytics] Failed to track event: [FirebaseError: Function addDoc() called with invalid data. Unsupported field value: undefined (found in field properties.platform in document analytics_events/dLAcJtuHOsb9wMoFmuyO)] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+[Analytics] Failed to track event: [FirebaseError: Function addDoc() called with invalid data. Unsupported field value: undefined (found in field properties.platform in document analytics_events/wEI8Fqzz5SeAkh5qtlFj)] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+[Analytics] Failed to track event: [FirebaseError: Function addDoc() called with invalid data. Unsupported field value: undefined (found in field properties.platform in document analytics_events/pzz7mUwgPldR6KDWaKxe)] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/analyticsService.test.ts > analyticsService tracking functions > trackTemplateUsed > should handle empty template name
+[Analytics] Failed to track event: [FirebaseError: Function addDoc() called with invalid data. Unsupported field value: undefined (found in field properties.platform in document analytics_events/0408BVT6b5DQU1EblgqO)] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/analyticsService.test.ts > analyticsService tracking functions > trackTemplateUsed > should handle empty user ID
+[Analytics] Failed to track event: [FirebaseError: Function addDoc() called with invalid data. Unsupported field value: undefined (found in field properties.platform in document analytics_events/h17x7y8ZYKXuWhu9d3HZ)] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/analyticsService.test.ts > analyticsService tracking functions > trackTemplateUsed > should handle special characters in template name
+[Analytics] Failed to track event: [FirebaseError: Function addDoc() called with invalid data. Unsupported field value: undefined (found in field properties.platform in document analytics_events/d9QB02R5NeByI7hSmYwI)] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/analyticsService.test.ts > analyticsService tracking functions > trackTemplateUsed > should handle numeric template names
+[Analytics] Failed to track event: [FirebaseError: Function addDoc() called with invalid data. Unsupported field value: undefined (found in field properties.platform in document analytics_events/7gGYCc9DAGtBf9F5B7PQ)] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/analyticsService.test.ts > analyticsService tracking functions > Integration: Analytics tracking flow > should handle template usage tracking
+[Analytics] Failed to track event: [FirebaseError: Function addDoc() called with invalid data. Unsupported field value: undefined (found in field properties.platform in document analytics_events/bT07ZA6pszeJStpLrJ2I)] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+[Analytics] Failed to track event: [FirebaseError: Function addDoc() called with invalid data. Unsupported field value: undefined (found in field properties.platform in document analytics_events/6wlGrLnqlc6EiPQtLfnI)] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+[Analytics] Failed to track event: [FirebaseError: Function addDoc() called with invalid data. Unsupported field value: undefined (found in field properties.platform in document analytics_events/mKnHtR6eqalQ0VOKzOx6)] {
+  code: 'invalid-argument',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/analyticsService.test.ts [2m([22m[2m70 tests[22m[2m)[22m[33m 348[2mms[22m[39m
+stderr | tests/week3/ClientDashboard.expansion.test.tsx > ClientDashboard - Week 3 Expansion Tests > Modal State Management > should handle proposalToPay prop
+TypeError: Cannot read properties of undefined (reading 'name')
+    at PaymentModal (C:\Users\JE\servio.ai\components\PaymentModal.tsx:49:109)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+    at HTMLUnknownElementImpl._dispatch (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:243:9)
+    at HTMLUnknownElementImpl.dispatchEvent (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:114:17)
+TypeError: Cannot read properties of undefined (reading 'name')
+    at PaymentModal (C:\Users\JE\servio.ai\components\PaymentModal.tsx:49:109)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+    at HTMLUnknownElementImpl._dispatch (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:243:9)
+    at HTMLUnknownElementImpl.dispatchEvent (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:114:17)
+The above error occurred in the <PaymentModal> component:
+
+    at PaymentModal (C:\Users\JE\servio.ai\components\PaymentModal.tsx:8:25)
+    at div
+    at ClientDashboard (C:\Users\JE\servio.ai\components\ClientDashboard.tsx:39:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | tests/week3/ClientDashboard.expansion.test.tsx > ClientDashboard - Week 3 Expansion Tests > Modal State Management > should handle both modal props together
+TypeError: Cannot read properties of undefined (reading 'name')
+    at PaymentModal (C:\Users\JE\servio.ai\components\PaymentModal.tsx:49:109)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+    at HTMLUnknownElementImpl._dispatch (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:243:9)
+    at HTMLUnknownElementImpl.dispatchEvent (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:114:17)
+TypeError: Cannot read properties of undefined (reading 'name')
+    at PaymentModal (C:\Users\JE\servio.ai\components\PaymentModal.tsx:49:109)
+    at renderWithHooks (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:20103:13)
+    at beginWork (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\generated\EventListener.js:26:30)
+    at innerInvokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:360:16)
+    at invokeEventListeners (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:296:3)
+    at HTMLUnknownElementImpl._dispatch (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:243:9)
+    at HTMLUnknownElementImpl.dispatchEvent (C:\Users\JE\servio.ai\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:114:17)
+The above error occurred in the <PaymentModal> component:
+
+    at PaymentModal (C:\Users\JE\servio.ai\components\PaymentModal.tsx:8:25)
+    at div
+    at ClientDashboard (C:\Users\JE\servio.ai\components\ClientDashboard.tsx:39:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+ [31mÔØ»[39m tests/week3/ClientDashboard.expansion.test.tsx [2m([22m[2m29 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[33m 367[2mms[22m[39m
+[31m   [31m├ù[31m ClientDashboard - Week 3 Expansion Tests[2m > [22mRendering and Basic Functionality[2m > [22mshould display user name in dashboard[90m 26[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the text: /Test Client|cliente/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex h-screen bg-gray-50"[31m
+    [36m>[31m
+      [36m<button[31m
+        [33maria-label[31m=[32m"Toggle menu"[31m
+        [33mclass[31m=[32m"fixed top-4 left-4 z-50 md:hidden bg-white p-2 rounded-lg shadow-lg border border-gray-200"[31m
+      [36m>[31m
+        [36m<svg[31m
+          [33mclass[31m=[32m"w-6 h-6 text-gray-700"[31m
+          [33mfill[31m=[32m"none"[31m
+          [33mstroke[31m=[32m"currentColor"[31m
+          [33mviewBox[31m=[32m"0 0 24 24"[31m
+        [36m>[31m
+          [36m<path[31m
+            [33md[31m=[32m"M4 6h16M4 12h16M4 18h16"[31m
+            [33mstroke-linecap[31m=[32m"round"[31m
+            [33mstroke-linejoin[31m=[32m"round"[31m
+            [33mstroke-width[31m=[32m"2"[31m
+          [36m/>[31m
+        [36m</svg>[31m
+      [36m</button>[31m
+      [36m<aside[31m
+        [33mclass[31m=[32m"w-64 bg-white border-r border-gray-200 flex flex-col fixed inset-y-0 left-0 z-40 transform transition-transform duration-200 md:relative md:translate-x-0 -translate-x-full"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"p-6 flex-1"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex items-center gap-2 mb-8"[31m
+          [36m>[31m
+            [36m<span[31m
+              [33mclass[31m=[32m"text-2xl"[31m
+            [36m>[31m
+              [0m­ƒæï[0m
+            [36m</span>[31m
+            [36m<div>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-sm font-semibold text-gray-900"[31m
+              [36m>[31m
+                [0mOl├í, [0m
+                [0mTest[0m
+                [0m![0m
+              [36m</p>[31m
+              [36m<button[31m
+                [33mclass[31m=[32m"text-xs text-blue-600 hover:underline"[31m
+              [36m>[31m
+                [0mConta Pessoal[0m
+              [36m</button>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<nav[31m
+            [33mclass[31m=[32m"space-y-1"[31m
+          [36m>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors bg-blue-50 text-blue-700"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-lg"[31m
+              [36m>[31m
+                [0m­ƒÅá[0m
+              [36m</span>[31m
+              [0mIn├¡cio[0m
+            [36m</button>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-lg"[31m
+              [36m>[31m
+                [0m­ƒôï[0m
+              [36m</span>[31m
+              [0mMeus Servi├ºos[0m
+            [36m</button>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-lg"[31m
+              [36m>[31m
+                [0m­ƒôª[0m
+              [36m</span>[31m
+              [0mMeus Itens[0m
+            [36m</button>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-lg"[31m
+              [36m>[31m
+                [0mÔØô[0m
+              [36m</span>[31m
+              [0mAjuda[0m
+            [36m</button>[31m
+          [36m</nav>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"p-6 border-t border-gray-200"[31m
+        [36m>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"text-sm text-gray-600 hover:text-blue-600"[31m
+          [36m>[31m
+            [0mSair[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</aside>[31m
+      [36m<main[31m
+        [33mclass[31m=[32m"flex-1 overflow-y-auto pt-16 md:pt-0"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"grid grid-cols-1 sm:grid-cols-3 gap-6"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"bg-white rounded-xl p-6 shadow-sm border border-gray-100"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center justify-between mb-4"[31m
+              [36m>[31m
+                [36m<h3[31m
+                  [33mclass[31m=[32m"text-sm font-medium text-gray-600"[31m
+                [36m>[31m
+                  [0mServi├ºos Ativos[0m
+                [36m</h3>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center"[31m
+                [36m>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"text-xl"[31m
+                  [36m>[31m
+                    [0m­ƒôï[0m
+                  [36m</span>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-3xl font-bold text-gray-900"[31m
+              [36m>[31m
+                [0m0[0m
+              [36m</p>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"bg-white rounded-xl p-6 shadow-sm border border-gray-100"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center justify-between mb-4"[31m
+              [36m>[31m
+                [36m<h3[31m
+                  [33mclass[31m=[32m"text-sm font-medium text-gray-600"[31m
+                [36m>[31m
+                  [0mConclu├¡dos[0m
+                [36m</h3>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center"[31m
+                [36m>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"text-xl"[31m
+                  [36m>[31m
+                    [0m­ƒÆ¼[0m
+                  [36m</span>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-3xl font-bold text-gray-900"[31m
+              [36m>[31m
+                [0m0[0m
+              [36m</p>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"bg-white rounded-xl p-6 shadow-sm border border-gray-100"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center justify-between mb-4"[31m
+              [36m>[31m
+                [36m<h3[31m
+                  [33mclass[31m=[32m"text-sm font-medium text-gray-600"[31m
+                [36m>[31m
+                  [0mItens Cadastrados[0m
+                [36m</h3>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center"[31m
+                [36m>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"text-xl"[31m
+                  [36m>[31m
+                    [0m­ƒº░[0m
+                  [36m</span>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-3xl font-bold text-gray-900"[31m
+              [36m>[31m
+                [0m0[0m
+              [36m</p>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<div>[31m
+            [36m<h2[31m
+              [33mclass[31m=[32m"text-xl font-bold text-gray-900 mb-4"[31m
+            [36m>[31m
+              [0mA├º├Áes R├ípidas[0m
+            [36m</h2>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"grid grid-cols-1 sm:grid-cols-2 gap-4"[31m
+            [36m>[31m
+              [36m<button[31m
+                [33mclass[31m=[32m"flex items-center gap-4 p-6 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition shadow-lg"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center"[31m
+                [36m>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"text-2xl"[31m
+                  [36m>[31m
+                    [0mÔ£¿[0m
+                  [36m</span>[31m
+                [36m</div>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"text-left"[31m
+                [36m>[31m
+                  [36m<h3[31m
+                    [33mclass[31m=[32m"font-semibold mb-1"[31m
+                  [36m>[31m
+                    [0mSolicitar Servi├ºo[0m
+                  [36m</h3>[31m
+                  [36m<p[31m
+                    [33mclass[31m=[32m"text-sm text-blue-100"[31m
+                  [36m>[31m
+                    [0mCom ajuda da IA[0m
+                  [36m</p>[31m
+                [36m</div>[31m
+              [36m</button>[31m
+              [36m<button[31m
+                [33mclass[31m=[32m"flex items-center gap-4 p-6 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition shadow-lg"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center"[31m
+                [36m>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"text-2xl"[31m
+                  [36m>[31m
+                    [0mÔÜÖ´©Å[0m
+                  [36m</span>[31m
+                [36m</div>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"text-left"[31m
+                [36m>[31m
+                  [36m<h3[31m
+                    [33mclass[31m=[32m"font-semibold mb-1"[31m
+                  [36m>[31m
+                    [0mCadastrar Item[0m
+                  [36m</h3>[31m
+                  [36m<p[31m
+                    [33mclass[31m=[32m"text-sm text-purple-100"[31m
+                  [36m>[31m
+                    [0mPara manuten├º├úo[0m
+                  [36m</p>[31m
+                [36m</div>[31m
+              [36m</button>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+      [36m</main>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[31m   [31m├ù[31m ClientDashboard - Week 3 Expansion Tests[2m > [22mModal State Management[2m > [22mshould handle viewingProposalsForJob prop[90m 23[2mms[22m[31m[39m
+[31m     ÔåÆ Found multiple elements with the role "main"
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<main[31m
+  [33mclass[31m=[32m"flex-1 overflow-y-auto pt-16 md:pt-0"[31m
+[36m>[31m
+  [36m<div[31m
+    [33mclass[31m=[32m"max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6"[31m
+  [36m>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"grid grid-cols-1 sm:grid-cols-3 gap-6"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"bg-white rounded-xl p-6 shadow-sm border border-gray-100"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center justify-between mb-4"[31m
+        [36m>[31m
+          [36m<h3[31m
+            [33mclass[31m=[32m"text-sm font-medium text-gray-600"[31m
+          [36m>[31m
+            [0mServi├ºos Ativos[0m
+          [36m</h3>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center"[31m
+          [36m>[31m
+            [36m<span[31m
+              [33mclass[31m=[32m"text-xl"[31m
+            [36m>[31m
+              [0m­ƒôï[0m
+            [36m</span>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<p[31m
+          [33mclass[31m=[32m"text-3xl font-bold text-gray-900"[31m
+        [36m>[31m
+          [0m0[0m
+        [36m</p>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"bg-white rounded-xl p-6 shadow-sm border border-gray-100"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center justify-between mb-4"[31m
+        [36m>[31m
+          [36m<h3[31m
+            [33mclass[31m=[32m"text-sm font-medium text-gray-600"[31m
+          [36m>[31m
+            [0mConclu├¡dos[0m
+          [36m</h3>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center"[31m
+          [36m>[31m
+            [36m<span[31m
+              [33mclass[31m=[32m"text-xl"[31m
+            [36m>[31m
+              [0m­ƒÆ¼[0m
+            [36m</span>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<p[31m
+          [33mclass[31m=[32m"text-3xl font-bold text-gray-900"[31m
+        [36m>[31m
+          [0m0[0m
+        [36m</p>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"bg-white rounded-xl p-6 shadow-sm border border-gray-100"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center justify-between mb-4"[31m
+        [36m>[31m
+          [36m<h3[31m
+            [33mclass[31m=[32m"text-sm font-medium text-gray-600"[31m
+          [36m>[31m
+            [0mItens Cadastrados[0m
+          [36m</h3>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center"[31m
+          [36m>[31m
+            [36m<span[31m
+              [33mclass[31m=[32m"text-xl"[31m
+            [36m>[31m
+              [0m­ƒº░[0m
+            [36m</span>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<p[31m
+          [33mclass[31m=[32m"text-3xl font-bold text-gray-900"[31m
+        [36m>[31m
+          [0m0[0m
+        [36m</p>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+    [36m<div>[31m
+      [36m<h2[31m
+        [33mclass[31m=[32m"text-xl font-bold text-gray-900 mb-4"[31m
+      [36m>[31m
+        [0mA├º├Áes R├ípidas[0m
+      [36m</h2>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"grid grid-cols-1 sm:grid-cols-2 gap-4"[31m
+      [36m>[31m
+        [36m<button[31m
+          [33mclass[31m=[32m"flex items-center gap-4 p-6 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition shadow-lg"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center"[31m
+          [36m>[31m
+            [36m<span[31m
+              [33mclass[31m=[32m"text-2xl"[31m
+            [36m>[31m
+              [0mÔ£¿[0m
+            [36m</span>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"text-left"[31m
+          [36m>[31m
+            [36m<h3[31m
+              [33mclass[31m=[32m"font-semibold mb-1"[31m
+            [36m>[31m
+              [0mSolicitar Servi├ºo[0m
+            [36m</h3>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-sm text-blue-100"[31m
+            [36m>[31m
+              [0mCom ajuda da IA[0m
+            [36m</p>[31m
+          [36m</div>[31m
+        [36m</button>[31m
+        [36m<button[31m
+          [33mclass[31m=[32m"flex items-center gap-4 p-6 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition shadow-lg"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center"[31m
+          [36m>[31m
+            [36m<span[31m
+              [33mclass[31m=[32m"text-2xl"[31m
+            [36m>[31m
+              [0mÔÜÖ´©Å[0m
+            [36m</span>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"text-left"[31m
+          [36m>[31m
+            [36m<h3[31m
+              [33mclass[31m=[32m"font-semibold mb-1"[31m
+            [36m>[31m
+              [0mCadastrar Item[0m
+            [36m</h3>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-sm text-purple-100"[31m
+            [36m>[31m
+              [0mPara manuten├º├úo[0m
+            [36m</p>[31m
+          [36m</div>[31m
+        [36m</button>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</main>[31m
+
+Ignored nodes: comments, script, style
+[36m<main[31m
+  [33mclass[31m=[32m"flex-grow overflow-y-auto p-6 space-y-4"[31m
+[36m>[31m
+  [36m<div[31m
+    [33mclass[31m=[32m"text-center py-16"[31m
+  [36m>[31m
+    [36m<svg[31m
+      [33maria-hidden[31m=[32m"true"[31m
+      [33mclass[31m=[32m"mx-auto h-12 w-12 text-gray-500"[31m
+      [33mfill[31m=[32m"none"[31m
+      [33mstroke[31m=[32m"currentColor"[31m
+      [33mviewBox[31m=[32m"0 0 24 24"[31m
+    [36m>[31m
+      [36m<path[31m
+        [33md[31m=[32m"M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"[31m
+        [33mstroke-linecap[31m=[32m"round"[31m
+        [33mstroke-linejoin[31m=[32m"round"[31m
+        [33mstroke-width[31m=[32m"2"[31m
+        [33mvector-effect[31m=[32m"non-scaling-stroke"[31m
+      [36m/>[31m
+    [36m</svg>[31m
+    [36m<h3[31m
+      [33mclass[31m=[32m"mt-2 text-lg font-medium text-gray-900"[31m
+    [36m>[31m
+      [0mNenhuma proposta recebida[0m
+    [36m</h3>[31m
+    [36m<p[31m
+      [33mclass[31m=[32m"mt-1 text-sm text-gray-600"[31m
+    [36m>[31m
+      [0mAguarde um pouco. Os prestadores foram notificados sobre seu job.[0m
+    [36m</p>[31m
+  [36m</div>[31m
+[36m</main>[31m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex h-screen bg-gray-50"[31m
+    [36m>[31m
+      [36m<button[31m
+        [33maria-label[31m=[32m"Toggle menu"[31m
+        [33mclass[31m=[32m"fixed top-4 left-4 z-50 md:hidden bg-white p-2 rounded-lg shadow-lg border border-gray-200"[31m
+      [36m>[31m
+        [36m<svg[31m
+          [33mclass[31m=[32m"w-6 h-6 text-gray-700"[31m
+          [33mfill[31m=[32m"none"[31m
+          [33mstroke[31m=[32m"currentColor"[31m
+          [33mviewBox[31m=[32m"0 0 24 24"[31m
+        [36m>[31m
+          [36m<path[31m
+            [33md[31m=[32m"M4 6h16M4 12h16M4 18h16"[31m
+            [33mstroke-linecap[31m=[32m"round"[31m
+            [33mstroke-linejoin[31m=[32m"round"[31m
+            [33mstroke-width[31m=[32m"2"[31m
+          [36m/>[31m
+        [36m</svg>[31m
+      [36m</button>[31m
+      [36m<aside[31m
+        [33mclass[31m=[32m"w-64 bg-white border-r border-gray-200 flex flex-col fixed inset-y-0 left-0 z-40 transform transition-transform duration-200 md:relative md:translate-x-0 -translate-x-full"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"p-6 flex-1"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex items-center gap-2 mb-8"[31m
+          [36m>[31m
+            [36m<span[31m
+              [33mclass[31m=[32m"text-2xl"[31m
+            [36m>[31m
+              [0m­ƒæï[0m
+            [36m</span>[31m
+            [36m<div>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-sm font-semibold text-gray-900"[31m
+              [36m>[31m
+                [0mOl├í, [0m
+                [0mTest[0m
+                [0m![0m
+              [36m</p>[31m
+              [36m<button[31m
+                [33mclass[31m=[32m"text-xs text-blue-600 hover:underline"[31m
+              [36m>[31m
+                [0mConta Pessoal[0m
+              [36m</button>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<nav[31m
+            [33mclass[31m=[32m"space-y-1"[31m
+          [36m>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors bg-blue-50 text-blue-700"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-lg"[31m
+              [36m>[31m
+                [0m­ƒÅá[0m
+              [36m</span>[31m
+              [0mIn├¡cio[0m
+            [36m</button>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-lg"[31m
+              [36m>[31m
+                [0m­ƒôï[0m
+              [36m</span>[31m
+              [0mMeus Servi├ºos[0m
+            [36m</button>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-lg"[31m
+              [36m>[31m
+                [0m­ƒôª[0m
+              [36m</span>[31m
+              [0mMeus Itens[0m
+            [36m</button>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-lg"[31m
+              [36m>[31m
+                [0mÔØô[0m
+              [36m</span>[31m
+              [0mAjuda[0m
+            [36m</button>[31m
+          [36m</nav>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"p-6 border-t border-gray-200"[31m
+        [36m>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"text-sm text-gray-600 hover:text-blue-600"[31m
+          [36m>[31m
+            [0mSair[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</aside>[31m
+      [36m<main[31m
+        [33mclass[31m=[32m"flex-1 overflow-y-auto pt-16 md:pt-0"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"grid grid-cols-1 sm:grid-cols-3 gap-6"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"bg-white rounded-xl p-6 shadow-sm border border-gray-100"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center justify-between mb-4"[31m
+              [36m>[31m
+                [36m<h3[31m
+                  [33mclass[31m=[32m"text-sm font-medium text-gray-600"[31m
+                [36m>[31m
+                  [0mServi├ºos Ativos[0m
+                [36m</h3>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center"[31m
+                [36m>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"text-xl"[31m
+                  [36m>[31m
+                    [0m­ƒôï[0m
+                  [36m</span>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-3xl font-bold text-gray-900"[31m
+              [36m>[31m
+                [0m0[0m
+              [36m</p>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"bg-white rounded-xl p-6 shadow-sm border border-gray-100"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center justify-between mb-4"[31m
+              [36m>[31m
+                [36m<h3[31m
+                  [33mclass[31m=[32m"text-sm font-medium text-gray-600"[31m
+                [36m>[31m
+                  [0mConclu├¡dos[0m
+                [36m</h3>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center"[31m
+                [36m>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"text-xl"[31m
+                  [36m>[31m
+                    [0m­ƒÆ¼[0m
+                  [36m</span>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-3xl font-bold text-gray-900"[31m
+              [36m>[31m
+                [0m0[0m
+              [36m</p>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"bg-white rounded-xl p-6 shadow-sm border border-gray-100"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center justify-between mb-4"[31m
+              [36m>[31m
+                [36m<h3[31m
+                  [33mclass[31m=[32m"text-sm font-medium text-gray-600"[31m
+                [36m>[31m
+                  [0mItens Cadastrados[0m
+                [36m</h3>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center"[31m
+                [36m>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"text-xl"[31m
+                  [36m>[31m
+                    [0m­ƒº░[0m
+                  [36m</span>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-3xl font-bold text-gray-900"[31m
+              [36m>[31m
+                [0m0[0m
+              [36m</p>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<div>[31m
+            [36m<h2[31m
+              [33mclass[31m=[32m"text-xl font-bold text-gray-900 mb-4"[31m
+            [36m>[31m
+              [0mA├º├Áes R├ípidas[0m
+            [36m</h2>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"grid grid-cols-1 sm:grid-cols-2 gap-4"[31m
+            [36m>[31m
+              [36m<button[31m
+                [33mclass[31m=[32m"flex items-center gap-4 p-6 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition shadow-lg"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center"[31m
+                [36m>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"text-2xl"[31m
+                  [36m>[31m
+                    [0mÔ£¿[0m
+                  [36m</span>[31m
+                [36m</div>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"text-left"[31m
+                [36m>[31m
+                  [36m<h3[31m
+                    [33mclass[31m=[32m"font-semibold mb-1"[31m
+                  [36m>[31m
+                    [0mSolicitar Servi├ºo[0m
+                  [36m</h3>[31m
+                  [36m<p[31m
+                    [33mclass[31m=[32m"text-sm text-blue-100"[31m
+                  [36m>[31m
+                    [0mCom ajuda da IA[0m
+                  [36m</p>[31m
+                [36m</div>[31m
+              [36m</button>[31m
+              [36m<button[31m
+                [33mclass[31m=[32m"flex items-center gap-4 p-6 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition shadow-lg"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center"[31m
+                [36m>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"text-2xl"[31m
+                  [36m>[31m
+                    [0mÔÜÖ´©Å[0m
+                  [36m</span>[31m
+                [36m</div>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"text-left"[31m
+                [36m>[31m
+                  [36m<h3[31m
+                    [33mclass[31m=[32m"font-semibold mb-1"[31m
+                  [36m>[31m
+                    [0mCadastrar Item[0m
+                  [36m</h3>[31m
+                  [36m<p[31m
+                    [33mclass[31m=[32m"text-sm text-purple-100"[31m
+                  [36m>[31m
+                    [0mPara manuten├º├úo[0m
+                  [36m</p>[31m
+                [36m</div>[31m
+              [36m</button>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+      [36m</main>[31m
+      [36m<div[31m
+        [33maria-modal[31m=[32m"true"[31m
+        [33mclass[31m=[32m"fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4"[31m
+        [33mrole[31m=[32m"dialog"[31m
+        [33mtabindex[31m=[32m"0"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"bg-slate-50 rounded-2xl shadow-xl w-full max-w-3xl m-4 transform transition-all h-[90vh] flex flex-col"[31m
+        [36m>[31m
+          [36m<header[31m
+            [33mclass[31m=[32m"relative p-6 border-b border-gray-200"[31m
+          [36m>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"absolute top-4 right-4 text-gray-500 hover:text-gray-600"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33mclass[31m=[32m"w-6 h-6"[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+                [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+              [36m>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M6 18L18 6M6 6l12 12"[31m
+                  [33mstroke-linecap[31m=[32m"round"[31m
+                  [33mstroke-linejoin[31m=[32m"round"[31m
+                  [33mstroke-width[31m=[32m"2"[31m
+                [36m/>[31m
+              [36m</svg>[31m
+            [36m</button>[31m
+            [36m<h2[31m
+              [33mclass[31m=[32m"text-xl font-bold text-gray-800"[31m
+            [36m>[31m
+              [0mPropostas para: [0m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-blue-600"[31m
+              [36m>[31m
+                [0mdesign[0m
+              [36m</span>[31m
+            [36m</h2>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-sm text-gray-600 mt-1 line-clamp-2"[31m
+            [36m>[31m
+              [0mModern website needed[0m
+            [36m</p>[31m
+          [36m</header>[31m
+          [36m<main[31m
+            [33mclass[31m=[32m"flex-grow overflow-y-auto p-6 space-y-4"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"text-center py-16"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33maria-hidden[31m=[32m"true"[31m
+                [33mclass[31m=[32m"mx-auto h-12 w-12 text-gray-500"[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [36m>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"[31m
+                  [33mstroke-linecap[31m=[32m"round"[31m
+                  [33mstroke-linejoin[31m=[32m"round"[31m
+                  [33mstroke-width[31m=[32m"2"[31m
+                  [33mvector-effect[31m=[32m"non-scaling-stroke"[31m
+                [36m/>[31m
+              [36m</svg>[31m
+              [36m<h3[31m
+                [33mclass[31m=[32m"mt-2 text-lg font-medium text-gray-900"[31m
+              [36m>[31m
+                [0mNenhuma proposta recebida[0m
+              [36m</h3>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"mt-1 text-sm text-gray-600"[31m
+              [36m>[31m
+                [0mAguarde um pouco. Os prestadores foram notificados sobre seu job.[0m
+              [36m</p>[31m
+            [36m</div>[31m
+          [36m</main>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[31m   [31m├ù[31m ClientDashboard - Week 3 Expansion Tests[2m > [22mModal State Management[2m > [22mshould handle proposalToPay prop[90m 21[2mms[22m[31m[39m
+[31m     ÔåÆ Cannot read properties of undefined (reading 'name')[39m
+[31m   [31m├ù[31m ClientDashboard - Week 3 Expansion Tests[2m > [22mModal State Management[2m > [22mshould handle both modal props together[90m 14[2mms[22m[31m[39m
+[31m     ÔåÆ Cannot read properties of undefined (reading 'name')[39m
+stderr | tests/week3/ClientDashboard.expansion.test.tsx
+[2025-11-28T15:02:13.178Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b17f error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/critical-components-coverage.test.ts
+Failed to get suggestion for item item1: TypeError: Cannot read properties of undefined (reading 'catch')
+    at fetchFromBackend (C:\Users\JE\servio.ai\services\geminiService.ts:140:10)
+    at fetchSuggestions (C:\Users\JE\servio.ai\components\MaintenanceSuggestions.tsx:41:26)
+
+ [32mÔ£ô[39m tests/critical-components-coverage.test.ts [2m([22m[2m28 tests[22m[2m)[22m[90m 101[2mms[22m[39m
+ [32mÔ£ô[39m tests/prospectorHelpers.test.ts [2m([22m[2m40 tests[22m[2m)[22m[90m 13[2mms[22m[39m
+stderr | tests/week2/AdminDashboard.suite.test.tsx
+[2025-11-28T15:02:13.658Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b180 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/week2/AdminDashboard.suite.test.tsx
+[2025-11-28T15:02:15.871Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b181 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [31mÔØ»[39m tests/week2/AdminDashboard.suite.test.tsx [2m([22m[2m32 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 1971[2mms[22m[39m
+[31m   [31m├ù[31m AdminDashboard[2m > [22mRendering[2m > [22mshould render admin dashboard[90m 38[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the text: /admin|dashboard|painel/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mdata-testid[31m=[32m"admin-dashboard-root"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex justify-between items-center mb-6"[31m
+      [36m/>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"border-b border-gray-200 mb-6"[31m
+        [33mdata-testid[31m=[32m"admin-tabs"[31m
+      [36m>[31m
+        [36m<nav[31m
+          [33maria-label[31m=[32m"Tabs"[31m
+          [33mclass[31m=[32m"-mb-px flex space-x-8 overflow-x-auto"[31m
+        [36m>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-blue-500 text-blue-600
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-analytics"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mAnalytics[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-jobs"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mJobs[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-providers"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mProviders[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-financials"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mFinancials[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-fraud"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mFraud[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-users"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mUsers[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-prospecting"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mProspecting[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-marketing"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mMarketing[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-prospectors"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mProspectors[0m
+            [36m</span>[31m
+          [36m</button>[31m
+        [36m</nav>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mdata-testid[31m=[32m"admin-active-tab-content"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"analytics"[31m
+        [36m>[31m
+          [0mAnalytics[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[31m   [31m├ù[31m AdminDashboard[2m > [22mRendering[2m > [22mshould display main sections[90m 17[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the text: /admin|dashboard/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mdata-testid[31m=[32m"admin-dashboard-root"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex justify-between items-center mb-6"[31m
+      [36m/>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"border-b border-gray-200 mb-6"[31m
+        [33mdata-testid[31m=[32m"admin-tabs"[31m
+      [36m>[31m
+        [36m<nav[31m
+          [33maria-label[31m=[32m"Tabs"[31m
+          [33mclass[31m=[32m"-mb-px flex space-x-8 overflow-x-auto"[31m
+        [36m>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-blue-500 text-blue-600
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-analytics"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mAnalytics[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-jobs"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mJobs[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-providers"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mProviders[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-financials"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mFinancials[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-fraud"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mFraud[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-users"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mUsers[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-prospecting"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mProspecting[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-marketing"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mMarketing[0m
+            [36m</span>[31m
+          [36m</button>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"[31m
+            [33mdata-testid[31m=[32m"admin-tab-prospectors"[31m
+          [36m>[31m
+            [36m<span>[31m
+              [0mProspectors[0m
+            [36m</span>[31m
+          [36m</button>[31m
+        [36m</nav>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mdata-testid[31m=[32m"admin-active-tab-content"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"analytics"[31m
+        [36m>[31m
+          [0mAnalytics[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+stderr | tests/api.test.ts > API Service > Error Handling > deve lan├ºar erro em opera├º├Áes cr├¡ticas sem fallback
+Failed to create job: Error: Falha de rede. Verifique sua conex├úo.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:61:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:106:11)
+    at Module.createJob (C:\Users\JE\servio.ai\services\api.ts:613:12) {
+  code: 'E_NETWORK'
+}
+
+ [32mÔ£ô[39m tests/api.test.ts [2m([22m[2m19 tests[22m[2m)[22m[90m 52[2mms[22m[39m
+stderr | tests/prospecting.enhanced.test.ts > Enhanced Prospecting Service > analyzeProspectWithAI > should fallback to basic scoring if AI fails
+[ProspectingService] AI analysis failed: Error: AI service down
+    at C:\Users\JE\servio.ai\tests\prospecting.enhanced.test.ts:68:51
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+
+stderr | tests/prospecting.enhanced.test.ts > Enhanced Prospecting Service > analyzeProspectWithAI > should handle prospect without rating
+[ProspectingService] AI analysis failed: Error: No rating
+    at C:\Users\JE\servio.ai\tests\prospecting.enhanced.test.ts:87:51
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+
+stderr | tests/prospecting.enhanced.test.ts > Enhanced Prospecting Service > generatePersonalizedEmail > should fallback to basic template if AI fails
+[ProspectingService] Email generation failed: Error: AI unavailable
+    at C:\Users\JE\servio.ai\tests\prospecting.enhanced.test.ts:145:51
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+
+stderr | tests/prospecting.enhanced.test.ts > Enhanced Prospecting Service > sendMultiChannelInvite > should handle channel failures gracefully
+[ProspectingService] SMS failed: Error: SMS service down
+    at C:\Users\JE\servio.ai\tests\prospecting.enhanced.test.ts:318:32
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+
+ [32mÔ£ô[39m tests/prospecting.enhanced.test.ts [2m([22m[2m13 tests[22m[2m)[22m[90m 21[2mms[22m[39m
+stderr | tests/errorTranslator.test.ts
+[2025-11-28T15:02:16.241Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b182 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/errorTranslator.test.ts [2m([22m[2m31 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [31mÔØ»[39m tests/messageTemplates.test.ts [2m([22m[2m29 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[90m 14[2mms[22m[39m
+[31m   [31m├ù[31m messageTemplates utilities[2m > [22mgetTemplates[2m > [22mshould return empty array for non-existent category[90m 4[2mms[22m[31m[39m
+[31m     ÔåÆ expected 7 to be +0 // Object.is equality[39m
+stderr | tests/AIJobRequestWizard.test.tsx > AIJobRequestWizard > chama enhanceJobRequest e mostra review screen
+[2025-11-28T15:02:16.614Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b183 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/AIJobRequestWizard.test.tsx > AIJobRequestWizard > faz upload de arquivo e inclui media no onSubmit
+[2025-11-28T15:02:16.974Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b184 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/AIJobRequestWizard.test.tsx [2m([22m[2m13 tests[22m[2m)[22m[33m 609[2mms[22m[39m
+stderr | tests/ProspectorCRM.test.tsx
+[2025-11-28T15:02:17.356Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b185 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [31mÔØ»[39m tests/ProspectorCRM.test.tsx [2m([22m[2m0 test[22m[2m)[22m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:83:16)
+[2025-11-28T15:02:17.718Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b186 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+stderr | Console.console.error (C:\Users\JE\servio.ai\tests\setup.ts:88:17)
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/App.test.tsx
+[2025-11-28T15:02:18.139Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b187 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/App.test.tsx [2m([22m[2m22 tests[22m[2m)[22m[90m 285[2mms[22m[39m
+ [32mÔ£ô[39m tests/coverage-boost.test.ts [2m([22m[2m21 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32mÔ£ô[39m tests/adminMetrics.test.ts [2m([22m[2m16 tests[22m[2m)[22m[90m 12[2mms[22m[39m
+stderr | tests/api.errorHandling.test.ts > apiCall - Error Handling > E_TIMEOUT - AbortController > deve lan├ºar E_TIMEOUT quando AbortError ocorre
+[api] Timeout on /api/stripe/create-connect-account Error: Tempo de resposta excedido. Tente novamente.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:61:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:99:22) {
+  code: 'E_TIMEOUT'
+}
+
+ [32mÔ£ô[39m tests/api.errorHandling.test.ts [2m([22m[2m14 tests[22m[2m)[22m[90m 41[2mms[22m[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:83:16)
+[2025-11-28T15:02:18.556Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b188 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+stderr | Console.console.error (C:\Users\JE\servio.ai\tests\setup.ts:88:17)
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/prospectorMaterialKit.test.ts [2m([22m[2m35 tests[22m[2m)[22m[90m 21[2mms[22m[39m
+stderr | tests/ProviderDashboard.actions.test.tsx > ProviderDashboard ÔÇô a├º├Áes e fluxos principais > gera email de indica├º├úo e exibe modal de convite
+[2025-11-28T15:02:19.679Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b189 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/ProviderDashboard.actions.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 923[2mms[22m[39m
+stderr | tests/ClientDashboard.test.tsx > ClientDashboard > altern├óncia de tabs e estados vazios (servi├ºos/itens/ajuda)
+[2025-11-28T15:02:20.980Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b18a error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ClientDashboard.test.tsx > ClientDashboard > altern├óncia de tabs e estados vazios (servi├ºos/itens/ajuda)
+[2025-11-28T15:02:21.633Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b18b error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ClientDashboard.test.tsx > ClientDashboard > bot├úo "+ Novo Servi├ºo" em "Meus Servi├ºos" dispara callback
+[2025-11-28T15:02:22.281Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b18c error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ClientDashboard.test.tsx > ClientDashboard > Fluxo de Pagamento > deve abrir o modal de pagamento ao aceitar uma proposta
+Warning: The current testing environment is not configured to support act(...)
+    at ClientDashboard (C:\Users\JE\servio.ai\components\ClientDashboard.tsx:39:3)
+Warning: The current testing environment is not configured to support act(...)
+    at ClientDashboard (C:\Users\JE\servio.ai\components\ClientDashboard.tsx:39:3)
+
+stderr | tests/ClientDashboard.test.tsx > ClientDashboard > Fluxo de Pagamento > deve chamar a API de checkout e redirecionar ao confirmar o pagamento
+Warning: The current testing environment is not configured to support act(...)
+    at ClientDashboard (C:\Users\JE\servio.ai\components\ClientDashboard.tsx:39:3)
+Warning: The current testing environment is not configured to support act(...)
+    at ClientDashboard (C:\Users\JE\servio.ai\components\ClientDashboard.tsx:39:3)
+[2025-11-28T15:02:22.634Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b18d error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ClientDashboard.test.tsx > ClientDashboard > Fluxo de Pagamento > deve fechar o modal de pagamento ao clicar em cancelar
+Warning: The current testing environment is not configured to support act(...)
+    at ClientDashboard (C:\Users\JE\servio.ai\components\ClientDashboard.tsx:39:3)
+Warning: The current testing environment is not configured to support act(...)
+    at ClientDashboard (C:\Users\JE\servio.ai\components\ClientDashboard.tsx:39:3)
+
+ [32mÔ£ô[39m tests/ClientDashboard.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 3495[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard[2m > [22mrenderiza tabs e sauda├º├úo ap├│s o loading [33m754[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard[2m > [22maltern├óncia de tabs e estados vazios (servi├ºos/itens/ajuda) [33m1036[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard[2m > [22ma├º├úo r├ípida "Solicitar Servi├ºo" dispara callback [33m349[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard[2m > [22mbot├úo "+ Novo Servi├ºo" em "Meus Servi├ºos" dispara callback [33m435[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard[2m > [22mFluxo de Pagamento[2m > [22mdeve chamar a API de checkout e redirecionar ao confirmar o pagamento [33m395[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard[2m > [22mFluxo de Pagamento[2m > [22mdeve fechar o modal de pagamento ao clicar em cancelar [33m404[2mms[22m[39m
+stderr | tests/PaymentModal.test.tsx > PaymentModal > chama onClose quando clicar no bot├úo Cancelar
+[2025-11-28T15:02:23.537Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b18e error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/PaymentModal.test.tsx > PaymentModal > mostra a├º├úo de Tentar novamente quando erro for E_NETWORK
+[2025-11-28T15:02:23.985Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b18f error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/PaymentModal.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 552[2mms[22m[39m
+stderr | tests/ChatModal.test.tsx > ChatModal > envia mensagem de texto e limpa input
+[2025-11-28T15:02:24.417Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b190 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ChatModal.test.tsx > ChatModal > exibe sugest├úo de agendamento via IA (proposeScheduleFromChat) e confirma
+[2025-11-28T15:02:24.811Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b191 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/ChatModal.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 1093[2mms[22m[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:83:16)
+[2025-11-28T15:02:25.239Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b192 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+stderr | Console.console.error (C:\Users\JE\servio.ai\tests\setup.ts:88:17)
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/components/ReviewModal.test.tsx
+[2025-11-28T15:02:26.003Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b193 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/ReviewModal.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[33m 729[2mms[22m[39m
+ [32mÔ£ô[39m tests/api.edgecases.test.ts [2m([22m[2m17 tests[22m[2m)[22m[90m 113[2mms[22m[39m
+stderr | tests/errorMessages.test.ts > errorMessages > createErrorHandler > cria handler que retorna mensagem e a├º├úo
+[Error] {
+  timestamp: '2025-11-28T15:02:26.250Z',
+  context: 'payment',
+  code: 'E_NETWORK',
+  message: 'Network error',
+  status: undefined,
+  details: undefined,
+  stack: undefined
+}
+
+stderr | tests/errorMessages.test.ts > errorMessages > createErrorHandler > chama callback de retry quando a├º├úo ├® executada
+[Error] {
+  timestamp: '2025-11-28T15:02:26.250Z',
+  context: 'unknown',
+  code: 'E_NETWORK',
+  message: 'Network error',
+  status: undefined,
+  details: undefined,
+  stack: undefined
+}
+
+stderr | tests/errorMessages.test.ts > errorMessages > createErrorHandler > chama callback de auth quando a├º├úo ├® login
+[Error] {
+  timestamp: '2025-11-28T15:02:26.251Z',
+  context: 'unknown',
+  code: 'E_AUTH',
+  message: 'Unauthorized',
+  status: undefined,
+  details: undefined,
+  stack: undefined
+}
+
+ [32mÔ£ô[39m tests/errorMessages.test.ts [2m([22m[2m22 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+stderr | tests/DisputeModal.unit.test.tsx > DisputeModal (unit) > envia mensagem ao submeter quando h├í texto e outra parte
+[2025-11-28T15:02:26.390Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b194 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/DisputeModal.unit.test.tsx > DisputeModal (unit) > envia mensagem ao pressionar Enter
+[2025-11-28T15:02:26.866Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b195 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/DisputeModal.unit.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 567[2mms[22m[39m
+stderr | tests/ClientDashboard.scheduleAndChat.test.tsx > ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve) > confirma agendamento a partir de uma proposta recebida no chat
+[2025-11-28T15:02:27.358Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b196 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ClientDashboard.scheduleAndChat.test.tsx > ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve) > mostra aviso ao tentar salvar perfil sem campos obrigat├│rios
+[2025-11-28T15:02:27.957Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b197 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ClientDashboard.scheduleAndChat.test.tsx > ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve) > exibe toast de erro ao falhar envio de mensagem
+[2025-11-28T15:02:28.700Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b198 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ClientDashboard.scheduleAndChat.test.tsx > ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve) > exibe toast de erro ao falhar envio de mensagem
+[2025-11-28T15:02:29.023Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b199 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/ClientDashboard.scheduleAndChat.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 2156[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve)[2m > [22mconfirma agendamento a partir de uma proposta recebida no chat [33m666[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve)[2m > [22mmostra aviso ao tentar salvar perfil sem campos obrigat├│rios [33m768[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ClientDashboard ÔÇô chat & agendamento (integra├º├úo leve)[2m > [22mexibe toast de erro ao falhar envio de mensagem [33m722[2mms[22m[39m
+stderr | tests/ProposalModal.test.tsx > ProposalModal > permite enviar proposta com pre├ºo e mensagem
+[2025-11-28T15:02:29.400Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b19a error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ProposalModal.test.tsx > ProposalModal > gera mensagem com IA quando bot├úo ├® clicado
+[2025-11-28T15:02:30.008Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b19b error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/ProposalModal.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 1055[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProposalModal[2m > [22mpermite enviar proposta com pre├ºo e mensagem [33m326[2mms[22m[39m
+stderr | tests/AdminDashboard.test.tsx
+[2025-11-28T15:02:30.362Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b19c error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/AdminDashboard.test.tsx > AdminDashboard > deve tratar erro de API gracefully
+[2025-11-28T15:02:30.927Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b19d error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/AdminDashboard.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 611[2mms[22m[39m
+stderr | tests/ReviewModal.test.tsx > ReviewModal > fecha modal ao clicar no bot├úo X
+[2025-11-28T15:02:31.298Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b19e error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ReviewModal.test.tsx > ReviewModal > exibe erro quando IA falha ao gerar coment├írio
+[2025-11-28T15:02:31.901Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b19f error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/ReviewModal.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 1094[2mms[22m[39m
+stderr | tests/AuctionRoomModal.test.tsx > AuctionRoomModal > valida e envia lance menor que o menor existente
+[2025-11-28T15:02:32.398Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1a0 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/AuctionRoomModal.test.tsx > AuctionRoomModal > contador encerra ap├│s expirar (fake timers)
+Warning: The current testing environment is not configured to support act(...)
+
+ [32mÔ£ô[39m tests/AuctionRoomModal.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[90m 288[2mms[22m[39m
+ [32mÔ£ô[39m tests/api.usersAndMessages.test.ts [2m([22m[2m9 tests[22m[2m)[22m[90m 39[2mms[22m[39m
+stderr | tests/AuthModal.test.tsx
+[2025-11-28T15:02:32.772Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1a1 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/AuthModal.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[90m 124[2mms[22m[39m
+stderr | tests/components/ProposalListModal.test.tsx
+[2025-11-28T15:02:33.252Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1a2 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/ProposalListModal.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 217[2mms[22m[39m
+stderr | tests/components/AddItemModal.test.tsx > AddItemModal > chama onSave com dados corretos ao salvar
+[2025-11-28T15:02:33.882Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1a3 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/AddItemModal.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 574[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m AddItemModal[2m > [22mexibe erro quando arquivo ├® maior que 4MB [33m345[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/DisputeDetailsModal.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[90m 93[2mms[22m[39m
+stderr | tests/modals.test.tsx
+[2025-11-28T15:02:34.432Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1a4 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/modals.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[90m 250[2mms[22m[39m
+stderr | tests/ProspectorDashboardUnified.test.tsx
+[2025-11-28T15:02:36.843Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1a5 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ProspectorDashboardUnified.test.tsx > ProspectorDashboard - Unified Layout > should display loading state initially dentro da aba Estat├¡sticas
+[2025-11-28T15:02:41.099Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1a6 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/ProspectorDashboardUnified.test.tsx
+[2025-11-28T15:02:42.114Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1a7 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/ProspectorDashboardUnified.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 1778[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Unified Layout[2m > [22mshould display loading state initially dentro da aba Estat├¡sticas [33m1217[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ProspectorDashboard - Unified Layout[2m > [22mshould display error message when API fails [33m560[2mms[22m[39m
+stderr | tests/JobCard.test.tsx > JobCard > mostra bot├úo de FAQ e abre modal com FAQ gerada
+[2025-11-28T15:02:42.556Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1a8 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/JobCard.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 458[2mms[22m[39m
+stderr | tests/components/ClientJobCard.test.tsx
+[2025-11-28T15:02:43.432Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1a9 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/ClientJobCard.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 504[2mms[22m[39m
+ [32mÔ£ô[39m tests/api.more.test.ts [2m([22m[2m9 tests[22m[2m)[22m[90m 44[2mms[22m[39m
+ [32mÔ£ô[39m tests/api.payments.test.ts [2m([22m[2m9 tests[22m[2m)[22m[90m 69[2mms[22m[39m
+stderr | tests/api.payments.test.ts
+[2025-11-28T15:02:43.834Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1aa error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [31mÔØ»[39m tests/fcmService.test.ts [2m([22m[2m13 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[90m 20[2mms[22m[39m
+[31m   [31m├ù[31m fcmService pure functions[2m > [22mgetNotificationPermission[2m > [22mshould return denied when notifications not supported[90m 8[2mms[22m[31m[39m
+[31m     ÔåÆ Cannot read properties of undefined (reading 'permission')[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:83:16)
+[2025-11-28T15:02:44.173Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1ab error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+stderr | Console.console.error (C:\Users\JE\servio.ai\tests\setup.ts:88:17)
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/DisputeModal.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 395[2mms[22m[39m
+stderr | tests/api.proposals.test.ts > Proposal Management > createProposal > valida pre├ºo m├¡nimo na proposta
+Failed to create proposal: Error: Erro interno do servidor. Tente mais tarde.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:61:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:93:13)
+    at Module.createProposal (C:\Users\JE\servio.ai\services\api.ts:685:12)
+    at C:\Users\JE\servio.ai\tests\api.proposals.test.ts:50:7
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5) {
+  code: 'E_SERVER',
+  details: { error: 'Pre├ºo m├¡nimo ├® R$ 50' }
+}
+
+stderr | tests/api.proposals.test.ts > Proposal Management > createProposal > valida descri├º├úo obrigat├│ria
+Failed to create proposal: Error: Falha de rede. Verifique sua conex├úo.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:61:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:106:11)
+    at Module.createProposal (C:\Users\JE\servio.ai\services\api.ts:685:12) {
+  code: 'E_NETWORK'
+}
+
+stderr | tests/api.proposals.test.ts > Proposal Management > createProposal > previne duplicata de proposta do mesmo provider
+Failed to create proposal: Error: Erro interno do servidor. Tente mais tarde.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:61:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:93:13)
+    at Module.createProposal (C:\Users\JE\servio.ai\services\api.ts:685:12)
+    at C:\Users\JE\servio.ai\tests\api.proposals.test.ts:71:7
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5) {
+  code: 'E_SERVER',
+  details: { error: 'Proposta j├í existe para este job' }
+}
+
+ [32mÔ£ô[39m tests/api.proposals.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 29[2mms[22m[39m
+stderr | tests/components/ConfirmDialog.test.tsx
+[2025-11-28T15:02:44.806Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1ac error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/ConfirmDialog.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[90m 57[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/Pagination.test.tsx [2m([22m[2m13 tests[22m[2m)[22m[90m 142[2mms[22m[39m
+stderr | tests/components/Pagination.test.tsx
+[2025-11-28T15:02:45.152Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1ad error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/api.matchProviders.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 58[2mms[22m[39m
+stderr | tests/Header.test.tsx
+[2025-11-28T15:02:45.514Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1ae error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/Header.test.tsx > Header > renderiza link "Encontrar Profissionais"
+[2025-11-28T15:02:45.851Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1af error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/Header.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 330[2mms[22m[39m
+ [32mÔ£ô[39m tests/AIJobRequestWizard.coverage.test.tsx [2m([22m[2m15 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/ProgressBar.test.tsx [2m([22m[2m17 tests[22m[2m)[22m[90m 140[2mms[22m[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:83:16)
+[2025-11-28T15:02:46.252Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1b0 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+stderr | Console.console.error (C:\Users\JE\servio.ai\tests\setup.ts:88:17)
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/FindProvidersPage.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[90m 272[2mms[22m[39m
+stderr | tests/components/Avatar.test.tsx
+[2025-11-28T15:02:46.742Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1b1 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/Avatar.test.tsx [2m([22m[2m16 tests[22m[2m)[22m[90m 52[2mms[22m[39m
+stderr | tests/components/PaymentSetupCard.test.tsx > PaymentSetupCard > shows toast on API error
+Failed to start Stripe onboarding: Error: network
+    at C:\Users\JE\servio.ai\tests\components\PaymentSetupCard.test.tsx:71:64
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+[2025-11-28T15:02:47.096Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1b2 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/PaymentSetupCard.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[90m 266[2mms[22m[39m
+ [32mÔ£ô[39m tests/analytics.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+stderr | tests/ProviderDashboard.profileStrength.test.tsx
+[2025-11-28T15:02:47.423Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1b3 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/ProviderDashboard.profileStrength.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 16[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProviderDashboard.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[90m 81[2mms[22m[39m
+stderr | tests/ProviderDashboard.test.tsx
+[2025-11-28T15:02:47.742Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1b4 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/ClientDashboard.coverage.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/Tooltip.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[90m 36[2mms[22m[39m
+stderr | tests/components/ItemCard.complete.test.tsx
+[2025-11-28T15:02:48.159Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1b5 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/ItemCard.complete.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[90m 118[2mms[22m[39m
+stderr | tests/AdminDashboard.errors.test.tsx > AdminDashboard ÔÇô cen├írios de erro > exibe toast de erro ao falhar resolver disputa e fecha modal no finally
+Falha ao resolver a disputa: Error: fail
+    at C:\Users\JE\servio.ai\tests\AdminDashboard.errors.test.tsx:48:57
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+ [32mÔ£ô[39m tests/AdminDashboard.errors.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[90m 103[2mms[22m[39m
+stderr | tests/ProviderJobCard.test.tsx > ProviderJobCard > chama onUpdateStatus para a_caminho quando status agendado
+[2025-11-28T15:02:48.530Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1b6 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/ProviderJobCard.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 368[2mms[22m[39m
+stderr | tests/AdminDashboard.navigation.test.tsx > AdminDashboard Tab Navigation > deve navegar entre m├║ltiplas abas corretamente
+[2025-11-28T15:02:49.049Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1b7 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/AdminDashboard.navigation.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[90m 233[2mms[22m[39m
+stderr | tests/NotificationsBell.test.tsx > NotificationsBell > marca todas como lidas e fecha o popover
+[2025-11-28T15:02:49.454Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1b8 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/NotificationsBell.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[90m 296[2mms[22m[39m
+stderr | tests/components/ServiceRequestForm.test.tsx
+[2025-11-28T15:02:50.461Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1b9 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/ServiceRequestForm.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 787[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m ServiceRequestForm[2m > [22menables submit after description and category selected then calls onSubmit [33m382[2mms[22m[39m
+ [32mÔ£ô[39m tests/AdminDashboard.actions.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[90m 52[2mms[22m[39m
+stderr | tests/ProviderDashboard.verify.test.tsx
+[2025-11-28T15:02:50.887Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1ba error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/ProviderDashboard.verify.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[90m 111[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/EmptyState.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[90m 18[2mms[22m[39m
+ [32mÔ£ô[39m tests/geminiService.resolveEndpoint.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/ItemCard.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[90m 70[2mms[22m[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:83:16)
+[2025-11-28T15:02:51.302Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1bb error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+stderr | Console.console.error (C:\Users\JE\servio.ai\tests\setup.ts:88:17)
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/NotificationsPopover.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[90m 97[2mms[22m[39m
+ [32mÔ£ô[39m tests/a11yHelpers.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+stderr | tests/e2e/error-handling.test.ts > [E2E-SMOKE] Error Handling API > Timeout ÔåÆ retorna lista b├ísica de providers (fallback)
+[api] Timeout on /api/match-providers Error: Tempo de resposta excedido. Tente novamente.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:61:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:99:22)
+    at Module.matchProvidersForJob (C:\Users\JE\servio.ai\services\api.ts:945:12)
+    at C:\Users\JE\servio.ai\tests\e2e\error-handling.test.ts:42:23
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3) {
+  code: 'E_TIMEOUT'
+}
+
+ [32mÔ£ô[39m tests/e2e/error-handling.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 35[2mms[22m[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:83:16)
+[2025-11-28T15:02:51.707Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1bc error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+stderr | Console.console.error (C:\Users\JE\servio.ai\tests\setup.ts:88:17)
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/StatusBadge.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 135[2mms[22m[39m
+ [32mÔ£ô[39m tests/ErrorBoundary.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[90m 41[2mms[22m[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:83:16)
+[2025-11-28T15:02:52.040Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1bd error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+ [32mÔ£ô[39m tests/components/MaintenanceSuggestions.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[90m 51[2mms[22m[39m
+ [32mÔ£ô[39m tests/firestoreRoleFunction.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 1[2mms[22m[39m
+stderr | tests/geminiService.test.ts > geminiService > enhanceJobRequest falls back to heuristic on backend failure
+[2025-11-28T15:02:52.389Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1be error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/geminiService.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 306[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m geminiService[2m > [22menhanceJobRequest falls back to heuristic on backend failure [33m305[2mms[22m[39m
+stderr | tests/ProfileTips.test.tsx
+[2025-11-28T15:02:52.703Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1bf error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/ProfileTips.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[90m 77[2mms[22m[39m
+stderr | tests/components/ServiceLandingPage.test.tsx > ServiceLandingPage > shows error on API failure
+Error: network
+    at C:\Users\JE\servio.ai\tests\components\ServiceLandingPage.test.tsx:38:59
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+    at file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+ [32mÔ£ô[39m tests/components/ServiceLandingPage.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[90m 62[2mms[22m[39m
+stderr | tests/geminiService.more.test.ts > geminiService ÔÇô resilience and URL resolution > generateJobFAQ retries once after network error and succeeds
+[2025-11-28T15:02:53.061Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1c0 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/geminiService.more.test.ts > geminiService ÔÇô resilience and URL resolution > getMatchingProviders falls back to [] on persistent failure
+[2025-11-28T15:02:53.378Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1c1 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+stderr | tests/geminiService.more.test.ts > geminiService ÔÇô resilience and URL resolution > getMatchingProviders falls back to [] on persistent failure
+[match-providers] Fallback to empty list due to backend error: Error: first fail
+    at fetchFromBackend (C:\Users\JE\servio.ai\services\geminiService.ts:143:19)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at processTimers (node:internal/timers:520:9)
+    at Module.getMatchingProviders (C:\Users\JE\servio.ai\services\geminiService.ts:205:16)
+    at C:\Users\JE\servio.ai\tests\geminiService.more.test.ts:35:17
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+
+ [32mÔ£ô[39m tests/geminiService.more.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 637[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m geminiService ÔÇô resilience and URL resolution[2m > [22mgenerateJobFAQ retries once after network error and succeeds [33m314[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m geminiService ÔÇô resilience and URL resolution[2m > [22mgetMatchingProviders falls back to [] on persistent failure [33m320[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProfileStrength.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[90m 58[2mms[22m[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:83:16)
+[2025-11-28T15:02:53.719Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1c2 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+stderr | Console.console.error (C:\Users\JE\servio.ai\tests\setup.ts:88:17)
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/api.coverage.bump.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32mÔ£ô[39m tests/ItemCard.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[90m 105[2mms[22m[39m
+ [32mÔ£ô[39m tests/api.positivePaths.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+stderr | tests/components/Spinner.test.tsx
+[2025-11-28T15:02:54.083Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1c3 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/Spinner.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[90m 19[2mms[22m[39m
+stderr | tests/e2e/stripe-timeout-retry.test.ts > [E2E-SMOKE] Stripe Timeout + Retry > createCheckoutSession: 1┬¬ tentativa E_TIMEOUT ÔåÆ 2┬¬ tentativa sucesso
+[api] Timeout on /create-checkout-session Error: Tempo de resposta excedido. Tente novamente.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:61:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:99:22) {
+  code: 'E_TIMEOUT'
+}
+
+ [32mÔ£ô[39m tests/e2e/stripe-timeout-retry.test.ts [2m([22m[2m1 test[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32mÔ£ô[39m tests/firebaseConfig.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 1[2mms[22m[39m
+ [32mÔ£ô[39m tests/CompletedJobCard.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[90m 12[2mms[22m[39m
+ [32mÔ£ô[39m tests/api.admin.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+stderr | tests/components/PortfolioGallery.test.tsx
+[2025-11-28T15:02:54.407Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1c4 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/PortfolioGallery.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[90m 43[2mms[22m[39m
+ [32mÔ£ô[39m tests/ProviderSearchResultCard.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 53[2mms[22m[39m
+stderr | tests/e2e/ai-fallback.test.ts > [E2E-SMOKE] AI Fallback > enhanceJobRequest ÔåÆ retorna objeto heur├¡stico quando backend falha
+[2025-11-28T15:02:54.736Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1c5 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/e2e/ai-fallback.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 314[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m [E2E-SMOKE] AI Fallback[2m > [22menhanceJobRequest ÔåÆ retorna objeto heur├¡stico quando backend falha [33m313[2mms[22m[39m
+ [32mÔ£ô[39m tests/LocationMap.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[90m 13[2mms[22m[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:83:16)
+[2025-11-28T15:02:55.080Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1c6 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+stderr | Console.console.error (C:\Users\JE\servio.ai\tests\setup.ts:88:17)
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/ProfileModal.save.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 117[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/TimePeriodFilter.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 104[2mms[22m[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:83:16)
+[2025-11-28T15:02:55.452Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1c7 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+stderr | Console.console.error (C:\Users\JE\servio.ai\tests\setup.ts:88:17)
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/e2e/payment-errors.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32mÔ£ô[39m tests/badgeUtils.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/StructuredDataSEO.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 8[2mms[22m[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:83:16)
+[2025-11-28T15:02:55.778Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1c8 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+stderr | Console.console.error (C:\Users\JE\servio.ai\tests\setup.ts:88:17)
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+ [32mÔ£ô[39m tests/components/LocationMap.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/AISchedulingAssistant.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/PublicContactCTA.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 30[2mms[22m[39m
+ [32mÔ£ô[39m tests/smoke.test.ts [2m([22m[2m1 test[22m[2m)[22m[90m 0[2mms[22m[39m
+stderr | Console.console.warn (C:\Users\JE\servio.ai\tests\setup.ts:83:16)
+[2025-11-28T15:02:56.146Z]  @firebase/firestore: Firestore (12.5.0): GrpcConnection RPC 'Write' stream 0x1256b1c9 error. Code: 7 Message: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+
+stderr | Console.console.error (C:\Users\JE\servio.ai\tests\setup.ts:88:17)
+[Analytics] Failed to track event: [FirebaseError: 7 PERMISSION_DENIED: Missing or insufficient permissions.] {
+  code: 'permission-denied',
+  customData: undefined,
+  toString: [Function (anonymous)]
+}
+
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Suites 1 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+ FAIL  tests/ProspectorCRM.test.tsx [ tests/ProspectorCRM.test.tsx ]
+Error: [vitest] No "getFirestore" export is defined on the "firebase/firestore" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+vi.mock(import("firebase/firestore"), async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    // your mocked methods
+  }
+})
+
+ ÔØ» firebaseConfig.ts:21:19
+     19| // Critical path: Auth and Firestore loaded immediately
+     20| export const auth = getAuth(app);
+     21| export const db = getFirestore(app);
+       |                   ^
+     22| 
+     23| // Lazy-loaded modules: Storage and Analytics
+ ÔØ» src/components/ProspectorCRM.tsx:3:31
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1/9]ÔÄ»
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Tests 8 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+ FAIL  tests/fcmService.test.ts > fcmService pure functions > getNotificationPermission > should return denied when notifications not supported
+TypeError: Cannot read properties of undefined (reading 'permission')
+ ÔØ» Module.getNotificationPermission src/services/fcmService.ts:53:23
+     51| export function getNotificationPermission(): NotificationPermission {
+     52|   if (!isNotificationSupported()) return 'denied';
+     53|   return Notification.permission;
+       |                       ^
+     54| }
+     55| 
+ ÔØ» tests/fcmService.test.ts:97:22
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[2/9]ÔÄ»
+
+ FAIL  tests/messageTemplates.test.ts > messageTemplates utilities > getTemplates > should return empty array for non-existent category
+AssertionError: expected 7 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 7
+
+ ÔØ» tests/messageTemplates.test.ts:63:32
+     61|     it('should return empty array for non-existent category', () => {
+     62|       const templates = getTemplates(undefined, 'NonExistentCategory12ÔÇª
+     63|       expect(templates.length).toBe(0);
+       |                                ^
+     64|     });
+     65| 
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[3/9]ÔÄ»
+
+ FAIL  tests/week2/AdminDashboard.suite.test.tsx > AdminDashboard > Rendering > should render admin dashboard
+TestingLibraryElementError: Unable to find an element with the text: /admin|dashboard|painel/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      data-testid="admin-dashboard-root"
+    >
+      <div
+        class="flex justify-between items-center mb-6"
+      />
+      <div
+        class="border-b border-gray-200 mb-6"
+        data-testid="admin-tabs"
+      >
+        <nav
+          aria-label="Tabs"
+          class="-mb-px flex space-x-8 overflow-x-auto"
+        >
+          <button
+            class="border-blue-500 text-blue-600
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-analytics"
+          >
+            <span>
+              Analytics
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-jobs"
+          >
+            <span>
+              Jobs
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-providers"
+          >
+            <span>
+              Providers
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-financials"
+          >
+            <span>
+              Financials
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-fraud"
+          >
+            <span>
+              Fraud
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-users"
+          >
+            <span>
+              Users
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-prospecting"
+          >
+            <span>
+              Prospecting
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-marketing"
+          >
+            <span>
+              Marketing
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-prospectors"
+          >
+            <span>
+              Prospectors
+            </span>
+          </button>
+        </nav>
+      </div>
+      <div
+        data-testid="admin-active-tab-content"
+      >
+        <div
+          data-testid="analytics"
+        >
+          Analytics
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ ÔØ» Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ÔØ» tests/week2/AdminDashboard.suite.test.tsx:52:21
+     50|       
+     51|       // Dashboard deve renderizar
+     52|       expect(screen.getByText(/admin|dashboard|painel/i) || 
+       |                     ^
+     53|              screen.getByTestId('analytics') ||
+     54|              true).toBeTruthy();
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[4/9]ÔÄ»
+
+ FAIL  tests/week2/AdminDashboard.suite.test.tsx > AdminDashboard > Rendering > should display main sections
+TestingLibraryElementError: Unable to find an element with the text: /admin|dashboard/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      data-testid="admin-dashboard-root"
+    >
+      <div
+        class="flex justify-between items-center mb-6"
+      />
+      <div
+        class="border-b border-gray-200 mb-6"
+        data-testid="admin-tabs"
+      >
+        <nav
+          aria-label="Tabs"
+          class="-mb-px flex space-x-8 overflow-x-auto"
+        >
+          <button
+            class="border-blue-500 text-blue-600
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-analytics"
+          >
+            <span>
+              Analytics
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-jobs"
+          >
+            <span>
+              Jobs
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-providers"
+          >
+            <span>
+              Providers
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-financials"
+          >
+            <span>
+              Financials
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-fraud"
+          >
+            <span>
+              Fraud
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-users"
+          >
+            <span>
+              Users
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-prospecting"
+          >
+            <span>
+              Prospecting
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-marketing"
+          >
+            <span>
+              Marketing
+            </span>
+          </button>
+          <button
+            class="border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2"
+            data-testid="admin-tab-prospectors"
+          >
+            <span>
+              Prospectors
+            </span>
+          </button>
+        </nav>
+      </div>
+      <div
+        data-testid="admin-active-tab-content"
+      >
+        <div
+          data-testid="analytics"
+        >
+          Analytics
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ ÔØ» Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ÔØ» tests/week2/AdminDashboard.suite.test.tsx:61:32
+     59|       
+     60|       // Deve exibir se├º├Áes principais
+     61|       const dashboard = screen.getByText(/admin|dashboard/i) || 
+       |                                ^
+     62|                        screen.getByTestId('analytics');
+     63|       expect(dashboard).toBeInTheDocument();
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[5/9]ÔÄ»
+
+ FAIL  tests/week3/ClientDashboard.expansion.test.tsx > ClientDashboard - Week 3 Expansion Tests > Rendering and Basic Functionality > should display user name in dashboard
+TestingLibraryElementError: Unable to find an element with the text: /Test Client|cliente/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="flex h-screen bg-gray-50"
+    >
+      <button
+        aria-label="Toggle menu"
+        class="fixed top-4 left-4 z-50 md:hidden bg-white p-2 rounded-lg shadow-lg border border-gray-200"
+      >
+        <svg
+          class="w-6 h-6 text-gray-700"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M4 6h16M4 12h16M4 18h16"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+      </button>
+      <aside
+        class="w-64 bg-white border-r border-gray-200 flex flex-col fixed inset-y-0 left-0 z-40 transform transition-transform duration-200 md:relative md:translate-x-0 -translate-x-full"
+      >
+        <div
+          class="p-6 flex-1"
+        >
+          <div
+            class="flex items-center gap-2 mb-8"
+          >
+            <span
+              class="text-2xl"
+            >
+              ­ƒæï
+            </span>
+            <div>
+              <p
+                class="text-sm font-semibold text-gray-900"
+              >
+                Ol├í, 
+                Test
+                !
+              </p>
+              <button
+                class="text-xs text-blue-600 hover:underline"
+              >
+                Conta Pessoal
+              </button>
+            </div>
+          </div>
+          <nav
+            class="space-y-1"
+          >
+            <button
+              class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors bg-blue-50 text-blue-700"
+            >
+              <span
+                class="text-lg"
+              >
+                ­ƒÅá
+              </span>
+              In├¡cio
+            </button>
+            <button
+              class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50"
+            >
+              <span
+                class="text-lg"
+              >
+                ­ƒôï
+              </span>
+              Meus Servi├ºos
+            </button>
+            <button
+              class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50"
+            >
+              <span
+                class="text-lg"
+              >
+                ­ƒôª
+              </span>
+              Meus Itens
+            </button>
+            <button
+              class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50"
+            >
+              <span
+                class="text-lg"
+              >
+                ÔØô
+              </span>
+              Ajuda
+            </button>
+          </nav>
+        </div>
+        <div
+          class="p-6 border-t border-gray-200"
+        >
+          <button
+            class="text-sm text-gray-600 hover:text-blue-600"
+          >
+            Sair
+          </button>
+        </div>
+      </aside>
+      <main
+        class="flex-1 overflow-y-auto pt-16 md:pt-0"
+      >
+        <div
+          class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6"
+        >
+          <div
+            class="grid grid-cols-1 sm:grid-cols-3 gap-6"
+          >
+            <div
+              class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+            >
+              <div
+                class="flex items-center justify-between mb-4"
+              >
+                <h3
+                  class="text-sm font-medium text-gray-600"
+                >
+                  Servi├ºos Ativos
+                </h3>
+                <div
+                  class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center"
+                >
+                  <span
+                    class="text-xl"
+                  >
+                    ­ƒôï
+                  </span>
+                </div>
+              </div>
+              <p
+                class="text-3xl font-bold text-gray-900"
+              >
+                0
+              </p>
+            </div>
+            <div
+              class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+            >
+              <div
+                class="flex items-center justify-between mb-4"
+              >
+                <h3
+                  class="text-sm font-medium text-gray-600"
+                >
+                  Conclu├¡dos
+                </h3>
+                <div
+                  class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center"
+                >
+                  <span
+                    class="text-xl"
+                  >
+                    ­ƒÆ¼
+                  </span>
+                </div>
+              </div>
+              <p
+                class="text-3xl font-bold text-gray-900"
+              >
+                0
+              </p>
+            </div>
+            <div
+              class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+            >
+              <div
+                class="flex items-center justify-between mb-4"
+              >
+                <h3
+                  class="text-sm font-medium text-gray-600"
+                >
+                  Itens Cadastrados
+                </h3>
+                <div
+                  class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center"
+                >
+                  <span
+                    class="text-xl"
+                  >
+                    ­ƒº░
+                  </span>
+                </div>
+              </div>
+              <p
+                class="text-3xl font-bold text-gray-900"
+              >
+                0
+              </p>
+            </div>
+          </div>
+          <div>
+            <h2
+              class="text-xl font-bold text-gray-900 mb-4"
+            >
+              A├º├Áes R├ípidas
+            </h2>
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+            >
+              <button
+                class="flex items-center gap-4 p-6 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition shadow-lg"
+              >
+                <div
+                  class="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center"
+                >
+                  <span
+                    class="text-2xl"
+                  >
+                    Ô£¿
+                  </span>
+                </div>
+                <div
+                  class="text-left"
+                >
+                  <h3
+                    class="font-semibold mb-1"
+                  >
+                    Solicitar Servi├ºo
+                  </h3>
+                  <p
+                    class="text-sm text-blue-100"
+                  >
+                    Com ajuda da IA
+                  </p>
+                </div>
+              </button>
+              <button
+                class="flex items-center gap-4 p-6 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition shadow-lg"
+              >
+                <div
+                  class="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center"
+                >
+                  <span
+                    class="text-2xl"
+                  >
+                    ÔÜÖ´©Å
+                  </span>
+                </div>
+                <div
+                  class="text-left"
+                >
+                  <h3
+                    class="font-semibold mb-1"
+                  >
+                    Cadastrar Item
+                  </h3>
+                  <p
+                    class="text-sm text-purple-100"
+                  >
+                    Para manuten├º├úo
+                  </p>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+ ÔØ» Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ÔØ» tests/week3/ClientDashboard.expansion.test.tsx:127:21
+    125|     it('should display user name in dashboard', () => {
+    126|       renderClientDashboard();
+    127|       expect(screen.getByText(/Test Client|cliente/i)).toBeInTheDocumeÔÇª
+       |                     ^
+    128|     });
+    129| 
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[6/9]ÔÄ»
+
+ FAIL  tests/week3/ClientDashboard.expansion.test.tsx > ClientDashboard - Week 3 Expansion Tests > Modal State Management > should handle viewingProposalsForJob prop
+TestingLibraryElementError: Found multiple elements with the role "main"
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<main
+  class="flex-1 overflow-y-auto pt-16 md:pt-0"
+>
+  <div
+    class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6"
+  >
+    <div
+      class="grid grid-cols-1 sm:grid-cols-3 gap-6"
+    >
+      <div
+        class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+      >
+        <div
+          class="flex items-center justify-between mb-4"
+        >
+          <h3
+            class="text-sm font-medium text-gray-600"
+          >
+            Servi├ºos Ativos
+          </h3>
+          <div
+            class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center"
+          >
+            <span
+              class="text-xl"
+            >
+              ­ƒôï
+            </span>
+          </div>
+        </div>
+        <p
+          class="text-3xl font-bold text-gray-900"
+        >
+          0
+        </p>
+      </div>
+      <div
+        class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+      >
+        <div
+          class="flex items-center justify-between mb-4"
+        >
+          <h3
+            class="text-sm font-medium text-gray-600"
+          >
+            Conclu├¡dos
+          </h3>
+          <div
+            class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center"
+          >
+            <span
+              class="text-xl"
+            >
+              ­ƒÆ¼
+            </span>
+          </div>
+        </div>
+        <p
+          class="text-3xl font-bold text-gray-900"
+        >
+          0
+        </p>
+      </div>
+      <div
+        class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+      >
+        <div
+          class="flex items-center justify-between mb-4"
+        >
+          <h3
+            class="text-sm font-medium text-gray-600"
+          >
+            Itens Cadastrados
+          </h3>
+          <div
+            class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center"
+          >
+            <span
+              class="text-xl"
+            >
+              ­ƒº░
+            </span>
+          </div>
+        </div>
+        <p
+          class="text-3xl font-bold text-gray-900"
+        >
+          0
+        </p>
+      </div>
+    </div>
+    <div>
+      <h2
+        class="text-xl font-bold text-gray-900 mb-4"
+      >
+        A├º├Áes R├ípidas
+      </h2>
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+      >
+        <button
+          class="flex items-center gap-4 p-6 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition shadow-lg"
+        >
+          <div
+            class="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center"
+          >
+            <span
+              class="text-2xl"
+            >
+              Ô£¿
+            </span>
+          </div>
+          <div
+            class="text-left"
+          >
+            <h3
+              class="font-semibold mb-1"
+            >
+              Solicitar Servi├ºo
+            </h3>
+            <p
+              class="text-sm text-blue-100"
+            >
+              Com ajuda da IA
+            </p>
+          </div>
+        </button>
+        <button
+          class="flex items-center gap-4 p-6 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition shadow-lg"
+        >
+          <div
+            class="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center"
+          >
+            <span
+              class="text-2xl"
+            >
+              ÔÜÖ´©Å
+            </span>
+          </div>
+          <div
+            class="text-left"
+          >
+            <h3
+              class="font-semibold mb-1"
+            >
+              Cadastrar Item
+            </h3>
+            <p
+              class="text-sm text-purple-100"
+            >
+              Para manuten├º├úo
+            </p>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+Ignored nodes: comments, script, style
+<main
+  class="flex-grow overflow-y-auto p-6 space-y-4"
+>
+  <div
+    class="text-center py-16"
+  >
+    <svg
+      aria-hidden="true"
+      class="mx-auto h-12 w-12 text-gray-500"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        vector-effect="non-scaling-stroke"
+      />
+    </svg>
+    <h3
+      class="mt-2 text-lg font-medium text-gray-900"
+    >
+      Nenhuma proposta recebida
+    </h3>
+    <p
+      class="mt-1 text-sm text-gray-600"
+    >
+      Aguarde um pouco. Os prestadores foram notificados sobre seu job.
+    </p>
+  </div>
+</main>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="flex h-screen bg-gray-50"
+    >
+      <button
+        aria-label="Toggle menu"
+        class="fixed top-4 left-4 z-50 md:hidden bg-white p-2 rounded-lg shadow-lg border border-gray-200"
+      >
+        <svg
+          class="w-6 h-6 text-gray-700"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M4 6h16M4 12h16M4 18h16"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+      </button>
+      <aside
+        class="w-64 bg-white border-r border-gray-200 flex flex-col fixed inset-y-0 left-0 z-40 transform transition-transform duration-200 md:relative md:translate-x-0 -translate-x-full"
+      >
+        <div
+          class="p-6 flex-1"
+        >
+          <div
+            class="flex items-center gap-2 mb-8"
+          >
+            <span
+              class="text-2xl"
+            >
+              ­ƒæï
+            </span>
+            <div>
+              <p
+                class="text-sm font-semibold text-gray-900"
+              >
+                Ol├í, 
+                Test
+                !
+              </p>
+              <button
+                class="text-xs text-blue-600 hover:underline"
+              >
+                Conta Pessoal
+              </button>
+            </div>
+          </div>
+          <nav
+            class="space-y-1"
+          >
+            <button
+              class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors bg-blue-50 text-blue-700"
+            >
+              <span
+                class="text-lg"
+              >
+                ­ƒÅá
+              </span>
+              In├¡cio
+            </button>
+            <button
+              class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50"
+            >
+              <span
+                class="text-lg"
+              >
+                ­ƒôï
+              </span>
+              Meus Servi├ºos
+            </button>
+            <button
+              class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50"
+            >
+              <span
+                class="text-lg"
+              >
+                ­ƒôª
+              </span>
+              Meus Itens
+            </button>
+            <button
+              class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50"
+            >
+              <span
+                class="text-lg"
+              >
+                ÔØô
+              </span>
+              Ajuda
+            </button>
+          </nav>
+        </div>
+        <div
+          class="p-6 border-t border-gray-200"
+        >
+          <button
+            class="text-sm text-gray-600 hover:text-blue-600"
+          >
+            Sair
+          </button>
+        </div>
+      </aside>
+      <main
+        class="flex-1 overflow-y-auto pt-16 md:pt-0"
+      >
+        <div
+          class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6"
+        >
+          <div
+            class="grid grid-cols-1 sm:grid-cols-3 gap-6"
+          >
+            <div
+              class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+            >
+              <div
+                class="flex items-center justify-between mb-4"
+              >
+                <h3
+                  class="text-sm font-medium text-gray-600"
+                >
+                  Servi├ºos Ativos
+                </h3>
+                <div
+                  class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center"
+                >
+                  <span
+                    class="text-xl"
+                  >
+                    ­ƒôï
+                  </span>
+                </div>
+              </div>
+              <p
+                class="text-3xl font-bold text-gray-900"
+              >
+                0
+              </p>
+            </div>
+            <div
+              class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+            >
+              <div
+                class="flex items-center justify-between mb-4"
+              >
+                <h3
+                  class="text-sm font-medium text-gray-600"
+                >
+                  Conclu├¡dos
+                </h3>
+                <div
+                  class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center"
+                >
+                  <span
+                    class="text-xl"
+                  >
+                    ­ƒÆ¼
+                  </span>
+                </div>
+              </div>
+              <p
+                class="text-3xl font-bold text-gray-900"
+              >
+                0
+              </p>
+            </div>
+            <div
+              class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+            >
+              <div
+                class="flex items-center justify-between mb-4"
+              >
+                <h3
+                  class="text-sm font-medium text-gray-600"
+                >
+                  Itens Cadastrados
+                </h3>
+                <div
+                  class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center"
+                >
+                  <span
+                    class="text-xl"
+                  >
+                    ­ƒº░
+                  </span>
+                </div>
+              </div>
+              <p
+                class="text-3xl font-bold text-gray-900"
+              >
+                0
+              </p>
+            </div>
+          </div>
+          <div>
+            <h2
+              class="text-xl font-bold text-gray-900 mb-4"
+            >
+              A├º├Áes R├ípidas
+            </h2>
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+            >
+              <button
+                class="flex items-center gap-4 p-6 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition shadow-lg"
+              >
+                <div
+                  class="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center"
+                >
+                  <span
+                    class="text-2xl"
+                  >
+                    Ô£¿
+                  </span>
+                </div>
+                <div
+                  class="text-left"
+                >
+                  <h3
+                    class="font-semibold mb-1"
+                  >
+                    Solicitar Servi├ºo
+                  </h3>
+                  <p
+                    class="text-sm text-blue-100"
+                  >
+                    Com ajuda da IA
+                  </p>
+                </div>
+              </button>
+              <button
+                class="flex items-center gap-4 p-6 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition shadow-lg"
+              >
+                <div
+                  class="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center"
+                >
+                  <span
+                    class="text-2xl"
+                  >
+                    ÔÜÖ´©Å
+                  </span>
+                </div>
+                <div
+                  class="text-left"
+                >
+                  <h3
+                    class="font-semibold mb-1"
+                  >
+                    Cadastrar Item
+                  </h3>
+                  <p
+                    class="text-sm text-purple-100"
+                  >
+                    Para manuten├º├úo
+                  </p>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+      <div
+        aria-modal="true"
+        class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4"
+        role="dialog"
+        tabindex="0"
+      >
+        <div
+          class="bg-slate-50 rounded-2xl shadow-xl w-full max-w-3xl m-4 transform transition-all h-[90vh] flex flex-col"
+        >
+          <header
+            class="relative p-6 border-b border-gray-200"
+          >
+            <button
+              class="absolute top-4 right-4 text-gray-500 hover:text-gray-600"
+            >
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6 18L18 6M6 6l12 12"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                />
+              </svg>
+            </button>
+            <h2
+              class="text-xl font-bold text-gray-800"
+            >
+              Propostas para: 
+              <span
+                class="text-blue-600"
+              >
+                design
+              </span>
+            </h2>
+            <p
+              class="text-sm text-gray-600 mt-1 line-clamp-2"
+            >
+              Modern website needed
+            </p>
+          </header>
+          <main
+            class="flex-grow overflow-y-auto p-6 space-y-4"
+          >
+            <div
+              class="text-center py-16"
+            >
+              <svg
+                aria-hidden="true"
+                class="mx-auto h-12 w-12 text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  vector-effect="non-scaling-stroke"
+                />
+              </svg>
+              <h3
+                class="mt-2 text-lg font-medium text-gray-900"
+              >
+                Nenhuma proposta recebida
+              </h3>
+              <p
+                class="mt-1 text-sm text-gray-600"
+              >
+                Aguarde um pouco. Os prestadores foram notificados sobre seu job.
+              </p>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ ÔØ» Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ÔØ» getElementError node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ÔØ» getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ÔØ» tests/week3/ClientDashboard.expansion.test.tsx:383:21
+    381|       });
+    382| 
+    383|       expect(screen.getByRole('main', { hidden: true })).toBeInTheDocuÔÇª
+       |                     ^
+    384|     });
+    385| 
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[7/9]ÔÄ»
+
+ FAIL  tests/week3/ClientDashboard.expansion.test.tsx > ClientDashboard - Week 3 Expansion Tests > Modal State Management > should handle proposalToPay prop
+ FAIL  tests/week3/ClientDashboard.expansion.test.tsx > ClientDashboard - Week 3 Expansion Tests > Modal State Management > should handle both modal props together
+TypeError: Cannot read properties of undefined (reading 'name')
+ ÔØ» PaymentModal components/PaymentModal.tsx:49:109
+     47| 
+     48|           <h2 className="text-2xl font-bold text-gray-800">Finalizar PÔÇª
+     49|           <p className="text-gray-600 mt-2">Voc├¬ est├í contratando <spaÔÇª
+       |                                                                                                             ^
+     50| 
+     51|           <div className="mt-6 bg-slate-50 border border-slate-200 rouÔÇª
+ ÔØ» renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ÔØ» mountIndeterminateComponent node_modules/react-dom/cjs/react-dom.development.js:20103:13
+ ÔØ» beginWork node_modules/react-dom/cjs/react-dom.development.js:21626:16
+ ÔØ» beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ÔØ» performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ÔØ» workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ÔØ» renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+ ÔØ» recoverFromConcurrentError node_modules/react-dom/cjs/react-dom.development.js:25889:20
+ ÔØ» performConcurrentWorkOnRoot node_modules/react-dom/cjs/react-dom.development.js:25789:22
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[8/9]ÔÄ»
+
+[31mÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1m[7m Unhandled Errors [27m[22mÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[39m
+[31m[1m
+Vitest caught 2 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ» Unhandled Rejection ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+Error: test
+ ÔØ» tests/App.test.tsx:220:31
+    218|     const event = new PromiseRejectionEvent('unhandledrejection', {
+    219|       reason: new Error('Failed to fetch dynamically imported module'),
+    220|       promise: Promise.reject(new Error('test')),
+       |                               ^
+    221|     });
+    222| 
+ ÔØ» node_modules/@vitest/runner/dist/index.js:146:14
+ ÔØ» node_modules/@vitest/runner/dist/index.js:533:11
+ ÔØ» runWithTimeout node_modules/@vitest/runner/dist/index.js:39:7
+ ÔØ» runTest node_modules/@vitest/runner/dist/index.js:1056:17
+ ÔØ» runSuite node_modules/@vitest/runner/dist/index.js:1205:15
+ ÔØ» runSuite node_modules/@vitest/runner/dist/index.js:1205:15
+ ÔØ» runFiles node_modules/@vitest/runner/dist/index.js:1262:5
+ ÔØ» startTests node_modules/@vitest/runner/dist/index.js:1271:3
+ ÔØ» node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+This error originated in "tests/App.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "tests/App.test.tsx". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ» Unhandled Rejection ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+Error: test
+ ÔØ» tests/App.test.tsx:257:31
+    255|     const event = new PromiseRejectionEvent('unhandledrejection', {
+    256|       reason: new Error('Failed to fetch dynamically imported module'),
+    257|       promise: Promise.reject(new Error('test')),
+       |                               ^
+    258|     });
+    259| 
+ ÔØ» node_modules/@vitest/runner/dist/index.js:146:14
+ ÔØ» node_modules/@vitest/runner/dist/index.js:533:11
+ ÔØ» runWithTimeout node_modules/@vitest/runner/dist/index.js:39:7
+ ÔØ» runTest node_modules/@vitest/runner/dist/index.js:1056:17
+ ÔØ» runSuite node_modules/@vitest/runner/dist/index.js:1205:15
+ ÔØ» runSuite node_modules/@vitest/runner/dist/index.js:1205:15
+ ÔØ» runFiles node_modules/@vitest/runner/dist/index.js:1262:5
+ ÔØ» startTests node_modules/@vitest/runner/dist/index.js:1271:3
+ ÔØ» node_modules/vitest/dist/chunks/runBaseTests.3qpJUEJM.js:126:11
+
+This error originated in "tests/App.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "tests/App.test.tsx". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+[31mÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[39m
+
+[2m Test Files [22m [1m[31m5 failed[39m[22m[2m | [22m[1m[32m103 passed[39m[22m[90m (108)[39m
+[2m      Tests [22m [1m[31m8 failed[39m[22m[2m | [22m[1m[32m1157 passed[39m[22m[90m (1165)[39m
+[2m     Errors [22m [1m[31m2 errors[39m[22m
+[2m   Start at [22m 12:01:58
+[2m   Duration [22m 58.62s[2m (transform 3.18s, setup 1.81s, collect 10.34s, tests 35.88s, environment 1.65s, prepare 159ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |    44.2 |    77.02 |   56.36 |    44.2 |                   
+ servio.ai         |   46.81 |    57.14 |   21.05 |   46.81 |                   
+  App.tsx          |   44.95 |    59.61 |   20.58 |   44.95 | ...36-538,549-566 
+  ...baseConfig.ts |   68.42 |    33.33 |   33.33 |   68.42 | 28-33,40-42,50-53 
+  types.ts         |       0 |        0 |       0 |       0 | 1                 
+ ....ai/components |   59.12 |    80.69 |   60.05 |   59.12 |                   
+  ...ernalChat.tsx |       0 |        0 |       0 |       0 | 1-266             
+  ...estWizard.tsx |   90.72 |    79.51 |   68.75 |   90.72 | ...94-201,244-246 
+  ...Assistant.tsx |     100 |      100 |     100 |     100 |                   
+  AddItemModal.tsx |   95.59 |    85.71 |    87.5 |   95.59 | 72-76,80-81       
+  ...Analytics.tsx |       0 |        0 |       0 |       0 | 1-46              
+  ...Dashboard.tsx |     100 |    77.77 |     100 |     100 | 12-13             
+  ...Dashboard.tsx |   94.87 |    78.12 |      75 |   94.87 | ...,96,98,100,102 
+  ...puteModal.tsx |       0 |        0 |       0 |       0 | 1-118             
+  ...inancials.tsx |   13.09 |      100 |       0 |   13.09 | 14-97             
+  ...audAlerts.tsx |   11.23 |      100 |       0 |   11.23 | 14-101            
+  ...anagement.tsx |   80.95 |    58.82 |   33.33 |   80.95 | 42,109,121-144    
+  ...Marketing.tsx |    1.75 |      100 |       0 |    1.75 | 23-419            
+  ...ospecting.tsx |    2.81 |      100 |       0 |    2.81 | 8-254             
+  ...anagement.tsx |    1.69 |      100 |       0 |    1.69 | 8-415             
+  ...anagement.tsx |    6.59 |      100 |       0 |    6.59 | 15-210            
+  ...anagement.tsx |   13.94 |       50 |    5.55 |   13.94 | ...41-314,320-431 
+  ...ationCard.tsx |    7.14 |      100 |       0 |    7.14 | 11-55             
+  ...RoomModal.tsx |   90.13 |       90 |     100 |   90.13 | 80-92,108-110     
+  AuthModal.tsx    |   88.88 |    88.57 |     100 |   88.88 | 28-29,49,70-77    
+  Avatar.tsx       |     100 |      100 |     100 |     100 |                   
+  Chart.tsx        |       0 |        0 |       0 |       0 | 1-34              
+  ChatModal.tsx    |   92.79 |    87.09 |   86.66 |   92.79 | ...13-118,218-225 
+  ...Dashboard.tsx |   67.34 |    67.36 |   35.55 |   67.34 | ...43-850,853-858 
+  ...ntJobCard.tsx |   89.61 |    94.11 |     100 |   89.61 | 94-101            
+  ...edJobCard.tsx |     100 |    66.66 |     100 |     100 | 26-27,45-47       
+  ...irmDialog.tsx |     100 |      100 |     100 |     100 |                   
+  Dashboard.tsx    |       0 |        0 |       0 |       0 | 1-113             
+  ...ailsModal.tsx |   88.09 |    83.33 |   71.42 |   88.09 | 50,96-106         
+  DisputeModal.tsx |     100 |      100 |     100 |     100 |                   
+  EmptyState.tsx   |     100 |      100 |     100 |     100 |                   
+  ...rBoundary.tsx |   76.19 |       60 |      75 |   76.19 | 33-40,44-45       
+  ...idersPage.tsx |   95.95 |    67.39 |      75 |   95.95 | ...07-108,227-230 
+  Header.tsx       |     100 |      100 |   85.71 |     100 |                   
+  HeroSection.tsx  |       0 |        0 |       0 |       0 | 1-84              
+  ItemCard.tsx     |     100 |      100 |     100 |     100 |                   
+  ...tailModal.tsx |     9.8 |      100 |       0 |     9.8 | 12-15,20-67       
+  JobCard.tsx      |   96.47 |    90.62 |      75 |   96.47 | 36-38             
+  JobFAQModal.tsx  |   98.21 |    77.77 |     100 |   98.21 | 24                
+  ...tionModal.tsx |   16.66 |      100 |       0 |   16.66 | 15-42             
+  JobTimeline.tsx  |   96.07 |    95.65 |     100 |   96.07 | 22-23             
+  ...ngSpinner.tsx |   84.84 |      100 |     100 |   84.84 | 17-21             
+  LocationMap.tsx  |     100 |    85.71 |     100 |     100 | 34                
+  ...ggestions.tsx |     100 |      100 |     100 |     100 |                   
+  ...ultsModal.tsx |       0 |        0 |       0 |       0 | 1-58              
+  ...tionsBell.tsx |     100 |      100 |     100 |     100 |                   
+  ...nsPopover.tsx |     100 |      100 |     100 |     100 |                   
+  Pagination.tsx   |     100 |      100 |     100 |     100 |                   
+  PaymentModal.tsx |     100 |    94.11 |     100 |     100 | 32                
+  ...SetupCard.tsx |     100 |     90.9 |     100 |     100 | 32                
+  ...ccessPage.tsx |       0 |        0 |       0 |       0 | 1-47              
+  ...ioGallery.tsx |     100 |      100 |   66.66 |     100 |                   
+  ProfileModal.tsx |   71.11 |       60 |   23.52 |   71.11 | ...28-134,192-202 
+  ProfilePage.tsx  |    5.16 |      100 |       0 |    5.16 | 19-21,26-262      
+  ...eStrength.tsx |     100 |     92.3 |     100 |     100 | 25                
+  ProfileTips.tsx  |     100 |      100 |     100 |     100 |                   
+  ProgressBar.tsx  |     100 |      100 |     100 |     100 |                   
+  ...etailCard.tsx |   94.23 |       40 |   66.66 |   94.23 | 53-55             
+  ...ListModal.tsx |     100 |      100 |     100 |     100 |                   
+  ...osalModal.tsx |     100 |    93.75 |     100 |     100 | 41                
+  ...tionModal.tsx |       0 |        0 |       0 |       0 | 1-48              
+  ...Dashboard.tsx |   78.08 |    63.63 |   35.71 |   78.08 | ...65-286,290-302 
+  ProviderCard.tsx |       0 |        0 |       0 |       0 | 1-75              
+  ...Dashboard.tsx |   85.41 |    80.48 |   60.86 |   85.41 | ...82,286-287,293 
+  ...ningsCard.tsx |   91.42 |    15.38 |     100 |   91.42 | ...33,128,131,134 
+  ...erJobCard.tsx |     100 |     87.5 |     100 |     100 | 13                
+  ...ndingPage.tsx |       0 |        0 |       0 |       0 | 1-127             
+  ...nboarding.tsx |   36.29 |       50 |   22.22 |   36.29 | ...17-135,138-142 
+  ...esultCard.tsx |     100 |    85.71 |     100 |     100 | 55                
+  ...ontactCTA.tsx |     100 |      100 |     100 |     100 |                   
+  ...tionModal.tsx |   13.79 |      100 |       0 |   13.79 | 10-39             
+  ...alProgram.tsx |   82.85 |      100 |   33.33 |   82.85 | 11-16             
+  ReviewModal.tsx  |   96.62 |    84.61 |     100 |   96.62 | 31-33             
+  ...ndingPage.tsx |     100 |      100 |     100 |     100 |                   
+  ...questForm.tsx |     100 |      100 |     100 |     100 |                   
+  ...Generator.tsx |       0 |        0 |       0 |       0 | 1-72              
+  Spinner.tsx      |     100 |      100 |     100 |     100 |                   
+  ...tingInput.tsx |     100 |      100 |     100 |     100 |                   
+  StatCard.tsx     |    12.5 |      100 |       0 |    12.5 | 13-35             
+  StatusBadge.tsx  |     100 |      100 |     100 |     100 |                   
+  ...edDataSEO.tsx |     100 |      100 |     100 |     100 |                   
+  ...iodFilter.tsx |     100 |      100 |     100 |     100 |                   
+  Toast.tsx        |      26 |      100 |       0 |      26 | 25-65             
+  ...Container.tsx |   36.36 |      100 |       0 |   36.36 | 11-18             
+  Tooltip.tsx      |     100 |      100 |     100 |     100 |                   
+  ...lyticsData.ts |    90.9 |    63.63 |     100 |    90.9 | 30-35             
+  ...hboardData.ts |   54.54 |    66.66 |      50 |   54.54 | 21-49             
+ ...mponents/admin |     100 |    71.42 |     100 |     100 |                   
+  ...riesChart.tsx |     100 |    71.42 |     100 |     100 | 19,32             
+ ...ents/skeletons |   16.03 |       50 |      20 |   16.03 |                   
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-34              
+  ...dSkeleton.tsx |      10 |      100 |       0 |      10 | 5-49              
+  ...dSkeleton.tsx |   33.33 |      100 |       0 |   33.33 | 5-13              
+  ...dSkeleton.tsx |   19.23 |      100 |       0 |   19.23 | 6-30              
+  ...etonBlock.tsx |     100 |      100 |     100 |     100 |                   
+ ...mponents/utils |     100 |      100 |     100 |     100 |                   
+  a11yHelpers.ts   |     100 |      100 |     100 |     100 |                   
+ ...io.ai/services |   58.22 |    70.07 |   68.81 |   58.22 |                   
+  api.ts           |   55.06 |    68.62 |   76.47 |   55.06 | ...99-901,932-942 
+  ...Translator.ts |   90.64 |    76.47 |     100 |   90.64 | ...77,181-182,198 
+  geminiService.ts |   73.09 |    67.44 |   52.17 |   73.09 | ...58-268,278-296 
+  ...ingService.ts |       0 |        0 |       0 |       0 | 1-57              
+  ...ingService.ts |   47.69 |       76 |      50 |   47.69 | ...71-240,264-265 
+  ...appService.ts |       0 |        0 |       0 |       0 | 1-29              
+ .../src/analytics |     100 |    95.83 |     100 |     100 |                   
+  adminMetrics.ts  |     100 |    95.83 |     100 |     100 | 90-91             
+ ...src/components |    2.49 |        0 |       0 |    2.49 |                   
+  ...eSelector.tsx |       0 |        0 |       0 |       0 | 1-283             
+  ...nSettings.tsx |       0 |        0 |       0 |       0 | 1-358             
+  ...pectorCRM.tsx |    0.86 |      100 |       0 |    0.86 | 63-1231           
+  ...Materials.tsx |   34.82 |      100 |       0 |   34.82 | 148-310           
+  ...nboarding.tsx |       0 |        0 |       0 |       0 | 1-244             
+  ...ckActions.tsx |       0 |        0 |       0 |       0 | 1-205             
+  ...ingWizard.tsx |       0 |        0 |       0 |       0 | 1-1310            
+  ...Generator.tsx |       0 |        0 |       0 |       0 | 1-279             
+ ...nts/prospector |   34.43 |    38.33 |   21.73 |   34.43 |                   
+  ...Generator.tsx |    0.55 |      100 |       0 |    0.55 | 24-312            
+  ...rdingTour.tsx |   72.49 |    52.63 |   33.33 |   72.49 | ...27-430,441-463 
+  ...MEnhanced.tsx |    2.23 |      100 |       0 |    2.23 | 34-470            
+  ...ctionsBar.tsx |   54.35 |       60 |   33.33 |   54.35 | ...64-266,275-278 
+  QuickPanel.tsx   |   36.29 |    15.38 |    12.5 |   36.29 | ...73-209,241-342 
+ ...io.ai/src/data |     100 |      100 |     100 |     100 |                   
+  ...eTemplates.ts |     100 |      100 |     100 |     100 |                   
+ servio.ai/src/lib |       0 |        0 |       0 |       0 |                   
+  firebaseLazy.ts  |       0 |        0 |       0 |       0 | 1-89              
+ ...i/src/services |   21.64 |    74.19 |   66.66 |   21.64 |                   
+  ...icsService.ts |   99.31 |     87.5 |     100 |   99.31 | 77                
+  fcmService.ts    |   15.32 |       50 |   28.57 |   15.32 | ...14-143,151-193 
+  ...ionService.ts |       0 |        0 |       0 |       0 | 1-308             
+  ...inkService.ts |       0 |        0 |       0 |       0 | 1-318             
+  ...onsService.ts |       0 |        0 |       0 |       0 | 1-172             
+ ...o.ai/src/utils |     100 |      100 |     100 |     100 |                   
+  ...torHelpers.ts |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------
+ERROR: Coverage for lines (44.2%) does not meet global threshold (80%)
+ERROR: Coverage for functions (56.36%) does not meet global threshold (80%)
+ERROR: Coverage for statements (44.2%) does not meet global threshold (80%)
