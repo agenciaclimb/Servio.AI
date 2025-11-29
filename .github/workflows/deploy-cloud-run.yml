@@ -226,15 +226,16 @@ jobs:
             ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/backend:${{ github.sha }}
             ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/backend:latest
 
-      - name: Deploy Backend Service
+      - name: Deploy Backend Service (v2)
         if: ${{ github.event.inputs.service == 'both' || github.event.inputs.service == 'backend' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }}
         run: |
           set -euo pipefail
           IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/backend:${GITHUB_SHA}"
-          gcloud run deploy servio-backend \
+          gcloud run deploy servio-backend-v2 \
             --image="$IMAGE" \
             --region="$REGION" \
             --platform=managed \
             --allow-unauthenticated \
             --port=8081 \
+            --timeout=300 \
             --set-env-vars="GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }},STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }},FRONTEND_URL=${{ secrets.FRONTEND_URL }},GCP_STORAGE_BUCKET=${{ secrets.GCP_STORAGE_BUCKET }}"
