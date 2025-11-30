@@ -238,6 +238,21 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Prospector personal CRM leads
+    match /prospector_prospects/{leadId} {
+      // Prospector can read only their own leads
+      allow read: if isSignedIn() && resource.data.prospectorId == authEmail();
+      // Create allowed only for prospectors creating their own lead documents
+      allow create: if isProspectorByEmail()
+                    && request.resource.data.prospectorId == authEmail()
+                    && request.resource.data.name is string
+                    && request.resource.data.phone is string
+                    && request.resource.data.createdAt is timestamp
+                    && request.resource.data.updatedAt is timestamp;
+      // Update/Delete allowed only by the owner prospector
+      allow update, delete: if isProspectorByEmail() && resource.data.prospectorId == authEmail();
+    }
+
     match /admin_logs/{logId} {
       // Only admin can read logs
       allow read: if isAdmin();
