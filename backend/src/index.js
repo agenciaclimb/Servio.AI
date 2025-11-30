@@ -749,7 +749,7 @@ Retorne APENAS JSON.`;
     try {
       const { messages = [], currentUserType } = req.body || {};
       
-      if (!GEMINI_API_KEY) {
+      if (!genAI) {
         console.error('[get-chat-assistance] Gemini API key not configured');
         return res.status(500).json({ error: 'IA não configurada' });
       }
@@ -784,7 +784,6 @@ Ajude com:
 
 Seja direto, prático e motivador. Responda em português brasileiro.`;
 
-      const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       const result = await model.generateContent({
