@@ -163,6 +163,7 @@ Prospector Servio.AI`
   // Regenerar quando trocar canal
   useEffect(() => {
     setMessage(generateLocalTemplateCallback());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channel, lead.stage]);
 
   function generateAIMessage() {
