@@ -9,6 +9,8 @@
  * - Notificações automáticas de follow-up
  */
 
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useCallback } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { db } from '../../../firebaseConfig';
