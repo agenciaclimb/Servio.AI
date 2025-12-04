@@ -25,6 +25,7 @@ const ServiceLandingPage = lazy(() => import('./components/ServiceLandingPage'))
 const ProviderLandingPage = lazy(() => import('./components/ProviderLandingPage'));
 const PaymentSuccessPage = lazy(() => import('./components/PaymentSuccessPage'));
 const FindProvidersPage = lazy(() => import('./components/FindProvidersPage'));
+const MetricsDashboard = lazy(() => import('./components/MetricsPageDashboard'));
 
 // Loading fallback component para Suspense
 const LoadingFallback = () => (
@@ -440,6 +441,16 @@ const App: React.FC = () => {
           );
       case 'payment-success':
         return <PaymentSuccessPage />;
+      case 'metrics':
+        // Métricas de prospecting - Fase 3
+        if (!currentUser || !['prospector', 'admin'].includes(currentUser.type)) {
+          return <div className="p-8 text-center text-red-600">Acesso negado. Apenas prospectors e admins podem visualizar métricas.</div>;
+        }
+        return (
+          <Suspense fallback={<div className="p-8 text-center text-slate-600">Carregando métricas…</div>}>
+            <MetricsDashboard />
+          </Suspense>
+        );
       case 'home':
       default:
         return (
