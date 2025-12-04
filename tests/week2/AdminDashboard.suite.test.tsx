@@ -48,19 +48,23 @@ describe('AdminDashboard', () => {
     it('should render admin dashboard', () => {
       render(<AdminDashboard {...defaultProps} />);
       
-      // Dashboard deve renderizar
-      expect(screen.getByText(/admin|dashboard|painel/i) || 
-             screen.getByTestId('analytics') ||
-             true).toBeTruthy();
+      // Dashboard deve renderizar (verificar se pelo menos um mockado está presente)
+      const dashboard = screen.queryByTestId('analytics') ||
+                       screen.queryByTestId('moderation') ||
+                       screen.queryByTestId('users') ||
+                       screen.queryByTestId('jobs');
+      
+      expect(dashboard).toBeInTheDocument();
     });
 
     it('should display main sections', () => {
       render(<AdminDashboard {...defaultProps} />);
       
-      // Deve exibir seções principais
-      const dashboard = screen.getByText(/admin|dashboard/i) || 
-                       screen.getByTestId('analytics');
-      expect(dashboard).toBeInTheDocument();
+      // Deve exibir pelo menos uma seção renderizada
+      expect(
+        screen.getByTestId('analytics') ||
+        screen.getByTestId('moderation')
+      ).toBeInTheDocument();
     });
   });
 

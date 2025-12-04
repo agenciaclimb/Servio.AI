@@ -37,7 +37,7 @@ const AnalyticsCard = ({ title, value, change, trend }: any) => (
     </div>
     <div className="space-y-2">
       <p data-testid="card-value" className="text-3xl font-bold">
-        {value !== undefined ? value : 'N/A'}
+        {value !== undefined && value !== null ? value : 'N/A'}
       </p>
       {change !== undefined && (
         <p
