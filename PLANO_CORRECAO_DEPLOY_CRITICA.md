@@ -1,3 +1,103 @@
+# PLANO DE CORREÇÃO DE DEPLOY CRÍTICO
+
+## Checklist de Validação Canária (CRM V2/V3)
+
+- Conta de teste `prospector` habilitada nas flags: confirmar acesso ao CRM V2 e barra de Vistas Salvas.
+- Vistas Salvas: criar, carregar, excluir e compartilhar; garantir persistência em `prospector_views`.
+- Filtros Avançados: aplicar múltiplas condições (status, score, source); avaliar latência p95 < 200ms.
+- Drag-and-Drop: mover leads entre estágios; verificar registro em activity log e confetti em "ganho".
+- Atalhos de Teclado: Ctrl+A, Esc, D, Delete funcionando; contabilizar eventos.
+- Edição Inline: nome e fonte do lead; confirmar update otimista no Firestore.
+- Barra de Ações em Massa: mover/temperatura/excluir em lote; sem erros.
+- Regressões: navegar entre tabs do ProspectorDashboard; nenhum crash ou jitter notável.
+
+## Monitoramento Pós-Deploy (Semana 1)
+
+- KPIs: uso de Vistas Salvas (criações/loads), p95 filtros, quantidade de DnD, ganhos por semana, atalhos por sessão.
+- Logs: revisar activity logs de mudanças de estágio diariamente; observar erros de render ou operações.
+- Expansão: se sem incidentes após 3–5 dias e KPIs OK, ampliar cohort (50% → 100%).
+
+## Canary UI Prospector – Fase 3 (Nov 30, 2025)
+
+- Objetivo: ativar a nova experiência de CRM (ProspectCardV2 + SavedViewsBar) para um grupo controlado de prospectores e medir impacto.
+- Escopo: apenas módulo Prospector CRM em `ProspectorDashboard`.
+
+### Cohort Alvo (prospectorId)
+- Lista inicial (10-15 usuários):
+  - joao.silva@email.com
+  - maria.oliveira@email.com
+  - pedro.souza@email.com
+  - ana.costa@email.com
+  - carla.mendes@email.com
+  - paulo.almeida@email.com
+  - julia.rocha@email.com
+  - rafael.pereira@email.com
+  - luiza.santos@email.com
+  - bruno.gomes@email.com
+- Critério: usuários com atividade semanal recorrente no CRM.
+
+### Feature Flags e Ativação
+- Flags existentes:
+  - `VITE_CRM_V2_ENABLED` (estrutural)
+  - `VITE_CRM_VIEWS_ENABLED` (Saved Views)
+- Ativação canário (frontend):
+  - Se `prospectorId ∈ Cohort`, renderizar componentes novos:
+    - `ProspectCardV2` (visual refinado)
+    - `SavedViewsBar` (modais e feedbacks)
+- Rollback imediato: desativar flag `VITE_CRM_VIEWS_ENABLED` ou retirar usuário da lista.
+
+### KPIs e Métricas
+- Engajamento:
+  - Tempo de interação por card (ms) – target: +8–15% sem queda de performance.
+  - Taxa de edição inline (nome/fonte) – target: >20% dos cards editados.
+- Usabilidade:
+  - Uso de views salvas – target: ≥30% dos usuários do cohort com ≥1 view criada.
+  - Cliques em badges/ações rápidas – target: aumento de 10%.
+- Qualidade:
+  - Erros JS por sessão – target: ≤0.5% sessões com erro.
+  - Latência de render do card – P95 ≤ 32ms.
+
+### Coleta (Analytics – plano)
+- Eventos a instrumentar (nomes canônicos):
+  - `prospector_card_view` { card_density, temperature, priority }
+  - `prospector_card_edit_name` { length_delta }
+  - `prospector_card_edit_source`
+  - `prospector_saved_view_create` { filters_count, density }
+  - `prospector_saved_view_load` { view_id }
+  - `prospector_saved_view_delete` { view_id }
+  - `prospector_card_badge_click` { badge_type }
+- Backend não requerido; usar Firebase Analytics lazy-load (já previsto no projeto).
+
+### Janela e Cadência
+- Duração: 72h de observação.
+- Amostragem: diária + fechamento ao final (D+3).
+- Critérios de sucesso: 3 de 4 KPIs em meta e nenhuma regressão crítica.
+
+### Rollback
+- Soft rollback: remover cohort ou desativar `VITE_CRM_VIEWS_ENABLED`.
+- Hard rollback: revert deploy no Hosting para versão anterior.
+
+### Comandos úteis (Windows PowerShell)
+```powershell
+$env:VITE_CRM_V2_ENABLED = "true"; $env:VITE_CRM_VIEWS_ENABLED = "true"; npm run dev
+
+npm run build
+
+firebase deploy --only hosting
+
+firebase hosting:rollback
+```
+
+### Observações
+- Emails são IDs de usuário no Firestore (padrão do projeto).
+- Segurança: regras de Firestore continuam válidas; nenhuma alteração em permissões.
+- Performance: alterações visuais não mudam lógica de filtro (já otimizada com memoização e debounce).
+
+## Rollback Plan
+
+- Desativar `VITE_CRM_VIEWS_ENABLED` para cohort se incidentes críticos ocorrerem.
+- Reverter renderização para CRM clássico (`ProspectorCRM`) via feature flag.
+- Publicar hotfix em Hosting e comunicar equipe via Slack.
 # 🚨 PLANO DE CORREÇÃO - DEPLOY CRÍTICO (27 NOV)
 
 **Status**: CRÍTICO - Produção quebrada com 404 errors  

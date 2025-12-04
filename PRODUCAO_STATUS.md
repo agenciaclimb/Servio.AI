@@ -126,6 +126,17 @@ Total: 4 | Passed: 4 | Failed: 0
 
 ## 🎯 PRÓXIMOS PASSOS RECOMENDADOS
 
+### Status Scheduler & Webhooks (03/12/2025)
+- prospectorRunScheduler: ATIVA (us-central1) — token + Content-Length: 0
+- Job: `prospector-follow-up-scheduler` — */5 * * * * (America/Sao_Paulo)
+- Omnichannel Webhook: ATIVO (WhatsApp/Instagram/Facebook)
+- Documentação atualizada: `OMNICHANNEL_WEBHOOKS_CONFIG.md`, `PROSPECCAO_SCHEDULER.md`
+
+### Recomendações
+- Upgrade `firebase-functions` >= 5.1.0
+- Migrar `functions.config()` para `.env` (prazo março/2026)
+- Alertas no Cloud Monitoring para falhas consecutivas
+
 ### Prioridade ALTA (Produção)
 
 1. **Testar Checkout Stripe End-to-End**

@@ -10,18 +10,26 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import confetti from 'canvas-confetti';
-import { generateSmartActions, type SmartAction } from '../../services/smartActionsService';
 import type { ProspectorStats } from '../../../services/api';
-import type { ProspectLead } from '../ProspectorCRM';
+
+export interface SmartAction {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+  priority: 'high' | 'medium' | 'low';
+  actionType: 'follow_up' | 'share' | 'engage' | 'goal' | 'badge';
+  metadata?: Record<string, unknown>;
+}
 
 interface QuickPanelProps {
   prospectorId: string;
   stats: ProspectorStats | null;
-  leads?: ProspectLead[];
+  leadsCount?: number;
   onActionClick?: (action: SmartAction) => void;
 }
 
-export default function QuickPanel({ prospectorId, stats, leads = [], onActionClick }: QuickPanelProps) {
+export default function QuickPanel({ stats, leadsCount = 0, onActionClick }: QuickPanelProps) {
   const [smartActions, setSmartActions] = useState<SmartAction[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastBadge, setLastBadge] = useState<string | null>(null);
@@ -50,23 +58,67 @@ export default function QuickPanel({ prospectorId, stats, leads = [], onActionCl
     setTimeout(() => toast.remove(), 5000);
   }, []);
 
-  const loadSmartActions = useCallback(async () => {
-    if (!stats) return;
+  const generateLocalActions = useCallback(() => {
+    if (!stats) return [];
     
-    setLoading(true);
-    try {
-      const actions = await generateSmartActions(prospectorId, stats, leads, []);
-      setSmartActions(actions.slice(0, 4)); // Top 4 ações
-    } catch (error) {
-      console.error('Erro ao carregar ações inteligentes:', error);
-    } finally {
-      setLoading(false);
+    const actions: SmartAction[] = [];
+    
+    // Ação 1: Ir para CRM se tem leads
+    if (leadsCount > 0) {
+      actions.push({
+        id: 'view-crm',
+        icon: '🎯',
+        title: 'Gerenciar Pipeline',
+        description: `Você tem ${leadsCount} lead${leadsCount > 1 ? 's' : ''} para acompanhar`,
+        priority: 'high',
+        actionType: 'follow_up'
+      });
     }
-  }, [prospectorId, stats, leads]);
+    
+    // Ação 2: Adicionar primeiro lead
+    if (leadsCount === 0) {
+      actions.push({
+        id: 'add-first-lead',
+        icon: '➕',
+        title: 'Adicionar seu primeiro lead',
+        description: 'Comece sua jornada cadastrando um profissional qualificado',
+        priority: 'high',
+        actionType: 'goal'
+      });
+    }
+    
+    // Ação 3: Compartilhar link
+    actions.push({
+      id: 'share-link',
+      icon: '📢',
+      title: 'Compartilhar link de convite',
+      description: 'Divulgue seu link em grupos e redes sociais',
+      priority: 'medium',
+      actionType: 'share'
+    });
+    
+    // Ação 4: Badge progress
+    if (stats.progressToNextBadge !== undefined && stats.progressToNextBadge > 70 && stats.nextBadge) {
+      const remaining = 100 - stats.progressToNextBadge;
+      actions.push({
+        id: 'badge-progress',
+        icon: '🏆',
+        title: `Próximo ao badge ${stats.nextBadge}`,
+        description: `Apenas ${remaining.toFixed(0)}% restantes para desbloquear`,
+        priority: 'high',
+        actionType: 'badge'
+      });
+    }
+    
+    return actions.slice(0, 4);
+  }, [stats, leadsCount]);
 
   useEffect(() => {
-    loadSmartActions();
-  }, [loadSmartActions]);
+    setLoading(true);
+    const actions = generateLocalActions();
+    setSmartActions(actions);
+    setLoading(false);
+  }, [generateLocalActions]);
 
   // Celebração automática ao conquistar novo badge
   useEffect(() => {
@@ -161,7 +213,12 @@ export default function QuickPanel({ prospectorId, stats, leads = [], onActionCl
             Próximas Ações Sugeridas por IA
           </h3>
           <button
-            onClick={loadSmartActions}
+            onClick={() => {
+              setLoading(true);
+              const actions = generateLocalActions();
+              setSmartActions(actions);
+              setLoading(false);
+            }}
             className="text-sm text-indigo-600 hover:text-indigo-800 transition-colors"
             disabled={loading}
           >
@@ -186,8 +243,21 @@ export default function QuickPanel({ prospectorId, stats, leads = [], onActionCl
             {smartActions.map((action) => (
               <button
                 key={action.id}
-                onClick={() => onActionClick?.(action)}
-                className={`w-full text-left p-4 rounded-lg border-l-4 transition-all hover:shadow-md ${getPriorityColor(action.priority)}`}
+                onClick={() => {
+                  onActionClick?.(action);
+                  // Toast de ação iniciada
+                  const toast = document.createElement('div');
+                  toast.className = 'fixed top-4 right-4 bg-indigo-500 text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-in';
+                  toast.innerHTML = `
+                    <div class="flex items-center gap-2">
+                      <span class="text-lg">${action.icon || getActionIcon(action.actionType)}</span>
+                      <span class="font-medium">Ação iniciada!</span>
+                    </div>
+                  `;
+                  document.body.appendChild(toast);
+                  setTimeout(() => toast.remove(), 3000);
+                }}
+                className={`w-full text-left p-4 rounded-lg border-l-4 transition-all hover:shadow-md hover:scale-[1.02] cursor-pointer ${getPriorityColor(action.priority)}`}
               >
                 <div className="flex items-start gap-3">
                   <span className="text-2xl">{action.icon || getActionIcon(action.actionType)}</span>
@@ -195,7 +265,7 @@ export default function QuickPanel({ prospectorId, stats, leads = [], onActionCl
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold text-gray-800">{action.title}</span>
                       {action.priority === 'high' && (
-                        <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded">
+                        <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded animate-pulse">
                           URGENTE
                         </span>
                       )}
@@ -217,7 +287,7 @@ export default function QuickPanel({ prospectorId, stats, leads = [], onActionCl
           <div>
             <h4 className="font-semibold text-gray-800 mb-1">Dica do Dia (IA)</h4>
             <p className="text-sm text-gray-700">
-              {getAIDailyTip(stats, leads)}
+              {getAIDailyTip(stats, leadsCount)}
             </p>
           </div>
         </div>
@@ -309,34 +379,25 @@ function getAIMotivationalMessage(stats: ProspectorStats, performance: Performan
   return 'Continue focado! Consistência é a chave para o sucesso na prospecção! ⭐';
 }
 
-function getAIDailyTip(stats: ProspectorStats, leads: ProspectLead[]): string {
+function getAIDailyTip(stats: ProspectorStats, leadsCount: number): string {
   const tips = [
     `Leads inativos há 7+ dias têm 40% menos chance de conversão. Priorize follow-ups!`,
     `Compartilhe seu link em grupos de WhatsApp locais - taxa de conversão 3x maior que redes sociais.`,
-    `Profissionais de ${getMostCommonCategory(leads) || 'serviços gerais'} têm maior demanda nesta região. Foque neles!`,
+    `Profissionais de serviços gerais têm maior demanda nesta região. Foque neles!`,
     `Envie mensagens entre 10h-12h e 18h-20h para aumentar taxa de resposta em 60%.`,
     `Leads com email têm 2x mais chance de conversão. Sempre peça o contato completo!`,
   ];
 
   // IA simples: seleciona tip baseado em contexto
-  if (leads.filter(l => l.stage === 'new').length > 5) {
-    return 'Você tem muitos leads novos! Priorize fazer o primeiro contato nas próximas 24h para aumentar conversão em 50%.';
+  if (leadsCount === 0) {
+    return 'Comece adicionando seu primeiro lead! Profissionais qualificados estão esperando para se cadastrar na Servio.AI.';
   }
-  if (stats.progressToNextBadge > 80) {
+  if (leadsCount > 10) {
+    return 'Excelente trabalho! Com mais de 10 leads, foque em manter contato regular para maximizar conversões.';
+  }
+  if (stats.progressToNextBadge > 80 && stats.nextBadge) {
     return `Faltam apenas ${Math.ceil((100 - stats.progressToNextBadge) * stats.totalRecruits / 100)} recrutas para o badge ${stats.nextBadge}! Foque em fechar negociações pendentes hoje.`;
   }
   
   return tips[Math.floor(Math.random() * tips.length)];
-}
-
-function getMostCommonCategory(leads: ProspectLead[]): string | null {
-  const categories = leads.map(l => l.category).filter(Boolean);
-  if (categories.length === 0) return null;
-  
-  const counts = categories.reduce((acc, cat) => {
-    acc[cat!] = (acc[cat!] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
 }

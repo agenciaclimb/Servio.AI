@@ -9,7 +9,7 @@
  * - Envio 1-click para WhatsApp/Email/SMS
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { ProspectLead } from '../ProspectorCRM';
@@ -27,14 +27,10 @@ export default function AIMessageGenerator({
   referralLink,
   onSendSuccess
 }: Readonly<AIMessageGeneratorProps>) {
-  const [message, setMessage] = useState<string>('');
   const [channel, setChannel] = useState<'whatsapp' | 'email' | 'sms'>('whatsapp');
-
-  function generateAIMessage() {
-    setMessage(generateLocalTemplate());
-  }
-
-  function generateLocalTemplate(): string {
+  
+  // Auto-gerar mensagem ao abrir e ao trocar canal
+  const generateLocalTemplateCallback = () => {
     const variables = {
       nome: lead.name,
       categoria: lead.category || 'serviços profissionais',
@@ -160,6 +156,17 @@ Prospector Servio.AI`
     };
 
     return templates[channel][lead.stage === 'new' ? 'new' : lead.stage === 'contacted' ? 'contacted' : 'negotiating'];
+  };
+  
+  const [message, setMessage] = useState<string>(() => generateLocalTemplateCallback());
+
+  // Regenerar quando trocar canal
+  useEffect(() => {
+    setMessage(generateLocalTemplateCallback());
+  }, [channel]);
+
+  function generateAIMessage() {
+    setMessage(generateLocalTemplateCallback());
   }
 
   function getGreeting(): string {

@@ -50,6 +50,12 @@ build/
 # Bloquear credenciais sensíveis (Service Account JSON)
 doc/gen-lang-client-0737507616-*.json
 
+# Credenciais Omnichannel (Meta, WhatsApp)
+doc/CREDENTIALS_OMNICHANNEL.md
+.env.local
+.env.*.local
+backend/.env.local
+
 # Stripe sensitive configuration
 STRIPE_CONFIGURACAO_COMPLETA.txt
 STRIPE_FINAL_STATUS.md

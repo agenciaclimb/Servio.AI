@@ -6,7 +6,7 @@ export type LeadStage = 'new' | 'contacted' | 'negotiating' | 'won' | 'lost';
 export type LeadTemperature = 'hot' | 'warm' | 'cold';
 export type LeadPriority = 'high' | 'medium' | 'low';
 export type LeadSource = 'referral' | 'direct' | 'event' | 'social' | 'other';
-export type ActivityType = 'call' | 'message' | 'email' | 'note' | 'stage_change';
+export type ActivityType = 'call' | 'message' | 'email' | 'note' | 'stage_change' | 'follow_up';
 
 export interface ProviderService {
   id: string;

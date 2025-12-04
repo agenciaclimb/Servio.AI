@@ -267,6 +267,89 @@ class WhatsAppService {
   getWebhookToken() {
     return WEBHOOK_TOKEN;
   }
+
+  /**
+   * Envia mensagens em massa com rate limiting e retry logic
+   * @param {Array} recipients - Array de { phone, message, leadId }
+   * @param {Object} options - { delayMs: tempo entre msgs, maxRetries: tentativas }
+   * @returns {Promise<Object>} { sent, failed, results }
+   */
+  async sendBulkMessages(recipients, options = {}) {
+    const {
+      delayMs = 15, // 15ms = ~66 msg/seg (limite Meta: 80/seg)
+      maxRetries = 2,
+      batchSize = 100
+    } = options;
+
+    const results = {
+      sent: 0,
+      failed: 0,
+      details: []
+    };
+
+    for (let i = 0; i < recipients.length; i++) {
+      const recipient = recipients[i];
+      let attempts = 0;
+      let success = false;
+      let lastError = null;
+
+      // Retry logic
+      while (attempts < maxRetries && !success) {
+        attempts++;
+
+        const result = await this.sendMessage(
+          recipient.phone,
+          recipient.message,
+          recipient.messageId || `bulk_${Date.now()}_${i}`
+        );
+
+        if (result.success) {
+          success = true;
+          results.sent++;
+        } else {
+          lastError = result.error;
+          
+          // Se erro for rate limit, aguarda mais tempo
+          if (lastError && lastError.includes('rate limit')) {
+            await this._sleep(1000); // 1 segundo de pausa
+          }
+        }
+      }
+
+      results.details.push({
+        leadId: recipient.leadId || null,
+        phone: recipient.phone,
+        success,
+        attempts,
+        error: success ? null : lastError
+      });
+
+      if (!success) {
+        results.failed++;
+      }
+
+      // Rate limiting: pausa entre mensagens
+      if (i < recipients.length - 1) {
+        await this._sleep(delayMs);
+      }
+
+      // Log de progresso a cada 10 mensagens
+      if ((i + 1) % 10 === 0) {
+        logger.info(`📊 Progresso WhatsApp bulk: ${i + 1}/${recipients.length} (${results.sent} enviados, ${results.failed} falhados)`);
+      }
+    }
+
+    logger.info(`✅ WhatsApp bulk finalizado: ${results.sent} enviados, ${results.failed} falhados de ${recipients.length} total`);
+    return results;
+  }
+
+  /**
+   * Helper: sleep promise
+   * @private
+   */
+  _sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 }
 
 module.exports = new WhatsAppService();

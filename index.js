@@ -82,3 +82,48 @@ exports.generateSeoOnVerification = functions
     }
     return null;
   });
+
+/**
+ * HTTPS Scheduler endpoint: executa follow-ups automáticos
+ * Protegido por header "x-servio-scheduler-token".
+ */
+exports.prospectorRunScheduler = functions
+  .region('us-central1')
+  .https.onRequest(async (req, res) => {
+    try {
+      if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
+      const tokenHeader = req.headers['x-servio-scheduler-token'];
+      const configured = (functions.config().servio && functions.config().servio.scheduler_token) || process.env.SERVIO_SCHEDULER_TOKEN;
+      if (!configured || tokenHeader !== configured) return res.status(401).send('Unauthorized');
+
+      const now = admin.firestore.Timestamp.now();
+      const limit = Math.min(parseInt(req.query.limit) || 50, 200);
+
+      const q = db.collection('prospector_prospects')
+        .where('nextFollowUpAt', '<=', now)
+        .limit(limit);
+
+      const snapshot = await q.get();
+      const processed = [];
+      for (const docSnap of snapshot.docs) {
+        const lead = docSnap.data();
+        const next = admin.firestore.Timestamp.fromMillis(Date.now() + 24 * 60 * 60 * 1000);
+        const newActivity = {
+          type: 'follow_up',
+          description: 'Follow-up automático executado (scheduler)',
+          timestamp: admin.firestore.Timestamp.now()
+        };
+        await docSnap.ref.update({
+          lastActivity: admin.firestore.Timestamp.now(),
+          nextFollowUpAt: next,
+          activities: [...(lead.activities || []), newActivity]
+        });
+        processed.push(docSnap.id);
+      }
+
+      return res.status(200).json({ ok: true, count: processed.length, processed });
+    } catch (err) {
+      console.error('prospectorRunScheduler error:', err);
+      return res.status(500).json({ ok: false, error: String(err) });
+    }
+  });

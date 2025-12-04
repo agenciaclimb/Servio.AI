@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { fetchProspectorStats, fetchProspectorLeaderboard, ProspectorStats, LeaderboardEntry, computeBadgeProgress } from '../services/api';
 import ReferralLinkGenerator from '../src/components/ReferralLinkGenerator';
 import NotificationSettings from '../src/components/NotificationSettings';
@@ -6,8 +6,12 @@ import ProspectorMaterials from '../src/components/ProspectorMaterials';
 // Novos componentes IA
 import QuickPanel from '../src/components/prospector/QuickPanel';
 import QuickActionsBar from '../src/components/prospector/QuickActionsBar';
-import ProspectorCRMEnhanced from '../src/components/prospector/ProspectorCRMEnhanced';
+import QuickAddPanel from '../src/components/prospector/QuickAddPanel';
+import ProspectorCRMProfessional from '../src/components/prospector/ProspectorCRMProfessional';
 import OnboardingTour from '../src/components/prospector/OnboardingTour';
+import { db } from '../firebaseConfig';
+import { collection, addDoc, Timestamp, query, where, getDocs } from 'firebase/firestore';
+import BulkCampaignModal from '../src/components/prospector/BulkCampaignModal';
 
 const loadingClass = 'animate-pulse bg-gray-200 rounded h-6 w-32';
 
@@ -45,32 +49,52 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<TabType>('dashboard'); // Novo padrão: dashboard IA
+  const [activeTab, setActiveTab] = useState<TabType>('crm'); // Padrão: CRM Kanban moderno
   const [referralLink, setReferralLink] = useState<string>('');
   const [showAddLeadModal, setShowAddLeadModal] = useState(false);
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
+  const [showCampaignModal, setShowCampaignModal] = useState(false);
+  const [leadsCount, setLeadsCount] = useState(0);
+  
+  // Estados do formulário de novo lead
+  const [newLeadForm, setNewLeadForm] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    category: '',
+    source: 'direct' as 'direct' | 'referral' | 'event' | 'social' | 'other',
+    notes: ''
+  });
+  const [isSavingLead, setIsSavingLead] = useState(false);
+
+  const loadDashboardData = useCallback(async () => {
+    if (!prospectorId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const [s, lb] = await Promise.all([
+        fetchProspectorStats(prospectorId),
+        fetchProspectorLeaderboard('commissions', 10)
+      ]);
+      setStats(s);
+      setLeaderboard(lb);
+      
+      // Contar leads
+      const leadsSnapshot = await getDocs(
+        query(collection(db, 'prospector_prospects'), where('prospectorId', '==', prospectorId))
+      );
+      setLeadsCount(leadsSnapshot.size);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Falha ao carregar';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }, [prospectorId]);
 
   useEffect(() => {
-    async function load() {
-      if (!prospectorId) return;
-      setLoading(true);
-      setError(null);
-      try {
-        const [s, lb] = await Promise.all([
-          fetchProspectorStats(prospectorId),
-          fetchProspectorLeaderboard('commissions', 10)
-        ]);
-        setStats(s);
-        setLeaderboard(lb);
-      } catch (e) {
-        const message = e instanceof Error ? e.message : 'Falha ao carregar';
-        setError(message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, [prospectorId]);
+    loadDashboardData();
+  }, [loadDashboardData]);
 
   // Optimistic badge if stats missing
   const badge = stats ? {
@@ -93,6 +117,7 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
         unreadNotifications={0} // Feature planned for Sprint 2: real-time notifications integration
         onAddLead={() => setShowAddLeadModal(true)}
         onOpenNotifications={() => setShowNotificationsModal(true)}
+        onOpenCampaign={() => setShowCampaignModal(true)}
       />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
@@ -161,16 +186,26 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
           <QuickPanel
             prospectorId={prospectorId}
             stats={stats}
+            leadsCount={leadsCount}
           />
         )}
 
         {/* Tab Content: CRM Enhanced */}
         {activeTab === 'crm' && (
-          <ProspectorCRMEnhanced
-            prospectorId={prospectorId}
-            prospectorName={'Prospector'}
-            referralLink={referralLink || `${globalThis.location?.origin || ''}/cadastro?ref=${prospectorId}`}
-          />
+          <>
+            {/* QuickAddPanel - Cadastro rápido de leads */}
+            <QuickAddPanel 
+              onLeadsAdded={(count) => {
+                console.log(`✅ ${count} leads adicionados!`);
+                loadDashboardData(); // Recarrega contadores
+              }} 
+            />
+            
+            {/* CRM Profissional Kanban */}
+            <ProspectorCRMProfessional
+              prospectorId={prospectorId}
+            />
+          </>
         )}
 
       {/* Tab Content: Overview Legado */}
@@ -262,26 +297,202 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
 
       {/* Modals */}
       {showAddLeadModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowAddLeadModal(false)}>
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold">➕ Adicionar Lead</h3>
+              <h3 className="text-xl font-bold">➕ Adicionar Novo Lead</h3>
               <button onClick={() => setShowAddLeadModal(false)} className="text-gray-500 hover:text-gray-700 text-2xl">
                 ×
               </button>
             </div>
-            <p className="text-sm text-gray-600 mb-4">
-              Esta funcionalidade será integrada com o CRM em breve. Por enquanto, use a aba "Pipeline CRM" para gerenciar seus leads.
-            </p>
-            <button
-              onClick={() => {
+            
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              if (!newLeadForm.name || !newLeadForm.phone) {
+                alert('Nome e telefone são obrigatórios!');
+                return;
+              }
+              
+              setIsSavingLead(true);
+              try {
+                const leadData = {
+                  prospectorId,
+                  name: newLeadForm.name,
+                  phone: newLeadForm.phone,
+                  email: newLeadForm.email || null,
+                  category: newLeadForm.category || null,
+                  source: newLeadForm.source,
+                  stage: 'new',
+                  notes: newLeadForm.notes || null,
+                  createdAt: Timestamp.now(),
+                  updatedAt: Timestamp.now(),
+                  activities: []
+                };
+                
+                await addDoc(collection(db, 'prospector_prospects'), leadData);
+                
+                // Limpar formulário
+                setNewLeadForm({
+                  name: '',
+                  phone: '',
+                  email: '',
+                  category: '',
+                  source: 'direct',
+                  notes: ''
+                });
+                
                 setShowAddLeadModal(false);
+                
+                // Toast de sucesso
+                const toast = document.createElement('div');
+                toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2';
+                toast.innerHTML = '<span class="text-xl">✅</span><span class="font-medium">Lead adicionado com sucesso!</span>';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+                
+                // Reload dashboard data
+                loadDashboardData();
+                
+                // Redirecionar para CRM
                 setActiveTab('crm');
-              }}
-              className="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
-            >
-              Ir para CRM
-            </button>
+              } catch (error) {
+                console.error('Erro ao salvar lead:', error);
+                alert('❌ Erro ao salvar lead. Tente novamente.');
+              } finally {
+                setIsSavingLead(false);
+              }
+            }} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nome <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newLeadForm.name}
+                  onChange={(e) => setNewLeadForm({...newLeadForm, name: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="João Silva"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Telefone <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="tel"
+                  required
+                  value={newLeadForm.phone}
+                  onChange={(e) => {
+                    // Máscara automática de telefone brasileiro
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length <= 11) {
+                      if (value.length <= 2) {
+                        value = value.replace(/^(\d{0,2})/, '($1');
+                      } else if (value.length <= 6) {
+                        value = value.replace(/^(\d{2})(\d{0,4})/, '($1) $2');
+                      } else if (value.length <= 10) {
+                        value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+                      } else {
+                        value = value.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+                      }
+                    }
+                    setNewLeadForm({...newLeadForm, phone: value});
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="(11) 98765-4321"
+                  maxLength={15}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={newLeadForm.email}
+                  onChange={(e) => setNewLeadForm({...newLeadForm, email: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="joao@exemplo.com"
+                />
+                <p className="text-xs text-gray-500 mt-1">💡 Leads com email têm 2x mais chance de conversão</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Categoria
+                </label>
+                <input
+                  type="text"
+                  list="categories"
+                  value={newLeadForm.category}
+                  onChange={(e) => setNewLeadForm({...newLeadForm, category: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Ex: Eletricista, Encanador..."
+                />
+                <datalist id="categories">
+                  <option value="Eletricista" />
+                  <option value="Encanador" />
+                  <option value="Pedreiro" />
+                  <option value="Pintor" />
+                  <option value="Marceneiro" />
+                  <option value="Jardineiro" />
+                  <option value="Faxineiro" />
+                  <option value="Montador de Móveis" />
+                  <option value="Chaveiro" />
+                  <option value="Vidraceiro" />
+                </datalist>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Fonte
+                </label>
+                <select
+                  value={newLeadForm.source}
+                  onChange={(e) => setNewLeadForm({...newLeadForm, source: e.target.value as any})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                  <option value="direct">Direto</option>
+                  <option value="referral">Indicação</option>
+                  <option value="event">Evento</option>
+                  <option value="social">Redes Sociais</option>
+                  <option value="other">Outro</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Observações
+                </label>
+                <textarea
+                  value={newLeadForm.notes}
+                  onChange={(e) => setNewLeadForm({...newLeadForm, notes: e.target.value})}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                  placeholder="Anotações sobre o lead..."
+                />
+              </div>
+              
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddLeadModal(false)}
+                  className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingLead}
+                  className="flex-1 bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSavingLead ? 'Salvando...' : 'Salvar Lead'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -301,6 +512,16 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
           </div>
         </div>
       )}
+
+      {/* Modal: Envio de Campanha */}
+      <BulkCampaignModal
+        isOpen={showCampaignModal}
+        onClose={() => setShowCampaignModal(false)}
+        onSent={() => {
+          // Recarrega métricas após envio
+          loadDashboardData();
+        }}
+      />
     </div>
   );
 };

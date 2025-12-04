@@ -7,10 +7,11 @@
   },
   "functions": {
     "source": "functions",
-    "runtime": "nodejs18",
-    "region": "us-west1"
+    "runtime": "nodejs20",
+    "region": "us-central1"
   },
   "hosting": {
+    "site": "gen-lang-client-0737507616",
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "headers": [
