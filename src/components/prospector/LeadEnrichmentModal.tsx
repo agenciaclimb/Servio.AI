@@ -28,7 +28,7 @@ function fakeEnrichment(lead: ProspectLead) {
 
 export default function LeadEnrichmentModal({ lead, onClose, onUpdate }: LeadEnrichmentModalProps) {
   const [loading, setLoading] = useState(false);
-  const [enriched, setEnriched] = useState<any>(null);
+  const [enriched, setEnriched] = useState<{ linkedin?: string; website?: string; company?: string; title?: string; location?: string } | null>(null);
   const [notes, setNotes] = useState('');
 
   if (!lead) return null;
@@ -53,7 +53,7 @@ export default function LeadEnrichmentModal({ lead, onClose, onUpdate }: LeadEnr
   async function handleSave() {
     if (!lead) return;
     try {
-      const updates: Partial<ProspectLead> = {
+      const updates: Partial<ProspectLead & { linkedin?: string; website?: string; company?: string; title?: string; location?: string; enrichmentNotes?: string }> = {
         linkedin: enriched?.linkedin,
         website: enriched?.website,
         company: enriched?.company,
@@ -61,7 +61,7 @@ export default function LeadEnrichmentModal({ lead, onClose, onUpdate }: LeadEnr
         location: enriched?.location,
         enrichmentNotes: notes,
         updatedAt: new Date()
-      } as any;
+      };
       await updateDoc(doc(db, 'prospector_prospects', lead.id), {
         ...updates,
         updatedAt: Timestamp.now()
