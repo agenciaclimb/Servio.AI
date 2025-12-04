@@ -284,7 +284,9 @@ export default function ProspectorCRMEnhanced({
                 try {
                   const analytics = await getAnalyticsIfSupported();
                   if (analytics) logEvent(analytics, 'funnel_dashboard_opened', { lead_count: leads.length });
-                } catch {}
+                } catch (error) {
+                  console.debug('Funnel dashboard tracking failed', error);
+                }
               }
             }}
             data-testid="btn-funnel-dashboard"
@@ -305,7 +307,9 @@ export default function ProspectorCRMEnhanced({
               try {
                 const analytics = await getAnalyticsIfSupported();
                 if (analytics) logEvent(analytics, 'enrichment_opened', {});
-              } catch {}
+              } catch (error) {
+                console.debug('Analytics tracking failed', error);
+              }
             }}
             data-testid="btn-enrichment"
             className="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg font-bold hover:shadow-lg transition-all"
@@ -318,7 +322,9 @@ export default function ProspectorCRMEnhanced({
               try {
                 const analytics = await getAnalyticsIfSupported();
                 if (analytics) logEvent(analytics, 'gamification_opened', { lead_count: leads.length });
-              } catch {}
+              } catch (error) {
+                console.debug('Gamification tracking failed', error);
+              }
             }}
             data-testid="btn-gamification"
             className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-lg font-bold hover:shadow-lg transition-all"
@@ -360,7 +366,9 @@ export default function ProspectorCRMEnhanced({
               try {
                 const analytics = await getAnalyticsIfSupported();
                 if (analytics) logEvent(analytics, 'sequence_activated_callback', { sequence_id: sequenceId, lead_count: count });
-              } catch {}
+              } catch (error) {
+                console.debug('Sequence activated tracking failed', error);
+              }
             }}
           />
         )}
@@ -543,7 +551,9 @@ export default function ProspectorCRMEnhanced({
         updatedAt: Timestamp.now(),
         activities: updatedActivities
       });
-      try { await trackStageChange((lead as any).campaignId || null, lead.stage, newStage); } catch {}
+      try { await trackStageChange((lead as any).campaignId || null, lead.stage, newStage); } catch (error) {
+        console.debug('Stage change tracking failed', error);
+      }
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Erro ao mover lead';
       console.error('[CRM] Erro ao atualizar lead:', error);
@@ -858,8 +868,12 @@ export default function ProspectorCRMEnhanced({
                                         lastActivity: Timestamp.fromDate(new Date())
                                       });
                                       setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, activities: [...(l.activities || []), newActivity], lastActivity: new Date() } : l));
-                                      try { await trackChannelAction('whatsapp', true); } catch {}
-                                    } catch {}
+                                      try { await trackChannelAction('whatsapp', true); } catch (error) {
+                                        console.debug('WhatsApp tracking failed', error);
+                                      }
+                                    } catch (error) {
+                                      console.debug('WhatsApp action failed', error);
+                                    }
                                   }}
                                   className="flex-1 text-xs bg-green-50 hover:bg-green-100 text-green-700 py-1 rounded transition-colors"
                                   title="WhatsApp"
@@ -887,8 +901,12 @@ export default function ProspectorCRMEnhanced({
                                           lastEmailSentAt: Timestamp.fromDate(new Date())
                                         });
                                         setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, activities: [...(l.activities || []), newActivity], lastActivity: new Date(), lastEmailSentAt: new Date() } : l));
-                                        try { await trackChannelAction('email', true); } catch {}
-                                      } catch {}
+                                        try { await trackChannelAction('email', true); } catch (error) {
+                                          console.debug('Email tracking failed', error);
+                                        }
+                                      } catch (error) {
+                                        console.debug('Email action failed', error);
+                                      }
                                     }
                                   }}
                                   disabled={!lead.email}
@@ -909,8 +927,12 @@ export default function ProspectorCRMEnhanced({
                                         lastActivity: Timestamp.fromDate(new Date())
                                       });
                                       setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, activities: [...(l.activities || []), newActivity], lastActivity: new Date() } : l));
-                                      try { await trackChannelAction('call', true); } catch {}
-                                    } catch {}
+                                      try { await trackChannelAction('call', true); } catch (error) {
+                                        console.debug('Call tracking failed', error);
+                                      }
+                                    } catch (error) {
+                                      console.debug('Call action failed', error);
+                                    }
                                   }}
                                   className="flex-1 text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 py-1 rounded transition-colors"
                                   title="Ligar"
@@ -1023,7 +1045,9 @@ export default function ProspectorCRMEnhanced({
                       });
                       setLeads(prev => prev.map(l => l.id === selectedLead.id ? { ...l, activities: [...(l.activities || []), newActivity], lastActivity: new Date() } : l));
                       setSelectedLead({ ...selectedLead, activities: [...(selectedLead.activities || []), newActivity], lastActivity: new Date() });
-                    } catch {}
+                    } catch (error) {
+                      console.debug('Modal WhatsApp action failed', error);
+                    }
                   }}
                   className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
                 >
@@ -1050,7 +1074,9 @@ export default function ProspectorCRMEnhanced({
                       });
                       setLeads(prev => prev.map(l => l.id === selectedLead.id ? { ...l, activities: [...(l.activities || []), newActivity], lastActivity: new Date(), lastEmailSentAt: new Date() } : l));
                       setSelectedLead({ ...selectedLead, activities: [...(selectedLead.activities || []), newActivity], lastActivity: new Date(), lastEmailSentAt: new Date() });
-                    } catch {}
+                    } catch (error) {
+                      console.debug('Modal Email action failed', error);
+                    }
                   }}
                   className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
                   disabled={!selectedLead.email}
@@ -1069,7 +1095,9 @@ export default function ProspectorCRMEnhanced({
                       });
                       setLeads(prev => prev.map(l => l.id === selectedLead.id ? { ...l, activities: [...(l.activities || []), newActivity], lastActivity: new Date() } : l));
                       setSelectedLead({ ...selectedLead, activities: [...(selectedLead.activities || []), newActivity], lastActivity: new Date() });
-                    } catch {}
+                    } catch (error) {
+                      console.debug('Modal Call action failed', error);
+                    }
                   }}
                   className="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
                 >
@@ -1591,7 +1619,9 @@ function ProspectorCRMV2Inner({
                               try {
                                 const analytics = await getAnalyticsIfSupported();
                                 if (analytics) logEvent(analytics, 'prospector_card_view', { lead_id: lead.id, density, temperature: lead.temperature, priority: lead.priority });
-                              } catch {}
+                              } catch (error) {
+                                console.debug('Prospect card view tracking failed', error);
+                              }
                             }}
                             onSelect={(e) => {
                               e.stopPropagation();

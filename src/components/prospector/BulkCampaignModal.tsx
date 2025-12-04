@@ -4,7 +4,7 @@ import { auth } from '../../../firebaseConfig';
 interface BulkCampaignModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSent?: (result: any) => void;
+  onSent?: (result: { success: number; failed: number; total: number }) => void;
 }
 
 export default function BulkCampaignModal({ isOpen, onClose, onSent }: BulkCampaignModalProps) {
@@ -28,7 +28,7 @@ export default function BulkCampaignModal({ isOpen, onClose, onSent }: BulkCampa
     
     try {
       // Valida canais selecionados
-      const selectedChannels = Object.keys(channels).filter(k => (channels as any)[k]);
+      const selectedChannels = Object.keys(channels).filter(k => channels[k as keyof typeof channels]);
       if (selectedChannels.length === 0) {
         setError('Selecione pelo menos um canal (Email ou WhatsApp)');
         setSending(false);
@@ -36,7 +36,7 @@ export default function BulkCampaignModal({ isOpen, onClose, onSent }: BulkCampa
       }
 
       // Parse leads
-      const leads = [] as Array<any>;
+      const leads: Array<{ email?: string; phone?: string }> = [];
       const emails = leadEmails.split(/[;,\n]/).map(s => s.trim()).filter(Boolean);
       const phones = leadPhones.split(/[;,\n]/).map(s => s.trim()).filter(Boolean);
       
@@ -62,7 +62,7 @@ export default function BulkCampaignModal({ isOpen, onClose, onSent }: BulkCampa
       }
 
       // Monta lista de leads (evita duplicatas)
-      const leadMap = new Map<string, any>();
+      const leadMap = new Map<string, { email?: string; phone?: string }>();
       emails.forEach(e => {
         const key = e.toLowerCase();
         if (!leadMap.has(key)) leadMap.set(key, { email: e });

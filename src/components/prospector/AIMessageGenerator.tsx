@@ -163,7 +163,7 @@ Prospector Servio.AI`
   // Regenerar quando trocar canal
   useEffect(() => {
     setMessage(generateLocalTemplateCallback());
-  }, [channel]);
+  }, [channel, lead.stage]);
 
   function generateAIMessage() {
     setMessage(generateLocalTemplateCallback());

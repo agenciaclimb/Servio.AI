@@ -196,7 +196,7 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
             {/* QuickAddPanel - Cadastro rápido de leads */}
             <QuickAddPanel 
               onLeadsAdded={(count) => {
-                console.log(`✅ ${count} leads adicionados!`);
+                console.debug(`✅ ${count} leads adicionados!`);
                 loadDashboardData(); // Recarrega contadores
               }} 
             />
