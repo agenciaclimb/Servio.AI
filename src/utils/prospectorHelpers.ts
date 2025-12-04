@@ -8,7 +8,7 @@ export type LeadTemperature = 'hot' | 'warm' | 'cold';
 export interface ProspectLead {
   id: string;
   name: string;
-  email: string;
+  email?: string;
   phone?: string;
   category?: string;
   temperature?: LeadTemperature;

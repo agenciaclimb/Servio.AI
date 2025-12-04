@@ -9,6 +9,8 @@ interface ImportMetaEnv {
 	readonly VITE_FIREBASE_APP_ID: string
 	readonly VITE_FIREBASE_MEASUREMENT_ID?: string
 	readonly VITE_FIREBASE_VAPID_KEY?: string
+	readonly VITE_CRM_V2_ENABLED?: string
+	readonly VITE_CRM_VIEWS_ENABLED?: string
 }
 
 interface ImportMeta {

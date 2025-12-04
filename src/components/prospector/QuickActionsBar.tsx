@@ -24,6 +24,7 @@ interface QuickActionsBarProps {
   unreadNotifications: number;
   onAddLead: () => void;
   onOpenNotifications: () => void;
+  onOpenCampaign?: () => void;
 }
 
 export default function QuickActionsBar({
@@ -31,7 +32,8 @@ export default function QuickActionsBar({
   referralLink,
   unreadNotifications,
   onAddLead,
-  onOpenNotifications
+  onOpenNotifications,
+  onOpenCampaign
 }: QuickActionsBarProps) {
   const [nextAction, setNextAction] = useState<SmartAction | null>(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -179,6 +181,16 @@ export default function QuickActionsBar({
                 ➕
               </button>
 
+              {/* Enviar Campanha */}
+              {onOpenCampaign && (
+                <button
+                  onClick={onOpenCampaign}
+                  className="w-14 h-14 bg-purple-500 text-white rounded-full shadow-xl flex items-center justify-center text-2xl hover:shadow-2xl transition-all"
+                >
+                  📧
+                </button>
+              )}
+
               {/* Compartilhar Link */}
               <button
                 onClick={handleShareLink}
@@ -251,6 +263,18 @@ export default function QuickActionsBar({
               <span className="text-xl">➕</span>
               <span className="text-sm">Novo Lead</span>
             </button>
+
+            {/* Enviar Campanha */}
+            {onOpenCampaign && (
+              <button
+                onClick={onOpenCampaign}
+                className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition-all"
+                title="Enviar campanha de prospecção"
+              >
+                <span className="text-xl">📧</span>
+                <span className="text-sm">Campanha</span>
+              </button>
+            )}
 
             {/* Notificações */}
             <button

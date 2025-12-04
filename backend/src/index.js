@@ -1270,6 +1270,30 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
     }
   });
 
+  // =================================================================
+  // SENDGRID WEBHOOK (Email Event Tracking)
+  // =================================================================
+
+  app.post('/api/sendgrid-webhook', express.json(), async (req, res) => {
+    try {
+      const events = req.body; // SendGrid envia array de eventos
+      if (!Array.isArray(events)) {
+        return res.status(400).send('Invalid webhook payload');
+      }
+
+      console.log(`[SendGrid Webhook] Received ${events.length} events`);
+
+      // Processar eventos usando emailService
+      const emailService = require('./services/emailService');
+      await emailService.handleWebhookEvents(events);
+
+      res.status(200).send('OK');
+    } catch (error) {
+      console.error('[SendGrid Webhook] Error:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+
   app.post("/jobs/:jobId/set-on-the-way", async (req, res) => {
     const { jobId } = req.params;
     try {
@@ -2739,6 +2763,411 @@ Retorne apenas o corpo do email, sem assunto.`;
     }
   });
 
+  // =================================================================
+  // NEW PROSPECTING AUTOMATION ENDPOINTS
+  // =================================================================
+
+  const googlePlacesService = require('./services/googlePlacesService');
+  const emailService = require('./services/emailService');
+  const whatsappService = require('./whatsappService');
+
+  /**
+   * Import leads em massa (CSV, paste, bulk)
+   * POST /api/prospector/import-leads
+   * Body: { userId, leads: [{ name, phone, email?, category }] }
+   */
+  app.post('/api/prospector/import-leads', requireAuth, async (req, res) => {
+    try {
+      const { userId, leads } = req.body;
+      const authEmail = req.user?.email;
+
+      // Validação: usuário deve ser prospector e corresponder ao userId
+      if (!authEmail || !userId) {
+        return res.status(401).json({ error: 'Authentication required' });
+      }
+
+      // Verifica se o usuário é prospector
+      const userDoc = await db.collection('users').doc(authEmail).get();
+      if (!userDoc.exists || userDoc.data().type !== 'prospector') {
+        return res.status(403).json({ error: 'Only prospectors can import leads' });
+      }
+
+      if (!Array.isArray(leads) || leads.length === 0) {
+        return res.status(400).json({ error: 'leads array required (min 1 lead)' });
+      }
+
+      if (leads.length > 100) {
+        return res.status(400).json({ error: 'Maximum 100 leads per batch' });
+      }
+
+      const results = {
+        imported: 0,
+        failed: 0,
+        details: []
+      };
+
+      for (const lead of leads) {
+        try {
+          // Validação básica
+          if (!lead.name || !lead.phone) {
+            results.failed++;
+            results.details.push({
+              lead,
+              success: false,
+              error: 'Nome e telefone obrigatórios'
+            });
+            continue;
+          }
+
+          // Normaliza telefone
+          const cleanPhone = lead.phone.replace(/\D/g, '');
+
+          // Gera ID único baseado no telefone do prospector
+          const leadId = `${userId}_${cleanPhone}`;
+
+          // Checa duplicatas
+          const existingLead = await db.collection('prospector_prospects').doc(leadId).get();
+          if (existingLead.exists) {
+            results.failed++;
+            results.details.push({
+              lead,
+              success: false,
+              error: 'Lead já existe'
+            });
+            continue;
+          }
+
+          // Enriquecimento básico com IA (opcional)
+          let enrichedData = {};
+          if (lead.category) {
+            try {
+              // Usa Gemini para gerar bio/headline se possível
+              const aiEnrichment = await enrichLeadWithAI(lead);
+              enrichedData = aiEnrichment;
+            } catch (aiError) {
+              console.warn('AI enrichment failed, continuing without it:', aiError.message);
+            }
+          }
+
+          // Salva no Firestore
+          await db.collection('prospector_prospects').doc(leadId).set({
+            id: leadId,
+            prospectorId: userId,
+            name: lead.name,
+            phone: cleanPhone,
+            email: lead.email || null,
+            category: lead.category || 'Geral',
+            stage: 'new',
+            source: 'bulk_import',
+            ...enrichedData,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+          });
+
+          results.imported++;
+          results.details.push({
+            leadId,
+            name: lead.name,
+            success: true
+          });
+        } catch (error) {
+          results.failed++;
+          results.details.push({
+            lead,
+            success: false,
+            error: error.message
+          });
+        }
+      }
+
+      res.status(200).json(results);
+    } catch (error) {
+      console.error('Error importing leads:', error);
+      res.status(500).json({ error: 'Failed to import leads' });
+    }
+  });
+
+  /**
+   * Enriquece um lead com dados adicionais (Google Places, IA)
+   * POST /api/prospector/enrich-lead
+   * Body: { leadId, phone?, email?, name?, category? }
+   */
+  app.post('/api/prospector/enrich-lead', requireAuth, async (req, res) => {
+    try {
+      const { leadId, phone, email, name, category } = req.body;
+      const authEmail = req.user?.email;
+
+      if (!authEmail) {
+        return res.status(401).json({ error: 'Authentication required' });
+      }
+
+      if (!leadId) {
+        return res.status(400).json({ error: 'leadId required' });
+      }
+
+      // Verifica se o lead pertence ao prospector
+      const leadDoc = await db.collection('prospector_prospects').doc(leadId).get();
+      if (!leadDoc.exists) {
+        return res.status(404).json({ error: 'Lead not found' });
+      }
+
+      const leadData = leadDoc.data();
+      if (leadData.prospectorId !== authEmail) {
+        return res.status(403).json({ error: 'You can only enrich your own leads' });
+      }
+
+      const enrichedData = {};
+
+      // Se tem categoria, busca no Google Places
+      if (category && name) {
+        try {
+          const location = 'São Paulo, SP'; // Pode ser parametrizável
+          const places = await googlePlacesService.searchQualityProfessionals(category, location, {
+            maxResults: 5
+          });
+
+          // Tenta match por nome similar
+          const match = places.find(p => 
+            p.name.toLowerCase().includes(name.toLowerCase()) ||
+            name.toLowerCase().includes(p.name.toLowerCase())
+          );
+
+          if (match) {
+            enrichedData.address = match.address;
+            enrichedData.rating = match.rating;
+            enrichedData.reviewCount = match.reviewCount;
+            enrichedData.googleMapsUrl = match.googleMapsUrl;
+            enrichedData.website = match.website;
+            enrichedData.enrichedFrom = 'google_places';
+          }
+        } catch (error) {
+          console.warn('Google Places enrichment failed:', error.message);
+        }
+      }
+
+      // Enriquecimento com IA
+      if (name && category) {
+        try {
+          const aiData = await enrichLeadWithAI({ name, category, email });
+          Object.assign(enrichedData, aiData);
+        } catch (error) {
+          console.warn('AI enrichment failed:', error.message);
+        }
+      }
+
+      // Atualiza lead no Firestore
+      if (Object.keys(enrichedData).length > 0) {
+        await db.collection('prospector_prospects').doc(leadId).update({
+          ...enrichedData,
+          enrichedAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        leadId,
+        enrichedData
+      });
+    } catch (error) {
+      console.error('Error enriching lead:', error);
+      res.status(500).json({ error: 'Failed to enrich lead' });
+    }
+  });
+
+  /**
+   * Envia campanha multi-canal para múltiplos leads
+   * POST /api/prospector/send-campaign
+   * Body: { channels: ['email','whatsapp'], template: {subject,message}, leads: [{email,phone}] }
+   */
+  app.post('/api/prospector/send-campaign', requireAuth, async (req, res) => {
+    try {
+      const { channels, template, leads } = req.body;
+      const authEmail = req.user?.email;
+
+      if (!authEmail) {
+        return res.status(401).json({ error: 'Authentication required' });
+      }
+
+      // Verifica se é prospector
+      const userDoc = await db.collection('users').doc(authEmail).get();
+      if (!userDoc.exists || userDoc.data().type !== 'prospector') {
+        return res.status(403).json({ error: 'Only prospectors can send campaigns' });
+      }
+
+      if (!Array.isArray(channels) || channels.length === 0) {
+        return res.status(400).json({ error: 'channels array required' });
+      }
+
+      if (!Array.isArray(leads) || leads.length === 0) {
+        return res.status(400).json({ error: 'leads array required (min 1 lead)' });
+      }
+
+      if (leads.length > 50) {
+        return res.status(400).json({ error: 'Maximum 50 leads per campaign' });
+      }
+
+      if (!template || !template.message) {
+        return res.status(400).json({ error: 'template with message required' });
+      }
+
+      const results = {
+        whatsapp: { sent: 0, failed: 0, details: [] },
+        email: { sent: 0, failed: 0, details: [] }
+      };
+
+      // Envia por Email
+      if (channels.includes('email')) {
+        const emailLeads = leads.filter(l => l.email);
+        
+        if (emailLeads.length > 0) {
+          try {
+            const emailData = {
+              subject: template.subject || 'Apresentação Servio.AI',
+              message: template.message,
+              fromEmail: 'prospeccao@servio.ai',
+              fromName: userDoc.data().name || 'Servio.AI'
+            };
+
+            const emailResults = await emailService.sendBulkEmails(emailLeads, emailData);
+            results.email = emailResults;
+            
+            // Log campanha no Firestore
+            await db.collection('prospector_campaigns').add({
+              prospectorId: authEmail,
+              channel: 'email',
+              recipientCount: emailLeads.length,
+              template: template.subject,
+              sentAt: admin.firestore.FieldValue.serverTimestamp(),
+              results: emailResults
+            });
+          } catch (emailError) {
+            console.error('Email campaign error:', emailError);
+            results.email.failed = emailLeads.length;
+            results.email.details.push({ error: emailError.message });
+          }
+        }
+      }
+
+      // Envia por WhatsApp
+      if (channels.includes('whatsapp')) {
+        const whatsappLeads = leads.filter(l => l.phone);
+        
+        if (whatsappLeads.length > 0) {
+          try {
+            const recipients = whatsappLeads.map(l => ({
+              phone: l.phone.replace(/\D/g, ''),
+              message: personalizeMessage(template.message, l)
+            }));
+
+            const whatsappResults = await whatsappService.sendBulkMessages(recipients);
+            results.whatsapp = whatsappResults;
+            
+            // Log campanha no Firestore
+            await db.collection('prospector_campaigns').add({
+              prospectorId: authEmail,
+              channel: 'whatsapp',
+              recipientCount: whatsappLeads.length,
+              template: 'custom',
+              sentAt: admin.firestore.FieldValue.serverTimestamp(),
+              results: whatsappResults
+            });
+          } catch (whatsappError) {
+            console.error('WhatsApp campaign error:', whatsappError);
+            results.whatsapp.failed = whatsappLeads.length;
+            results.whatsapp.details.push({ error: whatsappError.message });
+          }
+        }
+      }
+
+      res.status(200).json({
+        success: true,
+        results,
+        campaignId: `campaign_${Date.now()}`
+      });
+    } catch (error) {
+      console.error('Error sending campaign:', error);
+      res.status(500).json({ error: 'Failed to send campaign' });
+    }
+  });
+
+  /**
+   * Helper: Enriquece lead com IA (Gemini)
+   */
+  async function enrichLeadWithAI(lead) {
+    try {
+      if (!genAI) return {};
+
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+      
+      const prompt = `Você é um assistente de prospecção. Gere dados profissionais para:
+      Nome: ${lead.name}
+      Categoria: ${lead.category}
+      
+      Retorne JSON com:
+      - bio: Biografia profissional atraente (50-100 palavras)
+      - headline: Headline chamativo (10-15 palavras)
+      - tags: Array de 3-5 tags relevantes`;
+
+      const result = await model.generateContent(prompt);
+      const text = result.response.text();
+      
+      // Extrai JSON da resposta
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]);
+      }
+      
+      return {};
+    } catch (error) {
+      console.warn('AI enrichment error:', error.message);
+      return {};
+    }
+  }
+
+  /**
+   * Helper: Busca template de mensagem
+   */
+  async function getMessageTemplate(templateName) {
+    try {
+      const templateDoc = await db.collection('message_templates').doc(templateName).get();
+      
+      if (templateDoc.exists) {
+        return templateDoc.data();
+      }
+
+      // Templates padrão
+      const defaultTemplates = {
+        onboarding: {
+          whatsapp: '👋 Olá {nome}! Sou da Servio.AI. Você é {categoria}? Temos clientes buscando seus serviços. Cadastro gratuito: https://servio-ai.com/cadastro',
+          email: emailService.getDefaultTemplate({})
+        }
+      };
+
+      return defaultTemplates[templateName] || defaultTemplates.onboarding;
+    } catch (error) {
+      console.warn('Error loading template:', error);
+      return {
+        whatsapp: 'Olá! Cadastre-se na Servio.AI: https://servio-ai.com/cadastro',
+        email: emailService.getDefaultTemplate({})
+      };
+    }
+  }
+
+  /**
+   * Helper: Personaliza mensagem com dados do lead
+   */
+  function personalizeMessage(template, lead) {
+    return template
+      .replace(/\{nome\}/g, lead.name)
+      .replace(/\{categoria\}/g, lead.category || 'profissional')
+      .replace(/\{email\}/g, lead.email || '');
+  }
+
+  // =================================================================
+  // END NEW PROSPECTING AUTOMATION ENDPOINTS
+  // =================================================================
+
   // Get all jobs (with /api prefix for frontend compatibility)
   app.get("/api/jobs", requireAuth, async (req, res) => {
     try {
@@ -3324,6 +3753,13 @@ Retorne apenas o corpo do email, sem assunto.`;
   // Multi-role WhatsApp messaging for all user types
   // Routes: /api/whatsapp/client/*, /api/whatsapp/provider/*, /api/whatsapp/prospector/*, /api/whatsapp/admin/*
   app.use('/api/whatsapp/multi-role', whatsappMultiRoleRouter);
+
+  // Omnichannel Service - Unified multi-channel communication (WhatsApp, Instagram, Facebook, WebChat)
+  // Routes: POST /api/omni/webhook/whatsapp, POST /api/omni/webhook/instagram, POST /api/omni/webhook/facebook,
+  //         POST /api/omni/web/send, GET /api/omni/conversations, GET /api/omni/messages
+  // Database: conversations/{conversationId}, messages/{messageId}, omni_logs/{logId}
+  const omniRouter = require('./services/omnichannel');
+  app.use('/api/omni', omniRouter);
 
   return app;
 }

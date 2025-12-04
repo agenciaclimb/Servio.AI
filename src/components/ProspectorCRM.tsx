@@ -39,6 +39,7 @@ export interface ProspectLead {
   followUpScheduleId?: string; // Link to prospector_followups
   lastEmailSentAt?: Date;
   nextFollowUpAt?: Date;
+  followUpDate?: Date | string; // Scheduled follow-up date
   emailsOpened?: number;
   // Lead scoring
   score?: number; // 0-100
@@ -46,6 +47,9 @@ export interface ProspectLead {
   priority?: LeadPriority;
   // Selection for bulk actions
   selected?: boolean;
+  // Optional enrichment fields
+  company?: string;
+  title?: string;
 }
 
 interface ProspectorCRMProps {
@@ -1143,7 +1147,8 @@ function getActivityEmoji(type: Activity['type']): string {
     message: '💬',
     email: '✉️',
     note: '📝',
-    stage_change: '🔄'
+    stage_change: '🔄',
+    follow_up: '📅'
   };
   return emojis[type] || '•';
 }
