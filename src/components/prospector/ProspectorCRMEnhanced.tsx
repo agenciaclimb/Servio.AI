@@ -71,8 +71,10 @@ export default function ProspectorCRMEnhanced({
   const [followUpDate, setFollowUpDate] = useState('');
   const [activeTab, setActiveTab] = useState<'overview' | 'notes' | 'activities' | 'ai'>('overview');
   const [sortByScore, setSortByScore] = useState<boolean>(false);
-  const CRM_V2_ENABLED = (import.meta as any).env?.VITE_CRM_V2_ENABLED === 'true';
-  const CRM_VIEWS_ENABLED = (import.meta as any).env?.VITE_CRM_VIEWS_ENABLED === 'true';
+  // @ts-expect-error - import.meta.env is a special Vite API not fully typed
+  const CRM_V2_ENABLED = (import.meta as unknown as Record<string, unknown>).env?.VITE_CRM_V2_ENABLED === 'true';
+  // @ts-expect-error - import.meta.env is a special Vite API not fully typed
+  const CRM_VIEWS_ENABLED = (import.meta as unknown as Record<string, unknown>).env?.VITE_CRM_VIEWS_ENABLED === 'true';
   const [density, setDensity] = useState<'compact' | 'detailed'>('compact');
   const [conditions, setConditions] = useState<FilterCondition[]>([]);
   const { runMemoized } = useAdvancedFiltersHook(120);
@@ -115,12 +117,12 @@ export default function ProspectorCRMEnhanced({
           company: lead.company,
           title: lead.title,
           location: lead.location,
-          website: (lead as any).website,
-          linkedin: (lead as any).linkedin,
-          instagram: (lead as any).instagram,
-          facebook: (lead as any).facebook,
+          website: (lead as ProspectLead & { website?: string }).website,
+          linkedin: (lead as ProspectLead & { linkedin?: string }).linkedin,
+          instagram: (lead as ProspectLead & { instagram?: string }).instagram,
+          facebook: (lead as ProspectLead & { facebook?: string }).facebook,
           source: lead.source,
-          tags: (lead as any).tags,
+          tags: (lead as ProspectLead & { tags?: string[] }).tags,
           stage: lead.stage,
           lastInteractionTs: lead.lastActivity ? lead.lastActivity.getTime() : undefined,
           opens: (lead as any).opens,

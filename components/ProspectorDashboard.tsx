@@ -452,7 +452,7 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
                 </label>
                 <select
                   value={newLeadForm.source}
-                  onChange={(e) => setNewLeadForm({...newLeadForm, source: e.target.value as any})}
+                  onChange={(e) => setNewLeadForm({...newLeadForm, source: e.target.value as 'direct' | 'referral' | 'event'})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value="direct">Direto</option>

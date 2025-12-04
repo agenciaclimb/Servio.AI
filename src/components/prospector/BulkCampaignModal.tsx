@@ -135,9 +135,10 @@ export default function BulkCampaignModal({ isOpen, onClose, onSent }: BulkCampa
       setTimeout(() => {
         onClose();
       }, 2000);
-    } catch (e: any) {
+    } catch (e: Error | unknown) {
+      const errorMessage = e instanceof Error ? e.message : 'Falha ao enviar campanha';
       console.error('Campaign error:', e);
-      setError(e?.message || 'Falha ao enviar campanha');
+      setError(errorMessage);
     } finally {
       setSending(false);
     }
