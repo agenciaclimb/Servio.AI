@@ -265,7 +265,10 @@ describe('ResultsModal - Comprehensive Quality Tests', () => {
       ];
 
       render(<ResultsModal isOpen={true} results={specialResults} onClose={mockClose} />);
-      expect(screen.getByText(/Result/)).toBeInTheDocument();
+      // Validar que os 3 items com caracteres especiais foram renderizados corretamente
+      expect(screen.getByText('Result & Co.')).toBeInTheDocument();
+      expect(screen.getByText('Result "Quoted"')).toBeInTheDocument();
+      expect(screen.getByText("Result's Name")).toBeInTheDocument();
     });
 
     it('should handle very long descriptions', () => {
