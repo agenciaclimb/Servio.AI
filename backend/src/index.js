@@ -3761,6 +3761,22 @@ Retorne apenas o corpo do email, sem assunto.`;
   const omniRouter = require('./services/omnichannel');
   app.use('/api/omni', omniRouter);
 
+  // =================================================================
+  // CLOUD SCHEDULER ROUTES (Phase 3)
+  // =================================================================
+  // Automated tasks triggered by Google Cloud Scheduler
+  // Routes: POST /api/scheduler/follow-ups, /api/scheduler/email-reminders, /api/scheduler/analytics-rollup, etc.
+  const schedulerRouter = require('./routes/scheduler');
+  app.use('/api/scheduler', schedulerRouter);
+
+  // =================================================================
+  // ANALYTICS ROUTES (Phase 3)
+  // =================================================================
+  // Prospecting and campaign analytics endpoints
+  // Routes: GET /api/analytics/metrics-timeline, /api/analytics/campaign-performance, /api/analytics/channel-performance
+  const analyticsRouter = require('./routes/analytics');
+  app.use('/api/analytics', analyticsRouter);
+
   return app;
 }
 
