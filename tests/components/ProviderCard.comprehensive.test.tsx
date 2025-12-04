@@ -385,7 +385,8 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
       );
 
       const button = screen.getByTestId('provider-select-btn');
-      expect(button).toHaveAttribute('role', 'button');
+      // Native <button> has implicit role='button' - verify it's a button element
+      expect(button.tagName).toBe('BUTTON');
     });
 
     it('should support keyboard navigation', async () => {
