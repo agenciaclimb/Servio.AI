@@ -308,11 +308,16 @@ export function getTemplates(
   platform?: MessageTemplate['platform'],
   category?: string
 ): MessageTemplate[] {
-  return messageTemplates.filter(template => {
-    const platformMatch = !platform || template.platform === platform || template.platform === 'all';
-    const categoryMatch = !category || !template.category || template.category === category;
-    return platformMatch && categoryMatch;
-  });
+    return messageTemplates.filter(template => {
+        const platformMatch = !platform || template.platform === 'all' || template.platform === platform;
+        const categoryMatch = !category || (template.category === category) || !template.category;
+        
+        if (category && !getCategories().includes(category)) {
+            return false;
+        }
+
+        return platformMatch && categoryMatch;
+    });
 }
 
 /**

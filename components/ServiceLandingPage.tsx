@@ -1,68 +1,119 @@
+
 import React, { useState, useEffect } from 'react';
-import { User } from '../types';
-import * as API from '../services/api';
-import { SkeletonBlock } from './skeletons/SkeletonBlock';
+import { FiClock, FiTag } from 'react-icons/fi';
+import { fetchJobById } from '../services/api';
+import { Job } from '../types';
+import SkeletonBlock from './skeletons/SkeletonBlock';
 
 interface ServiceLandingPageProps {
-  category: string;
-  location?: string;
-  serviceNameToCategory: (name: string) => string;
+  serviceId: string;
 }
 
-const ProviderCardSkeleton: React.FC = () => (
-  <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
-    <div className="flex items-center gap-4">
-      <SkeletonBlock className="w-16 h-16 rounded-full" />
-      <div className="space-y-2 flex-1">
-        <SkeletonBlock className="h-5 w-1/2" />
-        <SkeletonBlock className="h-4 w-1/3" />
-        <SkeletonBlock className="h-4 w-3/4" />
-      </div>
-    </div>
-  </div>
-);
+const ServiceLandingPage: React.FC<ServiceLandingPageProps> = ({ serviceId }) => {
+    const [job, setJob] = useState<Job | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-const ServiceLandingPage: React.FC<ServiceLandingPageProps> = ({ category, location }) => {
-  const [providers, setProviders] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+    useEffect(() => {
+        const fetchJob = async () => {
+            if (!serviceId) {
+                setError('ID de serviço inválido.');
+                setLoading(false);
+                return;
+            }
+            try {
+                setLoading(true);
+                const fetchedJob = await fetchJobById(serviceId);
+                if (fetchedJob) {
+                    setJob(fetchedJob);
+                } else {
+                    setError('Serviço não encontrado ou indisponível.');
+                }
+            } catch (err) {
+                setError('Serviço não encontrado ou indisponível.');
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  useEffect(() => {
-    const fetchProvidersData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        // In a real backend, this would be filtered by category and location
-        const fetchedProviders = await API.fetchProviders();
-        setProviders(fetchedProviders.filter(p => p.specialties?.includes(category)));
-      } catch (err) {
-        setError("Não foi possível carregar os prestadores de serviço.");
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+        fetchJob();
+    }, [serviceId]);
 
-    fetchProvidersData();
-  }, [category, location]);
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-50">
+                <div className="max-w-4xl mx-auto p-8">
+                    <SkeletonBlock className="h-12 w-3/4 mb-4" />
+                    <SkeletonBlock className="h-6 w-1/2 mb-6" />
+                    <SkeletonBlock className="h-72 w-full mb-8" />
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <SkeletonBlock className="h-24 w-full" />
+                        <SkeletonBlock className="h-24 w-full" />
+                        <SkeletonBlock className="h-24 w-full" />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
-  return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">
-        Prestadores de Serviço para <span className="text-blue-600">{category}</span>
-      </h1>
-      {location && <p className="text-lg text-gray-600 mb-8">em {location}</p>}
+    if (error) {
+        return <div className="flex items-center justify-center min-h-screen bg-gray-50 text-red-500">{error}</div>;
+    }
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {isLoading && Array.from({ length: 6 }).map((_, i) => <ProviderCardSkeleton key={i} />)}
-        {!isLoading && error && <p className="text-red-500 col-span-full">{error}</p>}
-        {!isLoading && providers.length === 0 && !error && (
-          <p className="text-gray-600 col-span-full">Nenhum prestador encontrado para esta categoria.</p>
-        )}
-        {/* Here you would map over `providers` and render a real ProviderCard component */}
-      </div>
-    </div>
-  );
+    if (!job) {
+        return <div className="flex items-center justify-center min-h-screen bg-gray-50 text-gray-500">Serviço não encontrado.</div>;
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-50 font-sans">
+            <header className="bg-white shadow-sm">
+                <div className="max-w-4xl mx-auto py-6 px-8">
+                    <h1 className="text-4xl font-bold text-gray-800 capitalize">{job.category}</h1>
+                    <p className="text-lg text-gray-500 mt-1 capitalize">{job.serviceType}</p>
+                </div>
+            </header>
+
+            <main className="max-w-4xl mx-auto p-8">
+                <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div className="p-8">
+                        <h2 className="text-2xl font-semibold text-gray-700 mb-4">Descrição do Serviço</h2>
+                        <p className="text-gray-600 whitespace-pre-wrap">{job.description}</p>
+                    </div>
+
+                    <div className="bg-gray-50 p-8 border-t">
+                        <h3 className="text-xl font-semibold text-gray-700 mb-4">Detalhes</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {job.fixedPrice != null && (
+                                <div className="flex items-start">
+                                    <FiTag className="h-6 w-6 text-green-500 mt-1 mr-3 flex-shrink-0" />
+                                    <div>
+                                        <span className="font-semibold">Preço Fixo</span>
+                                        <p className="text-gray-600">R$ {job.fixedPrice.toFixed(2)}</p>
+                                    </div>
+                                </div>
+                            )}
+                             {job.visitFee != null && (
+                                <div className="flex items-start">
+                                    <FiTag className="h-6 w-6 text-blue-500 mt-1 mr-3 flex-shrink-0" />
+                                    <div>
+                                        <span className="font-semibold">Taxa de Visita</span>
+                                        <p className="text-gray-600">R$ {job.visitFee.toFixed(2)}</p>
+                                    </div>
+                                </div>
+                            )}
+                            <div className="flex items-start">
+                                <FiClock className="h-6 w-6 text-orange-500 mt-1 mr-3 flex-shrink-0" />
+                                <div>
+                                    <span className="font-semibold">Urgência</span>
+                                    <p className="text-gray-600 capitalize">{job.urgency.replace('_', ' ')}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
 };
 
 export default ServiceLandingPage;
