@@ -15,39 +15,27 @@ const prospectorAnalyticsService = {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     try {
-      const snapshot = await db.collection('prospector_campaigns')
-        .where('createdAt', '>=', thirtyDaysAgo)
-        .orderBy('createdAt', 'desc')
+      // Read from aggregated daily collection (produzido pelo scheduler)
+      const snapshot = await db.collection('analytics_daily')
+        .where('date', '>=', thirtyDaysAgo)
+        .orderBy('date', 'asc')
         .get();
 
-      const metricsMap = new Map();
+      const timeline = snapshot.docs.map(doc => {
+        const data = doc.data() || {};
+        const dateVal = data.date?.toDate?.() ? data.date.toDate() : (data.date || new Date());
+        const dateStr = dateVal.toISOString().split('T')[0];
 
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const date = data.createdAt?.toDate?.() || new Date();
-        const dateStr = date.toISOString().split('T')[0];
-
-        if (!metricsMap.has(dateStr)) {
-          metricsMap.set(dateStr, {
-            date: dateStr,
-            outreach: 0,
-            conversions: 0,
-            followUp: 0,
-            revenue: 0
-          });
-        }
-
-        const dayMetric = metricsMap.get(dateStr);
-        dayMetric.outreach += data.totalOutreach || 0;
-        dayMetric.conversions += data.totalConversions || 0;
-        dayMetric.followUp += data.totalFollowUps || 0;
-        dayMetric.revenue += data.totalRevenue || 0;
+        return {
+          date: dateStr,
+          outreach: data.totalOutreach || 0,
+          conversions: data.totalConversions || 0,
+          followUp: data.totalFollowUps || 0,
+          revenue: data.totalRevenue || 0,
+          conversionRate: data.conversionRate || 0,
+          campaignCount: data.campaignCount || 0
+        };
       });
-
-      // Sort by date
-      const timeline = Array.from(metricsMap.values()).sort((a, b) => 
-        new Date(a.date).getTime() - new Date(b.date).getTime()
-      );
 
       return {
         success: true,

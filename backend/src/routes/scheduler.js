@@ -12,7 +12,7 @@ const router = express.Router();
 const { requireAuth } = require('../authorizationMiddleware');
 const followUpService = require('../followUpService');
 const { processPendingOutreach } = require('../outreachScheduler');
-const prospectorAnalyticsService = require('../prospectorAnalyticsService');
+const prospectorAnalyticsService = require('../services/analyticsService');
 
 // Verify Cloud Scheduler token
 // Cloud Run automatically validates OIDC tokens from Cloud Scheduler
