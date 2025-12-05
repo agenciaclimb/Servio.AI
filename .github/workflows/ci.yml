@@ -115,7 +115,8 @@ jobs:
   deploy-omnichannel:
     runs-on: ubuntu-latest
     needs: ci
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: false # Temporariamente desabilitado - requer GCP secrets configurados
+    # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
       contents: read
       id-token: write
