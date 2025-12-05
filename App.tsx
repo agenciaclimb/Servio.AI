@@ -25,7 +25,7 @@ const ServiceLandingPage = lazy(() => import('./components/ServiceLandingPage'))
 const ProviderLandingPage = lazy(() => import('./components/ProviderLandingPage'));
 const PaymentSuccessPage = lazy(() => import('./components/PaymentSuccessPage'));
 const FindProvidersPage = lazy(() => import('./components/FindProvidersPage'));
-const MetricsDashboard = lazy(() => import('./components/MetricsPageDashboard'));
+const MetricsDashboard = lazy(() => import('./src/components/MetricsPageDashboard'));
 
 // Loading fallback component para Suspense
 const LoadingFallback = () => (
@@ -58,7 +58,8 @@ type View =
   | { name: 'service-landing'; data: { category: string, location?: string } }
   | { name: 'provider-landing' }
   | { name: 'find-providers' }
-  | { name: 'payment-success' };
+  | { name: 'payment-success' }
+  | { name: 'metrics' };
 
 const App: React.FC = () => {
   // State
