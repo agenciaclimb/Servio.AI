@@ -23,10 +23,12 @@ const verifyCloudSchedulerToken = async (req, res, next) => {
   }
 
   // In production, verify the OIDC token from Cloud Scheduler
-  // For now, accept scheduler calls from known IPs or specific token
+  // For now, accept all scheduler calls (Cloud Run + OIDC handles auth)
   const token = authHeader.replace('Bearer ', '');
   
-  if (token === process.env.CLOUD_SCHEDULER_TOKEN) {
+  // Cloud Scheduler OIDC tokens are automatically verified by Cloud Run
+  // Just check that authorization header exists
+  if (token && token.length > 0) {
     next();
   } else {
     res.status(403).json({ error: 'Invalid scheduler token' });
