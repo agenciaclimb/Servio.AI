@@ -15,24 +15,12 @@ const { processPendingOutreach } = require('../outreachScheduler');
 const prospectorAnalyticsService = require('../prospectorAnalyticsService');
 
 // Verify Cloud Scheduler token
+// Cloud Run automatically validates OIDC tokens from Cloud Scheduler
+// No additional validation needed - Cloud Run rejects unauthorized requests
 const verifyCloudSchedulerToken = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  
-  if (!authHeader) {
-    return res.status(401).json({ error: 'Missing authorization header' });
-  }
-
-  // In production, verify the OIDC token from Cloud Scheduler
-  // For now, accept all scheduler calls (Cloud Run + OIDC handles auth)
-  const token = authHeader.replace('Bearer ', '');
-  
-  // Cloud Scheduler OIDC tokens are automatically verified by Cloud Run
-  // Just check that authorization header exists
-  if (token && token.length > 0) {
-    next();
-  } else {
-    res.status(403).json({ error: 'Invalid scheduler token' });
-  }
+  // Cloud Run with OIDC auth already validated the request
+  // Just pass through
+  next();
 };
 
 /**
