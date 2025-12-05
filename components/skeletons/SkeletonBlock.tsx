@@ -1,5 +1,17 @@
+
 import React from 'react';
 
-export const SkeletonBlock: React.FC<{ className?: string }> = ({ className }) => {
-  return <div className={`bg-slate-200 rounded animate-pulse ${className}`} />;
+interface SkeletonBlockProps {
+  className?: string;
+}
+
+const SkeletonBlock: React.FC<SkeletonBlockProps> = ({ className }) => {
+  return (
+    <div
+      className={`animate-pulse bg-gray-200 rounded ${className}`}
+      data-testid="skeleton-block"
+    ></div>
+  );
 };
+
+export default SkeletonBlock;

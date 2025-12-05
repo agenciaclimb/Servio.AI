@@ -1,28 +1,33 @@
+
 import React from 'react';
-import { SkeletonBlock } from './SkeletonBlock';
-import JobCardSkeleton from './JobCardSkeleton';
+import SkeletonBlock from './SkeletonBlock'; // Corrigido
 
 const ProviderDashboardSkeleton: React.FC = () => {
   return (
-    <div className="space-y-10">
-      {/* Profile Strength Skeleton */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-4">
-          <SkeletonBlock className="h-6 w-1/4" />
-          <SkeletonBlock className="h-4 w-full" />
-          <SkeletonBlock className="h-10 w-1/3" />
+    <div className="p-4 md:p-6 lg:p-8">
+      {/* Header Skeleton */}
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <SkeletonBlock className="h-8 w-48 mb-2" />
+          <SkeletonBlock className="h-4 w-64" />
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-4">
-          <SkeletonBlock className="h-6 w-1/3" />
-          <SkeletonBlock className="h-4 w-3/4" />
-        </div>
+        <SkeletonBlock className="h-10 w-32" />
       </div>
 
-      {/* Job Lists Skeleton */}
+      {/* Stat Cards Skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <SkeletonBlock className="h-24 rounded-lg" />
+        <SkeletonBlock className="h-24 rounded-lg" />
+        <SkeletonBlock className="h-24 rounded-lg" />
+      </div>
+
+      {/* Main Content Area Skeleton */}
       <div>
-        <SkeletonBlock className="h-8 w-1/3 mb-4" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 3 }).map((_, index) => <JobCardSkeleton key={index} />)}
+        <SkeletonBlock className="h-6 w-40 mb-4" />
+        <div className="space-y-4">
+          <SkeletonBlock className="h-28 rounded-lg" />
+          <SkeletonBlock className="h-28 rounded-lg" />
+          <SkeletonBlock className="h-28 rounded-lg" />
         </div>
       </div>
     </div>
