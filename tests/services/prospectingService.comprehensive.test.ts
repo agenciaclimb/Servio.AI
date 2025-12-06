@@ -1,454 +1,395 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import * as prospectingService from '../../../services/prospectingService';
 
-// Mock Firebase
-vi.mock('firebase/firestore', () => ({
-  getFirestore: vi.fn(() => ({})),
-  collection: vi.fn(() => ({})),
-  query: vi.fn(() => ({})),
-  where: vi.fn(() => ({})),
-  getDocs: vi.fn(() => Promise.resolve({ docs: [] })),
-  addDoc: vi.fn(() => Promise.resolve({ id: 'doc-123' })),
-  updateDoc: vi.fn(() => Promise.resolve()),
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import {
+  triggerAutoProspecting,
+  searchGoogleForProviders,
+  sendProspectInvitation,
+  notifyProspectingTeam,
+  saveProspect,
+  analyzeProspectWithAI,
+  generatePersonalizedEmail,
+  sendMultiChannelInvite,
+} from '../../services/prospectingService';
+import * as logger from '../../utils/logger';
+import { JobData } from '../../types';
+
+// Mock the logger
+vi.mock('../../utils/logger', () => ({
+  logInfo: vi.fn(),
+  logError: vi.fn(),
 }));
 
-vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn(() => ({})),
-}));
+// Use the correct backend URL that the service will import
+const BACKEND_URL = 'https://servio-backend-738160936841.us-central1.run.app';
 
-describe('prospectingService - Comprehensive Quality Tests', () => {
+// Mock fetch
+global.fetch = vi.fn();
+
+describe('Prospecting Service', () => {
+  const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2025-01-15T10:00:00.000Z'));
+    (fetch as vi.Mock).mockClear();
+    (logger.logInfo as vi.Mock).mockClear();
+    (logger.logError as vi.Mock).mockClear();
+    consoleErrorSpy.mockClear();
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.useRealTimers();
+    (fetch as vi.Mock).mockReset(); // Use mockReset to clear all mocks between tests
   });
 
-  describe('Service Initialization', () => {
-    it('should initialize without errors', () => {
-      expect(prospectingService).toBeDefined();
+  describe('triggerAutoProspecting', () => {
+    const jobData: JobData = {
+      id: 'job-123',
+      category: 'Limpeza de Sofá',
+      description: 'Limpeza a seco de sofá de 3 lugares.',
+      address: 'Rua das Flores, 123, São Paulo, SP',
+      status: 'pending',
+      clientId: 'client-abc',
+      createdAt: new Date(),
+    };
+    const clientEmail = 'cliente@teste.com';
+
+    it('should successfully trigger prospecting and return results', async () => {
+      const mockSuccessResponse = {
+        success: true,
+        prospectsFound: 5,
+        emailsSent: 5,
+        adminNotified: true,
+        message: 'Prospecção automática concluída com sucesso.',
+      };
+      (fetch as vi.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockSuccessResponse,
+      });
+
+      const result = await triggerAutoProspecting(jobData, clientEmail);
+
+      expect(fetch).toHaveBeenCalledWith(`${BACKEND_URL}/api/auto-prospect`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category: jobData.category,
+          location: jobData.address,
+          description: jobData.description,
+          clientEmail,
+          urgency: 'high',
+        }),
+      });
+      expect(result).toEqual(mockSuccessResponse);
+      expect(logger.logInfo).toHaveBeenCalledWith(
+        '[ProspectingService] Triggering auto-prospecting for:',
+        'Limpeza de Sofá'
+      );
+      expect(logger.logInfo).toHaveBeenCalledWith(
+        '[ProspectingService] Auto-prospecting completed:',
+        mockSuccessResponse
+      );
     });
 
-    it('should export all required functions', () => {
-      expect(typeof prospectingService.getSmartProspectingActions).toBe('function');
-      expect(typeof prospectingService.generateProspectingMessage).toBe('function');
-    });
-  });
-
-  describe('getSmartProspectingActions - Core Functionality', () => {
-    it('should return empty array for user with no referrals', async () => {
-      const result = await prospectingService.getSmartProspectingActions('test@email.com');
-      expect(Array.isArray(result)).toBe(true);
-    });
-
-    it('should generate actions for valid user', async () => {
-      const result = await prospectingService.getSmartProspectingActions('user@example.com');
-      expect(Array.isArray(result)).toBe(true);
-    });
-
-    it('should return actions with required fields', async () => {
-      const result = await prospectingService.getSmartProspectingActions('user@example.com');
-      if (result.length > 0) {
-        result.forEach(action => {
-          expect(action).toHaveProperty('type');
-          expect(action).toHaveProperty('priority');
+    it('should use a default location when jobData.address is not provided', async () => {
+        const jobDataNoAddress = { ...jobData, address: undefined };
+        (fetch as vi.Mock).mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ success: true }),
         });
-      }
+
+        await triggerAutoProspecting(jobDataNoAddress, clientEmail);
+        const fetchCallBody = JSON.parse((fetch as vi.Mock).mock.calls[0][1].body);
+        expect(fetchCallBody.location).toBe('Não especificado');
     });
 
-    it('should handle different user email formats', async () => {
-      const emails = [
-        'simple@example.com',
-        'user+tag@example.co.uk',
-        'first.last@subdomain.example.com',
-        'user123@test-domain.com',
-      ];
-
-      for (const email of emails) {
-        const result = await prospectingService.getSmartProspectingActions(email);
-        expect(Array.isArray(result)).toBe(true);
-      }
-    });
-
-    it('should prioritize actions correctly', async () => {
-      const result = await prospectingService.getSmartProspectingActions('user@example.com');
-      if (result.length > 1) {
-        // Priority should be comparable
-        for (let i = 1; i < result.length; i++) {
-          const prev = result[i - 1];
-          const curr = result[i];
-          expect(prev.priority).toBeDefined();
-          expect(curr.priority).toBeDefined();
-        }
-      }
-    });
-  });
-
-  describe('generateProspectingMessage - Message Quality', () => {
-    it('should generate message for prospect data', async () => {
-      const prospectData = {
-        name: 'John Client',
-        service: 'web development',
-        budget: 5000,
-        timeline: '2 weeks',
-        email: 'john@example.com',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      expect(message).toBeDefined();
-      expect(typeof message).toBe('string');
-    });
-
-    it('should include prospect name in message', async () => {
-      const prospectData = {
-        name: 'Maria Silva',
-        service: 'design',
-        budget: 2000,
-        timeline: '1 month',
-        email: 'maria@example.com',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      expect(message.length).toBeGreaterThan(0);
-    });
-
-    it('should generate personalized messages for different services', async () => {
-      const services = ['web development', 'graphic design', 'social media', 'copywriting'];
-
-      for (const service of services) {
-        const prospectData = {
-          name: 'Test Client',
-          service,
-          budget: 1000,
-          timeline: '1 week',
-          email: 'test@example.com',
-        };
-
-        const message = await prospectingService.generateProspectingMessage(prospectData);
-        expect(message).toBeDefined();
-        expect(message.length).toBeGreaterThan(0);
-      }
-    });
-
-    it('should handle missing optional fields', async () => {
-      const prospectData = {
-        name: 'Client',
-        service: 'services',
-        email: 'client@example.com',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      expect(message).toBeDefined();
-    });
-
-    it('should handle special characters in prospect name', async () => {
-      const prospectData = {
-        name: 'José María da Silva-Costa',
-        service: 'web development',
-        budget: 5000,
-        timeline: '3 weeks',
-        email: 'jose@example.com',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      expect(message).toBeDefined();
-    });
-
-    it('should keep message within reasonable length', async () => {
-      const prospectData = {
-        name: 'Client Name',
-        service: 'design',
-        budget: 1000,
-        timeline: '1 week',
-        email: 'client@example.com',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      // LinkedIn/WhatsApp message should be max 2000 chars
-      expect(message.length).toBeLessThan(2000);
-    });
-
-    it('should maintain professional tone', async () => {
-      const prospectData = {
-        name: 'Client',
-        service: 'services',
-        budget: 1000,
-        email: 'client@example.com',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      const lowerMessage = message.toLowerCase();
-      
-      // Should not contain inappropriate language
-      expect(lowerMessage).not.toMatch(/spam|scam|guaranteed/i);
-    });
-  });
-
-  describe('Multi-Channel Message Generation', () => {
-    it('should generate appropriate SMS format messages', async () => {
-      const prospectData = {
-        name: 'John',
-        service: 'web dev',
-        email: 'john@example.com',
-        channel: 'sms',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      // SMS should be shorter
-      expect(message.length).toBeLessThan(500);
-    });
-
-    it('should generate appropriate email format messages', async () => {
-      const prospectData = {
-        name: 'John',
-        service: 'web development',
-        email: 'john@example.com',
-        channel: 'email',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      expect(message).toBeDefined();
-    });
-
-    it('should generate appropriate WhatsApp format messages', async () => {
-      const prospectData = {
-        name: 'John',
-        service: 'design',
-        email: 'john@example.com',
-        channel: 'whatsapp',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      expect(message).toBeDefined();
-    });
-
-    it('should generate appropriate LinkedIn format messages', async () => {
-      const prospectData = {
-        name: 'John Smith',
-        service: 'services',
-        email: 'john@example.com',
-        channel: 'linkedin',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      expect(message).toBeDefined();
-    });
-  });
-
-  describe('Error Handling', () => {
-    it('should handle null email gracefully', async () => {
-      expect(async () => {
-        await prospectingService.getSmartProspectingActions(null as any);
-      }).not.toThrow();
-    });
-
-    it('should handle empty email gracefully', async () => {
-      const result = await prospectingService.getSmartProspectingActions('');
-      expect(Array.isArray(result)).toBe(true);
-    });
-
-    it('should handle malformed email gracefully', async () => {
-      const result = await prospectingService.getSmartProspectingActions('not-an-email');
-      expect(Array.isArray(result)).toBe(true);
-    });
-
-    it('should handle null prospect data', async () => {
-      expect(async () => {
-        await prospectingService.generateProspectingMessage(null as any);
-      }).not.toThrow();
-    });
-
-    it('should handle missing prospect name', async () => {
-      const prospectData = {
-        service: 'design',
-        email: 'test@example.com',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData as any);
-      expect(message).toBeDefined();
-    });
-
-    it('should handle network failures gracefully', async () => {
-      const result = await prospectingService.getSmartProspectingActions('user@example.com');
-      expect(Array.isArray(result)).toBe(true);
-    });
-
-    it('should handle Firebase errors gracefully', async () => {
-      const result = await prospectingService.getSmartProspectingActions('user@example.com');
-      expect(Array.isArray(result)).toBe(true);
-    });
-  });
-
-  describe('Edge Cases and Stress Tests', () => {
-    it('should handle very long prospect name', async () => {
-      const prospectData = {
-        name: 'A'.repeat(500),
-        service: 'design',
-        email: 'test@example.com',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      expect(message).toBeDefined();
-    });
-
-    it('should handle very high budget values', async () => {
-      const prospectData = {
-        name: 'Rich Client',
-        service: 'web development',
-        budget: 1000000,
-        timeline: '6 months',
-        email: 'rich@example.com',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      expect(message).toBeDefined();
-    });
-
-    it('should handle zero budget', async () => {
-      const prospectData = {
-        name: 'Budget Client',
-        service: 'design',
-        budget: 0,
-        email: 'budget@example.com',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      expect(message).toBeDefined();
-    });
-
-    it('should handle negative budget gracefully', async () => {
-      const prospectData = {
-        name: 'Client',
-        service: 'services',
-        budget: -100,
-        email: 'test@example.com',
-      };
-
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      expect(message).toBeDefined();
-    });
-
-    it('should handle unusual service names', async () => {
-      const services = [
-        'Very niche service',
-        '123 Numeric',
-        'Service-with-dashes',
-        'Serviço em Português',
-        'SERVICE_WITH_UNDERSCORES',
-      ];
-
-      for (const service of services) {
-        const prospectData = {
-          name: 'Client',
-          service,
-          email: 'test@example.com',
-        };
-
-        const message = await prospectingService.generateProspectingMessage(prospectData);
-        expect(message).toBeDefined();
-      }
-    });
-
-    it('should handle concurrent requests', async () => {
-      const promises = Array(10).fill(null).map((_, i) =>
-        prospectingService.getSmartProspectingActions(`user${i}@example.com`)
-      );
-
-      const results = await Promise.allSettled(promises);
-      results.forEach(result => {
-        expect(result.status).toBe('fulfilled');
-        if (result.status === 'fulfilled') {
-          expect(Array.isArray(result.value)).toBe(true);
-        }
+    it('should handle API error during prospecting', async () => {
+      (fetch as vi.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 500,
       });
-    });
-  });
 
-  describe('Performance', () => {
-    it('should retrieve actions within reasonable time', async () => {
-      const start = Date.now();
-      await prospectingService.getSmartProspectingActions('user@example.com');
-      const duration = Date.now() - start;
+      const result = await triggerAutoProspecting(jobData, clientEmail);
 
-      // Should complete within 5 seconds
-      expect(duration).toBeLessThan(5000);
-    });
-
-    it('should generate messages within reasonable time', async () => {
-      const prospectData = {
-        name: 'Client',
-        service: 'design',
-        email: 'test@example.com',
-      };
-
-      const start = Date.now();
-      await prospectingService.generateProspectingMessage(prospectData);
-      const duration = Date.now() - start;
-
-      // Should complete within 5 seconds
-      expect(duration).toBeLessThan(5000);
-    });
-
-    it('should handle bulk action retrieval', async () => {
-      const start = Date.now();
-      const promises = Array(50).fill(null).map((_, i) =>
-        prospectingService.getSmartProspectingActions(`user${i}@example.com`)
+      expect(logger.logError).toHaveBeenCalledWith(
+        '[ProspectingService] Auto-prospecting failed:',
+        new Error('Prospecting API error: 500')
       );
-
-      await Promise.all(promises);
-      const duration = Date.now() - start;
-
-      // Should complete within 30 seconds
-      expect(duration).toBeLessThan(30000);
-    });
-  });
-
-  describe('Data Validation', () => {
-    it('should return consistent data structure for actions', async () => {
-      const result = await prospectingService.getSmartProspectingActions('user@example.com');
-      
-      result.forEach(action => {
-        expect(typeof action).toBe('object');
-        expect(action).not.toBeNull();
+      expect(result).toEqual({
+        success: false,
+        prospectsFound: 0,
+        emailsSent: 0,
+        adminNotified: false,
+        message: 'Falha na prospecção automática. Equipe será notificada manualmente.',
       });
     });
 
-    it('should generate non-empty messages', async () => {
-      const prospectData = {
-        name: 'Client',
-        service: 'services',
-        email: 'test@example.com',
-      };
+    it('should handle network failure during prospecting', async () => {
+        const networkError = new Error('Network failure');
+        (fetch as vi.Mock).mockRejectedValueOnce(networkError);
+  
+        const result = await triggerAutoProspecting(jobData, clientEmail);
+  
+        expect(logger.logError).toHaveBeenCalledWith(
+          '[ProspectingService] Auto-prospecting failed:',
+          networkError
+        );
+        expect(result).toEqual({
+          success: false,
+          prospectsFound: 0,
+          emailsSent: 0,
+          adminNotified: false,
+          message: 'Falha na prospecção automática. Equipe será notificada manualmente.',
+        });
+      });
+  });
 
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      expect(message.length).toBeGreaterThan(0);
+  describe('searchGoogleForProviders', () => {
+    it('should return an array of prospects on successful search', async () => {
+        const mockResults = [
+            { name: 'Eletricista João', email: 'joao@email.com' },
+            { name: 'Maria Faz Tudo', phone: '11999998888' },
+        ];
+        (fetch as vi.Mock).mockResolvedValueOnce({
+            ok: true,
+            json: async () => mockResults,
+        });
+
+        const results = await searchGoogleForProviders('Eletricista', 'São Paulo');
+
+        expect(fetch).toHaveBeenCalledWith(`${BACKEND_URL}/api/google-search-providers`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ category: 'Eletricista', location: 'São Paulo' }),
+        });
+        expect(results).toEqual(mockResults);
     });
 
-    it('should not generate messages with excessive newlines', async () => {
-      const prospectData = {
-        name: 'Client',
-        service: 'services',
-        email: 'test@example.com',
-      };
+    it('should return an empty array and log error on API error', async () => {
+        (fetch as vi.Mock).mockResolvedValueOnce({ ok: false, status: 404 });
 
-      const message = await prospectingService.generateProspectingMessage(prospectData);
-      const consecutiveNewlines = message.match(/\n\n\n/g);
-      
-      expect(consecutiveNewlines).toBeNull();
+        const results = await searchGoogleForProviders('Eletricista', 'São Paulo');
+        
+        expect(results).toEqual([]);
+        expect(logger.logError).toHaveBeenCalledWith(
+            '[ProspectingService] Google search failed:',
+            new Error('Google search API error: 404')
+        );
     });
   });
 
-  describe('Integration with Firestore', () => {
-    it('should query correct collection', async () => {
-      await prospectingService.getSmartProspectingActions('user@example.com');
-      // Should not throw any Firestore related errors
-      expect(true).toBe(true);
+  describe('sendProspectInvitation', () => {
+    it('should return true on successful invitation', async () => {
+        (fetch as vi.Mock).mockResolvedValueOnce({ ok: true });
+
+        const result = await sendProspectInvitation('prospect@email.com', 'Prospect Name', 'Carpintaria', 'Curitiba');
+        
+        expect(fetch).toHaveBeenCalledWith(`${BACKEND_URL}/api/send-prospect-invitation`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                prospectEmail: 'prospect@email.com',
+                prospectName: 'Prospect Name',
+                jobCategory: 'Carpintaria',
+                jobLocation: 'Curitiba',
+            }),
+        });
+        expect(result).toBe(true);
     });
 
-    it('should handle Firestore permission errors', async () => {
-      const result = await prospectingService.getSmartProspectingActions('user@example.com');
-      expect(Array.isArray(result)).toBe(true);
+    it('should return false and log error on failure', async () => {
+        const networkError = new Error('SMTP server down');
+        (fetch as vi.Mock).mockRejectedValueOnce(networkError);
+
+        const result = await sendProspectInvitation('prospect@email.com', 'Prospect Name', 'Carpintaria', 'Curitiba');
+        
+        expect(result).toBe(false);
+        expect(logger.logError).toHaveBeenCalledWith(
+            '[ProspectingService] Failed to send invitation:',
+            networkError
+        );
+    });
+  });
+
+  describe('notifyProspectingTeam', () => {
+    it('should return true on successful notification', async () => {
+        (fetch as vi.Mock).mockResolvedValueOnce({ ok: true });
+
+        const result = await notifyProspectingTeam('Pintura', 'Recife', 'client@new.com', 10);
+        
+        expect(fetch).toHaveBeenCalledWith(`${BACKEND_URL}/api/notify-prospecting-team`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                category: 'Pintura',
+                location: 'Recife',
+                clientEmail: 'client@new.com',
+                prospectsFound: 10,
+                urgency: 'high',
+                message: `Cliente solicitou Pintura em Recife mas não há prestadores disponíveis. 10 prospectos encontrados automaticamente.`,
+            }),
+        });
+        expect(result).toBe(true);
+    });
+
+    it('should return false and log error on failure', async () => {
+        const apiError = new Error('Webhook endpoint missing');
+        (fetch as vi.Mock).mockRejectedValueOnce(apiError);
+
+        const result = await notifyProspectingTeam('Pintura', 'Recife', 'client@new.com', 10);
+        
+        expect(result).toBe(false);
+        expect(logger.logError).toHaveBeenCalledWith(
+            '[ProspectingService] Failed to notify team:',
+            apiError
+        );
+    });
+  });
+
+  describe('saveProspect', () => {
+    
+    it('should return true on successful save', async () => {
+        (fetch as vi.Mock).mockResolvedValueOnce({ ok: true });
+
+        const result = await saveProspect('New Prospect', 'new@prospect.com', '11987654321', 'Jardinagem', 'Campinas', 'google_auto');
+        
+        expect(fetch).toHaveBeenCalledWith(`${BACKEND_URL}/api/prospects`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: expect.any(String),
+        });
+        
+        const body = JSON.parse((fetch as vi.Mock).mock.calls[0][1].body);
+        expect(body).toEqual({
+            name: 'New Prospect',
+            email: 'new@prospect.com',
+            phone: '11987654321',
+            specialty: 'Jardinagem',
+            source: 'google_auto',
+            status: 'pendente',
+            createdAt: '2025-01-15T10:00:00.000Z',
+            notes: [{
+                text: 'Auto-prospectado para Jardinagem em Campinas',
+                createdAt: '2025-01-15T10:00:00.000Z',
+                createdBy: 'system',
+            }],
+        });
+
+        expect(result).toBe(true);
+    });
+
+    it('should return false and log to console on failure', async () => {
+        const dbError = new Error('Database connection failed');
+        (fetch as vi.Mock).mockRejectedValueOnce(dbError);
+
+        const result = await saveProspect('Bad Prospect', 'bad@prospect.com', undefined, 'Test', 'Location', 'manual');
+        
+        expect(result).toBe(false);
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            '[ProspectingService] Failed to save prospect:',
+            dbError
+        );
+    });
+  });
+
+  describe('analyzeProspectWithAI', () => {
+    const googleProspect = { name: 'Pedro Pedreiro', email: 'pedro@obra.com', rating: 4.5 };
+    const jobCategory = 'Construção';
+    const jobDescription = 'Construir muro de arrimo';
+
+    it('should return AI analysis on success', async () => {
+        const mockAnalysis = { name: 'Pedro Pedreiro', qualityScore: 90, matchScore: 85, aiAnalysis: 'Excelente' };
+        (fetch as vi.Mock).mockResolvedValueOnce({ ok: true, json: async () => mockAnalysis });
+
+        const result = await analyzeProspectWithAI(googleProspect, jobCategory, jobDescription);
+
+        expect(fetch).toHaveBeenCalledWith(`${BACKEND_URL}/api/analyze-prospect`, expect.any(Object));
+        expect(result).toEqual(mockAnalysis);
+    });
+
+    it('should return a fallback object and log to console on failure', async () => {
+        const aiError = new Error('AI analysis failed');
+        (fetch as vi.Mock).mockRejectedValueOnce(aiError);
+        
+        const result = await analyzeProspectWithAI(googleProspect, jobCategory, jobDescription);
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith('[ProspectingService] AI analysis failed:', aiError);
+        expect(result).toEqual({
+            name: 'Pedro Pedreiro',
+            email: 'pedro@obra.com',
+            phone: undefined,
+            qualityScore: 90, // 4.5 * 20
+            matchScore: 50,
+            location: undefined,
+            preferredContact: 'email',
+        });
+    });
+  });
+
+  describe('generatePersonalizedEmail', () => {
+      const prospectProfile = { name: 'Ana Arquiteta', specialties: ['Design', 'Planejamento'], qualityScore: 95, matchScore: 90 };
+
+      it('should return a personalized email body on success', async () => {
+          const mockEmail = { emailBody: 'Olá Ana, vimos seu excelente trabalho...' };
+          (fetch as vi.Mock).mockResolvedValueOnce({ ok: true, json: async () => mockEmail });
+
+          const email = await generatePersonalizedEmail(prospectProfile, 'Arquitetura', 'São Paulo');
+
+          expect(fetch).toHaveBeenCalledWith(`${BACKEND_URL}/api/generate-prospect-email`, expect.any(Object));
+          expect(email).toBe('Olá Ana, vimos seu excelente trabalho...');
+      });
+
+      it('should return a fallback generic email and log to console on failure', async () => {
+          const genError = new Error('Email generation failed');
+          (fetch as vi.Mock).mockRejectedValueOnce(genError);
+
+          const email = await generatePersonalizedEmail(prospectProfile, 'Arquitetura', 'São Paulo');
+
+          expect(consoleErrorSpy).toHaveBeenCalledWith('[ProspectingService] Email generation failed:', genError);
+          expect(email).toContain('Olá Ana Arquiteta');
+          expect(email).toContain('Temos um cliente procurando por Arquitetura em São Paulo');
+      });
+  });
+
+  describe('sendMultiChannelInvite', () => {
+    const prospect = { name: 'Carlos Chaveiro', email: 'carlos@chaves.com', phone: '21912345678', qualityScore: 80, matchScore: 80 };
+
+    it('should send email successfully', async () => {
+        (fetch as vi.Mock)
+          .mockResolvedValueOnce({ ok: true, json: async () => ({ emailBody: '...' }) }) // email gen
+          .mockResolvedValueOnce({ ok: true }); // email send
+
+        const result = await sendMultiChannelInvite(prospect, 'Chaveiro', 'Rio de Janeiro', ['email']);
+        
+        expect(fetch).toHaveBeenCalledTimes(2); // generate + send
+        expect(result).toEqual({ email: true, sms: false, whatsapp: false });
+    });
+
+    it('should attempt all channels and report partial success', async () => {
+        // Email: OK, SMS: Failed, WhatsApp: Failed (network error)
+        const whatsappError = new Error('WhatsApp API is down');
+        (fetch as vi.Mock)
+          .mockResolvedValueOnce({ ok: true, json: async () => ({ emailBody: '...' }) }) // email gen
+          .mockResolvedValueOnce({ ok: true }) // email send
+          .mockResolvedValueOnce({ ok: false, status: 500 }) // sms send
+          .mockRejectedValueOnce(whatsappError); // whatsapp send
+          
+        const result = await sendMultiChannelInvite(prospect, 'Chaveiro', 'Rio de Janeiro', ['email', 'sms', 'whatsapp']);
+
+        expect(fetch).toHaveBeenCalledTimes(4); // email-gen, email-send, sms-send, whatsapp-send
+        expect(result).toEqual({ email: true, sms: false, whatsapp: false });
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          '[ProspectingService] WhatsApp failed:',
+          whatsappError
+        );
+    });
+
+    it('should not send if contact info is missing', async () => {
+        const prospectNoContact = { name: 'Fantasma', qualityScore: 70, matchScore: 70 };
+        const result = await sendMultiChannelInvite(prospectNoContact, 'Dedetização', 'Belo Horizonte', ['email', 'sms']);
+        
+        expect(fetch).not.toHaveBeenCalled();
+        expect(result).toEqual({ email: false, sms: false, whatsapp: false });
     });
   });
 });
