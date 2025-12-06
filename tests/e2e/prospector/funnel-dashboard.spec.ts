@@ -1,7 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-import { test, expect } from '@playwright/test';
-
 test.describe('Dashboard de Conversão', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('https://gen-lang-client-0737507616.web.app');

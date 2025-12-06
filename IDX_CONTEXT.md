@@ -309,6 +309,50 @@ prospector-cleanup-v3            → 0 3 * * 0      (Sunday 3AM)
 
 ---
 
-**Última Atualização**: 05/12/2025 17:25 BRT (Fase 3 ✅ Completa)  
+## 🔄 Workflow Git Automatizado
+
+### Para Você (Gemini):
+
+**Após editar arquivos, SEMPRE informe:**
+
+```
+✅ Arquivos modificados com sucesso!
+
+📝 Mudanças:
+- [listar arquivos]
+
+🚀 AÇÃO NECESSÁRIA:
+Execute no terminal do IDX:
+
+git add .
+git commit -m "feat: [descrever mudanças]"
+git push origin main
+```
+
+### Para o Desenvolvedor:
+
+**Scripts disponíveis (PowerShell local):**
+
+```powershell
+# Auto sync completo (100% automático)
+.\sync-servio.ps1 -Mode Auto
+
+# Ou use aliases (após carregar sync-aliases.ps1):
+sa                # Auto sync
+sp                # Pull apenas
+sps "mensagem"    # Push com mensagem
+st                # Status
+```
+
+**Veja arquivos:**
+
+- `GEMINI_IDX_INSTRUCTIONS.md` → Instruções completas para Gemini
+- `WORKFLOW_GIT.md` → Guia completo do workflow
+- `sync-servio.ps1` → Script de automação
+- `sync-aliases.ps1` → Aliases rápidos
+
+---
+
+**Última Atualização**: 05/12/2025 20:30 BRT (Fase 3 ✅ Completa + Automação Git implementada)  
 **Status**: 🟢 PRODUCTION READY | 5 Cloud Scheduler jobs ativos | Analytics Dashboard live  
 **Próximas Iterações**: Phase 4 (AI Autopilot + Marketplace Matching)
