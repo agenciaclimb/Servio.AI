@@ -3,6 +3,7 @@
 // Eligibility: status === 'email_sent', optOut === false, whatsappSentAt === null, Date.now() >= followUpEligibleAt
 // On success: updates status -> 'whatsapp_sent', sets whatsappSentAt.
 // On failure: pushes error into errorHistory.
+const admin = require('firebase-admin');
 
 /**
  * Process pending outreach records.
@@ -11,7 +12,10 @@
  * @param {(msg: string, phone?: string)=>Promise<{success:boolean}>} deps.sendWhatsApp Optional external sender fn
  * @returns {Promise<Array<{id:string,status:string,error?:string}>>}
  */
-async function processPendingOutreach({ db, sendWhatsApp = defaultWhatsAppStub } = {}) {
+async function processPendingOutreach({ db = admin.firestore(), sendWhatsApp = defaultWhatsAppStub } = {}) {
+  if (!db) {
+    throw new Error('Firestore instance not available for outreach processing');
+  }
   const coll = db.collection('prospector_outreach');
   const snap = await coll.get();
   const now = Date.now();

@@ -7,9 +7,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('OmniInbox - Painel de Conversas', () => {
-  test.beforeEach(async ({ _page }) => {
-    // TODO: Setup authentication
-    // await _page.goto('https://gen-lang-client-0737507616.web.app/admin');
+  test.beforeEach(async ({ page }) => {
+    // TODO: Setup authentication (mantém uso do page para evitar lint warning)
+    await page.waitForTimeout(10);
+    // await page.goto('https://gen-lang-client-0737507616.web.app/admin');
   });
 
   test('deve exibir métricas de conversas', async ({ page }) => {
