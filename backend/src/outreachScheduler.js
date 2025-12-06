@@ -1,58 +1,77 @@
-// Prospector follow-up outreach processing
-// Scans Firestore collection 'prospector_outreach' for records eligible for WhatsApp follow-up.
-// Eligibility: status === 'email_sent', optOut === false, whatsappSentAt === null, Date.now() >= followUpEligibleAt
-// On success: updates status -> 'whatsapp_sent', sets whatsappSentAt.
-// On failure: pushes error into errorHistory.
+
 const admin = require('firebase-admin');
 
 /**
- * Process pending outreach records.
- * @param {Object} deps
- * @param {import('firebase-admin').firestore.Firestore} deps.db Firestore instance
- * @param {(msg: string, phone?: string)=>Promise<{success:boolean}>} deps.sendWhatsApp Optional external sender fn
- * @returns {Promise<Array<{id:string,status:string,error?:string}>>}
+ * Processa de forma escalável os registros de outreach pendentes.
+ * Busca apenas documentos elegíveis no Firestore e os atualiza em lote.
+ * 
+ * Critérios de Elegibilidade:
+ * - status === 'email_sent'
+ * - optOut === false
+ * - whatsappSentAt === null
+ * - followUpEligibleAt <= AGORA
+ * 
+ * @param {Object} deps Dependências injetadas para teste.
+ * @param {import('firebase-admin').firestore.Firestore} deps.db Instância do Firestore.
+ * @param {(msg: string, phone?: string) => Promise<{success:boolean}>} deps.sendWhatsApp Função para enviar WhatsApp.
+ * @returns {Promise<Array<{id:string, status:string, error?:string}>>} Resultados do processamento.
  */
 async function processPendingOutreach({ db = admin.firestore(), sendWhatsApp = defaultWhatsAppStub } = {}) {
   if (!db) {
-    throw new Error('Firestore instance not available for outreach processing');
+    throw new Error('Instância do Firestore não está disponível.');
   }
-  const coll = db.collection('prospector_outreach');
-  const snap = await coll.get();
-  const now = Date.now();
-  const results = [];
-  for (const doc of snap.docs) {
-    const data = doc.data() || {};
-    if (data.status !== 'email_sent') continue;
-    if (data.optOut) continue;
-    if (data.whatsappSentAt) continue;
-    if (typeof data.followUpEligibleAt !== 'number') continue;
-    if (now < data.followUpEligibleAt) continue; // Not yet eligible
 
+  const now = Date.now();
+  const outreachQuery = db.collection('prospector_outreach')
+    .where('status', '==', 'email_sent')
+    .where('optOut', '==', false)
+    .where('whatsappSentAt', '==', null)
+    .where('followUpEligibleAt', '<=', now);
+
+  const snapshot = await outreachQuery.get();
+  if (snapshot.empty) {
+    console.log('Nenhum outreach pendente encontrado.');
+    return [];
+  }
+
+  const batch = db.batch();
+  const results = [];
+
+  for (const doc of snapshot.docs) {
+    const data = doc.data();
+    const message = `Olá ${data.providerName}, acompanhando seu convite para conhecer a Servio.AI. Posso ajudar no cadastro?`;
+    
     try {
-      // Simulate WhatsApp send (placeholder)
-      const message = `Olá ${data.providerName}, acompanhando seu convite para conhecer a Servio.AI. Posso ajudar no cadastro?`;
-      const sendRes = await sendWhatsApp(message, data.providerPhone);
-      if (!sendRes.success) throw new Error('WhatsApp send failed');
-      await coll.doc(doc.id).update({
-        whatsappSentAt: Date.now(),
-        status: 'whatsapp_sent'
-      });
+      const sendResult = await sendWhatsApp(message, data.providerPhone);
+      if (!sendResult.success) {
+        throw new Error(sendResult.error || 'Falha simulada no envio de WhatsApp');
+      }
+      
+      batch.update(doc.ref, { status: 'whatsapp_sent', whatsappSentAt: Date.now() });
       results.push({ id: doc.id, status: 'whatsapp_sent' });
+
     } catch (err) {
-      const errorMsg = err && err.message ? err.message : String(err);
-      const history = Array.isArray(data.errorHistory) ? data.errorHistory.slice() : [];
-      history.push({ at: Date.now(), error: errorMsg });
-      await coll.doc(doc.id).update({ errorHistory: history });
+      const errorMsg = err.message || String(err);
+      const newHistory = Array.isArray(data.errorHistory) ? [...data.errorHistory, { at: Date.now(), error: errorMsg }] : [{ at: Date.now(), error: errorMsg }];
+      
+      batch.update(doc.ref, { errorHistory: newHistory });
       results.push({ id: doc.id, status: 'error', error: errorMsg });
     }
   }
+
+  await batch.commit();
   return results;
 }
 
+// Função stub para simular o envio de WhatsApp em testes ou desenvolvimento.
 function defaultWhatsAppStub(message, phone) {
-  // 85% simulated success
-  const ok = Math.random() < 0.85;
-  return Promise.resolve({ success: ok, phone, message });
+  const isSuccess = Math.random() < 0.85; // 85% de chance de sucesso
+  return Promise.resolve({ 
+    success: isSuccess,
+    phone,
+    message,
+    error: isSuccess ? undefined : 'SIMULATED_FAILURE'
+  });
 }
 
 module.exports = { processPendingOutreach };
