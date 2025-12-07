@@ -682,7 +682,172 @@ Prioridade: P0/P1/P2/P3
 
 ---
 
-**Fim do Protocolo Oficial v1.0 (Expandido)**
+### 👀 **Code Review Best Practices (Gemini)**
+
+#### Checklist de Review Completo
+
+Gemini deve validar **TODOS** os itens abaixo antes de aprovar uma PR:
+
+#### 1️⃣ **Arquitetura & Design**
+
+- [ ] Código segue padrões existentes do projeto
+- [ ] Não viola princípios SOLID
+- [ ] Funções têm responsabilidade única
+- [ ] Nenhuma duplicação desnecessária de código
+- [ ] Separação de concerns mantida (API/UI/DB)
+
+#### 2️⃣ **Qualidade do Código**
+
+- [ ] Variáveis com nomes descritivos
+- [ ] Funções com propósito claro
+- [ ] Sem código "dead" ou comentado
+- [ ] Sem `console.log` ou `debugger` em produção
+- [ ] Error handling apropriado (try/catch onde necessário)
+
+#### 3️⃣ **TypeScript Strictness**
+
+- [ ] Sem `any` types (exceto em casos justificados com comment)
+- [ ] Tipos corretos em todas as assinaturas de função
+- [ ] Interfaces bem definidas (não misturar com types)
+- [ ] Nenhum `@ts-ignore` ou `@ts-expect-error` sem documentação
+- [ ] Tipos generic usados apropriadamente
+
+#### 4️⃣ **Testes**
+
+- [ ] Cobertura mínima 45% (unitários + E2E)
+- [ ] Casos positivos E negativos cobertos
+- [ ] Testes E2E cobrem fluxo crítico
+- [ ] Mock appropriados para dependências externas
+- [ ] Nenhum teste "flaky" (que passa/falha inconsistentemente)
+
+#### 5️⃣ **Performance & Security**
+
+- [ ] Sem N+1 queries no banco de dados
+- [ ] Sem exposição de secrets em código
+- [ ] Nenhuma vulnerabilidade de segurança óbvia
+- [ ] APIs possuem rate limiting se necessário
+- [ ] Bundle size não aumentou dramaticamente (< +10%)
+
+#### 6️⃣ **Documentação**
+
+- [ ] Funções públicas possuem JSDoc comments
+- [ ] APIs documentadas (endpoint, parâmetros, retorno)
+- [ ] DOCUMENTO_MESTRE atualizado se arquitetura mudou
+- [ ] README updated se novas dependências adicionadas
+- [ ] Mudanças breaking documentadas
+
+#### 7️⃣ **CI/CD Green**
+
+- [ ] ✅ Testes unitários passando
+- [ ] ✅ Testes E2E passando
+- [ ] ✅ Lint (ESLint) sem erros
+- [ ] ✅ Build (TypeScript) sem erros
+- [ ] ✅ Security audit (npm audit) sem vulnerabilidades críticas
+
+#### 8️⃣ **Git Hygiene**
+
+- [ ] Commits atômicos e bem descritos
+- [ ] Mensagens de commit seguem padrão (feat/fix/docs/etc)
+- [ ] Nenhum commit "WIP" ou "temp"
+- [ ] Sem merge commits em feature branches (rebase preferred)
+- [ ] Nenhuma branch com 20+ commits (deve ser refatorada em PRs menores)
+
+#### Red Flags (REJEITAR PR IMEDIATAMENTE)
+
+Se Gemini vê qualquer um desses, rejeita a PR sem discussão:
+
+- 🚫 Nenhum teste ou cobertura < 20%
+- 🚫 Breaking change sem documentação
+- 🚫 Secret/chave API exposta em código
+- 🚫 Código deletado sem razão clara
+- 🚫 Dependency vulnerabilidade crítica (CVSS >= 7.0)
+- 🚫 Alteração não autorizada em schema/database
+- 🚫 Performance degradada (LCP aumentou > 1s)
+- 🚫 CI/CD não está 100% verde
+
+---
+
+### ✅ **Checklist de Implementação (Copilot)**
+
+Copilot deve validar **TODOS** os itens abaixo ANTES de abrir PR:
+
+#### 1️⃣ **Código Completo**
+
+- [ ] Funcionalidade 100% implementada (não "draft")
+- [ ] Edge cases tratados
+- [ ] Validações de input em lugar
+- [ ] Erro handling completo
+- [ ] Sem `TODO` ou `FIXME` comentários pendentes
+
+#### 2️⃣ **Testes Escritos**
+
+- [ ] Testes unitários para cada função pública
+- [ ] Testes E2E para fluxo crítico
+- [ ] Casos positivos E negativos cobertos
+- [ ] Mocks configurados para dependências externas
+- [ ] Cobertura >= 45% (verificar com `npm run test:coverage`)
+
+#### 3️⃣ **Local Validation**
+
+```bash
+# Deve rodar ANTES de push:
+npm run lint          # ESLint clean
+npm run build         # TypeScript compile sem erros
+npm test              # Testes unitários passam
+npm run e2e:smoke     # E2E smoke tests passam
+npm audit             # Nenhuma vulnerabilidade crítica
+```
+
+#### 4️⃣ **Code Quality**
+
+- [ ] Usar Prettier (auto-format antes de commit)
+- [ ] Sem `console.log` em código de produção
+- [ ] Variáveis nomeadas descritivamente
+- [ ] Funções com máximo 30 linhas (refatorar se maior)
+- [ ] Imports organizados (order: libs → internal → relative)
+
+#### 5️⃣ **Git Commits**
+
+```bash
+# Commit messages devem ser atômicas e descritivas:
+git commit -m "feat(api): adicionar endpoint POST /api/leads/batch
+
+- Implementa processamento em batch de leads
+- Adiciona validação de input
+- Retorna IDs dos leads processados com status
+- Cobre com testes unitários e E2E"
+```
+
+#### 6️⃣ **PR Description**
+
+- [ ] Título claro (feat/fix/docs: descrição)
+- [ ] Seção "O que foi implementado"
+- [ ] Seção "Por que foi necessário"
+- [ ] Seção "Como testar"
+- [ ] Checklist de qualidade (todos marcados como feito)
+- [ ] Link para issues relacionadas
+
+#### 7️⃣ **Before Push**
+
+```bash
+# Última validação local:
+git log -5 --oneline      # Confirma commits bem descritos
+git diff origin/main      # Revisa código antes de push
+npm run lint:ci           # Final lint check
+npm run build             # Final build validation
+```
+
+#### 8️⃣ **Communication**
+
+- [ ] PR aberta com descrição detalhada
+- [ ] Aguarda review do Gemini
+- [ ] Responde a comentários rapidamente
+- [ ] Re-testa localmente após mudanças
+- [ ] Pede aprovação explícita quando pronto
+
+---
+
+**Fim do Protocolo Oficial v1.0 (Completo)**
 
 ---
 
