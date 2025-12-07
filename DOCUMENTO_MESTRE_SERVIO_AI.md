@@ -440,11 +440,14 @@ PATCH: Bug fixes, melhorias pequenas → v4.0.1
 
 #### Quando Increment Cada Versão
 
-| Tipo                | Exemplo                            | Novo Version | Quem Decide                       |
-| ------------------- | ---------------------------------- | ------------ | --------------------------------- |
-| **Breaking Change** | Remover endpoint, alterar schema   | MAJOR        | Gemini + Você                     |
-| **Nova Feature**    | Novo endpoint, novo componente     | MINOR        | Gemini                            |
-| **Bug Fix**         | Ajuste de lógica, correção de erro | PATCH        | Copilot (propõe), Gemini (aprova) |
+| Tipo      | Exemplo Específico                                 | Novo Version    | Antes/Depois                               | Quem Decide      |
+| --------- | -------------------------------------------------- | --------------- | ------------------------------------------ | ---------------- |
+| **MAJOR** | Mudança de API de pagamentos (Stripe → Adyen)      | v4.0.0 → v5.0.0 | Endpoints `/api/pay/*` mudam radicalmente  | Gemini + Você    |
+| **MAJOR** | Remover suporte a Firebase Auth, migrar para Auth0 | v4.0.0 → v5.0.0 | Sistema de autenticação completamente novo | Gemini + Você    |
+| **MINOR** | Adicionar novo dashboard para prospectors          | v4.0.0 → v4.1.0 | Novo recurso, compatível com v4.0          | Gemini           |
+| **MINOR** | Novo endpoint POST /api/leads/batch-process        | v4.1.0 → v4.2.0 | Endpoint novo, não quebra existentes       | Gemini           |
+| **PATCH** | Corrigir bug no CSS do modal de login              | v4.1.5 → v4.1.6 | Mesmo funcional, apenas visual             | Copilot + Gemini |
+| **PATCH** | Ajustar timeout de sessão 20min → 30min            | v4.2.0 → v4.2.1 | Comportamento melhorado, sem breaking      | Copilot + Gemini |
 
 #### Release Process
 
@@ -682,6 +685,26 @@ Prioridade: P0/P1/P2/P3
 
 ---
 
+### 📋 **Índice de Navegação Rápida**
+
+Para encontrar processos específicos rapidamente:
+
+- 🔵 **Papéis das IAs** → [Seção: Papéis das IAs](#papéis-das-ias)
+- ⚡ **Paralelização de Tarefas** → [Seção: Paralelização](#paralelização-de-tarefas)
+- 🔄 **Fluxo Oficial** → [Seção: Fluxo Oficial de Desenvolvimento](#fluxo-oficial-de-desenvolvimento)
+- 📏 **Padrões Obrigatórios** → [Seção: Padrões Obrigatórios](#padrões-obrigatórios)
+- 🎯 **Checklist de Qualidade** → [Seção: Checklist de Qualidade](#checklist-de-qualidade-mínima-para-merge)
+- 🚀 **Fases de Lançamento** → [Seção: Fases de Lançamento](#fases-de-lançamento)
+- 🔄 **Resolução de Conflitos** → [Seção: Resolução de Conflitos](#resolução-de-conflitos-de-merge)
+- 📦 **Versionamento** → [Seção: Versionamento](#estratégia-de-versionamento)
+- 🚨 **Escalonamento de Problemas** → [Seção: Escalonamento](#escalonamento-de-problemas)
+- 💬 **Templates de Comunicação** → [Seção: Templates](#templates-de-comunicação)
+- 👀 **Code Review** → [Seção: Code Review](#code-review-best-practices-gemini)
+- ✅ **Checklist de Implementação** → [Seção: Implementação](#-checklist-de-implementação-copilot)
+- 🧪 **Estratégia de Testes** → [Seção: Testes e Qualidade](#estratégia-de-testes-e-qualidade)
+
+---
+
 ### 👀 **Code Review Best Practices (Gemini)**
 
 #### Checklist de Review Completo
@@ -847,7 +870,208 @@ npm run build             # Final build validation
 
 ---
 
-**Fim do Protocolo Oficial v1.0 (Completo)**
+### 🧪 **Estratégia de Testes e Qualidade**
+
+#### Definition of Done (DoD) - Checklist de Implementação
+
+A seção anterior funciona como nossa **Definition of Done** formal. Uma implementação SÓ é considerada "feita" quando:
+
+1. ✅ Código implementado 100%
+2. ✅ Testes escritos e passando
+3. ✅ Lint/Build/Security green
+4. ✅ PR aberta com descrição completa
+5. ✅ Aprovada pelo Gemini conforme Code Review
+
+---
+
+#### 🔬 **Tipos de Testes Esperados**
+
+**FRONTEND** (React + TypeScript):
+
+```typescript
+// 1. Testes Unitários (Vitest + React Testing Library)
+describe('LeadCard Component', () => {
+  it('deve renderizar nome do lead', () => {
+    render(<LeadCard lead={mockLead} />);
+    expect(screen.getByText('João')).toBeInTheDocument();
+  });
+
+  it('deve chamar onSelect quando clicado', () => {
+    const mockSelect = vi.fn();
+    render(<LeadCard lead={mockLead} onSelect={mockSelect} />);
+    fireEvent.click(screen.getByRole('button'));
+    expect(mockSelect).toHaveBeenCalled();
+  });
+});
+
+// 2. Testes E2E (Playwright)
+test('fluxo completo: importar leads → visualizar → filtrar', async ({ page }) => {
+  await page.goto('/dashboard');
+  await page.click('text=Import Leads');
+  await page.fill('input[name=file]', 'leads.csv');
+  await page.click('text=Submit');
+  await expect(page.locator('text=Leads imported')).toBeVisible();
+});
+
+// 3. Testes de Acessibilidade
+it('deve ter texto alt em todas as imagens', () => {
+  render(<LeadCard lead={mockLead} />);
+  const images = screen.getAllByRole('img');
+  images.forEach(img => expect(img).toHaveAttribute('alt'));
+});
+```
+
+**BACKEND** (Node.js + Express):
+
+```javascript
+// 1. Testes Unitários (Jest/Vitest)
+describe('Lead Scoring Service', () => {
+  it('deve calcular score corretamente', () => {
+    const score = scoreLeadService({
+      engagement: 80,
+      qualification: 90,
+      industry: 'tech'
+    });
+    expect(score).toBe(85);
+  });
+
+  it('deve rejeitar leads sem email', () => {
+    expect(() => validateLead({ name: 'John', phone: '123' }))
+      .toThrow('Email required');
+  });
+});
+
+// 2. Testes de Integração
+describe('POST /api/leads/import', () => {
+  it('deve importar leads e salvar em Firestore', async () => {
+    const response = await request(app)
+      .post('/api/leads/import')
+      .send({ leads: [...] });
+
+    expect(response.status).toBe(200);
+    const saved = await db.collection('leads').count();
+    expect(saved).toBe(100);
+  });
+});
+
+// 3. Testes de Segurança
+it('deve rejeitar requisição sem token Auth', async () => {
+  const response = await request(app)
+    .post('/api/leads/import')
+    .send({ leads: [...] });
+
+  expect(response.status).toBe(401);
+  expect(response.body.error).toBe('Unauthorized');
+});
+```
+
+---
+
+#### 📊 **Metas de Cobertura de Código**
+
+| Área             | Meta | Ferramenta        |
+| ---------------- | ---- | ----------------- |
+| **Frontend**     | 70%  | Vitest + Istanbul |
+| **Backend**      | 80%  | Jest + Istanbul   |
+| **E2E Critical** | 100% | Playwright        |
+| **Overall**      | >45% | Combined          |
+
+#### Como Validar Cobertura Localmente
+
+```bash
+# Frontend
+npm run test:coverage          # Gera relatório de cobertura
+npm run test:coverage:report   # Abre HTML report
+
+# Backend
+cd backend && npm test -- --coverage
+open coverage/index.html
+
+# Validar limite mínimo
+npm run test:coverage:check    # Falha se < 45%
+```
+
+---
+
+#### 🚦 **Processo de QA (Quality Assurance)**
+
+**Antes de Gemini Aprovar um PR**:
+
+1. ✅ **Testes Unitários**:
+   - Todos passando (npm test)
+   - Cobertura >= meta estabelecida
+   - Casos positivos E negativos
+
+2. ✅ **Testes E2E**:
+   - Fluxos críticos cobertos (Playwright)
+   - Firefox + Chromium passando
+   - Sem flaky tests (consistência)
+
+3. ✅ **Lint & Format**:
+   - ESLint sem erros (npm run lint)
+   - Prettier aplicado (auto-fix)
+   - No console.log em produção
+
+4. ✅ **Build & TypeScript**:
+   - Compilação sem erros (npm run build)
+   - TypeScript strict mode ✅
+   - Bundle size dentro do limite
+
+5. ✅ **Segurança**:
+   - npm audit clean (zero críticas)
+   - Nenhuma secret em código
+   - Permissões de API validadas
+
+6. ✅ **Performance**:
+   - LCP < 3 segundos
+   - CLS < 0.1
+   - Bundle gzip < 200KB (frontend)
+
+---
+
+#### 📈 **Dashboard de Qualidade**
+
+Métricas a monitorar constantemente:
+
+```yaml
+Cobertura Geral:           45% → 80% (objetivo: 100%)
+Lint Errors:               0 (obrigatório)
+Build Time:                < 30s (frontend) / < 20s (backend)
+E2E Pass Rate:             100% (zero flakiness)
+Security Vulnerabilities:  0 críticas
+Performance (LCP):         < 3s (obrigatório)
+Uptime (produção):         > 99.5%
+```
+
+---
+
+#### 🔄 **Regressão Testing**
+
+Toda correção de bug DEVE incluir teste que reproduz o problema:
+
+```typescript
+// Exemplo: Bug de login com espaços no email
+describe('Auth Bug Fix: Email Trimming', () => {
+  it('deve aceitar email com espaços e fazer trim', () => {
+    const result = normalizeEmail('  user@example.com  ');
+    expect(result).toBe('user@example.com');
+  });
+
+  it('deve fazer login mesmo com espaços', async () => {
+    const response = await request(app)
+      .post('/api/auth/login')
+      .send({ email: '  user@example.com  ', password: 'pwd' });
+
+    expect(response.status).toBe(200);
+  });
+});
+```
+
+Este teste garante que o bug não reaparece em futuras mudanças.
+
+---
+
+**Fim do Protocolo Oficial v1.0 (Completo + Testes)**
 
 ---
 
