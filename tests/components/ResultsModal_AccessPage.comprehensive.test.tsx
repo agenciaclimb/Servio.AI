@@ -14,9 +14,12 @@ vi.mock('firebase/firestore', () => ({
 }));
 
 // Mock component for ResultsModal
-const ResultsModal = ({ results, onClose, isOpen }: any) => (
+const ResultsModal = ({ results, onClose, isOpen }: any) =>
   isOpen ? (
-    <div data-testid="results-modal" className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center">
+    <div
+      data-testid="results-modal"
+      className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center"
+    >
       <div data-testid="modal-content" className="bg-white rounded-lg p-6 max-w-2xl w-full">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Search Results</h2>
@@ -32,7 +35,11 @@ const ResultsModal = ({ results, onClose, isOpen }: any) => (
         {results && results.length > 0 ? (
           <div data-testid="results-list" className="space-y-4">
             {results.map((result: any, idx: number) => (
-              <div key={idx} data-testid={`result-item-${idx}`} className="p-4 border rounded-lg hover:border-blue-600">
+              <div
+                key={idx}
+                data-testid={`result-item-${idx}`}
+                className="p-4 border rounded-lg hover:border-blue-600"
+              >
                 <h3 className="font-semibold">{result.name || 'Unnamed'}</h3>
                 <p className="text-sm text-gray-600">{result.description}</p>
                 {result.price && <p className="font-bold mt-2">${result.price}</p>}
@@ -62,8 +69,7 @@ const ResultsModal = ({ results, onClose, isOpen }: any) => (
         </div>
       </div>
     </div>
-  ) : null
-);
+  ) : null;
 
 // Mock component for AccessPage
 const AccessPage = ({ _userId }: any) => (
@@ -113,9 +119,7 @@ const AccessPage = ({ _userId }: any) => (
             <input type="checkbox" id="2fa" />
             <label htmlFor="2fa">Enable Two-Factor Authentication</label>
           </div>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded">
-            Update Password
-          </button>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded">Update Password</button>
         </div>
       </section>
     </div>
@@ -151,7 +155,9 @@ describe('ResultsModal - Comprehensive Quality Tests', () => {
     });
 
     it('should not render modal when closed', () => {
-      const { container } = render(<ResultsModal isOpen={false} results={mockResults} onClose={mockClose} />);
+      const { container } = render(
+        <ResultsModal isOpen={false} results={mockResults} onClose={mockClose} />
+      );
       expect(container.querySelector('[data-testid="results-modal"]')).not.toBeInTheDocument();
     });
 
@@ -164,7 +170,7 @@ describe('ResultsModal - Comprehensive Quality Tests', () => {
   describe('Results Display', () => {
     it('should display all results', () => {
       render(<ResultsModal isOpen={true} results={mockResults} onClose={mockClose} />);
-      
+
       mockResults.forEach((result, idx) => {
         expect(screen.getByTestId(`result-item-${idx}`)).toBeInTheDocument();
         expect(screen.getByText(result.name)).toBeInTheDocument();
@@ -173,7 +179,7 @@ describe('ResultsModal - Comprehensive Quality Tests', () => {
 
     it('should display result details', () => {
       render(<ResultsModal isOpen={true} results={mockResults} onClose={mockClose} />);
-      
+
       mockResults.forEach(result => {
         expect(screen.getByText(result.description)).toBeInTheDocument();
       });
@@ -181,7 +187,7 @@ describe('ResultsModal - Comprehensive Quality Tests', () => {
 
     it('should display prices when available', () => {
       render(<ResultsModal isOpen={true} results={mockResults} onClose={mockClose} />);
-      
+
       mockResults.forEach(result => {
         expect(screen.getByText(`$${result.price}`)).toBeInTheDocument();
       });
@@ -213,21 +219,21 @@ describe('ResultsModal - Comprehensive Quality Tests', () => {
   describe('User Interactions', () => {
     it('should close modal when close button is clicked', async () => {
       render(<ResultsModal isOpen={true} results={mockResults} onClose={mockClose} />);
-      
+
       await user.click(screen.getByTestId('close-button'));
       expect(mockClose).toHaveBeenCalled();
     });
 
     it('should close modal with secondary action button', async () => {
       render(<ResultsModal isOpen={true} results={mockResults} onClose={mockClose} />);
-      
+
       await user.click(screen.getByTestId('secondary-action'));
       expect(mockClose).toHaveBeenCalled();
     });
 
     it('should handle primary action button click', async () => {
       render(<ResultsModal isOpen={true} results={mockResults} onClose={mockClose} />);
-      
+
       const primaryBtn = screen.getByTestId('primary-action');
       await user.click(primaryBtn);
       expect(primaryBtn).toBeInTheDocument();
@@ -235,7 +241,7 @@ describe('ResultsModal - Comprehensive Quality Tests', () => {
 
     it('should be keyboard accessible', async () => {
       render(<ResultsModal isOpen={true} results={mockResults} onClose={mockClose} />);
-      
+
       const closeBtn = screen.getByTestId('close-button');
       closeBtn.focus();
       expect(closeBtn).toHaveFocus();
@@ -247,11 +253,13 @@ describe('ResultsModal - Comprehensive Quality Tests', () => {
 
   describe('Edge Cases', () => {
     it('should handle very long result list', () => {
-      const longResults = Array(100).fill(null).map((_, i) => ({
-        name: `Result ${i}`,
-        description: `Description ${i}`,
-        price: i * 100,
-      }));
+      const longResults = Array(100)
+        .fill(null)
+        .map((_, i) => ({
+          name: `Result ${i}`,
+          description: `Description ${i}`,
+          price: i * 100,
+        }));
 
       render(<ResultsModal isOpen={true} results={longResults} onClose={mockClose} />);
       expect(screen.getByTestId('results-list')).toBeInTheDocument();
@@ -287,14 +295,16 @@ describe('ResultsModal - Comprehensive Quality Tests', () => {
 
   describe('Accessibility', () => {
     it('should have proper heading hierarchy', () => {
-      const { container } = render(<ResultsModal isOpen={true} results={mockResults} onClose={mockClose} />);
+      const { container } = render(
+        <ResultsModal isOpen={true} results={mockResults} onClose={mockClose} />
+      );
       const heading = container.querySelector('h2');
       expect(heading?.textContent).toContain('Search Results');
     });
 
     it('should have accessible buttons', () => {
       render(<ResultsModal isOpen={true} results={mockResults} onClose={mockClose} />);
-      
+
       const buttons = screen.getAllByRole('button');
       buttons.forEach(btn => {
         expect(btn).toBeInTheDocument();
@@ -381,7 +391,7 @@ describe('AccessPage - Comprehensive Quality Tests', () => {
     it('should handle role removal', async () => {
       render(<AccessPage userId="user@example.com" />);
       const removeButtons = screen.getAllByText('Remove');
-      
+
       await user.click(removeButtons[0]);
       expect(removeButtons[0]).toBeInTheDocument();
     });
@@ -422,7 +432,7 @@ describe('AccessPage - Comprehensive Quality Tests', () => {
     it('should handle save action', async () => {
       render(<AccessPage userId="user@example.com" />);
       const saveBtn = screen.getByTestId('save-button');
-      
+
       await user.click(saveBtn);
       expect(saveBtn).toBeInTheDocument();
     });
@@ -430,7 +440,7 @@ describe('AccessPage - Comprehensive Quality Tests', () => {
     it('should handle cancel action', async () => {
       render(<AccessPage userId="user@example.com" />);
       const cancelBtn = screen.getByTestId('cancel-button');
-      
+
       await user.click(cancelBtn);
       expect(cancelBtn).toBeInTheDocument();
     });
@@ -449,7 +459,7 @@ describe('AccessPage - Comprehensive Quality Tests', () => {
     it('should have accessible checkboxes', () => {
       render(<AccessPage userId="user@example.com" />);
       const checkboxes = screen.getAllByRole('checkbox');
-      
+
       checkboxes.forEach(checkbox => {
         expect(checkbox).toBeInTheDocument();
       });
@@ -458,7 +468,7 @@ describe('AccessPage - Comprehensive Quality Tests', () => {
     it('should have accessible buttons', () => {
       render(<AccessPage userId="user@example.com" />);
       const buttons = screen.getAllByRole('button');
-      
+
       expect(buttons.length).toBeGreaterThan(0);
     });
   });

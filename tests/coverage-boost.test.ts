@@ -9,7 +9,7 @@ describe('Cobertura Adicional - Codigo Novo', () => {
   describe('Validacoes e Helpers', () => {
     it('valida email com regex padrao', () => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      
+
       expect(emailRegex.test('usuario@example.com')).toBe(true);
       expect(emailRegex.test('invalido@')).toBe(false);
       expect(emailRegex.test('sem-arroba.com')).toBe(false);
@@ -18,7 +18,7 @@ describe('Cobertura Adicional - Codigo Novo', () => {
 
     it('valida telefone brasileiro', () => {
       const phoneRegex = /^\(\d{2}\)\s?\d{4,5}-?\d{4}$/;
-      
+
       expect(phoneRegex.test('(11) 98765-4321')).toBe(true);
       expect(phoneRegex.test('(11) 3456-7890')).toBe(true);
       expect(phoneRegex.test('11987654321')).toBe(false);
@@ -32,7 +32,7 @@ describe('Cobertura Adicional - Codigo Novo', () => {
         }).format(value);
       };
 
-      const result = formatCurrency(1500.50);
+      const result = formatCurrency(1500.5);
       expect(result).toContain('1');
       expect(result).toContain('5');
       expect(result).toContain('0');
@@ -126,7 +126,7 @@ describe('Cobertura Adicional - Codigo Novo', () => {
 
       const pastDate = new Date('2020-01-01');
       const futureDate = new Date('2030-01-01');
-      
+
       expect(isPast(pastDate)).toBe(true);
       expect(isPast(futureDate)).toBe(false);
     });
@@ -144,12 +144,15 @@ describe('Cobertura Adicional - Codigo Novo', () => {
 
     it('agrupa array por propriedade', () => {
       const groupBy = <T>(arr: T[], key: keyof T): Record<string, T[]> => {
-        return arr.reduce((acc, item) => {
-          const groupKey = String(item[key]);
-          if (!acc[groupKey]) acc[groupKey] = [];
-          acc[groupKey].push(item);
-          return acc;
-        }, {} as Record<string, T[]>);
+        return arr.reduce(
+          (acc, item) => {
+            const groupKey = String(item[key]);
+            if (!acc[groupKey]) acc[groupKey] = [];
+            acc[groupKey].push(item);
+            return acc;
+          },
+          {} as Record<string, T[]>
+        );
       };
 
       const items = [
@@ -188,7 +191,7 @@ describe('Cobertura Adicional - Codigo Novo', () => {
       ];
 
       const filtered = items.filter(
-        (item) => item.category === 'A' && item.inStock && item.price > 50
+        item => item.category === 'A' && item.inStock && item.price > 50
       );
 
       expect(filtered).toHaveLength(2);
@@ -223,9 +226,10 @@ describe('Cobertura Adicional - Codigo Novo', () => {
 
     it('capitaliza primeira letra de cada palavra', () => {
       const capitalize = (str: string): string => {
-        return str.split(' ').map(word => 
-          word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-        ).join(' ');
+        return str
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ');
       };
 
       expect(capitalize('joão da silva')).toBe('João Da Silva');
@@ -245,18 +249,18 @@ describe('Cobertura Adicional - Codigo Novo', () => {
     it('calcula comissao do prestador baseada no rating', () => {
       const calculateCommission = (rating: number): number => {
         if (rating >= 4.8) return 0.15; // 15%
-        if (rating >= 4.5) return 0.20; // 20%
+        if (rating >= 4.5) return 0.2; // 20%
         return 0.25; // 25%
       };
 
       expect(calculateCommission(4.9)).toBe(0.15);
-      expect(calculateCommission(4.6)).toBe(0.20);
+      expect(calculateCommission(4.6)).toBe(0.2);
       expect(calculateCommission(4.0)).toBe(0.25);
     });
 
     it('valida valor minimo de proposta', () => {
       const MIN_PROPOSAL_VALUE = 50;
-      
+
       const isValidProposal = (value: number): boolean => {
         return value >= MIN_PROPOSAL_VALUE;
       };
@@ -268,7 +272,7 @@ describe('Cobertura Adicional - Codigo Novo', () => {
 
     it('calcula pontos de fidelidade', () => {
       const calculateLoyaltyPoints = (spentAmount: number): number => {
-        return Math.floor(spentAmount * 0.10); // 10% em pontos
+        return Math.floor(spentAmount * 0.1); // 10% em pontos
       };
 
       expect(calculateLoyaltyPoints(1000)).toBe(100);

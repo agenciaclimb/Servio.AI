@@ -5,6 +5,7 @@
 **"Só lançamos quando tudo funcionar perfeitamente"**
 
 Este documento descreve a estratégia completa de testes que garante:
+
 - ✅ 100% das funcionalidades testadas
 - ✅ Toda a experiência do cliente coberta
 - ✅ Todas as páginas e componentes validados
@@ -30,6 +31,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ### 1️⃣ JORNADA DO CLIENTE (end-to-end)
 
 #### 1.1 Cadastro e Autenticação
+
 ```typescript
 // tests/e2e/client-auth.spec.ts
 - [ ] Cadastrar com email/senha
@@ -41,6 +43,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 1.2 Perfil e Onboarding
+
 ```typescript
 // tests/e2e/client-profile.spec.ts
 - [ ] Visualizar perfil próprio
@@ -52,6 +55,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 1.3 Criar Serviço com IA
+
 ```typescript
 // tests/e2e/client-create-service.spec.ts
 - [ ] Abrir wizard de criação
@@ -69,6 +73,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 1.4 Receber e Aceitar Propostas
+
 ```typescript
 // tests/e2e/client-proposals.spec.ts
 - [ ] Notificação quando prestador propõe
@@ -82,6 +87,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 1.5 Pagamento Stripe
+
 ```typescript
 // tests/e2e/client-payment.spec.ts
 - [ ] Modal de pagamento abre após aceitar
@@ -97,6 +103,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 1.6 Acompanhamento do Serviço
+
 ```typescript
 // tests/e2e/client-tracking.spec.ts
 - [ ] Ver status: agendado/a_caminho/em_andamento
@@ -110,6 +117,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 1.7 Avaliação e Conclusão
+
 ```typescript
 // tests/e2e/client-review.spec.ts
 - [ ] Prestador marca como "concluído"
@@ -125,6 +133,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 1.8 Disputa (se necessário)
+
 ```typescript
 // tests/e2e/client-dispute.spec.ts
 - [ ] Abrir disputa durante "em_andamento"
@@ -138,6 +147,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 1.9 Gerenciar Itens
+
 ```typescript
 // tests/e2e/client-items.spec.ts
 - [ ] Cadastrar item (geladeira, ar condicionado, etc.)
@@ -154,6 +164,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ### 2️⃣ JORNADA DO PRESTADOR (end-to-end)
 
 #### 2.1 Cadastro e Onboarding
+
 ```typescript
 // tests/e2e/provider-onboarding.spec.ts
 - [ ] Cadastro inicial (escolher "Quero prestar serviços")
@@ -167,6 +178,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 2.2 Dashboard e Busca de Jobs
+
 ```typescript
 // tests/e2e/provider-dashboard.spec.ts
 - [ ] Ver jobs abertos compatíveis com especialidades
@@ -179,6 +191,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 2.3 Propor Serviço
+
 ```typescript
 // tests/e2e/provider-proposal.spec.ts
 - [ ] Ver detalhes do job
@@ -192,6 +205,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 2.4 Leilão (modo auction)
+
 ```typescript
 // tests/e2e/provider-auction.spec.ts
 - [ ] Ver jobs em leilão
@@ -205,6 +219,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 2.5 Execução do Serviço
+
 ```typescript
 // tests/e2e/provider-execution.spec.ts
 - [ ] Job aceito aparece em "Meus Jobs"
@@ -218,6 +233,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 2.6 Recebimento
+
 ```typescript
 // tests/e2e/provider-earnings.spec.ts
 - [ ] Cliente avalia e pagamento é liberado
@@ -230,6 +246,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 2.7 Responder Disputa
+
 ```typescript
 // tests/e2e/provider-dispute-response.spec.ts
 - [ ] Cliente abre disputa
@@ -246,6 +263,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ### 3️⃣ JORNADA DO ADMIN (end-to-end)
 
 #### 3.1 Login e Dashboard
+
 ```typescript
 // tests/e2e/admin-dashboard.spec.ts
 - [ ] Login com email admin
@@ -256,6 +274,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 3.2 Gestão de Usuários
+
 ```typescript
 // tests/e2e/admin-users.spec.ts
 - [ ] Listar todos os usuários
@@ -270,6 +289,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 3.3 Gestão de Jobs
+
 ```typescript
 // tests/e2e/admin-jobs.spec.ts
 - [ ] Listar todos os jobs
@@ -282,6 +302,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 3.4 Mediação de Disputas
+
 ```typescript
 // tests/e2e/admin-disputes.spec.ts
 - [ ] Listar disputas abertas
@@ -298,6 +319,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### 3.5 Analytics e Relatórios
+
 ```typescript
 // tests/e2e/admin-analytics.spec.ts
 - [ ] Dashboard de métricas
@@ -319,6 +341,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ## 🖥️ PÁGINAS E COMPONENTES
 
 ### Páginas Públicas
+
 ```typescript
 // tests/e2e/public-pages.spec.ts
 - [ ] Home (HeroSection): Hero banner, CTA, navegação
@@ -332,6 +355,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 ### Páginas Autenticadas - Cliente
+
 ```typescript
 // tests/e2e/client-pages.spec.ts
 - [ ] Dashboard: Tabs, onboarding, ações rápidas
@@ -341,6 +365,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 ### Páginas Autenticadas - Prestador
+
 ```typescript
 // tests/e2e/provider-pages.spec.ts
 - [ ] Dashboard: Jobs abertos, meus jobs, filtros
@@ -350,6 +375,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 ### Páginas Autenticadas - Admin
+
 ```typescript
 // tests/e2e/admin-pages.spec.ts
 - [ ] Analytics: Métricas, gráficos, KPIs
@@ -359,6 +385,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 ### Modais Críticos
+
 ```typescript
 // tests/integration/modals.spec.ts
 - [ ] AuthModal: Login/Cadastro
@@ -379,6 +406,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 ### Componentes Críticos
+
 ```typescript
 // tests/unit/components.spec.ts
 - [ ] Header: Navegação, notificações, logout
@@ -399,6 +427,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ## 🚨 CENÁRIOS DE ERRO E EDGE CASES
 
 ### Validações de Formulário
+
 ```typescript
 // tests/unit/form-validations.spec.ts
 - [ ] Email inválido
@@ -416,6 +445,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 ### Erros de Rede
+
 ```typescript
 // tests/integration/network-errors.spec.ts
 - [ ] API offline (mostrar fallback ou mock data)
@@ -429,6 +459,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 ### Estados Vazios
+
 ```typescript
 // tests/integration/empty-states.spec.ts
 - [ ] Cliente sem jobs
@@ -442,6 +473,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 ### Permissões e Segurança
+
 ```typescript
 // tests/e2e/permissions.spec.ts
 - [ ] Cliente não pode acessar dashboard prestador
@@ -455,6 +487,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 ### IA e Integrações
+
 ```typescript
 // tests/integration/ai-fallbacks.spec.ts
 - [ ] IA offline → fallback para heurística
@@ -471,6 +504,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ## ⚡ PERFORMANCE E ACESSIBILIDADE
 
 ### Lighthouse Scores (alvo: > 90)
+
 ```typescript
 // tests/lighthouse/scores.spec.ts
 - [ ] Performance: > 90
@@ -480,6 +514,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 ### Acessibilidade (WCAG 2.1 AA)
+
 ```typescript
 // tests/a11y/wcag.spec.ts
 - [ ] Navegação por teclado (Tab, Enter, Esc)
@@ -495,6 +530,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 ### Performance
+
 ```typescript
 // tests/performance/metrics.spec.ts
 - [ ] Tempo de carregamento inicial < 3s
@@ -516,6 +552,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ### Alvo: 80%+ no SonarCloud (código novo)
 
 #### Componentes Críticos (100% cobertura obrigatória):
+
 ```typescript
 // Estes arquivos NÃO podem ter menos de 100% de cobertura
 - [ ] services/api.ts - Todas as chamadas de API
@@ -529,6 +566,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ```
 
 #### Componentes Importantes (80%+ cobertura):
+
 ```typescript
 - [ ] components/ClientDashboard.tsx
 - [ ] components/ProviderDashboard.tsx
@@ -546,43 +584,57 @@ Este documento descreve a estratégia completa de testes que garante:
 ## 🚀 ESTRATÉGIA DE IMPLEMENTAÇÃO
 
 ### FASE 1: Jornadas E2E Principais (PRIORIDADE MÁXIMA)
+
 **Prazo: 3-5 dias**
+
 1. ✅ Cliente: Cadastro → Criar serviço → Aceitar proposta → Pagar → Avaliar
 2. ✅ Prestador: Cadastro → Onboarding → Propor → Executar → Receber
 3. ✅ Admin: Aprovar prestador → Mediar disputa
 
 ### FASE 2: Cobertura de Todas as Páginas
+
 **Prazo: 2-3 dias**
+
 1. Testar renderização de cada página
 2. Validar navegação entre páginas
 3. Testar estados de loading e erro
 
 ### FASE 3: Cobertura de Todos os Modais
+
 **Prazo: 2-3 dias**
+
 1. Testar abertura/fechamento
 2. Validar interações
 3. Testar submissão de formulários
 
 ### FASE 4: Cenários de Erro
+
 **Prazo: 2 dias**
+
 1. Validações de formulário
 2. Erros de rede
 3. Permissões negadas
 
 ### FASE 5: Performance e Acessibilidade
+
 **Prazo: 1-2 dias**
+
 1. Lighthouse audits
 2. Testes com teclado
 3. Testes com screen readers
 
 ### FASE 6: Quality Gate SonarCloud
+
 **Prazo: 1-2 dias**
+
 1. Corrigir bugs SonarCloud
 2. Atingir 80% coverage
 3. Reliability Rating A
 
 ### FASE 7: Validação em Produção
+
 **Prazo: 1 dia**
+
 1. Deploy para produção
 2. Smoke tests em prod
 3. Monitoramento de erros
@@ -593,6 +645,7 @@ Este documento descreve a estratégia completa de testes que garante:
 ## ✅ CRITÉRIOS DE LANÇAMENTO
 
 ### Requisitos Mínimos (BLOQUEANTES)
+
 - ✅ **100% dos flows principais testados e funcionando**
 - ✅ **0 bugs críticos ou blockers**
 - ✅ **SonarCloud Quality Gate PASSED**
@@ -607,6 +660,7 @@ Este documento descreve a estratégia completa de testes que garante:
 - ✅ **IA respondendo OU fallback funcionando**
 
 ### Validação Final (Checklist de Lançamento)
+
 - [ ] Todos os testes E2E passando
 - [ ] Todas as páginas renderizando sem erros
 - [ ] Todos os modais funcionando
@@ -648,11 +702,11 @@ Este documento descreve a estratégia completa de testes que garante:
 
 ---
 
-**FILOSOFIA FINAL**: 
+**FILOSOFIA FINAL**:
 
 > "Uma boa ideia só funciona se o produto ou serviço tiver qualidade. Não lançamos até termos certeza absoluta de que TUDO está funcionando como deveria." 🚀
 
-**Critérios de aceite:
+\*\*Critérios de aceite:
 
 - Suite unit/integration adiciona pelo menos 10–15 casos pendentes (test.todo) sem quebrar build.
 - Sem flakiness novo; zero testes falhando.

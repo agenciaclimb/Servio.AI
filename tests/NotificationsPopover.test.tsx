@@ -50,10 +50,12 @@ describe('NotificationsPopover', () => {
 
     render(
       <NotificationsPopover
-        notifications={[
-          makeNoti({ text: 'A', createdAt: fiveMinAgo }),
-          makeNoti({ text: 'B', createdAt: twoHoursAgo }),
-        ] as any}
+        notifications={
+          [
+            makeNoti({ text: 'A', createdAt: fiveMinAgo }),
+            makeNoti({ text: 'B', createdAt: twoHoursAgo }),
+          ] as any
+        }
         onMarkAsRead={vi.fn()}
         onMarkAllAsRead={vi.fn()}
       />

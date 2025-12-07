@@ -16,7 +16,7 @@ const baseUser = {
 describe('ProfileStrength', () => {
   it('renderiza indicador de força do perfil', () => {
     render(<ProfileStrength user={baseUser as any} onEditProfile={vi.fn()} />);
-    
+
     expect(screen.getByText(/Força do Perfil/i)).toBeInTheDocument();
   });
 
@@ -50,6 +50,8 @@ describe('ProfileStrength', () => {
     render(<ProfileStrength user={completeUser as any} onEditProfile={vi.fn()} />);
 
     expect(screen.getByText(/100%/i)).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /Completar Perfil Agora/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Completar Perfil Agora/i })
+    ).not.toBeInTheDocument();
   });
 });

@@ -142,9 +142,7 @@ describe('AdminDashboard', () => {
 
     // Tenta encontrar botão de suspender (pode estar em modal ou lista de usuários)
     const buttons = screen.queryAllByRole('button');
-    const suspendButton = buttons.find(btn => 
-      btn.textContent?.toLowerCase().includes('suspender')
-    );
+    const suspendButton = buttons.find(btn => btn.textContent?.toLowerCase().includes('suspender'));
 
     if (suspendButton) {
       fireEvent.click(suspendButton);
@@ -177,15 +175,16 @@ describe('AdminDashboard', () => {
 
     // Procura botão de mediar
     const buttons = screen.queryAllByRole('button');
-    const mediateButton = buttons.find(btn => 
-      btn.textContent?.toLowerCase().includes('mediar')
-    );
+    const mediateButton = buttons.find(btn => btn.textContent?.toLowerCase().includes('mediar'));
 
     if (mediateButton) {
       fireEvent.click(mediateButton);
-      await waitFor(() => {
-        expect(mediateDispute).toHaveBeenCalled();
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          expect(mediateDispute).toHaveBeenCalled();
+        },
+        { timeout: 3000 }
+      );
     }
   });
 
@@ -218,7 +217,7 @@ describe('AdminDashboard', () => {
 
     // Tenta encontrar e clicar em diferentes abas
     const buttons = screen.queryAllByRole('button');
-    
+
     // Clica em diferentes botões para simular navegação de abas
     if (buttons.length > 1) {
       fireEvent.click(buttons[1]);
@@ -228,5 +227,3 @@ describe('AdminDashboard', () => {
     }
   });
 });
-
-

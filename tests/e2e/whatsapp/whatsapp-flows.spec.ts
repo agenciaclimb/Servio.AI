@@ -3,7 +3,8 @@ import { test } from '../fixtures/roles.fixture';
 
 // E2E "semi-integrado" para WhatsApp: UI + mock de webhook HTTP
 
-const WHATSAPP_WEBHOOK_URL = process.env.E2E_WHATSAPP_WEBHOOK_URL || 'http://localhost:8081/api/whatsapp/webhook-test';
+const WHATSAPP_WEBHOOK_URL =
+  process.env.E2E_WHATSAPP_WEBHOOK_URL || 'http://localhost:8081/api/whatsapp/webhook-test';
 
 // Mensagens de exemplo baseadas nos guias WHATSAPP_*.md
 

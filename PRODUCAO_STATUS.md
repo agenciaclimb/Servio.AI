@@ -11,12 +11,14 @@
 ### 1. ❌ → ✅ Upload de Arquivos (RESOLVIDO)
 
 **Problema:**
+
 ```
 POST /generate-upload-url → 500 Internal Server Error
 Causa: GCP_STORAGE_BUCKET não configurado no Cloud Run
 ```
 
 **Solução Aplicada:**
+
 ```bash
 # Identificado bucket existente com CORS configurado
 gs://servio-uploads (US-WEST1, CORS habilitado)
@@ -27,6 +29,7 @@ gcloud run services update servio-backend \
 ```
 
 **Resultado:**
+
 ```
 ✓ Smoke Test: 4/4 endpoints passando (100%)
 ✓ generate-upload-url retorna signed URL válida
@@ -38,11 +41,13 @@ gcloud run services update servio-backend \
 ### 2. ✅ Variáveis de Ambiente Completas (RESOLVIDO)
 
 **Problema:**
+
 - Stripe keys faltando após deploy
 - Frontend URL incorreta (localhost)
 - NODE_ENV não configurado
 
 **Solução Aplicada:**
+
 ```bash
 gcloud run services update servio-backend \
   --set-env-vars="
@@ -55,6 +60,7 @@ gcloud run services update servio-backend \
 ```
 
 **Resultado:**
+
 ```
 ✓ Stripe LIVE keys configuradas
 ✓ CORS configurado para produção
@@ -68,6 +74,7 @@ gcloud run services update servio-backend \
 ### 1. Serviço AI (servio-ai) - DESATUALIZADO
 
 **Status Atual:**
+
 ```
 Serviço: servio-ai
 URL: https://servio-ai-1000250760228.us-west1.run.app
@@ -75,6 +82,7 @@ Variáveis: usando Stripe TEST keys (sk_test_...)
 ```
 
 **Ação Requerida:**
+
 - [ ] Atualizar para Stripe LIVE keys
 - [ ] Verificar se está na última versão do código
 - [ ] Testar endpoints de IA em produção
@@ -84,12 +92,14 @@ Variáveis: usando Stripe TEST keys (sk_test_...)
 ### 2. SonarLint - 731 Avisos Não Críticos
 
 **Avisos Principais:**
+
 - Nested ternaries (52 ocorrências)
 - Cognitive complexity (12 funções)
 - Variáveis não usadas (15 ocorrências)
 - Redundant assignments (8 ocorrências)
 
 **Status:**
+
 - ✅ Regras pesadas desabilitadas no workspace
 - ℹ️ Não bloqueiam funcionamento em produção
 - 📋 Podem ser refatoradas gradualmente
@@ -99,6 +109,7 @@ Variáveis: usando Stripe TEST keys (sk_test_...)
 ### 3. GitHub Actions - Secret AI_BOT_TOKEN
 
 **Status:**
+
 - ⚠️ Workflow `.github/workflows/ai-autopr.yml` comentado
 - Secret não existe no repositório
 - Workflow de auto-PR desabilitado temporariamente
@@ -127,12 +138,14 @@ Total: 4 | Passed: 4 | Failed: 0
 ## 🎯 PRÓXIMOS PASSOS RECOMENDADOS
 
 ### Status Scheduler & Webhooks (03/12/2025)
+
 - prospectorRunScheduler: ATIVA (us-central1) — token + Content-Length: 0
-- Job: `prospector-follow-up-scheduler` — */5 * * * * (America/Sao_Paulo)
+- Job: `prospector-follow-up-scheduler` — _/5 _ \* \* \* (America/Sao_Paulo)
 - Omnichannel Webhook: ATIVO (WhatsApp/Instagram/Facebook)
 - Documentação atualizada: `OMNICHANNEL_WEBHOOKS_CONFIG.md`, `PROSPECCAO_SCHEDULER.md`
 
 ### Recomendações
+
 - Upgrade `firebase-functions` >= 5.1.0
 - Migrar `functions.config()` para `.env` (prazo março/2026)
 - Alertas no Cloud Monitoring para falhas consecutivas
@@ -140,12 +153,14 @@ Total: 4 | Passed: 4 | Failed: 0
 ### Prioridade ALTA (Produção)
 
 1. **Testar Checkout Stripe End-to-End**
+
    ```bash
    # Verificar se pagamentos estão funcionando
    # Testar fluxo: criar job → proposta → checkout → webhook
    ```
 
 2. **Validar Uploads no Bucket**
+
    ```bash
    # Testar upload de arquivo via frontend
    # Verificar se arquivo aparece em gs://servio-uploads
@@ -181,6 +196,7 @@ Total: 4 | Passed: 4 | Failed: 0
 ## 📝 COMANDOS ÚTEIS
 
 ### Verificar Status dos Serviços
+
 ```bash
 gcloud run services list \
   --project=gen-lang-client-0737507616 \
@@ -188,6 +204,7 @@ gcloud run services list \
 ```
 
 ### Ver Logs de Erro
+
 ```bash
 gcloud logging read \
   "resource.type=cloud_run_revision AND severity>=ERROR" \
@@ -196,11 +213,13 @@ gcloud logging read \
 ```
 
 ### Testar Backend
+
 ```bash
 node scripts/backend_smoke_test.mjs
 ```
 
 ### Ver Variáveis de Ambiente
+
 ```bash
 gcloud run services describe servio-backend \
   --project=gen-lang-client-0737507616 \
@@ -212,13 +231,13 @@ gcloud run services describe servio-backend \
 
 ## ✅ RESUMO EXECUTIVO
 
-| Item | Status | Impacto |
-|------|--------|---------|
-| Upload de arquivos | ✅ RESOLVIDO | CRÍTICO |
-| Stripe keys | ✅ CONFIGURADO | CRÍTICO |
-| Backend health | ✅ OPERACIONAL | CRÍTICO |
-| Serviço AI | ⚠️ DESATUALIZADO | MÉDIO |
-| SonarLint warnings | ℹ️ NÃO CRÍTICO | BAIXO |
-| GitHub Actions | ⚠️ COMENTADO | BAIXO |
+| Item               | Status           | Impacto |
+| ------------------ | ---------------- | ------- |
+| Upload de arquivos | ✅ RESOLVIDO     | CRÍTICO |
+| Stripe keys        | ✅ CONFIGURADO   | CRÍTICO |
+| Backend health     | ✅ OPERACIONAL   | CRÍTICO |
+| Serviço AI         | ⚠️ DESATUALIZADO | MÉDIO   |
+| SonarLint warnings | ℹ️ NÃO CRÍTICO   | BAIXO   |
+| GitHub Actions     | ⚠️ COMENTADO     | BAIXO   |
 
 **Conclusão:** Sistema em produção operacional com 100% dos endpoints críticos funcionando. Atenção necessária para atualizar serviço AI e testar fluxo completo de pagamento.

@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { 
-  createCheckoutSession, 
+import {
+  createCheckoutSession,
   releasePayment,
   confirmPayment,
   createDispute,
-  resolveDispute
+  resolveDispute,
 } from '../services/api';
 import type { Job, Dispute } from '../types';
 
@@ -79,9 +79,9 @@ describe('Payment & Escrow', () => {
     it('libera pagamento quando job é completado', async () => {
       vi.spyOn(global, 'fetch').mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ 
-          success: true, 
-          message: 'Pagamento liberado com sucesso' 
+        json: async () => ({
+          success: true,
+          message: 'Pagamento liberado com sucesso',
         }),
       } as any);
 
@@ -95,8 +95,8 @@ describe('Payment & Escrow', () => {
       vi.spyOn(global, 'fetch').mockResolvedValueOnce({
         ok: false,
         statusText: 'Conflict',
-        json: async () => ({ 
-          error: 'Não é possível liberar pagamento com disputa ativa' 
+        json: async () => ({
+          error: 'Não é possível liberar pagamento com disputa ativa',
         }),
       } as any);
 

@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import Joyride, { CallBackProps, STATUS, Step, ACTIONS, EVENTS } from 'react-joyride';
-import { trackTourStarted, trackTourCompleted, trackTourSkipped } from '../services/analyticsService';
+import {
+  trackTourStarted,
+  trackTourCompleted,
+  trackTourSkipped,
+} from '../services/analyticsService';
 
 interface ProspectorOnboardingProps {
   userId: string;
@@ -12,32 +16,37 @@ interface ProspectorOnboardingProps {
 const TOUR_STEPS: Step[] = [
   {
     target: '.prospector-stats-section',
-    content: '👋 Bem-vindo ao seu painel de prospector! Aqui você vê suas métricas principais: recrutas, comissões ganhas e seu badge atual.',
+    content:
+      '👋 Bem-vindo ao seu painel de prospector! Aqui você vê suas métricas principais: recrutas, comissões ganhas e seu badge atual.',
     disableBeacon: true,
     placement: 'bottom',
     title: 'Suas Métricas',
   },
   {
     target: '.referral-link-section',
-    content: '🔗 Este é SEU link personalizado de indicação. Copie e compartilhe com prestadores de serviço para começar a ganhar comissões!',
+    content:
+      '🔗 Este é SEU link personalizado de indicação. Copie e compartilhe com prestadores de serviço para começar a ganhar comissões!',
     placement: 'bottom',
     title: 'Link de Indicação',
   },
   {
     target: '.template-selector',
-    content: '💬 Use nossos templates prontos para WhatsApp, Email e SMS. Personalize com 1 clique e envie para seus contatos!',
+    content:
+      '💬 Use nossos templates prontos para WhatsApp, Email e SMS. Personalize com 1 clique e envie para seus contatos!',
     placement: 'top',
     title: 'Templates Rápidos',
   },
   {
     target: '.badge-progress',
-    content: '🏆 Ganhe badges recrutando mais prestadores! Cada nível traz reconhecimento e você sobe no leaderboard.',
+    content:
+      '🏆 Ganhe badges recrutando mais prestadores! Cada nível traz reconhecimento e você sobe no leaderboard.',
     placement: 'left',
     title: 'Sistema de Badges',
   },
   {
     target: '.leaderboard-section',
-    content: '📊 Compare-se com outros prospectores. Entre no Top 10 e seja reconhecido como um dos melhores!',
+    content:
+      '📊 Compare-se com outros prospectores. Entre no Top 10 e seja reconhecido como um dos melhores!',
     placement: 'left',
     title: 'Leaderboard',
   },
@@ -47,17 +56,17 @@ const STORAGE_KEY_PREFIX = 'servio-prospector-tour';
 
 /**
  * ProspectorOnboarding - Tour guiado interativo para novos prospectores
- * 
+ *
  * Features:
  * - 5 steps onboarding tour usando react-joyride
  * - Persiste estado no localStorage
  * - Auto-inicia na primeira visita
  * - Permite pular ou reiniciar tour
  * - Callbacks para tracking de conclusão
- * 
+ *
  * @example
  * ```tsx
- * <ProspectorOnboarding 
+ * <ProspectorOnboarding
  *   userId={currentUser.email}
  *   onComplete={() => trackEvent('onboarding_completed')}
  * />
@@ -79,13 +88,13 @@ export function ProspectorOnboarding({
     if (!isActive || !userId) return undefined;
 
     const hasSeenTour = localStorage.getItem(storageKey);
-    
+
     if (!hasSeenTour) {
       // Track tour start
       const startTime = Date.now();
       sessionStorage.setItem(`tour-start-${userId}`, startTime.toString());
       trackTourStarted(userId);
-      
+
       // Delay de 500ms para garantir que DOM está montado
       const timer = setTimeout(() => {
         setRunTour(true);
@@ -95,41 +104,52 @@ export function ProspectorOnboarding({
     return undefined;
   }, [isActive, userId, storageKey]);
 
-  const handleJoyrideCallback = useCallback((data: CallBackProps) => {
-    const { status, action, index, type } = data;
+  const handleJoyrideCallback = useCallback(
+    (data: CallBackProps) => {
+      const { status, action, index, type } = data;
 
-    // Atualizar step index quando navegar
-    if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
-      setStepIndex(index + (action === ACTIONS.PREV ? -1 : 1));
-    }
+      // Atualizar step index quando navegar
+      if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
+        setStepIndex(index + (action === ACTIONS.PREV ? -1 : 1));
+      }
 
-    // Tour finalizado
-    if (status === STATUS.FINISHED) {
-      setRunTour(false);
-      const startTime = sessionStorage.getItem(`tour-start-${userId}`);
-      const completionTime = startTime ? Math.round((Date.now() - parseInt(startTime)) / 1000) : 0;
-      
-      localStorage.setItem(storageKey, JSON.stringify({
-        completed: true,
-        completedAt: Date.now(),
-      }));
-      
-      trackTourCompleted(userId, completionTime);
-      onComplete?.();
-    }
+      // Tour finalizado
+      if (status === STATUS.FINISHED) {
+        setRunTour(false);
+        const startTime = sessionStorage.getItem(`tour-start-${userId}`);
+        const completionTime = startTime
+          ? Math.round((Date.now() - parseInt(startTime)) / 1000)
+          : 0;
 
-    // Tour pulado
-    if (status === STATUS.SKIPPED) {
-      setRunTour(false);
-      localStorage.setItem(storageKey, JSON.stringify({
-        completed: false,
-        skippedAt: Date.now(),
-      }));
-      
-      trackTourSkipped(userId, index);
-      onSkip?.();
-    }
-  }, [storageKey, onComplete, onSkip, userId]);
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({
+            completed: true,
+            completedAt: Date.now(),
+          })
+        );
+
+        trackTourCompleted(userId, completionTime);
+        onComplete?.();
+      }
+
+      // Tour pulado
+      if (status === STATUS.SKIPPED) {
+        setRunTour(false);
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({
+            completed: false,
+            skippedAt: Date.now(),
+          })
+        );
+
+        trackTourSkipped(userId, index);
+        onSkip?.();
+      }
+    },
+    [storageKey, onComplete, onSkip, userId]
+  );
 
   // Função pública para reiniciar tour
   const restartTour = useCallback(() => {
@@ -141,7 +161,9 @@ export function ProspectorOnboarding({
   // Expor função de restart via window para debug
   useEffect(() => {
     if (globalThis.window !== undefined) {
-      (globalThis as typeof globalThis & {restartProspectorTour?: () => void}).restartProspectorTour = restartTour;
+      (
+        globalThis as typeof globalThis & { restartProspectorTour?: () => void }
+      ).restartProspectorTour = restartTour;
     }
     return undefined;
   }, [restartTour]);

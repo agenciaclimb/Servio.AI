@@ -14,7 +14,14 @@ import BulkCampaignModal from '../src/components/prospector/BulkCampaignModal';
 import { useToast } from '../contexts/ToastContext';
 import ProspectorStatistics from './ProspectorStatistics';
 
-type TabType = 'dashboard' | 'crm' | 'links' | 'templates' | 'notifications' | 'materials' | 'overview';
+type TabType =
+  | 'dashboard'
+  | 'crm'
+  | 'links'
+  | 'templates'
+  | 'notifications'
+  | 'materials'
+  | 'overview';
 
 interface ProspectorDashboardProps {
   userId: string;
@@ -28,7 +35,7 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
   const [showCampaignModal, setShowCampaignModal] = useState(false);
   const { addToast } = useToast();
-  
+
   // Estados do formulário de novo lead
   const [newLeadForm, setNewLeadForm] = useState({
     name: '',
@@ -36,7 +43,7 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
     email: '',
     category: '',
     source: 'direct' as 'direct' | 'referral' | 'event' | 'social' | 'other',
-    notes: ''
+    notes: '',
   });
   const [isSavingLead, setIsSavingLead] = useState(false);
 
@@ -54,7 +61,9 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
       <QuickActionsBar
         prospectorId={prospectorId}
         prospectorName={'Prospector'}
-        referralLink={referralLink || `${globalThis.location?.origin || ''}/cadastro?ref=${prospectorId}`}
+        referralLink={
+          referralLink || `${globalThis.location?.origin || ''}/cadastro?ref=${prospectorId}`
+        }
         unreadNotifications={0} // Feature planned for Sprint 2: real-time notifications integration
         onAddLead={() => setShowAddLeadModal(true)}
         onOpenNotifications={() => setShowNotificationsModal(true)}
@@ -62,7 +71,6 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
       />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        
         {/* Tabs Navigation Simplificada */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
           <div className="flex overflow-x-auto">
@@ -122,106 +130,103 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
           </div>
         </div>
         {/* Tab Content: Dashboard IA (Novo Padrão) */}
-        {activeTab === 'dashboard' && (
-          <QuickPanel
-            prospectorId={prospectorId}
-          />
-        )}
+        {activeTab === 'dashboard' && <QuickPanel prospectorId={prospectorId} />}
 
         {/* Tab Content: CRM Enhanced */}
         {activeTab === 'crm' && (
           <>
             {/* QuickAddPanel - Cadastro rápido de leads */}
-            <QuickAddPanel 
-              onLeadsAdded={handleLeadsAdded} 
-            />
-            
+            <QuickAddPanel onLeadsAdded={handleLeadsAdded} />
+
             {/* CRM Profissional Kanban */}
-            <ProspectorCRMProfessional
-              prospectorId={prospectorId}
-            />
+            <ProspectorCRMProfessional prospectorId={prospectorId} />
           </>
         )}
 
-      {/* Tab Content: Overview/Statistics */}
-      {activeTab === 'overview' && (
-        <ProspectorStatistics prospectorId={prospectorId} />
-      )}
+        {/* Tab Content: Overview/Statistics */}
+        {activeTab === 'overview' && <ProspectorStatistics prospectorId={prospectorId} />}
 
-      {/* Tab Content: Referral Links */}
-      {activeTab === 'links' && (
-        <ReferralLinkGenerator 
-          prospectorId={prospectorId} 
-          onLinkGenerated={setReferralLink}
-        />
-      )}
+        {/* Tab Content: Referral Links */}
+        {activeTab === 'links' && (
+          <ReferralLinkGenerator prospectorId={prospectorId} onLinkGenerated={setReferralLink} />
+        )}
 
-      {/* Tab Content: Marketing Materials */}
-      {activeTab === 'materials' && (
-        <ProspectorMaterials />
-      )}
+        {/* Tab Content: Marketing Materials */}
+        {activeTab === 'materials' && <ProspectorMaterials />}
       </div>
 
       {/* Modals */}
       {showAddLeadModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowAddLeadModal(false)}>
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowAddLeadModal(false)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+            onClick={e => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold">➕ Adicionar Novo Lead</h3>
-              <button onClick={() => setShowAddLeadModal(false)} className="text-gray-500 hover:text-gray-700 text-2xl">
+              <button
+                onClick={() => setShowAddLeadModal(false)}
+                className="text-gray-500 hover:text-gray-700 text-2xl"
+              >
                 ×
               </button>
             </div>
-            
-            <form onSubmit={async (e) => {
-              e.preventDefault();
-              if (!newLeadForm.name || !newLeadForm.phone) {
-                addToast('Nome e telefone são obrigatórios!', 'error');
-                return;
-              }
-              
-              setIsSavingLead(true);
-              try {
-                const leadData = {
-                  prospectorId,
-                  name: newLeadForm.name,
-                  phone: newLeadForm.phone,
-                  email: newLeadForm.email || null,
-                  category: newLeadForm.category || null,
-                  source: newLeadForm.source,
-                  stage: 'new',
-                  notes: newLeadForm.notes || null,
-                  createdAt: Timestamp.now(),
-                  updatedAt: Timestamp.now(),
-                  activities: []
-                };
-                
-                await addDoc(collection(db, 'prospector_prospects'), leadData);
-                
-                // Limpar formulário
-                setNewLeadForm({
-                  name: '',
-                  phone: '',
-                  email: '',
-                  category: '',
-                  source: 'direct',
-                  notes: ''
-                });
-                
-                setShowAddLeadModal(false);
-                
-                // Toast de sucesso
-                addToast('🎉 Lead adicionado com sucesso!', 'success');
-                
-                // Redirecionar para CRM
-                setActiveTab('crm');
-              } catch (error) {
-                console.error('Erro ao salvar lead:', error);
-                addToast('❌ Erro ao salvar lead. Tente novamente.', 'error');
-              } finally {
-                setIsSavingLead(false);
-              }
-            }} className="space-y-4">
+
+            <form
+              onSubmit={async e => {
+                e.preventDefault();
+                if (!newLeadForm.name || !newLeadForm.phone) {
+                  addToast('Nome e telefone são obrigatórios!', 'error');
+                  return;
+                }
+
+                setIsSavingLead(true);
+                try {
+                  const leadData = {
+                    prospectorId,
+                    name: newLeadForm.name,
+                    phone: newLeadForm.phone,
+                    email: newLeadForm.email || null,
+                    category: newLeadForm.category || null,
+                    source: newLeadForm.source,
+                    stage: 'new',
+                    notes: newLeadForm.notes || null,
+                    createdAt: Timestamp.now(),
+                    updatedAt: Timestamp.now(),
+                    activities: [],
+                  };
+
+                  await addDoc(collection(db, 'prospector_prospects'), leadData);
+
+                  // Limpar formulário
+                  setNewLeadForm({
+                    name: '',
+                    phone: '',
+                    email: '',
+                    category: '',
+                    source: 'direct',
+                    notes: '',
+                  });
+
+                  setShowAddLeadModal(false);
+
+                  // Toast de sucesso
+                  addToast('🎉 Lead adicionado com sucesso!', 'success');
+
+                  // Redirecionar para CRM
+                  setActiveTab('crm');
+                } catch (error) {
+                  console.error('Erro ao salvar lead:', error);
+                  addToast('❌ Erro ao salvar lead. Tente novamente.', 'error');
+                } finally {
+                  setIsSavingLead(false);
+                }
+              }}
+              className="space-y-4"
+            >
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Nome <span className="text-red-500">*</span>
@@ -230,12 +235,12 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
                   type="text"
                   required
                   value={newLeadForm.name}
-                  onChange={(e) => setNewLeadForm({...newLeadForm, name: e.target.value})}
+                  onChange={e => setNewLeadForm({ ...newLeadForm, name: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="João Silva"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Telefone <span className="text-red-500">*</span>
@@ -244,7 +249,7 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
                   type="tel"
                   required
                   value={newLeadForm.phone}
-                  onChange={(e) => {
+                  onChange={e => {
                     // Máscara automática de telefone brasileiro
                     let value = e.target.value.replace(/\D/g, '');
                     if (value.length <= 11) {
@@ -258,37 +263,35 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
                         value = value.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
                       }
                     }
-                    setNewLeadForm({...newLeadForm, phone: value});
+                    setNewLeadForm({ ...newLeadForm, phone: value });
                   }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="(11) 98765-4321"
                   maxLength={15}
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
                   type="email"
                   value={newLeadForm.email}
-                  onChange={(e) => setNewLeadForm({...newLeadForm, email: e.target.value})}
+                  onChange={e => setNewLeadForm({ ...newLeadForm, email: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="joao@exemplo.com"
                 />
-                <p className="text-xs text-gray-500 mt-1">💡 Leads com email têm 2x mais chance de conversão</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 Leads com email têm 2x mais chance de conversão
+                </p>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Categoria
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
                 <input
                   type="text"
                   list="categories"
                   value={newLeadForm.category}
-                  onChange={(e) => setNewLeadForm({...newLeadForm, category: e.target.value})}
+                  onChange={e => setNewLeadForm({ ...newLeadForm, category: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="Ex: Eletricista, Encanador..."
                 />
@@ -305,14 +308,17 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
                   <option value="Vidraceiro" />
                 </datalist>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Fonte
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Fonte</label>
                 <select
                   value={newLeadForm.source}
-                  onChange={(e) => setNewLeadForm({...newLeadForm, source: e.target.value as 'direct' | 'referral' | 'event'})}
+                  onChange={e =>
+                    setNewLeadForm({
+                      ...newLeadForm,
+                      source: e.target.value as 'direct' | 'referral' | 'event',
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value="direct">Direto</option>
@@ -322,20 +328,18 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
                   <option value="other">Outro</option>
                 </select>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Observações
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
                 <textarea
                   value={newLeadForm.notes}
-                  onChange={(e) => setNewLeadForm({...newLeadForm, notes: e.target.value})}
+                  onChange={e => setNewLeadForm({ ...newLeadForm, notes: e.target.value })}
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
                   placeholder="Anotações sobre o lead..."
                 />
               </div>
-              
+
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
@@ -362,7 +366,10 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
           <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
               <h3 className="text-xl font-bold">🔔 Notificações</h3>
-              <button onClick={() => setShowNotificationsModal(false)} className="text-gray-500 hover:text-gray-700 text-2xl">
+              <button
+                onClick={() => setShowNotificationsModal(false)}
+                className="text-gray-500 hover:text-gray-700 text-2xl"
+              >
                 ×
               </button>
             </div>

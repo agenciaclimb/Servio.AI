@@ -25,11 +25,13 @@ const AnalyticsTimeSeriesChart: React.FC<Props> = ({ data, title = 'Série Tempo
         {data.length === 0 && (
           <p className="text-sm text-gray-600">Sem dados suficientes para exibir.</p>
         )}
-        {data.map((p) => (
+        {data.map(p => (
           <div key={p.label} className="space-y-1">
             <div className="flex items-center justify-between text-sm text-gray-700">
               <span className="font-medium">{p.label}</span>
-              <span>{p.jobs} jobs{p.revenue ? ` · R$ ${p.revenue.toFixed(2)}` : ''}</span>
+              <span>
+                {p.jobs} jobs{p.revenue ? ` · R$ ${p.revenue.toFixed(2)}` : ''}
+              </span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="flex-1 bg-gray-200 h-2 rounded">

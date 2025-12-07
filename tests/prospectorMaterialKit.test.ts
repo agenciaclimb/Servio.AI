@@ -4,7 +4,7 @@ import { resolve } from 'path';
 
 describe('Prospector Material Kit', () => {
   const docPath = resolve(__dirname, '../doc');
-  
+
   describe('Required Files Exist', () => {
     it('should have KIT_PROSPECTOR.md', () => {
       const filePath = resolve(docPath, 'KIT_PROSPECTOR.md');
@@ -202,14 +202,14 @@ describe('Prospector Material Kit', () => {
       const files = [
         'KIT_PROSPECTOR.md',
         'EMAIL_TEMPLATES_PROSPECTOR.md',
-        'GUIA_RAPIDO_PROSPECTOR.md'
+        'GUIA_RAPIDO_PROSPECTOR.md',
       ];
 
       files.forEach(file => {
         const filePath = resolve(docPath, file);
         const content = readFileSync(filePath, 'utf-8');
-        const hasCommissionMention = 
-          content.includes('comissão') || 
+        const hasCommissionMention =
+          content.includes('comissão') ||
           content.includes('Comissão') ||
           content.includes('1%') ||
           content.includes('0.25%');
@@ -221,7 +221,7 @@ describe('Prospector Material Kit', () => {
       const files = [
         'KIT_PROSPECTOR.md',
         'EMAIL_TEMPLATES_PROSPECTOR.md',
-        'GUIA_RAPIDO_PROSPECTOR.md'
+        'GUIA_RAPIDO_PROSPECTOR.md',
       ];
 
       files.forEach(file => {

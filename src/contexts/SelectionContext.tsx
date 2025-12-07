@@ -22,7 +22,7 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
   };
 
   const clearSelection = () => setSelectedIds(new Set());
-  
+
   const selectAll = (ids: string[]) => setSelectedIds(new Set(ids));
 
   return (

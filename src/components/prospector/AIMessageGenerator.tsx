@@ -1,6 +1,6 @@
 /**
  * AIMessageGenerator - Gerador Automático de Mensagens com IA
- * 
+ *
  * Features:
  * - Gera mensagens personalizadas por IA baseado no contexto do lead
  * - Templates dinâmicos com variáveis substituídas automaticamente
@@ -25,10 +25,10 @@ export default function AIMessageGenerator({
   lead,
   prospectorName,
   referralLink,
-  onSendSuccess
+  onSendSuccess,
 }: Readonly<AIMessageGeneratorProps>) {
   const [channel, setChannel] = useState<'whatsapp' | 'email' | 'sms'>('whatsapp');
-  
+
   // Auto-gerar mensagem ao abrir e ao trocar canal
   const generateLocalTemplateCallback = () => {
     const variables = {
@@ -37,7 +37,7 @@ export default function AIMessageGenerator({
       prospector: prospectorName,
       link: referralLink,
       saudacao: getGreeting(),
-      dia: format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR })
+      dia: format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR }),
     };
 
     const templates = {
@@ -61,9 +61,11 @@ Topa conhecer? Estou à disposição para tirar dúvidas! 😊`,
 
 Vi que você demonstrou interesse na Servio.AI! Já teve chance de explorar a plataforma?
 
-${variables.categoria.includes('Eletricista') || variables.categoria.includes('Encanador') 
-  ? `Só hoje tivemos 15+ pedidos de ${variables.categoria} na sua região! 🔧⚡`
-  : `A demanda por profissionais como você está crescendo! 📈`}
+${
+  variables.categoria.includes('Eletricista') || variables.categoria.includes('Encanador')
+    ? `Só hoje tivemos 15+ pedidos de ${variables.categoria} na sua região! 🔧⚡`
+    : `A demanda por profissionais como você está crescendo! 📈`
+}
 
 Quer que eu te ajude com o cadastro? Leva menos de 5 minutos!
 
@@ -79,7 +81,7 @@ Percebi que você começou o cadastro mas não finalizou. Tem alguma dúvida que
 
 Vamos finalizar agora? ${variables.link}
 
-Estou aqui para ajudar! 💪`
+Estou aqui para ajudar! 💪`,
       },
       email: {
         new: `Assunto: ${variables.nome}, conheça a plataforma que vai transformar seu negócio de ${variables.categoria}
@@ -146,18 +148,20 @@ Finalize agora e comece a receber oportunidades hoje: ${variables.link}
 Estou aqui para ajudar!
 
 ${variables.prospector}
-Prospector Servio.AI`
+Prospector Servio.AI`,
       },
       sms: {
         new: `Oi ${variables.nome}! ${variables.prospector} aqui. Conheça a Servio.AI - plataforma com IA que conecta profissionais de ${variables.categoria} com clientes. Cadastro grátis: ${variables.link}`,
         contacted: `${variables.nome}, vi seu interesse na Servio.AI! Tem dúvidas? Estou aqui. Finalize: ${variables.link}`,
-        negotiating: `${variables.nome}, que tal finalizar o cadastro hoje? Leva 5min. Link: ${variables.link}. Dúvidas? Fale comigo!`
-      }
+        negotiating: `${variables.nome}, que tal finalizar o cadastro hoje? Leva 5min. Link: ${variables.link}. Dúvidas? Fale comigo!`,
+      },
     };
 
-    return templates[channel][lead.stage === 'new' ? 'new' : lead.stage === 'contacted' ? 'contacted' : 'negotiating'];
+    return templates[channel][
+      lead.stage === 'new' ? 'new' : lead.stage === 'contacted' ? 'contacted' : 'negotiating'
+    ];
   };
-  
+
   const [message, setMessage] = useState<string>(() => generateLocalTemplateCallback());
 
   // Regenerar quando trocar canal
@@ -179,7 +183,7 @@ Prospector Servio.AI`
 
   function getBestTimeToSend(): string {
     const hour = new Date().getHours();
-    
+
     // IA simples: sugere melhor horário baseado em padrões
     if (hour < 10) {
       return '⏰ Ideal enviar entre 10h-12h para maximizar taxa de resposta (+60%)';
@@ -203,7 +207,7 @@ Prospector Servio.AI`
     const url = {
       whatsapp: `https://wa.me/${lead.phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`,
       email: `mailto:${lead.email}?subject=${encodeURIComponent('Oportunidade Servio.AI')}&body=${encodeURIComponent(message)}`,
-      sms: `sms:${lead.phone}?body=${encodeURIComponent(message)}`
+      sms: `sms:${lead.phone}?body=${encodeURIComponent(message)}`,
     }[channel];
 
     window.open(url, '_blank');
@@ -217,8 +221,8 @@ Prospector Servio.AI`
           leadId: lead.id,
           type: channel === 'whatsapp' ? 'message' : channel,
           description: `Enviado via ${channel}: ${message.substring(0, 50)}...`,
-          timestamp: new Date().toISOString()
-        })
+          timestamp: new Date().toISOString(),
+        }),
       });
 
       if (onSendSuccess) onSendSuccess();
@@ -231,7 +235,8 @@ Prospector Servio.AI`
     navigator.clipboard.writeText(message);
     // Toast notification
     const toast = document.createElement('div');
-    toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+    toast.className =
+      'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
     toast.textContent = '✅ Mensagem copiada!';
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2000);
@@ -279,12 +284,10 @@ Prospector Servio.AI`
 
       {/* Message Preview */}
       <div className="bg-white border border-gray-300 rounded-lg p-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Mensagem (editável)
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Mensagem (editável)</label>
         <textarea
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={e => setMessage(e.target.value)}
           rows={channel === 'email' ? 12 : 8}
           className="w-full border border-gray-300 rounded-lg p-3 text-sm font-mono focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           placeholder="Gerando mensagem..."

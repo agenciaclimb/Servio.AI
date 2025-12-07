@@ -158,14 +158,7 @@ describe('ProposalListModal', () => {
   });
 
   it('exibe mensagem quando não há propostas', () => {
-    render(
-      <ProposalListModal
-        job={mockJob}
-        proposals={[]}
-        users={mockUsers}
-        {...mockCallbacks}
-      />
-    );
+    render(<ProposalListModal job={mockJob} proposals={[]} users={mockUsers} {...mockCallbacks} />);
 
     expect(screen.getByText('Nenhuma proposta recebida')).toBeInTheDocument();
     expect(screen.getByText(/Aguarde um pouco/i)).toBeInTheDocument();
@@ -201,7 +194,7 @@ describe('ProposalListModal', () => {
 
   it('identifica job decidido quando status não é ativo', () => {
     const jobDecidido = { ...mockJob, status: 'proposta_aceita' as const };
-    
+
     render(
       <ProposalListModal
         job={jobDecidido}

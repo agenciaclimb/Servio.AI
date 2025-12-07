@@ -24,7 +24,8 @@ describe('Gemini Service (AI Integration)', () => {
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          enhanced: 'Professional website redesign required. Need modern, responsive design with UX improvements.',
+          enhanced:
+            'Professional website redesign required. Need modern, responsive design with UX improvements.',
           suggestions: [
             'Add specific timeline requirements',
             'Clarify target audience',
@@ -69,7 +70,8 @@ describe('Gemini Service (AI Integration)', () => {
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          enhanced: 'Looking for a professional redesign of our company website with modern aesthetics.',
+          enhanced:
+            'Looking for a professional redesign of our company website with modern aesthetics.',
           keywords: originalKeywords,
         }),
       });
@@ -200,7 +202,8 @@ describe('Gemini Service (AI Integration)', () => {
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          message: 'Hi TechCorp! I noticed you might benefit from web development services. I have expertise in modern web technologies and would love to discuss your project.',
+          message:
+            'Hi TechCorp! I noticed you might benefit from web development services. I have expertise in modern web technologies and would love to discuss your project.',
           tone: 'professional',
         }),
       });
@@ -245,7 +248,8 @@ describe('Gemini Service (AI Integration)', () => {
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          message: 'Available for web projects. Would you like to discuss your needs? Click here to chat.',
+          message:
+            'Available for web projects. Would you like to discuss your needs? Click here to chat.',
           hasCallToAction: true,
         }),
       });
@@ -448,9 +452,7 @@ describe('Gemini Service (AI Integration)', () => {
     });
 
     it('should handle Gemini API timeouts', async () => {
-      (global.fetch as any).mockRejectedValueOnce(
-        new Error('Request timeout')
-      );
+      (global.fetch as any).mockRejectedValueOnce(new Error('Request timeout'));
 
       try {
         await fetch('/api/enhance-job-description', {
@@ -556,11 +558,7 @@ describe('Gemini Service (AI Integration)', () => {
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          results: [
-            { enhanced: 'Result 1' },
-            { enhanced: 'Result 2' },
-            { enhanced: 'Result 3' },
-          ],
+          results: [{ enhanced: 'Result 1' }, { enhanced: 'Result 2' }, { enhanced: 'Result 3' }],
         }),
       });
 

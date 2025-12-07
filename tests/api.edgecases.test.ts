@@ -19,7 +19,7 @@ describe('API Service - Edge Cases', () => {
 
       // fetchAllUsers deve retornar mock data como fallback
       const users = await API.fetchAllUsers();
-      
+
       expect(Array.isArray(users)).toBe(true);
       expect(users.length).toBeGreaterThan(0);
     });
@@ -64,10 +64,9 @@ describe('API Service - Edge Cases', () => {
     });
 
     it('deve lidar com timeout de requisição', async () => {
-      mockFetch.mockImplementationOnce(() => 
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Request timeout')), 100)
-        )
+      mockFetch.mockImplementationOnce(
+        () =>
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Request timeout')), 100))
       );
 
       const users = await API.fetchAllUsers();
@@ -82,11 +81,7 @@ describe('API Service - Edge Cases', () => {
         json: async () => [{ email: 'test@test.com', name: 'Test User' }],
       });
 
-      const promises = [
-        API.fetchAllUsers(),
-        API.fetchAllUsers(),
-        API.fetchAllUsers(),
-      ];
+      const promises = [API.fetchAllUsers(), API.fetchAllUsers(), API.fetchAllUsers()];
 
       const results = await Promise.all(promises);
 
@@ -229,7 +224,7 @@ describe('API Service - Edge Cases', () => {
       mockFetch.mockRejectedValueOnce(new Error('Connection refused'));
 
       const users = await API.fetchAllUsers();
-      
+
       expect(Array.isArray(users)).toBe(true);
       expect(users.length).toBeGreaterThan(0);
       // Valida que retornou mock data estruturado

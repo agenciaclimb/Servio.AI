@@ -7,7 +7,6 @@ import * as geminiService from '../services/geminiService';
 
 // jsdom não implementa scrollIntoView; mock para evitar TypeError em efeitos de montagem
 beforeAll(() => {
-   
   (HTMLElement.prototype as any).scrollIntoView = vi.fn();
 });
 
@@ -109,7 +108,11 @@ describe('ChatModal', () => {
     const sendBtn = screen.getAllByRole('button').find(b => b.className.includes('bg-blue-600'))!; // botão azul enviar
     await user.click(sendBtn);
     expect(onSendMessage).toHaveBeenCalledTimes(1);
-    expect(onSendMessage).toHaveBeenCalledWith({ chatId: baseJob.id, text: 'Mensagem nova', type: 'text' });
+    expect(onSendMessage).toHaveBeenCalledWith({
+      chatId: baseJob.id,
+      text: 'Mensagem nova',
+      type: 'text',
+    });
     // input limpo
     expect((input as HTMLInputElement).value).toBe('');
   });
@@ -121,17 +124,23 @@ describe('ChatModal', () => {
       args: { summaryText: 'Resumo do acordo feito.' },
       displayText: 'Enviar resumo do acordo',
     };
-    const getAssistSpy = vi.spyOn(geminiService, 'getChatAssistance').mockResolvedValueOnce(suggestion);
+    const getAssistSpy = vi
+      .spyOn(geminiService, 'getChatAssistance')
+      .mockResolvedValueOnce(suggestion);
 
-  const { onSendMessage } = setup();
-  const aiBtn = screen.getByTitle('Assistente IA');
+    const { onSendMessage } = setup();
+    const aiBtn = screen.getByTitle('Assistente IA');
     await user.click(aiBtn);
 
     const sugBtn = await screen.findByRole('button', { name: /Enviar resumo do acordo/i });
     await user.click(sugBtn);
 
     expect(getAssistSpy).toHaveBeenCalled();
-    expect(onSendMessage).toHaveBeenCalledWith({ chatId: baseJob.id, text: 'Resumo do acordo feito.', type: 'system_notification' });
+    expect(onSendMessage).toHaveBeenCalledWith({
+      chatId: baseJob.id,
+      text: 'Resumo do acordo feito.',
+      type: 'system_notification',
+    });
   });
 
   it('exibe sugestão de agendamento via IA (proposeScheduleFromChat) e confirma', async () => {
@@ -149,7 +158,9 @@ describe('ChatModal', () => {
     // O componente AISchedulingAssistant exibe "Sugestão da IA" e botão Confirmar
     const aiBanner = await screen.findByText(/Sugestão da IA/i);
     expect(aiBanner).toBeInTheDocument();
-    const confirmBtn = within(aiBanner.closest('.p-3') as HTMLElement).getByRole('button', { name: /Confirmar/i });
+    const confirmBtn = within(aiBanner.closest('.p-3') as HTMLElement).getByRole('button', {
+      name: /Confirmar/i,
+    });
     await user.click(confirmBtn);
 
     expect(onConfirmSchedule).toHaveBeenCalledWith(baseJob.id, schedule);
@@ -173,10 +184,12 @@ describe('ChatModal', () => {
     fireEvent.change(dateEl, { target: { value: '2025-11-30' } });
     fireEvent.change(timeEl, { target: { value: '09:30' } });
 
-  await user.click(submitBtn);
+    await user.click(submitBtn);
 
     expect(onSendMessage).toHaveBeenCalled();
-    const call = (onSendMessage as any).mock.calls.find((c: any[]) => c[0]?.type === 'schedule_proposal');
+    const call = (onSendMessage as any).mock.calls.find(
+      (c: any[]) => c[0]?.type === 'schedule_proposal'
+    );
     expect(call?.[0]).toMatchObject({
       chatId: baseJob.id,
       type: 'schedule_proposal',

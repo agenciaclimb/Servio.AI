@@ -4,9 +4,27 @@ import userEvent from '@testing-library/user-event';
 import NotificationsBell from '../components/NotificationsBell';
 
 const baseNotifications = [
-  { id: 'n1', userId: 'user@test.com', text: 'Nova proposta recebida', isRead: false, createdAt: new Date().toISOString() },
-  { id: 'n2', userId: 'user@test.com', text: 'Pagamento confirmado', isRead: false, createdAt: new Date().toISOString() },
-  { id: 'n3', userId: 'user@test.com', text: 'Job concluído', isRead: true, createdAt: new Date().toISOString() },
+  {
+    id: 'n1',
+    userId: 'user@test.com',
+    text: 'Nova proposta recebida',
+    isRead: false,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'n2',
+    userId: 'user@test.com',
+    text: 'Pagamento confirmado',
+    isRead: false,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'n3',
+    userId: 'user@test.com',
+    text: 'Job concluído',
+    isRead: true,
+    createdAt: new Date().toISOString(),
+  },
 ];
 
 describe('NotificationsBell', () => {

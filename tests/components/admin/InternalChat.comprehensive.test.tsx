@@ -59,13 +59,11 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
     it('should load initial messages on mount', async () => {
       mockApiCall.mockResolvedValue({
         success: true,
-        messages: [
-          { id: '1', text: 'Hello', timestamp: new Date(), from: 'admin1' },
-        ],
+        messages: [{ id: '1', text: 'Hello', timestamp: new Date(), from: 'admin1' }],
       });
 
       render(<InternalChat adminId="admin1" />);
-      
+
       await waitFor(() => {
         expect(mockApiCall).toHaveBeenCalledWith(
           expect.stringContaining('/api/admin/chat'),
@@ -79,9 +77,9 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
     it('should not send empty message', async () => {
       render(<InternalChat adminId="admin1" />);
       const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
+
       fireEvent.click(sendButton);
-      
+
       await waitFor(() => {
         expect(mockApiCall).not.toHaveBeenCalledWith(
           expect.stringContaining('messages'),
@@ -94,10 +92,10 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
       render(<InternalChat adminId="admin1" />);
       const input = screen.getByPlaceholderText(/message|Digite/i);
       const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
+
       await userEvent.type(input, '   \n  ');
       fireEvent.click(sendButton);
-      
+
       await waitFor(() => {
         expect(mockApiCall).not.toHaveBeenCalledWith(
           expect.stringContaining('messages'),
@@ -111,10 +109,10 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
       render(<InternalChat adminId="admin1" />);
       const input = screen.getByPlaceholderText(/message|Digite/i) as HTMLInputElement;
       const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
+
       await user.type(input, '  Hello World  ');
       fireEvent.click(sendButton);
-      
+
       await waitFor(() => {
         expect(input.value).toBe('');
       });
@@ -125,11 +123,11 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
       render(<InternalChat adminId="admin1" />);
       const input = screen.getByPlaceholderText(/message|Digite/i);
       const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
+
       const longMessage = 'a'.repeat(2000);
       await user.type(input, longMessage);
       fireEvent.click(sendButton);
-      
+
       await waitFor(() => {
         expect(mockApiCall).toHaveBeenCalled();
       });
@@ -140,11 +138,11 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
       render(<InternalChat adminId="admin1" />);
       const input = screen.getByPlaceholderText(/message|Digite/i);
       const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
+
       const specialMessage = '<script>alert("xss")</script> & "quoted" \'single\'';
       await user.type(input, specialMessage);
       fireEvent.click(sendButton);
-      
+
       await waitFor(() => {
         expect(mockApiCall).toHaveBeenCalled();
       });
@@ -155,14 +153,14 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
     it('should handle API error when sending message', async () => {
       mockApiCall.mockRejectedValue(new Error('Network error'));
       const user = userEvent.setup();
-      
+
       render(<InternalChat adminId="admin1" />);
       const input = screen.getByPlaceholderText(/message|Digite/i);
       const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
+
       await user.type(input, 'Hello');
       fireEvent.click(sendButton);
-      
+
       await waitFor(() => {
         expect(mockApiCall).toHaveBeenCalled();
       });
@@ -170,9 +168,9 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
 
     it('should handle 401 Unauthorized response', async () => {
       mockApiCall.mockRejectedValue({ status: 401, message: 'Unauthorized' });
-      
+
       render(<InternalChat adminId="admin1" />);
-      
+
       await waitFor(() => {
         // Should show error or redirect
         expect(mockApiCall).toBeDefined();
@@ -181,9 +179,9 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
 
     it('should handle 500 server error', async () => {
       mockApiCall.mockRejectedValue({ status: 500, message: 'Internal Server Error' });
-      
+
       render(<InternalChat adminId="admin1" />);
-      
+
       await waitFor(() => {
         expect(mockApiCall).toBeDefined();
       });
@@ -193,9 +191,9 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
       mockApiCall
         .mockRejectedValueOnce(new Error('Timeout'))
         .mockResolvedValueOnce({ success: true, messages: [] });
-      
+
       render(<InternalChat adminId="admin1" />);
-      
+
       await waitFor(() => {
         expect(mockApiCall).toHaveBeenCalled();
       });
@@ -214,7 +212,7 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
       });
 
       render(<InternalChat adminId="admin1" />);
-      
+
       await waitFor(() => {
         const messages = screen.getAllByText(/First|Second|Third/);
         expect(messages.length).toBeGreaterThanOrEqual(3);
@@ -231,7 +229,7 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
       });
 
       render(<InternalChat adminId="admin1" />);
-      
+
       await waitFor(() => {
         expect(screen.getByText(/From me/)).toBeInTheDocument();
         expect(screen.getByText(/From other/)).toBeInTheDocument();
@@ -242,13 +240,11 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
       const testDate = new Date('2025-06-15T14:30:00');
       mockApiCall.mockResolvedValue({
         success: true,
-        messages: [
-          { id: '1', text: 'Test', timestamp: testDate, from: 'admin1' },
-        ],
+        messages: [{ id: '1', text: 'Test', timestamp: testDate, from: 'admin1' }],
       });
 
       render(<InternalChat adminId="admin1" />);
-      
+
       await waitFor(() => {
         expect(mockApiCall).toHaveBeenCalled();
       });
@@ -259,16 +255,16 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
     it('should clear input field after sending message', async () => {
       const user = userEvent.setup();
       mockApiCall.mockResolvedValue({ success: true });
-      
+
       render(<InternalChat adminId="admin1" />);
       const input = screen.getByPlaceholderText(/message|Digite/i) as HTMLInputElement;
       const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
+
       await user.type(input, 'Test message');
       expect(input.value).toBe('Test message');
-      
+
       fireEvent.click(sendButton);
-      
+
       await waitFor(() => {
         expect(input.value).toBe('');
       });
@@ -277,30 +273,33 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
     it('should disable send button while loading', async () => {
       mockApiCall.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 1000)));
       const user = userEvent.setup();
-      
+
       render(<InternalChat adminId="admin1" />);
       const input = screen.getByPlaceholderText(/message|Digite/i);
       const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
+
       await user.type(input, 'Test');
       fireEvent.click(sendButton);
-      
-      await waitFor(() => {
-        expect(sendButton).toHaveAttribute('disabled');
-      }, { timeout: 100 });
+
+      await waitFor(
+        () => {
+          expect(sendButton).toHaveAttribute('disabled');
+        },
+        { timeout: 100 }
+      );
     });
 
     it('should scroll to latest message after sending', async () => {
       const user = userEvent.setup();
       mockApiCall.mockResolvedValue({ success: true, messages: [] });
-      
+
       render(<InternalChat adminId="admin1" />);
       const input = screen.getByPlaceholderText(/message|Digite/i);
       const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
+
       await user.type(input, 'New message');
       fireEvent.click(sendButton);
-      
+
       await waitFor(() => {
         expect(mockApiCall).toHaveBeenCalled();
       });
@@ -311,7 +310,7 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
     it('should have proper ARIA labels on buttons', () => {
       render(<InternalChat adminId="admin1" />);
       const buttons = screen.getAllByRole('button');
-      
+
       buttons.forEach(button => {
         expect(
           button.getAttribute('aria-label') || button.textContent || button.title
@@ -323,7 +322,7 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
       const user = userEvent.setup();
       render(<InternalChat adminId="admin1" />);
       const input = screen.getByPlaceholderText(/message|Digite/i);
-      
+
       await user.tab();
       expect(input).toHaveFocus();
     });
@@ -331,12 +330,12 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
     it('should handle Enter key to send message', async () => {
       const user = userEvent.setup();
       mockApiCall.mockResolvedValue({ success: true });
-      
+
       render(<InternalChat adminId="admin1" />);
       const input = screen.getByPlaceholderText(/message|Digite/i);
-      
+
       await user.type(input, 'Test{Enter}');
-      
+
       await waitFor(() => {
         expect(mockApiCall).toHaveBeenCalled();
       });
@@ -353,9 +352,9 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
       }));
 
       mockApiCall.mockResolvedValue({ success: true, messages });
-      
+
       const { container } = render(<InternalChat adminId="admin1" />);
-      
+
       await waitFor(() => {
         expect(container).toBeInTheDocument();
       });
@@ -363,9 +362,9 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
 
     it('should cleanup on unmount', () => {
       const { unmount } = render(<InternalChat adminId="admin1" />);
-      
+
       unmount();
-      
+
       expect(mockApiCall).toBeDefined();
     });
   });

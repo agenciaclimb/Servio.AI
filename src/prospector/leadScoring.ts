@@ -69,7 +69,11 @@ export function scoreProspect(p: Prospect): ScoreBreakdown {
   const hasStrategicTag = (p.tags || []).some(t => ['alto_valor', 'parceria'].includes(t));
   const bonus = (p.sentiment === 'positivo' ? 10 : 0) + (hasStrategicTag ? 8 : 0);
 
-  const total = clamp(Math.round(base * 0.3 + engagement * 0.35 + profile * 0.2 + recency * 0.1 + bonus), 0, 100);
+  const total = clamp(
+    Math.round(base * 0.3 + engagement * 0.35 + profile * 0.2 + recency * 0.1 + bonus),
+    0,
+    100
+  );
 
   return { base, engagement, profile, recency, bonus, total };
 }

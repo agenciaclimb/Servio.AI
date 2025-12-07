@@ -7,9 +7,11 @@ Bem-vindo ao centro de recursos para prospectores Servio.AI! Este índice organi
 ## 🗂️ Estrutura dos Materiais
 
 ### 1. 🚀 [GUIA_RAPIDO_PROSPECTOR.md](./GUIA_RAPIDO_PROSPECTOR.md)
+
 **Comece aqui!** Guia introdutório completo.
 
 **O que você vai encontrar:**
+
 - O que é um prospector e como funciona
 - Como você ganha comissões (1% manual, 0.25% IA)
 - Checklist do primeiro dia
@@ -23,6 +25,7 @@ Bem-vindo ao centro de recursos para prospectores Servio.AI! Este índice organi
 - Informações de suporte
 
 **Ideal para:**
+
 - ✅ Prospectores iniciantes
 - ✅ Revisão rápida de conceitos
 - ✅ Onboarding de novos prospectores
@@ -32,9 +35,11 @@ Bem-vindo ao centro de recursos para prospectores Servio.AI! Este índice organi
 ---
 
 ### 2. 📋 [KIT_PROSPECTOR.md](./KIT_PROSPECTOR.md)
+
 **Material de campo completo.**
 
 **O que você vai encontrar:**
+
 - 3 scripts de apresentação (rápido, completo, redes sociais)
 - Respostas para objeções comuns:
   - "Por que pagar comissão?"
@@ -55,6 +60,7 @@ Bem-vindo ao centro de recursos para prospectores Servio.AI! Este índice organi
 - Dicas finais
 
 **Ideal para:**
+
 - ✅ Consulta rápida durante prospecção
 - ✅ Copiar/colar mensagens
 - ✅ Preparar-se para objeções
@@ -65,9 +71,11 @@ Bem-vindo ao centro de recursos para prospectores Servio.AI! Este índice organi
 ---
 
 ### 3. 📧 [EMAIL_TEMPLATES_PROSPECTOR.md](./EMAIL_TEMPLATES_PROSPECTOR.md)
+
 **Templates de e-mail prontos para usar.**
 
 **O que você vai encontrar:**
+
 - **6 Templates Completos:**
   1. E-mail Profissional Formal
   2. E-mail Casual/Direto
@@ -83,6 +91,7 @@ Bem-vindo ao centro de recursos para prospectores Servio.AI! Este índice organi
 - Métricas para acompanhar (taxa de abertura, resposta, conversão)
 
 **Ideal para:**
+
 - ✅ Prospecção por e-mail
 - ✅ Nutrir leads frios
 - ✅ Reengajar contatos antigos
@@ -97,24 +106,28 @@ Bem-vindo ao centro de recursos para prospectores Servio.AI! Este índice organi
 ### Fluxo de Trabalho Recomendado:
 
 #### **Dia 1: Preparação**
+
 1. Leia [GUIA_RAPIDO_PROSPECTOR.md](./GUIA_RAPIDO_PROSPECTOR.md) completo
 2. Configure seu dashboard
 3. Anote seu código de convite
 4. Salve seu link personalizado
 
 #### **Dia 2-7: Primeiras Prospecções**
+
 1. Escolha 1 canal (ex: Instagram)
 2. Use scripts do [KIT_PROSPECTOR.md](./KIT_PROSPECTOR.md)
 3. Faça 5 contatos por dia
 4. Anote objeções que aparecem
 
 #### **Semana 2: Otimização**
+
 1. Teste e-mails usando [EMAIL_TEMPLATES_PROSPECTOR.md](./EMAIL_TEMPLATES_PROSPECTOR.md)
 2. Ajuste scripts com base em feedback
 3. Aumente para 10 contatos/dia
 4. Faça follow-up dos primeiros contatos
 
 #### **Mês 1: Escala**
+
 1. Diversifique canais (Instagram + Facebook + E-mail)
 2. Automatize o que funciona
 3. Meta: 3 cadastros por semana
@@ -125,24 +138,31 @@ Bem-vindo ao centro de recursos para prospectores Servio.AI! Este índice organi
 ## 📖 Guia de Consulta Rápida
 
 ### "Preciso de uma mensagem para WhatsApp"
+
 → [KIT_PROSPECTOR.md](./KIT_PROSPECTOR.md) - Seção "Mensagens WhatsApp Personalizáveis"
 
 ### "Vou enviar e-mail frio"
+
 → [EMAIL_TEMPLATES_PROSPECTOR.md](./EMAIL_TEMPLATES_PROSPECTOR.md) - Template 1 ou 2
 
 ### "O cara disse 'vou pensar'"
+
 → [KIT_PROSPECTOR.md](./KIT_PROSPECTOR.md) - Seção "Respostas para Objeções Comuns"
 
 ### "Não sei onde encontrar prestadores"
+
 → [GUIA_RAPIDO_PROSPECTOR.md](./GUIA_RAPIDO_PROSPECTOR.md) - Seção "Onde Encontrar Prestadores?"
 
 ### "Preciso de um script para Instagram"
+
 → [KIT_PROSPECTOR.md](./KIT_PROSPECTOR.md) - Script 3: Para Grupos e Redes Sociais
 
 ### "Contato não respondeu há 2 dias"
+
 → [EMAIL_TEMPLATES_PROSPECTOR.md](./EMAIL_TEMPLATES_PROSPECTOR.md) - Template 3: Follow-up 48h
 
 ### "Como responder 'por que pagar comissão?'"
+
 → [KIT_PROSPECTOR.md](./KIT_PROSPECTOR.md) - Primeira objeção comum
 
 ---
@@ -150,7 +170,9 @@ Bem-vindo ao centro de recursos para prospectores Servio.AI! Este índice organi
 ## 🏆 Recursos por Nível de Experiência
 
 ### Iniciante (0-10 recrutados)
+
 **Priorize:**
+
 1. [GUIA_RAPIDO_PROSPECTOR.md](./GUIA_RAPIDO_PROSPECTOR.md) - Leitura completa
 2. [KIT_PROSPECTOR.md](./KIT_PROSPECTOR.md) - Scripts básicos e 3 objeções principais
 3. Escolha 1 canal e domine
@@ -160,7 +182,9 @@ Bem-vindo ao centro de recursos para prospectores Servio.AI! Este índice organi
 ---
 
 ### Intermediário (11-30 recrutados)
+
 **Priorize:**
+
 1. [EMAIL_TEMPLATES_PROSPECTOR.md](./EMAIL_TEMPLATES_PROSPECTOR.md) - Teste A/B
 2. [KIT_PROSPECTOR.md](./KIT_PROSPECTOR.md) - Técnicas de prospecção avançadas
 3. Diversifique canais
@@ -170,7 +194,9 @@ Bem-vindo ao centro de recursos para prospectores Servio.AI! Este índice organi
 ---
 
 ### Avançado (31+ recrutados)
+
 **Priorize:**
+
 1. Criar seus próprios templates (baseados nos fornecidos)
 2. Mentorar novos prospectores
 3. Compartilhar suas técnicas
@@ -182,6 +208,7 @@ Bem-vindo ao centro de recursos para prospectores Servio.AI! Este índice organi
 ## 🔄 Atualizações dos Materiais
 
 Este material é **vivo** e será atualizado com:
+
 - Novas objeções e respostas
 - Casos de sucesso de prospectores
 - Templates que tiveram alta conversão
@@ -196,14 +223,17 @@ Este material é **vivo** e será atualizado com:
 ## 📞 Precisa de Ajuda?
 
 ### Dúvidas sobre os Materiais:
+
 - **E-mail:** suporte@servio-ai.com
 - **WhatsApp:** [número]
 - **Horário:** Seg-Sex 9h-18h
 
 ### Sugestões de Novos Conteúdos:
+
 Se você sentiu falta de algo, avise! Queremos que este material seja o mais completo possível.
 
 ### Comunidade de Prospectores:
+
 [Link para grupo/fórum onde prospectores trocam experiências]
 
 ---
@@ -237,4 +267,4 @@ Agora que você conhece os materiais disponíveis:
 
 ---
 
-*Este índice é seu mapa. Os documentos são suas ferramentas. Seu trabalho é usá-los para crescer! 💪*
+_Este índice é seu mapa. Os documentos são suas ferramentas. Seu trabalho é usá-los para crescer! 💪_

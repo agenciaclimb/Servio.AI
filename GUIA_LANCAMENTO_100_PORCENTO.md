@@ -10,6 +10,7 @@
 ### O que já está configurado
 
 ✅ **Webhook Servio.AI está ATIVO**
+
 - ID: `we_1SVJo4JEyu4utIB8YxuJEX4H`
 - URL: https://servio-backend-1000250760228.us-west1.run.app/api/stripe-webhook
 - Status: Enabled
@@ -17,6 +18,7 @@
 - Endpoint testado e respondendo
 
 ✅ **Infraestrutura completa**
+
 - Chaves live configuradas
 - Backend deployado
 - Signing secret configurado
@@ -41,6 +43,7 @@
 #### 1.2 Configurar Conta (15 min)
 
 **Opção A - Se pedir configuração inicial**:
+
 ```
 1. Escolha: "Platform" (para marketplace)
 2. Business Type: "Company" ou "Individual"
@@ -52,6 +55,7 @@
 ```
 
 **Opção B - Se já estiver configurado**:
+
 ```
 ✅ Pule para o passo 1.3
 ```
@@ -66,7 +70,7 @@
    PRODUÇÃO:
    https://servio.ai/dashboard?stripe_onboarding_complete=true
    https://servio.ai/onboarding-stripe/refresh
-   
+
    DESENVOLVIMENTO (opcional):
    http://localhost:3000/dashboard?stripe_onboarding_complete=true
    http://localhost:3000/onboarding-stripe/refresh
@@ -81,7 +85,7 @@
 2. Verificar se estão habilitados:
    ✅ Transfers
    ✅ Card payments
-   
+
 Se não estiverem, habilite-os.
 ```
 
@@ -95,6 +99,7 @@ npm run dev
 ```
 
 **Fluxo de teste**:
+
 ```
 1. Acesse http://localhost:3000
 2. Crie uma conta como PRESTADOR
@@ -109,6 +114,7 @@ npm run dev
 ```
 
 **Resultado esperado**:
+
 ```
 ✅ stripeAccountId: acct_XXXXXXXXXXXXX (salvo no Firestore)
 ✅ Redirecionamento funcionou
@@ -227,7 +233,7 @@ gcloud logging read "resource.type=cloud_run_revision AND resource.labels.servic
 
 2. Encontre o webhook do Servio.AI:
    ID: we_1SVJo4JEyu4utIB8YxuJEX4H
-   
+
 3. Clique no webhook
 
 4. Clique em "Send test webhook"
@@ -238,7 +244,7 @@ gcloud logging read "resource.type=cloud_run_revision AND resource.labels.servic
 
 7. Aguarde resposta
 
-8. Resultado esperado: 
+8. Resultado esperado:
    ✅ Status: 200 OK
    ✅ Response time: < 1s
    ✅ No errors
@@ -251,6 +257,7 @@ gcloud logging read "resource.type=cloud_run_revision AND resource.labels.servic
 ## 📋 CHECKLIST FINAL ANTES DO LANÇAMENTO
 
 ### Stripe
+
 - [ ] Connect configurado
 - [ ] Redirect URIs adicionados
 - [ ] Teste de onboarding prestador OK
@@ -259,11 +266,13 @@ gcloud logging read "resource.type=cloud_run_revision AND resource.labels.servic
 - [ ] Transferência funcionando
 
 ### Código
+
 - [ ] Build produção sem erros: `npm run build`
 - [ ] Testes passando: `npm test`
 - [ ] Variáveis de ambiente atualizadas
 
 ### Deploy
+
 - [ ] Backup Firestore realizado
 - [ ] Deploy para produção
 - [ ] Smoke tests executados

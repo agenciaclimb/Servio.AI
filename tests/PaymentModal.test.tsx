@@ -159,10 +159,10 @@ describe('PaymentModal', () => {
 
   it('desabilita botões durante loading', async () => {
     const user = userEvent.setup({ delay: null });
-    
+
     // Cria uma promise que controlamos manualmente
     let resolvePayment: () => void;
-    const paymentPromise = new Promise<void>((resolve) => {
+    const paymentPromise = new Promise<void>(resolve => {
       resolvePayment = resolve;
     });
     onConfirmPayment.mockReturnValue(paymentPromise);
@@ -193,7 +193,7 @@ describe('PaymentModal', () => {
 
     // Resolve o pagamento para finalizar
     resolvePayment!();
-    
+
     // Apenas aguarda que o onConfirmPayment tenha sido chamado - não há garantia
     // de que o estado interno vai mudar antes do componente fechar/desmontar
     await waitFor(() => expect(onConfirmPayment).toHaveBeenCalledWith(mockProposal));
@@ -201,8 +201,8 @@ describe('PaymentModal', () => {
 
   it('mostra ação de Tentar novamente quando erro for E_TIMEOUT e permite retry', async () => {
     const user = userEvent.setup({ delay: null });
-  const timeoutErr = new Error('Tempo de resposta excedido');
-  (timeoutErr as any).code = 'E_TIMEOUT';
+    const timeoutErr = new Error('Tempo de resposta excedido');
+    (timeoutErr as any).code = 'E_TIMEOUT';
     onConfirmPayment.mockRejectedValueOnce(timeoutErr);
 
     render(
@@ -231,8 +231,8 @@ describe('PaymentModal', () => {
 
   it('mostra ação de Tentar novamente quando erro for E_NETWORK', async () => {
     const user = userEvent.setup({ delay: null });
-  const netErr = new Error('Falha de rede. Verifique sua conexão.');
-  (netErr as any).code = 'E_NETWORK';
+    const netErr = new Error('Falha de rede. Verifique sua conexão.');
+    (netErr as any).code = 'E_NETWORK';
     onConfirmPayment.mockRejectedValueOnce(netErr);
 
     render(

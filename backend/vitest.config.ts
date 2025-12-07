@@ -4,16 +4,13 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
-    include: [
-      'tests/**/*.{test,spec}.{js,ts,tsx}',
-      'src/**/*.{test,spec}.{js,ts,tsx}'
-    ],
+    include: ['tests/**/*.{test,spec}.{js,ts,tsx}', 'src/**/*.{test,spec}.{js,ts,tsx}'],
     exclude: [
       ...configDefaults.exclude,
       'node_modules/**',
       'dist/**',
       'coverage/**',
-      'src/index.test.js'
+      'src/index.test.js',
     ],
     coverage: {
       enabled: true,

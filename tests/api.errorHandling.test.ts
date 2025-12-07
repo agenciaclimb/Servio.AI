@@ -1,7 +1,7 @@
 /**
  * Testes de tratamento de erro da função apiCall
  * Cobre todos os branches de erro estruturado (E_NETWORK, E_TIMEOUT, E_AUTH, E_NOT_FOUND, E_SERVER)
- * 
+ *
  * Usa funções Stripe que NÃO fazem fallback para mock (lançam erros diretamente):
  * - createStripeConnectAccount
  * - createStripeAccountLink
@@ -31,7 +31,7 @@ describe('apiCall - Error Handling', () => {
     it('deve lançar E_TIMEOUT quando AbortError ocorre', async () => {
       const abortError = new Error('The operation was aborted');
       abortError.name = 'AbortError';
-      
+
       mockFetch.mockRejectedValueOnce(abortError);
 
       try {
@@ -191,7 +191,7 @@ describe('apiCall - Error Handling', () => {
     it('deve rethrow erro já estruturado', async () => {
       const structuredError: any = new Error('Custom error');
       structuredError.code = 'E_CUSTOM';
-      
+
       mockFetch.mockRejectedValueOnce(structuredError);
 
       try {
@@ -244,7 +244,7 @@ describe('apiCall - Error Handling', () => {
   describe('Timeout clearTimeout', () => {
     it('deve limpar timeout quando requisição é bem-sucedida', async () => {
       const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
-      
+
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ accountId: 'acct_123' }),
@@ -257,7 +257,7 @@ describe('apiCall - Error Handling', () => {
 
     it('deve limpar timeout quando requisição falha', async () => {
       const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
-      
+
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 500,

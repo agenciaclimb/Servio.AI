@@ -27,12 +27,7 @@ describe('AIJobRequestWizard', () => {
   });
 
   it('renderiza o step inicial com campo de descrição', () => {
-    render(
-      <AIJobRequestWizard
-        onClose={mockOnClose}
-        onSubmit={mockOnSubmit}
-      />
-    );
+    render(<AIJobRequestWizard onClose={mockOnClose} onSubmit={mockOnSubmit} />);
     // Label do campo inicial
     expect(screen.getByText(/Descreva sua necessidade/i)).toBeInTheDocument();
     // Placeholder genérico começa com "Ex:" – tornamos o matcher mais flexível
@@ -42,13 +37,8 @@ describe('AIJobRequestWizard', () => {
 
   it('valida descrição muito curta', async () => {
     const mockEnhance = vi.mocked(geminiService.enhanceJobRequest);
-    
-    render(
-      <AIJobRequestWizard
-        onClose={mockOnClose}
-        onSubmit={mockOnSubmit}
-      />
-    );
+
+    render(<AIJobRequestWizard onClose={mockOnClose} onSubmit={mockOnSubmit} />);
 
     const input = screen.getByPlaceholderText(/Ex:/i);
     const analyzeButton = screen.getByTestId('wizard-analyze-button');
@@ -72,14 +62,9 @@ describe('AIJobRequestWizard', () => {
       estimatedCost: { min: 150, max: 300 },
     });
 
-    render(
-      <AIJobRequestWizard
-        onClose={mockOnClose}
-        onSubmit={mockOnSubmit}
-      />
-    );
+    render(<AIJobRequestWizard onClose={mockOnClose} onSubmit={mockOnSubmit} />);
 
-  const input = screen.getByPlaceholderText(/Ex:/i);
+    const input = screen.getByPlaceholderText(/Ex:/i);
     const analyzeButton = screen.getByTestId('wizard-analyze-button');
 
     fireEvent.change(input, { target: { value: 'Preciso instalar um ventilador de teto' } });
@@ -89,11 +74,7 @@ describe('AIJobRequestWizard', () => {
       expect(screen.getByText(/Revise o seu Pedido/i)).toBeInTheDocument();
     });
 
-    expect(mockEnhance).toHaveBeenCalledWith(
-      'Preciso instalar um ventilador de teto',
-      '',
-      0
-    );
+    expect(mockEnhance).toHaveBeenCalledWith('Preciso instalar um ventilador de teto', '', 0);
 
     expect(screen.getByDisplayValue(/Instalação de ventilador/i)).toBeInTheDocument();
   });
@@ -233,12 +214,7 @@ describe('AIJobRequestWizard', () => {
   });
 
   it('chama onClose ao clicar no botão X', () => {
-    render(
-      <AIJobRequestWizard
-        onClose={mockOnClose}
-        onSubmit={mockOnSubmit}
-      />
-    );
+    render(<AIJobRequestWizard onClose={mockOnClose} onSubmit={mockOnSubmit} />);
 
     const closeButton = screen.getByTestId('wizard-close');
     fireEvent.click(closeButton);
@@ -283,9 +259,16 @@ describe('AIJobRequestWizard', () => {
     // Não usamos enhance aqui porque vamos direto ao review com initialData
     mockEnhance.mockReset();
 
-    const fetchMock = vi.fn()
+    const fetchMock = vi
+      .fn()
       // 1) gerar signed URL
-      .mockResolvedValueOnce({ ok: true, json: async () => ({ signedUrl: 'https://upload.example', filePath: 'uploads/job123/foto.jpg' }) } as any)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          signedUrl: 'https://upload.example',
+          filePath: 'uploads/job123/foto.jpg',
+        }),
+      } as any)
       // 2) upload PUT
       .mockResolvedValueOnce({ ok: true } as any);
     // @ts-expect-error sobrescrevendo global para teste
@@ -307,7 +290,7 @@ describe('AIJobRequestWizard', () => {
 
     // Adiciona arquivo no passo review
     const fileInput = screen.getByLabelText('Carregar arquivos') as HTMLInputElement;
-    const file = new File([new Uint8Array([1,2,3])], 'foto.jpg', { type: 'image/jpeg' });
+    const file = new File([new Uint8Array([1, 2, 3])], 'foto.jpg', { type: 'image/jpeg' });
     await waitFor(() => expect(fileInput).toBeInTheDocument());
     // fireEvent em inputs type=file precisa de target.files
     await waitFor(() => {
@@ -323,7 +306,7 @@ describe('AIJobRequestWizard', () => {
       expect(mockOnSubmit).toHaveBeenCalled();
       const payload = mockOnSubmit.mock.calls[0][0];
       expect(payload.media).toEqual([
-        { name: 'foto.jpg', path: 'uploads/job123/foto.jpg', type: 'image' }
+        { name: 'foto.jpg', path: 'uploads/job123/foto.jpg', type: 'image' },
       ]);
     });
   });
@@ -345,14 +328,18 @@ describe('AIJobRequestWizard', () => {
       />
     );
 
-    const addressInput = screen.getByLabelText('Endereço do serviço', { selector: 'input#address-review' });
+    const addressInput = screen.getByLabelText('Endereço do serviço', {
+      selector: 'input#address-review',
+    });
     fireEvent.change(addressInput, { target: { value: 'Rua Azul, 456' } });
 
     const publish = screen.getByTestId('wizard-publish-button');
     fireEvent.click(publish);
 
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(expect.objectContaining({ address: 'Rua Azul, 456' }));
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({ address: 'Rua Azul, 456' })
+      );
     });
   });
 

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 /**
  * Stripe Payment Service Integration Tests
- * 
+ *
  * Coverage:
  * - Stripe client initialization
  * - Checkout session creation
@@ -460,12 +460,10 @@ describe('Stripe Payment Service Integration', () => {
 
     it('should retry failed payment operations', async () => {
       const error = new Error('Temporary failure');
-      mockStripeInstance.paymentIntents.create
-        .mockRejectedValueOnce(error)
-        .mockResolvedValueOnce({
-          id: 'pi_test_123',
-          status: 'requires_payment_method',
-        });
+      mockStripeInstance.paymentIntents.create.mockRejectedValueOnce(error).mockResolvedValueOnce({
+        id: 'pi_test_123',
+        status: 'requires_payment_method',
+      });
 
       // First attempt fails
       try {
@@ -516,7 +514,12 @@ describe('Stripe Payment Service Integration', () => {
 
       const createdSession = await mockStripeInstance.checkout.sessions.create({
         payment_method_types: ['card'],
-        line_items: [{ price_data: { currency: 'usd', product_data: { name: 'Service' }, unit_amount: 10000 }, quantity: 1 }],
+        line_items: [
+          {
+            price_data: { currency: 'usd', product_data: { name: 'Service' }, unit_amount: 10000 },
+            quantity: 1,
+          },
+        ],
         mode: 'payment',
         success_url: 'https://example.com/success',
         cancel_url: 'https://example.com/cancel',

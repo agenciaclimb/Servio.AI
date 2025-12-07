@@ -25,11 +25,11 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       message,
       type,
     };
-    setMessages((prevMessages) => [...prevMessages, newToast]);
+    setMessages(prevMessages => [...prevMessages, newToast]);
   }, []);
 
   const removeToast = useCallback((id: number) => {
-    setMessages((prevMessages) => prevMessages.filter((message) => message.id !== id));
+    setMessages(prevMessages => prevMessages.filter(message => message.id !== id));
   }, []);
 
   return (

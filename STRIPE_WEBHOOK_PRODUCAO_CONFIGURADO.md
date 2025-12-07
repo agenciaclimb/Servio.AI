@@ -211,6 +211,7 @@ stripe webhook_endpoints create \
 
 **Problema**: Webhook desabilitado ou eventos não configurados  
 **Solução**:
+
 ```powershell
 # Verificar status
 stripe webhook_endpoints retrieve we_1SVIq9JEyu4utIB8OmM9SxRX --live

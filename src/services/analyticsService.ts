@@ -1,6 +1,6 @@
 /**
  * Analytics Service - Phase 1 Metrics Tracking
- * 
+ *
  * Tracks user interactions and KPIs for Phase 1 features:
  * - Onboarding tour completion
  * - Quick actions usage
@@ -31,7 +31,7 @@ function getSessionId(): string {
   const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes
 
   const sessionData = sessionStorage.getItem(SESSION_KEY);
-  
+
   if (sessionData) {
     const { id, timestamp } = JSON.parse(sessionData);
     if (Date.now() - timestamp < SESSION_DURATION) {
@@ -42,10 +42,13 @@ function getSessionId(): string {
   // Create new session
   const randomSegment = Math.random().toString(36).slice(2, 11);
   const newSessionId = `session_${Date.now()}_${randomSegment}`;
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify({
-    id: newSessionId,
-    timestamp: Date.now()
-  }));
+  sessionStorage.setItem(
+    SESSION_KEY,
+    JSON.stringify({
+      id: newSessionId,
+      timestamp: Date.now(),
+    })
+  );
 
   return newSessionId;
 }
@@ -59,19 +62,20 @@ export async function trackEvent(
   properties?: AnalyticsProperties
 ): Promise<void> {
   try {
-    const prospectorIdOverride = typeof properties?.prospectorId === 'string' ? properties.prospectorId : undefined;
+    const prospectorIdOverride =
+      typeof properties?.prospectorId === 'string' ? properties.prospectorId : undefined;
     const event: AnalyticsEvent = {
       eventName,
       userId,
       prospectorId: prospectorIdOverride || userId,
       timestamp: new Date(),
       sessionId: getSessionId(),
-      properties: properties ?? {}
+      properties: properties ?? {},
     };
 
     await addDoc(collection(db, 'analytics_events'), {
       ...event,
-      timestamp: Timestamp.fromDate(event.timestamp)
+      timestamp: Timestamp.fromDate(event.timestamp),
     });
 
     logInfo(`[Analytics] Event tracked: ${eventName}`, properties);
@@ -91,10 +95,10 @@ export function trackPageView(pageName: string, userId: string): () => void {
   // Return cleanup function to track time spent
   return () => {
     const timeSpent = Math.round((Date.now() - startTime) / 1000); // seconds
-    trackEvent('page_exit', userId, { 
-      pageName, 
+    trackEvent('page_exit', userId, {
+      pageName,
       timeSpent,
-      timeSpentFormatted: formatDuration(timeSpent)
+      timeSpentFormatted: formatDuration(timeSpent),
     });
   };
 }
@@ -119,17 +123,17 @@ export function trackTourStarted(userId: string): void {
 }
 
 export function trackTourCompleted(userId: string, completionTime: number): void {
-  trackEvent('tour_completed', userId, { 
+  trackEvent('tour_completed', userId, {
     feature: 'prospector_onboarding',
     completionTimeSeconds: completionTime,
-    completionTimeFormatted: formatDuration(completionTime)
+    completionTimeFormatted: formatDuration(completionTime),
   });
 }
 
 export function trackTourSkipped(userId: string, stepNumber: number): void {
-  trackEvent('tour_skipped', userId, { 
+  trackEvent('tour_skipped', userId, {
     feature: 'prospector_onboarding',
-    stepNumber
+    stepNumber,
   });
 }
 
@@ -137,12 +141,12 @@ export function trackTourSkipped(userId: string, stepNumber: number): void {
  * Track quick actions bar usage
  */
 export function trackQuickActionUsed(
-  userId: string, 
+  userId: string,
   action: 'copy_link' | 'copy_whatsapp' | 'copy_email' | 'copy_sms'
 ): void {
-  trackEvent('quick_action_used', userId, { 
+  trackEvent('quick_action_used', userId, {
     feature: 'quick_actions_bar',
-    action 
+    action,
   });
 }
 
@@ -157,7 +161,7 @@ export function trackDashboardEngagement(
   trackEvent('dashboard_engagement', userId, {
     feature: 'dashboard_unified',
     section,
-    action
+    action,
   });
 }
 
@@ -169,10 +173,14 @@ export function trackNotificationPermission(
   granted: boolean,
   prompt: 'first' | 'retry' = 'first'
 ): void {
-  trackEvent(granted ? 'notification_permission_granted' : 'notification_permission_denied', userId, {
-    feature: 'fcm_notifications',
-    prompt
-  });
+  trackEvent(
+    granted ? 'notification_permission_granted' : 'notification_permission_denied',
+    userId,
+    {
+      feature: 'fcm_notifications',
+      prompt,
+    }
+  );
 }
 
 /**
@@ -184,7 +192,7 @@ export function trackNotificationReceived(
 ): void {
   trackEvent('notification_received', userId, {
     feature: 'fcm_notifications',
-    notificationType
+    notificationType,
   });
 }
 
@@ -194,7 +202,7 @@ export function trackNotificationClicked(
 ): void {
   trackEvent('notification_clicked', userId, {
     feature: 'fcm_notifications',
-    notificationType
+    notificationType,
   });
 }
 
@@ -207,7 +215,7 @@ export function trackReferralShare(
 ): void {
   trackEvent('referral_share', userId, {
     feature: 'referral_links',
-    method
+    method,
   });
 }
 
@@ -222,6 +230,6 @@ export function trackTemplateUsed(
   trackEvent('template_used', userId, {
     feature: 'message_templates',
     templateId,
-    platform
+    platform,
   });
 }

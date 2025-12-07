@@ -61,23 +61,23 @@ describe('ClientDashboard - Coverage Tests', () => {
       { id: '2', createdAt: '2025-11-15T10:00:00Z' },
     ];
 
-    const sorted = [...jobs].sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    const sorted = [...jobs].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
 
     expect(sorted[0].id).toBe('2'); // Mais recente primeiro
   });
 
   it('tests sort by urgency', () => {
-    const urgencyOrder = { 'urgente': 1, 'amanha': 2, '3dias': 3, '1semana': 4 };
-    
+    const urgencyOrder = { urgente: 1, amanha: 2, '3dias': 3, '1semana': 4 };
+
     const jobs = [
       { id: '1', urgency: '3dias' },
       { id: '2', urgency: 'urgente' },
     ];
 
-    const sorted = [...jobs].sort((a: any, b: any) => 
-      (urgencyOrder[a.urgency] || 999) - (urgencyOrder[b.urgency] || 999)
+    const sorted = [...jobs].sort(
+      (a: any, b: any) => (urgencyOrder[a.urgency] || 999) - (urgencyOrder[b.urgency] || 999)
     );
 
     expect(sorted[0].id).toBe('2'); // Urgente primeiro

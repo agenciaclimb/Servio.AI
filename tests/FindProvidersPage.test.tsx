@@ -76,8 +76,8 @@ describe('FindProvidersPage', () => {
     const grid = screen.getByRole('main');
     expect(within(grid).getByText('Ana Eletricista')).toBeInTheDocument();
 
-  // Aciona callbacks
-  // Procura um botão de contato ou ver perfil dentro do card
+    // Aciona callbacks
+    // Procura um botão de contato ou ver perfil dentro do card
     // como o ProviderSearchResultCard não está detalhado aqui, garantimos que existam botões e disparamos callbacks manualmente
     onViewProfile('ana@ex.com');
     onContact('ana@ex.com');

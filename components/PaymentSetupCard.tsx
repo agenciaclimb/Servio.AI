@@ -29,7 +29,8 @@ const PaymentSetupCard: React.FC<PaymentSetupCardProps> = ({ user }) => {
       console.error('Failed to start Stripe onboarding:', error);
       const message = formatErrorForToast(error, 'payment');
       const action = getErrorAction(error);
-      const actionHint = action === 'support' ? ' Entre em contato com o suporte se o problema persistir.' : '';
+      const actionHint =
+        action === 'support' ? ' Entre em contato com o suporte se o problema persistir.' : '';
       addToast(`${message}${actionHint}`, 'error');
     } finally {
       setIsLoading(false);
@@ -43,12 +44,28 @@ const PaymentSetupCard: React.FC<PaymentSetupCardProps> = ({ user }) => {
         <div className="text-center bg-green-50 text-green-700 p-4 rounded-md">
           <p className="font-semibold">✅ Conta Conectada</p>
           <p className="text-sm">Você está pronto para receber pagamentos.</p>
-          <button onClick={handleOnboarding} disabled={isLoading} className="mt-2 text-sm font-medium text-green-800 hover:underline">Gerenciar Conta</button>
+          <button
+            onClick={handleOnboarding}
+            disabled={isLoading}
+            className="mt-2 text-sm font-medium text-green-800 hover:underline"
+          >
+            Gerenciar Conta
+          </button>
         </div>
       ) : (
-        <p className="text-sm text-gray-600 mb-4">Conecte sua conta ao Stripe para receber pagamentos de forma segura pelos seus serviços.</p>
+        <p className="text-sm text-gray-600 mb-4">
+          Conecte sua conta ao Stripe para receber pagamentos de forma segura pelos seus serviços.
+        </p>
       )}
-      {!user.stripeAccountId && <button onClick={handleOnboarding} disabled={isLoading} className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400">{isLoading ? 'Aguarde...' : 'Configurar Pagamentos'}</button>}
+      {!user.stripeAccountId && (
+        <button
+          onClick={handleOnboarding}
+          disabled={isLoading}
+          className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+        >
+          {isLoading ? 'Aguarde...' : 'Configurar Pagamentos'}
+        </button>
+      )}
     </div>
   );
 };

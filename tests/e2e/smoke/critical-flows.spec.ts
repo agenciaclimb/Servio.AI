@@ -15,7 +15,9 @@ test.describe('🚨 SMOKE TESTS - Critical Flows', () => {
   test('✅ SMOKE-02: Modal de autenticação', async ({ page }) => {
     await page.getByTestId('header-login-button').click();
     await page.waitForTimeout(1000);
-    const inputFields = page.locator('input[type="email"], input[type="text"], input[type="password"]');
+    const inputFields = page.locator(
+      'input[type="email"], input[type="text"], input[type="password"]'
+    );
     expect(await inputFields.count()).toBeGreaterThan(0);
   });
 
@@ -47,7 +49,7 @@ test.describe('🚨 SMOKE TESTS - Critical Flows', () => {
 
   test('✅ SMOKE-07: Sem erros de console', async ({ page }) => {
     const errors: string[] = [];
-    page.on('console', (msg) => {
+    page.on('console', msg => {
       if (msg.type() === 'error') errors.push(msg.text());
     });
     await page.waitForTimeout(1000);

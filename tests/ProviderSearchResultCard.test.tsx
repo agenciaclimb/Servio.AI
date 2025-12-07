@@ -30,8 +30,8 @@ describe('ProviderSearchResultCard', () => {
     expect(screen.getByText('Ana Eletricista')).toBeInTheDocument();
     expect(screen.getByText('São Paulo')).toBeInTheDocument();
     expect(screen.getByText('27')).toBeInTheDocument();
-  // rating formatado
-  expect(screen.getByText('4.3')).toBeInTheDocument();
+    // rating formatado
+    expect(screen.getByText('4.3')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Ver Perfil' }));
     fireEvent.click(screen.getByRole('button', { name: 'Contatar' }));

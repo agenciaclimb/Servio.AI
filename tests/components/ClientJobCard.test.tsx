@@ -85,7 +85,7 @@ describe('ClientJobCard', () => {
 
     const button = screen.getByRole('button', { name: /Acompanhar Leilão/i });
     expect(button).toBeInTheDocument();
-    
+
     fireEvent.click(button);
     expect(mockCallbacks.onViewProposals).toHaveBeenCalledTimes(1);
   });

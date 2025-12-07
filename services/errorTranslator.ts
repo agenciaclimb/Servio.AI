@@ -7,7 +7,7 @@ import { ApiError } from './api';
 export interface UserFriendlyError {
   title: string;
   message: string;
-  action?: string;  // Ação sugerida ao usuário
+  action?: string; // Ação sugerida ao usuário
   canRetry: boolean;
 }
 

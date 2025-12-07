@@ -9,6 +9,7 @@
 ## 📦 Pacote de Funcionalidades Deployado
 
 ### 🎯 Novos Componentes (4)
+
 1. **ConversionFunnelDashboard** - Analytics visual com detecção de gargalos
    - 4 estágios do funil (Novos → Contatados → Negociando → Convertidos)
    - KPIs: taxa conversão global, leads ativos, perdidos
@@ -35,7 +36,9 @@
    - Recomendações baseadas em estado atual
 
 ### 📊 Analytics Instrumentado
+
 Todos eventos registrados via Firebase Analytics:
+
 - `funnel_dashboard_opened` (payload: `lead_count`)
 - `sequence_activated` (payload: `sequence_id`, `sequence_name`, `lead_count`)
 - `sequence_activated_callback` (redundância auditoria)
@@ -43,7 +46,9 @@ Todos eventos registrados via Firebase Analytics:
 - `gamification_opened` (payload: `lead_count`)
 
 ### 🎨 UI/UX Melhorias
+
 **Toolbar CRM Enhanced** (4 botões):
+
 - 📊 Dashboard de Conversão (toggle visibility)
 - 🔄 Sequências Automáticas (modal)
 - 🔍 Enriquecer Lead (modal)
@@ -56,6 +61,7 @@ Todos com `data-testid` para testes E2E estáveis.
 ## 🧪 Testes E2E Criados (4 specs)
 
 Arquivos criados em `tests/e2e/prospector/`:
+
 1. `funnel-dashboard.spec.ts` - Valida abertura dashboard e presença métricas
 2. `followup-sequences.spec.ts` - Verifica modal e lista de sequências
 3. `enrichment-modal.spec.ts` - Testa fluxo de enriquecimento simulado
@@ -67,13 +73,13 @@ Arquivos criados em `tests/e2e/prospector/`:
 
 ## 📈 Métricas de Build
 
-| Métrica | Valor |
-|---------|-------|
-| Build Time | 18.52s ⚡ |
+| Métrica                    | Valor                       |
+| -------------------------- | --------------------------- |
+| Build Time                 | 18.52s ⚡                   |
 | ProspectorDashboard Bundle | 476.51 kB (gzip: 117.21 kB) |
-| TypeScript Errors | 0 ✅ |
-| Total Files Changed | 8 |
-| Lines Added | ~1200 |
+| TypeScript Errors          | 0 ✅                        |
+| Total Files Changed        | 8                           |
+| Lines Added                | ~1200                       |
 
 ---
 
@@ -101,6 +107,7 @@ Arquivos criados em `tests/e2e/prospector/`:
 ## 🔄 Próximos Passos Recomendados
 
 ### Curto Prazo (1-2 semanas)
+
 1. **Configurar APIs Externas**
    - [ ] Criar conta Twilio + solicitar WhatsApp Business API
    - [ ] Criar conta SendGrid (free tier 100 emails/dia)
@@ -117,6 +124,7 @@ Arquivos criados em `tests/e2e/prospector/`:
    - [ ] Integrar no CI pipeline
 
 ### Médio Prazo (1 mês)
+
 4. **Monitoramento Produção**
    - [ ] Dashboard Looker Studio (Analytics events)
    - [ ] Alertas Cloud Monitoring (taxa erro > 10%)
@@ -133,6 +141,7 @@ Arquivos criados em `tests/e2e/prospector/`:
    - [ ] Leaderboard semanal/mensal
 
 ### Longo Prazo (3 meses)
+
 7. **Automação Avançada**
    - [ ] Detecção resposta lead (pausa sequência)
    - [ ] A/B testing templates follow-up
@@ -146,6 +155,7 @@ Arquivos criados em `tests/e2e/prospector/`:
 ### Objetivo: Aumentar conversão prospector em 20%
 
 **Key Results (3 meses)**:
+
 - KR1: 60% prospectores ativos usam dashboard conversão semanalmente
 - KR2: 35% novos leads ativam sequência follow-up nos primeiros 7 dias
 - KR3: Taxa conversão (Novos → Convertidos) aumenta de 18% para 28%
@@ -158,17 +168,20 @@ Arquivos criados em `tests/e2e/prospector/`:
 ## 🐛 Issues Conhecidos
 
 ### 1. Testes E2E Falhando
+
 **Status**: ⚠️ Conhecido  
 **Causa**: Rota `/prospector` requer autenticação  
 **Workaround**: Executar testes manualmente após login  
 **Fix Planejado**: Criar fixture auth com token mock
 
 ### 2. Enriquecimento Simulado
+
 **Status**: 📋 By Design  
 **Nota**: Dados fake (~900ms delay simulado)  
 **Próximo Passo**: Integrar API real (Clearbit $99/mês)
 
 ### 3. Ranking Fictício
+
 **Status**: 📋 By Design  
 **Nota**: Dados hardcoded ("Você", "Prospector A/B")  
 **Próximo Passo**: Query agregada Firestore com ordenação
@@ -187,11 +200,13 @@ Arquivos criados em `tests/e2e/prospector/`:
 ## 💰 Custos Estimados
 
 ### Infraestrutura Atual (sem Cloud Function)
+
 - Firebase Hosting: $0 (free tier)
 - Firestore Reads (prospector_followups): ~5k/mês = $0 (free tier)
 - Analytics: $0 (free tier)
 
 ### Após Implementar Cloud Function
+
 - Cloud Function: $0 (free tier 2M invocações/mês)
 - Cloud Scheduler: $0.10/mês (720 jobs/mês)
 - SendGrid: $14.95/mês (Essentials, 3000 emails)
@@ -203,6 +218,7 @@ Arquivos criados em `tests/e2e/prospector/`:
 ## 📞 Suporte & Troubleshooting
 
 ### Logs
+
 ```powershell
 # Frontend errors (browser console)
 # Abrir DevTools → Console → filtrar "error"
@@ -212,6 +228,7 @@ gcloud logging read "resource.type=cloud_run_revision" --limit 50
 ```
 
 ### Rollback Rápido
+
 ```powershell
 # Listar versões anteriores
 firebase hosting:channel:list
@@ -221,6 +238,7 @@ firebase hosting:clone SOURCE_SITE_ID:SOURCE_CHANNEL_ID DESTINATION_SITE_ID:live
 ```
 
 ### Contatos
+
 - **Dev Team**: @backend-team (Cloud Function issues)
 - **DevOps**: @devops (deploy/infra issues)
 - **Product**: @product (feature requests)
@@ -232,6 +250,7 @@ firebase hosting:clone SOURCE_SITE_ID:SOURCE_CHANNEL_ID DESTINATION_SITE_ID:live
 **Status Final**: ✅ FASE 3 COMPLETA E EM PRODUÇÃO
 
 Todas funcionalidades core entregues e deployadas. Próxima fase foca em:
+
 1. Automação backend (Cloud Function)
 2. Integração APIs externas (Twilio/SendGrid)
 3. Monitoramento e otimização baseada em dados reais

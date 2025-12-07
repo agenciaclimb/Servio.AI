@@ -83,7 +83,9 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
       // Check for semantic elements
       const sections = container.querySelectorAll('section, header, main, article, nav');
       // Should have at least one structural element
-      expect(sections.length + (container.querySelectorAll('div').length > 0 ? 1 : 0)).toBeGreaterThan(0);
+      expect(
+        sections.length + (container.querySelectorAll('div').length > 0 ? 1 : 0)
+      ).toBeGreaterThan(0);
     });
   });
 
@@ -121,7 +123,7 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
     it('should handle button clicks', async () => {
       render(<HeroSection />);
       const buttons = screen.queryAllByRole('button');
-      
+
       if (buttons.length > 0) {
         await user.click(buttons[0]);
         // Should handle click without error
@@ -132,7 +134,7 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
     it('should handle link navigation', async () => {
       render(<HeroSection />);
       const links = screen.queryAllByRole('link');
-      
+
       if (links.length > 0) {
         expect(links[0]).toHaveAttribute('href');
       }
@@ -141,7 +143,7 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
     it('should support keyboard navigation', async () => {
       const { container } = render(<HeroSection />);
       const buttons = container.querySelectorAll('button');
-      
+
       if (buttons.length > 0) {
         buttons[0].focus();
         expect(buttons[0]).toHaveFocus();
@@ -151,7 +153,7 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
     it('should handle form input if present', async () => {
       const { container } = render(<HeroSection />);
       const inputs = container.querySelectorAll('input');
-      
+
       if (inputs.length > 0) {
         const input = inputs[0] as HTMLInputElement;
         await user.type(input, 'test input');
@@ -164,12 +166,12 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
     it('should have proper ARIA labels', () => {
       const { container } = render(<HeroSection />);
       const buttons = container.querySelectorAll('button');
-      
+
       buttons.forEach(button => {
         expect(
           button.getAttribute('aria-label') ||
-          button.textContent ||
-          button.querySelector('[aria-hidden="false"]')
+            button.textContent ||
+            button.querySelector('[aria-hidden="false"]')
         ).toBeTruthy();
       });
     });
@@ -177,7 +179,7 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
     it('should have proper heading hierarchy', () => {
       const { container } = render(<HeroSection />);
       const headings = container.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      
+
       if (headings.length > 0) {
         // Headings should be in proper order
         const levels: number[] = [];
@@ -185,7 +187,7 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
           const level = parseInt(h.tagName[1]);
           levels.push(level);
         });
-        
+
         expect(levels.length).toBeGreaterThan(0);
       }
     });
@@ -193,7 +195,7 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
     it('should have alt text for images', () => {
       const { container } = render(<HeroSection />);
       const images = container.querySelectorAll('img');
-      
+
       images.forEach(img => {
         expect(img.hasAttribute('alt')).toBe(true);
       });
@@ -239,13 +241,13 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
     it('should handle rapid interactions', async () => {
       render(<HeroSection />);
       const buttons = screen.queryAllByRole('button');
-      
+
       if (buttons.length > 0) {
         for (let i = 0; i < 5; i++) {
           await user.click(buttons[0]);
         }
       }
-      
+
       expect(true).toBe(true);
     });
   });
@@ -255,7 +257,7 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
       const start = performance.now();
       render(<HeroSection />);
       const duration = performance.now() - start;
-      
+
       // Should render quickly
       expect(duration).toBeLessThan(1000);
     });

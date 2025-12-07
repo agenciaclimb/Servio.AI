@@ -169,9 +169,7 @@ describe('API Service – Users, Jobs, Messages & Notifications', () => {
   describe('Notifications', () => {
     it('fetchNotifications: busca por usuário (sucesso) e faz fallback quando falha', async () => {
       const userId = 'cliente@servio.ai';
-      const notifs = [
-        { id: 'n1', userId, text: 'Bem-vindo' },
-      ];
+      const notifs = [{ id: 'n1', userId, text: 'Bem-vindo' }];
 
       vi.spyOn(global, 'fetch').mockResolvedValueOnce({
         ok: true,

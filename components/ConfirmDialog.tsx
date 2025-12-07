@@ -34,7 +34,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
@@ -46,7 +46,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           {title}
         </h2>
         <p className="text-gray-600 mb-6">{message}</p>
-        
+
         <div className="flex gap-3 justify-end">
           <button
             onClick={onCancel}

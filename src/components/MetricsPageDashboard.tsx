@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 interface MetricData {
   date: string;
@@ -44,11 +55,11 @@ export const MetricsDashboard: React.FC = () => {
   const fetchMetrics = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch from backend analytics endpoints
       const [metricsRes, campaignsRes] = await Promise.all([
         fetch('/api/analytics/metrics-timeline'),
-        fetch('/api/analytics/campaign-performance')
+        fetch('/api/analytics/campaign-performance'),
       ]);
 
       if (!metricsRes.ok || !campaignsRes.ok) {
@@ -60,11 +71,20 @@ export const MetricsDashboard: React.FC = () => {
 
       setMetrics(metricsData.data);
       setCampaigns(campaignsData.campaigns);
-      
+
       // Calculate aggregate stats
-      const totalLeads = metricsData.data.reduce((sum: number, m: MetricData) => sum + m.outreach, 0);
-      const totalConverted = metricsData.data.reduce((sum: number, m: MetricData) => sum + m.conversions, 0);
-      const totalRevenue = metricsData.data.reduce((sum: number, m: MetricData) => sum + m.revenue, 0);
+      const totalLeads = metricsData.data.reduce(
+        (sum: number, m: MetricData) => sum + m.outreach,
+        0
+      );
+      const totalConverted = metricsData.data.reduce(
+        (sum: number, m: MetricData) => sum + m.conversions,
+        0
+      );
+      const totalRevenue = metricsData.data.reduce(
+        (sum: number, m: MetricData) => sum + m.revenue,
+        0
+      );
 
       setStats({
         totalLeads,
@@ -72,7 +92,7 @@ export const MetricsDashboard: React.FC = () => {
         overallConversionRate: totalLeads > 0 ? (totalConverted / totalLeads) * 100 : 0,
         totalRevenue,
         avgFollowUpTime: 4.2, // Hours
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       });
 
       setError(null);
@@ -110,7 +130,8 @@ export const MetricsDashboard: React.FC = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Dashboard de Métricas</h1>
           <p className="text-gray-600 mt-2">
-            Últimas atualizações: {stats?.lastUpdated ? new Date(stats.lastUpdated).toLocaleString('pt-BR') : 'N/A'}
+            Últimas atualizações:{' '}
+            {stats?.lastUpdated ? new Date(stats.lastUpdated).toLocaleString('pt-BR') : 'N/A'}
           </p>
         </div>
 
@@ -124,8 +145,12 @@ export const MetricsDashboard: React.FC = () => {
 
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm font-medium text-gray-600">Conversões</div>
-            <div className="text-3xl font-bold text-green-600 mt-2">{stats?.totalConverted ?? 0}</div>
-            <div className="text-xs text-gray-500 mt-2">Taxa: {stats?.overallConversionRate.toFixed(1)}%</div>
+            <div className="text-3xl font-bold text-green-600 mt-2">
+              {stats?.totalConverted ?? 0}
+            </div>
+            <div className="text-xs text-gray-500 mt-2">
+              Taxa: {stats?.overallConversionRate.toFixed(1)}%
+            </div>
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
@@ -138,13 +163,17 @@ export const MetricsDashboard: React.FC = () => {
 
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm font-medium text-gray-600">Tempo Médio Follow-up</div>
-            <div className="text-3xl font-bold text-purple-600 mt-2">{stats?.avgFollowUpTime ?? 0}h</div>
+            <div className="text-3xl font-bold text-purple-600 mt-2">
+              {stats?.avgFollowUpTime ?? 0}h
+            </div>
             <div className="text-xs text-gray-500 mt-2">Entre contatos</div>
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm font-medium text-gray-600">Taxa de Conversão</div>
-            <div className="text-3xl font-bold text-orange-600 mt-2">{stats?.overallConversionRate.toFixed(1)}%</div>
+            <div className="text-3xl font-bold text-orange-600 mt-2">
+              {stats?.overallConversionRate.toFixed(1)}%
+            </div>
             <div className="text-xs text-gray-500 mt-2">Global</div>
           </div>
         </div>
@@ -203,9 +232,13 @@ export const MetricsDashboard: React.FC = () => {
                   <tr key={idx} className="border-b hover:bg-gray-50">
                     <td className="py-3 px-4">{campaign.name}</td>
                     <td className="py-3 px-4">
-                      <span className={`px-2 py-1 rounded text-sm font-medium ${
-                        campaign.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span
+                        className={`px-2 py-1 rounded text-sm font-medium ${
+                          campaign.status === 'active'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
                         {campaign.status === 'active' ? 'Ativa' : 'Pausada'}
                       </span>
                     </td>
@@ -237,7 +270,9 @@ export const MetricsDashboard: React.FC = () => {
             </div>
             <div className="text-center">
               <div className="bg-purple-100 rounded-lg p-6 mb-2">
-                <div className="text-3xl font-bold text-purple-600">{Math.floor((stats?.totalLeads ?? 0) * 0.4)}</div>
+                <div className="text-3xl font-bold text-purple-600">
+                  {Math.floor((stats?.totalLeads ?? 0) * 0.4)}
+                </div>
               </div>
               <p className="text-sm text-gray-600">Qualificados</p>
             </div>
@@ -246,7 +281,9 @@ export const MetricsDashboard: React.FC = () => {
             </div>
             <div className="text-center">
               <div className="bg-green-100 rounded-lg p-6 mb-2">
-                <div className="text-3xl font-bold text-green-600">{stats?.totalConverted ?? 0}</div>
+                <div className="text-3xl font-bold text-green-600">
+                  {stats?.totalConverted ?? 0}
+                </div>
               </div>
               <p className="text-sm text-gray-600">Convertidos</p>
             </div>

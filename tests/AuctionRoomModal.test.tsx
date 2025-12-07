@@ -89,10 +89,7 @@ describe('AuctionRoomModal', () => {
   });
 
   test('anonimiza provedores e exibe rótulos sequenciais', () => {
-    const bids = [
-      makeBid('b1', 'provX', 700),
-      makeBid('b2', 'provY', 650),
-    ];
+    const bids = [makeBid('b1', 'provX', 700), makeBid('b2', 'provY', 650)];
     render(
       <AuctionRoomModal
         job={baseJob}
@@ -133,25 +130,30 @@ describe('AuctionRoomModal', () => {
       />
     );
     const input = screen.getByLabelText(/Seu lance/);
-    
+
     // Validação de lance inválido (>= menor existente)
     await user.clear(input);
     await user.type(input, '600'); // inválido (>= menor)
     await user.click(screen.getByRole('button', { name: /Confirmar Lance/ }));
-    
+
     // Aguardar validação aparecer com timeout maior
-    expect(await screen.findByText(/Seu lance deve ser menor/, {}, { timeout: 10000 })).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Seu lance deve ser menor/, {}, { timeout: 10000 })
+    ).toBeInTheDocument();
 
     // Validação de lance válido (< menor existente)
     await user.clear(input);
     await user.type(input, '480');
     await user.click(screen.getByRole('button', { name: /Confirmar Lance/ }));
-    
+
     // Aguardar callback ser chamado com timeout maior
-    await vi.waitFor(() => {
-      expect(onPlaceBid).toHaveBeenCalledTimes(1);
-    }, { timeout: 10000 });
-    
+    await vi.waitFor(
+      () => {
+        expect(onPlaceBid).toHaveBeenCalledTimes(1);
+      },
+      { timeout: 10000 }
+    );
+
     expect(onPlaceBid).toHaveBeenCalledWith(baseJob.id, 480);
   }, 15000); // Timeout total do teste: 15 segundos
 

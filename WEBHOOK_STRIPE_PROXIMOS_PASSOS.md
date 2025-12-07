@@ -37,6 +37,7 @@ gcloud run services update servio-backend `
 ```
 
 **Importante**: Certifique-se de que o nome do serviço Cloud Run está correto. Pode ser:
+
 - `servio-backend`
 - `servio-ai`
 - Outro nome usado no seu projeto
@@ -121,6 +122,7 @@ Deve aparecer `STRIPE_WEBHOOK_SECRET` na lista.
 ### 2. Enviar Evento de Teste
 
 No Dashboard do Stripe:
+
 1. Webhooks → Seu webhook → Send test webhook
 2. Se retornar **200 OK**, está funcionando! ✅
 3. Se retornar **401** ou **403**, revisar o signing secret
@@ -128,6 +130,7 @@ No Dashboard do Stripe:
 ### 3. Testar com Pagamento Real
 
 Para teste final (opcional):
+
 1. Criar um pagamento de teste pequeno (ex: R$ 5,00)
 2. Usar cartão de teste: `4242 4242 4242 4242`
 3. Verificar nos logs se o webhook foi recebido
@@ -194,7 +197,7 @@ Após concluir os passos acima, você terá:
 ✅ Webhook de produção totalmente funcional  
 ✅ Pagamentos sendo processados automaticamente  
 ✅ Escrows atualizados no Firestore  
-✅ Sistema pronto para receber pagamentos reais  
+✅ Sistema pronto para receber pagamentos reais
 
 ---
 

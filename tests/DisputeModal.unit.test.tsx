@@ -23,8 +23,18 @@ const job: Job = {
   createdAt: new Date(),
 } as Job;
 
-const client: User = { id: 'client-1', name: 'Cliente', email: 'client@test.com', role: 'client' as any };
-const provider: User = { id: 'prov-1', name: 'Prestador', email: 'prov@test.com', role: 'provider' as any };
+const client: User = {
+  id: 'client-1',
+  name: 'Cliente',
+  email: 'client@test.com',
+  role: 'client' as any,
+};
+const provider: User = {
+  id: 'prov-1',
+  name: 'Prestador',
+  email: 'prov@test.com',
+  role: 'provider' as any,
+};
 
 const dispute: Dispute = {
   id: 'd1',
@@ -46,7 +56,14 @@ describe('DisputeModal (unit)', () => {
 
   it('renderiza cabeçalho e nota de pagamento pausado', () => {
     render(
-      <DisputeModal user={client} job={job} dispute={dispute} otherParty={provider} onClose={onClose} onSendMessage={onSendMessage} />
+      <DisputeModal
+        user={client}
+        job={job}
+        dispute={dispute}
+        otherParty={provider}
+        onClose={onClose}
+        onSendMessage={onSendMessage}
+      />
     );
 
     expect(screen.getByText(/Disputa em Aberto/i)).toBeInTheDocument();
@@ -60,15 +77,22 @@ describe('DisputeModal (unit)', () => {
   it('envia mensagem ao submeter quando há texto e outra parte', async () => {
     const user = userEvent.setup({ delay: null });
     render(
-      <DisputeModal user={client} job={job} dispute={dispute} otherParty={provider} onClose={onClose} onSendMessage={onSendMessage} />
+      <DisputeModal
+        user={client}
+        job={job}
+        dispute={dispute}
+        otherParty={provider}
+        onClose={onClose}
+        onSendMessage={onSendMessage}
+      />
     );
 
     const input = screen.getByPlaceholderText(/Digite sua mensagem/i) as HTMLInputElement;
     await user.type(input, 'Nova mensagem');
 
-  // Há dois botões sem nome acessível (fechar e enviar). Clicar no segundo (submit)
-  const buttons = screen.getAllByRole('button');
-  await user.click(buttons[1]);
+    // Há dois botões sem nome acessível (fechar e enviar). Clicar no segundo (submit)
+    const buttons = screen.getAllByRole('button');
+    await user.click(buttons[1]);
 
     expect(onSendMessage).toHaveBeenCalledWith('Nova mensagem');
     expect(input.value).toBe('');
@@ -77,13 +101,20 @@ describe('DisputeModal (unit)', () => {
   it('não envia quando mensagem vazia ou só espaços', async () => {
     const user = userEvent.setup({ delay: null });
     render(
-      <DisputeModal user={client} job={job} dispute={dispute} otherParty={provider} onClose={onClose} onSendMessage={onSendMessage} />
+      <DisputeModal
+        user={client}
+        job={job}
+        dispute={dispute}
+        otherParty={provider}
+        onClose={onClose}
+        onSendMessage={onSendMessage}
+      />
     );
 
     const input = screen.getByPlaceholderText(/Digite sua mensagem/i) as HTMLInputElement;
     await user.type(input, '    ');
-  const buttons = screen.getAllByRole('button');
-  await user.click(buttons[1]);
+    const buttons = screen.getAllByRole('button');
+    await user.click(buttons[1]);
 
     expect(onSendMessage).not.toHaveBeenCalled();
   });
@@ -91,13 +122,19 @@ describe('DisputeModal (unit)', () => {
   it('não envia se otherParty estiver ausente', async () => {
     const user = userEvent.setup({ delay: null });
     render(
-      <DisputeModal user={client} job={job} dispute={dispute} onClose={onClose} onSendMessage={onSendMessage} />
+      <DisputeModal
+        user={client}
+        job={job}
+        dispute={dispute}
+        onClose={onClose}
+        onSendMessage={onSendMessage}
+      />
     );
 
     const input = screen.getByPlaceholderText(/Digite sua mensagem/i) as HTMLInputElement;
     await user.type(input, 'Sem outro usuário');
-  const buttons = screen.getAllByRole('button');
-  await user.click(buttons[1]);
+    const buttons = screen.getAllByRole('button');
+    await user.click(buttons[1]);
 
     expect(onSendMessage).not.toHaveBeenCalled();
   });
@@ -105,7 +142,14 @@ describe('DisputeModal (unit)', () => {
   it('fecha ao clicar no botão de fechar', async () => {
     const user = userEvent.setup({ delay: null });
     render(
-      <DisputeModal user={client} job={job} dispute={dispute} otherParty={provider} onClose={onClose} onSendMessage={onSendMessage} />
+      <DisputeModal
+        user={client}
+        job={job}
+        dispute={dispute}
+        otherParty={provider}
+        onClose={onClose}
+        onSendMessage={onSendMessage}
+      />
     );
 
     const closeBtn = screen.getAllByRole('button')[0];
@@ -115,7 +159,14 @@ describe('DisputeModal (unit)', () => {
 
   it('exibe nome da outra parte no cabeçalho', () => {
     render(
-      <DisputeModal user={client} job={job} dispute={dispute} otherParty={provider} onClose={onClose} onSendMessage={onSendMessage} />
+      <DisputeModal
+        user={client}
+        job={job}
+        dispute={dispute}
+        otherParty={provider}
+        onClose={onClose}
+        onSendMessage={onSendMessage}
+      />
     );
     expect(screen.getByText(/Job:/)).toBeInTheDocument();
     expect(screen.getByText(/Prestador/)).toBeInTheDocument();
@@ -123,7 +174,14 @@ describe('DisputeModal (unit)', () => {
 
   it('alinha mensagens conforme remetente (cliente à direita, prestador à esquerda)', () => {
     render(
-      <DisputeModal user={client} job={job} dispute={dispute} otherParty={provider} onClose={onClose} onSendMessage={onSendMessage} />
+      <DisputeModal
+        user={client}
+        job={job}
+        dispute={dispute}
+        otherParty={provider}
+        onClose={onClose}
+        onSendMessage={onSendMessage}
+      />
     );
     const msgCliente = screen.getByText('Problema no serviço');
     const msgPrestador = screen.getByText('Vamos resolver');
@@ -141,7 +199,14 @@ describe('DisputeModal (unit)', () => {
   it('fecha ao clicar no overlay', async () => {
     const user = userEvent.setup({ delay: null });
     render(
-      <DisputeModal user={client} job={job} dispute={dispute} otherParty={provider} onClose={onClose} onSendMessage={onSendMessage} />
+      <DisputeModal
+        user={client}
+        job={job}
+        dispute={dispute}
+        otherParty={provider}
+        onClose={onClose}
+        onSendMessage={onSendMessage}
+      />
     );
     // O overlay é o container com role dialog no getModalOverlayProps; usamos getByRole('dialog')
     const overlay = screen.getByRole('dialog');
@@ -151,7 +216,13 @@ describe('DisputeModal (unit)', () => {
 
   it('mostra "Usuário" no cabeçalho quando otherParty não é fornecido', () => {
     render(
-      <DisputeModal user={client} job={job} dispute={dispute} onClose={onClose} onSendMessage={onSendMessage} />
+      <DisputeModal
+        user={client}
+        job={job}
+        dispute={dispute}
+        onClose={onClose}
+        onSendMessage={onSendMessage}
+      />
     );
     expect(screen.getByText(/Job:/)).toBeInTheDocument();
     expect(screen.getByText(/Usuário/)).toBeInTheDocument();
@@ -160,7 +231,14 @@ describe('DisputeModal (unit)', () => {
   it('envia mensagem ao pressionar Enter', async () => {
     const user = userEvent.setup({ delay: null });
     render(
-      <DisputeModal user={client} job={job} dispute={dispute} otherParty={provider} onClose={onClose} onSendMessage={onSendMessage} />
+      <DisputeModal
+        user={client}
+        job={job}
+        dispute={dispute}
+        otherParty={provider}
+        onClose={onClose}
+        onSendMessage={onSendMessage}
+      />
     );
     const input = screen.getByPlaceholderText(/Digite sua mensagem/i) as HTMLInputElement;
     await user.type(input, 'Mensagem via enter{enter}');

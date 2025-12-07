@@ -1,9 +1,9 @@
 /**
  * 🎯 JORNADA COMPLETA DO ADMIN - Teste E2E
- * 
+ *
  * Cobre: Login → Dashboard → Aprovar Prestadores → Gerenciar Usuários →
  *        Gerenciar Jobs → Mediar Disputas → Analytics → Suspender Usuários
- * 
+ *
  * Este teste garante que TODO o fluxo do admin funciona end-to-end
  */
 
@@ -20,7 +20,7 @@ vi.mock('../src/services/api');
 vi.mock('../src/firebaseConfig', () => ({
   auth: {
     currentUser: null,
-    onAuthStateChanged: vi.fn((callback) => {
+    onAuthStateChanged: vi.fn(callback => {
       callback(null);
       return vi.fn();
     }),
@@ -58,7 +58,7 @@ describe('🎯 Jornada Completa do Admin', () => {
     // Preencher credenciais de admin
     const emailInput = within(modal).getByLabelText(/email/i);
     const senhaInput = within(modal).getByLabelText(/senha/i);
-    
+
     await user.type(emailInput, 'admin@servio.ai');
     await user.type(senhaInput, 'admin123456');
 
@@ -230,8 +230,20 @@ describe('🎯 Jornada Completa do Admin', () => {
     mockApi.fetchAllUsers.mockResolvedValue([
       { id: 'u1', name: 'Cliente 1', email: 'c1@example.com', role: 'client', status: 'active' },
       { id: 'u2', name: 'Cliente 2', email: 'c2@example.com', role: 'client', status: 'active' },
-      { id: 'u3', name: 'Prestador 1', email: 'p1@example.com', role: 'provider', status: 'active' },
-      { id: 'u4', name: 'Prestador 2', email: 'p2@example.com', role: 'provider', status: 'suspended' },
+      {
+        id: 'u3',
+        name: 'Prestador 1',
+        email: 'p1@example.com',
+        role: 'provider',
+        status: 'active',
+      },
+      {
+        id: 'u4',
+        name: 'Prestador 2',
+        email: 'p2@example.com',
+        role: 'provider',
+        status: 'suspended',
+      },
     ]);
 
     render(
@@ -327,7 +339,10 @@ describe('🎯 Jornada Completa do Admin', () => {
 
     // Preencher motivo
     const reasonTextarea = within(confirmModal).getByLabelText(/motivo/i);
-    await user.type(reasonTextarea, 'Múltiplas reclamações de clientes. Rating muito baixo (2.1). Comportamento inadequado.');
+    await user.type(
+      reasonTextarea,
+      'Múltiplas reclamações de clientes. Rating muito baixo (2.1). Comportamento inadequado.'
+    );
 
     // Mock suspender
     mockApi.suspendUser.mockResolvedValue({
@@ -339,7 +354,9 @@ describe('🎯 Jornada Completa do Admin', () => {
     });
 
     // Confirmar suspensão
-    const confirmButton = within(confirmModal).getByRole('button', { name: /confirmar|suspender/i });
+    const confirmButton = within(confirmModal).getByRole('button', {
+      name: /confirmar|suspender/i,
+    });
     await user.click(confirmButton);
 
     // Verificar
@@ -468,7 +485,9 @@ describe('🎯 Jornada Completa do Admin', () => {
     });
 
     // Submeter decisão
-    const submitButton = within(disputeModal).getByRole('button', { name: /resolver|confirmar decisão/i });
+    const submitButton = within(disputeModal).getByRole('button', {
+      name: /resolver|confirmar decisão/i,
+    });
     await user.click(submitButton);
 
     // Verificar

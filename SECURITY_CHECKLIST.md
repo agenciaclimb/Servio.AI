@@ -194,4 +194,4 @@ node scripts/create_admin_master.mjs admin@servio.ai
 
 **Responsável**: DevOps Team  
 **Aprovação**: CTO/Tech Lead  
-**Data Aprovação**: ****\_\_\_**** ✅
+**Data Aprovação**: \***\*\_\_\_\*\*** ✅

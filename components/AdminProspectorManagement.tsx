@@ -11,7 +11,7 @@ const AdminProspectorManagement: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedProspector, setSelectedProspector] = useState<Prospector | null>(null);
-  
+
   const [formData, setFormData] = useState({
     email: '',
     name: '',
@@ -22,7 +22,7 @@ const AdminProspectorManagement: React.FC = () => {
     try {
       const [prospectorsData, commissionsData] = await Promise.all([
         API.fetchProspectors(),
-        API.fetchCommissions()
+        API.fetchCommissions(),
       ]);
       setProspectors(prospectorsData);
       setCommissions(commissionsData);
@@ -39,7 +39,10 @@ const AdminProspectorManagement: React.FC = () => {
   }, [loadData]);
 
   const generateInviteCode = (name: string): string => {
-    const cleanName = name.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6);
+    const cleanName = name
+      .toUpperCase()
+      .replace(/[^A-Z]/g, '')
+      .slice(0, 6);
     const random = Math.random().toString(36).substring(2, 6).toUpperCase();
     return `${cleanName}${random}`;
   };
@@ -52,7 +55,7 @@ const AdminProspectorManagement: React.FC = () => {
       }
 
       const inviteCode = generateInviteCode(formData.name);
-      
+
       const newProspector: Omit<Prospector, 'id'> = {
         name: formData.name,
         email: formData.email,
@@ -94,7 +97,9 @@ const AdminProspectorManagement: React.FC = () => {
     totalProspectors: prospectors.length,
     totalRecruits: prospectors.reduce((sum, p) => sum + p.totalRecruits, 0),
     totalCommissions: commissions.reduce((sum, c) => sum + c.amount, 0),
-    pendingCommissions: commissions.filter(c => c.status === 'pending').reduce((sum, c) => sum + c.amount, 0),
+    pendingCommissions: commissions
+      .filter(c => c.status === 'pending')
+      .reduce((sum, c) => sum + c.amount, 0),
   };
 
   if (isLoading) {
@@ -144,9 +149,16 @@ const AdminProspectorManagement: React.FC = () => {
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h3 className="text-sm font-semibold text-blue-900 mb-2">📊 Sistema de Comissionamento</h3>
         <div className="text-sm text-blue-800 space-y-1">
-          <div>• <strong>Prospecção Manual:</strong> 1% de comissão sobre toda produção do prestador</div>
-          <div>• <strong>Prospecção por IA:</strong> 0,25% de comissão sobre toda produção do prestador</div>
-          <div>• <strong>Suporte:</strong> Cada prospector é responsável por dar suporte aos seus prestadores</div>
+          <div>
+            • <strong>Prospecção Manual:</strong> 1% de comissão sobre toda produção do prestador
+          </div>
+          <div>
+            • <strong>Prospecção por IA:</strong> 0,25% de comissão sobre toda produção do prestador
+          </div>
+          <div>
+            • <strong>Suporte:</strong> Cada prospector é responsável por dar suporte aos seus
+            prestadores
+          </div>
         </div>
       </div>
 
@@ -252,9 +264,7 @@ const AdminProspectorManagement: React.FC = () => {
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">
-              Adicionar Novo Prospector
-            </h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Adicionar Novo Prospector</h3>
 
             <div className="space-y-4">
               <div>
@@ -264,20 +274,18 @@ const AdminProspectorManagement: React.FC = () => {
                 <input
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
                   placeholder="João Silva"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email *
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  onChange={e => setFormData({ ...formData, email: e.target.value })}
                   placeholder="joao@empresa.com"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -358,44 +366,60 @@ const AdminProspectorManagement: React.FC = () => {
             </div>
 
             <div className="mb-6">
-              <h4 className="text-lg font-semibold text-gray-800 mb-3">
-                Histórico de Comissões
-              </h4>
+              <h4 className="text-lg font-semibold text-gray-800 mb-3">Histórico de Comissões</h4>
               <div className="border rounded-lg overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-600">Data</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-600">Prestador</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-600">Taxa</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-600">Valor</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-600">Status</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-600">
+                        Data
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-600">
+                        Prestador
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-600">
+                        Taxa
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-600">
+                        Valor
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-600">
+                        Status
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {getProspectorCommissions(selectedProspector.id).slice(0, 10).map(commission => (
-                      <tr key={commission.id}>
-                        <td className="px-4 py-2 text-sm text-gray-600">
-                          {new Date(commission.createdAt).toLocaleDateString('pt-BR')}
-                        </td>
-                        <td className="px-4 py-2 text-sm text-gray-900">{commission.providerId}</td>
-                        <td className="px-4 py-2 text-sm text-gray-600">
-                          {(commission.rate * 100).toFixed(2)}%
-                        </td>
-                        <td className="px-4 py-2 text-sm font-medium text-green-600">
-                          R$ {commission.amount.toFixed(2)}
-                        </td>
-                        <td className="px-4 py-2">
-                          <span className={`px-2 py-1 text-xs rounded-full ${
-                            commission.status === 'paid' ? 'bg-green-100 text-green-800' :
-                            commission.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-red-100 text-red-800'
-                          }`}>
-                            {commission.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
+                    {getProspectorCommissions(selectedProspector.id)
+                      .slice(0, 10)
+                      .map(commission => (
+                        <tr key={commission.id}>
+                          <td className="px-4 py-2 text-sm text-gray-600">
+                            {new Date(commission.createdAt).toLocaleDateString('pt-BR')}
+                          </td>
+                          <td className="px-4 py-2 text-sm text-gray-900">
+                            {commission.providerId}
+                          </td>
+                          <td className="px-4 py-2 text-sm text-gray-600">
+                            {(commission.rate * 100).toFixed(2)}%
+                          </td>
+                          <td className="px-4 py-2 text-sm font-medium text-green-600">
+                            R$ {commission.amount.toFixed(2)}
+                          </td>
+                          <td className="px-4 py-2">
+                            <span
+                              className={`px-2 py-1 text-xs rounded-full ${
+                                commission.status === 'paid'
+                                  ? 'bg-green-100 text-green-800'
+                                  : commission.status === 'pending'
+                                    ? 'bg-yellow-100 text-yellow-800'
+                                    : 'bg-red-100 text-red-800'
+                              }`}
+                            >
+                              {commission.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
