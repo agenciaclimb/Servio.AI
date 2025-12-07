@@ -374,7 +374,315 @@ Se Copilot ou Gemini **ignorarem** este protocolo:
 
 ---
 
-**Fim do Protocolo Oficial v1.0**
+### 🔄 **Resolução de Conflitos de Merge**
+
+#### Quando Conflitos Ocorrem
+
+Conflitos acontecem quando:
+
+- Duas branches modificam a mesma linha de código
+- Uma branch deleta arquivo que outra modifica
+- Rebase falha por mudanças concorrentes
+
+#### Estratégia de Resolução
+
+**Passo 1: Prevenção (Responsabilidade de Gemini)**
+
+- ✅ Verificar dependências entre branches ANTES de permitir execução paralela
+- ✅ Avisar Copilot sobre áreas de potencial conflito
+- ✅ Manter branches o máximo isoladas possível
+
+**Passo 2: Detecção (Responsabilidade de GitHub Actions)**
+
+- ✅ CI/CD detecta automaticamente conflitos no merge
+- ✅ Bloqueia merge automático se houver conflitos
+- ✅ Notifica no PR que resolução manual é necessária
+
+**Passo 3: Resolução (Responsabilidade de Copilot)**
+
+```bash
+# Copilot executa na branch com conflito:
+git fetch origin
+git rebase origin/main
+# Resolve conflitos no editor
+git add arquivo-conflitado.ts
+git rebase --continue
+git push -f origin feat/sua-task  # Force push para atualizar PR
+```
+
+**Passo 4: Validação (Responsabilidade de Gemini)**
+
+- ✅ Revisar resolução de conflito linha por linha
+- ✅ Garantir que lógica de ambas branches está preservada
+- ✅ Rodar testes locais para validar merged code
+- ✅ Aprovar apenas após validação completa
+
+#### ⚠️ Regras de Conflito
+
+- ❌ NUNCA fazer merge manual sem validação do Gemini
+- ❌ NUNCA usar "Choose Ours" / "Choose Theirs" sem entender implicações
+- ❌ NUNCA deletar código sem validar se é realmente duplicado
+- ✅ SEMPRE rebase em vez de merge (para historico limpo)
+- ✅ SEMPRE testar após resolver conflitos
+- ✅ SEMPRE pedir aprovação do Gemini
+
+---
+
+### 📦 **Estratégia de Versionamento**
+
+#### Versioning Scheme: Semantic Versioning (MAJOR.MINOR.PATCH)
+
+```
+MAJOR: Breaking changes (arquitetura, schema) → v5.0.0
+MINOR: Novas features (endpoints, componentes) → v4.1.0
+PATCH: Bug fixes, melhorias pequenas → v4.0.1
+```
+
+#### Quando Increment Cada Versão
+
+| Tipo                | Exemplo                            | Novo Version | Quem Decide                       |
+| ------------------- | ---------------------------------- | ------------ | --------------------------------- |
+| **Breaking Change** | Remover endpoint, alterar schema   | MAJOR        | Gemini + Você                     |
+| **Nova Feature**    | Novo endpoint, novo componente     | MINOR        | Gemini                            |
+| **Bug Fix**         | Ajuste de lógica, correção de erro | PATCH        | Copilot (propõe), Gemini (aprova) |
+
+#### Release Process
+
+1. **Gemini verifica changelog**:
+   - ✅ Lista todas as mudanças desde última release
+   - ✅ Categoriza em Features, Fixes, Breaking Changes
+
+2. **Você decide versão nova**:
+   - ✅ Analisa changesets
+   - ✅ Define MAJOR, MINOR ou PATCH
+   - ✅ Aprova release
+
+3. **Copilot cria release**:
+   - ✅ Cria tag Git (ex: v4.1.0)
+   - ✅ Gera release notes automático
+   - ✅ Faz deploy para produção (se GitHub Actions liberado)
+   - ✅ Atualiza DOCUMENTO_MESTRE com versão nova
+
+#### Changelog Format
+
+```markdown
+## v4.1.0 (2025-12-08)
+
+### 🚀 Features
+
+- feat(api): novo endpoint POST /api/leads/batch-process
+- feat(ui): componente LeadCardAdvanced com 5 novas opções
+
+### 🐛 Bug Fixes
+
+- fix(auth): ajustar timeout de sessão para 30 minutos
+- fix(db): corrigir query de deduplicação de leads
+
+### ⚠️ Breaking Changes
+
+- Removido endpoint /api/leads/old-format (use /api/leads/batch-process)
+
+### 📊 Stats
+
+- 12 files changed
+- 340 insertions, 128 deletions
+- 4 new tests added
+```
+
+---
+
+### 🚨 **Escalonamento de Problemas**
+
+#### Níveis de Severidade
+
+```
+CRÍTICO (P0): Sistema down, dados corrompidos
+              → Resposta: IMEDIATA
+              → Escalação: Você + Gemini + Copilot
+
+ALTO (P1):    Features quebradas, bugs em produção
+              → Resposta: <1 hora
+              → Escalação: Gemini valida, Copilot corrige
+
+MÉDIO (P2):   Performance degradada, UX ruim
+              → Resposta: <4 horas
+              → Escalação: Agendado para próximo sprint
+
+BAIXO (P3):   Melhorias, code smell, documentação
+              → Resposta: Próximo sprint
+              → Escalação: Gemini revisa quando houver tempo
+```
+
+#### Fluxo de Escalação
+
+```
+┌──────────────────────────────────────┐
+│  Copilot/Gemini identifica problema  │
+└──────────────────────────────────────┘
+                ↓
+        Qual é o nível?
+        /    |    |     \
+       P0   P1   P2     P3
+       ↓    ↓    ↓      ↓
+      VOCÊ GEMINI (P1+P2) BACKLOG
+       +      +
+    GEMINI  COPILOT
+       +      +
+    COPILOT  NEXT
+    HOTFIX   SPRINT
+```
+
+#### P0 Crisis Protocol
+
+Quando crítico (P0) acontece:
+
+1. **Copilot cria hotfix branch**:
+
+   ```bash
+   git checkout -b hotfix/emergency-[descrição]
+   # Implementa solução mínima (não refatora)
+   # Testa localmente
+   git push -u origin hotfix/emergency-...
+   ```
+
+2. **Gemini aprova em <5 minutos**:
+   - ✅ Revisa apenas o hotfix (sem rewrite)
+   - ✅ Valida que não quebra nada mais
+   - ✅ Aprova PR
+
+3. **Merge & Deploy IMEDIATO**:
+   - ✅ Merge para main
+   - ✅ GitHub Actions deploya automaticamente
+   - ✅ Verificar em produção
+
+4. **Comunicação**:
+   - ✅ Você avisa stakeholders que foi resolvido
+   - ✅ Agendar reunião post-mortem
+
+#### Post-Mortem Checklist
+
+Após resolver P0/P1:
+
+- [ ] Root cause identificada
+- [ ] Fix permanente implementado
+- [ ] Testes adicionados para evitar regressão
+- [ ] Documentação atualizada (DOCUMENTO_MESTRE)
+- [ ] Alerta/monitoramento adicionado
+- [ ] Gemini validou fix completo
+- [ ] Equipe informada (se houver)
+
+---
+
+### 💬 **Templates de Comunicação**
+
+#### Template 1: Task Request (Você → Copilot)
+
+```markdown
+# TASK: [Nome da Feature]
+
+## Descrição
+
+[2-3 linhas explicando o que fazer]
+
+## Requisitos
+
+- [ ] Requisito 1
+- [ ] Requisito 2
+- [ ] Requisito 3
+
+## Dependências
+
+- [ ] Depende de TASK-XXX? (se sim, qual?)
+- [ ] Pode rodar em paralelo com outras tasks?
+
+## Deadline
+
+Data: [DD/MM/YYYY]
+Prioridade: P0/P1/P2/P3
+
+## Context
+
+[Links para issues, documentação, exemplos, etc]
+
+---
+
+**Observação**: Use este template para tarefas > 4 horas de trabalho.
+```
+
+#### Template 2: PR Review (Gemini → Copilot)
+
+```markdown
+## 🔍 Review Findings
+
+### ✅ Pontos Positivos
+
+- Implementação clara
+- Testes cobrindo casos
+- Commits bem organizados
+
+### ⚠️ Issues Encontrados
+
+**[CRÍTICO]**
+
+- [ ] Linha 45: Falta validação de input
+
+**[IMPORTANTE]**
+
+- [ ] Test coverage < 45%
+
+**[MELHORIAS]**
+
+- [ ] Considerar refatorar função X para aumentar legibilidade
+
+### 🎯 Próximos Passos
+
+1. Fixar issues CRÍTICOS
+2. Adicionar testes para coverage
+3. Resubmeter para re-review
+
+---
+
+**Status**: Aguardando correções
+**Reviewer**: Gemini IDX
+```
+
+#### Template 3: Escalação (Qualquer Um → Você)
+
+```markdown
+## 🚨 Escalação de Problema
+
+**Nível**: P[0-3]
+**Problema**: [Uma linha]
+**Impacto**: [Qual a severidade para usuários/sistema]
+
+## Situação
+
+[Descrever detalhadamente o que aconteceu]
+
+## Tentativas de Resolução
+
+- [ ] Tentativa 1: [Resultado]
+- [ ] Tentativa 2: [Resultado]
+
+## Recomendação
+
+[O que Gemini/Copilot acham que deve ser feito]
+
+## Necessário Decisão
+
+- [ ] Rollback?
+- [ ] Hotfix emergencial?
+- [ ] Agendar para próximo sprint?
+
+---
+
+**Encaminhado por**: [Copilot/Gemini]
+**Data**: [Timestamp]
+```
+
+---
+
+**Fim do Protocolo Oficial v1.0 (Expandido)**
 
 ---
 
