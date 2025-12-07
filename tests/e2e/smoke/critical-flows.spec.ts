@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 
 test.describe('🚨 SMOKE TESTS - Critical Flows', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('header', { timeout: 15000 });
   });
 
   test('✅ SMOKE-01: Sistema acessível', async ({ page }) => {
@@ -42,8 +42,8 @@ test.describe('🚨 SMOKE TESTS - Critical Flows', () => {
 
   test('✅ SMOKE-06: Responsividade mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('header', { timeout: 15000 });
     await expect(page.locator('header')).toBeVisible();
   });
 
