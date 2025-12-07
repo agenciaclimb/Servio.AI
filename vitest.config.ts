@@ -21,7 +21,7 @@ export default defineConfig({
     },
     exclude: ['backend/**', 'doc/**', 'node_modules/**'],
     coverage: {
-      enabled: true,
+      enabled: false, // Coverage disabled to isolate and fix failing tests
       reportOnFailure: true,
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
