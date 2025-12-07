@@ -241,6 +241,7 @@ const AIInternalChat: React.FC<AIInternalChatProps> = ({ currentUser, context, o
               onClick={handleSendMessage}
               disabled={!input.trim() || isLoading}
               className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium"
+              aria-label="Enviar mensagem"
             >
               {isLoading ? (
                 <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">

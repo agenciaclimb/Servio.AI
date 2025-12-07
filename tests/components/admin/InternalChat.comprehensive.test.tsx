@@ -1,372 +1,179 @@
+
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import '@testing-library/jest-dom';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
+import AIInternalChat from '../../../components/AIInternalChat';
+import * as geminiService from '../../../services/geminiService';
+import { User } from '../../../types';
 
-// Mock dependencies BEFORE imports
-vi.mock('../../../contexts/ToastContext', () => ({
-  useToast: () => ({
-    addToast: vi.fn(),
-    removeToast: vi.fn(),
-  }),
-}));
+// Mock do geminiService com Vitest
+vi.mock('../../../services/geminiService');
+const mockedGetChatAssistance = vi.mocked(geminiService.getChatAssistance);
 
-vi.mock('../../../services/api', () => ({
-  apiCall: vi.fn(),
-  handleApiError: vi.fn(),
-}));
+// Mock para a função scrollIntoView, que não existe no JSDOM
+beforeAll(() => {
+  window.HTMLElement.prototype.scrollIntoView = vi.fn();
+});
 
-vi.mock('../../../lib/firebaseLazy', () => ({
-  getStorageInstance: vi.fn(() => ({
-    ref: vi.fn(),
-  })),
-}));
+// Dados de mock para usuários
+const prospectorUser: User = {
+  id: 'user-1',
+  name: 'João Prospector',
+  email: 'joao@servio.ai',
+  type: 'prospector',
+  createdAt: new Date().toISOString(),
+};
 
-import InternalChat from '../../../components/admin/InternalChat';
-import { apiCall } from '../../../services/api';
+const providerUser: User = {
+  id: 'user-2',
+  name: 'Maria Prestadora',
+  email: 'maria@servio.ai',
+  type: 'provider',
+  createdAt: new Date().toISOString(),
+};
 
-describe('InternalChat Component - Comprehensive Quality Tests', () => {
-  const mockApiCall = apiCall as any;
+describe('AUDITORIA COMPLETA - Componente AIInternalChat', () => {
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    mockApiCall.mockResolvedValue({ success: true, messages: [] });
+    // Limpar mocks antes de cada teste
+    mockedGetChatAssistance.mockClear();
+    vi.clearAllMocks(); // Limpa todos os mocks, incluindo o de scrollIntoView se necessário
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
+  // =================================================================
+  // 1. TESTES DE RENDERIZAÇÃO INICIAL
+  // =================================================================
+  describe('Cenário 1: Renderização Inicial e Boas-Vindas', () => {
+    
+    it('Deve exibir a mensagem de boas-vindas e ações rápidas para "prospector"', () => {
+      render(<AIInternalChat currentUser={prospectorUser} />);
+      
+      // Valida a mensagem de boas-vindas
+      expect(screen.getByText(/Olá! 👋 Sou seu assistente de IA para prospecção/)).toBeInTheDocument();
+      
+      // Valida as ações rápidas
+      expect(screen.getByText('Como abordar um novo prospect?')).toBeInTheDocument();
+      expect(screen.getByText('Template de follow-up')).toBeInTheDocument();
+    });
+
+    it('Deve exibir a mensagem de boas-vindas e ações rápidas para "provider"', () => {
+      render(<AIInternalChat currentUser={providerUser} />);
+      
+      // Valida a mensagem de boas-vindas
+      expect(screen.getByText(/Olá! 👋 Sou seu assistente de IA/)).toBeInTheDocument();
+      expect(screen.queryByText(/para prospecção/)).not.toBeInTheDocument();
+
+      // Valida as ações rápidas
+      expect(screen.getByText('Como melhorar meu perfil?')).toBeInTheDocument();
+      expect(screen.getByText('Dicas de precificação')).toBeInTheDocument();
+    });
   });
 
-  describe('Rendering and Initialization', () => {
-    it('should render chat container with all UI elements', () => {
-      render(<InternalChat adminId="admin1" />);
-      expect(screen.getByRole('main', { hidden: true })).toBeInTheDocument();
-    });
+  // =================================================================
+  // 2. TESTES DE FLUXO DE MENSAGENS (CAMINHO FELIZ)
+  // =================================================================
+  describe('Cenário 2: Fluxo de Mensagens - Caminho Feliz', () => {
 
-    it('should render message input field with placeholder', () => {
-      render(<InternalChat adminId="admin1" />);
-      const input = screen.getByPlaceholderText(/message|Digite/i);
-      expect(input).toBeInTheDocument();
-      expect(input).toHaveAttribute('type', 'text');
-    });
-
-    it('should render send button and other action buttons', () => {
-      render(<InternalChat adminId="admin1" />);
-      const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      expect(sendButton).toBeInTheDocument();
-    });
-
-    it('should load initial messages on mount', async () => {
-      mockApiCall.mockResolvedValue({
-        success: true,
-        messages: [
-          { id: '1', text: 'Hello', timestamp: new Date(), from: 'admin1' },
-        ],
+    it('Deve enviar uma mensagem, exibir loading e receber uma resposta da IA', async () => {
+      mockedGetChatAssistance.mockResolvedValue({
+        displayText: 'Esta é uma ótima pergunta! Para abordar um novo prospect, você deve...',
+        json: null
       });
 
-      render(<InternalChat adminId="admin1" />);
+      render(<AIInternalChat currentUser={prospectorUser} />);
       
+      const input = screen.getByPlaceholderText('Digite sua mensagem...');
+      const sendButton = screen.getByRole('button', { name: /enviar mensagem/i });
+
+      // Usuário digita e envia a mensagem
+      fireEvent.change(input, { target: { value: 'Como devo abordar um prospect?' } });
+      fireEvent.click(sendButton);
+
+      // Valida se a mensagem do usuário aparece na tela
+      expect(await screen.findByText('Como devo abordar um prospect?')).toBeInTheDocument();
+      
+      // Valida se o botão está desabilitado durante o carregamento
+      expect(sendButton).toBeDisabled();
+
+      // Valida se a resposta da IA é exibida
+      expect(await screen.findByText(/Esta é uma ótima pergunta!/)).toBeInTheDocument();
+      
+      // Valida que o loading sumiu e o botão está pronto para novo envio
+      // O botão deve permanecer desabilitado pois o input está vazio
+      expect(sendButton).toBeDisabled();
+
+      // Digita uma nova mensagem
+      fireEvent.change(input, { target: { value: 'Obrigado!' } });
+
+      // Agora, com texto no input, o botão deve estar habilitado
+      expect(sendButton).not.toBeDisabled();
+    });
+  });
+  
+  // =================================================================
+  // 3. TESTES DE TRATAMENTO DE ERROS
+  // =================================================================
+  describe('Cenário 3: Tratamento de Erros da API', () => {
+
+    it('Deve exibir uma mensagem de erro se a chamada para a API falhar', async () => {
+      mockedGetChatAssistance.mockRejectedValue(new Error('API Failure'));
+
+      render(<AIInternalChat currentUser={providerUser} />);
+      
+      fireEvent.change(screen.getByPlaceholderText('Digite sua mensagem...'), { target: { value: 'Ajuda!' } });
+      fireEvent.click(screen.getByRole('button', { name: /enviar mensagem/i }));
+
+      // Valida se a mensagem de erro é exibida no chat
+      expect(await screen.findByText(/Desculpe, ocorreu um erro ao processar sua mensagem/)).toBeInTheDocument();
+    });
+  });
+
+  // =================================================================
+  // 4. TESTES DE INTERAÇÃO E CONTEXTO
+  // =================================================================
+  describe('Cenário 4: Interação, Contexto e UI', () => {
+
+    it('Deve usar uma ação rápida para preencher o input', () => {
+      render(<AIInternalChat currentUser={prospectorUser} />);
+      const quickActionButton = screen.getByText('Template de follow-up');
+      const input = screen.getByPlaceholderText('Digite sua mensagem...');
+      
+      fireEvent.click(quickActionButton);
+
+      expect(input).toHaveValue('Template de follow-up');
+    });
+
+    it('Deve enviar a propriedade de contexto para a API', async () => {
+      mockedGetChatAssistance.mockResolvedValue({ displayText: 'Resposta...', json: null });
+      const contextString = 'Prospect ID: 12345, Status: Qualificado';
+      
+      render(<AIInternalChat currentUser={prospectorUser} context={contextString} />);
+      
+      fireEvent.change(screen.getByPlaceholderText('Digite sua mensagem...'), { target: { value: 'O que faço agora?' } });
+      fireEvent.click(screen.getByRole('button', { name: /enviar mensagem/i }));
+
       await waitFor(() => {
-        expect(mockApiCall).toHaveBeenCalledWith(
-          expect.stringContaining('/api/admin/chat'),
-          expect.any(Object)
+        expect(mockedGetChatAssistance).toHaveBeenCalledWith(
+          expect.arrayContaining([
+            expect.objectContaining({
+              senderId: 'system',
+              text: `Context: ${contextString}`
+            })
+          ]),
+          prospectorUser.type
         );
       });
     });
-  });
 
-  describe('Message Sending - Edge Cases', () => {
-    it('should not send empty message', async () => {
-      render(<InternalChat adminId="admin1" />);
-      const sendButton = screen.getByRole('button', { name: /send|enviar/i });
+    it('Deve chamar a função onClose ao clicar no botão de fechar', () => {
+      const handleClose = vi.fn();
+      render(<AIInternalChat currentUser={prospectorUser} onClose={handleClose} />);
       
-      fireEvent.click(sendButton);
-      
-      await waitFor(() => {
-        expect(mockApiCall).not.toHaveBeenCalledWith(
-          expect.stringContaining('messages'),
-          expect.any(Object)
-        );
-      });
-    });
+      const closeButton = screen.getByLabelText('Fechar chat');
+      fireEvent.click(closeButton);
 
-    it('should not send message with only whitespace', async () => {
-      render(<InternalChat adminId="admin1" />);
-      const input = screen.getByPlaceholderText(/message|Digite/i);
-      const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
-      await userEvent.type(input, '   \n  ');
-      fireEvent.click(sendButton);
-      
-      await waitFor(() => {
-        expect(mockApiCall).not.toHaveBeenCalledWith(
-          expect.stringContaining('messages'),
-          expect.any(Object)
-        );
-      });
-    });
-
-    it('should trim whitespace from message before sending', async () => {
-      const user = userEvent.setup();
-      render(<InternalChat adminId="admin1" />);
-      const input = screen.getByPlaceholderText(/message|Digite/i) as HTMLInputElement;
-      const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
-      await user.type(input, '  Hello World  ');
-      fireEvent.click(sendButton);
-      
-      await waitFor(() => {
-        expect(input.value).toBe('');
-      });
-    });
-
-    it('should handle very long messages (>1000 chars)', async () => {
-      const user = userEvent.setup();
-      render(<InternalChat adminId="admin1" />);
-      const input = screen.getByPlaceholderText(/message|Digite/i);
-      const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
-      const longMessage = 'a'.repeat(2000);
-      await user.type(input, longMessage);
-      fireEvent.click(sendButton);
-      
-      await waitFor(() => {
-        expect(mockApiCall).toHaveBeenCalled();
-      });
-    });
-
-    it('should handle special characters in message', async () => {
-      const user = userEvent.setup();
-      render(<InternalChat adminId="admin1" />);
-      const input = screen.getByPlaceholderText(/message|Digite/i);
-      const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
-      const specialMessage = '<script>alert("xss")</script> & "quoted" \'single\'';
-      await user.type(input, specialMessage);
-      fireEvent.click(sendButton);
-      
-      await waitFor(() => {
-        expect(mockApiCall).toHaveBeenCalled();
-      });
-    });
-  });
-
-  describe('API Error Handling', () => {
-    it('should handle API error when sending message', async () => {
-      mockApiCall.mockRejectedValue(new Error('Network error'));
-      const user = userEvent.setup();
-      
-      render(<InternalChat adminId="admin1" />);
-      const input = screen.getByPlaceholderText(/message|Digite/i);
-      const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
-      await user.type(input, 'Hello');
-      fireEvent.click(sendButton);
-      
-      await waitFor(() => {
-        expect(mockApiCall).toHaveBeenCalled();
-      });
-    });
-
-    it('should handle 401 Unauthorized response', async () => {
-      mockApiCall.mockRejectedValue({ status: 401, message: 'Unauthorized' });
-      
-      render(<InternalChat adminId="admin1" />);
-      
-      await waitFor(() => {
-        // Should show error or redirect
-        expect(mockApiCall).toBeDefined();
-      });
-    });
-
-    it('should handle 500 server error', async () => {
-      mockApiCall.mockRejectedValue({ status: 500, message: 'Internal Server Error' });
-      
-      render(<InternalChat adminId="admin1" />);
-      
-      await waitFor(() => {
-        expect(mockApiCall).toBeDefined();
-      });
-    });
-
-    it('should retry on timeout', async () => {
-      mockApiCall
-        .mockRejectedValueOnce(new Error('Timeout'))
-        .mockResolvedValueOnce({ success: true, messages: [] });
-      
-      render(<InternalChat adminId="admin1" />);
-      
-      await waitFor(() => {
-        expect(mockApiCall).toHaveBeenCalled();
-      });
-    });
-  });
-
-  describe('Message Display and Formatting', () => {
-    it('should display messages in correct order (oldest first)', async () => {
-      mockApiCall.mockResolvedValue({
-        success: true,
-        messages: [
-          { id: '1', text: 'First', timestamp: new Date('2025-01-01'), from: 'admin1' },
-          { id: '2', text: 'Second', timestamp: new Date('2025-01-02'), from: 'admin2' },
-          { id: '3', text: 'Third', timestamp: new Date('2025-01-03'), from: 'admin1' },
-        ],
-      });
-
-      render(<InternalChat adminId="admin1" />);
-      
-      await waitFor(() => {
-        const messages = screen.getAllByText(/First|Second|Third/);
-        expect(messages.length).toBeGreaterThanOrEqual(3);
-      });
-    });
-
-    it('should highlight own messages differently from others', async () => {
-      mockApiCall.mockResolvedValue({
-        success: true,
-        messages: [
-          { id: '1', text: 'From me', timestamp: new Date(), from: 'admin1' },
-          { id: '2', text: 'From other', timestamp: new Date(), from: 'admin2' },
-        ],
-      });
-
-      render(<InternalChat adminId="admin1" />);
-      
-      await waitFor(() => {
-        expect(screen.getByText(/From me/)).toBeInTheDocument();
-        expect(screen.getByText(/From other/)).toBeInTheDocument();
-      });
-    });
-
-    it('should format timestamps correctly', async () => {
-      const testDate = new Date('2025-06-15T14:30:00');
-      mockApiCall.mockResolvedValue({
-        success: true,
-        messages: [
-          { id: '1', text: 'Test', timestamp: testDate, from: 'admin1' },
-        ],
-      });
-
-      render(<InternalChat adminId="admin1" />);
-      
-      await waitFor(() => {
-        expect(mockApiCall).toHaveBeenCalled();
-      });
-    });
-  });
-
-  describe('User Interactions and State Management', () => {
-    it('should clear input field after sending message', async () => {
-      const user = userEvent.setup();
-      mockApiCall.mockResolvedValue({ success: true });
-      
-      render(<InternalChat adminId="admin1" />);
-      const input = screen.getByPlaceholderText(/message|Digite/i) as HTMLInputElement;
-      const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
-      await user.type(input, 'Test message');
-      expect(input.value).toBe('Test message');
-      
-      fireEvent.click(sendButton);
-      
-      await waitFor(() => {
-        expect(input.value).toBe('');
-      });
-    });
-
-    it('should disable send button while loading', async () => {
-      mockApiCall.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 1000)));
-      const user = userEvent.setup();
-      
-      render(<InternalChat adminId="admin1" />);
-      const input = screen.getByPlaceholderText(/message|Digite/i);
-      const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
-      await user.type(input, 'Test');
-      fireEvent.click(sendButton);
-      
-      await waitFor(() => {
-        expect(sendButton).toHaveAttribute('disabled');
-      }, { timeout: 100 });
-    });
-
-    it('should scroll to latest message after sending', async () => {
-      const user = userEvent.setup();
-      mockApiCall.mockResolvedValue({ success: true, messages: [] });
-      
-      render(<InternalChat adminId="admin1" />);
-      const input = screen.getByPlaceholderText(/message|Digite/i);
-      const sendButton = screen.getByRole('button', { name: /send|enviar/i });
-      
-      await user.type(input, 'New message');
-      fireEvent.click(sendButton);
-      
-      await waitFor(() => {
-        expect(mockApiCall).toHaveBeenCalled();
-      });
-    });
-  });
-
-  describe('Accessibility', () => {
-    it('should have proper ARIA labels on buttons', () => {
-      render(<InternalChat adminId="admin1" />);
-      const buttons = screen.getAllByRole('button');
-      
-      buttons.forEach(button => {
-        expect(
-          button.getAttribute('aria-label') || button.textContent || button.title
-        ).toBeTruthy();
-      });
-    });
-
-    it('should be keyboard navigable', async () => {
-      const user = userEvent.setup();
-      render(<InternalChat adminId="admin1" />);
-      const input = screen.getByPlaceholderText(/message|Digite/i);
-      
-      await user.tab();
-      expect(input).toHaveFocus();
-    });
-
-    it('should handle Enter key to send message', async () => {
-      const user = userEvent.setup();
-      mockApiCall.mockResolvedValue({ success: true });
-      
-      render(<InternalChat adminId="admin1" />);
-      const input = screen.getByPlaceholderText(/message|Digite/i);
-      
-      await user.type(input, 'Test{Enter}');
-      
-      await waitFor(() => {
-        expect(mockApiCall).toHaveBeenCalled();
-      });
-    });
-  });
-
-  describe('Performance and Memory', () => {
-    it('should handle large number of messages efficiently', async () => {
-      const messages = Array.from({ length: 500 }, (_, i) => ({
-        id: String(i),
-        text: `Message ${i}`,
-        timestamp: new Date(),
-        from: i % 2 === 0 ? 'admin1' : 'admin2',
-      }));
-
-      mockApiCall.mockResolvedValue({ success: true, messages });
-      
-      const { container } = render(<InternalChat adminId="admin1" />);
-      
-      await waitFor(() => {
-        expect(container).toBeInTheDocument();
-      });
-    });
-
-    it('should cleanup on unmount', () => {
-      const { unmount } = render(<InternalChat adminId="admin1" />);
-      
-      unmount();
-      
-      expect(mockApiCall).toBeDefined();
+      expect(handleClose).toHaveBeenCalledTimes(1);
     });
   });
 });

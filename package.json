@@ -79,7 +79,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
     "husky": "^9.1.6",
-    "jsdom": "^27.2.0",
+    "jsdom": "^24.1.0",
     "lint-staged": "^15.2.10",
     "msw": "^2.12.1",
     "postcss": "^8.4.38",
@@ -99,8 +99,5 @@
     "*.{md,json,yml,yaml}": [
       "prettier --write"
     ]
-  },
-  "overrides": {
-    "parse5": "^6.0.1"
   }
 }
