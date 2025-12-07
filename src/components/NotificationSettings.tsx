@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNotificationSettings } from '../hooks/useNotificationSettings';
-import { logError } from '../utils/logger';
 
 // Definição de tipos para as configurações de notificação
 type NotificationSetting = {
@@ -49,17 +48,9 @@ const NOTIFICATION_SETTINGS_CONFIG: NotificationSetting[] = [
   },
 ];
 
-const NotificationSettings: React.FC<{ userId: string }> = ({ userId }) => {
-  const { settings, updateSetting, isLoading, error } = useNotificationSettings(userId);
+const NotificationSettings: React.FC<{ prospectorId?: string }> = () => {
+  const { settings, updateSetting } = useNotificationSettings();
 
-  if (isLoading) {
-    return <div className="text-center p-4">Carregando configurações...</div>;
-  }
-
-  if (error) {
-    logError('Erro ao carregar configurações de notificação:', error);
-    return <div className="text-center p-4 text-red-600">Erro ao carregar configurações.</div>;
-  }
 
   return (
     <div className="bg-white shadow sm:rounded-lg">
@@ -85,8 +76,8 @@ const NotificationSettings: React.FC<{ userId: string }> = ({ userId }) => {
                   <input
                     type="checkbox"
                     className="sr-only peer"
-                    checked={settings[setting.id] ?? true}
-                    onChange={e => updateSetting(setting.id, e.target.checked)}
+                    checked={settings.find(s => s.id === setting.id)?.enabled ?? true}
+                    onChange={e => updateSetting(setting.id, { enabled: e.target.checked })}
                   />
                   <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-indigo-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                 </label>
