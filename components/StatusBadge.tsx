@@ -12,7 +12,7 @@ interface StatusBadgeProps {
  */
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label, size = 'md' }) => {
   const baseClasses = 'inline-flex items-center font-medium rounded-full';
-  
+
   const sizeClasses = {
     sm: 'px-2 py-0.5 text-xs',
     md: 'px-3 py-1 text-sm',
@@ -27,7 +27,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label, size = 'md' })
   };
 
   return (
-    <span 
+    <span
       className={`${baseClasses} ${sizeClasses[size]} ${statusClasses[status]}`}
       role="status"
       aria-label={label}

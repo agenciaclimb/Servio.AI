@@ -14,6 +14,7 @@
 - ✅ Webhook Signing Secret: `whsec_FIZOs8ismaBk0sgTUVyAUiPg2Cg28bpW`
 
 **Locais configurados**:
+
 - `.env.local` (desenvolvimento local)
 - GitHub Secrets (CI/CD)
 - Google Cloud Run (produção)
@@ -28,6 +29,7 @@
 **Criado via**: Stripe CLI
 
 **Eventos Configurados** (10 eventos):
+
 - checkout.session.completed ⭐ CRÍTICO
 - payment_intent.succeeded
 - payment_intent.payment_failed
@@ -62,6 +64,7 @@
 ### Teste com Pagamento Real
 
 Use cartão de teste:
+
 - Número: `4242 4242 4242 4242`
 - Validade: qualquer futura (ex: 12/30)
 - CVV: qualquer (ex: 123)

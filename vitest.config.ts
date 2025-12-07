@@ -1,5 +1,5 @@
-import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
@@ -16,8 +16,8 @@ export default defineConfig({
     poolOptions: {
       threads: {
         singleThread: true,
-        isolate: true
-      }
+        isolate: true,
+      },
     },
     exclude: ['backend/**', 'doc/**', 'node_modules/**'],
     coverage: {
@@ -32,7 +32,7 @@ export default defineConfig({
         'src/**/*.{ts,tsx}',
         'App.tsx',
         'types.ts',
-        'firebaseConfig.ts'
+        'firebaseConfig.ts',
       ],
       thresholds: {
         lines: 80,
@@ -55,5 +55,5 @@ export default defineConfig({
         'services/errorMessages.ts', // Utility file - messages catalog
       ],
     },
-  }
-})
+  },
+});

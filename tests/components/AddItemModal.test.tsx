@@ -22,7 +22,9 @@ describe('AddItemModal', () => {
     render(<AddItemModal onClose={mockOnClose} onSave={mockOnSave} />);
 
     expect(screen.getByText(/Adicionar Novo Item/i)).toBeInTheDocument();
-    expect(screen.getByText(/Carregue uma foto e deixe a IA fazer o trabalho pesado/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Carregue uma foto e deixe a IA fazer o trabalho pesado/i)
+    ).toBeInTheDocument();
   });
 
   it('chama onClose ao clicar no botão fechar', () => {
@@ -39,9 +41,9 @@ describe('AddItemModal', () => {
 
     // Cria arquivo mock > 4MB
     const largeFile = new File(['x'.repeat(5 * 1024 * 1024)], 'large.jpg', { type: 'image/jpeg' });
-    
+
     const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-    
+
     Object.defineProperty(input, 'files', {
       value: [largeFile],
       writable: false,
@@ -83,11 +85,14 @@ describe('AddItemModal', () => {
     });
 
     // Review step com dados identificados
-    await waitFor(() => {
-      expect(screen.getByDisplayValue('Ar Condicionado Split')).toBeInTheDocument();
-      expect(screen.getByDisplayValue('Eletrônico')).toBeInTheDocument();
-      expect(screen.getByDisplayValue('Samsung')).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByDisplayValue('Ar Condicionado Split')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('Eletrônico')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('Samsung')).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('permite editar campos manualmente no step review', async () => {
@@ -183,8 +188,11 @@ describe('AddItemModal', () => {
 
     fireEvent.change(input);
 
-    await waitFor(() => {
-      expect(screen.getByText(/API indisponível/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText(/API indisponível/i)).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 });

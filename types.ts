@@ -79,16 +79,26 @@ export interface User {
 }
 
 export interface ProviderProfile {
-    id: string;
-    name: string;
-    service: string;
-    location: string;
-    rating: number;
-    bio: string;
-    headline: string;
+  id: string;
+  name: string;
+  service: string;
+  location: string;
+  rating: number;
+  bio: string;
+  headline: string;
 }
 
-export type JobStatus = 'ativo' | 'em_leilao' | 'proposta_aceita' | 'agendado' | 'a_caminho' | 'em_progresso' | 'pagamento_pendente' | 'em_disputa' | 'concluido' | 'cancelado';
+export type JobStatus =
+  | 'ativo'
+  | 'em_leilao'
+  | 'proposta_aceita'
+  | 'agendado'
+  | 'a_caminho'
+  | 'em_progresso'
+  | 'pagamento_pendente'
+  | 'em_disputa'
+  | 'concluido'
+  | 'cancelado';
 export type ServiceType = 'personalizado' | 'tabelado' | 'diagnostico';
 export type JobMode = 'normal' | 'leilao';
 
@@ -139,27 +149,27 @@ export interface Job {
 }
 
 export interface Bid {
-    id: string;
-    jobId: string;
-    providerId: string;
-    amount: number;
-    createdAt: string; // ISO Date string
+  id: string;
+  jobId: string;
+  providerId: string;
+  amount: number;
+  createdAt: string; // ISO Date string
 }
 
 // FIX: Moved JobData type here from App.tsx to be shared across components.
-export type JobData = { 
-  description: string; 
-  category: string; 
-  serviceType: ServiceType; 
-  urgency: 'hoje' | 'amanha' | '3dias' | '1semana'; 
-  address?: string; 
+export type JobData = {
+  description: string;
+  category: string;
+  serviceType: ServiceType;
+  urgency: 'hoje' | 'amanha' | '3dias' | '1semana';
+  address?: string;
   media?: { name: string; type: 'image' | 'video'; path: string }[];
-  fixedPrice?: number; 
-  visitFee?: number; 
+  fixedPrice?: number;
+  visitFee?: number;
   targetProviderId?: string;
   jobMode?: JobMode;
   auctionDurationHours?: number;
-}
+};
 
 export type ProposalStatus = 'pendente' | 'aceita' | 'recusada' | 'bloqueada';
 
@@ -237,7 +247,6 @@ export interface Dispute {
   };
   createdAt: string; // ISO Date string
 }
-
 
 export interface MatchingResult {
   provider: ProviderProfile;
@@ -346,8 +355,8 @@ export interface ScheduledDateTime {
 }
 
 export interface ExtractedDocumentInfo {
-    fullName: string;
-    cpf: string;
+  fullName: string;
+  cpf: string;
 }
 
 export interface ParsedSearchQuery {
@@ -357,12 +366,12 @@ export interface ParsedSearchQuery {
 }
 
 export interface MaintenanceSuggestion {
-    suggestionTitle: string;
-    jobDescription: string;
+  suggestionTitle: string;
+  jobDescription: string;
 }
 
 export interface ChatSuggestion {
-    name: 'clarify_scope' | 'propose_schedule' | 'summarize_agreement' | 'suggest_next_step';
+  name: 'clarify_scope' | 'propose_schedule' | 'summarize_agreement' | 'suggest_next_step';
   args: Record<string, unknown>;
-    displayText: string;
+  displayText: string;
 }

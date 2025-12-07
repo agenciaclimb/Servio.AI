@@ -29,16 +29,18 @@ const ProviderEarningsCard: React.FC<ProviderEarningsCardProps> = ({
     return sum + (job.earnings?.providerShare || 0);
   }, 0);
 
-  const averageJobValue = completedJobs.length > 0 
-    ? totalEarnings / completedJobs.length 
-    : 0;
+  const averageJobValue = completedJobs.length > 0 ? totalEarnings / completedJobs.length : 0;
 
   // Badge logic
   const getBadge = () => {
-    if (totalJobs >= 100 && averageRating >= 4.8) return { name: '🏆 Elite', color: 'bg-yellow-500', textColor: 'text-yellow-900' };
-    if (totalJobs >= 50 && averageRating >= 4.5) return { name: '💎 Premium', color: 'bg-purple-500', textColor: 'text-purple-900' };
-    if (totalJobs >= 20 && averageRating >= 4.0) return { name: '⭐ Profissional', color: 'bg-blue-500', textColor: 'text-blue-900' };
-    if (totalJobs >= 5) return { name: '🌟 Verificado', color: 'bg-green-500', textColor: 'text-green-900' };
+    if (totalJobs >= 100 && averageRating >= 4.8)
+      return { name: '🏆 Elite', color: 'bg-yellow-500', textColor: 'text-yellow-900' };
+    if (totalJobs >= 50 && averageRating >= 4.5)
+      return { name: '💎 Premium', color: 'bg-purple-500', textColor: 'text-purple-900' };
+    if (totalJobs >= 20 && averageRating >= 4.0)
+      return { name: '⭐ Profissional', color: 'bg-blue-500', textColor: 'text-blue-900' };
+    if (totalJobs >= 5)
+      return { name: '🌟 Verificado', color: 'bg-green-500', textColor: 'text-green-900' };
     return { name: '🆕 Iniciante', color: 'bg-gray-400', textColor: 'text-gray-900' };
   };
 
@@ -51,7 +53,9 @@ const ProviderEarningsCard: React.FC<ProviderEarningsCardProps> = ({
     <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl shadow-lg p-6 border border-blue-200">
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-xl font-bold text-gray-800">💰 Meus Ganhos</h3>
-        <span className={`px-3 py-1 rounded-full text-xs font-bold ${badge.color} ${badge.textColor}`}>
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-bold ${badge.color} ${badge.textColor}`}
+        >
           {badge.name}
         </span>
       </div>
@@ -88,10 +92,12 @@ const ProviderEarningsCard: React.FC<ProviderEarningsCardProps> = ({
       <div className="bg-white rounded-lg p-3 shadow-sm mb-4">
         <div className="flex justify-between items-center mb-2">
           <span className="text-xs text-gray-600">Sua Comissão Atual</span>
-          <span className="text-lg font-bold text-green-600">{(currentRate * 100).toFixed(0)}%</span>
+          <span className="text-lg font-bold text-green-600">
+            {(currentRate * 100).toFixed(0)}%
+          </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
+          <div
             className="bg-green-500 h-2 rounded-full transition-all duration-300"
             style={{ width: `${currentRate * 100}%` }}
           ></div>
@@ -122,16 +128,24 @@ const ProviderEarningsCard: React.FC<ProviderEarningsCardProps> = ({
         <div className="mt-4 bg-blue-50 rounded-lg p-3 border border-blue-200">
           <p className="text-xs font-semibold text-blue-800 mb-1">📈 Próximo Nível</p>
           {badge.name === '🆕 Iniciante' && (
-            <p className="text-xs text-blue-700">Complete 5 jobs para ser <strong>🌟 Verificado</strong></p>
+            <p className="text-xs text-blue-700">
+              Complete 5 jobs para ser <strong>🌟 Verificado</strong>
+            </p>
           )}
           {badge.name === '🌟 Verificado' && (
-            <p className="text-xs text-blue-700">Complete 20 jobs com rating 4.0+ para ser <strong>⭐ Profissional</strong></p>
+            <p className="text-xs text-blue-700">
+              Complete 20 jobs com rating 4.0+ para ser <strong>⭐ Profissional</strong>
+            </p>
           )}
           {badge.name === '⭐ Profissional' && (
-            <p className="text-xs text-blue-700">Complete 50 jobs com rating 4.5+ para ser <strong>💎 Premium</strong></p>
+            <p className="text-xs text-blue-700">
+              Complete 50 jobs com rating 4.5+ para ser <strong>💎 Premium</strong>
+            </p>
           )}
           {badge.name === '💎 Premium' && (
-            <p className="text-xs text-blue-700">Complete 100 jobs com rating 4.8+ para ser <strong>🏆 Elite</strong></p>
+            <p className="text-xs text-blue-700">
+              Complete 100 jobs com rating 4.8+ para ser <strong>🏆 Elite</strong>
+            </p>
           )}
         </div>
       )}

@@ -2,7 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as API from '../../services/api';
 
 function simulateResponse(status: number, body: any = { message: 'x' }) {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
 
 describe('[E2E-SMOKE] Error Handling API', () => {
@@ -27,17 +30,24 @@ describe('[E2E-SMOKE] Error Handling API', () => {
     // Primeira chamada: força AbortError (timeout interno)
     // Segunda chamada (fallback fetchProviders): retorna lista mínima mock
     vi.spyOn(globalThis, 'fetch')
-      .mockImplementationOnce((_url, _opts) => Promise.reject(Object.assign(new Error('Aborted'), { name: 'AbortError' })))
-      .mockResolvedValueOnce(new Response(JSON.stringify([
-        {
-          type: 'prestador',
-          verificationStatus: 'verificado',
-          email: 'p@mock',
-          name: 'Prestador Mock',
-          status: 'ativo',
-          memberSince: '2023-01-01T00:00:00Z'
-        }
-      ]), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+      .mockImplementationOnce((_url, _opts) =>
+        Promise.reject(Object.assign(new Error('Aborted'), { name: 'AbortError' }))
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify([
+            {
+              type: 'prestador',
+              verificationStatus: 'verificado',
+              email: 'p@mock',
+              name: 'Prestador Mock',
+              status: 'ativo',
+              memberSince: '2023-01-01T00:00:00Z',
+            },
+          ]),
+          { status: 200, headers: { 'Content-Type': 'application/json' } }
+        )
+      );
 
     const providers = await API.matchProvidersForJob('job-x');
     expect(Array.isArray(providers)).toBe(true);

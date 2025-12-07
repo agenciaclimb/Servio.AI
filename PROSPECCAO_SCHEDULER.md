@@ -3,6 +3,7 @@
 Este guia configura um job do Cloud Scheduler para acionar o endpoint HTTPS que executa follow-ups automáticos em leads com `nextFollowUpAt <= agora`.
 
 ## ✅ Status: PRODUÇÃO
+
 - **Deploy**: 03/12/2025 21:20 BRT
 - **Job ID**: `prospector-follow-up-scheduler`
 - **Região**: `us-central1`
@@ -54,7 +55,6 @@ curl -X POST "https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/
 
 > Nota: Projeto usa `firebase-functions@4.9.0` e `functions.config()`.
 > Planejar upgrade para `firebase-functions@>=5.1.0` e migração de variáveis para `.env` antes de março/2026.
-
 
 ## 📌 Pré-requisitos
 

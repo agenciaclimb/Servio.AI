@@ -43,7 +43,11 @@ export interface RecentMetrics {
   completions: number;
 }
 
-export interface TopProvider { email: string; count: number; name: string; }
+export interface TopProvider {
+  email: string;
+  count: number;
+  name: string;
+}
 export type TopCategory = [string, number];
 
 export interface AdminAnalytics {
@@ -57,7 +61,14 @@ export interface AdminAnalytics {
   topProviders: TopProvider[];
 }
 
-const ACTIVE_JOB_STATUSES = ['ativo', 'em_leilao', 'proposta_aceita', 'agendado', 'a_caminho', 'em_progresso'];
+const ACTIVE_JOB_STATUSES = [
+  'ativo',
+  'em_leilao',
+  'proposta_aceita',
+  'agendado',
+  'a_caminho',
+  'em_progresso',
+];
 
 export function computeAnalytics(
   allJobs: Job[],
@@ -70,7 +81,9 @@ export function computeAnalytics(
   const users: UserMetrics = {
     total: allUsers.length,
     activeProviders: allUsers.filter(u => u.type === 'prestador' && u.status === 'ativo').length,
-    verifiedProviders: allUsers.filter(u => u.type === 'prestador' && u.verificationStatus === 'verificado').length,
+    verifiedProviders: allUsers.filter(
+      u => u.type === 'prestador' && u.verificationStatus === 'verificado'
+    ).length,
     suspendedUsers: allUsers.filter(u => u.status === 'suspenso').length,
   };
 
@@ -132,7 +145,8 @@ export function computeAnalytics(
   const providerJobs = allJobs.filter(j => j.providerId);
   const providersByJobCount: Record<string, number> = {};
   providerJobs.forEach(j => {
-    if (j.providerId) providersByJobCount[j.providerId] = (providersByJobCount[j.providerId] || 0) + 1;
+    if (j.providerId)
+      providersByJobCount[j.providerId] = (providersByJobCount[j.providerId] || 0) + 1;
   });
   const topProviders: TopProvider[] = Object.entries(providersByJobCount)
     .sort(([, a], [, b]) => b - a)
@@ -159,9 +173,10 @@ export function computeTimeSeriesData(
   const buckets = new Map<string, { jobs: number; revenue: number }>();
   for (const j of jobs) {
     const d = new Date(j.createdAt);
-    const key = granularity === 'day'
-      ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-      : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const key =
+      granularity === 'day'
+        ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+        : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     const bucket = buckets.get(key) || { jobs: 0, revenue: 0 };
     bucket.jobs += 1;
     if (j.earnings?.totalAmount) bucket.revenue += j.earnings.totalAmount;

@@ -25,10 +25,19 @@ A Fase 3 adiciona capacidades profissionais de filtragem e organização ao CRM 
 #### Exports
 
 ```typescript
-export type Operator = 
-  | 'contains' | 'equals' | 'startsWith' | 'endsWith'
-  | 'gt' | 'lt' | 'gte' | 'lte'
-  | 'in' | 'notIn' | 'exists' | 'notExists';
+export type Operator =
+  | 'contains'
+  | 'equals'
+  | 'startsWith'
+  | 'endsWith'
+  | 'gt'
+  | 'lt'
+  | 'gte'
+  | 'lte'
+  | 'in'
+  | 'notIn'
+  | 'exists'
+  | 'notExists';
 
 export interface FilterCondition {
   field: keyof ProspectLead | 'followUpDate' | 'lastActivity';
@@ -38,7 +47,7 @@ export interface FilterCondition {
 
 // Função pura (pode ser chamada diretamente)
 export function applyAdvancedFilters(
-  leads: ProspectLead[], 
+  leads: ProspectLead[],
   conditions: FilterCondition[]
 ): ProspectLead[];
 
@@ -62,14 +71,12 @@ function MeuCRM() {
 
   // Aplicação imediata (onClick, render)
   const leadsQuentes = runMemoized(leads, [
-    { field: 'temperature', operator: 'equals', value: 'hot' }
+    { field: 'temperature', operator: 'equals', value: 'hot' },
   ]);
 
   // Aplicação debounced (onChange de input)
   const handleSearchChange = (term: string) => {
-    const newConditions = [
-      { field: 'name', operator: 'contains', value: term }
-    ];
+    const newConditions = [{ field: 'name', operator: 'contains', value: term }];
     runDebounced(leads, newConditions, setFiltered);
   };
 
@@ -130,20 +137,20 @@ prospector_views/{viewId}
 
 ## 🔍 Operadores Disponíveis
 
-| Operador       | Tipo de Valor              | Exemplo de Uso                                         |
-|----------------|----------------------------|--------------------------------------------------------|
-| `contains`     | string                     | Nome contém "João"                                     |
-| `equals`       | string/number              | Score exatamente 85                                    |
-| `startsWith`   | string                     | Email começa com "joao@"                               |
-| `endsWith`     | string                     | Telefone termina com "4321"                            |
-| `gt`           | number                     | Score maior que 70                                     |
-| `lt`           | number                     | Score menor que 40                                     |
-| `gte`          | number                     | Score maior ou igual a 50                              |
-| `lte`          | number                     | Score menor ou igual a 60                              |
-| `in`           | array de strings/numbers   | Stage em ['new', 'contacted']                          |
-| `notIn`        | array de strings/numbers   | Temperature não em ['cold']                            |
-| `exists`       | n/a                        | Email existe (não vazio/null)                          |
-| `notExists`    | n/a                        | followUpDate não existe                                |
+| Operador     | Tipo de Valor            | Exemplo de Uso                |
+| ------------ | ------------------------ | ----------------------------- |
+| `contains`   | string                   | Nome contém "João"            |
+| `equals`     | string/number            | Score exatamente 85           |
+| `startsWith` | string                   | Email começa com "joao@"      |
+| `endsWith`   | string                   | Telefone termina com "4321"   |
+| `gt`         | number                   | Score maior que 70            |
+| `lt`         | number                   | Score menor que 40            |
+| `gte`        | number                   | Score maior ou igual a 50     |
+| `lte`        | number                   | Score menor ou igual a 60     |
+| `in`         | array de strings/numbers | Stage em ['new', 'contacted'] |
+| `notIn`      | array de strings/numbers | Temperature não em ['cold']   |
+| `exists`     | n/a                      | Email existe (não vazio/null) |
+| `notExists`  | n/a                      | followUpDate não existe       |
 
 ---
 
@@ -154,8 +161,8 @@ prospector_views/{viewId}
 ```typescript
 [
   { field: 'temperature', operator: 'equals', value: 'hot' },
-  { field: 'followUpDate', operator: 'equals', value: '2025-11-30' }
-]
+  { field: 'followUpDate', operator: 'equals', value: '2025-11-30' },
+];
 ```
 
 ### Leads Novos com Score Alto
@@ -163,33 +170,27 @@ prospector_views/{viewId}
 ```typescript
 [
   { field: 'stage', operator: 'equals', value: 'new' },
-  { field: 'score', operator: 'gte', value: 70 }
-]
+  { field: 'score', operator: 'gte', value: 70 },
+];
 ```
 
 ### Leads Sem Email Cadastrado
 
 ```typescript
-[
-  { field: 'email', operator: 'notExists' }
-]
+[{ field: 'email', operator: 'notExists' }];
 ```
 
 ### Leads de Referência ou Evento
 
 ```typescript
-[
-  { field: 'source', operator: 'in', value: ['referral', 'event'] }
-]
+[{ field: 'source', operator: 'in', value: ['referral', 'event'] }];
 ```
 
 ### Busca por Nome (debounced)
 
 ```typescript
 // Aplicar com runDebounced ao digitar
-[
-  { field: 'name', operator: 'contains', value: termoDeBusca }
-]
+[{ field: 'name', operator: 'contains', value: termoDeBusca }];
 ```
 
 ---
@@ -198,12 +199,12 @@ prospector_views/{viewId}
 
 ### Benchmarks (500 leads)
 
-| Operação                     | Tempo (ms) | Método                  |
-|------------------------------|------------|-------------------------|
-| Aplicar 1 condição           | ~8         | `runImmediate`          |
-| Aplicar 3 condições          | ~18        | `runImmediate`          |
-| Aplicar 3 condições (cached) | ~0.2       | `runMemoized` (hit)     |
-| Debounce input (5 teclas/s)  | ~120       | `runDebounced` (delay)  |
+| Operação                     | Tempo (ms) | Método                 |
+| ---------------------------- | ---------- | ---------------------- |
+| Aplicar 1 condição           | ~8         | `runImmediate`         |
+| Aplicar 3 condições          | ~18        | `runImmediate`         |
+| Aplicar 3 condições (cached) | ~0.2       | `runMemoized` (hit)    |
+| Debounce input (5 teclas/s)  | ~120       | `runDebounced` (delay) |
 
 ### Recomendações
 

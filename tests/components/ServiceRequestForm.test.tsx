@@ -4,7 +4,11 @@ import React, { useState } from 'react';
 import ServiceRequestForm from '../../components/ServiceRequestForm';
 
 // Wrapper to provide state so we exercise interaction realistically
-const StatefulWrapper: React.FC<{ onSubmit: (e: React.FormEvent) => void; isLoading?: boolean; submitText?: string; }> = ({ onSubmit, isLoading = false, submitText = 'Publicar Pedido' }) => {
+const StatefulWrapper: React.FC<{
+  onSubmit: (e: React.FormEvent) => void;
+  isLoading?: boolean;
+  submitText?: string;
+}> = ({ onSubmit, isLoading = false, submitText = 'Publicar Pedido' }) => {
   const [description, setDescription] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   return (

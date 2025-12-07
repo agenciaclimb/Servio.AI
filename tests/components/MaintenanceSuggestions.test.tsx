@@ -9,8 +9,24 @@ vi.mock('../../services/geminiService', () => ({
 import { suggestMaintenance } from '../../services/geminiService';
 
 const items = [
-  { id: 'i1', clientId: 'c1', name: 'Ar Condicionado', category: 'clima', imageUrl: 'data:', createdAt: '2024-01-01', maintenanceHistory: [] },
-  { id: 'i2', clientId: 'c1', name: 'Geladeira', category: 'eletro', imageUrl: 'data:', createdAt: '2024-01-01', maintenanceHistory: [] },
+  {
+    id: 'i1',
+    clientId: 'c1',
+    name: 'Ar Condicionado',
+    category: 'clima',
+    imageUrl: 'data:',
+    createdAt: '2024-01-01',
+    maintenanceHistory: [],
+  },
+  {
+    id: 'i2',
+    clientId: 'c1',
+    name: 'Geladeira',
+    category: 'eletro',
+    imageUrl: 'data:',
+    createdAt: '2024-01-01',
+    maintenanceHistory: [],
+  },
 ];
 
 beforeEach(() => {
@@ -20,7 +36,10 @@ beforeEach(() => {
 describe('MaintenanceSuggestions', () => {
   it('renders suggestions and triggers onSuggestJob', async () => {
     (suggestMaintenance as any)
-      .mockResolvedValueOnce({ suggestionTitle: 'Limpeza preventiva', jobDescription: 'Limpar filtros' })
+      .mockResolvedValueOnce({
+        suggestionTitle: 'Limpeza preventiva',
+        jobDescription: 'Limpar filtros',
+      })
       .mockResolvedValueOnce(null);
 
     const onSuggestJob = vi.fn();
@@ -38,11 +57,11 @@ describe('MaintenanceSuggestions', () => {
   });
 
   it('renders nothing when there are no suggestions', async () => {
-    (suggestMaintenance as any)
-      .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce(null);
+    (suggestMaintenance as any).mockResolvedValueOnce(null).mockResolvedValueOnce(null);
 
-    const { container } = render(<MaintenanceSuggestions items={items as any} onSuggestJob={vi.fn()} />);
+    const { container } = render(
+      <MaintenanceSuggestions items={items as any} onSuggestJob={vi.fn()} />
+    );
 
     // wait for loading to finish
     await screen.findByText(/Sugestões/i).catch(() => {});

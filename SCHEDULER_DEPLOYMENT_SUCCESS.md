@@ -14,6 +14,7 @@ Sistema de automação de follow-ups do Prospector CRM totalmente configurado e 
 ## 📦 Componentes Implementados
 
 ### 1. **Cloud Function: `prospectorRunScheduler`**
+
 - **Arquivo**: `functions/index.js` (linhas ~479-520)
 - **URL**: `https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/prospectorRunScheduler`
 - **Método**: POST
@@ -21,6 +22,7 @@ Sistema de automação de follow-ups do Prospector CRM totalmente configurado e 
 - **Parâmetros**: `?limit=N` (default 50, max 200)
 
 **Lógica**:
+
 ```javascript
 1. Valida token de autenticação
 2. Busca leads com nextFollowUpAt <= now
@@ -30,6 +32,7 @@ Sistema de automação de follow-ups do Prospector CRM totalmente configurado e 
 ```
 
 ### 2. **Cloud Scheduler Job**
+
 - **Nome**: `prospector-follow-up-scheduler`
 - **Região**: `us-central1`
 - **Cron**: `*/5 * * * *` (a cada 5 minutos)
@@ -38,6 +41,7 @@ Sistema de automação de follow-ups do Prospector CRM totalmente configurado e 
 - **Próxima execução**: ~21:15 BRT
 
 **Comando usado**:
+
 ```bash
 gcloud scheduler jobs create http prospector-follow-up-scheduler \
   --location=us-central1 \
@@ -49,6 +53,7 @@ gcloud scheduler jobs create http prospector-follow-up-scheduler \
 ```
 
 ### 3. **Token de Segurança**
+
 - **Valor**: `b9b79cd3-0e74-4a26-a00e-c9965c2173bd_servioai_scheduler_2025`
 - **Armazenamento**:
   - Firebase Functions Config: `servio.scheduler_token`
@@ -56,6 +61,7 @@ gcloud scheduler jobs create http prospector-follow-up-scheduler \
 - **Uso**: Header `x-servio-scheduler-token` em todas as requisições
 
 ### 4. **Integração com Template System**
+
 - Arquivo: `src/prospector/templates.ts`
 - Templates centralizados:
   - `templates.whatsapp.intro_value`
@@ -69,6 +75,7 @@ gcloud scheduler jobs create http prospector-follow-up-scheduler \
 ## 🧪 Testes Realizados
 
 ### Teste Manual (curl)
+
 ```powershell
 $token = Get-Content scheduler_token.txt
 curl -X POST "https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/prospectorRunScheduler?limit=10" \
@@ -80,12 +87,14 @@ curl -X POST "https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/
 ```
 
 ### Execução Manual do Job
+
 ```bash
 gcloud scheduler jobs run prospector-follow-up-scheduler --location=us-central1
 # Sucesso (status 200 nos logs)
 ```
 
 ### Verificação de Logs
+
 ```bash
 gcloud functions logs read prospectorRunScheduler --region=us-central1 --limit=5
 
@@ -100,11 +109,13 @@ gcloud functions logs read prospectorRunScheduler --region=us-central1 --limit=5
 ## 📊 Monitoramento
 
 ### Cloud Console
+
 - **Functions**: https://console.cloud.google.com/functions/list?project=gen-lang-client-0737507616
 - **Scheduler**: https://console.cloud.google.com/cloudscheduler?project=gen-lang-client-0737507616
 - **Logs**: https://console.cloud.google.com/logs/query?project=gen-lang-client-0737507616
 
 ### Comandos CLI
+
 ```bash
 # Listar jobs ativos
 gcloud scheduler jobs list --location=us-central1
@@ -149,6 +160,7 @@ gcloud scheduler jobs resume prospector-follow-up-scheduler --location=us-centra
 ## 🚀 Próximos Passos (Opcional)
 
 ### Melhorias Futuras
+
 1. **Dashboard de Métricas**
    - Criar página em `/prospector/scheduler-stats`
    - Exibir execuções/dia, leads processados, taxa de sucesso
@@ -170,6 +182,7 @@ gcloud scheduler jobs resume prospector-follow-up-scheduler --location=us-centra
 ## 📞 Troubleshooting
 
 ### Job não está executando
+
 ```bash
 # Verificar estado do job
 gcloud scheduler jobs describe prospector-follow-up-scheduler --location=us-central1
@@ -179,6 +192,7 @@ gcloud scheduler jobs run prospector-follow-up-scheduler --location=us-central1
 ```
 
 ### Função retorna 401 (Unauthorized)
+
 ```bash
 # Re-setar token
 firebase functions:config:set servio.scheduler_token="NOVO_TOKEN"
@@ -191,12 +205,13 @@ gcloud scheduler jobs update http prospector-follow-up-scheduler \
 ```
 
 ### Verificar leads elegíveis
+
 ```javascript
 // Console do Firebase (Firestore)
 db.collection('prospector_prospects')
   .where('nextFollowUpAt', '<=', new Date())
   .get()
-  .then(snap => console.log(`${snap.size} leads prontos para follow-up`))
+  .then(snap => console.log(`${snap.size} leads prontos para follow-up`));
 ```
 
 ---
@@ -204,6 +219,7 @@ db.collection('prospector_prospects')
 ## ✨ Conclusão
 
 O sistema de automação está **COMPLETO e OPERACIONAL**:
+
 - ✅ Cloud Function deployada e testada
 - ✅ Cloud Scheduler job criado e ativo
 - ✅ Token de segurança configurado
@@ -216,6 +232,7 @@ O sistema de automação está **COMPLETO e OPERACIONAL**:
 ---
 
 **Referências**:
+
 - Código: `functions/index.js` (linha ~479)
 - Templates: `src/prospector/templates.ts`
 - Docs: `PROSPECCAO_SCHEDULER.md`, `OMNICHANNEL_WEBHOOKS_CONFIG.md`

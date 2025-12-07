@@ -10,10 +10,21 @@ describe('ServiceLandingPage', () => {
 
   it('shows empty state when no providers match category', async () => {
     vi.spyOn(API, 'fetchProviders').mockResolvedValueOnce([
-      { email: 'a@a.com', name: 'A', type: 'prestador', bio: '', location: 'sp', memberSince: new Date().toISOString(), status: 'ativo', specialties: ['eletricista'] },
+      {
+        email: 'a@a.com',
+        name: 'A',
+        type: 'prestador',
+        bio: '',
+        location: 'sp',
+        memberSince: new Date().toISOString(),
+        status: 'ativo',
+        specialties: ['eletricista'],
+      },
     ] as any);
 
-    render(<ServiceLandingPage category="encanador" location="sp" serviceNameToCategory={(x)=>x} />);
+    render(
+      <ServiceLandingPage category="encanador" location="sp" serviceNameToCategory={x => x} />
+    );
 
     await waitFor(() => {
       expect(screen.getByText(/Nenhum prestador encontrado/i)).toBeInTheDocument();
@@ -22,8 +33,26 @@ describe('ServiceLandingPage', () => {
 
   it('lists providers that match the category', async () => {
     vi.spyOn(API, 'fetchProviders').mockResolvedValueOnce([
-      { email: 'b@b.com', name: 'B', type: 'prestador', bio: '', location: 'sp', memberSince: new Date().toISOString(), status: 'ativo', specialties: ['encanador'] },
-      { email: 'c@c.com', name: 'C', type: 'prestador', bio: '', location: 'sp', memberSince: new Date().toISOString(), status: 'ativo', specialties: ['eletricista'] },
+      {
+        email: 'b@b.com',
+        name: 'B',
+        type: 'prestador',
+        bio: '',
+        location: 'sp',
+        memberSince: new Date().toISOString(),
+        status: 'ativo',
+        specialties: ['encanador'],
+      },
+      {
+        email: 'c@c.com',
+        name: 'C',
+        type: 'prestador',
+        bio: '',
+        location: 'sp',
+        memberSince: new Date().toISOString(),
+        status: 'ativo',
+        specialties: ['eletricista'],
+      },
     ] as any);
 
     render(<ServiceLandingPage category="encanador" />);

@@ -5,14 +5,20 @@ import { collection, addDoc, getDocs, deleteDoc, doc, Timestamp } from 'firebase
 interface SavedView {
   id: string;
   name: string;
-    prospectorId: string;
+  prospectorId: string;
   density: 'compact' | 'detailed';
   conditions: any[];
   createdAt: Date;
   description?: string;
 }
 
-export default function SavedViewsBar({ prospectorId, density, setDensity, conditions, setConditions }: {
+export default function SavedViewsBar({
+  prospectorId,
+  density,
+  setDensity,
+  conditions,
+  setConditions,
+}: {
   prospectorId: string;
   density: 'compact' | 'detailed';
   setDensity: (d: 'compact' | 'detailed') => void;
@@ -37,11 +43,11 @@ export default function SavedViewsBar({ prospectorId, density, setDensity, condi
           return {
             id: d.id,
             name: data.name,
-                        prospectorId: data.prospectorId,
+            prospectorId: data.prospectorId,
             density: data.density,
             conditions: data.conditions || [],
             createdAt: data.createdAt?.toDate?.() || new Date(),
-            description: data.description
+            description: data.description,
           };
         })
         .filter(v => v.prospectorId === prospectorId)
@@ -55,7 +61,9 @@ export default function SavedViewsBar({ prospectorId, density, setDensity, condi
     }
   }
 
-  useEffect(() => { loadViews(); }, [prospectorId]);
+  useEffect(() => {
+    loadViews();
+  }, [prospectorId]);
 
   async function saveView() {
     if (!newViewName.trim()) {
@@ -69,7 +77,7 @@ export default function SavedViewsBar({ prospectorId, density, setDensity, condi
         description: newViewDescription.trim() || null,
         density,
         conditions,
-        createdAt: Timestamp.now()
+        createdAt: Timestamp.now(),
       });
       await loadViews();
       setShowSaveModal(false);
@@ -119,7 +127,7 @@ export default function SavedViewsBar({ prospectorId, density, setDensity, condi
     const colors = {
       success: 'bg-green-500',
       error: 'bg-red-500',
-      warning: 'bg-amber-500'
+      warning: 'bg-amber-500',
     };
     toast.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-3 rounded-lg shadow-xl z-50 animate-bounce`;
     toast.textContent = message;
@@ -140,7 +148,7 @@ export default function SavedViewsBar({ prospectorId, density, setDensity, condi
             </span>
           )}
         </div>
-        
+
         <div className="flex items-center gap-2 ml-auto">
           <button
             onClick={() => setShowViewsModal(true)}
@@ -154,12 +162,16 @@ export default function SavedViewsBar({ prospectorId, density, setDensity, condi
               </span>
             )}
           </button>
-          
+
           <button
             onClick={() => setShowSaveModal(true)}
             disabled={conditions.length === 0}
             className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-all hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            title={conditions.length === 0 ? 'Configure filtros antes de salvar' : 'Salvar configuração atual'}
+            title={
+              conditions.length === 0
+                ? 'Configure filtros antes de salvar'
+                : 'Salvar configuração atual'
+            }
           >
             <span>💾</span>
             <span>Salvar Vista</span>
@@ -169,48 +181,67 @@ export default function SavedViewsBar({ prospectorId, density, setDensity, condi
 
       {/* Modal Salvar Vista */}
       {showSaveModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowSaveModal(false)}>
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 animate-scale-in" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowSaveModal(false)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 animate-scale-in"
+            onClick={e => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                 <span className="text-2xl">💾</span>
                 Salvar Nova Vista
               </h3>
-              <button onClick={() => setShowSaveModal(false)} className="text-gray-400 hover:text-gray-600 text-2xl">×</button>
+              <button
+                onClick={() => setShowSaveModal(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ×
+              </button>
             </div>
-            
+
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nome da Vista *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nome da Vista *
+                </label>
                 <input
                   type="text"
                   value={newViewName}
-                  onChange={(e) => setNewViewName(e.target.value)}
+                  onChange={e => setNewViewName(e.target.value)}
                   placeholder="Ex: Leads Quentes para Hoje"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   autoFocus
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Descrição (opcional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Descrição (opcional)
+                </label>
                 <textarea
                   value={newViewDescription}
-                  onChange={(e) => setNewViewDescription(e.target.value)}
+                  onChange={e => setNewViewDescription(e.target.value)}
                   placeholder="Descreva o propósito desta vista..."
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
                 />
               </div>
-              
+
               <div className="bg-gray-50 rounded-lg p-3 space-y-2">
                 <div className="text-sm text-gray-600">Configuração atual:</div>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="bg-white px-2 py-1 rounded border">Densidade: {density === 'compact' ? '📏 Compacta' : '📐 Detalhada'}</span>
-                  <span className="bg-white px-2 py-1 rounded border">Filtros: {conditions.length}</span>
+                  <span className="bg-white px-2 py-1 rounded border">
+                    Densidade: {density === 'compact' ? '📏 Compacta' : '📐 Detalhada'}
+                  </span>
+                  <span className="bg-white px-2 py-1 rounded border">
+                    Filtros: {conditions.length}
+                  </span>
                 </div>
               </div>
-              
+
               <div className="flex gap-2 pt-2">
                 <button
                   onClick={() => setShowSaveModal(false)}
@@ -232,8 +263,14 @@ export default function SavedViewsBar({ prospectorId, density, setDensity, condi
 
       {/* Modal Minhas Vistas */}
       {showViewsModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowViewsModal(false)}>
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col animate-scale-in" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowViewsModal(false)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col animate-scale-in"
+            onClick={e => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between p-6 border-b">
               <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                 <span className="text-2xl">📂</span>
@@ -244,9 +281,14 @@ export default function SavedViewsBar({ prospectorId, density, setDensity, condi
                   </span>
                 )}
               </h3>
-              <button onClick={() => setShowViewsModal(false)} className="text-gray-400 hover:text-gray-600 text-2xl">×</button>
+              <button
+                onClick={() => setShowViewsModal(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ×
+              </button>
             </div>
-            
+
             <div className="flex-1 overflow-y-auto p-6">
               {loading ? (
                 <div className="flex items-center justify-center py-12">
@@ -256,7 +298,9 @@ export default function SavedViewsBar({ prospectorId, density, setDensity, condi
                 <div className="text-center py-12">
                   <div className="text-6xl mb-4">📭</div>
                   <p className="text-gray-600 mb-2">Nenhuma vista salva ainda</p>
-                  <p className="text-sm text-gray-500">Configure seus filtros e clique em "Salvar Vista"</p>
+                  <p className="text-sm text-gray-500">
+                    Configure seus filtros e clique em "Salvar Vista"
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -264,7 +308,9 @@ export default function SavedViewsBar({ prospectorId, density, setDensity, condi
                     <div
                       key={view.id}
                       className={`border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer ${
-                        activeViewId === view.id ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'
+                        activeViewId === view.id
+                          ? 'border-indigo-500 bg-indigo-50'
+                          : 'border-gray-200 hover:border-indigo-300'
                       }`}
                       onClick={() => loadView(view)}
                     >
@@ -273,7 +319,9 @@ export default function SavedViewsBar({ prospectorId, density, setDensity, condi
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="font-semibold text-gray-800">{view.name}</h4>
                             {activeViewId === view.id && (
-                              <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Ativa</span>
+                              <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                                Ativa
+                              </span>
                             )}
                           </div>
                           {view.description && (
@@ -282,21 +330,29 @@ export default function SavedViewsBar({ prospectorId, density, setDensity, condi
                           <div className="flex items-center gap-2 text-xs text-gray-500">
                             <span>🕒 {view.createdAt.toLocaleDateString('pt-BR')}</span>
                             <span>•</span>
-                            <span>{view.density === 'compact' ? '📏 Compacta' : '📐 Detalhada'}</span>
+                            <span>
+                              {view.density === 'compact' ? '📏 Compacta' : '📐 Detalhada'}
+                            </span>
                             <span>•</span>
                             <span>{view.conditions.length} filtro(s)</span>
                           </div>
                         </div>
                         <div className="flex gap-1 ml-2">
                           <button
-                            onClick={(e) => { e.stopPropagation(); shareView(view.id, view.name); }}
+                            onClick={e => {
+                              e.stopPropagation();
+                              shareView(view.id, view.name);
+                            }}
                             className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
                             title="Compartilhar"
                           >
                             🔗
                           </button>
                           <button
-                            onClick={(e) => { e.stopPropagation(); deleteView(view.id, view.name); }}
+                            onClick={e => {
+                              e.stopPropagation();
+                              deleteView(view.id, view.name);
+                            }}
                             className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                             title="Excluir"
                           >

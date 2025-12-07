@@ -315,6 +315,7 @@ curl -X POST http://localhost:8081/api/whatsapp/multi-role/admin/system-alert \
    - ProspectorCRM: Integração com lead follow-up
 
 3. **Exemplo de Integração:**
+
    ```typescript
    // Notificar cliente quando job é publicado
    async function publishJobWithNotification(jobData: Job) {

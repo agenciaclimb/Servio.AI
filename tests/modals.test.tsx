@@ -38,7 +38,7 @@ const mockUserClient: User = {
   name: 'Cliente Teste',
   type: 'cliente',
   verificationStatus: 'verificado',
-  memberSince: new Date().toISOString()
+  memberSince: new Date().toISOString(),
 };
 
 const mockUserProvider: User = {
@@ -47,7 +47,7 @@ const mockUserProvider: User = {
   type: 'prestador',
   verificationStatus: 'verificado',
   memberSince: new Date().toISOString(),
-  serviceCatalog: []
+  serviceCatalog: [],
 };
 
 const mockDispute: Dispute = {
@@ -57,10 +57,20 @@ const mockDispute: Dispute = {
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   messages: [
-    { id: 'm1', senderId: 'client@example.com', text: 'Problema encontrado', createdAt: new Date().toISOString() },
-    { id: 'm2', senderId: 'provider@example.com', text: 'Estou verificando', createdAt: new Date().toISOString() }
+    {
+      id: 'm1',
+      senderId: 'client@example.com',
+      text: 'Problema encontrado',
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'm2',
+      senderId: 'provider@example.com',
+      text: 'Estou verificando',
+      createdAt: new Date().toISOString(),
+    },
   ],
-  resolution: null
+  resolution: null,
 };
 
 describe('Modals Suite', () => {

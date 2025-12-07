@@ -8,6 +8,7 @@
 ## ✅ ONDE VOCÊ ESTÁ AGORA
 
 Você acessou o link de setup do Stripe Connect:
+
 ```
 https://connect.stripe.com/d/setup/s/_TSExkQBdsFTbWPU1AvKkxYuOs4/...
 ```
@@ -64,12 +65,14 @@ http://localhost:5173/onboarding-stripe/refresh
 ### 2. Verificar Configuração
 
 Execute o script:
+
 ```powershell
 cd scripts
 .\test-stripe-connect.ps1
 ```
 
 **Resultado esperado**:
+
 ```
 ✅ Webhook ativo
 ✅ Platform configurado
@@ -83,6 +86,7 @@ cd scripts
 Depois de configurar, teste o fluxo completo:
 
 ### Setup (5 min)
+
 ```powershell
 # Terminal 1 - Frontend
 npm run dev
@@ -95,6 +99,7 @@ npm run dev
 ### Fluxo de Teste (45 min)
 
 **1. Como PRESTADOR** (15 min)
+
 ```
 1. Acesse http://localhost:3000
 2. Criar conta como PRESTADOR
@@ -107,6 +112,7 @@ npm run dev
 ```
 
 **2. Como CLIENTE** (15 min)
+
 ```
 1. Abra janela anônima
 2. Acesse http://localhost:3000
@@ -119,6 +125,7 @@ npm run dev
 ```
 
 **3. Proposta e Pagamento** (15 min)
+
 ```
 1. Volte para janela do PRESTADOR
 2. Veja o job do cliente
@@ -134,11 +141,13 @@ npm run dev
 ### Verificação (10 min)
 
 **Logs do Backend**:
+
 ```powershell
 gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=servio-backend AND textPayload=~'webhook'" --limit 10 --format="table(timestamp, textPayload)"
 ```
 
 **Firestore**:
+
 ```
 https://console.firebase.google.com
 Firestore → escrows
@@ -147,6 +156,7 @@ Verifique: status = "pago"
 ```
 
 **Finalização**:
+
 ```
 1. Cliente marca job como concluído
 2. Submete review (5 estrelas)
@@ -197,6 +207,7 @@ npm run e2e:smoke
 ## 📊 CHECKLIST FINAL
 
 ### Stripe
+
 - [ ] Platform Profile configurado
 - [ ] Redirect URIs adicionados (6 URIs)
 - [ ] Teste de onboarding OK
@@ -205,11 +216,13 @@ npm run e2e:smoke
 - [ ] Transferência funcionou
 
 ### Código
+
 - [ ] Build sem erros
 - [ ] Testes passando
 - [ ] Variáveis atualizadas
 
 ### Deploy
+
 - [ ] Backup Firestore
 - [ ] Deploy produção
 - [ ] Smoke tests OK
@@ -220,18 +233,21 @@ npm run e2e:smoke
 ## 🆘 SE DER ERRO
 
 ### Onboarding não redireciona
+
 ```
 Causa: Redirect URI não configurado
 Solução: Adicionar URI no Dashboard → Connect → Settings
 ```
 
 ### Transferência falha
+
 ```
 Causa: Prestador não completou onboarding
 Solução: Refazer onboarding do prestador
 ```
 
 ### Webhook não processa
+
 ```powershell
 # Verificar secret
 gcloud run services describe servio-backend --region=us-west1 | grep STRIPE_WEBHOOK_SECRET

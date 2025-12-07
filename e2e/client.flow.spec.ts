@@ -8,7 +8,9 @@ test.describe('Client Journey - Smoke', () => {
     await expect(page.getByRole('button', { name: /começar agora/i })).toBeVisible();
   });
 
-  test.skip('search triggers wizard open (initialPrompt path) - SKIP: requires auth', async ({ page }) => {
+  test.skip('search triggers wizard open (initialPrompt path) - SKIP: requires auth', async ({
+    page,
+  }) => {
     // This flow requires user to be authenticated first.
     // Current app redirects guest users to login before opening wizard.
     // TODO: implement auth mock or unskip after auth flow is E2E-testable.

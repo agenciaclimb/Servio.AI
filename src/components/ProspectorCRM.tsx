@@ -1,6 +1,6 @@
 /**
  * Prospector CRM - Kanban Board
- * 
+ *
  * Features:
  * - Drag-and-drop leads between stages
  * - Lead stages: New → Contacted → Negotiating → Won/Lost
@@ -11,8 +11,23 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { db } from '../../firebaseConfig';
-import { collection, query, where, getDocs, addDoc, updateDoc, doc, Timestamp } from 'firebase/firestore';
-import type { LeadStage, LeadTemperature, LeadPriority, LeadSource, ActivityType } from '../../types';
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  updateDoc,
+  doc,
+  Timestamp,
+} from 'firebase/firestore';
+import type {
+  LeadStage,
+  LeadTemperature,
+  LeadPriority,
+  LeadSource,
+  ActivityType,
+} from '../../types';
 
 export interface Activity {
   type: ActivityType;
@@ -61,7 +76,7 @@ const STAGES = [
   { id: 'contacted', title: '📞 Contatados', color: 'bg-yellow-50 border-yellow-200' },
   { id: 'negotiating', title: '🤝 Negociando', color: 'bg-purple-50 border-purple-200' },
   { id: 'won', title: '✅ Convertidos', color: 'bg-green-50 border-green-200' },
-  { id: 'lost', title: '❌ Perdidos', color: 'bg-red-50 border-red-200' }
+  { id: 'lost', title: '❌ Perdidos', color: 'bg-red-50 border-red-200' },
 ];
 
 export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMProps>) {
@@ -100,11 +115,13 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
           score: data.score || 50,
           temperature: data.temperature || 'cold',
           priority: data.priority || 'low',
-          activities: (data.activities || []).map((a: { type: string; description: string; timestamp?: { toDate(): Date } }) => ({
-            ...a,
-            timestamp: a.timestamp?.toDate() || new Date()
-          })),
-          selected: false
+          activities: (data.activities || []).map(
+            (a: { type: string; description: string; timestamp?: { toDate(): Date } }) => ({
+              ...a,
+              timestamp: a.timestamp?.toDate() || new Date(),
+            })
+          ),
+          selected: false,
         } as ProspectLead;
       });
       setLeads(loadedLeads);
@@ -130,16 +147,17 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
       stage: 'new' as const,
       category: 'Eletricista',
       location: 'São Paulo, SP',
-      notes: 'Lead de exemplo - recomendado por cliente satisfeito. Interessado em trabalhos residenciais.',
+      notes:
+        'Lead de exemplo - recomendado por cliente satisfeito. Interessado em trabalhos residenciais.',
       createdAt: Timestamp.fromDate(now),
       updatedAt: Timestamp.fromDate(now),
       activities: [
         {
           type: 'note' as const,
           description: 'Lead criado como exemplo - você pode editá-lo ou excluí-lo',
-          timestamp: Timestamp.fromDate(now)
-        }
-      ]
+          timestamp: Timestamp.fromDate(now),
+        },
+      ],
     };
 
     try {
@@ -155,23 +173,25 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
     if (!lead || lead.stage === newStage) return;
 
     // Optimistic update
-    setLeads(prev => prev.map(l => 
-      l.id === leadId 
-        ? { 
-            ...l, 
-            stage: newStage,
-            lastActivity: new Date(),
-            activities: [
-              ...l.activities,
-              {
-                type: 'stage_change',
-                description: `Movido para ${STAGES.find(s => s.id === newStage)?.title}`,
-                timestamp: new Date()
-              }
-            ]
-          }
-        : l
-    ));
+    setLeads(prev =>
+      prev.map(l =>
+        l.id === leadId
+          ? {
+              ...l,
+              stage: newStage,
+              lastActivity: new Date(),
+              activities: [
+                ...l.activities,
+                {
+                  type: 'stage_change',
+                  description: `Movido para ${STAGES.find(s => s.id === newStage)?.title}`,
+                  timestamp: new Date(),
+                },
+              ],
+            }
+          : l
+      )
+    );
 
     // Update Firestore
     try {
@@ -180,15 +200,15 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
         {
           type: 'stage_change' as const,
           description: `Movido para ${STAGES.find(s => s.id === newStage)?.title}`,
-          timestamp: Timestamp.now()
-        }
+          timestamp: Timestamp.now(),
+        },
       ];
 
       await updateDoc(doc(db, 'prospector_prospects', leadId), {
         stage: newStage,
         lastActivity: Timestamp.now(),
         updatedAt: Timestamp.now(),
-        activities: updatedActivities
+        activities: updatedActivities,
       });
     } catch (error) {
       console.error('Error updating lead:', error);
@@ -210,11 +230,13 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
         notes: leadData.notes || '',
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
-        activities: [{
-          type: 'note',
-          description: 'Lead criado',
-          timestamp: Timestamp.now()
-        }]
+        activities: [
+          {
+            type: 'note',
+            description: 'Lead criado',
+            timestamp: Timestamp.now(),
+          },
+        ],
       };
 
       await addDoc(collection(db, 'prospector_prospects'), newLead);
@@ -229,7 +251,7 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
     try {
       await updateDoc(doc(db, 'prospector_prospects', leadId), {
         ...updates,
-        updatedAt: Timestamp.now()
+        updatedAt: Timestamp.now(),
       });
       loadLeads();
       setEditingLead(null);
@@ -247,7 +269,7 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
       await updateDoc(doc(db, 'prospector_prospects', leadId), {
         activities: updatedActivities,
         lastActivity: Timestamp.now(),
-        updatedAt: Timestamp.now()
+        updatedAt: Timestamp.now(),
       });
       loadLeads();
     } catch (error) {
@@ -260,7 +282,7 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
     addActivity(lead.id, {
       type: 'call',
       description: 'Chamada telefônica realizada',
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -272,7 +294,7 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
     addActivity(lead.id, {
       type: 'email',
       description: 'Email enviado',
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -284,7 +306,7 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
     addActivity(lead.id, {
       type: 'message',
       description: 'Mensagem WhatsApp enviada',
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -299,7 +321,9 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
   };
 
   const toggleSelectLead = (leadId: string) => {
-    setLeads(leads.map(lead => lead.id === leadId ? { ...lead, selected: !lead.selected } : lead));
+    setLeads(
+      leads.map(lead => (lead.id === leadId ? { ...lead, selected: !lead.selected } : lead))
+    );
   };
 
   const handleBulkAction = async (action: 'export' | 'delete' | 'move', targetStage?: string) => {
@@ -311,7 +335,7 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
       for (const lead of selectedLeads) {
         await updateDoc(doc(db, 'prospector_prospects', lead.id), {
           stage: targetStage,
-          updatedAt: Timestamp.now()
+          updatedAt: Timestamp.now(),
         });
       }
       loadLeads();
@@ -343,13 +367,26 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
         <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-8 border-2 border-blue-200">
           <div className="max-w-2xl mx-auto text-center">
             <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">Bem-vindo ao seu Pipeline CRM! 🚀</h3>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">
+              Bem-vindo ao seu Pipeline CRM! 🚀
+            </h3>
             <p className="text-gray-600 mb-6">
-              Organize seus prospects em estágios e acompanhe cada conversão. Comece adicionando seu primeiro lead.
+              Organize seus prospects em estágios e acompanhe cada conversão. Comece adicionando seu
+              primeiro lead.
             </p>
 
             {/* Tutorial Steps */}
@@ -357,22 +394,30 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
               <div className="bg-white p-4 rounded-lg shadow-sm">
                 <div className="text-2xl mb-2">🆕</div>
                 <h4 className="font-semibold text-sm mb-1">1. Adicionar Lead</h4>
-                <p className="text-xs text-gray-600">Clique em "+ Novo Lead" e cadastre nome, telefone e categoria</p>
+                <p className="text-xs text-gray-600">
+                  Clique em "+ Novo Lead" e cadastre nome, telefone e categoria
+                </p>
               </div>
               <div className="bg-white p-4 rounded-lg shadow-sm">
                 <div className="text-2xl mb-2">📞</div>
                 <h4 className="font-semibold text-sm mb-1">2. Fazer Contato</h4>
-                <p className="text-xs text-gray-600">Arraste o card para "Contatados" após ligar ou enviar mensagem</p>
+                <p className="text-xs text-gray-600">
+                  Arraste o card para "Contatados" após ligar ou enviar mensagem
+                </p>
               </div>
               <div className="bg-white p-4 rounded-lg shadow-sm">
                 <div className="text-2xl mb-2">🤝</div>
                 <h4 className="font-semibold text-sm mb-1">3. Negociar</h4>
-                <p className="text-xs text-gray-600">Acompanhe a negociação e registre atividades</p>
+                <p className="text-xs text-gray-600">
+                  Acompanhe a negociação e registre atividades
+                </p>
               </div>
               <div className="bg-white p-4 rounded-lg shadow-sm">
                 <div className="text-2xl mb-2">✅</div>
                 <h4 className="font-semibold text-sm mb-1">4. Converter</h4>
-                <p className="text-xs text-gray-600">Mova para "Convertidos" quando virar cliente</p>
+                <p className="text-xs text-gray-600">
+                  Mova para "Convertidos" quando virar cliente
+                </p>
               </div>
             </div>
 
@@ -407,8 +452,12 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
               {leads.length} leads · {getLeadsByStage('won').length} convertidos
             </p>
             <div className="flex gap-2 text-xs">
-              <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full">🔥 {hotLeads} quentes</span>
-              <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full">☀️ {warmLeads} mornos</span>
+              <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full">
+                🔥 {hotLeads} quentes
+              </span>
+              <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full">
+                ☀️ {warmLeads} mornos
+              </span>
             </div>
           </div>
         </div>
@@ -431,7 +480,9 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
           </button>
           {selectedLeads.length > 0 && (
             <>
-              <span className="text-sm font-medium text-indigo-900">{selectedLeads.length} selecionados</span>
+              <span className="text-sm font-medium text-indigo-900">
+                {selectedLeads.length} selecionados
+              </span>
               <button
                 onClick={() => handleBulkAction('export')}
                 className="text-sm px-3 py-1.5 bg-white border border-indigo-300 rounded hover:bg-indigo-50"
@@ -439,13 +490,17 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
                 📥 Exportar CSV
               </button>
               <select
-                onChange={(e) => handleBulkAction('move', e.target.value)}
+                onChange={e => handleBulkAction('move', e.target.value)}
                 className="text-sm px-3 py-1.5 bg-white border border-indigo-300 rounded"
                 defaultValue=""
               >
-                <option value="" disabled>Mover para...</option>
+                <option value="" disabled>
+                  Mover para...
+                </option>
                 {STAGES.map(stage => (
-                  <option key={stage.id} value={stage.id}>{stage.title}</option>
+                  <option key={stage.id} value={stage.id}>
+                    {stage.title}
+                  </option>
                 ))}
               </select>
               <button
@@ -462,19 +517,18 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
       {/* Kanban Board */}
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {STAGES.map(stage => (
-          <div
-            key={stage.id}
-            className={`rounded-lg border-2 p-3 min-h-[500px] ${stage.color}`}
-          >
+          <div key={stage.id} className={`rounded-lg border-2 p-3 min-h-[500px] ${stage.color}`}>
             {/* Stage Header */}
             <div className="mb-3 pb-2 border-b border-gray-300">
               <h3 className="font-semibold text-sm text-gray-800">{stage.title}</h3>
-              <span className="text-xs text-gray-600">{getLeadsByStage(stage.id).length} leads</span>
+              <span className="text-xs text-gray-600">
+                {getLeadsByStage(stage.id).length} leads
+              </span>
             </div>
 
             {/* Lead Cards */}
             <div className="space-y-2">
-              {getLeadsByStage(stage.id).map((lead) => (
+              {getLeadsByStage(stage.id).map(lead => (
                 <div
                   key={lead.id}
                   className={`bg-white p-3 rounded border shadow-sm hover:shadow-md transition-all ${
@@ -496,7 +550,9 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
                     </div>
                     {/* Score Badge */}
                     {lead.temperature && (
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${getTemperatureBadgeClass(lead.temperature)}`}>
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded-full ${getTemperatureBadgeClass(lead.temperature)}`}
+                      >
                         {getTemperatureEmoji(lead.temperature)}
                         {lead.score || 0}
                       </span>
@@ -507,7 +563,9 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
                   <div className="text-xs text-gray-600 space-y-0.5 mb-2">
                     {lead.phone && <div>📱 {lead.phone}</div>}
                     {lead.email && <div>✉️ {lead.email}</div>}
-                    {lead.category && <div className="text-[10px] text-gray-500">🏷️ {lead.category}</div>}
+                    {lead.category && (
+                      <div className="text-[10px] text-gray-500">🏷️ {lead.category}</div>
+                    )}
                   </div>
 
                   {/* Follow-up Timeline */}
@@ -528,22 +586,26 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
                       Última atividade: {formatRelativeTime(lead.lastActivity)}
                     </div>
                   )}
-                  
+
                   {/* Move Stage Buttons */}
                   {stage.id !== lead.stage && (
                     <div className="mb-2">
                       <select
                         value={lead.stage}
-                        onChange={(e) => moveLeadToStage(lead.id, e.target.value as ProspectLead['stage'])}
+                        onChange={e =>
+                          moveLeadToStage(lead.id, e.target.value as ProspectLead['stage'])
+                        }
                         className="w-full text-xs px-2 py-1 border rounded bg-gray-50 hover:bg-gray-100"
                       >
                         {STAGES.map(s => (
-                          <option key={s.id} value={s.id}>{s.title}</option>
+                          <option key={s.id} value={s.id}>
+                            {s.title}
+                          </option>
                         ))}
                       </select>
                     </div>
                   )}
-                  
+
                   {/* Quick Actions */}
                   <div className="grid grid-cols-4 gap-1 mb-1">
                     <button
@@ -577,7 +639,7 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
                       🤖
                     </button>
                   </div>
-                  
+
                   {/* Edit Button */}
                   <button
                     onClick={() => setEditingLead(lead)}
@@ -593,19 +655,14 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
       </div>
 
       {/* Add Lead Modal */}
-      {showAddLead && (
-        <AddLeadModal
-          onClose={() => setShowAddLead(false)}
-          onAdd={addLead}
-        />
-      )}
+      {showAddLead && <AddLeadModal onClose={() => setShowAddLead(false)} onAdd={addLead} />}
 
       {/* Edit Lead Modal */}
       {editingLead && (
         <EditLeadModal
           lead={editingLead}
           onClose={() => setEditingLead(null)}
-          onSave={(updates) => updateLead(editingLead.id, updates)}
+          onSave={updates => updateLead(editingLead.id, updates)}
         />
       )}
 
@@ -614,7 +671,7 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
         <AIAssistantModal
           lead={aiAssistLead}
           onClose={() => setAiAssistLead(null)}
-          onAddActivity={(activity) => addActivity(aiAssistLead.id, activity)}
+          onAddActivity={activity => addActivity(aiAssistLead.id, activity)}
         />
       )}
     </div>
@@ -637,7 +694,7 @@ function getTemperatureEmoji(temperature?: LeadTemperature): string {
 
 function formatRelativeTime(date: Date): string {
   const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-  
+
   if (seconds < 60) return 'agora';
   if (seconds < 3600) return `${Math.floor(seconds / 60)}min atrás`;
   if (seconds < 86400) return `${Math.floor(seconds / 3600)}h atrás`;
@@ -683,7 +740,16 @@ Equipe Servio.AI`;
 
 // Helper: Export leads to CSV
 function exportLeadsToCSV(leads: ProspectLead[]) {
-  const headers = ['Nome', 'Telefone', 'Email', 'Categoria', 'Estágio', 'Score', 'Temperatura', 'Última Atividade'];
+  const headers = [
+    'Nome',
+    'Telefone',
+    'Email',
+    'Categoria',
+    'Estágio',
+    'Score',
+    'Temperatura',
+    'Última Atividade',
+  ];
   const rows = leads.map(lead => [
     lead.name,
     lead.phone,
@@ -692,12 +758,12 @@ function exportLeadsToCSV(leads: ProspectLead[]) {
     lead.stage,
     lead.score || 0,
     lead.temperature || '',
-    lead.lastActivity ? lead.lastActivity.toLocaleString('pt-BR') : ''
+    lead.lastActivity ? lead.lastActivity.toLocaleString('pt-BR') : '',
   ]);
 
   const csvContent = [
     headers.join(','),
-    ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ...rows.map(row => row.map(cell => `"${cell}"`).join(',')),
   ].join('\n');
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -715,7 +781,7 @@ interface AddLeadModalProps {
 
 function AddLeadModal({ onClose, onAdd }: Readonly<AddLeadModalProps>) {
   const [formData, setFormData] = useState<Partial<ProspectLead>>({
-    source: 'direct'
+    source: 'direct',
   });
 
   function handleSubmit(e: React.FormEvent) {
@@ -728,72 +794,89 @@ function AddLeadModal({ onClose, onAdd }: Readonly<AddLeadModalProps>) {
   }
 
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" 
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={onClose}
-      onKeyDown={(e) => e.key === 'Escape' && onClose()}
+      onKeyDown={e => e.key === 'Escape' && onClose()}
       role="dialog"
       aria-modal="true"
       aria-labelledby="add-lead-title"
     >
-      <div className="bg-white rounded-lg max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
-        <h3 id="add-lead-title" className="text-xl font-bold text-gray-800 mb-4">Novo Lead</h3>
-        
+      <div className="bg-white rounded-lg max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+        <h3 id="add-lead-title" className="text-xl font-bold text-gray-800 mb-4">
+          Novo Lead
+        </h3>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="lead-name" className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
+            <label htmlFor="lead-name" className="block text-sm font-medium text-gray-700 mb-1">
+              Nome *
+            </label>
             <input
               id="lead-name"
               type="text"
               required
               value={formData.name || ''}
-              onChange={e => setFormData({...formData, name: e.target.value})}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label htmlFor="lead-phone" className="block text-sm font-medium text-gray-700 mb-1">Telefone *</label>
+            <label htmlFor="lead-phone" className="block text-sm font-medium text-gray-700 mb-1">
+              Telefone *
+            </label>
             <input
               id="lead-phone"
               type="tel"
               required
               value={formData.phone || ''}
-              onChange={e => setFormData({...formData, phone: e.target.value})}
+              onChange={e => setFormData({ ...formData, phone: e.target.value })}
               placeholder="(11) 99999-9999"
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label htmlFor="lead-email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label htmlFor="lead-email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
             <input
               id="lead-email"
               type="email"
               value={formData.email || ''}
-              onChange={e => setFormData({...formData, email: e.target.value})}
+              onChange={e => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label htmlFor="lead-category" className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+            <label htmlFor="lead-category" className="block text-sm font-medium text-gray-700 mb-1">
+              Categoria
+            </label>
             <input
               id="lead-category"
               type="text"
               value={formData.category || ''}
-              onChange={e => setFormData({...formData, category: e.target.value})}
+              onChange={e => setFormData({ ...formData, category: e.target.value })}
               placeholder="Ex: Encanador, Eletricista..."
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label htmlFor="lead-source" className="block text-sm font-medium text-gray-700 mb-1">Origem</label>
+            <label htmlFor="lead-source" className="block text-sm font-medium text-gray-700 mb-1">
+              Origem
+            </label>
             <select
               id="lead-source"
               value={formData.source}
-              onChange={e => setFormData({...formData, source: e.target.value as 'referral' | 'direct' | 'event' | 'social' | 'other'})}
+              onChange={e =>
+                setFormData({
+                  ...formData,
+                  source: e.target.value as 'referral' | 'direct' | 'event' | 'social' | 'other',
+                })
+              }
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             >
               <option value="referral">Indicação</option>
@@ -805,11 +888,13 @@ function AddLeadModal({ onClose, onAdd }: Readonly<AddLeadModalProps>) {
           </div>
 
           <div>
-            <label htmlFor="lead-notes" className="block text-sm font-medium text-gray-700 mb-1">Notas</label>
+            <label htmlFor="lead-notes" className="block text-sm font-medium text-gray-700 mb-1">
+              Notas
+            </label>
             <textarea
               id="lead-notes"
               value={formData.notes || ''}
-              onChange={e => setFormData({...formData, notes: e.target.value})}
+              onChange={e => setFormData({ ...formData, notes: e.target.value })}
               rows={3}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
@@ -851,7 +936,7 @@ function EditLeadModal({ lead, onClose, onSave }: Readonly<EditLeadModalProps>) 
     category: lead.category,
     location: lead.location,
     notes: lead.notes,
-    source: lead.source
+    source: lead.source,
   });
 
   function handleSubmit(e: React.FormEvent) {
@@ -860,10 +945,16 @@ function EditLeadModal({ lead, onClose, onSave }: Readonly<EditLeadModalProps>) 
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
         <h3 className="text-xl font-bold text-gray-800 mb-4">✏️ Editar Lead</h3>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
@@ -871,7 +962,7 @@ function EditLeadModal({ lead, onClose, onSave }: Readonly<EditLeadModalProps>) 
               type="text"
               required
               value={formData.name || ''}
-              onChange={e => setFormData({...formData, name: e.target.value})}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -882,7 +973,7 @@ function EditLeadModal({ lead, onClose, onSave }: Readonly<EditLeadModalProps>) 
               type="tel"
               required
               value={formData.phone || ''}
-              onChange={e => setFormData({...formData, phone: e.target.value})}
+              onChange={e => setFormData({ ...formData, phone: e.target.value })}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -892,7 +983,7 @@ function EditLeadModal({ lead, onClose, onSave }: Readonly<EditLeadModalProps>) 
             <input
               type="email"
               value={formData.email || ''}
-              onChange={e => setFormData({...formData, email: e.target.value})}
+              onChange={e => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -902,7 +993,7 @@ function EditLeadModal({ lead, onClose, onSave }: Readonly<EditLeadModalProps>) 
             <input
               type="text"
               value={formData.category || ''}
-              onChange={e => setFormData({...formData, category: e.target.value})}
+              onChange={e => setFormData({ ...formData, category: e.target.value })}
               placeholder="Ex: Encanador, Eletricista..."
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
@@ -913,7 +1004,7 @@ function EditLeadModal({ lead, onClose, onSave }: Readonly<EditLeadModalProps>) 
             <input
               type="text"
               value={formData.location || ''}
-              onChange={e => setFormData({...formData, location: e.target.value})}
+              onChange={e => setFormData({ ...formData, location: e.target.value })}
               placeholder="Cidade, Estado"
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
@@ -923,7 +1014,12 @@ function EditLeadModal({ lead, onClose, onSave }: Readonly<EditLeadModalProps>) 
             <label className="block text-sm font-medium text-gray-700 mb-1">Origem</label>
             <select
               value={formData.source}
-              onChange={e => setFormData({...formData, source: e.target.value as 'referral' | 'direct' | 'event' | 'social' | 'other'})}
+              onChange={e =>
+                setFormData({
+                  ...formData,
+                  source: e.target.value as 'referral' | 'direct' | 'event' | 'social' | 'other',
+                })
+              }
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             >
               <option value="referral">Indicação</option>
@@ -938,7 +1034,7 @@ function EditLeadModal({ lead, onClose, onSave }: Readonly<EditLeadModalProps>) 
             <label className="block text-sm font-medium text-gray-700 mb-1">Notas</label>
             <textarea
               value={formData.notes || ''}
-              onChange={e => setFormData({...formData, notes: e.target.value})}
+              onChange={e => setFormData({ ...formData, notes: e.target.value })}
               rows={4}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
@@ -947,17 +1043,20 @@ function EditLeadModal({ lead, onClose, onSave }: Readonly<EditLeadModalProps>) 
           <div className="border-t pt-4">
             <h4 className="font-semibold text-sm text-gray-700 mb-2">📝 Últimas Atividades</h4>
             <div className="space-y-2 max-h-32 overflow-y-auto">
-              {lead.activities.slice(-5).reverse().map((activity, idx) => (
-                <div key={idx} className="text-xs bg-gray-50 p-2 rounded">
-                  <div className="flex items-center gap-2">
-                    <span>{getActivityEmoji(activity.type)}</span>
-                    <span className="font-medium">{activity.description}</span>
+              {lead.activities
+                .slice(-5)
+                .reverse()
+                .map((activity, idx) => (
+                  <div key={idx} className="text-xs bg-gray-50 p-2 rounded">
+                    <div className="flex items-center gap-2">
+                      <span>{getActivityEmoji(activity.type)}</span>
+                      <span className="font-medium">{activity.description}</span>
+                    </div>
+                    <div className="text-gray-500 text-[10px] mt-0.5">
+                      {new Date(activity.timestamp).toLocaleString('pt-BR')}
+                    </div>
                   </div>
-                  <div className="text-gray-500 text-[10px] mt-0.5">
-                    {new Date(activity.timestamp).toLocaleString('pt-BR')}
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
 
@@ -995,32 +1094,32 @@ function AIAssistantModal({ lead, onClose, onAddActivity }: Readonly<AIAssistant
       new: [
         `Envie mensagem de boas-vindas via WhatsApp`,
         `Pergunte sobre disponibilidade para conversa`,
-        `Compartilhe cases de sucesso da plataforma`
+        `Compartilhe cases de sucesso da plataforma`,
       ],
       contacted: [
         `Agende follow-up para daqui a 2 dias`,
         `Envie materiais sobre pagamento e garantias`,
-        `Pergunte sobre objeções ou dúvidas`
+        `Pergunte sobre objeções ou dúvidas`,
       ],
       negotiating: [
         `Ofereça tour guiado pela plataforma`,
         `Apresente depoimentos de profissionais`,
-        `Discuta primeiros serviços disponíveis`
+        `Discuta primeiros serviços disponíveis`,
       ],
       won: [
         `Envie mensagem de boas-vindas oficial`,
         `Agende treinamento de onboarding`,
-        `Solicite documentos para cadastro`
+        `Solicite documentos para cadastro`,
       ],
       lost: [
         `Pergunte motivo da desistência`,
         `Agende follow-up para 1 mês`,
-        `Mantenha contato com conteúdo relevante`
-      ]
+        `Mantenha contato com conteúdo relevante`,
+      ],
     };
     return stageSuggestions[lead.stage] || stageSuggestions.new;
   });
-  
+
   const [script] = useState<string>(() => generateConversationScript(lead));
 
   function copyScript() {
@@ -1032,17 +1131,28 @@ function AIAssistantModal({ lead, onClose, onAddActivity }: Readonly<AIAssistant
     onAddActivity({
       type: 'note',
       description: `IA sugeriu: ${suggestion}`,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
     onClose();
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-gray-800">🤖 Assistente IA - {lead.name}</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-2xl leading-none">×</button>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+          >
+            ×
+          </button>
         </div>
 
         <div className="space-y-6">
@@ -1074,7 +1184,10 @@ function AIAssistantModal({ lead, onClose, onAddActivity }: Readonly<AIAssistant
             <h4 className="font-semibold text-gray-800 mb-3">💡 Próximas Ações Recomendadas</h4>
             <div className="space-y-2">
               {suggestions.map((suggestion, idx) => (
-                <div key={idx} className="flex items-start gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
+                <div
+                  key={idx}
+                  className="flex items-start gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 transition-colors"
+                >
                   <div className="flex-1 text-sm text-gray-700">{suggestion}</div>
                   <button
                     onClick={() => applySuggestion(suggestion)}
@@ -1109,8 +1222,15 @@ function AIAssistantModal({ lead, onClose, onAddActivity }: Readonly<AIAssistant
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => {
-                  globalThis.open(`https://wa.me/55${lead.phone.replaceAll(/\D/g, '')}?text=${encodeURIComponent(script)}`, '_blank');
-                  onAddActivity({ type: 'message', description: 'Script IA enviado via WhatsApp', timestamp: new Date() });
+                  globalThis.open(
+                    `https://wa.me/55${lead.phone.replaceAll(/\D/g, '')}?text=${encodeURIComponent(script)}`,
+                    '_blank'
+                  );
+                  onAddActivity({
+                    type: 'message',
+                    description: 'Script IA enviado via WhatsApp',
+                    timestamp: new Date(),
+                  });
                   onClose();
                 }}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
@@ -1120,8 +1240,14 @@ function AIAssistantModal({ lead, onClose, onAddActivity }: Readonly<AIAssistant
               <button
                 onClick={() => {
                   if (lead.email) {
-                    window.open(`mailto:${lead.email}?subject=Oportunidade Servio.AI&body=${encodeURIComponent(script)}`);
-                    onAddActivity({ type: 'email', description: 'Script IA enviado via email', timestamp: new Date() });
+                    window.open(
+                      `mailto:${lead.email}?subject=Oportunidade Servio.AI&body=${encodeURIComponent(script)}`
+                    );
+                    onAddActivity({
+                      type: 'email',
+                      description: 'Script IA enviado via email',
+                      timestamp: new Date(),
+                    });
                     onClose();
                   } else {
                     alert('Lead sem email cadastrado');
@@ -1148,7 +1274,7 @@ function getActivityEmoji(type: Activity['type']): string {
     email: '✉️',
     note: '📝',
     stage_change: '🔄',
-    follow_up: '📅'
+    follow_up: '📅',
   };
   return emojis[type] || '•';
 }
@@ -1159,7 +1285,7 @@ function getStageLabel(stage: string): string {
     contacted: '📞 Contatado',
     negotiating: '🤝 Negociando',
     won: '✅ Convertido',
-    lost: '❌ Perdido'
+    lost: '❌ Perdido',
   };
   return labels[stage] || stage;
 }
@@ -1229,7 +1355,7 @@ Pode me contar o principal motivo? Isso me ajuda a melhorar.
 
 Se mudar de ideia ou conhecer alguém interessado, me chame!
 
-Sucesso! 💪`
+Sucesso! 💪`,
   };
 
   return scripts[lead.stage] || scripts.new;

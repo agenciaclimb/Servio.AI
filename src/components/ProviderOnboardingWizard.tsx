@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { User, PortfolioItem, ExtractedDocumentInfo } from '../../types';
-// import { 
-//   generateProviderBio, 
-//   analyzePortfolioImage, 
+// import {
+//   generateProviderBio,
+//   analyzePortfolioImage,
 //   validateCertification
 // } from '../../services/geminiService';
 import { auth } from '../../firebaseConfig';
@@ -37,7 +37,7 @@ type WizardStep = 1 | 2 | 3 | 4 | 5 | 6;
 interface OnboardingData {
   // Step 1: Verificação (já existe no user)
   documentVerified: boolean;
-  
+
   // Step 2: Perfil Profissional
   providerType: 'autonomo' | 'empresa';
   companyName?: string;
@@ -47,17 +47,17 @@ interface OnboardingData {
   serviceAreas: string[];
   teamSize?: number;
   teams?: ProviderTeam[];
-  
+
   // Step 3: Bio e Diferencial
   bio: string;
   headline: string;
   specialties: string[];
   differentials: string[];
   aiGeneratedBio: boolean;
-  
+
   // Step 4: Portfólio
   portfolio: PortfolioItem[];
-  
+
   // Step 5: Pagamentos (Stripe)
   stripeConnected: boolean;
 }
@@ -78,7 +78,10 @@ const INITIAL_DATA: OnboardingData = {
   stripeConnected: false,
 };
 
-const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ user, onComplete }) => {
+const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({
+  user,
+  onComplete,
+}) => {
   const [currentStep, setCurrentStep] = useState<WizardStep>(
     user.verificationStatus === 'verificado' ? 2 : 1
   );
@@ -91,7 +94,11 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
 
   // Estados temporários para cada step
   const [documentImage, setDocumentImage] = useState<string | null>(user.documentImage || null);
-  const [extractedDocData, setExtractedDocData] = useState({ fullName: user.name, cpf: user.cpf || '', cnpj: '' });
+  const [extractedDocData, setExtractedDocData] = useState({
+    fullName: user.name,
+    cpf: user.cpf || '',
+    cnpj: '',
+  });
   const [bioInput, setBioInput] = useState('');
   const [generatingBio, setGeneratingBio] = useState(false);
   const [uploadingPortfolio, setUploadingPortfolio] = useState(false);
@@ -102,14 +109,14 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
 
   const handleNext = () => {
     if (currentStep < 6) {
-      setCurrentStep((prev) => (prev + 1) as WizardStep);
+      setCurrentStep(prev => (prev + 1) as WizardStep);
       setError(null);
     }
   };
 
   const handleBack = () => {
     if (currentStep > 1) {
-      setCurrentStep((prev) => (prev - 1) as WizardStep);
+      setCurrentStep(prev => (prev - 1) as WizardStep);
       setError(null);
     }
   };
@@ -117,7 +124,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
   // ============================================================================
   // STEP 1: Verificação de Identidade
   // ============================================================================
-  
+
   const handleDocumentUpload = async (file: File) => {
     if (file.size > 4 * 1024 * 1024) {
       setError('Arquivo muito grande. Use uma imagem com menos de 4MB.');
@@ -158,7 +165,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
     try {
       const token = await auth.currentUser?.getIdToken();
       const baseUrl = import.meta.env.VITE_BACKEND_API_URL || '';
-      
+
       const updatedData: Partial<User> = {
         name: extractedDocData.fullName,
         verificationStatus: 'pendente',
@@ -174,7 +181,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updatedData),
       });
@@ -230,10 +237,10 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
           name: file.name.replace(/\.[^/.]+$/, ''),
           issuer: 'Emissor não identificado',
           issueDate: new Date().toISOString().split('T')[0],
-          expiryDate: undefined
-        }
+          expiryDate: undefined,
+        },
       };
-      
+
       handleUpdateCertification(id, {
         name: result.extractedData.name || '',
         issuer: result.extractedData.issuer || '',
@@ -265,7 +272,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
       // TODO: Implement generateProviderBio service
       const result = {
         bio: `${user.name} - Profissional em ${data.category} com ${data.yearsOfExperience} anos de experiência.`,
-        headline: `${data.category} - ${data.yearsOfExperience}+ anos`
+        headline: `${data.category} - ${data.yearsOfExperience}+ anos`,
       };
 
       updateData({
@@ -325,7 +332,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
         // TODO: Implement analyzePortfolioImage service
         const analysis = {
           suggestedTitle: file.name.replace(/\.[^/.]+$/, ''),
-          suggestedDescription: `Imagem de portfólio - ${data.category}`
+          suggestedDescription: `Imagem de portfólio - ${data.category}`,
         };
 
         newItems.push({
@@ -346,9 +353,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
 
   const handleUpdatePortfolioItem = (id: string, updates: Partial<PortfolioItem>) => {
     updateData({
-      portfolio: data.portfolio.map(item =>
-        item.id === id ? { ...item, ...updates } : item
-      ),
+      portfolio: data.portfolio.map(item => (item.id === id ? { ...item, ...updates } : item)),
     });
   };
 
@@ -365,12 +370,12 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
     try {
       const token = await auth.currentUser?.getIdToken();
       const baseUrl = import.meta.env.VITE_BACKEND_API_URL || '';
-      
+
       const response = await fetch(`${baseUrl}/create-stripe-account-link`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ email: user.email }),
       });
@@ -394,9 +399,9 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
       const token = await auth.currentUser?.getIdToken();
       const baseUrl = import.meta.env.VITE_BACKEND_API_URL || '';
 
-      const updatedUser: Partial<User> & { 
-        providerType?: string; 
-        cnpj?: string; 
+      const updatedUser: Partial<User> & {
+        providerType?: string;
+        cnpj?: string;
         companyName?: string;
         yearsOfExperience?: number;
         certifications?: Array<{ name: string; year: number }>;
@@ -414,7 +419,9 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
         bio: data.bio,
         specialties: data.specialties,
         yearsOfExperience: data.yearsOfExperience,
-        certifications: data.certifications as unknown as Array<{ name: string; year: number }> | undefined,
+        certifications: data.certifications as unknown as
+          | Array<{ name: string; year: number }>
+          | undefined,
         serviceAreas: data.serviceAreas,
         teamSize: data.teamSize,
         teams: data.teams as unknown as Array<{ role: string; count: number }> | undefined,
@@ -427,7 +434,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updatedUser),
       });
@@ -501,13 +508,29 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
       </div>
 
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors">
-        <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        <svg
+          className="mx-auto h-12 w-12 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+          />
         </svg>
         <p className="mt-2 text-sm text-gray-600">
-          Envie foto do seu <strong>{data.providerType === 'autonomo' ? 'RG ou CNH' : 'Contrato Social ou CNPJ'}</strong>
+          Envie foto do seu{' '}
+          <strong>
+            {data.providerType === 'autonomo' ? 'RG ou CNH' : 'Contrato Social ou CNPJ'}
+          </strong>
         </p>
-        <label htmlFor="document-upload" className="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700">
+        <label
+          htmlFor="document-upload"
+          className="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700"
+        >
           Escolher Arquivo
         </label>
         <input
@@ -515,14 +538,14 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
           type="file"
           accept="image/*"
           className="hidden"
-          onChange={(e) => e.target.files?.[0] && handleDocumentUpload(e.target.files[0])}
+          onChange={e => e.target.files?.[0] && handleDocumentUpload(e.target.files[0])}
         />
       </div>
 
       {documentImage && (
         <div className="space-y-4">
           <img src={documentImage} alt="Documento" className="max-h-48 mx-auto rounded-lg border" />
-          
+
           <div>
             <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
               Nome Completo {data.providerType === 'empresa' && '(Responsável Legal)'}
@@ -531,19 +554,21 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
               id="fullName"
               type="text"
               value={extractedDocData.fullName}
-              onChange={(e) => setExtractedDocData(prev => ({ ...prev, fullName: e.target.value }))}
+              onChange={e => setExtractedDocData(prev => ({ ...prev, fullName: e.target.value }))}
               className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
 
           {data.providerType === 'autonomo' ? (
             <div>
-              <label htmlFor="cpf" className="block text-sm font-medium text-gray-700 mb-1">CPF</label>
+              <label htmlFor="cpf" className="block text-sm font-medium text-gray-700 mb-1">
+                CPF
+              </label>
               <input
                 id="cpf"
                 type="text"
                 value={extractedDocData.cpf}
-                onChange={(e) => setExtractedDocData(prev => ({ ...prev, cpf: e.target.value }))}
+                onChange={e => setExtractedDocData(prev => ({ ...prev, cpf: e.target.value }))}
                 className="w-full px-3 py-2 border rounded-lg"
                 placeholder="000.000.000-00"
               />
@@ -551,25 +576,30 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
           ) : (
             <>
               <div>
-                <label htmlFor="cnpj" className="block text-sm font-medium text-gray-700 mb-1">CNPJ</label>
+                <label htmlFor="cnpj" className="block text-sm font-medium text-gray-700 mb-1">
+                  CNPJ
+                </label>
                 <input
                   id="cnpj"
                   type="text"
                   value={extractedDocData.cnpj}
-                  onChange={(e) => setExtractedDocData(prev => ({ ...prev, cnpj: e.target.value }))}
+                  onChange={e => setExtractedDocData(prev => ({ ...prev, cnpj: e.target.value }))}
                   className="w-full px-3 py-2 border rounded-lg"
                   placeholder="00.000.000/0000-00"
                 />
               </div>
               <div>
-                <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="companyName"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Nome Fantasia da Empresa
                 </label>
                 <input
                   id="companyName"
                   type="text"
                   value={data.companyName || ''}
-                  onChange={(e) => updateData({ companyName: e.target.value })}
+                  onChange={e => updateData({ companyName: e.target.value })}
                   className="w-full px-3 py-2 border rounded-lg"
                   placeholder="Ex: Silva & Cia Eletricistas"
                 />
@@ -595,9 +625,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-800">Perfil Profissional</h2>
-        <p className="mt-2 text-gray-600">
-          Conte-nos sobre sua experiência e qualificações
-        </p>
+        <p className="mt-2 text-gray-600">Conte-nos sobre sua experiência e qualificações</p>
       </div>
 
       {/* Categoria */}
@@ -607,7 +635,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
         </label>
         <select
           value={data.category}
-          onChange={(e) => updateData({ category: e.target.value })}
+          onChange={e => updateData({ category: e.target.value })}
           className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Selecione...</option>
@@ -636,7 +664,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
           min="0"
           max="50"
           value={data.yearsOfExperience}
-          onChange={(e) => updateData({ yearsOfExperience: parseInt(e.target.value) })}
+          onChange={e => updateData({ yearsOfExperience: parseInt(e.target.value) })}
           className="w-full"
         />
       </div>
@@ -644,14 +672,12 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
       {/* Tamanho da Equipe (só para empresas) */}
       {data.providerType === 'empresa' && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Tamanho da Equipe
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Tamanho da Equipe</label>
           <input
             type="number"
             min="1"
             value={data.teamSize || 1}
-            onChange={(e) => updateData({ teamSize: parseInt(e.target.value) })}
+            onChange={e => updateData({ teamSize: parseInt(e.target.value) })}
             className="w-full px-3 py-2 border rounded-lg"
             placeholder="Número de profissionais"
           />
@@ -660,14 +686,12 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
 
       {/* Áreas de Atendimento */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Áreas de Atendimento
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Áreas de Atendimento</label>
         <input
           type="text"
           placeholder="Ex: São Paulo, Zona Sul, Pinheiros..."
           className="w-full px-3 py-2 border rounded-lg"
-          onKeyPress={(e) => {
+          onKeyPress={e => {
             if (e.key === 'Enter') {
               const input = e.currentTarget;
               if (input.value.trim()) {
@@ -679,10 +703,15 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
         />
         <div className="flex flex-wrap gap-2 mt-2">
           {data.serviceAreas.map((area, idx) => (
-            <span key={idx} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+            <span
+              key={idx}
+              className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-2"
+            >
               {area}
               <button
-                onClick={() => updateData({ serviceAreas: data.serviceAreas.filter((_, i) => i !== idx) })}
+                onClick={() =>
+                  updateData({ serviceAreas: data.serviceAreas.filter((_, i) => i !== idx) })
+                }
                 className="text-blue-600 hover:text-blue-800"
               >
                 ×
@@ -703,15 +732,15 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
         >
           + Adicionar Certificação
         </button>
-        
+
         <div className="mt-4 space-y-3">
-          {data.certifications.map((cert) => (
+          {data.certifications.map(cert => (
             <div key={cert.id} className="border rounded-lg p-4 bg-gray-50">
               <div className="flex justify-between items-start mb-2">
                 <input
                   type="text"
                   value={cert.name}
-                  onChange={(e) => handleUpdateCertification(cert.id, { name: e.target.value })}
+                  onChange={e => handleUpdateCertification(cert.id, { name: e.target.value })}
                   placeholder="Nome do certificado"
                   className="flex-1 px-2 py-1 border rounded"
                 />
@@ -725,7 +754,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
               <input
                 type="text"
                 value={cert.issuer || ''}
-                onChange={(e) => handleUpdateCertification(cert.id, { issuer: e.target.value })}
+                onChange={e => handleUpdateCertification(cert.id, { issuer: e.target.value })}
                 placeholder="Instituição emissora"
                 className="w-full px-2 py-1 border rounded mb-2"
               />
@@ -735,7 +764,10 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => e.target.files?.[0] && handleCertificationImageUpload(cert.id, e.target.files[0])}
+                  onChange={e =>
+                    e.target.files?.[0] &&
+                    handleCertificationImageUpload(cert.id, e.target.files[0])
+                  }
                 />
               </label>
               {cert.verified && (
@@ -751,7 +783,10 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
       {error && <p className="text-sm text-red-600 text-center">{error}</p>}
 
       <div className="flex gap-4">
-        <button onClick={handleBack} className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
+        <button
+          onClick={handleBack}
+          className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+        >
           Voltar
         </button>
         <button
@@ -769,9 +804,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-800">Apresentação Profissional</h2>
-        <p className="mt-2 text-gray-600">
-          Use a IA para criar uma bio otimizada para SEO
-        </p>
+        <p className="mt-2 text-gray-600">Use a IA para criar uma bio otimizada para SEO</p>
       </div>
 
       {/* Headline */}
@@ -782,7 +815,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
         <input
           type="text"
           value={data.headline || ''}
-          onChange={(e) => updateData({ headline: e.target.value })}
+          onChange={e => updateData({ headline: e.target.value })}
           placeholder="Ex: Eletricista Certificado com 10 anos de experiência"
           className="w-full px-3 py-2 border rounded-lg"
           maxLength={60}
@@ -797,7 +830,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
         </label>
         <textarea
           value={bioInput}
-          onChange={(e) => setBioInput(e.target.value)}
+          onChange={e => setBioInput(e.target.value)}
           placeholder="Ex: Trabalho principalmente com instalações residenciais, tenho especialização em sistemas smart home..."
           className="w-full px-3 py-2 border rounded-lg"
           rows={3}
@@ -815,9 +848,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
             Gerando com IA...
           </>
         ) : (
-          <>
-            ✨ Gerar Bio com IA
-          </>
+          <>✨ Gerar Bio com IA</>
         )}
       </button>
 
@@ -825,11 +856,14 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
       {data.bio && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Sua Bio Profissional {data.aiGeneratedBio && <span className="text-purple-600 text-xs">✨ Gerada por IA</span>}
+            Sua Bio Profissional{' '}
+            {data.aiGeneratedBio && (
+              <span className="text-purple-600 text-xs">✨ Gerada por IA</span>
+            )}
           </label>
           <textarea
             value={data.bio}
-            onChange={(e) => updateData({ bio: e.target.value, aiGeneratedBio: false })}
+            onChange={e => updateData({ bio: e.target.value, aiGeneratedBio: false })}
             className="w-full px-3 py-2 border rounded-lg"
             rows={6}
           />
@@ -838,14 +872,12 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
 
       {/* Especialidades */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Especialidades
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Especialidades</label>
         <input
           type="text"
           placeholder="Digite e pressione Enter"
           className="w-full px-3 py-2 border rounded-lg"
-          onKeyPress={(e) => {
+          onKeyPress={e => {
             if (e.key === 'Enter') {
               const input = e.currentTarget;
               if (input.value.trim()) {
@@ -857,9 +889,15 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
         />
         <div className="flex flex-wrap gap-2 mt-2">
           {data.specialties.map((spec, idx) => (
-            <span key={idx} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+            <span
+              key={idx}
+              className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center gap-2"
+            >
               {spec}
-              <button onClick={() => handleRemoveSpecialty(spec)} className="text-purple-600 hover:text-purple-800">
+              <button
+                onClick={() => handleRemoveSpecialty(spec)}
+                className="text-purple-600 hover:text-purple-800"
+              >
                 ×
               </button>
             </span>
@@ -869,14 +907,12 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
 
       {/* Diferenciais */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Seus Diferenciais
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Seus Diferenciais</label>
         <input
           type="text"
           placeholder="Ex: Garantia de 1 ano, Atendimento 24h..."
           className="w-full px-3 py-2 border rounded-lg"
-          onKeyPress={(e) => {
+          onKeyPress={e => {
             if (e.key === 'Enter') {
               const input = e.currentTarget;
               if (input.value.trim()) {
@@ -891,7 +927,10 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
             <div key={idx} className="flex items-center gap-2 bg-green-50 px-3 py-2 rounded">
               <span className="text-green-600">✓</span>
               <span className="flex-1 text-gray-700">{diff}</span>
-              <button onClick={() => handleRemoveDifferential(diff)} className="text-red-600 hover:text-red-800">
+              <button
+                onClick={() => handleRemoveDifferential(diff)}
+                className="text-red-600 hover:text-red-800"
+              >
                 ×
               </button>
             </div>
@@ -902,7 +941,10 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
       {error && <p className="text-sm text-red-600 text-center">{error}</p>}
 
       <div className="flex gap-4">
-        <button onClick={handleBack} className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
+        <button
+          onClick={handleBack}
+          className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+        >
           Voltar
         </button>
         <button
@@ -920,15 +962,23 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-800">Portfólio de Trabalhos</h2>
-        <p className="mt-2 text-gray-600">
-          Mostre seus melhores trabalhos (máx. 10 fotos)
-        </p>
+        <p className="mt-2 text-gray-600">Mostre seus melhores trabalhos (máx. 10 fotos)</p>
       </div>
 
       {/* Upload Area */}
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors">
-        <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        <svg
+          className="mx-auto h-12 w-12 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+          />
         </svg>
         <p className="mt-2 text-sm text-gray-600">
           A IA analisará suas fotos e sugerirá títulos e descrições
@@ -941,30 +991,28 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
             multiple
             className="hidden"
             disabled={uploadingPortfolio || data.portfolio.length >= 10}
-            onChange={(e) => e.target.files && handlePortfolioUpload(e.target.files)}
+            onChange={e => e.target.files && handlePortfolioUpload(e.target.files)}
           />
         </label>
-        <p className="text-xs text-gray-500 mt-2">
-          {data.portfolio.length}/10 fotos
-        </p>
+        <p className="text-xs text-gray-500 mt-2">{data.portfolio.length}/10 fotos</p>
       </div>
 
       {/* Portfolio Items */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {data.portfolio.map((item) => (
+        {data.portfolio.map(item => (
           <div key={item.id} className="border rounded-lg overflow-hidden bg-white shadow-sm">
             <img src={item.imageUrl} alt={item.title} className="w-full h-48 object-cover" />
             <div className="p-4">
               <input
                 type="text"
                 value={item.title}
-                onChange={(e) => handleUpdatePortfolioItem(item.id, { title: e.target.value })}
+                onChange={e => handleUpdatePortfolioItem(item.id, { title: e.target.value })}
                 placeholder="Título do trabalho"
                 className="w-full px-2 py-1 border rounded mb-2 font-semibold"
               />
               <textarea
                 value={item.description || ''}
-                onChange={(e) => handleUpdatePortfolioItem(item.id, { description: e.target.value })}
+                onChange={e => handleUpdatePortfolioItem(item.id, { description: e.target.value })}
                 placeholder="Descrição do trabalho"
                 className="w-full px-2 py-1 border rounded text-sm"
                 rows={2}
@@ -983,7 +1031,10 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
       {error && <p className="text-sm text-red-600 text-center">{error}</p>}
 
       <div className="flex gap-4">
-        <button onClick={handleBack} className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
+        <button
+          onClick={handleBack}
+          className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+        >
           Voltar
         </button>
         <button
@@ -1008,8 +1059,18 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6">
         <div className="flex items-start gap-4">
           <div className="bg-blue-600 rounded-full p-3">
-            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              className="w-6 h-6 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
           </div>
           <div className="flex-1">
@@ -1044,24 +1105,25 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
               Conectando...
             </>
           ) : (
-            <>
-              🔗 Conectar com Stripe
-            </>
+            <>🔗 Conectar com Stripe</>
           )}
         </button>
       )}
 
       <div className="bg-gray-50 rounded-lg p-4">
         <p className="text-xs text-gray-600">
-          <strong>Importante:</strong> Você será redirecionado para o Stripe para completar o cadastro.
-          Precisará fornecer dados bancários e documentos para verificação.
+          <strong>Importante:</strong> Você será redirecionado para o Stripe para completar o
+          cadastro. Precisará fornecer dados bancários e documentos para verificação.
         </p>
       </div>
 
       {error && <p className="text-sm text-red-600 text-center">{error}</p>}
 
       <div className="flex gap-4">
-        <button onClick={handleBack} className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
+        <button
+          onClick={handleBack}
+          className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+        >
           Voltar
         </button>
         <button
@@ -1079,21 +1141,22 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-800">Revisar e Publicar</h2>
-        <p className="mt-2 text-gray-600">
-          Confira seu perfil antes de publicar
-        </p>
+        <p className="mt-2 text-gray-600">Confira seu perfil antes de publicar</p>
       </div>
 
       {/* Preview Card */}
       <div className="border-2 border-gray-200 rounded-xl overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 h-32"></div>
-        
+
         {/* Profile Info */}
         <div className="px-6 pb-6">
           <div className="-mt-16 mb-4">
             <div className="w-32 h-32 bg-white rounded-full border-4 border-white shadow-lg flex items-center justify-center text-4xl font-bold text-blue-600">
-              {(data.providerType === 'empresa' && data.companyName ? data.companyName : user.name).charAt(0)}
+              {(data.providerType === 'empresa' && data.companyName
+                ? data.companyName
+                : user.name
+              ).charAt(0)}
             </div>
           </div>
 
@@ -1101,7 +1164,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
             {data.providerType === 'empresa' && data.companyName ? data.companyName : user.name}
           </h3>
           <p className="text-lg text-gray-600 mt-1">{data.headline}</p>
-          
+
           <div className="flex flex-wrap gap-2 mt-3">
             <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
               {data.category}
@@ -1128,7 +1191,10 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
               <h4 className="font-semibold text-gray-800 mb-2">Especialidades</h4>
               <div className="flex flex-wrap gap-2">
                 {data.specialties.map((spec, idx) => (
-                  <span key={idx} className="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-sm">
+                  <span
+                    key={idx}
+                    className="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-sm"
+                  >
                     {spec}
                   </span>
                 ))}
@@ -1156,7 +1222,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
             <div className="mt-6">
               <h4 className="font-semibold text-gray-800 mb-3">Portfólio</h4>
               <div className="grid grid-cols-3 gap-2">
-                {data.portfolio.slice(0, 6).map((item) => (
+                {data.portfolio.slice(0, 6).map(item => (
                   <img
                     key={item.id}
                     src={item.imageUrl}
@@ -1178,7 +1244,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
             <div className="mt-6">
               <h4 className="font-semibold text-gray-800 mb-2">Certificações</h4>
               <div className="space-y-2">
-                {data.certifications.map((cert) => (
+                {data.certifications.map(cert => (
                   <div key={cert.id} className="flex items-center gap-2 text-sm">
                     <span className="text-blue-600">📜</span>
                     <span className="text-gray-700">{cert.name}</span>
@@ -1202,15 +1268,18 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
       {/* Confirmation */}
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
         <p className="text-sm text-yellow-800">
-          ⚠️ <strong>Atenção:</strong> Seu perfil será analisado pela nossa equipe.
-          A verificação pode levar até 24 horas. Você receberá um email quando for aprovado.
+          ⚠️ <strong>Atenção:</strong> Seu perfil será analisado pela nossa equipe. A verificação
+          pode levar até 24 horas. Você receberá um email quando for aprovado.
         </p>
       </div>
 
       {error && <p className="text-sm text-red-600 text-center">{error}</p>}
 
       <div className="flex gap-4">
-        <button onClick={handleBack} className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
+        <button
+          onClick={handleBack}
+          className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+        >
           Voltar
         </button>
         <button
@@ -1234,9 +1303,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">
-              Etapa {currentStep} de 6
-            </span>
+            <span className="text-sm font-medium text-gray-700">Etapa {currentStep} de 6</span>
             <span className="text-sm text-gray-500">
               {Math.round((currentStep / 6) * 100)}% completo
             </span>
@@ -1251,7 +1318,7 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
 
         {/* Step Indicators */}
         <div className="flex justify-between mb-8">
-          {[1, 2, 3, 4, 5, 6].map((step) => (
+          {[1, 2, 3, 4, 5, 6].map(step => (
             <div
               key={step}
               className={`flex flex-col items-center ${
@@ -1260,14 +1327,16 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({ use
             >
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                  step <= currentStep
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-300 bg-white'
+                  step <= currentStep ? 'border-blue-600 bg-blue-50' : 'border-gray-300 bg-white'
                 }`}
               >
                 {step < currentStep ? (
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 ) : (
                   <span className="text-sm font-semibold">{step}</span>

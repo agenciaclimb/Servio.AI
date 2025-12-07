@@ -35,7 +35,7 @@ describe('Tooltip', () => {
     );
 
     const wrapper = screen.getByTestId('tooltip-wrapper');
-    
+
     fireEvent.mouseEnter(wrapper);
     expect(screen.getByTestId('tooltip-content')).toBeInTheDocument();
 

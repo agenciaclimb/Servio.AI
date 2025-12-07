@@ -20,7 +20,17 @@ function scoreColor(score: number) {
   return 'from-red-500 to-red-300';
 }
 
-function ProspectCardV2({ lead, density = 'compact', selected = false, onClick, onSelect, onUpdate, onWhatsApp, onEmail, onToggleAutomation }: ProspectCardV2Props) {
+function ProspectCardV2({
+  lead,
+  density = 'compact',
+  selected = false,
+  onClick,
+  onSelect,
+  onUpdate,
+  onWhatsApp,
+  onEmail,
+  onToggleAutomation,
+}: ProspectCardV2Props) {
   const gradient = scoreColor(lead.score ?? 0);
   const [editingName, setEditingName] = useState(false);
   const [editingSource, setEditingSource] = useState(false);
@@ -58,12 +68,19 @@ function ProspectCardV2({ lead, density = 'compact', selected = false, onClick, 
   };
 
   const tempIcon = lead.temperature === 'hot' ? '🔥' : lead.temperature === 'warm' ? '⚡' : '❄️';
-  const priorityColor = lead.priority === 'high' ? 'bg-red-100 text-red-700' : lead.priority === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600';
+  const priorityColor =
+    lead.priority === 'high'
+      ? 'bg-red-100 text-red-700'
+      : lead.priority === 'medium'
+        ? 'bg-amber-100 text-amber-700'
+        : 'bg-gray-100 text-gray-600';
 
   return (
     <div
       className={`group rounded-xl border-2 bg-white shadow-sm hover:shadow-lg transition-all duration-200 relative overflow-hidden ${
-        selected ? 'ring-2 ring-indigo-500 border-indigo-300 shadow-md' : 'border-gray-200 hover:border-indigo-200'
+        selected
+          ? 'ring-2 ring-indigo-500 border-indigo-300 shadow-md'
+          : 'border-gray-200 hover:border-indigo-200'
       } ${onClick ? 'cursor-pointer hover:scale-[1.02]' : ''}`}
       onClick={editingName || editingSource ? undefined : onClick}
       role="button"
@@ -71,7 +88,7 @@ function ProspectCardV2({ lead, density = 'compact', selected = false, onClick, 
     >
       {/* Barra de temperatura no topo */}
       <div className={`h-1 w-full bg-gradient-to-r ${gradient}`} />
-      
+
       {onSelect && (
         <div className="absolute top-3 left-3 z-10">
           <input
@@ -83,8 +100,10 @@ function ProspectCardV2({ lead, density = 'compact', selected = false, onClick, 
           />
         </div>
       )}
-      
-      <div className={`p-4 ${density === 'compact' ? 'space-y-2' : 'space-y-3'} ${onSelect ? 'pl-10' : ''}`}>
+
+      <div
+        className={`p-4 ${density === 'compact' ? 'space-y-2' : 'space-y-3'} ${onSelect ? 'pl-10' : ''}`}
+      >
         {/* Nome e score bar */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
@@ -116,12 +135,14 @@ function ProspectCardV2({ lead, density = 'compact', selected = false, onClick, 
               <div className="mt-2">
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className={`h-full bg-gradient-to-r ${gradient} transition-all duration-500`}
                       style={{ width: `${lead.score}%` }}
                     />
                   </div>
-                  <span className="text-xs font-bold text-gray-600 min-w-[2rem] text-right">{lead.score}</span>
+                  <span className="text-xs font-bold text-gray-600 min-w-[2rem] text-right">
+                    {lead.score}
+                  </span>
                 </div>
               </div>
             )}
@@ -131,7 +152,9 @@ function ProspectCardV2({ lead, density = 'compact', selected = false, onClick, 
               {tempIcon}
             </span>
             {lead.temperature && (
-              <span className="text-xs font-semibold text-gray-500 capitalize">{lead.temperature}</span>
+              <span className="text-xs font-semibold text-gray-500 capitalize">
+                {lead.temperature}
+              </span>
             )}
           </div>
         </div>
@@ -139,7 +162,9 @@ function ProspectCardV2({ lead, density = 'compact', selected = false, onClick, 
         {/* Badges de metadados */}
         <div className="flex flex-wrap items-center gap-1.5">
           {lead.priority && (
-            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${priorityColor}`}>
+            <span
+              className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${priorityColor}`}
+            >
               {lead.priority === 'high' ? '🔴' : lead.priority === 'medium' ? '🟡' : '⚪'}
               {lead.priority}
             </span>
@@ -162,7 +187,9 @@ function ProspectCardV2({ lead, density = 'compact', selected = false, onClick, 
             {lead.email && (
               <div className="flex items-center gap-2 text-xs text-gray-600">
                 <span>✉️</span>
-                <span className="truncate" title={lead.email}>{lead.email}</span>
+                <span className="truncate" title={lead.email}>
+                  {lead.email}
+                </span>
               </div>
             )}
             {lead.phone && (
@@ -203,19 +230,33 @@ function ProspectCardV2({ lead, density = 'compact', selected = false, onClick, 
           <div className="mt-3 space-y-1">
             <div className="text-xs font-semibold text-gray-700">Histórico recente</div>
             <ul className="space-y-1">
-              {lead.activities.slice(-3).reverse().map((a, idx) => (
-                <li key={idx} className="flex items-center gap-2 text-xs text-gray-600">
-                  <span>
-                    {a.type === 'call' ? '📞' : a.type === 'email' ? '✉️' : a.type === 'message' ? '💬' : a.type === 'stage_change' ? '🔀' : '📝'}
-                  </span>
-                  <span className="truncate flex-1">{a.description}</span>
-                  {a.timestamp && (
-                    <span className="text-gray-400" title={new Date(a.timestamp).toLocaleString()}>
-                      {formatRelativeTime(new Date(a.timestamp))}
+              {lead.activities
+                .slice(-3)
+                .reverse()
+                .map((a, idx) => (
+                  <li key={idx} className="flex items-center gap-2 text-xs text-gray-600">
+                    <span>
+                      {a.type === 'call'
+                        ? '📞'
+                        : a.type === 'email'
+                          ? '✉️'
+                          : a.type === 'message'
+                            ? '💬'
+                            : a.type === 'stage_change'
+                              ? '🔀'
+                              : '📝'}
                     </span>
-                  )}
-                </li>
-              ))}
+                    <span className="truncate flex-1">{a.description}</span>
+                    {a.timestamp && (
+                      <span
+                        className="text-gray-400"
+                        title={new Date(a.timestamp).toLocaleString()}
+                      >
+                        {formatRelativeTime(new Date(a.timestamp))}
+                      </span>
+                    )}
+                  </li>
+                ))}
             </ul>
           </div>
         )}
@@ -225,7 +266,10 @@ function ProspectCardV2({ lead, density = 'compact', selected = false, onClick, 
           <button
             type="button"
             className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-md bg-green-50 text-green-700 border border-green-200 hover:bg-green-100"
-            onClick={e => { e.stopPropagation(); onWhatsApp?.(lead); }}
+            onClick={e => {
+              e.stopPropagation();
+              onWhatsApp?.(lead);
+            }}
             disabled={!lead.phone}
             title={lead.phone ? `WhatsApp para ${lead.phone}` : 'Sem telefone'}
           >
@@ -234,7 +278,10 @@ function ProspectCardV2({ lead, density = 'compact', selected = false, onClick, 
           <button
             type="button"
             className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100"
-            onClick={e => { e.stopPropagation(); onEmail?.(lead); }}
+            onClick={e => {
+              e.stopPropagation();
+              onEmail?.(lead);
+            }}
             disabled={!lead.email}
             title={lead.email ? `Email para ${lead.email}` : 'Sem email'}
           >
@@ -243,7 +290,10 @@ function ProspectCardV2({ lead, density = 'compact', selected = false, onClick, 
           <button
             type="button"
             className="ml-auto inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-md bg-yellow-50 text-yellow-700 border border-yellow-200 hover:bg-yellow-100"
-            onClick={e => { e.stopPropagation(); onToggleAutomation?.(lead); }}
+            onClick={e => {
+              e.stopPropagation();
+              onToggleAutomation?.(lead);
+            }}
             title="Ativar/Desativar automação"
           >
             ⚙️ Automação
@@ -259,7 +309,18 @@ function arePropsEqual(prev: ProspectCardV2Props, next: ProspectCardV2Props): bo
   // Early exit se diferentes referências e objetos
   if (prev.lead !== next.lead) {
     // Comparar campos críticos apenas
-    const criticalFields: Array<keyof ProspectLead> = ['id', 'name', 'score', 'temperature', 'priority', 'stage', 'followUpDate', 'source', 'email', 'phone'];
+    const criticalFields: Array<keyof ProspectLead> = [
+      'id',
+      'name',
+      'score',
+      'temperature',
+      'priority',
+      'stage',
+      'followUpDate',
+      'source',
+      'email',
+      'phone',
+    ];
     for (const field of criticalFields) {
       if (prev.lead[field] !== next.lead[field]) return false;
     }

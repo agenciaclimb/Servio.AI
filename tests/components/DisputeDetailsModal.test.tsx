@@ -41,8 +41,18 @@ const mockDispute: Dispute = {
   reason: 'Serviço incompleto',
   description: 'Problema no reparo',
   messages: [
-    { id: 'm1', senderId: 'client@example.com', text: 'Serviço não concluído', timestamp: new Date().toISOString() },
-    { id: 'm2', senderId: 'provider@example.com', text: 'Vou verificar', timestamp: new Date().toISOString() },
+    {
+      id: 'm1',
+      senderId: 'client@example.com',
+      text: 'Serviço não concluído',
+      timestamp: new Date().toISOString(),
+    },
+    {
+      id: 'm2',
+      senderId: 'provider@example.com',
+      text: 'Vou verificar',
+      timestamp: new Date().toISOString(),
+    },
   ],
   createdAt: new Date().toISOString(),
 };
@@ -129,7 +139,7 @@ describe('DisputeDetailsModal', () => {
 
     const form = textarea.closest('form');
     expect(form).toBeInTheDocument();
-    
+
     if (form) {
       fireEvent.submit(form);
       expect(mockOnSendMessage).toHaveBeenCalledWith('d1', 'Nova mensagem');
@@ -152,7 +162,7 @@ describe('DisputeDetailsModal', () => {
 
     const textarea = screen.getByPlaceholderText(/Digite sua mensagem/i);
     const form = textarea.closest('form');
-    
+
     if (form) {
       fireEvent.submit(form);
       expect(mockOnSendMessage).not.toHaveBeenCalled();
@@ -163,9 +173,24 @@ describe('DisputeDetailsModal', () => {
     const disputeComAdmin = {
       ...mockDispute,
       messages: [
-        { id: 'm1', senderId: 'client@example.com', text: 'Msg Cliente', timestamp: new Date().toISOString() },
-        { id: 'm2', senderId: 'provider@example.com', text: 'Msg Prestador', timestamp: new Date().toISOString() },
-        { id: 'm3', senderId: 'admin@servio.ai', text: 'Msg Admin', timestamp: new Date().toISOString() },
+        {
+          id: 'm1',
+          senderId: 'client@example.com',
+          text: 'Msg Cliente',
+          timestamp: new Date().toISOString(),
+        },
+        {
+          id: 'm2',
+          senderId: 'provider@example.com',
+          text: 'Msg Prestador',
+          timestamp: new Date().toISOString(),
+        },
+        {
+          id: 'm3',
+          senderId: 'admin@servio.ai',
+          text: 'Msg Admin',
+          timestamp: new Date().toISOString(),
+        },
       ],
     };
 

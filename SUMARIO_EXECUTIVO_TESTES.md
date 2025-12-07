@@ -11,6 +11,7 @@
 ## 📊 O QUE FOI CRIADO
 
 ### 1️⃣ Documentação Completa
+
 - ✅ **PLANO_TESTES_COMPLETO.md** - Estratégia abrangente com 500+ casos de teste
   - Todas as jornadas (Cliente, Prestador, Admin)
   - Todas as páginas e componentes
@@ -21,7 +22,9 @@
 ### 2️⃣ Testes E2E das Jornadas Principais ✅ CRIADOS
 
 #### 📱 **Cliente** (`tests/e2e/client-complete-journey.spec.ts`)
+
 **8 testes completos** cobrindo:
+
 1. Cadastro e Login
 2. Criar Serviço com IA (wizard completo)
 3. Receber e Aceitar Propostas (comparação de prestadores)
@@ -32,7 +35,9 @@
 8. Gerenciar Itens (CRUD completo)
 
 #### 🔧 **Prestador** (`tests/e2e/provider-complete-journey.spec.ts`)
+
 **12 testes completos** cobrindo:
+
 1. Cadastro
 2. Onboarding Passo 1 (perfil básico)
 3. Onboarding Passo 2 (especialidades)
@@ -47,7 +52,9 @@
 12. Leilão (dar lances, ganhar job)
 
 #### 👨‍💼 **Admin** (`tests/e2e/admin-complete-journey.spec.ts`)
+
 **9 testes completos** cobrindo:
+
 1. Login Admin
 2. Dashboard (KPIs e métricas)
 3. Aprovar Prestadores (onboarding)
@@ -63,16 +70,19 @@
 ## 📈 COBERTURA ATUAL
 
 ### Testes Existentes
+
 - ✅ **439 testes passando** (363 frontend + 76 backend)
 - ✅ **CI/CD**: Todos os workflows funcionando (GitHub Actions)
 - ✅ **SonarCloud**: Análise automática configurada
 
 ### Cobertura de Código
+
 - **Overall**: 54.62%
 - **Novo Código**: 68.97% (alvo: 80%+)
 - **Issues**: 205 (-88 de melhoria)
 
 ### Quality Gate Status 🔴
+
 - ❌ **Reliability Rating on New Code**: C (alvo: A)
 - ❌ **Coverage on New Code**: 68.97% (alvo: 80%)
 
@@ -83,6 +93,7 @@
 ### 🔥 PRIORIDADE 1: Aumentar Cobertura para 80%+ (1-2 dias)
 
 #### Estratégia
+
 1. **Testes Unitários** para componentes críticos (100% obrigatório):
    - `services/api.ts` - Chamadas de API
    - `services/geminiService.ts` - Integrações IA
@@ -98,15 +109,18 @@
    - `components/AIJobRequestWizard.tsx`
 
 3. **Executar Coverage Report**:
+
    ```bash
    npm test -- --coverage
    ```
+
    - Identificar linhas não cobertas
    - Criar testes específicos para essas linhas
 
 ### 🔥 PRIORIDADE 2: Corrigir Bugs para Rating A (1-2 dias)
 
 #### Ações
+
 1. **Acessar SonarCloud**: https://sonarcloud.io/project/issues?id=agenciaclimb_Servio.AI&resolved=false&types=BUG
 2. **Filtrar bugs em código novo**: `inNewCodePeriod=true`
 3. **Priorizar por severidade**: BLOCKER → CRITICAL → MAJOR
@@ -119,13 +133,16 @@
 ### 🔥 PRIORIDADE 3: Executar Testes E2E (2-3 dias)
 
 #### Opção A: Com Vitest + Testing Library (Atual)
+
 ```bash
 npm test -- tests/e2e/ --run
 ```
+
 **Vantagem**: Rápido, sem setup adicional  
 **Desvantagem**: Não testa integração real browser
 
 #### Opção B: Com Playwright (Recomendado)
+
 ```bash
 # Instalar Playwright
 npm install -D @playwright/test
@@ -136,20 +153,24 @@ npm install -D @playwright/test
 # Executar
 npx playwright test
 ```
+
 **Vantagem**: Testa browser real, screenshots, vídeos  
 **Desvantagem**: Requer configuração e browser headless
 
 #### Opção C: Com Cypress (Já configurado)
+
 ```bash
 # Cypress já tem alguns testes em doc/
 npx cypress open
 ```
+
 **Vantagem**: UI interativa, debugging visual  
 **Desvantagem**: Testes em `doc/` são stubs, precisam ser expandidos
 
 ### 🔥 PRIORIDADE 4: Validar Páginas e Modais (1-2 dias)
 
 #### Checklist
+
 - [ ] Todas as páginas renderizam sem erros
 - [ ] Todos os modais abrem e fecham
 - [ ] Todos os formulários validam corretamente
@@ -160,6 +181,7 @@ npx cypress open
 ### 🔥 PRIORIDADE 5: Performance e Acessibilidade (1 dia)
 
 #### Lighthouse Audits
+
 ```bash
 # Instalar lighthouse
 npm install -D @lhci/cli
@@ -170,12 +192,14 @@ lhci autorun
 ```
 
 **Alvos**:
+
 - Performance: > 90
 - Accessibility: 100
 - Best Practices: > 90
 - SEO: 100
 
 #### WCAG 2.1 AA
+
 - Navegação por teclado (Tab, Enter, Esc)
 - Leitores de tela (ARIA labels)
 - Contraste de cores adequado (4.5:1)
@@ -184,12 +208,14 @@ lhci autorun
 ### 🔥 PRIORIDADE 6: Validação Final em Produção (1 dia)
 
 #### Smoke Tests
+
 ```bash
 # Após deploy
 npm run test:smoke -- --url=https://servio.ai
 ```
 
 #### Monitoramento 24h
+
 - Sentry: Erros em tempo real
 - Analytics: Comportamento dos usuários
 - Logs: Identificar anomalias
@@ -199,6 +225,7 @@ npm run test:smoke -- --url=https://servio.ai
 ## 🎯 CRITÉRIOS DE LANÇAMENTO
 
 ### ✅ BLOQUEADORES (Não lança sem isso)
+
 - [ ] **100% dos flows principais testados**
 - [ ] **0 bugs críticos ou blockers**
 - [ ] **SonarCloud Quality Gate PASSED**
@@ -213,6 +240,7 @@ npm run test:smoke -- --url=https://servio.ai
 - [ ] **IA respondendo OU fallback funcionando**
 
 ### ⚠️ RECOMENDAÇÕES (Lança com ressalvas)
+
 - [ ] Analytics configurado e funcionando
 - [ ] Monitoramento de erros (Sentry)
 - [ ] Backup automático de dados
@@ -224,11 +252,13 @@ npm run test:smoke -- --url=https://servio.ai
 ## 📚 RECURSOS CRIADOS
 
 ### Documentos
+
 1. **PLANO_TESTES_COMPLETO.md** - Estratégia completa (este arquivo)
 2. **SUMARIO_EXECUTIVO_TESTES.md** - Sumário para stakeholders (este arquivo)
 3. **TODO.md** - Lista de tarefas (já existia, atualizada)
 
 ### Testes E2E
+
 1. `tests/e2e/client-complete-journey.spec.ts` (8 testes, 400+ linhas)
 2. `tests/e2e/provider-complete-journey.spec.ts` (12 testes, 600+ linhas)
 3. `tests/e2e/admin-complete-journey.spec.ts` (9 testes, 500+ linhas)
@@ -236,6 +266,7 @@ npm run test:smoke -- --url=https://servio.ai
 **Total**: 29 testes E2E cobrindo todas as jornadas principais
 
 ### Testes Unitários (já existentes)
+
 - `tests/AIJobRequestWizard.coverage.test.tsx` (15 testes)
 - `tests/ClientDashboard.coverage.test.tsx` (8 testes)
 - Outros 416 testes em diversos arquivos
@@ -245,6 +276,7 @@ npm run test:smoke -- --url=https://servio.ai
 ## 💡 RECOMENDAÇÕES FINAIS
 
 ### Para o Time de Desenvolvimento
+
 1. **Priorize qualidade sobre velocidade**
    - Melhor atrasar 1 semana do que lançar com bugs
    - Bugs em produção custam 10x mais caro
@@ -258,6 +290,7 @@ npm run test:smoke -- --url=https://servio.ai
    - Analytics deve mostrar comportamento real dos usuários
 
 ### Para os Stakeholders
+
 1. **Expectativas realistas**
    - Implementar testes completos leva 1-2 semanas
    - Qualidade é investimento, não custo
@@ -277,16 +310,19 @@ npm run test:smoke -- --url=https://servio.ai
 ## 📅 CRONOGRAMA SUGERIDO
 
 ### Semana 1
+
 - **Dia 1-2**: Aumentar cobertura para 80%+
 - **Dia 3-4**: Corrigir bugs SonarCloud (Rating A)
 - **Dia 5**: Quality Gate verde ✅
 
 ### Semana 2
+
 - **Dia 1-3**: Executar e validar testes E2E
 - **Dia 4**: Performance e acessibilidade (Lighthouse)
 - **Dia 5**: Preparação para deploy
 
 ### Semana 3
+
 - **Dia 1**: Deploy para produção
 - **Dia 2-7**: Monitoramento intensivo 24h
 
@@ -297,6 +333,7 @@ npm run test:smoke -- --url=https://servio.ai
 ## 🎖️ CONCLUSÃO
 
 Este plano de testes é **o mais abrangente possível** e garante que:
+
 - ✅ Todas as funcionalidades são testadas
 - ✅ Toda a experiência do usuário é validada
 - ✅ Todas as páginas e componentes funcionam
@@ -310,6 +347,7 @@ Este plano de testes é **o mais abrangente possível** e garante que:
 ## 📞 CONTATO
 
 Para dúvidas ou sugestões sobre este plano:
+
 - **GitHub Issues**: https://github.com/agenciaclimb/Servio.AI/issues
 - **SonarCloud**: https://sonarcloud.io/project/overview?id=agenciaclimb_Servio.AI
 - **CI/CD**: https://github.com/agenciaclimb/Servio.AI/actions

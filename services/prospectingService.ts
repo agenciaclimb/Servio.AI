@@ -89,10 +89,9 @@ export async function triggerAutoProspecting(
     }
 
     const result: ProspectingResult = await response.json();
-    
+
     logInfo('[ProspectingService] Auto-prospecting completed:', result);
     return result;
-
   } catch (error) {
     logError('[ProspectingService] Auto-prospecting failed:', error);
     return {
@@ -127,7 +126,6 @@ export async function searchGoogleForProviders(
 
     const results: GoogleSearchResult[] = await response.json();
     return results;
-
   } catch (error) {
     logError('[ProspectingService] Google search failed:', error);
     return [];
@@ -158,7 +156,6 @@ export async function sendProspectInvitation(
     });
 
     return response.ok;
-
   } catch (error) {
     logError('[ProspectingService] Failed to send invitation:', error);
     return false;
@@ -191,7 +188,6 @@ export async function notifyProspectingTeam(
     });
 
     return response.ok;
-
   } catch (error) {
     logError('[ProspectingService] Failed to notify team:', error);
     return false;
@@ -223,16 +219,17 @@ export async function saveProspect(
         source,
         status: 'pendente',
         createdAt: new Date().toISOString(),
-        notes: [{
-          text: `Auto-prospectado para ${category} em ${location}`,
-          createdAt: new Date().toISOString(),
-          createdBy: 'system',
-        }],
+        notes: [
+          {
+            text: `Auto-prospectado para ${category} em ${location}`,
+            createdAt: new Date().toISOString(),
+            createdBy: 'system',
+          },
+        ],
       }),
     });
 
     return response.ok;
-
   } catch (error) {
     console.error('[ProspectingService] Failed to save prospect:', error);
     return false;
@@ -265,7 +262,6 @@ export async function analyzeProspectWithAI(
     }
 
     return await response.json();
-
   } catch (error) {
     console.error('[ProspectingService] AI analysis failed:', error);
     return {
@@ -304,7 +300,6 @@ export async function generatePersonalizedEmail(
     if (!response.ok) throw new Error('Email generation failed');
     const result = await response.json();
     return result.emailBody;
-
   } catch (error) {
     console.error('[ProspectingService] Email generation failed:', error);
     return `Olá ${prospect.name},\n\nTemos um cliente procurando por ${jobCategory} em ${jobLocation}.\n\nGostaríamos de convidá-lo(a) para participar deste projeto!\n\nCadastre-se: https://servio-ai.com/register?type=provider\n\nEquipe Servio.AI`;
@@ -324,7 +319,12 @@ export async function sendMultiChannelInvite(
 
   if (channels.includes('email') && prospect.email) {
     await generatePersonalizedEmail(prospect, jobCategory, jobLocation);
-    results.email = await sendProspectInvitation(prospect.email, prospect.name, jobCategory, jobLocation);
+    results.email = await sendProspectInvitation(
+      prospect.email,
+      prospect.name,
+      jobCategory,
+      jobLocation
+    );
   }
 
   if (channels.includes('sms') && prospect.phone) {
@@ -332,10 +332,17 @@ export async function sendMultiChannelInvite(
       const response = await fetch(`${BACKEND_URL}/api/send-sms-invite`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: prospect.phone, name: prospect.name, category: jobCategory, location: jobLocation }),
+        body: JSON.stringify({
+          phone: prospect.phone,
+          name: prospect.name,
+          category: jobCategory,
+          location: jobLocation,
+        }),
       });
       results.sms = response.ok;
-    } catch (error) { console.error('[ProspectingService] SMS failed:', error); }
+    } catch (error) {
+      console.error('[ProspectingService] SMS failed:', error);
+    }
   }
 
   if (channels.includes('whatsapp') && prospect.phone) {
@@ -343,10 +350,17 @@ export async function sendMultiChannelInvite(
       const response = await fetch(`${BACKEND_URL}/api/send-whatsapp-invite`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: prospect.phone, name: prospect.name, category: jobCategory, location: jobLocation }),
+        body: JSON.stringify({
+          phone: prospect.phone,
+          name: prospect.name,
+          category: jobCategory,
+          location: jobLocation,
+        }),
       });
       results.whatsapp = response.ok;
-    } catch (error) { console.error('[ProspectingService] WhatsApp failed:', error); }
+    } catch (error) {
+      console.error('[ProspectingService] WhatsApp failed:', error);
+    }
   }
 
   return results;

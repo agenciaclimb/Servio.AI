@@ -17,7 +17,7 @@ export default function BulkActionsBar({
   onClearSelection,
   onBulkMove,
   onBulkTemperature,
-  onBulkDelete
+  onBulkDelete,
 }: BulkActionsBarProps) {
   const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [campaignType, setCampaignType] = useState<'whatsapp' | 'email'>('whatsapp');
@@ -26,18 +26,22 @@ export default function BulkActionsBar({
   if (selectedCount === 0) return null;
 
   const handleBulkCampaign = () => {
-    const leadsWithContact = selectedLeads.filter(l => 
+    const leadsWithContact = selectedLeads.filter(l =>
       campaignType === 'whatsapp' ? l.phone : l.email
     );
 
     if (leadsWithContact.length === 0) {
-      alert(`❌ Nenhum lead selecionado possui ${campaignType === 'whatsapp' ? 'telefone' : 'email'}.`);
+      alert(
+        `❌ Nenhum lead selecionado possui ${campaignType === 'whatsapp' ? 'telefone' : 'email'}.`
+      );
       return;
     }
 
-    const message = customMessage || (campaignType === 'whatsapp' 
-      ? generateWhatsAppTemplate(leadsWithContact[0]) 
-      : generateEmailTemplate(leadsWithContact[0]));
+    const message =
+      customMessage ||
+      (campaignType === 'whatsapp'
+        ? generateWhatsAppTemplate(leadsWithContact[0])
+        : generateEmailTemplate(leadsWithContact[0]));
 
     if (campaignType === 'whatsapp') {
       leadsWithContact.forEach(lead => {
@@ -46,7 +50,10 @@ export default function BulkActionsBar({
       });
     } else {
       const emails = leadsWithContact.map(l => l.email).join(',');
-      window.open(`mailto:${emails}?subject=Oportunidade Servio.AI&body=${encodeURIComponent(message)}`, '_blank');
+      window.open(
+        `mailto:${emails}?subject=Oportunidade Servio.AI&body=${encodeURIComponent(message)}`,
+        '_blank'
+      );
     }
 
     setShowCampaignModal(false);
@@ -137,17 +144,30 @@ export default function BulkActionsBar({
 
       {/* Campaign Modal */}
       {showCampaignModal && (
-        <div className="fixed inset-0 bg-black/60 grid place-items-center z-[60]" onClick={() => setShowCampaignModal(false)}>
-          <div className="bg-white rounded-xl shadow-2xl w-[600px] max-w-[90vw] p-6" onClick={e => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black/60 grid place-items-center z-[60]"
+          onClick={() => setShowCampaignModal(false)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl w-[600px] max-w-[90vw] p-6"
+            onClick={e => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-gray-900">📢 Campanha em Massa</h3>
-              <button onClick={() => setShowCampaignModal(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+              <button
+                onClick={() => setShowCampaignModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
             </div>
 
             <div className="space-y-4">
               {/* Campaign type selector */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Canal de envio</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Canal de envio
+                </label>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setCampaignType('whatsapp')}
@@ -174,16 +194,22 @@ export default function BulkActionsBar({
 
               {/* Message template */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Mensagem (opcional - deixe vazio para usar template automático)</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Mensagem (opcional - deixe vazio para usar template automático)
+                </label>
                 <textarea
                   value={customMessage}
                   onChange={e => setCustomMessage(e.target.value)}
-                  placeholder={campaignType === 'whatsapp' 
-                    ? 'Olá {nome}! Tenho uma oportunidade incrível para você...'
-                    : 'Assunto: Oportunidade Servio.AI\n\nOlá {nome},\n\n...'}
+                  placeholder={
+                    campaignType === 'whatsapp'
+                      ? 'Olá {nome}! Tenho uma oportunidade incrível para você...'
+                      : 'Assunto: Oportunidade Servio.AI\n\nOlá {nome},\n\n...'
+                  }
                   className="w-full h-32 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all resize-none"
                 />
-                <p className="text-xs text-gray-500 mt-1">💡 Use {'{nome}'} para personalização automática</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 Use {'{nome}'} para personalização automática
+                </p>
               </div>
 
               {/* Actions */}

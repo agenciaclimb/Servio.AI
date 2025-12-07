@@ -1,12 +1,12 @@
 /**
  * OmniChannelStatus - Painel de Status dos Canais
- * 
+ *
  * Monitora a saúde e status de cada canal de comunicação:
  * - WhatsApp Cloud API
  * - Instagram (Graph API)
  * - Facebook Messenger (Graph API)
  * - WebChat
- * 
+ *
  * Features:
  * - Status de conexão (online/offline)
  * - Última mensagem recebida
@@ -33,7 +33,7 @@ export default function OmniChannelStatus() {
       status: 'online',
       lastMessage: new Date(),
       errorRate: 0.5,
-      webhookStatus: 'healthy'
+      webhookStatus: 'healthy',
     },
     {
       name: 'Instagram',
@@ -41,7 +41,7 @@ export default function OmniChannelStatus() {
       status: 'online',
       lastMessage: new Date(Date.now() - 3600000),
       errorRate: 1.2,
-      webhookStatus: 'healthy'
+      webhookStatus: 'healthy',
     },
     {
       name: 'Facebook',
@@ -49,7 +49,7 @@ export default function OmniChannelStatus() {
       status: 'warning',
       lastMessage: new Date(Date.now() - 7200000),
       errorRate: 5.8,
-      webhookStatus: 'unhealthy'
+      webhookStatus: 'unhealthy',
     },
     {
       name: 'WebChat',
@@ -57,8 +57,8 @@ export default function OmniChannelStatus() {
       status: 'online',
       lastMessage: new Date(),
       errorRate: 0.1,
-      webhookStatus: 'healthy'
-    }
+      webhookStatus: 'healthy',
+    },
   ]);
 
   // TODO: Conectar a API real para buscar status
@@ -96,9 +96,9 @@ export default function OmniChannelStatus() {
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6">
       <h2 className="text-xl font-bold text-gray-900 mb-4">Status dos Canais</h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {channels.map((channel) => (
+        {channels.map(channel => (
           <div
             key={channel.name}
             className={`border-2 rounded-lg p-4 transition ${getStatusColor(channel.status)}`}
@@ -128,14 +128,18 @@ export default function OmniChannelStatus() {
 
               <div className="flex justify-between">
                 <span className="text-gray-700">Taxa de erro:</span>
-                <span className={`font-medium ${channel.errorRate > 3 ? 'text-red-600' : 'text-green-600'}`}>
+                <span
+                  className={`font-medium ${channel.errorRate > 3 ? 'text-red-600' : 'text-green-600'}`}
+                >
                   {channel.errorRate.toFixed(1)}%
                 </span>
               </div>
 
               <div className="flex justify-between">
                 <span className="text-gray-700">Webhook:</span>
-                <span className={`font-medium ${channel.webhookStatus === 'healthy' ? 'text-green-600' : 'text-red-600'}`}>
+                <span
+                  className={`font-medium ${channel.webhookStatus === 'healthy' ? 'text-green-600' : 'text-red-600'}`}
+                >
                   {channel.webhookStatus === 'healthy' ? '✓ Saudável' : '✗ Com problemas'}
                 </span>
               </div>

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 /**
  * Gemini AI Service Integration Tests
- * 
+ *
  * Coverage:
  * - Smart action generation
  * - Job description enhancement
@@ -108,9 +108,7 @@ describe('Gemini AI Service Integration', () => {
       });
 
       const data = await response.json();
-      const highPriorityActions = data.actions.filter(
-        (a: any) => a.priority === 'high'
-      );
+      const highPriorityActions = data.actions.filter((a: any) => a.priority === 'high');
 
       expect(highPriorityActions.length).toBeGreaterThan(0);
       expect(highPriorityActions[0].id).toBe('urgent_1');
@@ -318,10 +316,7 @@ describe('Gemini AI Service Integration', () => {
         leadScore: 7.5,
         engagementLevel: 'high',
         conversionLikelihood: 0.75,
-        recommendations: [
-          'Follow up within 24 hours',
-          'Emphasize case studies',
-        ],
+        recommendations: ['Follow up within 24 hours', 'Emphasize case studies'],
       };
 
       mockFetch.mockResolvedValue({
@@ -483,12 +478,10 @@ describe('Gemini AI Service Integration', () => {
     });
 
     it('should retry on transient failures', async () => {
-      mockFetch
-        .mockRejectedValueOnce(new Error('Network error'))
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({ actions: [] }),
-        });
+      mockFetch.mockRejectedValueOnce(new Error('Network error')).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ actions: [] }),
+      });
 
       try {
         await fetch('/api/prospector/smart-actions', {

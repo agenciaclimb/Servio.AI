@@ -9,21 +9,25 @@
 ## 📍 URLs dos Webhooks por Canal
 
 ### WhatsApp Business API
+
 ```
 https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWebhook?channel=whatsapp
 ```
 
 ### Instagram Messaging
+
 ```
 https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWebhook?channel=instagram
 ```
 
 ### Facebook Messenger
+
 ```
 https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWebhook?channel=facebook
 ```
 
 ### SendGrid Email Tracking
+
 ```
 https://servio-backend-v2-1000250760228.us-west1.run.app/api/sendgrid-webhook
 ```
@@ -35,17 +39,20 @@ https://servio-backend-v2-1000250760228.us-west1.run.app/api/sendgrid-webhook
 ### 1. WhatsApp Business API
 
 #### Passo a Passo:
+
 1. Acesse: https://developers.facebook.com/apps/784914627901299/whatsapp-business/wa-settings
 2. Localize a seção **"Webhook"**
 3. Clique em **"Edit"** ou **"Configure Webhook"**
 4. Preencha os campos:
 
 **Callback URL:**
+
 ```
 https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWebhook?channel=whatsapp
 ```
 
 **Verify Token:**
+
 ```
 servioai_omni_secret_705ed8ad-96b3-4708-a99c-337f9d6cf3cb
 ```
@@ -61,17 +68,20 @@ servioai_omni_secret_705ed8ad-96b3-4708-a99c-337f9d6cf3cb
 ### 2. Instagram Messaging
 
 #### Passo a Passo:
+
 1. Acesse: https://developers.facebook.com/apps/784914627901299/messenger/settings
 2. Na seção **Instagram**, localize **"Webhooks"**
 3. Clique em **"Add Callback URL"** ou **"Edit"**
 4. Preencha os campos:
 
 **Callback URL:**
+
 ```
 https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWebhook?channel=instagram
 ```
 
 **Verify Token:**
+
 ```
 servioai_omni_secret_705ed8ad-96b3-4708-a99c-337f9d6cf3cb
 ```
@@ -87,17 +97,20 @@ servioai_omni_secret_705ed8ad-96b3-4708-a99c-337f9d6cf3cb
 ### 3. Facebook Messenger
 
 #### Passo a Passo:
+
 1. Acesse: https://developers.facebook.com/apps/784914627901299/messenger/settings
 2. Na seção **Messenger**, localize **"Webhooks"**
 3. Clique em **"Add Callback URL"** ou **"Edit"**
 4. Preencha os campos:
 
 **Callback URL:**
+
 ```
 https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWebhook?channel=facebook
 ```
 
 **Verify Token:**
+
 ```
 servioai_omni_secret_705ed8ad-96b3-4708-a99c-337f9d6cf3cb
 ```
@@ -114,12 +127,14 @@ servioai_omni_secret_705ed8ad-96b3-4708-a99c-337f9d6cf3cb
 ### 4. SendGrid Email Tracking
 
 #### Passo a Passo:
+
 1. Acesse: https://app.sendgrid.com/settings/mail_settings
 2. Localize **"Event Webhook"**
 3. Clique em **"Enable"**
 4. Preencha os campos:
 
 **HTTP POST URL:**
+
 ```
 https://servio-backend-v2-1000250760228.us-west1.run.app/api/sendgrid-webhook
 ```
@@ -136,6 +151,7 @@ https://servio-backend-v2-1000250760228.us-west1.run.app/api/sendgrid-webhook
 6. Clique em **"Save"**
 
 **Teste do webhook:**
+
 ```powershell
 # Enviar evento de teste
 curl -X POST https://servio-backend-v2-1000250760228.us-west1.run.app/api/sendgrid-webhook `
@@ -149,6 +165,7 @@ curl -X POST https://servio-backend-v2-1000250760228.us-west1.run.app/api/sendgr
 ## 🧪 Como Testar a Integração
 
 ### Teste Rápido via cURL (Verificar Webhook):
+
 ```powershell
 # Simula a verificação do Meta
 $url = "https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWebhook"
@@ -161,16 +178,19 @@ curl "$url$params"
 ### Teste com Mensagem Real:
 
 #### WhatsApp:
+
 1. Envie uma mensagem para o número: **+1 (xxx) xxx-xxxx** (número da conta Business)
 2. Verifique os logs: `firebase functions:log --only omnichannelWebhook`
 3. A IA deve responder automaticamente
 
 #### Instagram:
+
 1. Envie um DM para a conta @servioai_oficial (ou sua conta configurada)
 2. Verifique os logs
 3. A IA deve responder automaticamente
 
 #### Facebook:
+
 1. Envie mensagem via Messenger para a Página do Facebook
 2. Verifique os logs
 3. A IA deve responder automaticamente
@@ -213,6 +233,7 @@ firebase firestore:query ia_logs --limit 10
 ```
 
 **Ou via Firebase Console:**
+
 - https://console.firebase.google.com/project/gen-lang-client-0737507616/firestore
 
 ---
@@ -224,10 +245,8 @@ A Cloud Function **valida automaticamente** as assinaturas HMAC SHA-256 de todas
 ```javascript
 // Código implementado em functions/index.js
 const signature = req.headers['x-hub-signature-256'];
-const expectedSignature = 'sha256=' + crypto
-  .createHmac('sha256', metaSecret)
-  .update(rawBody)
-  .digest('hex');
+const expectedSignature =
+  'sha256=' + crypto.createHmac('sha256', metaSecret).update(rawBody).digest('hex');
 
 if (signature !== expectedSignature) {
   return res.status(403).send('Invalid signature');
@@ -243,6 +262,7 @@ if (signature !== expectedSignature) {
 ### Endpoint de Prospecção
 
 **URL do Scheduler:**
+
 ```
 https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/prospectorRunScheduler
 ```

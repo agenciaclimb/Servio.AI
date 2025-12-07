@@ -184,14 +184,14 @@ firebase emulators:start
 ```javascript
 // Create test message (triggers notifyOnNewMessage)
 const testMessage = {
-  chatId: "job-123",
-  senderId: "client@test.com",
-  senderType: "cliente",
-  text: "Test message",
+  chatId: 'job-123',
+  senderId: 'client@test.com',
+  senderType: 'cliente',
+  text: 'Test message',
   createdAt: new Date().toISOString(),
 };
 
-db.collection("messages").add(testMessage);
+db.collection('messages').add(testMessage);
 ```
 
 ---

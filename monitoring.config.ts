@@ -10,12 +10,12 @@ export const errorTracking = {
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
   },
-  
+
   // Google Analytics 4
   ga4: {
     measurementId: import.meta.env.VITE_GA4_MEASUREMENT_ID || '',
   },
-  
+
   // Configurar em .env.local:
   // VITE_SENTRY_DSN=https://...@sentry.io/...
   // VITE_GA4_MEASUREMENT_ID=G-...

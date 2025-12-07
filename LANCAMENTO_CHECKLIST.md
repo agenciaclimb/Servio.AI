@@ -57,6 +57,7 @@
 **O que fazer**:
 
 1. **Habilitar Stripe Connect no Dashboard** (30 min)
+
    ```
    Acesse: https://dashboard.stripe.com/connect/accounts/overview
    Clique em "Get started"
@@ -65,6 +66,7 @@
    ```
 
 2. **Configurar Redirect URIs** (10 min)
+
    ```
    No Dashboard → Settings → Redirect URIs
    Adicionar:
@@ -74,6 +76,7 @@
    ```
 
 3. **Testar Onboarding de Prestador** (1-2 horas)
+
    ```
    - Criar conta como prestador
    - Completar onboarding Stripe
@@ -256,13 +259,15 @@
 ## ⏱️ TEMPO TOTAL ESTIMADO
 
 **Mínimo para lançamento**: 3-4 horas
+
 - Stripe Connect: 2-3 horas
 - Testes E2E: 1 hora
 
 **Com testes completos**: 4-5 horas
-- + Teste webhook: 15 min
-- + Teste real: 10 min
-- + Validações extras: 30 min
+
+- - Teste webhook: 15 min
+- - Teste real: 10 min
+- - Validações extras: 30 min
 
 ---
 

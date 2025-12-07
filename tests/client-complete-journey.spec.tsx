@@ -1,9 +1,9 @@
 /**
  * 🎯 JORNADA COMPLETA DO CLIENTE - Teste E2E
- * 
- * Cobre: Cadastro → Login → Criar Serviço → Receber Propostas → 
+ *
+ * Cobre: Cadastro → Login → Criar Serviço → Receber Propostas →
  *        Aceitar → Pagar → Acompanhar → Avaliar → Disputa (opcional)
- * 
+ *
  * Este teste garante que TODO o fluxo do cliente funciona end-to-end
  */
 
@@ -22,7 +22,7 @@ vi.mock('../src/services/geminiService');
 vi.mock('../src/firebaseConfig', () => ({
   auth: {
     currentUser: null,
-    onAuthStateChanged: vi.fn((callback) => {
+    onAuthStateChanged: vi.fn(callback => {
       callback(null);
       return vi.fn();
     }),
@@ -39,7 +39,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
   beforeEach(() => {
     user = userEvent.setup();
     vi.clearAllMocks();
-    
+
     // Setup mocks padrão
     mockApi.fetchUser.mockResolvedValue(null);
     mockApi.fetchJobs.mockResolvedValue([]);
@@ -71,7 +71,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
     // Preencher formulário de cadastro
     const emailInput = within(modal).getByLabelText(/email/i);
     const senhaInput = within(modal).getByLabelText(/senha/i);
-    
+
     await user.type(emailInput, 'cliente-teste@example.com');
     await user.type(senhaInput, 'senha123456');
 
@@ -119,11 +119,15 @@ describe('🎯 Jornada Completa do Cliente', () => {
     );
 
     // Abrir wizard de criação de serviço
-    const criarServicoButton = await screen.findByRole('button', { name: /solicitar serviço|criar serviço/i });
+    const criarServicoButton = await screen.findByRole('button', {
+      name: /solicitar serviço|criar serviço/i,
+    });
     await user.click(criarServicoButton);
 
     // Wizard deve abrir
-    const wizardModal = await screen.findByRole('dialog', { name: /criar serviço|solicitar serviço/i });
+    const wizardModal = await screen.findByRole('dialog', {
+      name: /criar serviço|solicitar serviço/i,
+    });
     expect(wizardModal).toBeInTheDocument();
 
     // Descrever necessidade (mínimo 10 caracteres)
@@ -194,10 +198,10 @@ describe('🎯 Jornada Completa do Cliente', () => {
       status: 'open',
       estimatedPrice: 150,
     };
-    
+
     mockApi.fetchUser.mockResolvedValue(mockUser);
     mockApi.fetchJobs.mockResolvedValue([mockJob]);
-    
+
     // Mock propostas recebidas
     mockApi.fetchProposals.mockResolvedValue([
       {
@@ -233,7 +237,9 @@ describe('🎯 Jornada Completa do Cliente', () => {
     );
 
     // Abrir lista de propostas
-    const verPropostasButton = await screen.findByRole('button', { name: /ver propostas|propostas/i });
+    const verPropostasButton = await screen.findByRole('button', {
+      name: /ver propostas|propostas/i,
+    });
     await user.click(verPropostasButton);
 
     // Modal de propostas deve abrir
@@ -284,7 +290,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
       acceptedProviderId: 'prov-1',
       price: 120,
     };
-    
+
     mockApi.fetchUser.mockResolvedValue(mockUser);
     mockApi.fetchJobs.mockResolvedValue([mockJob]);
 
@@ -319,7 +325,9 @@ describe('🎯 Jornada Completa do Cliente', () => {
     window.location.assign = mockRedirect as any;
 
     // Clicar no botão de pagar
-    const confirmarPagamentoButton = within(paymentModal).getByRole('button', { name: /pagar|confirmar/i });
+    const confirmarPagamentoButton = within(paymentModal).getByRole('button', {
+      name: /pagar|confirmar/i,
+    });
     await user.click(confirmarPagamentoButton);
 
     // Verificar que a sessão foi criada
@@ -333,9 +341,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
 
     // Verificar que tentou redirecionar para Stripe
     await waitFor(() => {
-      expect(mockRedirect).toHaveBeenCalledWith(
-        expect.stringContaining('checkout.stripe.com')
-      );
+      expect(mockRedirect).toHaveBeenCalledWith(expect.stringContaining('checkout.stripe.com'));
     });
   });
 
@@ -349,7 +355,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
       acceptedProviderId: 'prov-1',
       providerName: 'João Encanador',
     };
-    
+
     mockApi.fetchUser.mockResolvedValue(mockUser);
     mockApi.fetchJobs.mockResolvedValue([mockJob]);
 
@@ -427,7 +433,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
       providerName: 'João Encanador',
       price: 120,
     };
-    
+
     mockApi.fetchUser.mockResolvedValue(mockUser);
     mockApi.fetchJobs.mockResolvedValue([mockJob]);
 
@@ -505,7 +511,7 @@ describe('🎯 Jornada Completa do Cliente', () => {
       acceptedProviderId: 'prov-1',
       providerName: 'João Encanador',
     };
-    
+
     mockApi.fetchUser.mockResolvedValue(mockUser);
     mockApi.fetchJobs.mockResolvedValue([mockJob]);
 
@@ -518,7 +524,9 @@ describe('🎯 Jornada Completa do Cliente', () => {
     );
 
     // Abrir modal de disputa
-    const abrirDisputaButton = await screen.findByRole('button', { name: /problema|abrir disputa|contestar/i });
+    const abrirDisputaButton = await screen.findByRole('button', {
+      name: /problema|abrir disputa|contestar/i,
+    });
     await user.click(abrirDisputaButton);
 
     // Modal de disputa deve abrir
@@ -527,7 +535,10 @@ describe('🎯 Jornada Completa do Cliente', () => {
 
     // Descrever motivo (mínimo 20 caracteres)
     const reasonTextarea = within(disputeModal).getByLabelText(/motivo|descrição/i);
-    await user.type(reasonTextarea, 'O serviço não foi realizado conforme combinado. Há vazamento ainda.');
+    await user.type(
+      reasonTextarea,
+      'O serviço não foi realizado conforme combinado. Há vazamento ainda.'
+    );
 
     // Mock criar disputa
     mockApi.createDispute.mockResolvedValue({
@@ -541,7 +552,9 @@ describe('🎯 Jornada Completa do Cliente', () => {
     });
 
     // Submeter disputa
-    const submitButton = within(disputeModal).getByRole('button', { name: /abrir disputa|enviar/i });
+    const submitButton = within(disputeModal).getByRole('button', {
+      name: /abrir disputa|enviar/i,
+    });
     await user.click(submitButton);
 
     // Verificar que a disputa foi criada

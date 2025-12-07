@@ -4,10 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import {
-  isNotificationSupported,
-  getNotificationPermission,
-} from '../src/services/fcmService';
+import { isNotificationSupported, getNotificationPermission } from '../src/services/fcmService';
 
 describe('fcmService pure functions', () => {
   describe('isNotificationSupported', () => {

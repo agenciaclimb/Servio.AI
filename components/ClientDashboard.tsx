@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Job, User, Proposal, Message, Dispute, MaintainedItem, Escrow, Notification, ScheduledDateTime, DisputeMessage, Bid } from '../types';
+import {
+  Job,
+  User,
+  Proposal,
+  Message,
+  Dispute,
+  MaintainedItem,
+  Escrow,
+  Notification,
+  ScheduledDateTime,
+  DisputeMessage,
+  Bid,
+} from '../types';
 import { useToast } from '../contexts/ToastContext'; // 1. Importar o hook
 import * as API from '../services/api';
 import ClientJobCard from './ClientJobCard';
@@ -47,12 +59,26 @@ interface ClientDashboardProps {
 }
 
 const ClientDashboard: React.FC<ClientDashboardProps> = ({
-  user, allUsers, allProposals, allMessages, maintainedItems, allDisputes, allBids,
-  setAllProposals, setAllMessages, setAllNotifications, setAllEscrows, setAllDisputes, setMaintainedItems,
-  onViewProfile, onNewJobFromItem, onUpdateUser, disableSkeleton = false,
+  user,
+  allUsers,
+  allProposals,
+  allMessages,
+  maintainedItems,
+  allDisputes,
+  allBids,
+  setAllProposals,
+  setAllMessages,
+  setAllNotifications,
+  setAllEscrows,
+  setAllDisputes,
+  setMaintainedItems,
+  onViewProfile,
+  onNewJobFromItem,
+  onUpdateUser,
+  disableSkeleton = false,
   viewingProposalsForJob: viewingProposalsForJobProp = null,
   proposalToPay: proposalToPayProp = null,
-  initialUserJobs = []
+  initialUserJobs = [],
 }) => {
   const { addToast } = useToast(); // 2. Inicializar o hook
 
@@ -67,7 +93,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
         setIsLoadingJobs(false);
         return; // pula lógica de timer e carregamento
       }
-      
+
       try {
         setIsLoadingJobs(true);
         const jobs = await API.fetchJobsForUser(user.email);
@@ -76,7 +102,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
           ...job,
           status: job.status || 'ativo',
           category: job.category || 'geral',
-          description: job.description || 'Serviço solicitado'
+          description: job.description || 'Serviço solicitado',
         }));
         setUserJobs(validJobs);
       } catch (error) {
@@ -104,7 +130,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     }
   }, [proposalToPayProp]);
 
-  const [currentView, setCurrentView] = useState<'inicio' | 'servicos' | 'itens' | 'ajuda'>('inicio');
+  const [currentView, setCurrentView] = useState<'inicio' | 'servicos' | 'itens' | 'ajuda'>(
+    'inicio'
+  );
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [viewingProposalsForJob, setViewingProposalsForJob] = useState<Job | null>(null);
@@ -112,7 +140,10 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
   const [proposalToPay, setProposalToPay] = useState<Proposal | null>(null);
   const [payingForProposal, setPayingForProposal] = useState<Proposal | null>(null);
   const [_reviewingJob, _setReviewingJob] = useState<Job | null>(null); // unused (future review feature)
-  const [jobInFocus, setJobInFocus] = useState<{ job: Job; action: 'review' | 'dispute' | 'dispute-details' } | null>(null);
+  const [jobInFocus, setJobInFocus] = useState<{
+    job: Job;
+    action: 'review' | 'dispute' | 'dispute-details';
+  } | null>(null);
   const [_viewingDisputeForJob, _setViewingDisputeForJob] = useState<Job | null>(null); // unused (future dispute detail view)
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   const [viewingItem, setViewingItem] = useState<MaintainedItem | null>(null);
@@ -131,7 +162,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
             const newMessages = messages.filter(m => !existingIds.has(m.id));
             return [...prev, ...newMessages];
           });
-        } catch (error) { /* Intentionally ignored */ }
+        } catch (error) {
+          /* Intentionally ignored */
+        }
       };
       loadMessages();
     }
@@ -141,12 +174,15 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     return <ClientDashboardSkeleton />;
   }
 
-
   const activeJobs = userJobs.filter(j => !['concluido', 'cancelado'].includes(j.status));
   const completedJobs = userJobs.filter(j => j.status === 'concluido');
   // Consider profile complete with just an address (bio is optional to simplify onboarding)
   const profileComplete = Boolean(user.address);
-  const onboardingStepsDone = [profileComplete, userJobs.length > 0, maintainedItems.length > 0].filter(Boolean).length;
+  const onboardingStepsDone = [
+    profileComplete,
+    userJobs.length > 0,
+    maintainedItems.length > 0,
+  ].filter(Boolean).length;
   const onboardingStepsTotal = 4;
   const handleAcceptProposal = async (proposalId: string) => {
     const proposal = allProposals.find(p => p.id === proposalId);
@@ -171,7 +207,10 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     if (!job) return;
 
     try {
-      const result = await API.createCheckoutSession(job, proposal.price) as { url?: string; id?: string };
+      const result = (await API.createCheckoutSession(job, proposal.price)) as {
+        url?: string;
+        id?: string;
+      };
       // Suporte a dois formatos: { url } e { id }
       if (result?.url) {
         window.location.href = result.url;
@@ -181,18 +220,26 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       if (!sessionId) {
         throw new Error('Sessão de checkout inválida');
       }
-      
+
       // Store proposal for later confirmation
       setPayingForProposal(proposal);
-      
+
       // Redirect to Stripe Checkout
-      const StripeConstructor = (window as Window & { Stripe?: (key: string) => { redirectToCheckout: (opts: { sessionId: string }) => Promise<{ error?: { message: string } }> } }).Stripe;
+      const StripeConstructor = (
+        window as Window & {
+          Stripe?: (key: string) => {
+            redirectToCheckout: (opts: {
+              sessionId: string;
+            }) => Promise<{ error?: { message: string } }>;
+          };
+        }
+      ).Stripe;
       if (!StripeConstructor) {
         throw new Error('Stripe não carregado');
       }
       const stripe = StripeConstructor(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
       const { error } = await stripe.redirectToCheckout({ sessionId });
-      
+
       if (error) {
         addToast('Erro ao redirecionar para pagamento. Tente novamente.', 'error');
         throw new Error(error.message || 'Falha ao redirecionar para o Stripe');
@@ -212,39 +259,48 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     try {
       // Update proposal status via API
       await API.updateProposal(proposalId, { status: 'aceita' });
-      
+
       // Update other proposals for same job to rejected
       const otherProposals = allProposals.filter(p => p.jobId === jobId && p.id !== proposalId);
       for (const prop of otherProposals) {
         await API.updateProposal(prop.id, { status: 'recusada' });
       }
-      
+
       // Update job status
       const newEscrowId = `esc-${Date.now()}`;
-      await API.updateJob(jobId, { 
-        status: 'proposta_aceita', 
-        providerId, 
-        escrowId: newEscrowId 
+      await API.updateJob(jobId, {
+        status: 'proposta_aceita',
+        providerId,
+        escrowId: newEscrowId,
       });
 
       // Update local state
-      setAllProposals(prev => prev.map(p => 
-        p.jobId === jobId ? { ...p, status: p.id === proposalId ? 'aceita' : 'recusada' } : p
-      ));
-      setUserJobs(prev => prev.map(j => 
-        j.id === jobId ? { ...j, status: 'proposta_aceita', providerId, escrowId: newEscrowId } : j
-      ));
+      setAllProposals(prev =>
+        prev.map(p =>
+          p.jobId === jobId ? { ...p, status: p.id === proposalId ? 'aceita' : 'recusada' } : p
+        )
+      );
+      setUserJobs(prev =>
+        prev.map(j =>
+          j.id === jobId
+            ? { ...j, status: 'proposta_aceita', providerId, escrowId: newEscrowId }
+            : j
+        )
+      );
 
       // Create Escrow (local for now - would need API endpoint)
-      setAllEscrows(prev => [...prev, {
-        id: newEscrowId,
-        jobId,
-        clientId: user.email,
-        providerId,
-        amount: price,
-        status: 'bloqueado',
-        createdAt: new Date().toISOString(),
-      }]);
+      setAllEscrows(prev => [
+        ...prev,
+        {
+          id: newEscrowId,
+          jobId,
+          clientId: user.email,
+          providerId,
+          amount: price,
+          status: 'bloqueado',
+          createdAt: new Date().toISOString(),
+        },
+      ]);
 
       // Notify provider
       await API.createNotification({
@@ -255,40 +311,52 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
 
       setPayingForProposal(null);
       setViewingProposalsForJob(null);
-
     } catch (error) {
-
       addToast('Erro ao processar pagamento. Tente novamente.', 'error'); // 3. Substituir alert()
     }
   };
-  
-  const handleFinalizeJob = async (reviewData: { rating: number, comment: string }) => {
-    if(!jobInFocus || jobInFocus.action !== 'review') return;
+
+  const handleFinalizeJob = async (reviewData: { rating: number; comment: string }) => {
+    if (!jobInFocus || jobInFocus.action !== 'review') return;
 
     try {
       // Update Job with review and set status to 'concluido'
       await API.updateJob(jobInFocus.job.id, {
         status: 'concluido',
-        review: { ...reviewData, authorId: user.email, createdAt: new Date().toISOString() }
+        review: { ...reviewData, authorId: user.email, createdAt: new Date().toISOString() },
       });
 
       // Release payment from escrow via API
       await API.releasePayment(jobInFocus.job.id);
 
-      setUserJobs(prev => prev.map(j =>
-        j.id === jobInFocus!.job.id ? { ...j, status: 'concluido', review: { ...reviewData, authorId: user.email, createdAt: new Date().toISOString() } } : j
-      ));
+      setUserJobs(prev =>
+        prev.map(j =>
+          j.id === jobInFocus!.job.id
+            ? {
+                ...j,
+                status: 'concluido',
+                review: {
+                  ...reviewData,
+                  authorId: user.email,
+                  createdAt: new Date().toISOString(),
+                },
+              }
+            : j
+        )
+      );
 
       // Update escrow locally
-      setAllEscrows(prev => prev.map(e => 
-        e.jobId === jobInFocus!.job.id ? { ...e, status: 'liberado', releasedAt: new Date().toISOString() } : e
-      ));
-      
+      setAllEscrows(prev =>
+        prev.map(e =>
+          e.jobId === jobInFocus!.job.id
+            ? { ...e, status: 'liberado', releasedAt: new Date().toISOString() }
+            : e
+        )
+      );
+
       setJobInFocus(null);
       addToast('Serviço finalizado e pagamento liberado com sucesso!', 'success'); // 3. Substituir alert()
-
     } catch (error) {
-
       addToast('Erro ao finalizar serviço. Tente novamente.', 'error'); // 3. Substituir alert()
     }
   };
@@ -304,55 +372,62 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       description: data.description,
     });
 
-    setUserJobs(prev => prev.map(j => j.id === jobInFocus!.job.id ? { ...j, status: 'em_disputa' } : j));
+    setUserJobs(prev =>
+      prev.map(j => (j.id === jobInFocus!.job.id ? { ...j, status: 'em_disputa' } : j))
+    );
 
     // Idealmente, o backend notificaria o provider e o admin.
     // Para fins de UI, podemos simular uma notificação local.
     addToast('Disputa criada com sucesso. Nossa equipe de mediação entrará em contato.', 'success'); // 3. Substituir alert()
   };
 
-    const handleSendDisputeMessage = (disputeId: string, text: string) => {
-        const newMessage: DisputeMessage = {
-            id: `d-msg-${Date.now()}`,
-            senderId: user.email,
-            createdAt: new Date().toISOString(),
-            text,
-        };
-
-        setAllDisputes(prevDisputes =>
-            prevDisputes.map(d =>
-                d.id === disputeId
-                    ? { ...d, messages: [...d.messages, newMessage] }
-                    : d
-            )
-        );
-
-        const dispute = allDisputes.find(d => d.id === disputeId);
-        const job = userJobs.find(j => j.id === dispute?.jobId);
-    if (job?.providerId) {
-            setAllNotifications(prev => [...prev, {
-                id: `notif-dispute-${Date.now()}`,
-                userId: job.providerId!,
-                text: `Nova mensagem na disputa do job "${job.category}".`,
-                isRead: false,
-        createdAt: new Date().toISOString(),
-            }]);
-        }
+  const handleSendDisputeMessage = (disputeId: string, text: string) => {
+    const newMessage: DisputeMessage = {
+      id: `d-msg-${Date.now()}`,
+      senderId: user.email,
+      createdAt: new Date().toISOString(),
+      text,
     };
 
-  const handleSaveItem = (newItemData: Omit<MaintainedItem, 'id' | 'clientId' | 'maintenanceHistory' | 'createdAt'>) => {
-      const newItem: MaintainedItem = {
-          ...newItemData,
-          id: `item-${Date.now()}`,
-          clientId: user.email,
+    setAllDisputes(prevDisputes =>
+      prevDisputes.map(d =>
+        d.id === disputeId ? { ...d, messages: [...d.messages, newMessage] } : d
+      )
+    );
+
+    const dispute = allDisputes.find(d => d.id === disputeId);
+    const job = userJobs.find(j => j.id === dispute?.jobId);
+    if (job?.providerId) {
+      setAllNotifications(prev => [
+        ...prev,
+        {
+          id: `notif-dispute-${Date.now()}`,
+          userId: job.providerId!,
+          text: `Nova mensagem na disputa do job "${job.category}".`,
+          isRead: false,
           createdAt: new Date().toISOString(),
-          maintenanceHistory: [],
-      };
-      setMaintainedItems(prev => [newItem, ...prev]);
-      setIsAddItemModalOpen(false);
+        },
+      ]);
+    }
   };
 
-  const handleSendMessage = async (messageData: Partial<Message> & { chatId: string, text: string }) => {
+  const handleSaveItem = (
+    newItemData: Omit<MaintainedItem, 'id' | 'clientId' | 'maintenanceHistory' | 'createdAt'>
+  ) => {
+    const newItem: MaintainedItem = {
+      ...newItemData,
+      id: `item-${Date.now()}`,
+      clientId: user.email,
+      createdAt: new Date().toISOString(),
+      maintenanceHistory: [],
+    };
+    setMaintainedItems(prev => [newItem, ...prev]);
+    setIsAddItemModalOpen(false);
+  };
+
+  const handleSendMessage = async (
+    messageData: Partial<Message> & { chatId: string; text: string }
+  ) => {
     try {
       // Save message to backend (Firestore)
       const savedMessage = await API.createMessage({
@@ -361,7 +436,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
         text: messageData.text,
         type: messageData.type || 'text',
       });
-      
+
       // Update local state with saved message
       setAllMessages(prev => [...prev, savedMessage]);
 
@@ -377,46 +452,58 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
           });
         }
       }
-
     } catch (error) {
-
       addToast('Erro ao enviar mensagem. Tente novamente.', 'error'); // 3. Substituir alert()
     }
   };
-  
-  const handleConfirmSchedule = (jobId: string, schedule: ScheduledDateTime, messageId?: string) => {
+
+  const handleConfirmSchedule = (
+    jobId: string,
+    schedule: ScheduledDateTime,
+    messageId?: string
+  ) => {
     const job = userJobs.find(j => j.id === jobId);
     if (!job || !job.providerId) return;
 
     // 1. Update Job Status
     setUserJobs(prev => prev.map(j => (j.id === jobId ? { ...j, status: 'agendado' } : j)));
 
-    const formattedDate = new Date(`${schedule.date}T00:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const formattedDate = new Date(`${schedule.date}T00:00:00`).toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
     const confirmationText = `✅ Agendamento confirmado para ${formattedDate} às ${schedule.time}.`;
 
     // 2. Add System Message to Chat
     const systemMessage: Message = {
-        id: `msg-system-${Date.now()}`,
-        chatId: jobId,
-        senderId: 'system', // Special ID for system messages
-        text: confirmationText,
-        createdAt: new Date().toISOString(),
-        type: 'system_notification',
+      id: `msg-system-${Date.now()}`,
+      chatId: jobId,
+      senderId: 'system', // Special ID for system messages
+      text: confirmationText,
+      createdAt: new Date().toISOString(),
+      type: 'system_notification',
     };
     setAllMessages(prev => [...prev, systemMessage]);
 
     // 3. Notify the Provider
-  setAllNotifications(prev => [...prev, {
+    setAllNotifications(prev => [
+      ...prev,
+      {
         id: `notif-${Date.now()}`,
         userId: job.providerId!,
         text: `Agendamento confirmado para o job "${job.category}"!`,
         isRead: false,
-    createdAt: new Date().toISOString(),
-    }]);
+        createdAt: new Date().toISOString(),
+      },
+    ]);
 
     // 4. Mark the proposal message as confirmed
     if (messageId) {
-        setAllMessages(prev => prev.map(m => m.id === messageId ? { ...m, isScheduleConfirmed: true } : m));
+      setAllMessages(prev =>
+        prev.map(m => (m.id === messageId ? { ...m, isScheduleConfirmed: true } : m))
+      );
     }
   };
 
@@ -453,33 +540,55 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
         className="fixed top-4 left-4 z-50 md:hidden bg-white p-2 rounded-lg shadow-lg border border-gray-200"
         aria-label="Toggle menu"
       >
-        <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-6 h-6 text-gray-700"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           {isMobileMenuOpen ? (
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
           ) : (
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           )}
         </svg>
       </button>
 
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <aside className={`w-64 bg-white border-r border-gray-200 flex flex-col fixed inset-y-0 left-0 z-40 transform transition-transform duration-200 md:relative md:translate-x-0 ${
-        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+      <aside
+        className={`w-64 bg-white border-r border-gray-200 flex flex-col fixed inset-y-0 left-0 z-40 transform transition-transform duration-200 md:relative md:translate-x-0 ${
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
         <div className="p-6 flex-1">
           <div className="flex items-center gap-2 mb-8">
             <span className="text-2xl">👋</span>
             <div>
               <p className="text-sm font-semibold text-gray-900">Olá, {user.name.split(' ')[0]}!</p>
-              <button onClick={() => setIsProfileModalOpen(true)} className="text-xs text-blue-600 hover:underline">Conta Pessoal</button>
+              <button
+                onClick={() => setIsProfileModalOpen(true)}
+                className="text-xs text-blue-600 hover:underline"
+              >
+                Conta Pessoal
+              </button>
             </div>
           </div>
 
@@ -490,7 +599,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                 setIsMobileMenuOpen(false);
               }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                currentView === 'inicio' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
+                currentView === 'inicio'
+                  ? 'bg-blue-50 text-blue-700'
+                  : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <span className="text-lg">🏠</span>
@@ -502,7 +613,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                 setIsMobileMenuOpen(false);
               }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                currentView === 'servicos' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
+                currentView === 'servicos'
+                  ? 'bg-blue-50 text-blue-700'
+                  : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <span className="text-lg">📋</span>
@@ -514,7 +627,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                 setIsMobileMenuOpen(false);
               }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                currentView === 'itens' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
+                currentView === 'itens'
+                  ? 'bg-blue-50 text-blue-700'
+                  : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <span className="text-lg">📦</span>
@@ -526,7 +641,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                 setIsMobileMenuOpen(false);
               }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                currentView === 'ajuda' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
+                currentView === 'ajuda'
+                  ? 'bg-blue-50 text-blue-700'
+                  : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <span className="text-lg">❓</span>
@@ -550,31 +667,43 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                   <button
                     className="absolute top-4 right-4 text-white/70 hover:text-white text-xl"
                     onClick={() => setShowOnboarding(false)}
-                  >✕</button>
+                  >
+                    ✕
+                  </button>
                   <div className="flex items-start gap-4 mb-6">
                     <span className="text-4xl">✨</span>
                     <div>
                       <h2 className="text-2xl font-bold mb-2">Complete seu perfil</h2>
-                      <p className="text-blue-100 mb-4">{onboardingStepsDone} de {onboardingStepsTotal} passos concluídos</p>
+                      <p className="text-blue-100 mb-4">
+                        {onboardingStepsDone} de {onboardingStepsTotal} passos concluídos
+                      </p>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="bg-white/15 backdrop-blur-sm rounded-xl p-6">
-                      <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-xl font-bold mb-3">1</div>
+                      <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-xl font-bold mb-3">
+                        1
+                      </div>
                       <h3 className="font-semibold mb-2">Complete seu perfil</h3>
                       <p className="text-sm text-blue-100 mb-4">Adicione telefone e localização</p>
                       <button
                         onClick={() => setIsProfileModalOpen(true)}
                         className="text-sm px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 transition"
-                      >Completar</button>
+                      >
+                        Completar
+                      </button>
                     </div>
                     <div className="bg-white/15 backdrop-blur-sm rounded-xl p-6">
-                      <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-xl font-bold mb-3">2</div>
+                      <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-xl font-bold mb-3">
+                        2
+                      </div>
                       <h3 className="font-semibold mb-2">Solicite seu primeiro serviço</h3>
                       <p className="text-sm text-blue-100 mb-4">A IA vai te ajudar!</p>
                     </div>
                     <div className="bg-white/15 backdrop-blur-sm rounded-xl p-6">
-                      <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-xl font-bold mb-3">3</div>
+                      <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-xl font-bold mb-3">
+                        3
+                      </div>
                       <h3 className="font-semibold mb-2">Cadastre um item</h3>
                       <p className="text-sm text-blue-100 mb-4">Para manutenção preventiva</p>
                     </div>
@@ -677,7 +806,11 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                       key={job.id}
                       job={job}
                       proposals={allProposals.filter(p => p.jobId === job.id)}
-                      onViewProposals={() => job.jobMode === 'leilao' ? setViewingAuctionForJob(job) : setViewingProposalsForJob(job)}
+                      onViewProposals={() =>
+                        job.jobMode === 'leilao'
+                          ? setViewingAuctionForJob(job)
+                          : setViewingProposalsForJob(job)
+                      }
                       onChat={() => setChattingWithJob(job)}
                       onFinalize={() => setJobInFocus({ job, action: 'review' })}
                       onReportIssue={() => {
@@ -693,7 +826,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                 <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
                   <span className="text-6xl mb-4 block">📋</span>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhum serviço ainda</h3>
-                  <p className="text-gray-600 mb-6">Solicite seu primeiro serviço com ajuda da IA</p>
+                  <p className="text-gray-600 mb-6">
+                    Solicite seu primeiro serviço com ajuda da IA
+                  </p>
                   <button
                     onClick={() => onNewJobFromItem('')}
                     className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
@@ -725,8 +860,12 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
               ) : (
                 <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
                   <span className="text-6xl mb-4 block">📦</span>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhum item cadastrado</h3>
-                  <p className="text-gray-600 mb-6">Cadastre itens para facilitar manutenções futuras</p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Nenhum item cadastrado
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Cadastre itens para facilitar manutenções futuras
+                  </p>
                   <button
                     onClick={() => setIsAddItemModalOpen(true)}
                     className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
@@ -744,18 +883,22 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
               <div className="space-y-4">
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">Como solicitar um serviço?</h3>
-                  <p className="text-sm text-gray-600">Use nossa IA assistente para descrever seu problema e receber propostas de profissionais qualificados.</p>
+                  <p className="text-sm text-gray-600">
+                    Use nossa IA assistente para descrever seu problema e receber propostas de
+                    profissionais qualificados.
+                  </p>
                 </div>
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">Como funciona o pagamento?</h3>
-                  <p className="text-sm text-gray-600">O valor fica retido em segurança e só é liberado após a conclusão do serviço.</p>
+                  <p className="text-sm text-gray-600">
+                    O valor fica retido em segurança e só é liberado após a conclusão do serviço.
+                  </p>
                 </div>
               </div>
             </div>
           )}
         </div>
       </main>
-
 
       {/* Modals */}
 
@@ -770,155 +913,220 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
         />
       )}
       {viewingAuctionForJob && (
-          <AuctionRoomModal
-              job={viewingAuctionForJob}
-              currentUser={user}
-              bids={allBids.filter(b => b.jobId === viewingAuctionForJob.id)}
-              onClose={() => setViewingAuctionForJob(null)}
-              onPlaceBid={() => {}} // Client cannot place bids
-          />
+        <AuctionRoomModal
+          job={viewingAuctionForJob}
+          currentUser={user}
+          bids={allBids.filter(b => b.jobId === viewingAuctionForJob.id)}
+          onClose={() => setViewingAuctionForJob(null)}
+          onPlaceBid={() => {}} // Client cannot place bids
+        />
       )}
       {proposalToPay && (
-        <PaymentModal 
-            isOpen={!!proposalToPay}
-            job={userJobs.find(j => j.id === proposalToPay.jobId)!}
-            proposal={proposalToPay}
-            provider={allUsers.find(u => u.email === proposalToPay.providerId)!}
-            onClose={handleClosePaymentModal}
-            onConfirmPayment={handleConfirmPayment}
+        <PaymentModal
+          isOpen={!!proposalToPay}
+          job={userJobs.find(j => j.id === proposalToPay.jobId)!}
+          proposal={proposalToPay}
+          provider={allUsers.find(u => u.email === proposalToPay.providerId)!}
+          onClose={handleClosePaymentModal}
+          onConfirmPayment={handleConfirmPayment}
         />
       )}
       {jobInFocus?.action === 'review' && (
         <ReviewModal
-            job={jobInFocus.job}
-            onClose={() => setJobInFocus(null)}
-            onSubmit={handleFinalizeJob}
+          job={jobInFocus.job}
+          onClose={() => setJobInFocus(null)}
+          onSubmit={handleFinalizeJob}
         />
       )}
-      {jobInFocus?.action === 'dispute' && (() => {
-        // For creating a new dispute, we need a different modal
-        // This is a temporary workaround - proper modal should accept onSubmit
-        const mockDispute: Dispute = {
-          id: 'temp',
-          jobId: jobInFocus.job.id,
-          initiatorId: user.email,
-          status: 'aberta',
-          reason: '',
-          createdAt: new Date().toISOString(),
-          messages: []
-        };
-        return (
-          <DisputeModal
+      {jobInFocus?.action === 'dispute' &&
+        (() => {
+          // For creating a new dispute, we need a different modal
+          // This is a temporary workaround - proper modal should accept onSubmit
+          const mockDispute: Dispute = {
+            id: 'temp',
+            jobId: jobInFocus.job.id,
+            initiatorId: user.email,
+            status: 'aberta',
+            reason: '',
+            createdAt: new Date().toISOString(),
+            messages: [],
+          };
+          return (
+            <DisputeModal
               job={jobInFocus.job}
               user={user}
               dispute={mockDispute}
               onClose={() => setJobInFocus(null)}
-              onSendMessage={(text) => handleOpenDispute({ reason: 'Disputa', description: text })}
-          />
-        );
-      })()}
-      {jobInFocus?.action === 'dispute-details' && (() => {
-        const dispute = allDisputes.find(d => d.jobId === jobInFocus.job.id);
-        if (!dispute) return null;
-        return (
-          <DisputeDetailsModal
-            isOpen={true}
-            job={jobInFocus.job}
-            dispute={dispute}
-            currentUser={user}
-            client={user}
-            provider={allUsers.find(u => u.email === jobInFocus.job.providerId)!}
-            onClose={() => setJobInFocus(null)}
-            onSendMessage={handleSendDisputeMessage}
-          />
-        );
-      })()}
+              onSendMessage={text => handleOpenDispute({ reason: 'Disputa', description: text })}
+            />
+          );
+        })()}
+      {jobInFocus?.action === 'dispute-details' &&
+        (() => {
+          const dispute = allDisputes.find(d => d.jobId === jobInFocus.job.id);
+          if (!dispute) return null;
+          return (
+            <DisputeDetailsModal
+              isOpen={true}
+              job={jobInFocus.job}
+              dispute={dispute}
+              currentUser={user}
+              client={user}
+              provider={allUsers.find(u => u.email === jobInFocus.job.providerId)!}
+              onClose={() => setJobInFocus(null)}
+              onSendMessage={handleSendDisputeMessage}
+            />
+          );
+        })()}
       {isAddItemModalOpen && (
-        <AddItemModal 
-            onClose={() => setIsAddItemModalOpen(false)}
-            onSave={handleSaveItem}
-        />
+        <AddItemModal onClose={() => setIsAddItemModalOpen(false)} onSave={handleSaveItem} />
       )}
       {viewingItem && (
         <ItemDetailModal
-            item={viewingItem}
-            onClose={() => setViewingItem(null)}
-            onServiceRequest={(item) => {
-                onNewJobFromItem(`Preciso de manutenção para meu ${item.name} (${item.brand} ${item.model}).`);
-                setViewingItem(null);
-            }}
+          item={viewingItem}
+          onClose={() => setViewingItem(null)}
+          onServiceRequest={item => {
+            onNewJobFromItem(
+              `Preciso de manutenção para meu ${item.name} (${item.brand} ${item.model}).`
+            );
+            setViewingItem(null);
+          }}
         />
       )}
       {viewingJobOnMap && (
         <JobLocationModal
-            job={viewingJobOnMap}
-            client={user}
-            provider={allUsers.find(u => u.email === viewingJobOnMap.providerId)!}
-            onClose={() => setViewingJobOnMap(null)}
+          job={viewingJobOnMap}
+          client={user}
+          provider={allUsers.find(u => u.email === viewingJobOnMap.providerId)!}
+          onClose={() => setViewingJobOnMap(null)}
         />
       )}
       {chattingWithJob && (
         <ChatModal
-            job={chattingWithJob}
-            currentUser={user}
-            otherParty={allUsers.find(u => u.email === chattingWithJob.providerId)}
-            messages={allMessages.filter(m => m.chatId === chattingWithJob.id)}
-            onClose={() => setChattingWithJob(null)}
-            onSendMessage={handleSendMessage}
-            onConfirmSchedule={handleConfirmSchedule}
-            setAllMessages={setAllMessages}
+          job={chattingWithJob}
+          currentUser={user}
+          otherParty={allUsers.find(u => u.email === chattingWithJob.providerId)}
+          messages={allMessages.filter(m => m.chatId === chattingWithJob.id)}
+          onClose={() => setChattingWithJob(null)}
+          onSendMessage={handleSendMessage}
+          onConfirmSchedule={handleConfirmSchedule}
+          setAllMessages={setAllMessages}
         />
       )}
 
-  {/* AI Assistant Widget (single instance retained above) */}
-  {/* Duplicate instance removed to prevent double mounting */}
+      {/* AI Assistant Widget (single instance retained above) */}
+      {/* Duplicate instance removed to prevent double mounting */}
       {/* Modal simples de edição de perfil */}
       {isProfileModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          role="dialog"
+          aria-modal="true"
+        >
           <div className="bg-white w-full max-w-lg rounded-xl shadow-xl p-6 relative">
             <button
               onClick={() => setIsProfileModalOpen(false)}
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-600"
               aria-label="Fechar"
-            >✕</button>
+            >
+              ✕
+            </button>
             <h3 className="text-lg font-bold mb-4">Completar Perfil</h3>
             <form onSubmit={handleSaveProfile} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-                <input name="name" defaultValue={user.name} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
+                <input
+                  name="name"
+                  defaultValue={user.name}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-                <input name="email" defaultValue={user.email} disabled className="w-full rounded-md border-gray-300 bg-gray-100 text-gray-600 shadow-sm text-sm" />
+                <input
+                  name="email"
+                  defaultValue={user.email}
+                  disabled
+                  className="w-full rounded-md border-gray-300 bg-gray-100 text-gray-600 shadow-sm text-sm"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
-                <input name="address" defaultValue={user.address} placeholder="Rua, nº, bairro" className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
+                <input
+                  name="address"
+                  defaultValue={user.address}
+                  placeholder="Rua, nº, bairro"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
-                <input name="whatsapp" defaultValue={user.whatsapp} placeholder="(DDD) 9 9999-9999" className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
+                <input
+                  name="whatsapp"
+                  defaultValue={user.whatsapp}
+                  placeholder="(DDD) 9 9999-9999"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Localização (cidade)</label>
-                <input name="location" defaultValue={user.location} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Localização (cidade)
+                </label>
+                <input
+                  name="location"
+                  defaultValue={user.location}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Endereços adicionais (um por linha) — opcional</label>
-                <textarea name="addressesExtra" defaultValue={(user.addresses || []).join('\n')} rows={3} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Endereços adicionais (um por linha) — opcional
+                </label>
+                <textarea
+                  name="addressesExtra"
+                  defaultValue={(user.addresses || []).join('\n')}
+                  rows={3}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">CPF (opcional)</label>
-                <input name="cpf" defaultValue={user.cpf} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  CPF (opcional)
+                </label>
+                <input
+                  name="cpf"
+                  defaultValue={user.cpf}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Bio (opcional)</label>
-                <textarea name="bio" defaultValue={user.bio} rows={4} className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />
-                <p className="text-xs text-gray-600 mt-1">Opcional. Você pode adicionar detalhes sobre você quando preferir.</p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Bio (opcional)
+                </label>
+                <textarea
+                  name="bio"
+                  defaultValue={user.bio}
+                  rows={4}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                />
+                <p className="text-xs text-gray-600 mt-1">
+                  Opcional. Você pode adicionar detalhes sobre você quando preferir.
+                </p>
               </div>
               <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={() => setIsProfileModalOpen(false)} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-100 hover:bg-gray-200">Cancelar</button>
-                <button type="submit" className="px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700">Salvar</button>
+                <button
+                  type="button"
+                  onClick={() => setIsProfileModalOpen(false)}
+                  className="px-4 py-2 text-sm font-medium rounded-md bg-gray-100 hover:bg-gray-200"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                >
+                  Salvar
+                </button>
               </div>
             </form>
           </div>
@@ -929,6 +1137,3 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
 };
 
 export default ClientDashboard;
-
-
-

@@ -10,6 +10,7 @@
 **Por que não pode ser feito 100% via CLI:**
 
 O Stripe Connect requer aprovação e aceite de termos de responsabilidade legal que **só podem ser feitos pelo Dashboard web** por questões de:
+
 - Compliance legal
 - Segurança
 - Verificação de identidade
@@ -93,6 +94,7 @@ cd scripts
 ```
 
 **O que o script faz**:
+
 - ✅ Verifica webhook ativo
 - ✅ Lista contas Connect criadas
 - ✅ Mostra eventos recentes
@@ -104,12 +106,14 @@ cd scripts
 ## 📋 Checklist Completo
 
 ### Configuração Inicial (Dashboard - 10 min)
+
 - [ ] Platform Profile configurado
 - [ ] Termos aceitos
 - [ ] Redirect URIs adicionados (4 URIs)
 - [ ] Capabilities habilitados (Transfers, Card payments)
 
 ### Teste Manual (App - 1 hora)
+
 - [ ] Criar conta como prestador
 - [ ] Conectar Stripe via onboarding
 - [ ] Verificar stripeAccountId salvo no Firestore
@@ -121,6 +125,7 @@ cd scripts
 - [ ] Verificar transferência no Dashboard Stripe
 
 ### Validação (Script - 2 min)
+
 - [ ] Executar `test-stripe-connect.ps1`
 - [ ] Verificar relatório gerado
 - [ ] Confirmar 0 erros
@@ -136,6 +141,7 @@ cd scripts
 ### Por que é necessário?
 
 Sem isso, prestadores não conseguem:
+
 - Criar contas Connect
 - Receber pagamentos
 - Completar onboarding
@@ -153,6 +159,7 @@ Sem isso, prestadores não conseguem:
 ## 🚀 APÓS CONFIGURAR
 
 1. **Execute o script**:
+
    ```powershell
    .\scripts\test-stripe-connect.ps1
    ```
@@ -184,7 +191,7 @@ Criei o script `scripts/test-stripe-connect.ps1` que:
 ✅ Mostra eventos recentes  
 ✅ Cria links de onboarding  
 ✅ Gera relatório completo  
-✅ Indica próximos passos  
+✅ Indica próximos passos
 
 **Use sempre que precisar verificar o status!**
 

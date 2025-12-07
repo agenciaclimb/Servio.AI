@@ -12,7 +12,7 @@ export const templates = {
   },
   call: {
     call_script_short: `Script curto:\n- Apresentação rápida e contexto de valor para {{categoria}}\n- Case objetivo ({{empresa}}, {{percent}}%)\n- Pergunta de encaixe (agenda de 15min)\n- Próximo passo (enviar proposta/agenda)`,
-  }
+  },
 } as const;
 
 export function render(template: string, vars: TemplateVars): string {

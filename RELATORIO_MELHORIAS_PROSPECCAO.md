@@ -11,13 +11,13 @@ Implementamos melhorias significativas no sistema de prospecção, elevando-o de
 
 ### Métricas Chave
 
-| Métrica | Antes (v1.0) | Depois (v2.0) | Melhoria |
-|---------|--------------|---------------|----------|
-| **Precisão de Match** | 40% (rating básico) | 85% (AI scoring) | **+112%** |
-| **Taxa de Conversão** | 12% (template fixo) | 32% (IA personalizada) | **+167%** |
-| **Canais de Contato** | 1 (email) | 3 (email + SMS + WhatsApp) | **+200%** |
-| **Tempo de Prospecção** | 45 min/categoria | 8 min/categoria | **-82%** |
-| **Qualidade dos Leads** | Score 50 médio | Score 78 médio | **+56%** |
+| Métrica                 | Antes (v1.0)        | Depois (v2.0)              | Melhoria  |
+| ----------------------- | ------------------- | -------------------------- | --------- |
+| **Precisão de Match**   | 40% (rating básico) | 85% (AI scoring)           | **+112%** |
+| **Taxa de Conversão**   | 12% (template fixo) | 32% (IA personalizada)     | **+167%** |
+| **Canais de Contato**   | 1 (email)           | 3 (email + SMS + WhatsApp) | **+200%** |
+| **Tempo de Prospecção** | 45 min/categoria    | 8 min/categoria            | **-82%**  |
+| **Qualidade dos Leads** | Score 50 médio      | Score 78 médio             | **+56%**  |
 
 ---
 
@@ -28,6 +28,7 @@ Implementamos melhorias significativas no sistema de prospecção, elevando-o de
 **Rota:** `POST /api/analyze-prospect`
 
 **O que faz:**
+
 - Analisa perfil do profissional usando Gemini AI
 - Gera pontuação de qualidade (0-100) baseada em:
   - Avaliações e número de reviews
@@ -39,6 +40,7 @@ Implementamos melhorias significativas no sistema de prospecção, elevando-o de
 - Determina canal preferido de contato
 
 **Exemplo de Resposta:**
+
 ```json
 {
   "name": "João Silva",
@@ -53,6 +55,7 @@ Implementamos melhorias significativas no sistema de prospecção, elevando-o de
 ```
 
 **Testes:** ✅ 3/3 passando
+
 - Análise com IA bem-sucedida
 - Fallback quando IA indisponível
 - Tratamento de dados incompletos
@@ -64,6 +67,7 @@ Implementamos melhorias significativas no sistema de prospecção, elevando-o de
 **Rota:** `POST /api/generate-prospect-email`
 
 **O que faz:**
+
 - Gera emails únicos e personalizados usando Gemini AI
 - Considera especialidades do profissional
 - Menciona o job específico disponível
@@ -74,6 +78,7 @@ Implementamos melhorias significativas no sistema de prospecção, elevando-o de
 **Antes vs Depois:**
 
 **❌ Antes (template genérico):**
+
 ```
 Olá João,
 
@@ -85,17 +90,18 @@ Equipe Servio.AI
 ```
 
 **✅ Depois (IA personalizada):**
+
 ```
 Olá João Silva,
 
-Identificamos seu perfil como especialista em Elétrica Residencial 
+Identificamos seu perfil como especialista em Elétrica Residencial
 e Automação, com excelentes avaliações (4.8★ - 120 reviews).
 
-Temos um cliente em São Paulo procurando especificamente um 
-profissional qualificado para instalar sistema de automação 
+Temos um cliente em São Paulo procurando especificamente um
+profissional qualificado para instalar sistema de automação
 residencial completo - exatamente sua área de atuação!
 
-Este é o tipo de projeto de alto valor que você busca. 
+Este é o tipo de projeto de alto valor que você busca.
 
 Gostaria de participar? Cadastre-se gratuitamente:
 https://servio-ai.com/register?type=provider
@@ -105,6 +111,7 @@ Equipe Servio.AI
 ```
 
 **Testes:** ✅ 3/3 passando
+
 - Geração com IA personalizada
 - Fallback para template básico
 - Inclusão de especialidades
@@ -113,11 +120,13 @@ Equipe Servio.AI
 
 ### 3. Comunicação Multi-Canal
 
-**Rotas:** 
+**Rotas:**
+
 - `POST /api/send-sms-invite`
 - `POST /api/send-whatsapp-invite`
 
 **O que faz:**
+
 - Envia convites por múltiplos canais simultaneamente
 - Seleciona canal preferido baseado no perfil
 - SMS para contatos rápidos
@@ -125,6 +134,7 @@ Equipe Servio.AI
 - Email para documentação formal
 
 **Funcionalidade Frontend:**
+
 ```typescript
 const result = await sendMultiChannelInvite(
   prospect,
@@ -137,6 +147,7 @@ const result = await sendMultiChannelInvite(
 ```
 
 **Testes:** ✅ 6/6 passando
+
 - Envio por email
 - Envio por SMS
 - Envio por WhatsApp
@@ -164,6 +175,7 @@ Executa o fluxo completo de prospecção inteligente:
 9. **Notificação:** Alerta equipe de prospecção
 
 **Parâmetros Configuráveis:**
+
 ```typescript
 {
   category: string;           // 'Eletricista'
@@ -177,6 +189,7 @@ Executa o fluxo completo de prospecção inteligente:
 ```
 
 **Resposta:**
+
 ```json
 {
   "success": true,
@@ -272,12 +285,12 @@ Duration   7.26s
 
 **Cenário: 100 prospecções/mês**
 
-| Métrica | Antes | Depois | Economia |
-|---------|-------|--------|----------|
-| **Tempo de prospecção** | 75h | 13h | **62h/mês** |
-| **Custo operacional** | R$ 3.750 | R$ 650 | **R$ 3.100/mês** |
-| **Leads convertidos** | 12 | 32 | **+167%** |
-| **Receita gerada** | R$ 18.000 | R$ 48.000 | **R$ 30.000/mês** |
+| Métrica                 | Antes     | Depois    | Economia          |
+| ----------------------- | --------- | --------- | ----------------- |
+| **Tempo de prospecção** | 75h       | 13h       | **62h/mês**       |
+| **Custo operacional**   | R$ 3.750  | R$ 650    | **R$ 3.100/mês**  |
+| **Leads convertidos**   | 12        | 32        | **+167%**         |
+| **Receita gerada**      | R$ 18.000 | R$ 48.000 | **R$ 30.000/mês** |
 
 **ROI anual: R$ 397.200**
 
@@ -290,6 +303,7 @@ Duration   7.26s
 **Arquivo:** `backend/src/index.js` (linhas 1650-1950)
 
 **Dependências:**
+
 ```json
 {
   "@google/generative-ai": "^0.21.0",
@@ -299,6 +313,7 @@ Duration   7.26s
 ```
 
 **Endpoints Implementados:**
+
 - `POST /api/analyze-prospect` - Análise com IA
 - `POST /api/generate-prospect-email` - Email personalizado
 - `POST /api/send-sms-invite` - Envio SMS
@@ -310,28 +325,30 @@ Duration   7.26s
 **Arquivo:** `services/prospectingService.ts`
 
 **Funções Exportadas:**
+
 ```typescript
 // v1.0 (mantidas para compatibilidade)
-triggerAutoProspecting()
-searchGoogleForProviders()
-sendProspectInvitation()
-notifyProspectingTeam()
-saveProspect()
+triggerAutoProspecting();
+searchGoogleForProviders();
+sendProspectInvitation();
+notifyProspectingTeam();
+saveProspect();
 
 // v2.0 (novas funcionalidades)
-analyzeProspectWithAI()
-generatePersonalizedEmail()
-sendMultiChannelInvite()
+analyzeProspectWithAI();
+generatePersonalizedEmail();
+sendMultiChannelInvite();
 ```
 
 **Interfaces de Dados:**
+
 ```typescript
 interface ProspectProfile {
   name: string;
   email?: string;
   phone?: string;
-  qualityScore: number;      // 0-100
-  matchScore: number;         // 0-100
+  qualityScore: number; // 0-100
+  matchScore: number; // 0-100
   specialties?: string[];
   location?: string;
   preferredContact?: 'email' | 'phone' | 'whatsapp';
@@ -366,6 +383,7 @@ interface GoogleSearchResult {
 **Status:** ✅ Deployed e funcional
 
 **Logs de Deploy:**
+
 ```
 ✓ Building Container
 ✓ Creating Revision
@@ -382,6 +400,7 @@ Done.
 **Status:** ✅ Deployed e funcional
 
 **Bundle Sizes:**
+
 - prospectingService: 3.84 KB (1.33 KB gzip)
 - Total optimizado: ~1.2 MB (320 KB gzip)
 
@@ -454,6 +473,7 @@ Done.
 ### Caso 1: Cliente Solicita Eletricista Especializado
 
 **Contexto:**
+
 - Cliente: Instalar sistema de automação residencial
 - Localização: São Paulo, Zona Sul
 - Urgência: Alta
@@ -476,6 +496,7 @@ Done.
 ### Caso 2: Prospecção em Massa para Nova Categoria
 
 **Contexto:**
+
 - Categoria: Designer de Interiores
 - Nenhum prestador cadastrado
 - Meta: 20 profissionais

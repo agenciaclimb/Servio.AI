@@ -4,19 +4,25 @@ import userEvent from '@testing-library/user-event';
 import ProviderJobCard from '../components/ProviderJobCard';
 import type { Job, User } from '../types';
 
-const baseJob = (over: Partial<Job> = {}): Job => ({
-  id: 'job-1',
-  title: 'Limpeza pós-obra',
-  category: 'limpeza' as any,
-  description: 'Limpeza de apartamento 70m²',
-  clientId: 'client-1',
-  status: 'open' as any,
-  serviceType: 'personalizado' as any,
-  createdAt: new Date(),
-  ...over,
-} as Job);
+const baseJob = (over: Partial<Job> = {}): Job =>
+  ({
+    id: 'job-1',
+    title: 'Limpeza pós-obra',
+    category: 'limpeza' as any,
+    description: 'Limpeza de apartamento 70m²',
+    clientId: 'client-1',
+    status: 'open' as any,
+    serviceType: 'personalizado' as any,
+    createdAt: new Date(),
+    ...over,
+  }) as Job;
 
-const client: User = { id: 'client-1', name: 'Maria', email: 'maria@test.com', role: 'client' as any };
+const client: User = {
+  id: 'client-1',
+  name: 'Maria',
+  email: 'maria@test.com',
+  role: 'client' as any,
+};
 
 describe('ProviderJobCard', () => {
   beforeEach(() => vi.clearAllMocks());
@@ -33,7 +39,9 @@ describe('ProviderJobCard', () => {
     const user = userEvent.setup({ delay: null });
     const onUpdateStatus = vi.fn();
     const job = baseJob({ status: 'agendado' as any });
-    render(<ProviderJobCard job={job} client={client} onChat={vi.fn()} onUpdateStatus={onUpdateStatus} />);
+    render(
+      <ProviderJobCard job={job} client={client} onChat={vi.fn()} onUpdateStatus={onUpdateStatus} />
+    );
 
     const btn = screen.getByRole('button', { name: /Estou a Caminho/i });
     await user.click(btn);
@@ -45,7 +53,9 @@ describe('ProviderJobCard', () => {
     const user = userEvent.setup({ delay: null });
     const onUpdateStatus = vi.fn();
     const job = baseJob({ status: 'a_caminho' as any });
-    render(<ProviderJobCard job={job} client={client} onChat={vi.fn()} onUpdateStatus={onUpdateStatus} />);
+    render(
+      <ProviderJobCard job={job} client={client} onChat={vi.fn()} onUpdateStatus={onUpdateStatus} />
+    );
 
     const btn = screen.getByRole('button', { name: /Iniciar Serviço/i });
     await user.click(btn);

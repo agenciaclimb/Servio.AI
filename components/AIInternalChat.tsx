@@ -39,12 +39,14 @@ const AIInternalChat: React.FC<AIInternalChatProps> = ({ currentUser, context, o
   // Welcome message based on user type
   useEffect(() => {
     const welcomeMessage = getWelcomeMessage(currentUser.type);
-    setMessages([{
-      id: 'welcome',
-      role: 'assistant',
-      content: welcomeMessage,
-      timestamp: new Date(),
-    }]);
+    setMessages([
+      {
+        id: 'welcome',
+        role: 'assistant',
+        content: welcomeMessage,
+        timestamp: new Date(),
+      },
+    ]);
   }, [currentUser.type]);
 
   const getWelcomeMessage = (userType: string): string => {
@@ -80,15 +82,18 @@ const AIInternalChat: React.FC<AIInternalChatProps> = ({ currentUser, context, o
       }));
 
       // Add context if provided
-      const contextualHistory = context 
-        ? [{ 
-            id: 'context', 
-            chatId: 'ai-assistant',
-            senderId: 'system',
-            senderName: 'System',
-            text: `Context: ${context}`,
-            createdAt: new Date().toISOString(),
-          }, ...chatHistory]
+      const contextualHistory = context
+        ? [
+            {
+              id: 'context',
+              chatId: 'ai-assistant',
+              senderId: 'system',
+              senderName: 'System',
+              text: `Context: ${context}`,
+              createdAt: new Date().toISOString(),
+            },
+            ...chatHistory,
+          ]
         : chatHistory;
 
       const response = await getChatAssistance(contextualHistory, currentUser.type);
@@ -96,7 +101,9 @@ const AIInternalChat: React.FC<AIInternalChatProps> = ({ currentUser, context, o
       const aiMessage: ChatMessage = {
         id: `ai-${Date.now()}`,
         role: 'assistant',
-        content: response?.displayText || 'Desculpe, não consegui processar sua solicitação. Por favor, tente novamente.',
+        content:
+          response?.displayText ||
+          'Desculpe, não consegui processar sua solicitação. Por favor, tente novamente.',
         timestamp: new Date(),
       };
 
@@ -123,19 +130,20 @@ const AIInternalChat: React.FC<AIInternalChatProps> = ({ currentUser, context, o
   };
 
   // Quick action suggestions
-  const quickActions = currentUser.type === 'prospector' 
-    ? [
-        'Como abordar um novo prospect?',
-        'Template de follow-up',
-        'Análise de prospect qualificado',
-        'Estratégias de conversão',
-      ]
-    : [
-        'Como melhorar meu perfil?',
-        'Dicas de precificação',
-        'Como responder propostas?',
-        'Construir portfolio',
-      ];
+  const quickActions =
+    currentUser.type === 'prospector'
+      ? [
+          'Como abordar um novo prospect?',
+          'Template de follow-up',
+          'Análise de prospect qualificado',
+          'Estratégias de conversão',
+        ]
+      : [
+          'Como melhorar meu perfil?',
+          'Dicas de precificação',
+          'Como responder propostas?',
+          'Construir portfolio',
+        ];
 
   const handleQuickAction = (action: string) => {
     setInput(action);
@@ -149,13 +157,20 @@ const AIInternalChat: React.FC<AIInternalChatProps> = ({ currentUser, context, o
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                />
               </svg>
             </div>
             <div>
               <h2 className="font-bold text-lg">Assistente IA</h2>
               <p className="text-xs text-white/80">
-                {currentUser.type === 'prospector' ? 'Especialista em Prospecção' : 'Seu Coach Pessoal'}
+                {currentUser.type === 'prospector'
+                  ? 'Especialista em Prospecção'
+                  : 'Seu Coach Pessoal'}
               </p>
             </div>
           </div>
@@ -166,7 +181,12 @@ const AIInternalChat: React.FC<AIInternalChatProps> = ({ currentUser, context, o
               aria-label="Fechar chat"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           )}
@@ -174,7 +194,7 @@ const AIInternalChat: React.FC<AIInternalChatProps> = ({ currentUser, context, o
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-          {messages.map((msg) => (
+          {messages.map(msg => (
             <div
               key={msg.id}
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
@@ -188,7 +208,10 @@ const AIInternalChat: React.FC<AIInternalChatProps> = ({ currentUser, context, o
               >
                 <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
                 <p className="text-xs mt-2 opacity-70">
-                  {msg.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                  {msg.timestamp.toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </p>
               </div>
             </div>
@@ -198,8 +221,14 @@ const AIInternalChat: React.FC<AIInternalChatProps> = ({ currentUser, context, o
               <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div
+                    className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce"
+                    style={{ animationDelay: '0.1s' }}
+                  ></div>
+                  <div
+                    className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce"
+                    style={{ animationDelay: '0.2s' }}
+                  ></div>
                 </div>
               </div>
             </div>
@@ -212,7 +241,7 @@ const AIInternalChat: React.FC<AIInternalChatProps> = ({ currentUser, context, o
           <div className="px-4 py-2 border-t bg-gray-50">
             <p className="text-xs text-gray-600 mb-2">Sugestões rápidas:</p>
             <div className="flex flex-wrap gap-2">
-              {quickActions.map((action) => (
+              {quickActions.map(action => (
                 <button
                   key={action}
                   onClick={() => handleQuickAction(action)}
@@ -230,7 +259,7 @@ const AIInternalChat: React.FC<AIInternalChatProps> = ({ currentUser, context, o
           <div className="flex gap-2">
             <textarea
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={e => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
               placeholder="Digite sua mensagem..."
               disabled={isLoading}
@@ -243,13 +272,34 @@ const AIInternalChat: React.FC<AIInternalChatProps> = ({ currentUser, context, o
               className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium"
             >
               {isLoading ? (
-                <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="w-5 h-5 animate-spin"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
               ) : (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                  />
                 </svg>
               )}
             </button>

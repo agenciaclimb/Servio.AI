@@ -25,7 +25,7 @@ describe('[E2E-SMOKE] AI Fallback', () => {
       location: 'São Paulo, SP',
       status: 'ativo',
       memberSince: new Date().toISOString(),
-      verificationStatus: 'verificado'
+      verificationStatus: 'verificado',
     } as any);
     expect(typeof tip).toBe('string');
     expect(tip).toMatch(/mock-tip/);

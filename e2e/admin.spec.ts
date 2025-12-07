@@ -7,7 +7,12 @@ test.describe('Painel do Administrador', () => {
     await page.goto('/');
     // Simula usuário admin (a aplicação atual não possui fluxo real de persistência de auth no localStorage, mas deixamos para futura integração)
     await page.evaluate(() => {
-      const adminUser = { email: 'admin@servio.ai', name: 'Administrador QA', type: 'admin', status: 'ativo' };
+      const adminUser = {
+        email: 'admin@servio.ai',
+        name: 'Administrador QA',
+        type: 'admin',
+        status: 'ativo',
+      };
       localStorage.setItem('mockCurrentUser', JSON.stringify(adminUser));
     });
     await page.reload();

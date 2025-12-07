@@ -67,9 +67,7 @@ describe('ProfilePage Component - Quality Tests', () => {
     });
 
     it('should display loading skeleton while fetching', () => {
-      mockApiCall.mockImplementation(
-        () => new Promise(resolve => setTimeout(resolve, 500))
-      );
+      mockApiCall.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 500)));
 
       const { container } = render(<ProfilePage />);
 

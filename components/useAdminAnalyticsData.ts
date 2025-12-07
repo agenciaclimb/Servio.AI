@@ -27,7 +27,7 @@ export function useAdminAnalyticsData(period: TimePeriod) {
         setAllDisputes(Array.isArray(disputes) ? disputes : []);
         setAllFraudAlerts(Array.isArray(fraudAlerts) ? fraudAlerts : []);
       } catch (error) {
-        console.error("Failed to load admin analytics data:", error);
+        console.error('Failed to load admin analytics data:', error);
         // Mantém estado consistente mesmo em falhas para evitar erros em componentes dependentes
         setAllJobs([]);
         setAllUsers([]);

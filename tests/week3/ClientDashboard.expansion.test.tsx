@@ -4,7 +4,7 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 // Mock do skeleton ANTES de importar o componente principal
 vi.mock('../../components/skeletons/ClientDashboardSkeleton', () => ({
-  default: () => <div data-testid="skeleton" />
+  default: () => <div data-testid="skeleton" />,
 }));
 
 // Mock ToastContext
@@ -16,7 +16,17 @@ vi.mock('../../contexts/ToastContext', () => ({
 }));
 
 import ClientDashboard from '../../components/ClientDashboard';
-import { User, Job, Proposal, Message, Dispute, Bid, Notification, MaintainedItem, Escrow } from '../../types';
+import {
+  User,
+  Job,
+  Proposal,
+  Message,
+  Dispute,
+  Bid,
+  Notification,
+  MaintainedItem,
+  Escrow,
+} from '../../types';
 
 // Mock data factories
 const mockUser: User = {
@@ -83,9 +93,7 @@ function renderClientDashboard(overrides: Partial<ClientDashboardProps> = {}) {
     ...overrides,
   };
 
-  return render(
-    <ClientDashboard {...defaultProps} />
-  );
+  return render(<ClientDashboard {...defaultProps} />);
 }
 
 interface ClientDashboardProps {
@@ -146,7 +154,12 @@ describe('ClientDashboard - Week 3 Expansion Tests', () => {
     it('should display multiple proposals', () => {
       const proposals = [
         { ...mockProposal, id: 'prop1', bidAmount: 500 },
-        { ...mockProposal, id: 'prop2', bidAmount: 750, provider: { displayName: 'Provider 2', rating: 4.5, completedJobs: 30 } },
+        {
+          ...mockProposal,
+          id: 'prop2',
+          bidAmount: 750,
+          provider: { displayName: 'Provider 2', rating: 4.5, completedJobs: 30 },
+        },
       ];
 
       renderClientDashboard({
@@ -493,4 +506,3 @@ describe('ClientDashboard - Week 3 Expansion Tests', () => {
     });
   });
 });
-

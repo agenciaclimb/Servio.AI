@@ -22,18 +22,18 @@ const Pagination: React.FC<PaginationProps> = ({
   const getVisiblePages = (): number[] => {
     const pages: number[] = [];
     const halfVisible = Math.floor(maxVisible / 2);
-    
+
     let start = Math.max(1, currentPage - halfVisible);
     const end = Math.min(totalPages, start + maxVisible - 1);
-    
+
     if (end - start < maxVisible - 1) {
       start = Math.max(1, end - maxVisible + 1);
     }
-    
+
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
-    
+
     return pages;
   };
 
@@ -62,7 +62,7 @@ const Pagination: React.FC<PaginationProps> = ({
         </>
       )}
 
-      {visiblePages.map((page) => (
+      {visiblePages.map(page => (
         <button
           key={page}
           onClick={() => onPageChange(page)}
