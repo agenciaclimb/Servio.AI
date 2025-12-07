@@ -40,7 +40,7 @@ export function applyAdvancedFilters(
   return leads.filter(lead => {
     for (let i = 0; i < normalized.length; i++) {
       const cond = normalized[i];
-      const raw = (lead as Record<string, unknown>)[cond.field];
+      const raw = (lead as any)[cond.field as string];
       const valStr = String(raw ?? '').toLowerCase();
       switch (cond.operator) {
         case 'contains':
@@ -68,10 +68,10 @@ export function applyAdvancedFilters(
           if (!(Number(raw ?? 0) <= Number(cond.value ?? 0))) return false;
           break;
         case 'in':
-          if (!Array.isArray(cond.value) || !cond.value.includes(raw)) return false;
+          if (!Array.isArray(cond.value) || !cond.value.includes(raw as string | number)) return false;
           break;
         case 'notIn':
-          if (Array.isArray(cond.value) && cond.value.includes(raw)) return false;
+          if (Array.isArray(cond.value) && cond.value.includes(raw as string | number)) return false;
           break;
         case 'exists':
           if (raw === undefined || raw === null || raw === '') return false;

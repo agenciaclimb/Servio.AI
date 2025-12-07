@@ -33,7 +33,6 @@ import ProspectCardV2 from './ProspectCardV2';
 import { SelectionProvider, useSelection } from '../../contexts/SelectionContext';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import SavedViewsBar from './SavedViewsBar';
-import { type FilterCondition } from '../../hooks/useAdvancedFilters';
 import { useAdvancedFiltersHook } from '../../hooks/useAdvancedFilters';
 import { templates, render } from '../../prospector/templates';
 import { getAnalyticsIfSupported } from '../../../firebaseConfig';
@@ -86,14 +85,10 @@ export default function ProspectorCRMEnhanced({
     'overview'
   );
   const [sortByScore, setSortByScore] = useState<boolean>(false);
-  // @ts-expect-error - import.meta.env is a special Vite API not fully typed
-  const CRM_V2_ENABLED =
-    (import.meta as unknown as Record<string, unknown>).env?.VITE_CRM_V2_ENABLED === 'true';
-  // @ts-expect-error - import.meta.env is a special Vite API not fully typed
-  const CRM_VIEWS_ENABLED =
-    (import.meta as unknown as Record<string, unknown>).env?.VITE_CRM_VIEWS_ENABLED === 'true';
+  const CRM_V2_ENABLED = true;
+  const CRM_VIEWS_ENABLED = true;
   const [density, setDensity] = useState<'compact' | 'detailed'>('compact');
-  const [conditions, setConditions] = useState<FilterCondition[]>([]);
+  const [conditions, setConditions] = useState<any[]>([]);
   const { runMemoized } = useAdvancedFiltersHook(120);
   const [smartFilter, setSmartFilter] = useState<((lead: ProspectLead) => boolean) | null>(null);
   const [showFunnelDashboard, setShowFunnelDashboard] = useState(false);
