@@ -20,20 +20,13 @@ const mockRecommendation = {
 
 describe('LeadScoreCard Component', () => {
   it('should render with basic props', () => {
-    render(
-      <LeadScoreCard
-        leadId="lead-1"
-        score={85}
-      />
-    );
+    render(<LeadScoreCard leadId="lead-1" score={85} />);
     expect(screen.getByTestId('lead-score-card-lead-1')).toBeInTheDocument();
     expect(screen.getByText('85')).toBeInTheDocument();
   });
 
   it('should determine temperature from score when not provided', () => {
-    const { rerender } = render(
-      <LeadScoreCard leadId="lead-1" score={85} />
-    );
+    const { rerender } = render(<LeadScoreCard leadId="lead-1" score={85} />);
     expect(screen.getByText(/Hot/i)).toBeInTheDocument();
 
     rerender(<LeadScoreCard leadId="lead-1" score={60} />);
@@ -44,60 +37,36 @@ describe('LeadScoreCard Component', () => {
   });
 
   it('should use provided temperature over score calculation', () => {
-    render(
-      <LeadScoreCard
-        leadId="lead-1"
-        score={30}
-        temperature="hot"
-      />
-    );
+    render(<LeadScoreCard leadId="lead-1" score={30} temperature="hot" />);
     expect(screen.getByText(/Hot/i)).toBeInTheDocument();
   });
 
   it('should display analysis components when provided', () => {
-    render(
-      <LeadScoreCard
-        leadId="lead-1"
-        score={85}
-        analysis={mockAnalysis}
-      />
-    );
+    render(<LeadScoreCard leadId="lead-1" score={85} analysis={mockAnalysis} />);
     expect(screen.getByText('Category Match')).toBeInTheDocument();
     expect(screen.getByText('Location Score')).toBeInTheDocument();
     expect(screen.getByText('Engagement')).toBeInTheDocument();
   });
 
   it('should display recommendation when provided', () => {
-    render(
-      <LeadScoreCard
-        leadId="lead-1"
-        score={85}
-        recommendation={mockRecommendation}
-      />
-    );
+    render(<LeadScoreCard leadId="lead-1" score={85} recommendation={mockRecommendation} />);
     expect(screen.getByText('Send Email')).toBeInTheDocument();
     expect(screen.getByText(/85%/)).toBeInTheDocument();
   });
 
   it('should toggle details on click', () => {
-    render(
-      <LeadScoreCard
-        leadId="lead-1"
-        score={85}
-        analysis={mockAnalysis}
-      />
-    );
-    
+    render(<LeadScoreCard leadId="lead-1" score={85} analysis={mockAnalysis} />);
+
     const card = screen.getByTestId('lead-score-card-lead-1');
-    
+
     // Initially should show "Click to view details"
     expect(screen.getByText(/Click to view details/i)).toBeInTheDocument();
-    
+
     // Click to expand
     fireEvent.click(card);
     expect(screen.getByText(/Click to collapse details/i)).toBeInTheDocument();
     expect(screen.getByText('Score Components')).toBeInTheDocument();
-    
+
     // Click to collapse
     fireEvent.click(card);
     expect(screen.getByText(/Click to view details/i)).toBeInTheDocument();
@@ -105,28 +74,16 @@ describe('LeadScoreCard Component', () => {
 
   it('should call onDetailClick when provided', () => {
     const onDetailClick = vi.fn();
-    render(
-      <LeadScoreCard
-        leadId="lead-1"
-        score={85}
-        onDetailClick={onDetailClick}
-      />
-    );
-    
+    render(<LeadScoreCard leadId="lead-1" score={85} onDetailClick={onDetailClick} />);
+
     const card = screen.getByTestId('lead-score-card-lead-1');
     fireEvent.click(card);
-    
+
     expect(onDetailClick).toHaveBeenCalledWith('lead-1');
   });
 
   it('should render compact version', () => {
-    render(
-      <LeadScoreCard
-        leadId="lead-1"
-        score={85}
-        compact={true}
-      />
-    );
+    render(<LeadScoreCard leadId="lead-1" score={85} compact={true} />);
     expect(screen.getByTestId('lead-score-card-compact-lead-1')).toBeInTheDocument();
     expect(screen.getByText('85')).toBeInTheDocument();
     expect(screen.getByText('HOT')).toBeInTheDocument();
@@ -153,37 +110,25 @@ describe('LeadScoreCard Component', () => {
   });
 
   it('should handle keyboard interaction', () => {
-    render(
-      <LeadScoreCard
-        leadId="lead-1"
-        score={85}
-        analysis={mockAnalysis}
-      />
-    );
-    
+    render(<LeadScoreCard leadId="lead-1" score={85} analysis={mockAnalysis} />);
+
     const card = screen.getByTestId('lead-score-card-lead-1');
-    
+
     // Press Enter
     fireEvent.keyDown(card, { key: 'Enter' });
     expect(screen.getByText(/Click to collapse details/i)).toBeInTheDocument();
-    
+
     // Press Space
     fireEvent.keyDown(card, { key: ' ' });
     expect(screen.getByText(/Click to view details/i)).toBeInTheDocument();
   });
 
   it('should display all score components in expanded view', () => {
-    render(
-      <LeadScoreCard
-        leadId="lead-1"
-        score={85}
-        analysis={mockAnalysis}
-      />
-    );
-    
+    render(<LeadScoreCard leadId="lead-1" score={85} analysis={mockAnalysis} />);
+
     const card = screen.getByTestId('lead-score-card-lead-1');
     fireEvent.click(card);
-    
+
     expect(screen.getByText('Score Components')).toBeInTheDocument();
     expect(screen.getByText('Category')).toBeInTheDocument();
     expect(screen.getByText('Location')).toBeInTheDocument();
@@ -192,17 +137,11 @@ describe('LeadScoreCard Component', () => {
   });
 
   it('should display AI recommendation in expanded view', () => {
-    render(
-      <LeadScoreCard
-        leadId="lead-1"
-        score={85}
-        recommendation={mockRecommendation}
-      />
-    );
-    
+    render(<LeadScoreCard leadId="lead-1" score={85} recommendation={mockRecommendation} />);
+
     const card = screen.getByTestId('lead-score-card-lead-1');
     fireEvent.click(card);
-    
+
     expect(screen.getByText('AI Recommendation')).toBeInTheDocument();
     expect(screen.getByText(/Action:/)).toBeInTheDocument();
     expect(screen.getByText(/Confidence:/)).toBeInTheDocument();
@@ -210,16 +149,11 @@ describe('LeadScoreCard Component', () => {
   });
 
   it('should show message when no analysis or recommendation', () => {
-    render(
-      <LeadScoreCard
-        leadId="lead-1"
-        score={85}
-      />
-    );
-    
+    render(<LeadScoreCard leadId="lead-1" score={85} />);
+
     const card = screen.getByTestId('lead-score-card-lead-1');
     fireEvent.click(card);
-    
+
     expect(screen.getByText(/No detailed analysis available yet/i)).toBeInTheDocument();
   });
 
@@ -231,12 +165,13 @@ describe('LeadScoreCard Component', () => {
         recommendation={{ ...mockRecommendation, confidence: 0.92 }}
       />
     );
-    
+
     expect(screen.getByText('92%')).toBeInTheDocument();
   });
 
   it('should truncate long template text', () => {
-    const longTemplate = 'This is a very long template that should be truncated at 60 characters to display properly';
+    const longTemplate =
+      'This is a very long template that should be truncated at 60 characters to display properly';
     render(
       <LeadScoreCard
         leadId="lead-1"
@@ -244,19 +179,16 @@ describe('LeadScoreCard Component', () => {
         recommendation={{ ...mockRecommendation, template: longTemplate }}
       />
     );
-    
-    const templateDisplay = screen.getByText(/This is a very long template that should be truncated at 6/);
+
+    const templateDisplay = screen.getByText(
+      /This is a very long template that should be truncated at 6/
+    );
     expect(templateDisplay).toBeInTheDocument();
   });
 
   it('should maintain accessibility with proper role and tabIndex', () => {
-    render(
-      <LeadScoreCard
-        leadId="lead-1"
-        score={85}
-      />
-    );
-    
+    render(<LeadScoreCard leadId="lead-1" score={85} />);
+
     const card = screen.getByTestId('lead-score-card-lead-1');
     expect(card).toHaveAttribute('role', 'button');
     expect(card).toHaveAttribute('tabIndex', '0');

@@ -606,9 +606,8 @@ describe('ProspectorDashboard - Expansion Test Suite', () => {
     });
 
     it('should optimize data fetching with Promise.all', async () => {
-      const { fetchProspectorStats, fetchProspectorLeaderboard } = await import(
-        '../../services/api'
-      );
+      const { fetchProspectorStats, fetchProspectorLeaderboard } =
+        await import('../../services/api');
 
       renderProspectorDashboard();
 

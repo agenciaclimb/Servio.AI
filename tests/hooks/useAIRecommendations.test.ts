@@ -50,9 +50,7 @@ describe('useAIRecommendations Hook', () => {
       json: async () => mockRecommendations,
     });
 
-    const { result } = renderHook(() =>
-      useAIRecommendations('lead-1', 'prospect-1')
-    );
+    const { result } = renderHook(() => useAIRecommendations('lead-1', 'prospect-1'));
 
     expect(result.current.loading).toBe(true);
 
@@ -68,9 +66,7 @@ describe('useAIRecommendations Hook', () => {
     const errorMessage = 'Network error';
     (global.fetch as any).mockRejectedValueOnce(new Error(errorMessage));
 
-    const { result } = renderHook(() =>
-      useAIRecommendations('lead-1', 'prospect-1')
-    );
+    const { result } = renderHook(() => useAIRecommendations('lead-1', 'prospect-1'));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -87,9 +83,7 @@ describe('useAIRecommendations Hook', () => {
       statusText: 'Not Found',
     });
 
-    const { result } = renderHook(() =>
-      useAIRecommendations('lead-1', 'prospect-1')
-    );
+    const { result } = renderHook(() => useAIRecommendations('lead-1', 'prospect-1'));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -100,9 +94,7 @@ describe('useAIRecommendations Hook', () => {
   });
 
   it('should validate required parameters', async () => {
-    const { result } = renderHook(() =>
-      useAIRecommendations('', 'prospect-1')
-    );
+    const { result } = renderHook(() => useAIRecommendations('', 'prospect-1'));
 
     expect(result.current.error).toBeTruthy();
     expect(result.current.error?.message).toContain('required');
@@ -114,9 +106,7 @@ describe('useAIRecommendations Hook', () => {
       json: async () => mockRecommendations,
     });
 
-    const { result } = renderHook(() =>
-      useAIRecommendations('lead-1', 'prospect-1')
-    );
+    const { result } = renderHook(() => useAIRecommendations('lead-1', 'prospect-1'));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -172,9 +162,7 @@ describe('useNextAction Hook', () => {
       json: async () => mockRecommendations.nextAction,
     });
 
-    const { result } = renderHook(() =>
-      useNextAction('lead-1', 'prospect-1')
-    );
+    const { result } = renderHook(() => useNextAction('lead-1', 'prospect-1'));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -192,10 +180,7 @@ describe('useNextAction Hook', () => {
     renderHook(() => useNextAction('lead-1', 'prospect-1'));
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith(
-        '/api/prospector/next-action',
-        expect.any(Object)
-      );
+      expect(global.fetch).toHaveBeenCalledWith('/api/prospector/next-action', expect.any(Object));
     });
   });
 });
@@ -215,17 +200,13 @@ describe('useConversionPrediction Hook', () => {
       json: async () => mockRecommendations.conversionPrediction,
     });
 
-    const { result } = renderHook(() =>
-      useConversionPrediction('lead-1', 'prospect-1')
-    );
+    const { result } = renderHook(() => useConversionPrediction('lead-1', 'prospect-1'));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
 
-    expect(result.current.prediction).toEqual(
-      mockRecommendations.conversionPrediction
-    );
+    expect(result.current.prediction).toEqual(mockRecommendations.conversionPrediction);
   });
 
   it('should call correct endpoint', async () => {
@@ -260,17 +241,13 @@ describe('useFollowUpSequence Hook', () => {
       json: async () => mockRecommendations.followUpSequence,
     });
 
-    const { result } = renderHook(() =>
-      useFollowUpSequence('lead-1', 'prospect-1')
-    );
+    const { result } = renderHook(() => useFollowUpSequence('lead-1', 'prospect-1'));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
 
-    expect(result.current.sequence).toEqual(
-      mockRecommendations.followUpSequence
-    );
+    expect(result.current.sequence).toEqual(mockRecommendations.followUpSequence);
   });
 
   it('should call correct endpoint', async () => {
@@ -295,9 +272,7 @@ describe('useFollowUpSequence Hook', () => {
       json: async () => [],
     });
 
-    const { result } = renderHook(() =>
-      useFollowUpSequence('lead-1', 'prospect-1')
-    );
+    const { result } = renderHook(() => useFollowUpSequence('lead-1', 'prospect-1'));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);

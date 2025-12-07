@@ -91,6 +91,104 @@ Garantir que todo desenvolvimento do Servio.AI seja executado por IA com **quali
 
 ---
 
+### ⚡ **Paralelização de Tarefas**
+
+**Objetivo**: Maximizar velocidade de desenvolvimento através da execução paralela de múltiplas funcionalidades.
+
+#### 🎯 **Estratégia de Paralelização**
+
+1. **Gemini Planeja (Fase de Planejamento)**
+   - ✅ Recebe lista de tasks a implementar
+   - ✅ Divide tarefas em módulos independentes
+   - ✅ Identifica dependências críticas
+   - ✅ Define ordem de prioridade
+   - ✅ Cria plano de ataque com estimativas
+   - ✅ Documenta no DOCUMENTO_MESTRE (seção planejamento)
+
+   **Output**: Mapa de tarefas com dependências claramente mapeadas
+
+   ```
+   TASK 1: Endpoint A (independente)
+   TASK 2: Endpoint B (independente)
+   TASK 3: Frontend para A (depende de TASK 1)
+   TASK 4: Frontend para B (depende de TASK 2)
+   ```
+
+2. **Copilot Executa em Paralelo (Fase de Implementação)**
+   - ✅ Recebe tarefas independentes simultâneas
+   - ✅ Cria branches separadas para cada task (feat/task-1, feat/task-2, etc)
+   - ✅ Implementa código de forma **completamente isolada**
+   - ✅ Cria testes unitários completos para cada task
+   - ✅ Faz commits atômicos em cada branch
+   - ✅ Abre PRs separadas para validação paralela
+   - ✅ Não mistura código de tasks diferentes
+
+   **Exemplo**:
+
+   ```bash
+   # Terminal 1: Copilot trabalha em TASK 1
+   git checkout -b feat/payment-endpoint
+   # implementa POST /api/payment
+   # cria testes para payment
+   # commit e push
+   # abre PR
+
+   # Terminal 2: Copilot trabalha em TASK 2
+   git checkout -b feat/notification-endpoint
+   # implementa POST /api/notify
+   # cria testes para notify
+   # commit e push
+   # abre PR
+   ```
+
+3. **Gemini Audita em Paralelo (Fase de Auditoria)**
+   - ✅ Recebe múltiplas PRs simultâneas
+   - ✅ Audita cada PR de forma independente
+   - ✅ Cria testes E2E específicos para cada funcionalidade
+   - ✅ Aponta issues/melhorias para cada task
+   - ✅ Reavalia a cada push do Copilot
+   - ✅ Aprova PRs quando tudo está verde (independentemente das outras)
+
+4. **CI/CD Valida em Paralelo**
+   - ✅ GitHub Actions roda testes para cada PR simultaneamente
+   - ✅ Builds paralelos não interferem uma com a outra
+   - ✅ Relatórios de cobertura, lint e segurança por PR
+
+5. **Merge Ordenado (Fase de Consolidação)**
+   - ✅ Tasks com **ZERO dependências** são mergeadas primeiro
+   - ✅ Tasks **dependentes** só são mergeadas após suas dependências
+   - ✅ Ordem segura evita conflitos e erros de integração
+
+#### 📊 **Benefícios**
+
+| Benefício           | Impacto                                                              |
+| ------------------- | -------------------------------------------------------------------- |
+| **Velocidade**      | 4 tarefas paralelas = ~4x mais rápido que sequencial                 |
+| **Qualidade**       | Gemini audita cada PR isoladamente (menor contexto = melhor análise) |
+| **Independência**   | Cada task tem sua própria branch, testes e PR (zero conflitos)       |
+| **Rastreabilidade** | Cada commit está ligado a uma task específica (log limpo)            |
+| **Rollback Seguro** | Se uma task quebrar, outras branches não são afetadas                |
+
+#### ⚠️ **Regras Criticas para Paralelização**
+
+1. **ISOLAMENTO TOTAL**: Uma branch NÃO pode modificar código de outra task
+2. **DEPENDÊNCIAS CLARAS**: Gemini deve documentar exatamente o que depende de quê
+3. **TESTE INDEPENDENTE**: Cada task tem testes 100% próprios (sem dependências cruzadas)
+4. **MERGE ORDENADO**: Respeitar ordem de dependências RIGOROSAMENTE
+5. **COMUNICAÇÃO**: Se Copilot encontrar uma dependência não prevista, escalada imediata
+
+#### 🔴 **O QUE NÃO FAZER**
+
+- ❌ Modificar código de outra task em sua branch
+- ❌ Compartilhar branches entre tasks
+- ❌ Merging fora de ordem
+- ❌ Suprimir testes porque "outra task vai testar"
+- ❌ Deixar tasks incompletas aguardando outras
+
+**Cada task deve ser 100% funcional E testada DE FORMA INDEPENDENTE antes do merge.**
+
+---
+
 ### 🔄 Fluxo Oficial de Desenvolvimento
 
 ```
@@ -276,7 +374,480 @@ Se Copilot ou Gemini **ignorarem** este protocolo:
 
 ---
 
-**Fim do Protocolo Oficial v1.0**
+### 🔄 **Resolução de Conflitos de Merge**
+
+#### Quando Conflitos Ocorrem
+
+Conflitos acontecem quando:
+
+- Duas branches modificam a mesma linha de código
+- Uma branch deleta arquivo que outra modifica
+- Rebase falha por mudanças concorrentes
+
+#### Estratégia de Resolução
+
+**Passo 1: Prevenção (Responsabilidade de Gemini)**
+
+- ✅ Verificar dependências entre branches ANTES de permitir execução paralela
+- ✅ Avisar Copilot sobre áreas de potencial conflito
+- ✅ Manter branches o máximo isoladas possível
+
+**Passo 2: Detecção (Responsabilidade de GitHub Actions)**
+
+- ✅ CI/CD detecta automaticamente conflitos no merge
+- ✅ Bloqueia merge automático se houver conflitos
+- ✅ Notifica no PR que resolução manual é necessária
+
+**Passo 3: Resolução (Responsabilidade de Copilot)**
+
+```bash
+# Copilot executa na branch com conflito:
+git fetch origin
+git rebase origin/main
+# Resolve conflitos no editor
+git add arquivo-conflitado.ts
+git rebase --continue
+git push -f origin feat/sua-task  # Force push para atualizar PR
+```
+
+**Passo 4: Validação (Responsabilidade de Gemini)**
+
+- ✅ Revisar resolução de conflito linha por linha
+- ✅ Garantir que lógica de ambas branches está preservada
+- ✅ Rodar testes locais para validar merged code
+- ✅ Aprovar apenas após validação completa
+
+#### ⚠️ Regras de Conflito
+
+- ❌ NUNCA fazer merge manual sem validação do Gemini
+- ❌ NUNCA usar "Choose Ours" / "Choose Theirs" sem entender implicações
+- ❌ NUNCA deletar código sem validar se é realmente duplicado
+- ✅ SEMPRE rebase em vez de merge (para historico limpo)
+- ✅ SEMPRE testar após resolver conflitos
+- ✅ SEMPRE pedir aprovação do Gemini
+
+---
+
+### 📦 **Estratégia de Versionamento**
+
+#### Versioning Scheme: Semantic Versioning (MAJOR.MINOR.PATCH)
+
+```
+MAJOR: Breaking changes (arquitetura, schema) → v5.0.0
+MINOR: Novas features (endpoints, componentes) → v4.1.0
+PATCH: Bug fixes, melhorias pequenas → v4.0.1
+```
+
+#### Quando Increment Cada Versão
+
+| Tipo                | Exemplo                            | Novo Version | Quem Decide                       |
+| ------------------- | ---------------------------------- | ------------ | --------------------------------- |
+| **Breaking Change** | Remover endpoint, alterar schema   | MAJOR        | Gemini + Você                     |
+| **Nova Feature**    | Novo endpoint, novo componente     | MINOR        | Gemini                            |
+| **Bug Fix**         | Ajuste de lógica, correção de erro | PATCH        | Copilot (propõe), Gemini (aprova) |
+
+#### Release Process
+
+1. **Gemini verifica changelog**:
+   - ✅ Lista todas as mudanças desde última release
+   - ✅ Categoriza em Features, Fixes, Breaking Changes
+
+2. **Você decide versão nova**:
+   - ✅ Analisa changesets
+   - ✅ Define MAJOR, MINOR ou PATCH
+   - ✅ Aprova release
+
+3. **Copilot cria release**:
+   - ✅ Cria tag Git (ex: v4.1.0)
+   - ✅ Gera release notes automático
+   - ✅ Faz deploy para produção (se GitHub Actions liberado)
+   - ✅ Atualiza DOCUMENTO_MESTRE com versão nova
+
+#### Changelog Format
+
+```markdown
+## v4.1.0 (2025-12-08)
+
+### 🚀 Features
+
+- feat(api): novo endpoint POST /api/leads/batch-process
+- feat(ui): componente LeadCardAdvanced com 5 novas opções
+
+### 🐛 Bug Fixes
+
+- fix(auth): ajustar timeout de sessão para 30 minutos
+- fix(db): corrigir query de deduplicação de leads
+
+### ⚠️ Breaking Changes
+
+- Removido endpoint /api/leads/old-format (use /api/leads/batch-process)
+
+### 📊 Stats
+
+- 12 files changed
+- 340 insertions, 128 deletions
+- 4 new tests added
+```
+
+---
+
+### 🚨 **Escalonamento de Problemas**
+
+#### Níveis de Severidade
+
+```
+CRÍTICO (P0): Sistema down, dados corrompidos
+              → Resposta: IMEDIATA
+              → Escalação: Você + Gemini + Copilot
+
+ALTO (P1):    Features quebradas, bugs em produção
+              → Resposta: <1 hora
+              → Escalação: Gemini valida, Copilot corrige
+
+MÉDIO (P2):   Performance degradada, UX ruim
+              → Resposta: <4 horas
+              → Escalação: Agendado para próximo sprint
+
+BAIXO (P3):   Melhorias, code smell, documentação
+              → Resposta: Próximo sprint
+              → Escalação: Gemini revisa quando houver tempo
+```
+
+#### Fluxo de Escalação
+
+```
+┌──────────────────────────────────────┐
+│  Copilot/Gemini identifica problema  │
+└──────────────────────────────────────┘
+                ↓
+        Qual é o nível?
+        /    |    |     \
+       P0   P1   P2     P3
+       ↓    ↓    ↓      ↓
+      VOCÊ GEMINI (P1+P2) BACKLOG
+       +      +
+    GEMINI  COPILOT
+       +      +
+    COPILOT  NEXT
+    HOTFIX   SPRINT
+```
+
+#### P0 Crisis Protocol
+
+Quando crítico (P0) acontece:
+
+1. **Copilot cria hotfix branch**:
+
+   ```bash
+   git checkout -b hotfix/emergency-[descrição]
+   # Implementa solução mínima (não refatora)
+   # Testa localmente
+   git push -u origin hotfix/emergency-...
+   ```
+
+2. **Gemini aprova em <5 minutos**:
+   - ✅ Revisa apenas o hotfix (sem rewrite)
+   - ✅ Valida que não quebra nada mais
+   - ✅ Aprova PR
+
+3. **Merge & Deploy IMEDIATO**:
+   - ✅ Merge para main
+   - ✅ GitHub Actions deploya automaticamente
+   - ✅ Verificar em produção
+
+4. **Comunicação**:
+   - ✅ Você avisa stakeholders que foi resolvido
+   - ✅ Agendar reunião post-mortem
+
+#### Post-Mortem Checklist
+
+Após resolver P0/P1:
+
+- [ ] Root cause identificada
+- [ ] Fix permanente implementado
+- [ ] Testes adicionados para evitar regressão
+- [ ] Documentação atualizada (DOCUMENTO_MESTRE)
+- [ ] Alerta/monitoramento adicionado
+- [ ] Gemini validou fix completo
+- [ ] Equipe informada (se houver)
+
+---
+
+### 💬 **Templates de Comunicação**
+
+#### Template 1: Task Request (Você → Copilot)
+
+```markdown
+# TASK: [Nome da Feature]
+
+## Descrição
+
+[2-3 linhas explicando o que fazer]
+
+## Requisitos
+
+- [ ] Requisito 1
+- [ ] Requisito 2
+- [ ] Requisito 3
+
+## Dependências
+
+- [ ] Depende de TASK-XXX? (se sim, qual?)
+- [ ] Pode rodar em paralelo com outras tasks?
+
+## Deadline
+
+Data: [DD/MM/YYYY]
+Prioridade: P0/P1/P2/P3
+
+## Context
+
+[Links para issues, documentação, exemplos, etc]
+
+---
+
+**Observação**: Use este template para tarefas > 4 horas de trabalho.
+```
+
+#### Template 2: PR Review (Gemini → Copilot)
+
+```markdown
+## 🔍 Review Findings
+
+### ✅ Pontos Positivos
+
+- Implementação clara
+- Testes cobrindo casos
+- Commits bem organizados
+
+### ⚠️ Issues Encontrados
+
+**[CRÍTICO]**
+
+- [ ] Linha 45: Falta validação de input
+
+**[IMPORTANTE]**
+
+- [ ] Test coverage < 45%
+
+**[MELHORIAS]**
+
+- [ ] Considerar refatorar função X para aumentar legibilidade
+
+### 🎯 Próximos Passos
+
+1. Fixar issues CRÍTICOS
+2. Adicionar testes para coverage
+3. Resubmeter para re-review
+
+---
+
+**Status**: Aguardando correções
+**Reviewer**: Gemini IDX
+```
+
+#### Template 3: Escalação (Qualquer Um → Você)
+
+```markdown
+## 🚨 Escalação de Problema
+
+**Nível**: P[0-3]
+**Problema**: [Uma linha]
+**Impacto**: [Qual a severidade para usuários/sistema]
+
+## Situação
+
+[Descrever detalhadamente o que aconteceu]
+
+## Tentativas de Resolução
+
+- [ ] Tentativa 1: [Resultado]
+- [ ] Tentativa 2: [Resultado]
+
+## Recomendação
+
+[O que Gemini/Copilot acham que deve ser feito]
+
+## Necessário Decisão
+
+- [ ] Rollback?
+- [ ] Hotfix emergencial?
+- [ ] Agendar para próximo sprint?
+
+---
+
+**Encaminhado por**: [Copilot/Gemini]
+**Data**: [Timestamp]
+```
+
+---
+
+### 👀 **Code Review Best Practices (Gemini)**
+
+#### Checklist de Review Completo
+
+Gemini deve validar **TODOS** os itens abaixo antes de aprovar uma PR:
+
+#### 1️⃣ **Arquitetura & Design**
+
+- [ ] Código segue padrões existentes do projeto
+- [ ] Não viola princípios SOLID
+- [ ] Funções têm responsabilidade única
+- [ ] Nenhuma duplicação desnecessária de código
+- [ ] Separação de concerns mantida (API/UI/DB)
+
+#### 2️⃣ **Qualidade do Código**
+
+- [ ] Variáveis com nomes descritivos
+- [ ] Funções com propósito claro
+- [ ] Sem código "dead" ou comentado
+- [ ] Sem `console.log` ou `debugger` em produção
+- [ ] Error handling apropriado (try/catch onde necessário)
+
+#### 3️⃣ **TypeScript Strictness**
+
+- [ ] Sem `any` types (exceto em casos justificados com comment)
+- [ ] Tipos corretos em todas as assinaturas de função
+- [ ] Interfaces bem definidas (não misturar com types)
+- [ ] Nenhum `@ts-ignore` ou `@ts-expect-error` sem documentação
+- [ ] Tipos generic usados apropriadamente
+
+#### 4️⃣ **Testes**
+
+- [ ] Cobertura mínima 45% (unitários + E2E)
+- [ ] Casos positivos E negativos cobertos
+- [ ] Testes E2E cobrem fluxo crítico
+- [ ] Mock appropriados para dependências externas
+- [ ] Nenhum teste "flaky" (que passa/falha inconsistentemente)
+
+#### 5️⃣ **Performance & Security**
+
+- [ ] Sem N+1 queries no banco de dados
+- [ ] Sem exposição de secrets em código
+- [ ] Nenhuma vulnerabilidade de segurança óbvia
+- [ ] APIs possuem rate limiting se necessário
+- [ ] Bundle size não aumentou dramaticamente (< +10%)
+
+#### 6️⃣ **Documentação**
+
+- [ ] Funções públicas possuem JSDoc comments
+- [ ] APIs documentadas (endpoint, parâmetros, retorno)
+- [ ] DOCUMENTO_MESTRE atualizado se arquitetura mudou
+- [ ] README updated se novas dependências adicionadas
+- [ ] Mudanças breaking documentadas
+
+#### 7️⃣ **CI/CD Green**
+
+- [ ] ✅ Testes unitários passando
+- [ ] ✅ Testes E2E passando
+- [ ] ✅ Lint (ESLint) sem erros
+- [ ] ✅ Build (TypeScript) sem erros
+- [ ] ✅ Security audit (npm audit) sem vulnerabilidades críticas
+
+#### 8️⃣ **Git Hygiene**
+
+- [ ] Commits atômicos e bem descritos
+- [ ] Mensagens de commit seguem padrão (feat/fix/docs/etc)
+- [ ] Nenhum commit "WIP" ou "temp"
+- [ ] Sem merge commits em feature branches (rebase preferred)
+- [ ] Nenhuma branch com 20+ commits (deve ser refatorada em PRs menores)
+
+#### Red Flags (REJEITAR PR IMEDIATAMENTE)
+
+Se Gemini vê qualquer um desses, rejeita a PR sem discussão:
+
+- 🚫 Nenhum teste ou cobertura < 20%
+- 🚫 Breaking change sem documentação
+- 🚫 Secret/chave API exposta em código
+- 🚫 Código deletado sem razão clara
+- 🚫 Dependency vulnerabilidade crítica (CVSS >= 7.0)
+- 🚫 Alteração não autorizada em schema/database
+- 🚫 Performance degradada (LCP aumentou > 1s)
+- 🚫 CI/CD não está 100% verde
+
+---
+
+### ✅ **Checklist de Implementação (Copilot)**
+
+Copilot deve validar **TODOS** os itens abaixo ANTES de abrir PR:
+
+#### 1️⃣ **Código Completo**
+
+- [ ] Funcionalidade 100% implementada (não "draft")
+- [ ] Edge cases tratados
+- [ ] Validações de input em lugar
+- [ ] Erro handling completo
+- [ ] Sem `TODO` ou `FIXME` comentários pendentes
+
+#### 2️⃣ **Testes Escritos**
+
+- [ ] Testes unitários para cada função pública
+- [ ] Testes E2E para fluxo crítico
+- [ ] Casos positivos E negativos cobertos
+- [ ] Mocks configurados para dependências externas
+- [ ] Cobertura >= 45% (verificar com `npm run test:coverage`)
+
+#### 3️⃣ **Local Validation**
+
+```bash
+# Deve rodar ANTES de push:
+npm run lint          # ESLint clean
+npm run build         # TypeScript compile sem erros
+npm test              # Testes unitários passam
+npm run e2e:smoke     # E2E smoke tests passam
+npm audit             # Nenhuma vulnerabilidade crítica
+```
+
+#### 4️⃣ **Code Quality**
+
+- [ ] Usar Prettier (auto-format antes de commit)
+- [ ] Sem `console.log` em código de produção
+- [ ] Variáveis nomeadas descritivamente
+- [ ] Funções com máximo 30 linhas (refatorar se maior)
+- [ ] Imports organizados (order: libs → internal → relative)
+
+#### 5️⃣ **Git Commits**
+
+```bash
+# Commit messages devem ser atômicas e descritivas:
+git commit -m "feat(api): adicionar endpoint POST /api/leads/batch
+
+- Implementa processamento em batch de leads
+- Adiciona validação de input
+- Retorna IDs dos leads processados com status
+- Cobre com testes unitários e E2E"
+```
+
+#### 6️⃣ **PR Description**
+
+- [ ] Título claro (feat/fix/docs: descrição)
+- [ ] Seção "O que foi implementado"
+- [ ] Seção "Por que foi necessário"
+- [ ] Seção "Como testar"
+- [ ] Checklist de qualidade (todos marcados como feito)
+- [ ] Link para issues relacionadas
+
+#### 7️⃣ **Before Push**
+
+```bash
+# Última validação local:
+git log -5 --oneline      # Confirma commits bem descritos
+git diff origin/main      # Revisa código antes de push
+npm run lint:ci           # Final lint check
+npm run build             # Final build validation
+```
+
+#### 8️⃣ **Communication**
+
+- [ ] PR aberta com descrição detalhada
+- [ ] Aguarda review do Gemini
+- [ ] Responde a comentários rapidamente
+- [ ] Re-testa localmente após mudanças
+- [ ] Pede aprovação explícita quando pronto
+
+---
+
+**Fim do Protocolo Oficial v1.0 (Completo)**
 
 ---
 
