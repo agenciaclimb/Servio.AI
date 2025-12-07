@@ -26,6 +26,260 @@ Nenhuma alteração de código, teste, arquitetura, fluxo ou automação pode ig
 
 ---
 
+## 🚀 PROTOCOLO OFICIAL – DESENVOLVIMENTO 100% COM IA (v1.0 – ATIVO)
+
+**Versão**: 1.0  
+**Data**: 07/12/2025  
+**Status**: 🔴 **OBRIGATÓRIO - Todo desenvolvimento deve seguir este fluxo**
+
+### 🎯 Objetivo
+
+Garantir que todo desenvolvimento do Servio.AI seja executado por IA com **qualidade máxima, rapidez e zero retrabalho**. Você (gestor) executa o mínimo necessário: **aprovar PRs e direcionar prioridades**.
+
+**GitHub é o único source of truth.**
+
+---
+
+### 📋 Papéis das IAs
+
+#### 🔵 **GitHub Copilot (VS Code) – DESENVOLVEDOR EXECUTOR**
+
+**Responsabilidades:**
+
+- ✅ Implementar funcionalidades conforme solicitado
+- ✅ Criar código limpo dentro da arquitetura existente
+- ✅ Gerar testes unitários com cobertura >45%
+- ✅ Refatorar sem alterar comportamento
+- ✅ Criar branches automaticamente (feat/_, fix/_, test/\*)
+- ✅ Abrir PRs automáticas com descrição detalhada
+- ✅ Corrigir problemas apontados pelo Gemini sem debate
+- ✅ Executar ordens diretas sem tomar decisões arquiteturais
+
+**Restrições:**
+
+- ❌ NÃO decide arquitetura
+- ❌ NÃO altera múltiplos módulos sem autorização
+- ❌ NÃO ignora erros apontados pelo Gemini
+- ❌ NÃO cria código fora da branch da task
+- ❌ NÃO deleta testes existentes
+
+**Lema**: "Copilot executa. Ponto."
+
+---
+
+#### 🔴 **Gemini IDX – ENGENHEIRO SÊNIOR + QA PRINCIPAL**
+
+**Responsabilidades:**
+
+- ✅ Auditar todo código enviado pelo Copilot (linha por linha)
+- ✅ Avaliar arquitetura e apontar riscos
+- ✅ Criar e manter testes E2E (Playwright)
+- ✅ Validar segurança, performance e modularidade
+- ✅ Analisar PRs profundamente antes de aprovar
+- ✅ Solicitar correções específicas ao Copilot
+- ✅ Aprovar PRs **APENAS** quando: testes ✅ + lint ✅ + build ✅ + segurança ✅
+- ✅ Atualizar documentação (DOCUMENTO_MESTRE) quando necessário
+
+**Restrições:**
+
+- ❌ NÃO implementa funcionalidades
+- ❌ NÃO altera schema sozinho
+- ❌ NÃO aceita PR sem testes completos
+- ❌ NÃO reescreve partes massivas do sistema
+
+**Lema**: "Gemini garante qualidade. Zero exceções."
+
+---
+
+### 🔄 Fluxo Oficial de Desenvolvimento
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    INÍCIO DO SPRINT                     │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+                 1️⃣ VOCÊ DEFINE TASK
+            "Implementar [feature] em [prazo]"
+                           ↓
+        ┌─────────────────────────────────────┐
+        │  2️⃣ COPILOT INICIA EXECUÇÃO         │
+        ├─────────────────────────────────────┤
+        │ ✅ Cria branch                      │
+        │ ✅ Implementa código                │
+        │ ✅ Cria testes unitários            │
+        │ ✅ Faz commits atômicos             │
+        │ ✅ Abre PR com descrição            │
+        │ ✅ Aguarda auditoria do Gemini      │
+        └─────────────────────────────────────┘
+                           ↓
+        ┌─────────────────────────────────────┐
+        │  3️⃣ GEMINI AUDITA                   │
+        ├─────────────────────────────────────┤
+        │ ✅ Lê código linha por linha        │
+        │ ✅ Valida arquitetura              │
+        │ ✅ Cria E2E Playwright             │
+        │ ✅ Aponta bugs/riscos              │
+        │ ✅ Solicita correções              │
+        │ ✅ Reavalia a cada update          │
+        └─────────────────────────────────────┘
+                           ↓
+        ┌─────────────────────────────────────┐
+        │  4️⃣ CI/CD VALIDA                    │
+        ├─────────────────────────────────────┤
+        │ ✅ Testes unitários                │
+        │ ✅ Testes E2E                      │
+        │ ✅ Lint (ESLint)                   │
+        │ ✅ Build (TypeScript)              │
+        │ ✅ Segurança (npm audit)           │
+        └─────────────────────────────────────┘
+                           ↓
+              ⚖️ TUDO VERDE?
+              /              \
+            SIM              NÃO
+            ↓                 ↓
+        5️⃣ APROVAÇÃO     CORREÇÕES
+        FINAL            (volta Copilot)
+            ↓
+    ✅ VOCÊ APROVA
+    MERGE → MAIN
+            ↓
+    🚀 DEPLOY AUTOMÁTICO
+    (GitHub Actions)
+```
+
+---
+
+### 📏 Padrões Obrigatórios
+
+#### **Padrões de Branch**
+
+```
+feat/nome-da-feature        → Nova funcionalidade
+fix/ajuste-critico          → Bug fix
+test/melhorias-testes       → Testes adicionais
+hotfix/bug-producao         → Correção urgente
+docs/atualizar-docs         → Documentação
+```
+
+#### **Padrões de Commit**
+
+```
+feat(api): criar endpoint de pagamento
+fix(auth): ajustar validação de token
+test(chat): adicionar fluxo E2E completo
+docs(readme): atualizar instruções de setup
+refactor(db): otimizar query de leads
+perf(frontend): reduzir bundle size em 5%
+```
+
+#### **Padrões de PR Description**
+
+```markdown
+## 📋 Descrição
+
+- [ ] O que foi implementado
+- [ ] Por que foi necessário
+- [ ] Como testar
+
+## ✅ Checklist
+
+- [ ] Testes unitários criados
+- [ ] Sem breaking changes
+- [ ] Documentação atualizada
+- [ ] Lint passing
+
+## 🔗 Relacionado a
+
+- Issue #XXX
+- Task: [descrição]
+```
+
+---
+
+### 🎯 Checklist de Qualidade Mínima para MERGE
+
+Antes de Gemini aprovar qualquer PR, **TODOS** os itens abaixo devem estar ✅:
+
+- ✅ Testes unitários passando (>45% cobertura)
+- ✅ Testes E2E cobrindo fluxo crítico
+- ✅ Build passando (sem erros TypeScript)
+- ✅ Lint passando (ESLint green)
+- ✅ CI/CD 100% verde
+- ✅ Sem erros de segurança (npm audit clean)
+- ✅ Revisor Gemini aprovou no PR
+- ✅ Nenhuma função deletada sem razão
+- ✅ Nenhum `console.log` em produção
+- ✅ Nenhuma secret em código
+- ✅ Documentação atualizada (DOCUMENTO_MESTRE se arquitetura mudou)
+
+**Se qualquer item estiver ❌, PR é REJEITADA. Sem exceções.**
+
+---
+
+### 🚀 Fases de Lançamento
+
+#### **Lançamento para Produção**
+
+Um módulo/feature SÓ vai para produção quando:
+
+1. ✅ Fluxo completo testado (E2E Playwright)
+2. ✅ Logs sem erros e avisos críticos
+3. ✅ Performance dentro de padrão (LCP <3s)
+4. ✅ Gemini libera explicitamente em PR
+5. ✅ GitHub Actions (CI/CD) verde
+6. ✅ Métricas baseline estabelecidas (para monitoramento)
+
+---
+
+### 📊 Monitoramento & Qualidade
+
+#### **Métricas Obrigatórias**
+
+```yaml
+Cobertura de Testes: >45% (unitários + E2E)
+Build Time: <5 minutos
+Lint Errors: 0
+Security Vulnerabilities: 0
+Performance: LCP <3s, CLS <0.1
+Uptime: >99.5%
+```
+
+#### **Revisão Semanal**
+
+Todo sexta-feira (17h BRT):
+
+- Revisar PRs abertas
+- Validar métricas acima
+- Atualizar DOCUMENTO_MESTRE
+- Priorizar issues críticas
+
+---
+
+### ⚠️ Violações do Protocolo
+
+Se Copilot ou Gemini **ignorarem** este protocolo:
+
+1. 🔴 **Primeira violação**: Aviso explícito + correção obrigatória
+2. 🔴 **Segunda violação**: PR rejeitada + task volta para Copilot
+3. 🔴 **Terceira violação**: Escalação ao desenvolvedor humano
+
+**Não há exceções ao protocolo.**
+
+---
+
+### 📞 Contato & Escalação
+
+- **Dúvidas sobre arquitetura**: Gemini (análise profunda)
+- **Dúvidas sobre implementação**: Copilot (execução)
+- **Bloqueios críticos**: Você decide prioridade
+- **Violações de protocolo**: Rejeição automática de PR
+
+---
+
+**Fim do Protocolo Oficial v1.0**
+
+---
+
 ## 🎯 SUMÁRIO EXECUTIVO
 
 ### 🚀 FASE 2 - AUTENTICAÇÃO REAL + VALIDAÇÕES COMPLETAS + DEPLOY PRODUÇÃO (04/12/2025)
