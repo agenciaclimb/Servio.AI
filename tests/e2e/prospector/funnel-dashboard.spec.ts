@@ -1,29 +1,35 @@
-import { test, expect } from '@playwright/test';
 
-test.describe('Dashboard de Conversão', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('https://gen-lang-client-0737507616.web.app');
+import { test, expect } from '../fixtures/roles.fixture';
+
+test.describe('Prospector - Painel de Funil (Dashboard)', () => {
+
+  // Antes de cada teste neste grupo, executa o login como Prospector
+  test.beforeEach(async ({ page, loginAsProspector }) => {
+    // 1. Executa a rotina de login definida no fixture
+    await loginAsProspector();
+    
+    // 2. Navega diretamente para a página principal do prospector
+    // A baseURL já está configurada no playwright.config.ts
+    await page.goto('/prospector');
+    
+    // 3. Aguarda a página carregar completamente para evitar instabilidade
     await page.waitForLoadState('networkidle');
-    // Nota: assumindo session/auth já tratada ou página pública
   });
 
-  test('abre e exibe métricas básicas', async ({ page }) => {
-    // Tentar acessar dashboard prospector (pode precisar login)
-    await page.goto('https://gen-lang-client-0737507616.web.app/prospector');
-    await page.waitForTimeout(2000);
+  // O teste agora verifica o fluxo real do usuário de forma automatizada
+  test('deve exibir as métricas chave do funil após o login', async ({ page }) => {
+    // O beforeEach já nos logou e nos levou para a página /prospector
 
+    // Clica no botão para abrir o dashboard do funil
     const dashboardButton = page.getByTestId('btn-funnel-dashboard');
-    // Aumentar timeout e verificar visibilidade primeiro
     await expect(dashboardButton).toBeVisible({ timeout: 10000 });
     await dashboardButton.click();
 
-    // Verifica presença de elementos chave
-    await expect(page.getByText('Taxa de Conversão')).toBeVisible({ timeout: 5000 });
+    // Verifica se os componentes e textos essenciais do dashboard estão visíveis
+    await expect(page.getByText('Taxa de Conversão do Funil')).toBeVisible({ timeout: 5000 });
     await expect(page.getByText(/Novos/i)).toBeVisible();
     await expect(page.getByText(/Contatados/i)).toBeVisible();
-  });
-
-  test.skip('⚠️ Requer autenticação prospector - executar manualmente', () => {
-    // Placeholder para documentar necessidade de auth
+    await expect(page.getByText(/Engajados/i)).toBeVisible();
+    await expect(page.getByText(/Convertidos/i)).toBeVisible();
   });
 });
