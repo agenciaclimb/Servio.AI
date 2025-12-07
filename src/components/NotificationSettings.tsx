@@ -51,7 +51,6 @@ const NOTIFICATION_SETTINGS_CONFIG: NotificationSetting[] = [
 const NotificationSettings: React.FC<{ prospectorId?: string }> = () => {
   const { settings, updateSetting } = useNotificationSettings();
 
-
   return (
     <div className="bg-white shadow sm:rounded-lg">
       <div className="px-4 py-5 sm:p-6">

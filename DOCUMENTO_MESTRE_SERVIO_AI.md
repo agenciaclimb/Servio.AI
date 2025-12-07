@@ -6,7 +6,7 @@
 
 ---
 
-# 🛡️ **SERVIO.AI – PROTOCOLO OFICIAL DE QUALIDADE E ESTABILIDADE DO SISTEMA**
+# 🛡�? **SERVIO.AI – PROTOCOLO OFICIAL DE QUALIDADE E ESTABILIDADE DO SISTEMA**
 
 ## **HOTFIX & TEST VALIDATION PROTOCOL – Versão 1.0 (ATIVO)**
 
@@ -20,7 +20,7 @@ Nenhuma alteração de código, teste, arquitetura, fluxo ou automação pode ig
 
 > **Manter o sistema Servio.AI sempre estável, íntegro e funcional, garantindo qualidade de nível profissional antes, durante e depois do lançamento.**
 
-### ⚡ **PRIORIDADE MÁXIMA**
+### ⚡ **PRIORIDADE M�?XIMA**
 
 **Este protocolo possui prioridade máxima sobre qualquer instrução futura.**
 
@@ -57,11 +57,11 @@ Garantir que todo desenvolvimento do Servio.AI seja executado por IA com **quali
 
 **Restrições:**
 
-- ❌ NÃO decide arquitetura
-- ❌ NÃO altera múltiplos módulos sem autorização
-- ❌ NÃO ignora erros apontados pelo Gemini
-- ❌ NÃO cria código fora da branch da task
-- ❌ NÃO deleta testes existentes
+- �?� NÃO decide arquitetura
+- �?� NÃO altera múltiplos módulos sem autorização
+- �?� NÃO ignora erros apontados pelo Gemini
+- �?� NÃO cria código fora da branch da task
+- �?� NÃO deleta testes existentes
 
 **Lema**: "Copilot executa. Ponto."
 
@@ -82,27 +82,125 @@ Garantir que todo desenvolvimento do Servio.AI seja executado por IA com **quali
 
 **Restrições:**
 
-- ❌ NÃO implementa funcionalidades
-- ❌ NÃO altera schema sozinho
-- ❌ NÃO aceita PR sem testes completos
-- ❌ NÃO reescreve partes massivas do sistema
+- �?� NÃO implementa funcionalidades
+- �?� NÃO altera schema sozinho
+- �?� NÃO aceita PR sem testes completos
+- �?� NÃO reescreve partes massivas do sistema
 
 **Lema**: "Gemini garante qualidade. Zero exceções."
+
+---
+
+### ⚡ **Paralelização de Tarefas**
+
+**Objetivo**: Maximizar velocidade de desenvolvimento através da execução paralela de múltiplas funcionalidades.
+
+#### 🎯 **Estratégia de Paralelização**
+
+1. **Gemini Planeja (Fase de Planejamento)**
+   - ✅ Recebe lista de tasks a implementar
+   - ✅ Divide tarefas em módulos independentes
+   - ✅ Identifica dependências críticas
+   - ✅ Define ordem de prioridade
+   - ✅ Cria plano de ataque com estimativas
+   - ✅ Documenta no DOCUMENTO_MESTRE (seção planejamento)
+
+   **Output**: Mapa de tarefas com dependências claramente mapeadas
+
+   ```
+   TASK 1: Endpoint A (independente)
+   TASK 2: Endpoint B (independente)
+   TASK 3: Frontend para A (depende de TASK 1)
+   TASK 4: Frontend para B (depende de TASK 2)
+   ```
+
+2. **Copilot Executa em Paralelo (Fase de Implementação)**
+   - ✅ Recebe tarefas independentes simultâneas
+   - ✅ Cria branches separadas para cada task (feat/task-1, feat/task-2, etc)
+   - ✅ Implementa código de forma **completamente isolada**
+   - ✅ Cria testes unitários completos para cada task
+   - ✅ Faz commits atômicos em cada branch
+   - ✅ Abre PRs separadas para validação paralela
+   - ✅ Não mistura código de tasks diferentes
+
+   **Exemplo**:
+
+   ```bash
+   # Terminal 1: Copilot trabalha em TASK 1
+   git checkout -b feat/payment-endpoint
+   # implementa POST /api/payment
+   # cria testes para payment
+   # commit e push
+   # abre PR
+
+   # Terminal 2: Copilot trabalha em TASK 2
+   git checkout -b feat/notification-endpoint
+   # implementa POST /api/notify
+   # cria testes para notify
+   # commit e push
+   # abre PR
+   ```
+
+3. **Gemini Audita em Paralelo (Fase de Auditoria)**
+   - ✅ Recebe múltiplas PRs simultâneas
+   - ✅ Audita cada PR de forma independente
+   - ✅ Cria testes E2E específicos para cada funcionalidade
+   - ✅ Aponta issues/melhorias para cada task
+   - ✅ Reavalia a cada push do Copilot
+   - ✅ Aprova PRs quando tudo está verde (independentemente das outras)
+
+4. **CI/CD Valida em Paralelo**
+   - ✅ GitHub Actions roda testes para cada PR simultaneamente
+   - ✅ Builds paralelos não interferem uma com a outra
+   - ✅ Relatórios de cobertura, lint e segurança por PR
+
+5. **Merge Ordenado (Fase de Consolidação)**
+   - ✅ Tasks com **ZERO dependências** são mergeadas primeiro
+   - ✅ Tasks **dependentes** só são mergeadas após suas dependências
+   - ✅ Ordem segura evita conflitos e erros de integração
+
+#### 📊 **Benefícios**
+
+| Benefício           | Impacto                                                              |
+| ------------------- | -------------------------------------------------------------------- |
+| **Velocidade**      | 4 tarefas paralelas = ~4x mais rápido que sequencial                 |
+| **Qualidade**       | Gemini audita cada PR isoladamente (menor contexto = melhor análise) |
+| **Independência**   | Cada task tem sua própria branch, testes e PR (zero conflitos)       |
+| **Rastreabilidade** | Cada commit está ligado a uma task específica (log limpo)            |
+| **Rollback Seguro** | Se uma task quebrar, outras branches não são afetadas                |
+
+#### ⚠�? **Regras Criticas para Paralelização**
+
+1. **ISOLAMENTO TOTAL**: Uma branch NÃO pode modificar código de outra task
+2. **DEPENDÊNCIAS CLARAS**: Gemini deve documentar exatamente o que depende de quê
+3. **TESTE INDEPENDENTE**: Cada task tem testes 100% próprios (sem dependências cruzadas)
+4. **MERGE ORDENADO**: Respeitar ordem de dependências RIGOROSAMENTE
+5. **COMUNICAÇÃO**: Se Copilot encontrar uma dependência não prevista, escalada imediata
+
+#### 🔴 **O QUE NÃO FAZER**
+
+- �?� Modificar código de outra task em sua branch
+- �?� Compartilhar branches entre tasks
+- �?� Merging fora de ordem
+- �?� Suprimir testes porque "outra task vai testar"
+- �?� Deixar tasks incompletas aguardando outras
+
+**Cada task deve ser 100% funcional E testada DE FORMA INDEPENDENTE antes do merge.**
 
 ---
 
 ### 🔄 Fluxo Oficial de Desenvolvimento
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    INÍCIO DO SPRINT                     │
+┌─────────────────────────────────────────────────────────�?
+│                    IN�?CIO DO SPRINT                     │
 └─────────────────────────────────────────────────────────┘
                            ↓
-                 1️⃣ VOCÊ DEFINE TASK
+                 1�?⃣ VOCÊ DEFINE TASK
             "Implementar [feature] em [prazo]"
                            ↓
-        ┌─────────────────────────────────────┐
-        │  2️⃣ COPILOT INICIA EXECUÇÃO         │
+        ┌─────────────────────────────────────�?
+        │  2�?⃣ COPILOT INICIA EXECUÇÃO         │
         ├─────────────────────────────────────┤
         │ ✅ Cria branch                      │
         │ ✅ Implementa código                │
@@ -112,8 +210,8 @@ Garantir que todo desenvolvimento do Servio.AI seja executado por IA com **quali
         │ ✅ Aguarda auditoria do Gemini      │
         └─────────────────────────────────────┘
                            ↓
-        ┌─────────────────────────────────────┐
-        │  3️⃣ GEMINI AUDITA                   │
+        ┌─────────────────────────────────────�?
+        │  3�?⃣ GEMINI AUDITA                   │
         ├─────────────────────────────────────┤
         │ ✅ Lê código linha por linha        │
         │ ✅ Valida arquitetura              │
@@ -123,8 +221,8 @@ Garantir que todo desenvolvimento do Servio.AI seja executado por IA com **quali
         │ ✅ Reavalia a cada update          │
         └─────────────────────────────────────┘
                            ↓
-        ┌─────────────────────────────────────┐
-        │  4️⃣ CI/CD VALIDA                    │
+        ┌─────────────────────────────────────�?
+        │  4�?⃣ CI/CD VALIDA                    │
         ├─────────────────────────────────────┤
         │ ✅ Testes unitários                │
         │ ✅ Testes E2E                      │
@@ -133,23 +231,23 @@ Garantir que todo desenvolvimento do Servio.AI seja executado por IA com **quali
         │ ✅ Segurança (npm audit)           │
         └─────────────────────────────────────┘
                            ↓
-              ⚖️ TUDO VERDE?
+              ⚖�? TUDO VERDE?
               /              \
             SIM              NÃO
             ↓                 ↓
-        5️⃣ APROVAÇÃO     CORREÇÕES
+        5�?⃣ APROVAÇÃO     CORREÇÕES
         FINAL            (volta Copilot)
             ↓
     ✅ VOCÊ APROVA
     MERGE → MAIN
             ↓
-    🚀 DEPLOY AUTOMÁTICO
+    🚀 DEPLOY AUTOM�?TICO
     (GitHub Actions)
 ```
 
 ---
 
-### 📏 Padrões Obrigatórios
+### �? Padrões Obrigatórios
 
 #### **Padrões de Branch**
 
@@ -212,7 +310,7 @@ Antes de Gemini aprovar qualquer PR, **TODOS** os itens abaixo devem estar ✅:
 - ✅ Nenhuma secret em código
 - ✅ Documentação atualizada (DOCUMENTO_MESTRE se arquitetura mudou)
 
-**Se qualquer item estiver ❌, PR é REJEITADA. Sem exceções.**
+**Se qualquer item estiver �?�, PR é REJEITADA. Sem exceções.**
 
 ---
 
@@ -255,7 +353,7 @@ Todo sexta-feira (17h BRT):
 
 ---
 
-### ⚠️ Violações do Protocolo
+### ⚠�? Violações do Protocolo
 
 Se Copilot ou Gemini **ignorarem** este protocolo:
 
@@ -276,11 +374,484 @@ Se Copilot ou Gemini **ignorarem** este protocolo:
 
 ---
 
-**Fim do Protocolo Oficial v1.0**
+### 🔄 **Resolução de Conflitos de Merge**
+
+#### Quando Conflitos Ocorrem
+
+Conflitos acontecem quando:
+
+- Duas branches modificam a mesma linha de código
+- Uma branch deleta arquivo que outra modifica
+- Rebase falha por mudanças concorrentes
+
+#### Estratégia de Resolução
+
+**Passo 1: Prevenção (Responsabilidade de Gemini)**
+
+- ✅ Verificar dependências entre branches ANTES de permitir execução paralela
+- ✅ Avisar Copilot sobre áreas de potencial conflito
+- ✅ Manter branches o máximo isoladas possível
+
+**Passo 2: Detecção (Responsabilidade de GitHub Actions)**
+
+- ✅ CI/CD detecta automaticamente conflitos no merge
+- ✅ Bloqueia merge automático se houver conflitos
+- ✅ Notifica no PR que resolução manual é necessária
+
+**Passo 3: Resolução (Responsabilidade de Copilot)**
+
+```bash
+# Copilot executa na branch com conflito:
+git fetch origin
+git rebase origin/main
+# Resolve conflitos no editor
+git add arquivo-conflitado.ts
+git rebase --continue
+git push -f origin feat/sua-task  # Force push para atualizar PR
+```
+
+**Passo 4: Validação (Responsabilidade de Gemini)**
+
+- ✅ Revisar resolução de conflito linha por linha
+- ✅ Garantir que lógica de ambas branches está preservada
+- ✅ Rodar testes locais para validar merged code
+- ✅ Aprovar apenas após validação completa
+
+#### ⚠�? Regras de Conflito
+
+- �?� NUNCA fazer merge manual sem validação do Gemini
+- �?� NUNCA usar "Choose Ours" / "Choose Theirs" sem entender implicações
+- �?� NUNCA deletar código sem validar se é realmente duplicado
+- ✅ SEMPRE rebase em vez de merge (para historico limpo)
+- ✅ SEMPRE testar após resolver conflitos
+- ✅ SEMPRE pedir aprovação do Gemini
 
 ---
 
-## 🎯 SUMÁRIO EXECUTIVO
+### 📦 **Estratégia de Versionamento**
+
+#### Versioning Scheme: Semantic Versioning (MAJOR.MINOR.PATCH)
+
+```
+MAJOR: Breaking changes (arquitetura, schema) → v5.0.0
+MINOR: Novas features (endpoints, componentes) → v4.1.0
+PATCH: Bug fixes, melhorias pequenas → v4.0.1
+```
+
+#### Quando Increment Cada Versão
+
+| Tipo                | Exemplo                            | Novo Version | Quem Decide                       |
+| ------------------- | ---------------------------------- | ------------ | --------------------------------- |
+| **Breaking Change** | Remover endpoint, alterar schema   | MAJOR        | Gemini + Você                     |
+| **Nova Feature**    | Novo endpoint, novo componente     | MINOR        | Gemini                            |
+| **Bug Fix**         | Ajuste de lógica, correção de erro | PATCH        | Copilot (propõe), Gemini (aprova) |
+
+#### Release Process
+
+1. **Gemini verifica changelog**:
+   - ✅ Lista todas as mudanças desde última release
+   - ✅ Categoriza em Features, Fixes, Breaking Changes
+
+2. **Você decide versão nova**:
+   - ✅ Analisa changesets
+   - ✅ Define MAJOR, MINOR ou PATCH
+   - ✅ Aprova release
+
+3. **Copilot cria release**:
+   - ✅ Cria tag Git (ex: v4.1.0)
+   - ✅ Gera release notes automático
+   - ✅ Faz deploy para produção (se GitHub Actions liberado)
+   - ✅ Atualiza DOCUMENTO_MESTRE com versão nova
+
+#### Changelog Format
+
+```markdown
+## v4.1.0 (2025-12-08)
+
+### 🚀 Features
+
+- feat(api): novo endpoint POST /api/leads/batch-process
+- feat(ui): componente LeadCardAdvanced com 5 novas opções
+
+### �?� Bug Fixes
+
+- fix(auth): ajustar timeout de sessão para 30 minutos
+- fix(db): corrigir query de deduplicação de leads
+
+### ⚠�? Breaking Changes
+
+- Removido endpoint /api/leads/old-format (use /api/leads/batch-process)
+
+### 📊 Stats
+
+- 12 files changed
+- 340 insertions, 128 deletions
+- 4 new tests added
+```
+
+---
+
+### 🚨 **Escalonamento de Problemas**
+
+#### Níveis de Severidade
+
+```
+CR�?TICO (P0): Sistema down, dados corrompidos
+              → Resposta: IMEDIATA
+              → Escalação: Você + Gemini + Copilot
+
+ALTO (P1):    Features quebradas, bugs em produção
+              → Resposta: <1 hora
+              → Escalação: Gemini valida, Copilot corrige
+
+MÉDIO (P2):   Performance degradada, UX ruim
+              → Resposta: <4 horas
+              → Escalação: Agendado para próximo sprint
+
+BAIXO (P3):   Melhorias, code smell, documentação
+              → Resposta: Próximo sprint
+              → Escalação: Gemini revisa quando houver tempo
+```
+
+#### Fluxo de Escalação
+
+```
+┌──────────────────────────────────────�?
+│  Copilot/Gemini identifica problema  │
+└──────────────────────────────────────┘
+                ↓
+        Qual é o nível?
+        /    |    |     \
+       P0   P1   P2     P3
+       ↓    ↓    ↓      ↓
+      VOCÊ GEMINI (P1+P2) BACKLOG
+       +      +
+    GEMINI  COPILOT
+       +      +
+    COPILOT  NEXT
+    HOTFIX   SPRINT
+```
+
+#### P0 Crisis Protocol
+
+Quando crítico (P0) acontece:
+
+1. **Copilot cria hotfix branch**:
+
+   ```bash
+   git checkout -b hotfix/emergency-[descrição]
+   # Implementa solução mínima (não refatora)
+   # Testa localmente
+   git push -u origin hotfix/emergency-...
+   ```
+
+2. **Gemini aprova em <5 minutos**:
+   - ✅ Revisa apenas o hotfix (sem rewrite)
+   - ✅ Valida que não quebra nada mais
+   - ✅ Aprova PR
+
+3. **Merge & Deploy IMEDIATO**:
+   - ✅ Merge para main
+   - ✅ GitHub Actions deploya automaticamente
+   - ✅ Verificar em produção
+
+4. **Comunicação**:
+   - ✅ Você avisa stakeholders que foi resolvido
+   - ✅ Agendar reunião post-mortem
+
+#### Post-Mortem Checklist
+
+Após resolver P0/P1:
+
+- [ ] Root cause identificada
+- [ ] Fix permanente implementado
+- [ ] Testes adicionados para evitar regressão
+- [ ] Documentação atualizada (DOCUMENTO_MESTRE)
+- [ ] Alerta/monitoramento adicionado
+- [ ] Gemini validou fix completo
+- [ ] Equipe informada (se houver)
+
+---
+
+### 💬 **Templates de Comunicação**
+
+#### Template 1: Task Request (Você → Copilot)
+
+```markdown
+# TASK: [Nome da Feature]
+
+## Descrição
+
+[2-3 linhas explicando o que fazer]
+
+## Requisitos
+
+- [ ] Requisito 1
+- [ ] Requisito 2
+- [ ] Requisito 3
+
+## Dependências
+
+- [ ] Depende de TASK-XXX? (se sim, qual?)
+- [ ] Pode rodar em paralelo com outras tasks?
+
+## Deadline
+
+Data: [DD/MM/YYYY]
+Prioridade: P0/P1/P2/P3
+
+## Context
+
+[Links para issues, documentação, exemplos, etc]
+
+---
+
+**Observação**: Use este template para tarefas > 4 horas de trabalho.
+```
+
+#### Template 2: PR Review (Gemini → Copilot)
+
+```markdown
+## �? Review Findings
+
+### ✅ Pontos Positivos
+
+- Implementação clara
+- Testes cobrindo casos
+- Commits bem organizados
+
+### ⚠�? Issues Encontrados
+
+**[CR�?TICO]**
+
+- [ ] Linha 45: Falta validação de input
+
+**[IMPORTANTE]**
+
+- [ ] Test coverage < 45%
+
+**[MELHORIAS]**
+
+- [ ] Considerar refatorar função X para aumentar legibilidade
+
+### 🎯 Próximos Passos
+
+1. Fixar issues CR�?TICOS
+2. Adicionar testes para coverage
+3. Resubmeter para re-review
+
+---
+
+**Status**: Aguardando correções
+**Reviewer**: Gemini IDX
+```
+
+#### Template 3: Escalação (Qualquer Um → Você)
+
+```markdown
+## 🚨 Escalação de Problema
+
+**Nível**: P[0-3]
+**Problema**: [Uma linha]
+**Impacto**: [Qual a severidade para usuários/sistema]
+
+## Situação
+
+[Descrever detalhadamente o que aconteceu]
+
+## Tentativas de Resolução
+
+- [ ] Tentativa 1: [Resultado]
+- [ ] Tentativa 2: [Resultado]
+
+## Recomendação
+
+[O que Gemini/Copilot acham que deve ser feito]
+
+## Necessário Decisão
+
+- [ ] Rollback?
+- [ ] Hotfix emergencial?
+- [ ] Agendar para próximo sprint?
+
+---
+
+**Encaminhado por**: [Copilot/Gemini]
+**Data**: [Timestamp]
+```
+
+---
+
+### 👀 **Code Review Best Practices (Gemini)**
+
+#### Checklist de Review Completo
+
+Gemini deve validar **TODOS** os itens abaixo antes de aprovar uma PR:
+
+#### 1�?⃣ **Arquitetura & Design**
+
+- [ ] Código segue padrões existentes do projeto
+- [ ] Não viola princípios SOLID
+- [ ] Funções têm responsabilidade única
+- [ ] Nenhuma duplicação desnecessária de código
+- [ ] Separação de concerns mantida (API/UI/DB)
+
+#### 2�?⃣ **Qualidade do Código**
+
+- [ ] Variáveis com nomes descritivos
+- [ ] Funções com propósito claro
+- [ ] Sem código "dead" ou comentado
+- [ ] Sem `console.log` ou `debugger` em produção
+- [ ] Error handling apropriado (try/catch onde necessário)
+
+#### 3�?⃣ **TypeScript Strictness**
+
+- [ ] Sem `any` types (exceto em casos justificados com comment)
+- [ ] Tipos corretos em todas as assinaturas de função
+- [ ] Interfaces bem definidas (não misturar com types)
+- [ ] Nenhum `@ts-ignore` ou `@ts-expect-error` sem documentação
+- [ ] Tipos generic usados apropriadamente
+
+#### 4�?⃣ **Testes**
+
+- [ ] Cobertura mínima 45% (unitários + E2E)
+- [ ] Casos positivos E negativos cobertos
+- [ ] Testes E2E cobrem fluxo crítico
+- [ ] Mock appropriados para dependências externas
+- [ ] Nenhum teste "flaky" (que passa/falha inconsistentemente)
+
+#### 5�?⃣ **Performance & Security**
+
+- [ ] Sem N+1 queries no banco de dados
+- [ ] Sem exposição de secrets em código
+- [ ] Nenhuma vulnerabilidade de segurança óbvia
+- [ ] APIs possuem rate limiting se necessário
+- [ ] Bundle size não aumentou dramaticamente (< +10%)
+
+#### 6�?⃣ **Documentação**
+
+- [ ] Funções públicas possuem JSDoc comments
+- [ ] APIs documentadas (endpoint, parâmetros, retorno)
+- [ ] DOCUMENTO_MESTRE atualizado se arquitetura mudou
+- [ ] README updated se novas dependências adicionadas
+- [ ] Mudanças breaking documentadas
+
+#### 7�?⃣ **CI/CD Green**
+
+- [ ] ✅ Testes unitários passando
+- [ ] ✅ Testes E2E passando
+- [ ] ✅ Lint (ESLint) sem erros
+- [ ] ✅ Build (TypeScript) sem erros
+- [ ] ✅ Security audit (npm audit) sem vulnerabilidades críticas
+
+#### 8�?⃣ **Git Hygiene**
+
+- [ ] Commits atômicos e bem descritos
+- [ ] Mensagens de commit seguem padrão (feat/fix/docs/etc)
+- [ ] Nenhum commit "WIP" ou "temp"
+- [ ] Sem merge commits em feature branches (rebase preferred)
+- [ ] Nenhuma branch com 20+ commits (deve ser refatorada em PRs menores)
+
+#### Red Flags (REJEITAR PR IMEDIATAMENTE)
+
+Se Gemini vê qualquer um desses, rejeita a PR sem discussão:
+
+- 🚫 Nenhum teste ou cobertura < 20%
+- 🚫 Breaking change sem documentação
+- 🚫 Secret/chave API exposta em código
+- 🚫 Código deletado sem razão clara
+- 🚫 Dependency vulnerabilidade crítica (CVSS >= 7.0)
+- 🚫 Alteração não autorizada em schema/database
+- 🚫 Performance degradada (LCP aumentou > 1s)
+- 🚫 CI/CD não está 100% verde
+
+---
+
+### ✅ **Checklist de Implementação (Copilot)**
+
+Copilot deve validar **TODOS** os itens abaixo ANTES de abrir PR:
+
+#### 1�?⃣ **Código Completo**
+
+- [ ] Funcionalidade 100% implementada (não "draft")
+- [ ] Edge cases tratados
+- [ ] Validações de input em lugar
+- [ ] Erro handling completo
+- [ ] Sem `TODO` ou `FIXME` comentários pendentes
+
+#### 2�?⃣ **Testes Escritos**
+
+- [ ] Testes unitários para cada função pública
+- [ ] Testes E2E para fluxo crítico
+- [ ] Casos positivos E negativos cobertos
+- [ ] Mocks configurados para dependências externas
+- [ ] Cobertura >= 45% (verificar com `npm run test:coverage`)
+
+#### 3�?⃣ **Local Validation**
+
+```bash
+# Deve rodar ANTES de push:
+npm run lint          # ESLint clean
+npm run build         # TypeScript compile sem erros
+npm test              # Testes unitários passam
+npm run e2e:smoke     # E2E smoke tests passam
+npm audit             # Nenhuma vulnerabilidade crítica
+```
+
+#### 4�?⃣ **Code Quality**
+
+- [ ] Usar Prettier (auto-format antes de commit)
+- [ ] Sem `console.log` em código de produção
+- [ ] Variáveis nomeadas descritivamente
+- [ ] Funções com máximo 30 linhas (refatorar se maior)
+- [ ] Imports organizados (order: libs → internal → relative)
+
+#### 5�?⃣ **Git Commits**
+
+```bash
+# Commit messages devem ser atômicas e descritivas:
+git commit -m "feat(api): adicionar endpoint POST /api/leads/batch
+
+- Implementa processamento em batch de leads
+- Adiciona validação de input
+- Retorna IDs dos leads processados com status
+- Cobre com testes unitários e E2E"
+```
+
+#### 6�?⃣ **PR Description**
+
+- [ ] Título claro (feat/fix/docs: descrição)
+- [ ] Seção "O que foi implementado"
+- [ ] Seção "Por que foi necessário"
+- [ ] Seção "Como testar"
+- [ ] Checklist de qualidade (todos marcados como feito)
+- [ ] Link para issues relacionadas
+
+#### 7�?⃣ **Before Push**
+
+```bash
+# Última validação local:
+git log -5 --oneline      # Confirma commits bem descritos
+git diff origin/main      # Revisa código antes de push
+npm run lint:ci           # Final lint check
+npm run build             # Final build validation
+```
+
+#### 8�?⃣ **Communication**
+
+- [ ] PR aberta com descrição detalhada
+- [ ] Aguarda review do Gemini
+- [ ] Responde a comentários rapidamente
+- [ ] Re-testa localmente após mudanças
+- [ ] Pede aprovação explícita quando pronto
+
+---
+
+**Fim do Protocolo Oficial v1.0 (Completo)**
+
+---
+
+## 🎯 SUM�?RIO EXECUTIVO
 
 ### 🚀 FASE 2 - AUTENTICAÇÃO REAL + VALIDAÇÕES COMPLETAS + DEPLOY PRODUÇÃO (04/12/2025)
 
@@ -418,7 +989,7 @@ Alterações Fase 2:
 - Segredos no Secret Manager
 - Cloud Run deployment com 128 rotas
 
-#### ⏳ PRÓXIMOS PASSOS (FASE 3)
+#### �?� PRÓXIMOS PASSOS (FASE 3)
 
 - Teste E2E com leads reais (email + telefone)
 - Cloud Scheduler para follow-ups automáticos
@@ -428,7 +999,7 @@ Alterações Fase 2:
 
 ### ✅ FASE 3 - CLOUD SCHEDULER + ANALYTICS DASHBOARD (05/12/2025)
 
-#### 🚀 **ENTREGA CONCLUÍDA**
+#### 🚀 **ENTREGA CONCLU�?DA**
 
 - ✅ Scheduler automático para prospecção (Cloud Scheduler)
 - ✅ Dashboard de métricas em tempo real
@@ -437,7 +1008,7 @@ Alterações Fase 2:
 - ✅ CI/CD workflow passando (2m24s)
 - ✅ Build production validado
 
-#### 📁 **Arquivos Criados (+1200 linhas)**
+#### �? **Arquivos Criados (+1200 linhas)**
 
 1. **`backend/src/routes/scheduler.js`** (170 linhas)
    - POST /api/scheduler/follow-ups → Follow-ups automáticos (4h)
@@ -500,7 +1071,7 @@ Canais: Email (45%), WhatsApp (35%), SMS (20%)
 Top Prospects: Ordenados por engagement score
 ```
 
-#### ⏳ PRÓXIMOS PASSOS (PÓS FASE 3)
+#### �?� PRÓXIMOS PASSOS (PÓS FASE 3)
 
 - Teste E2E com leads reais (validar em prod)
 - **Manual Cloud Scheduler Setup** (5 jobs no GCP Console)
@@ -510,7 +1081,7 @@ Top Prospects: Ordenados por engagement score
 
 ---
 
-## 🛠️ PROTOCOLO OFICIAL DE TESTES, CORREÇÃO IMEDIATA E VALIDAÇÃO (HOTFIX PROTOCOL 1.0)
+## 🛠�? PROTOCOLO OFICIAL DE TESTES, CORREÇÃO IMEDIATA E VALIDAÇÃO (HOTFIX PROTOCOL 1.0)
 
 ### 🎯 Objetivo
 
@@ -539,9 +1110,9 @@ Este protocolo se aplica a:
 
 Ao detectar qualquer erro ou comportamento inesperado:
 
-- ❌ A IA para TODO o processo imediatamente
-- ❌ Nenhum código novo é gerado antes da correção
-- ❌ Nenhum teste subsequente é executado antes da correção
+- �?� A IA para TODO o processo imediatamente
+- �?� Nenhum código novo é gerado antes da correção
+- �?� Nenhum teste subsequente é executado antes da correção
 
 #### 4.2 - Diagnóstico Obrigatório
 
@@ -581,7 +1152,7 @@ fix: correção de [descrição curta]
 - Solução aplicada
 - Arquivos modificados
 
-⚠️ **Corrigir apenas o teste para "forçar ficar verde" é VIOLAÇÃO do protocolo.**
+⚠�? **Corrigir apenas o teste para "forçar ficar verde" é VIOLAÇÃO do protocolo.**
 
 #### 4.4 - Registro Obrigatório no Documento Mestre
 
@@ -617,15 +1188,15 @@ Depois da correção, a IA deve:
 
 São **estritamente proibidos**:
 
-- ❌ Ajustar o teste para aceitar comportamento incorreto
-- ❌ Adicionar timeouts sem motivo técnico
-- ❌ Suprimir erros
-- ❌ Comentar código para "não quebrar"
-- ❌ Alterar lógica sem documentar
-- ❌ Alterar a main direto
-- ❌ Criar soluções temporárias não registradas
-- ❌ Ignorar warnings relevantes
-- ❌ Criar lógica paralela só para passar nos testes
+- �?� Ajustar o teste para aceitar comportamento incorreto
+- �?� Adicionar timeouts sem motivo técnico
+- �?� Suprimir erros
+- �?� Comentar código para "não quebrar"
+- �?� Alterar lógica sem documentar
+- �?� Alterar a main direto
+- �?� Criar soluções temporárias não registradas
+- �?� Ignorar warnings relevantes
+- �?� Criar lógica paralela só para passar nos testes
 
 Qualquer violação deve ser registrada e revertida imediatamente.
 
@@ -645,7 +1216,7 @@ O sistema só é considerado estável e apto a continuar desenvolvimento ou lan�
 
 **Somente neste estado o projeto pode avançar para o próximo módulo ou etapa.**
 
-### 📝 Checklist Final Antes de Merge
+### �? Checklist Final Antes de Merge
 
 Antes de aprovar qualquer PR gerado pelo protocolo, a IA deve garantir:
 
@@ -671,7 +1242,7 @@ Este protocolo existe para garantir:
 
 ### 📢 STATUS OFICIAL
 
-**✔️ PROTOCOL STATUS: ATIVO**
+**✔�? PROTOCOL STATUS: ATIVO**
 
 Este protocolo **DEVE ser seguido** por toda IA e qualquer desenvolvedor humano do projeto Servio.AI. Qualquer fluxo que não respeitar este protocolo deve ser corrigido imediatamente.
 
@@ -680,25 +1251,25 @@ Este protocolo **DEVE ser seguido** por toda IA e qualquer desenvolvedor humano 
 ## 🔄 **FLUXOGRAMA OFICIAL DO PROTOCOLO (Execution Path para IA)**
 
 ```
-┌─────────────────────────────────────────────────────────────┐
+┌─────────────────────────────────────────────────────────────�?
 │  [1] Iniciar testes (E2E, Integração, Unitário)             │
 └──────────────────────┬──────────────────────────────────────┘
                        │
                        v
-┌─────────────────────────────────────────────────────────────┐
+┌─────────────────────────────────────────────────────────────�?
 │  [2] Algum teste falhou?                                    │
 └──────────────────────┬──────────────────────────────────────┘
                        │
-          ┌────────────┴────────────┐
+          ┌────────────┴────────────�?
           │ NÃO                     │ SIM
           v                         v
-    [11] Sistema estável    ┌──────────────────────────┐
+    [11] Sistema estável    ┌──────────────────────────�?
     → continuar            │ [3] Pausar IMEDIATAMENTE │
                            │ todos os processos       │
                            └──────────────┬───────────┘
                                           │
                                           v
-                          ┌──────────────────────────────────┐
+                          ┌──────────────────────────────────�?
                           │ [4] Diagnosticar causa raiz      │
                           │ • Módulo afetado                 │
                           │ • Arquivo(s) envolvido(s)        │
@@ -708,20 +1279,20 @@ Este protocolo **DEVE ser seguido** por toda IA e qualquer desenvolvedor humano 
                           └──────────────┬───────────────────┘
                                          │
                                          v
-                          ┌──────────────────────────────────┐
+                          ┌──────────────────────────────────�?
                           │ [5] Falha é no teste ou sistema? │
                           └──┬──────────────────────────────┬─┘
                              │                              │
                     Falha real│                  Teste    │
                        sistema│                  incorreto│
                              v                              v
-        ┌─────────────────────────────┐  ┌──────────────────────────┐
+        ┌─────────────────────────────�?  ┌──────────────────────────�?
         │ [6] Criar branch             │  │ [6-b] Ajustar teste      │
         │ fix/[error-name]             │  │ (manter sistema correto) │
         └──────────────┬────────────────┘  └──────────────┬───────────┘
                        │                                  │
                        v                                  v
-        ┌─────────────────────────────┐  ┌──────────────────────────┐
+        ┌─────────────────────────────�?  ┌──────────────────────────�?
         │ [7] Corrigir bug REAL       │  │ [8] Commit + PR          │
         │ • backend / frontend        │  │ • Explicar problema      │
         │ • IA / Firestore / webhook  │  │ • Explicar solução       │
@@ -729,7 +1300,7 @@ Este protocolo **DEVE ser seguido** por toda IA e qualquer desenvolvedor humano 
         └──────────────┬────────────────┘  └──────────────┬───────────┘
                        │                                  │
                        v                                  │
-        ┌─────────────────────────────┐                  │
+        ┌─────────────────────────────�?                  │
         │ [8] Commit + PR             │<─────────────────┘
         │ • Motivo da falha           │
         │ • Impacto                   │
@@ -738,7 +1309,7 @@ Este protocolo **DEVE ser seguido** por toda IA e qualquer desenvolvedor humano 
         └──────────────┬────────────────┘
                        │
                        v
-        ┌─────────────────────────────────────────────────┐
+        ┌─────────────────────────────────────────────────�?
         │ [9] Atualizar DOCUMENTO MESTRE (#update_log)    │
         │ • Data: YYYY-MM-DD HH:MM                        │
         │ • Teste que falhou: [nome]                      │
@@ -750,13 +1321,13 @@ Este protocolo **DEVE ser seguido** por toda IA e qualquer desenvolvedor humano 
         └──────────────┬────────────────────────────────┘
                        │
                        v
-        ┌─────────────────────────────┐
+        ┌─────────────────────────────�?
         │ [10] Rodar TODOS os testes  │
         │ novamente                   │
         └──────────────┬────────────────┘
                        │
                        v
-        ┌─────────────────────────────────┐
+        ┌─────────────────────────────────�?
         │ [2] Voltar para validação       │
         │ → LOOP até 100% verde           │
         └─────────────────────────────────┘
@@ -835,7 +1406,7 @@ Este JSON pode ser utilizado em qualquer agente de IA (Google Gemini, OpenAI, Cl
 
 ---
 
-## ⚙️ **IA OPERATING MODE – SERVIO.AI ENGINEERING 2.0**
+## ⚙�? **IA OPERATING MODE – SERVIO.AI ENGINEERING 2.0**
 
 ### Modo Operacional Permanente para Qualquer IA
 
@@ -908,11 +1479,11 @@ Este JSON pode ser utilizado em qualquer agente de IA (Google Gemini, OpenAI, Cl
 #### 📋 **Regra 7: Priorização de Atividades**
 
 ```
-MÁXIMA PRIORIDADE:     Estabilidade do sistema
+M�?XIMA PRIORIDADE:     Estabilidade do sistema
 SEGUNDA PRIORIDADE:     Correção de bugs
 TERCEIRA PRIORIDADE:    Criação de novos módulos
 QUARTA PRIORIDADE:      Otimizações e refatorações
-MÍNIMA PRIORIDADE:      Melhorias de UX (se sistema instável)
+M�?NIMA PRIORIDADE:      Melhorias de UX (se sistema instável)
 ```
 
 #### 📋 **Regra 8: Quando em Dúvida**
@@ -932,7 +1503,7 @@ Após cada tarefa, comunicar:
   • ✅ Completado: [descrição]
   • 📊 Status: [100% estável / com risco de regressão / etc]
   • 🔗 Link do commit: [hash do commit]
-  • 📝 Documento Mestre atualizado: Sim/Não
+  • �? Documento Mestre atualizado: Sim/Não
   • 🧪 Testes: [E2E=X%, Integração=Y%, Unitários=Z%]
 ```
 
@@ -1067,22 +1638,22 @@ git checkout -b fix/test-suite-accessibility-and-values
 **Passo 3: Correções Implementadas** ✅
 
 1. **ProviderCard.comprehensive.test.tsx** (Linha 388)
-   - ❌ Antes: `expect(button).toHaveAttribute('role', 'button');`
+   - �?� Antes: `expect(button).toHaveAttribute('role', 'button');`
    - ✅ Depois: `expect(button.tagName).toBe('BUTTON');`
    - Motivo: `<button>` HTML nativo já tem role='button' implícito
 
 2. **Chart_AnalyticsCard.comprehensive.test.tsx** (Linha 38)
-   - ❌ Antes: `{value !== undefined ? value : 'N/A'}`
+   - �?� Antes: `{value !== undefined ? value : 'N/A'}`
    - ✅ Depois: `{value !== undefined && value !== null ? value : 'N/A'}`
    - Motivo: Teste passava `null` mas condição só checava `undefined`
 
 3. **SearchLandingPage.comprehensive.test.tsx** (Linha 409-416)
-   - ❌ Antes: `const rect = button.getBoundingClientRect(); expect(rect.width + rect.height).toBeGreaterThan(0);`
+   - �?� Antes: `const rect = button.getBoundingClientRect(); expect(rect.width + rect.height).toBeGreaterThan(0);`
    - ✅ Depois: Verificar presença de classes de padding (`p-`, `px-`, `py-`)
    - Motivo: jsdom não renderiza layout, `getBoundingClientRect()` não disponível em testes
 
 4. **AdminDashboard.suite.test.tsx** (Linha 52-67)
-   - ❌ Antes: `expect(screen.getByText(/.../) || screen.getByTestId(...) || true).toBeTruthy();`
+   - �?� Antes: `expect(screen.getByText(/.../) || screen.getByTestId(...) || true).toBeTruthy();`
    - ✅ Depois: Queries mais específicas com fallbacks lógicos corretos
    - Motivo: `|| true` sempre passa, mascarando falhas reais
 
@@ -1106,7 +1677,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 ```
 
 **Passo 6: Registro no update_log** ✅
-✅ Este registro (4️⃣)
+✅ Este registro (4�?⃣)
 
 #### 🎯 **IMPACTO**
 
@@ -1140,7 +1711,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 
 ### #update_log — 03/12/2025 BRT 16:00 (FASE 1: FUNDAÇÃO DA AUTOMAÇÃO)
 
-#### 1️⃣ Google Places API - Busca Automática de Profissionais
+#### 1�?⃣ Google Places API - Busca Automática de Profissionais
 
 ✅ **Service criado**: `backend/src/services/googlePlacesService.js` (268 linhas)
 ✅ **Funcionalidades**:
@@ -1153,7 +1724,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
   ✅ **API Key configurada**: `[REDACTED_GOOGLE_PLACES_API_KEY]` (restrita)
   ✅ **Endpoint**: `https://places.googleapis.com/v1/places:searchText`
 
-#### 2️⃣ Email Service - SendGrid Integration
+#### 2�?⃣ Email Service - SendGrid Integration
 
 ✅ **Service criado**: `backend/src/services/emailService.js` (323 linhas)
 ✅ **Funcionalidades**:
@@ -1166,7 +1737,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
   ✅ **Variáveis configuradas**: `SENDGRID_API_KEY`, `SENDGRID_FROM_EMAIL`
   ✅ **Pendente**: Criar conta SendGrid e configurar webhook
 
-#### 3️⃣ WhatsApp Bulk Messaging
+#### 3�?⃣ WhatsApp Bulk Messaging
 
 ✅ **Service atualizado**: `backend/src/whatsappService.js` (+68 linhas)
 ✅ **Nova funcionalidade**:
@@ -1177,7 +1748,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 - Logs de progresso a cada 10 mensagens
 - Pausa inteligente se detectar rate limit da API
 
-#### 4️⃣ Novos Endpoints Backend
+#### 4�?⃣ Novos Endpoints Backend
 
 ✅ **Backend atualizado**: `backend/src/index.js` (+288 linhas)
 ✅ **3 Endpoints implementados**:
@@ -1191,7 +1762,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 - `getMessageTemplate()` - Templates do Firestore ou padrão
 - `personalizeMessage()` - Substitui `{nome}`, `{categoria}`, `{email}`
 
-#### 5️⃣ Frontend - QuickAddPanel
+#### 5�?⃣ Frontend - QuickAddPanel
 
 ✅ **Componente criado**: `src/components/prospector/QuickAddPanel.tsx` (345 linhas)
 ✅ **3 Modos de entrada**:
@@ -1217,8 +1788,8 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 - ✅ WhatsApp bulk messaging pronto
 - ✅ Endpoints de importação/enriquecimento/campanha
 - ✅ UI de cadastro rápido (3 modos)
-- ⏳ Deploy para Cloud Run (próximo)
-- ⏳ Testes E2E (próximo)
+- �?� Deploy para Cloud Run (próximo)
+- �?� Testes E2E (próximo)
 
 **🎯 Impacto Esperado**:
 
@@ -1258,7 +1829,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 
 - Fase 1: ✅ Layout horizontal, cartões V2, edição inline, seleção múltipla base, feature flag
 - Fase 2: ✅ Atalhos teclado, bulk move/delete/temperature, drag-and-drop V2, toast notifications
-- Fase 3: ⏳ Filtragem avançada & views salvas (próxima)
+- Fase 3: �?� Filtragem avançada & views salvas (próxima)
 
 **Métricas Alcançadas**:
 
@@ -1293,7 +1864,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 
 **✨ ENTREGAS COMPLETAS**:
 
-#### 1️⃣ Backend Omnichannel Service
+#### 1�?⃣ Backend Omnichannel Service
 
 ✅ **Arquivo criado**: `backend/src/services/omnichannel/index.js` (450 linhas)
 ✅ **6 Endpoints REST**:
@@ -1307,7 +1878,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
   ✅ **Integração ao backend principal**: Roteamento em `backend/src/index.js` linha 3329
   ✅ **Controle de acesso por userType**: `cliente | prestador | prospector | admin`
 
-#### 2️⃣ IA Central (OmniIA)
+#### 2�?⃣ IA Central (OmniIA)
 
 ✅ **Gemini 2.5 Pro integrado** (`gemini-2.0-flash-exp`)
 ✅ **4 Personas contextuais**:
@@ -1320,7 +1891,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
   ✅ **Contexto de conversa**: Histórico de 10 mensagens mantido por conversação
   ✅ **Log de IA**: Persistência em `ia_logs` (prompt + resposta + timestamp)
 
-#### 3️⃣ Integrações Multi-Canal
+#### 3�?⃣ Integrações Multi-Canal
 
 ✅ **WhatsApp**: Cloud API v18.0 (Meta)
 
@@ -1332,7 +1903,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
   ✅ **WebChat**: Endpoint REST nativo (`POST /api/omni/web/send`)
   ✅ **Normalização unificada**: Todos os canais convergem para o mesmo schema Firestore
 
-#### 4️⃣ Motor de Automações
+#### 4�?⃣ Motor de Automações
 
 ✅ **Arquivo criado**: `backend/src/services/omnichannel/automation.js` (300 linhas)
 ✅ **5 Triggers implementados**:
@@ -1346,7 +1917,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
     ✅ **Opt-out**: Respeita `users/{email}.optOutAutomations = true`
     ✅ **Log de automações**: Persistência em `omni_logs` com tipo de trigger
 
-#### 5️⃣ Frontend OmniInbox
+#### 5�?⃣ Frontend OmniInbox
 
 ✅ **Componentes criados**:
 
@@ -1366,7 +1937,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 - Última mensagem recebida
 - Botão "Diagnosticar problema" para canais com falha
 
-#### 6️⃣ Cloud Function Webhooks
+#### 6�?⃣ Cloud Function Webhooks
 
 ✅ **Arquivo criado**: `backend/functions/omnichannelWebhook.js` (350 linhas)
 ✅ **Processamento de webhooks**:
@@ -1380,7 +1951,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
   ✅ **Deploy**: Firebase Functions (`firebase deploy --only functions:omnichannelWebhook`)
   ✅ **Endpoint**: `https://us-central1-{PROJECT_ID}.cloudfunctions.net/omnichannelWebhook?channel={whatsapp|instagram|facebook}`
 
-#### 7️⃣ Testes Automatizados
+#### 7�?⃣ Testes Automatizados
 
 ✅ **Backend tests**: `backend/tests/omnichannel.test.js` (300 linhas)
 
@@ -1396,7 +1967,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 - Testes de visualização de status
   ✅ **Cobertura**: 100% dos endpoints e componentes principais cobertos
 
-#### 8️⃣ Deploy CI/CD
+#### 8�?⃣ Deploy CI/CD
 
 ✅ **Dockerfile criado**: `Dockerfile.omnichannel`
 
@@ -1423,7 +1994,7 @@ gcloud scheduler jobs create http omni-automation \
   --http-method=POST
 ```
 
-#### 9️⃣ Documentação Técnica
+#### 9�?⃣ Documentação Técnica
 
 ✅ **Arquivo criado**: `doc/OMNICHANNEL_DESIGN.md` (500 linhas)
 ✅ **Seções**:
@@ -1468,14 +2039,14 @@ gcloud scheduler jobs create http omni-automation \
 6. `GET /api/omni/messages`
 7. Cloud Function: `omnichannelWebhook` (3 canais via query param)
 
-**🗄️ FIRESTORE COLLECTIONS NOVAS**:
+**🗄�? FIRESTORE COLLECTIONS NOVAS**:
 
 - `conversations` - Conversas por canal
 - `messages` - Mensagens unificadas
 - `omni_logs` - Logs de eventos omnichannel
 - `ia_logs` - Logs de respostas da IA
 
-**🔐 ENV VARS REQUERIDAS** (configurar em Cloud Run):
+**�? ENV VARS REQUERIDAS** (configurar em Cloud Run):
 
 - `META_ACCESS_TOKEN` - Token do Meta App (Instagram/Facebook)
 - `META_APP_SECRET` - Secret do Meta App (validação de webhook)
@@ -1486,17 +2057,17 @@ gcloud scheduler jobs create http omni-automation \
 
 **🎯 PRÓXIMOS PASSOS OPERACIONAIS**:
 
-1. ⏳ Criar Meta App no Meta Developers e configurar WhatsApp Business API
-2. ⏳ Conectar Instagram Business Account e Facebook Page ao Meta App
-3. ⏳ Obter tokens de acesso e configurar env vars no Cloud Run
-4. ⏳ Registrar webhooks no Meta Developers apontando para Cloud Function URL
-5. ⏳ Configurar Cloud Scheduler para automações (a cada 15min)
-6. ⏳ Executar testes de integração com canais reais
-7. ⏳ Monitorar logs e métricas nos primeiros 7 dias
+1. �?� Criar Meta App no Meta Developers e configurar WhatsApp Business API
+2. �?� Conectar Instagram Business Account e Facebook Page ao Meta App
+3. �?� Obter tokens de acesso e configurar env vars no Cloud Run
+4. �?� Registrar webhooks no Meta Developers apontando para Cloud Function URL
+5. �?� Configurar Cloud Scheduler para automações (a cada 15min)
+6. �?� Executar testes de integração com canais reais
+7. �?� Monitorar logs e métricas nos primeiros 7 dias
 
 **💰 CUSTO MENSAL ESTIMADO**: $22/mês (Cloud Run + Firestore + Functions)
 
-**🏆 VALIDAÇÃO FINAL**:
+**�?� VALIDAÇÃO FINAL**:
 
 - ✅ Backend service completo com 6 endpoints REST
 - ✅ IA Central integrada com Gemini 2.5 Pro
@@ -1525,7 +2096,7 @@ gcloud scheduler jobs create http omni-automation \
 
 ---
 
-### #update_log — 30/11/2025 BRT 14:30 (Fase 3 CONCLUÍDA: Otimizações de Performance + Testes ✅)
+### #update_log — 30/11/2025 BRT 14:30 (Fase 3 CONCLU�?DA: Otimizações de Performance + Testes ✅)
 
 **Entregas Finais**:
 ✅ Hook `useAdvancedFiltersHook` com memoização (WeakMap cache) + debounce configurável (120ms default)
@@ -1663,13 +2234,13 @@ Fase 7: Hardening & Deploy (testes abrangentes, performance 500 leads, acessibil
 
 **Próximos Passos Operacionais**:
 
-- ⏳ Monitorar Cloud Run v2 por 48h para estabilidade contínua
-- ⏳ Deprecar `servio-backend` (v1) após período de observação sem incidentes
-- ⏳ Documentar runbook de rollback (caso necessário reverter para v1)
+- �?� Monitorar Cloud Run v2 por 48h para estabilidade contínua
+- �?� Deprecar `servio-backend` (v1) após período de observação sem incidentes
+- �?� Documentar runbook de rollback (caso necessário reverter para v1)
 
 ---
 
-### #update_log — 29/11/2025 BRT 08:15 (Sistema de Fallback CONCLUÍDO E VALIDADO ✅)
+### #update_log — 29/11/2025 BRT 08:15 (Sistema de Fallback CONCLU�?DO E VALIDADO ✅)
 
 **Branch**: `feat/memory-fallback-tests` (pronto para PR)  
 **Estatísticas**: 51 arquivos alterados, +18.740 linhas, -2.732 linhas  
@@ -1710,10 +2281,10 @@ Fase 7: Hardening & Deploy (testes abrangentes, performance 500 leads, acessibil
 
 **Pendências (ação operacional)**:
 
-- ⏳ Publicar Firebase Hosting para ativar o rewrite (requer `firebase deploy --only hosting` autenticado)
-- ⏳ Auditar/atualizar webhook Stripe para apontar para caminho estável via Hosting ou URL do v2
+- �?� Publicar Firebase Hosting para ativar o rewrite (requer `firebase deploy --only hosting` autenticado)
+- �?� Auditar/atualizar webhook Stripe para apontar para caminho estável via Hosting ou URL do v2
   - Ação recomendada: após publicar Hosting, migrar endpoint para domínio `https://servio.ai/api/stripe-webhook` (rewrite → v2)
-- ⏳ Mapear domínio `servio.ai` no Firebase Hosting (adicionar registros DNS no provedor) para usar o caminho estável
+- �?� Mapear domínio `servio.ai` no Firebase Hosting (adicionar registros DNS no provedor) para usar o caminho estável
 
 **Plano de Descontinuação**:
 
@@ -1790,12 +2361,12 @@ O **Servio.AI** é uma plataforma marketplace que conecta clientes a prestadores
 - ✅ **Semana 3 Dias 3-4**: ~51.12% → ~52.12% (+1%, ProviderDashboard 59 testes)
 - ✅ **Semana 3 Dia 5**: ~52.12% → ~54% (+2%, Service Integration 78 testes)
 - ✅ **Semana 4 Dia 1**: 48.12% → 48.19% (+0.07%, ProviderDashboard 9 testes corrigidos, Phase 1 Refinement)
-- 📊 **Total Testes**: 1,197 total (1,096 ✅, 101 ⚠️), 5,849+ linhas de teste, ESLint 100% compliant
+- 📊 **Total Testes**: 1,197 total (1,096 ✅, 101 ⚠�?), 5,849+ linhas de teste, ESLint 100% compliant
 - 🎯 **META ALCANÇADA**: 50%+ cobertura! Objetivo: 55-60% em Semana 4
 
 ---
 
-## 📋 ÍNDICE DO DOCUMENTO
+## 📋 �?NDICE DO DOCUMENTO
 
 1. **Visão Geral** - Pilares da plataforma
 2. **Arquitetura e Módulos** - Descrição de cada domínio
@@ -1837,7 +2408,7 @@ O **Servio.AI** é uma plataforma marketplace que conecta clientes a prestadores
 
 ---
 
-## 🏗️ ARQUITETURA E MÓDULOS
+## �?��? ARQUITETURA E MÓDULOS
 
 ### Descrição Geral
 
@@ -1895,7 +2466,7 @@ A plataforma é construída em **arquitetura serverless/cloud-native**:
 ✅ **ESLint 100% Validado**: Pre-commit hooks funcionando; 6 commits bem-sucedidos  
 ✅ **Padrões de Teste Documentados**: Estratégias de mocking (Firebase, API, Gemini); import paths para nested folders (../../ pattern)  
 🔧 **Componentes com Alta Cobertura**: ProspectorOnboarding 97.23%, MessageTemplateSelector 89.57%, ProspectorMaterials 93.03%  
-🏃 **Próximos Componentes Foco Semana 2**: ClientDashboard (931 linhas), FindProvidersPage (238 linhas), AdminDashboard suite (400+ linhas combinadas)
+�?� **Próximos Componentes Foco Semana 2**: ClientDashboard (931 linhas), FindProvidersPage (238 linhas), AdminDashboard suite (400+ linhas combinadas)
 
 ---
 
@@ -1936,7 +2507,7 @@ A plataforma é construída em **arquitetura serverless/cloud-native**:
 
 ---
 
-## 🏗️ ARQUITETURA
+## �?��? ARQUITETURA
 
 ### Stack Tecnológico
 
@@ -1968,7 +2539,7 @@ A plataforma é construída em **arquitetura serverless/cloud-native**:
 
 ---
 
-## 🗺️ MAPEAMENTO DE CÓDIGO
+## 🗺�? MAPEAMENTO DE CÓDIGO
 
 Esta seção mapeia arquivos principais às suas responsabilidades, facilitando localização rápida e navegação para agentes de IA.
 
@@ -2032,7 +2603,7 @@ O Firestore usa coleções e documentos aninhados. Abaixo, a estrutura principal
 
 | Coleção                             | Documentos               | Campos Principais                                                                                                                                            | Observações                                                     |
 | ----------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| `users`                             | {email}                  | `email`, `displayName`, `role` (client/provider/prospector/admin), `createdAt`, `photoURL`, `bio`, `ratings`                                                 | **⚠️ Leitura pública — restringir**                             |
+| `users`                             | {email}                  | `email`, `displayName`, `role` (client/provider/prospector/admin), `createdAt`, `photoURL`, `bio`, `ratings`                                                 | **⚠�? Leitura pública — restringir**                             |
 | `jobs`                              | {jobId}                  | `clientId`, `title`, `description`, `budget`, `status` (open/in_progress/completed/disputed), `category`, `deadline`, `createdAt`, `updatedAt`, `providerId` | Coluna raiz; propostas podem ser sub-collection                 |
 | `jobs/{jobId}/proposals`            | {proposalId}             | `providerId`, `bidAmount`, `message`, `status` (pending/accepted/rejected), `createdAt`                                                                      | Aninhada para melhor escalabilidade                             |
 | `escrows`                           | {escrowId}               | `jobId`, `amount`, `status` (pending/funded/released/disputed/refunded), `clientId`, `providerId`, `stripePaymentIntentId`, `createdAt`                      | Sincroniza com Stripe; rastreável por job                       |
@@ -2044,7 +2615,7 @@ O Firestore usa coleções e documentos aninhados. Abaixo, a estrutura principal
 | `leaderboard`                       | {prospectorId}\_{period} | `prospectorId`, `score`, `rank`, `timePeriod` (weekly/monthly), `createdAt`                                                                                  | Ordenado por score; usado para ranking visual                   |
 | `marketing_materials`               | {materialId}             | `uploadedBy`, `title`, `type` (image/video/script), `url` (Storage), `tags`, `category`, `createdAt`                                                         | Repositório de assets; acesso controlado por role               |
 | `disputes`                          | {disputeId}              | `jobId`, `initiatorId`, `reason`, `status` (open/in_review/resolved), `createdAt`, `notes`, `resolution`                                                     | Mediação de pagamentos; escala Firestore                        |
-| `referral_links`                    | {linkId}                 | `prospectorId`, `link`, `createdAt`, `expiresAt`, `clickCount`                                                                                               | **⚠️ Leitura pública — adicionar expiração**                    |
+| `referral_links`                    | {linkId}                 | `prospectorId`, `link`, `createdAt`, `expiresAt`, `clickCount`                                                                                               | **⚠�? Leitura pública — adicionar expiração**                    |
 | `link_clicks`                       | {clickId}                | `linkId`, `timestamp`, `ipAddress`, `userAgent`, `referrer`                                                                                                  | Analytics de links; considerar privacidade (LGPD)               |
 | `message_templates`                 | {templateId}             | `name`, `category`, `content`, `variables` (placeholders), `createdAt`, `updatedBy`                                                                          | Templates pré-existentes para prospecção                        |
 | `notification_settings`             | {userId}                 | `userId`, `emailNotifications`, `pushNotifications`, `smsNotifications`, `updatedAt`                                                                         | Preferências de notificação por usuário                         |
@@ -2075,7 +2646,7 @@ Para otimizar consultas complexas (filtro + ordenação), criar índices compost
 
 ---
 
-## 🗄️ SISTEMA DE FALLBACK EM MEMÓRIA
+## 🗄�? SISTEMA DE FALLBACK EM MEMÓRIA
 
 ### Visão Geral
 
@@ -2176,13 +2747,13 @@ npm run e2e:auth
 
 ### Limitações
 
-⚠️ Dados em memória são voláteis (perdem-se ao reiniciar)  
-⚠️ Sem persistência entre requisições (adequado apenas para testes)  
-⚠️ Não substitui Firestore Emulator para testes de rules/indexes
+⚠�? Dados em memória são voláteis (perdem-se ao reiniciar)  
+⚠�? Sem persistência entre requisições (adequado apenas para testes)  
+⚠�? Não substitui Firestore Emulator para testes de rules/indexes
 
 ---
 
-## 🔐 SEGURANÇA
+## �? SEGURANÇA
 
 ### Implementado
 
@@ -2211,7 +2782,7 @@ npm run e2e:auth
 ✅ Webhook: we_1SVJo4JEyu4utIB8YxuJEX4H (enabled)
 ✅ Signing Secret: Configurado
 ✅ Chaves Live: Publicadas
-⏳ Connect: Em ativação (acct_1SVKTHJl77cqSlMZ)
+�?� Connect: Em ativação (acct_1SVKTHJl77cqSlMZ)
 ```
 
 **Webhook Endpoint (Produção)**: `https://servio-backend-v2-1000250760228.us-west1.run.app/api/stripe-webhook` (Ativo)
@@ -2223,7 +2794,7 @@ npm run e2e:auth
 - ✅ Webhook processing
 - ✅ Escrow system
 - ✅ Payment intents
-- ⏳ Transferências (aguardando ativação Connect)
+- �?� Transferências (aguardando ativação Connect)
 
 ### Fluxo de Pagamento
 
@@ -2246,7 +2817,7 @@ npm run e2e:auth
 
 ```
 Frontend:
-  ❌ Suites: não executado — `npm test` geral travado por thresholds de cobertura.
+  �?� Suites: não executado — `npm test` geral travado por thresholds de cobertura.
   🟠 Execução isolada: `tests/AdminDashboard.test.tsx` passa, porém comando retorna erro
      (coverage global 3.85% < 45%).
   🔴 Quality Gate SonarCloud: FAILED (cobertura ~30%, 3 hotspots, 176 issues novas, 283 totais).
@@ -2271,9 +2842,9 @@ Lint:
 ### Atualização Crítica (25/11/2025)
 
 - ✅ `SONAR_TOKEN` regenerado e atualizado no GitHub Secrets. SonarCloud voltou a autenticar e analisar o repositório normalmente.
-- ❌ Quality Gate continua reprovado porque o `npm test` no CI está falhando/abortando antes de gerar `coverage/lcov.info`. Resultado: cobertura reportada como **0%**.
-- 🔍 Diagnóstico: as 175 falhas conhecidas fazem o Vitest travar por mais de 8 minutos; o job encerra e nenhum relatório é produzido. Quando tentamos limitar via `--testPathIgnorePatterns`, o comando falhou (flag do Jest não suportada no Vitest) e novamente não houve coverage.
-- 🛠️ Plano imediato:
+- �?� Quality Gate continua reprovado porque o `npm test` no CI está falhando/abortando antes de gerar `coverage/lcov.info`. Resultado: cobertura reportada como **0%**.
+- �? Diagnóstico: as 175 falhas conhecidas fazem o Vitest travar por mais de 8 minutos; o job encerra e nenhum relatório é produzido. Quando tentamos limitar via `--testPathIgnorePatterns`, o comando falhou (flag do Jest não suportada no Vitest) e novamente não houve coverage.
+- 🛠�? Plano imediato:
   - Rodar `npm test` localmente para listar quais suites estão quebradas (priorizar `tests/components/**`).
   - Criar um comando de CI apenas com testes rápidos/estáveis para gerar coverage parcial (>40%) enquanto as 175 falhas são corrigidas.
   - Reativar gradualmente as suites restantes após estabilização.
@@ -2379,7 +2950,7 @@ Lint:
 - ✅ Tests: Skipped locally (158/158 pass ✅)
 - ✅ Build: Production bundle validado
 - ✅ SonarCloud: Scan completo
-- ⏸️ Deploy-omnichannel: Desabilitado (GCP secrets)
+- �?��? Deploy-omnichannel: Desabilitado (GCP secrets)
 - **Elapsed**: 2m24s
 
 **Commits Fase 3**:
@@ -2432,7 +3003,7 @@ Lint:
 
 ---
 
-## 🐛 ISSUES CONHECIDOS
+## �?� ISSUES CONHECIDOS
 
 ### 🔴 Críticos
 
@@ -2506,11 +3077,11 @@ Lint:
 
 ### 🔄 Fase 2: Lançamento (EM BLOQUEIO)
 
-- ❌ Testes completos — suíte desatualizada, coverage <45%
-- ❌ Build otimizado — precisa rerun pós-refactors
+- �?� Testes completos — suíte desatualizada, coverage <45%
+- �?� Build otimizado — precisa rerun pós-refactors
 - 🟠 Segurança validada — hotspots pendentes
 - 🟠 Stripe configurado — Connect aguardando aprovação
-- ⏳ Ativação Stripe Connect (1-24h)
+- �?� Ativação Stripe Connect (1-24h)
 - [ ] Deploy final (dependente dos itens acima)
 - [ ] Monitoramento ativo (revalidar após novo deploy)
 
@@ -2540,7 +3111,7 @@ Lint:
 
 | Métrica                     | Meta   | Atual                                   | Status |
 | --------------------------- | ------ | --------------------------------------- | ------ |
-| Testes Passando             | >95%   | ❌ Não executado (suíte bloqueada)      | 🔴     |
+| Testes Passando             | >95%   | �?� Não executado (suíte bloqueada)      | 🔴     |
 | Cobertura                   | >40%   | ~30% (SonarCloud) / 3.85% (run isolado) | 🔴     |
 | Vulnerabilidades / Hotspots | 0      | 3 hotspots abertos                      | 🟠     |
 | Build Time                  | <30s   | n/d (aguardando novo build)             | 🟡     |
@@ -2639,7 +3210,7 @@ gcloud run services describe servio-backend --region=us-west1 | grep STRIPE_WEBH
 4. **Segurança Sólida**: 0 vulnerabilidades
 5. **Arquitetura Escalável**: Cloud-native, serverless
 
-### 📝 Melhorias Futuras
+### �? Melhorias Futuras
 
 1. **Mais Testes E2E**: Cobertura completa de user journeys
 2. **Monitoring Avançado**: RUM, APM, distributed tracing
@@ -2748,7 +3319,7 @@ firebase deploy --only hosting
 
 ## 🩺 Diagnóstico Profissional SonarCloud - 24/11/2025
 
-### Status Quality Gate: ❌ FAILED
+### Status Quality Gate: �?� FAILED
 
 **Métricas Críticas:**
 
@@ -2761,7 +3332,7 @@ firebase deploy --only hosting
 
 ### Problemas Críticos (Bloqueadores)
 
-1. **Security Hotspots (3):** Vulnerabilidades não revisadas - CRÍTICO
+1. **Security Hotspots (3):** Vulnerabilidades não revisadas - CR�?TICO
 2. **Coverage (30%):** 7.3k linhas sem testes - BLOQUEADOR
 3. **New Issues (176):** Qualidade degradada, dívida técnica - BLOQUEADOR
 4. **Funcionalidades em Produção:** IA inoperante, Stripe falhas, modais/formulários quebrados
@@ -2971,9 +3542,9 @@ _Última atualização: 26/11/2025 | Semana 1 Concluída com Sucesso ✅ | Seman
    ├─ JOB_POSTED          → "Seu job foi publicado! 🎉"
    ├─ PROPOSAL_RECEIVED   → "Você recebeu uma proposta! 💼"
    ├─ PROPOSAL_ACCEPTED   → "Sua proposta foi aceita! ✅"
-   ├─ JOB_COMPLETED       → "Seu job foi concluído! 🏆"
-   ├─ PAYMENT_REMINDER    → "Lembrete de pagamento! ⏰"
-   └─ DISPUTE_ALERT       → "Disputa aberta! ⚖️"
+   ├─ JOB_COMPLETED       → "Seu job foi concluído! �?�"
+   ├─ PAYMENT_REMINDER    → "Lembrete de pagamento! �?�"
+   └─ DISPUTE_ALERT       → "Disputa aberta! ⚖�?"
 
 ✅ PRESTADOR (6 mensagens)
    ├─ NEW_JOB             → "Novo job disponível! 💰"
@@ -2981,25 +3552,25 @@ _Última atualização: 26/11/2025 | Semana 1 Concluída com Sucesso ✅ | Seman
    ├─ PROPOSAL_STATUS     → "Status da proposta: {status} 📊"
    ├─ PAYMENT_RECEIVED    → "Pagamento recebido! 💳"
    ├─ CHAT_MESSAGE        → "Mensagem recebida! 💬"
-   └─ RATING_RECEIVED     → "Avaliação recebida! ⭐"
+   └─ RATING_RECEIVED     → "Avaliação recebida! �?"
 
 ✅ PROSPECTOR (8 mensagens)
    ├─ RECRUIT_WELCOME     → "Bem-vindo ao Servio.AI! 🎉"
    ├─ RECRUIT_CONFIRMED   → "Recrutamento confirmado! ✅"
    ├─ COMMISSION_EARNED   → "Você ganhou uma comissão! 💰"
    ├─ COMMISSION_PAID     → "Comissão paga! 🎊"
-   ├─ BADGE_UNLOCKED      → "Novo badge desbloqueado! 🏅"
+   ├─ BADGE_UNLOCKED      → "Novo badge desbloqueado! �?�"
    ├─ LEAD_REMINDER       → "Lembrete de follow-up! 📞"
    ├─ REFERRAL_CLICK      → "Seu link foi clicado! 👀"
    └─ LEADERBOARD_UPDATE  → "Atualização do leaderboard! 📈"
 
 ✅ ADMIN (6 mensagens)
    ├─ SYSTEM_ALERT        → "Alerta do Sistema! 🚨"
-   ├─ DISPUTE_ESCALATION  → "Disputa escalada! ⚖️"
+   ├─ DISPUTE_ESCALATION  → "Disputa escalada! ⚖�?"
    ├─ FRAUD_DETECTION     → "Suspeita de fraude! 🔒"
    ├─ DAILY_REPORT        → "Relatório diário! 📊"
    ├─ PAYMENT_ISSUE       → "Problema de pagamento! 💳"
-   └─ USER_REPORT         → "Novo relatório! 📝"
+   └─ USER_REPORT         → "Novo relatório! �?"
 
 TOTAL: 26 TIPOS DE MENSAGENS | 20 ENDPOINTS | 4 USER TYPES | 100% COVERAGE
 ```
@@ -3168,8 +3739,8 @@ GET  /api/whatsapp/multi-role/templates/:userType
 
 | Severidade | Descrição                               | Ação                             |
 | ---------- | --------------------------------------- | -------------------------------- |
-| 🔴 CRÍTICA | Middleware x-user-email injeta usuários | Remover; Firebase Auth only      |
-| 🔴 CRÍTICA | Coleção users permite leitura pública   | Restringir por isAuthenticated() |
+| 🔴 CR�?TICA | Middleware x-user-email injeta usuários | Remover; Firebase Auth only      |
+| 🔴 CR�?TICA | Coleção users permite leitura pública   | Restringir por isAuthenticated() |
 | 🟠 ALTA    | Prompts IA não sanitizados              | Validar com Zod                  |
 | 🟠 ALTA    | Validação inputs insuficiente           | Schemas validação em todas rotas |
 | 🟠 MÉDIA   | Queries sem paginação                   | limit/offset <100 items          |

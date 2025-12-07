@@ -1,7 +1,12 @@
 import { useState, useCallback } from 'react';
 
 export interface NotificationSetting {
-  id: 'job_updates' | 'proposal_updates' | 'payment_updates' | 'message_updates' | 'schedule_updates';
+  id:
+    | 'job_updates'
+    | 'proposal_updates'
+    | 'payment_updates'
+    | 'message_updates'
+    | 'schedule_updates';
   enabled: boolean;
   channels: {
     email: boolean;
@@ -39,14 +44,9 @@ export function useNotificationSettings() {
     },
   ]);
 
-  const updateSetting = useCallback(
-    (id: string, updates: Partial<NotificationSetting>) => {
-      setSettings(prev =>
-        prev.map(s => (s.id === id ? { ...s, ...updates } : s))
-      );
-    },
-    []
-  );
+  const updateSetting = useCallback((id: string, updates: Partial<NotificationSetting>) => {
+    setSettings(prev => prev.map(s => (s.id === id ? { ...s, ...updates } : s)));
+  }, []);
 
   const toggleChannel = useCallback(
     (id: string, channel: keyof NotificationSetting['channels']) => {

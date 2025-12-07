@@ -29,10 +29,10 @@ interface LeadScoreCardProps {
 
 /**
  * LeadScoreCard Component
- * 
+ *
  * Exibe score visual de lead com indicador de temperatura
  * e recomendações de próximas ações.
- * 
+ *
  * @component
  * @example
  * <LeadScoreCard
@@ -120,7 +120,7 @@ export default function LeadScoreCard({
       data-testid={`lead-score-card-${leadId}`}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') {
           handleDetailClick();
         }
@@ -172,9 +172,7 @@ export default function LeadScoreCard({
         </div>
 
         {/* Badge de temperatura */}
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${colors.badge}`}
-        >
+        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${colors.badge}`}>
           {determinedTemperature.charAt(0).toUpperCase() + determinedTemperature.slice(1)}
         </span>
       </div>
@@ -225,7 +223,9 @@ export default function LeadScoreCard({
           <Target className="w-4 h-4 mt-0.5 flex-shrink-0" />
           <div className="flex-1">
             <p className="text-xs font-semibold text-gray-900">{recommendation.action}</p>
-            <p className="text-xs text-gray-600 mt-0.5">{recommendation.template.substring(0, 60)}...</p>
+            <p className="text-xs text-gray-600 mt-0.5">
+              {recommendation.template.substring(0, 60)}...
+            </p>
             <p className="text-xs text-gray-500 mt-1">
               Send in: <span className="font-semibold">{recommendation.timeToSend}</span>
             </p>
@@ -300,4 +300,3 @@ export default function LeadScoreCard({
     </div>
   );
 }
-

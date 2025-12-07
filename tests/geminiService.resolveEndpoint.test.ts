@@ -51,12 +51,10 @@ describe('resolveEndpoint (browser vs node, AI endpoints)', () => {
 
   it('uses VITE_AI_API_URL for AI endpoints when set', () => {
     return withEnv({ VITE_AI_API_URL: 'https://ai.example.com' }, () => {
-      const spy = vi
-        .spyOn(globalThis, 'fetch' as any)
-        .mockResolvedValue({
-          ok: true,
-          json: async () => ({ suggestedHeadline: 'h', suggestedBio: 'b' }),
-        } as any);
+      const spy = vi.spyOn(globalThis, 'fetch' as any).mockResolvedValue({
+        ok: true,
+        json: async () => ({ suggestedHeadline: 'h', suggestedBio: 'b' }),
+      } as any);
       // enhanceProviderProfile hits /api/enhance-profile (AI)
       return (gemini as any)
         .enhanceProviderProfile({ name: 'u', headline: 'h', bio: 'b' } as any)
