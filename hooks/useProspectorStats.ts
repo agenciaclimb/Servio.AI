@@ -1,6 +1,10 @@
-
 import { useState, useEffect, useCallback } from 'react';
-import { fetchProspectorStats, fetchProspectorLeaderboard, ProspectorStats, LeaderboardEntry } from '../services/api';
+import {
+  fetchProspectorStats,
+  fetchProspectorLeaderboard,
+  ProspectorStats,
+  LeaderboardEntry,
+} from '../services/api';
 import { getDocs, query, collection, where } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
@@ -24,13 +28,14 @@ export const useProspectorStats = (prospectorId: string) => {
       const [fetchedStats, fetchedLeaderboard, leadsSnapshot] = await Promise.all([
         fetchProspectorStats(prospectorId),
         fetchProspectorLeaderboard('commissions', 10),
-        getDocs(query(collection(db, 'prospector_prospects'), where('prospectorId', '==', prospectorId)))
+        getDocs(
+          query(collection(db, 'prospector_prospects'), where('prospectorId', '==', prospectorId))
+        ),
       ]);
 
       setStats(fetchedStats);
       setLeaderboard(fetchedLeaderboard);
       setLeadsCount(leadsSnapshot.size);
-
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Falha ao carregar dados do dashboard.';
       setError(message);

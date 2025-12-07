@@ -16,23 +16,30 @@
 ## 2. Passos para Correção de Domínio (EXECUTADOS)
 
 ### 2.1. ✅ Firebase Hosting - CONCLUÍDO
+
 Deploy realizado com sucesso:
+
 ```sh
 npm run build
 firebase deploy --only hosting
 ```
+
 - URL temporária: https://gen-lang-client-0737507616.web.app
 - Status: Funcionando perfeitamente
 
 ### 2.2. ✅ Cloud Run Domain Mapping - CONCLUÍDO
+
 Mapeamentos criados com sucesso:
+
 ```sh
 powershell -ExecutionPolicy Bypass -File scripts/gcloud_setup_domain_mappings.ps1
 ```
+
 - ✅ api.servio-ai.com → servio-backend
 - ✅ ai.servio-ai.com → servio-ai
 
 **PRÓXIMOS PASSOS DNS:**
+
 1. Acesse Cloud Console → Network Services → Cloud DNS
 2. Zona: servio-ai-com já existe
 3. Adicione os registros CNAME fornecidos pelo Cloud Run para:
@@ -41,7 +48,9 @@ powershell -ExecutionPolicy Bypass -File scripts/gcloud_setup_domain_mappings.ps
 4. Aguarde propagação DNS (5-30 minutos)
 
 ### 2.3. ✅ Variáveis de Ambiente do Frontend - CONFIGURADO
+
 Arquivo `.env.production.example` atualizado com:
+
 ```env
 VITE_BACKEND_API_URL=https://api.servio-ai.com
 VITE_AI_API_URL=https://ai.servio-ai.com
@@ -54,6 +63,7 @@ VITE_FIREBASE_APP_ID=1:1000250760228:web:af4350677e8b85f1e29f40
 ```
 
 **Para aplicar em produção:**
+
 1. Copie `.env.production.example` para `.env.production`
 2. Ajuste chaves Stripe LIVE se necessário
 3. Rebuild e redeploy:
@@ -63,7 +73,9 @@ VITE_FIREBASE_APP_ID=1:1000250760228:web:af4350677e8b85f1e29f40
    ```
 
 ### 2.4. ✅ Firebase Auth - JÁ CONFIGURADO
+
 Domínios autorizados confirmados no console:
+
 - ✅ localhost
 - ✅ 127.0.0.1
 - ✅ servio-ai.com
@@ -73,19 +85,24 @@ Domínios autorizados confirmados no console:
 - ✅ gen-lang-client-0737507616.web.app
 
 ### 2.5. ⏳ CORS Backend/IA - PENDENTE
+
 Aguardando validação dos domínios para configurar CORS adequado:
+
 - Permitir origem: https://servio-ai.com
 - Permitir origem: https://www.servio-ai.com
 
 ## 3. Testes de Produção
 
 ### 3.1. ✅ Smoke Test Backend - PASSOU
+
 Executado em: 2025-11-20
+
 ```sh
 node scripts/backend_smoke_test.mjs
 ```
 
 Resultados:
+
 - ✅ Health Check (200)
 - ✅ List Users (200)
 - ✅ List Jobs (200)
@@ -94,7 +111,9 @@ Resultados:
 **Status:** Backend em produção está 100% funcional
 
 ### 3.2. ⏳ Testes com Domínios Customizados - PENDENTE DNS
+
 Após propagação DNS, testar:
+
 ```sh
 curl https://servio-ai.com
 curl https://api.servio-ai.com/health
@@ -104,6 +123,7 @@ curl https://ai.servio-ai.com/health
 ## 4. Diagnóstico Rápido
 
 ### Scripts Disponíveis
+
 ```sh
 # Smoke test completo
 node scripts/backend_smoke_test.mjs
@@ -119,10 +139,10 @@ powershell -ExecutionPolicy Bypass -File scripts/gcloud_setup_domain_mappings.ps
 ```
 
 ### Troubleshooting Comum
+
 - **Erro 500 em /users ou /jobs:**
   - Execute: `npm run gcp:fix-firestore-iam`
   - Aguarde 1–2 min e rode o smoke test novamente
-  
 - **Domain Mapping não funciona:**
   - Verifique registros CNAME no Cloud DNS
   - Aguarde até 30 minutos para propagação DNS
@@ -135,6 +155,7 @@ powershell -ExecutionPolicy Bypass -File scripts/gcloud_setup_domain_mappings.ps
 ## 6. Checklist de Produção
 
 ### ✅ Infraestrutura
+
 - [x] Build e deploy do frontend (Firebase Hosting)
 - [x] Domain Mappings criados (api.servio-ai.com, ai.servio-ai.com)
 - [x] Variáveis de ambiente configuradas (.env.production.example)
@@ -144,18 +165,21 @@ powershell -ExecutionPolicy Bypass -File scripts/gcloud_setup_domain_mappings.ps
 - [x] CNAME ai.servio-ai.com criado (aguardando propagação)
 
 ### ⏳ Pendente DNS
+
 - [ ] Aguardar propagação DNS (5-30 min)
 - [ ] Testar: curl https://ai.servio-ai.com/health
 - [ ] Testar: curl https://api.servio-ai.com/health
 - [ ] Abrir https://servio-ai.com no navegador
 
 ### ✅ Qualidade do Código
+
 - [x] TypeScript: 0 erros (tsc --noEmit)
 - [x] Testes: 634/634 passando (100%)
 - [x] Coverage: 70.15% (aceitável para MVP)
 - [x] Backend endpoints: 4/4 funcionando (health, users, jobs, upload)
 
 ### 📋 Próximas Otimizações
+
 - [ ] Configurar CORS no backend para servio-ai.com
 - [ ] Testar fluxo completo: login → criar job → upload
 - [ ] Adicionar monitoring (Cloud Logging + alertas)
@@ -163,6 +187,7 @@ powershell -ExecutionPolicy Bypass -File scripts/gcloud_setup_domain_mappings.ps
 - [ ] Habilitar HTTPS redirect no Firebase Hosting
 
 ## 6. Observações Importantes
+
 - ✅ servio-ai.com aponta para Firebase Hosting (não Cloud Run)
 - ✅ api.servio-ai.com e ai.servio-ai.com apontam para Cloud Run
 - ✅ Subdomínios mapeados corretamente por função

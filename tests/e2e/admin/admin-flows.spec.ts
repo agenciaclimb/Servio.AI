@@ -12,7 +12,10 @@ test.describe('[E2E] Admin - Fluxos críticos', () => {
   test('acessar lista de disputas e abrir detalhes', async ({ page, loginAsAdmin }) => {
     await loginAsAdmin();
 
-    await page.getByRole('link', { name: /disputas|mediação/i }).first().click();
+    await page
+      .getByRole('link', { name: /disputas|mediação/i })
+      .first()
+      .click();
 
     const disputeCard = page.getByText(/disputa|problema|contestação/i).first();
     await disputeCard.click();

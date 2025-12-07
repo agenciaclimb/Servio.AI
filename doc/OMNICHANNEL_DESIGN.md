@@ -5,6 +5,7 @@
 O módulo Omnichannel unifica comunicações multi-canal para a plataforma Servio.AI, integrando WhatsApp, Instagram, Facebook Messenger e WebChat em uma única interface gerenciada por IA.
 
 **Objetivos**:
+
 - Centralizar todas as conversas em um único painel (OmniInbox)
 - Automatizar respostas contextuais via Gemini AI
 - Personalizar comunicação baseada em persona do usuário (cliente | prestador | prospector | admin)
@@ -41,6 +42,7 @@ O módulo Omnichannel unifica comunicações multi-canal para a plataforma Servi
 ### 2.3 Componentes Principais
 
 #### Backend Service (`backend/src/services/omnichannel/index.js`)
+
 - **Endpoints REST**:
   - `POST /api/omni/webhook/whatsapp` - Recebe mensagens WhatsApp
   - `POST /api/omni/webhook/instagram` - Recebe mensagens Instagram
@@ -50,6 +52,7 @@ O módulo Omnichannel unifica comunicações multi-canal para a plataforma Servi
   - `GET /api/omni/messages` - Lista mensagens de uma conversa
 
 #### Automation Engine (`backend/src/services/omnichannel/automation.js`)
+
 - **5 Triggers**:
   1. `followup_48h` - Cliente sem resposta há 48h
   2. `followup_proposta` - Proposta não respondida em 24h
@@ -58,6 +61,7 @@ O módulo Omnichannel unifica comunicações multi-canal para a plataforma Servi
   5. `followup_prospector_recrutamento` - Lead prospector sem resposta em 72h
 
 #### Cloud Function (`backend/functions/omnichannelWebhook.js`)
+
 - Processa webhooks de todos os canais
 - Normaliza payload para formato unificado
 - Valida duplicação de mensagens
@@ -65,13 +69,13 @@ O módulo Omnichannel unifica comunicações multi-canal para a plataforma Servi
 - Dispara processamento da IA
 
 #### Frontend Components
+
 - **OmniInbox** (`src/components/omnichannel/OmniInbox.tsx`):
   - Lista de conversas com real-time (Firestore onSnapshot)
   - Filtros por canal e userType
   - Visualizador de mensagens
   - Envio manual de mensagens
   - Métricas de tempo de resposta
-  
 - **OmniChannelStatus** (`src/components/omnichannel/OmniChannelStatus.tsx`):
   - Status de conexão de cada canal
   - Taxa de erro
@@ -81,6 +85,7 @@ O módulo Omnichannel unifica comunicações multi-canal para a plataforma Servi
 ## 3. Firestore Data Models
 
 ### Collection: `conversations`
+
 ```typescript
 {
   id: string, // formato: {channel}_{sender_id}
@@ -96,6 +101,7 @@ O módulo Omnichannel unifica comunicações multi-canal para a plataforma Servi
 ```
 
 ### Collection: `messages`
+
 ```typescript
 {
   id: string,
@@ -115,6 +121,7 @@ O módulo Omnichannel unifica comunicações multi-canal para a plataforma Servi
 ```
 
 ### Collection: `omni_logs`
+
 ```typescript
 {
   type: 'message_processed' | 'automation_followup_48h' | 'automation_followup_proposta' | ...,
@@ -128,6 +135,7 @@ O módulo Omnichannel unifica comunicações multi-canal para a plataforma Servi
 ```
 
 ### Collection: `ia_logs`
+
 ```typescript
 {
   conversationId: string,
@@ -142,21 +150,25 @@ O módulo Omnichannel unifica comunicações multi-canal para a plataforma Servi
 ## 4. Estratégias de Personas IA
 
 ### 4.1 Cliente
+
 **Tom**: Cordial, resolutivo, acessível  
 **Função**: Ajudar com dúvidas sobre serviços, orçamentos, pagamentos  
 **Exemplo**: "Olá! Como posso ajudá-lo a encontrar o prestador perfeito para seu serviço?"
 
 ### 4.2 Prestador
+
 **Tom**: Profissional, direto, motivacional  
 **Função**: Ajudar com jobs, propostas, perfil, visibilidade  
 **Exemplo**: "Vi que você tem uma nova oportunidade de job. Vamos revisar a proposta para maximizar sua conversão?"
 
 ### 4.3 Prospector
+
 **Tom**: Estratégico, motivacional, equipe interna  
 **Função**: Ajudar com CRM, leads, metas, ferramentas  
 **Exemplo**: "Ótimo trabalho hoje! Você contatou 18 prospects. Faltam apenas 2 para bater a meta diária. 🚀"
 
 ### 4.4 Admin
+
 **Tom**: Técnico, objetivo, data-driven  
 **Função**: Insights sobre plataforma, usuários, performance  
 **Exemplo**: "Sistema operando normalmente. Taxa de conversão hoje: 12.5% (+2.1% vs. ontem). 267 jobs ativos."
@@ -166,6 +178,7 @@ O módulo Omnichannel unifica comunicações multi-canal para a plataforma Servi
 ### 5.1 WhatsApp Cloud API
 
 **Setup**:
+
 1. Criar Meta App no Meta Developers
 2. Configurar WhatsApp Business API
 3. Obter `WHATSAPP_TOKEN` e `WHATSAPP_PHONE_ID`
@@ -173,6 +186,7 @@ O módulo Omnichannel unifica comunicações multi-canal para a plataforma Servi
 5. Definir `OMNI_WEBHOOK_SECRET` para validação
 
 **Fluxo de Mensagem Recebida**:
+
 ```
 Usuário envia mensagem → Meta webhook call → Cloud Function
 → Validação assinatura (X-Hub-Signature-256)
@@ -184,6 +198,7 @@ Usuário envia mensagem → Meta webhook call → Cloud Function
 ### 5.2 Instagram Messaging
 
 **Setup**:
+
 1. Configurar Instagram Business Account
 2. Conectar ao Meta App
 3. Obter `META_ACCESS_TOKEN`
@@ -191,6 +206,7 @@ Usuário envia mensagem → Meta webhook call → Cloud Function
 5. Subscrever eventos: `messages`, `messaging_postbacks`
 
 **Fluxo**:
+
 ```
 DM no Instagram → Meta webhook → Cloud Function
 → Normalização (event.messaging) → Firestore
@@ -208,6 +224,7 @@ DM no Instagram → Meta webhook → Cloud Function
 **Implementação**: Widget React embeddable
 
 **Fluxo**:
+
 ```
 Usuário digita no widget → POST /api/omni/web/send
 → Salva mensagem → IA processa → Retorna resposta JSON
@@ -217,6 +234,7 @@ Usuário digita no widget → POST /api/omni/web/send
 ## 6. Automação Triggers
 
 ### Scheduler Setup (Cloud Scheduler)
+
 ```bash
 gcloud scheduler jobs create http omni-automation \
   --location=us-west1 \
@@ -231,24 +249,29 @@ gcloud scheduler jobs create http omni-automation \
 **Opt-Out**: Respeitado via campo `users/{email}.optOutAutomations = true`
 
 ### Trigger 1: followup_48h
+
 - **Condição**: Cliente inativo há 48h (lastMessageAt < now - 48h, lastMessageSender = 'omni_ia', status = 'active')
 - **Mensagem**: "Olá! Vi que você não respondeu há alguns dias. Ainda posso ajudar com algo? 😊"
 - **Canal**: Canal preferido da conversa
 
 ### Trigger 2: followup_proposta
+
 - **Condição**: Proposta com status 'enviada' há 24h sem resposta
 - **Mensagem**: "Olá! Vi que você recebeu uma proposta para \"{job.title}\". Gostaria de revisar? 📋"
 - **Canal**: `user.preferredChannel` (default: webchat)
 
 ### Trigger 3: followup_pagamento
+
 - **Condição**: Escrow com status 'pending' há 12h
 - **Mensagem**: "Olá! Percebi que há um pagamento pendente de R$ {escrow.amount}. Posso ajudar a concluir? 💳"
 
 ### Trigger 4: followup_onboarding
+
 - **Condição**: Usuário criado há 24h com `onboardingCompleted = false`
 - **Mensagens**: Personalizadas por userType (cliente/prestador/prospector)
 
 ### Trigger 5: followup_prospector_recrutamento
+
 - **Condição**: Prospect com status 'contatado' há 72h sem progressão
 - **Mensagem**: Email com CTA para adesão à plataforma
 - **Canal**: Email (SendGrid)
@@ -256,15 +279,18 @@ gcloud scheduler jobs create http omni-automation \
 ## 7. Segurança
 
 ### 7.1 Validação de Webhooks
+
 - **Meta (WA/IG/FB)**: Validação via HMAC SHA-256 (header `X-Hub-Signature-256`)
 - **Implementação**:
+
 ```javascript
-const signature = 'sha256=' + crypto.createHmac('sha256', META_APP_SECRET)
-  .update(rawBody).digest('hex');
+const signature =
+  'sha256=' + crypto.createHmac('sha256', META_APP_SECRET).update(rawBody).digest('hex');
 crypto.timingSafeEqual(Buffer.from(incomingSignature), Buffer.from(signature));
 ```
 
 ### 7.2 Firestore Security Rules
+
 ```javascript
 // conversations - só participantes podem ler/escrever
 match /conversations/{conversationId} {
@@ -285,6 +311,7 @@ match /omni_logs/{logId} {
 ```
 
 ### 7.3 Rate Limiting
+
 - Cloud Run: 100 req/s por instância
 - Firestore: 10k writes/s (documentação)
 - Considerar Cloud Armor para DDoS protection
@@ -292,6 +319,7 @@ match /omni_logs/{logId} {
 ## 8. Monitoramento
 
 ### 8.1 Métricas (Cloud Monitoring)
+
 - **Latência**: p50, p95, p99 dos endpoints
 - **Taxa de erro**: 4xx e 5xx por canal
 - **Volume de mensagens**: Mensagens processadas/hora por canal
@@ -300,6 +328,7 @@ match /omni_logs/{logId} {
 - **Automation execution**: Triggers executados e taxas de envio
 
 ### 8.2 Logs (Cloud Logging)
+
 ```
 [Omni WA] Mensagem de 5511999999999: "Preciso de ajuda"
 [Omni IA] Resposta enviada: wa_5511999999999
@@ -307,6 +336,7 @@ match /omni_logs/{logId} {
 ```
 
 ### 8.3 Alertas
+
 - **Webhook failure rate > 5%** → Notificar admin
 - **IA response time > 5s** → Investigar Gemini API
 - **Canal offline > 30min** → Incidente crítico
@@ -314,21 +344,25 @@ match /omni_logs/{logId} {
 ## 9. Plano de Recuperação de Falhas
 
 ### 9.1 Webhook Timeout
+
 - **Sintoma**: Meta retenta entrega 3x
 - **Ação**: Cloud Function deve responder 200 imediatamente, processar assíncrono
 - **Retry**: Meta retenta em 15s, 30s, 1min
 
 ### 9.2 Firestore Overload
+
 - **Sintoma**: Write contention ou quota exceeded
 - **Ação**: Implementar batch writes (até 500 docs/batch)
 - **Fallback**: Queue em Pub/Sub para processamento posterior
 
 ### 9.3 Gemini API Quota
+
 - **Sintoma**: 429 Too Many Requests
 - **Ação**: Implementar backoff exponencial
 - **Fallback**: Mensagem genérica pré-definida: "Desculpe, estou com muitas solicitações no momento. Por favor, tente novamente em instantes."
 
 ### 9.4 Canal Offline
+
 - **Detecção**: Health check falha 3x consecutivas
 - **Ação**: Marcar canal como 'offline' no status dashboard
 - **Notificação**: Webhook para Slack/email do admin
@@ -337,33 +371,39 @@ match /omni_logs/{logId} {
 ## 10. Custos Estimados
 
 ### 10.1 Cloud Run
+
 - **Instâncias**: 0-10 (scale-to-zero)
 - **CPU**: 1 vCPU x 512Mi RAM
 - **Requisições**: ~10k/dia
 - **Custo**: ~$15/mês
 
 ### 10.2 Firestore
+
 - **Leituras**: ~50k/dia (conversas + mensagens)
 - **Escritas**: ~15k/dia (mensagens + logs)
 - **Armazenamento**: ~10GB
 - **Custo**: ~$5/mês
 
 ### 10.3 Cloud Functions
+
 - **Invocações**: ~10k/dia (webhooks)
 - **Compute**: 512Mi x 60s avg
 - **Custo**: ~$2/mês
 
 ### 10.4 Gemini AI
+
 - **Modelo**: gemini-2.0-flash-exp (Free Tier: 1500 req/day)
 - **Uso estimado**: ~500 req/dia
 - **Custo**: $0/mês (dentro do free tier)
 
 ### 10.5 Meta APIs (WhatsApp/IG/FB)
+
 - **WhatsApp**: Free para mensagens de resposta (24h window)
 - **Instagram/Facebook**: Free
 - **Custo**: $0/mês
 
 ### 10.6 SendGrid (Email)
+
 - **Envios**: ~100/dia (automações)
 - **Plano**: Free tier (100/dia)
 - **Custo**: $0/mês
@@ -373,6 +413,7 @@ match /omni_logs/{logId} {
 ## 11. Roadmap Futuro
 
 ### Fase 2 (Q2 2025)
+
 - [ ] Integração Telegram
 - [ ] SMS via Twilio
 - [ ] Suporte a anexos (imagens, PDFs)
@@ -380,6 +421,7 @@ match /omni_logs/{logId} {
 - [ ] Analytics dashboard (conversão por canal)
 
 ### Fase 3 (Q3 2025)
+
 - [ ] Voice messages (transcrição automática)
 - [ ] Chatbot builder visual (no-code)
 - [ ] A/B testing de mensagens

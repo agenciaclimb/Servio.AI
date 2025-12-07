@@ -43,12 +43,7 @@ describe('ProposalModal', () => {
 
   it('renderiza modal com informações do job', () => {
     render(
-      <ProposalModal
-        job={mockJob}
-        provider={mockProvider}
-        onClose={onClose}
-        onSubmit={onSubmit}
-      />
+      <ProposalModal job={mockJob} provider={mockProvider} onClose={onClose} onSubmit={onSubmit} />
     );
 
     expect(screen.getByText('Enviar Proposta')).toBeInTheDocument();
@@ -59,12 +54,7 @@ describe('ProposalModal', () => {
   it('fecha modal ao clicar no X', async () => {
     const user = userEvent.setup({ delay: null });
     render(
-      <ProposalModal
-        job={mockJob}
-        provider={mockProvider}
-        onClose={onClose}
-        onSubmit={onSubmit}
-      />
+      <ProposalModal job={mockJob} provider={mockProvider} onClose={onClose} onSubmit={onSubmit} />
     );
 
     const closeButton = screen.getAllByRole('button')[0]; // Botão X
@@ -76,12 +66,7 @@ describe('ProposalModal', () => {
   it('permite enviar proposta com preço e mensagem', async () => {
     const user = userEvent.setup({ delay: null });
     render(
-      <ProposalModal
-        job={mockJob}
-        provider={mockProvider}
-        onClose={onClose}
-        onSubmit={onSubmit}
-      />
+      <ProposalModal job={mockJob} provider={mockProvider} onClose={onClose} onSubmit={onSubmit} />
     );
 
     // Preenche preço
@@ -106,12 +91,7 @@ describe('ProposalModal', () => {
   it('exibe erro quando preço é inválido', async () => {
     const user = userEvent.setup({ delay: null });
     render(
-      <ProposalModal
-        job={mockJob}
-        provider={mockProvider}
-        onClose={onClose}
-        onSubmit={onSubmit}
-      />
+      <ProposalModal job={mockJob} provider={mockProvider} onClose={onClose} onSubmit={onSubmit} />
     );
 
     // Tenta submeter com preço negativo
@@ -145,16 +125,12 @@ describe('ProposalModal', () => {
 
   it('gera mensagem com IA quando botão é clicado', async () => {
     const user = userEvent.setup({ delay: null });
-    const mockGeneratedMessage = 'Olá! Sou especialista em pintura residencial com 15 anos de experiência.';
+    const mockGeneratedMessage =
+      'Olá! Sou especialista em pintura residencial com 15 anos de experiência.';
     vi.mocked(geminiService.generateProposalMessage).mockResolvedValue(mockGeneratedMessage);
 
     render(
-      <ProposalModal
-        job={mockJob}
-        provider={mockProvider}
-        onClose={onClose}
-        onSubmit={onSubmit}
-      />
+      <ProposalModal job={mockJob} provider={mockProvider} onClose={onClose} onSubmit={onSubmit} />
     );
 
     // Clica em gerar com IA
@@ -175,12 +151,7 @@ describe('ProposalModal', () => {
     vi.mocked(geminiService.generateProposalMessage).mockRejectedValue(new Error('API timeout'));
 
     render(
-      <ProposalModal
-        job={mockJob}
-        provider={mockProvider}
-        onClose={onClose}
-        onSubmit={onSubmit}
-      />
+      <ProposalModal job={mockJob} provider={mockProvider} onClose={onClose} onSubmit={onSubmit} />
     );
 
     const generateButton = screen.getByRole('button', { name: /Gerar com IA/i });
@@ -194,12 +165,7 @@ describe('ProposalModal', () => {
   it('permite submeter proposta sem mensagem', async () => {
     const user = userEvent.setup({ delay: null });
     render(
-      <ProposalModal
-        job={mockJob}
-        provider={mockProvider}
-        onClose={onClose}
-        onSubmit={onSubmit}
-      />
+      <ProposalModal job={mockJob} provider={mockProvider} onClose={onClose} onSubmit={onSubmit} />
     );
 
     // Preenche apenas preço
@@ -218,12 +184,7 @@ describe('ProposalModal', () => {
 
   it('exibe dica de segurança', () => {
     render(
-      <ProposalModal
-        job={mockJob}
-        provider={mockProvider}
-        onClose={onClose}
-        onSubmit={onSubmit}
-      />
+      <ProposalModal job={mockJob} provider={mockProvider} onClose={onClose} onSubmit={onSubmit} />
     );
 
     expect(screen.getByText(/Dica de Segurança/i)).toBeInTheDocument();

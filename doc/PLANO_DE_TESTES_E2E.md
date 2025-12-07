@@ -9,6 +9,7 @@ Este documento descreve os cenários de teste que simulam a jornada completa dos
 **Objetivo:** Validar a experiência completa de um cliente, desde a solicitação de um serviço até a sua avaliação final.
 
 **Passos:**
+
 1.  **Busca Inteligente:** Acessar a página inicial e descrever uma necessidade na barra de busca (ex: "consertar vazamento na pia da cozinha").
 2.  **Wizard com IA:** Ser direcionado para o `AIJobRequestWizard` já na etapa de revisão, com os campos preenchidos pela IA.
 3.  **Publicação e Login:** Revisar os dados, adicionar endereço e publicar o job. Se não estiver logado, ser solicitado a criar uma conta/logar.
@@ -27,6 +28,7 @@ Este documento descreve os cenários de teste que simulam a jornada completa dos
 **Objetivo:** Validar a experiência completa de um prestador, desde o cadastro até o recebimento pelo serviço prestado.
 
 **Passos:**
+
 1.  **Cadastro e Onboarding:** Criar uma nova conta como "prestador". Ser redirecionado para o fluxo de onboarding.
 2.  **Verificação com IA:** Fazer o upload de um documento de identidade e confirmar os dados extraídos pela IA. Submeter para análise.
 3.  **Aprovação pelo Admin:** Logar como `admin@servio.ai`, acessar o painel, encontrar o novo prestador pendente e aprová-lo.

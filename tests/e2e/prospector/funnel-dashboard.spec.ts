@@ -1,17 +1,15 @@
-
 import { test, expect } from '../fixtures/roles.fixture';
 
 test.describe('Prospector - Painel de Funil (Dashboard)', () => {
-
   // Antes de cada teste neste grupo, executa o login como Prospector
   test.beforeEach(async ({ page, loginAsProspector }) => {
     // 1. Executa a rotina de login definida no fixture
     await loginAsProspector();
-    
+
     // 2. Navega diretamente para a página principal do prospector
     // A baseURL já está configurada no playwright.config.ts
     await page.goto('/prospector');
-    
+
     // 3. Aguarda a página carregar completamente para evitar instabilidade
     await page.waitForLoadState('networkidle');
   });

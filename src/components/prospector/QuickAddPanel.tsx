@@ -22,13 +22,13 @@ export default function QuickAddPanel({ onLeadsAdded }: QuickAddPanelProps) {
   const [textInput, setTextInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ imported: number; failed: number } | null>(null);
-  
+
   // Formulário simplificado
   const [formData, setFormData] = useState<Lead>({
     name: '',
     phone: '',
     email: '',
-    category: 'Geral'
+    category: 'Geral',
   });
 
   const auth = getAuth();
@@ -50,7 +50,7 @@ export default function QuickAddPanel({ onLeadsAdded }: QuickAddPanelProps) {
             name: parts[0] || '',
             phone: parts[1] || '',
             email: parts[2] || undefined,
-            category: parts[3] || 'Geral'
+            category: parts[3] || 'Geral',
           });
         }
         // Formato simplificado: "Nome - Telefone"
@@ -59,7 +59,7 @@ export default function QuickAddPanel({ onLeadsAdded }: QuickAddPanelProps) {
           leads.push({
             name: parts[0] || '',
             phone: parts[1] || '',
-            category: 'Geral'
+            category: 'Geral',
           });
         }
         // Formato livre (extrai telefone via regex)
@@ -71,7 +71,7 @@ export default function QuickAddPanel({ onLeadsAdded }: QuickAddPanelProps) {
             leads.push({
               name: name || 'Lead',
               phone,
-              category: 'Geral'
+              category: 'Geral',
             });
           }
         }
@@ -119,17 +119,17 @@ export default function QuickAddPanel({ onLeadsAdded }: QuickAddPanelProps) {
       }
 
       const token = await user.getIdToken();
-      
+
       const response = await fetch('/api/prospector/import-leads', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           userId: user.email,
-          leads
-        })
+          leads,
+        }),
       });
 
       if (!response.ok) {
@@ -148,7 +148,9 @@ export default function QuickAddPanel({ onLeadsAdded }: QuickAddPanelProps) {
         onLeadsAdded(data.imported);
       }
 
-      alert(`✅ ${data.imported} leads importados com sucesso! ${data.failed > 0 ? `(${data.failed} falharam)` : ''}`);
+      alert(
+        `✅ ${data.imported} leads importados com sucesso! ${data.failed > 0 ? `(${data.failed} falharam)` : ''}`
+      );
     } catch (error) {
       console.error('Erro ao importar leads:', error);
       alert('❌ Erro ao importar leads. Verifique o console.');
@@ -165,7 +167,7 @@ export default function QuickAddPanel({ onLeadsAdded }: QuickAddPanelProps) {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = e => {
       const text = e.target?.result as string;
       setTextInput(text);
       setMode('paste');
@@ -175,9 +177,7 @@ export default function QuickAddPanel({ onLeadsAdded }: QuickAddPanelProps) {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-      <h3 className="text-xl font-bold mb-4 text-gray-800">
-        🚀 Cadastro Rápido de Leads
-      </h3>
+      <h3 className="text-xl font-bold mb-4 text-gray-800">🚀 Cadastro Rápido de Leads</h3>
 
       {/* Abas de modo */}
       <div className="flex gap-2 mb-4">
@@ -218,7 +218,7 @@ export default function QuickAddPanel({ onLeadsAdded }: QuickAddPanelProps) {
         <div>
           <textarea
             value={textInput}
-            onChange={(e) => setTextInput(e.target.value)}
+            onChange={e => setTextInput(e.target.value)}
             placeholder={`Cole seus leads aqui. Formatos aceitos:
 
 Nome, Telefone, Email, Categoria
@@ -240,48 +240,40 @@ Maria Souza - (21) 91234-5678`}
       {mode === 'form' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nome *
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
               placeholder="João Silva"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Telefone *
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Telefone *</label>
             <input
               type="tel"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={e => setFormData({ ...formData, phone: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
               placeholder="(11) 98765-4321"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email (opcional)
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email (opcional)</label>
             <input
               type="email"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={e => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
               placeholder="joao@email.com"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Categoria
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
             <select
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              onChange={e => setFormData({ ...formData, category: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
             >
               <option value="Geral">Geral</option>
@@ -307,19 +299,24 @@ Maria Souza - (21) 91234-5678`}
             className="hidden"
             id="csv-upload"
           />
-          <label
-            htmlFor="csv-upload"
-            className="cursor-pointer inline-flex flex-col items-center"
-          >
-            <svg className="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          <label htmlFor="csv-upload" className="cursor-pointer inline-flex flex-col items-center">
+            <svg
+              className="w-12 h-12 text-gray-400 mb-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
             </svg>
             <span className="text-purple-600 font-semibold hover:text-purple-700">
               Clique para fazer upload
             </span>
-            <span className="text-gray-500 text-sm mt-1">
-              ou arraste um arquivo CSV aqui
-            </span>
+            <span className="text-gray-500 text-sm mt-1">ou arraste um arquivo CSV aqui</span>
           </label>
           <p className="text-xs text-gray-500 mt-4">
             Formato CSV: Nome, Telefone, Email, Categoria
@@ -330,14 +327,29 @@ Maria Souza - (21) 91234-5678`}
       {/* Botão de importação */}
       <button
         onClick={handleImport}
-        disabled={loading || (mode === 'paste' && !textInput) || (mode === 'form' && (!formData.name || !formData.phone))}
+        disabled={
+          loading ||
+          (mode === 'paste' && !textInput) ||
+          (mode === 'form' && (!formData.name || !formData.phone))
+        }
         className="mt-4 w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
       >
         {loading ? (
           <>
             <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
             <span>Importando...</span>
           </>

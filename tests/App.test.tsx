@@ -7,7 +7,7 @@ import App from '../App';
 vi.mock('../firebaseConfig', () => ({
   auth: {
     currentUser: null,
-    onAuthStateChanged: vi.fn((callback) => {
+    onAuthStateChanged: vi.fn(callback => {
       callback(null);
       return vi.fn();
     }),
@@ -19,7 +19,7 @@ vi.mock('react', async () => {
   const actual = await vi.importActual('react');
   return {
     ...actual,
-    lazy: vi.fn((fn) => {
+    lazy: vi.fn(fn => {
       const Component = React.lazy(fn);
       return (props: any) => (
         <React.Suspense fallback={<div data-testid="loading-fallback">Loading...</div>}>
@@ -61,7 +61,9 @@ vi.mock('../services/api', () => ({
 vi.mock('../components/Header', () => ({
   default: ({ onLoginClick }: any) => (
     <header data-testid="header">
-      <button onClick={() => onLoginClick('cliente')} data-testid="login-button">Login</button>
+      <button onClick={() => onLoginClick('cliente')} data-testid="login-button">
+        Login
+      </button>
     </header>
   ),
 }));
@@ -69,7 +71,9 @@ vi.mock('../components/Header', () => ({
 vi.mock('../components/HeroSection', () => ({
   default: ({ onSmartSearch }: any) => (
     <section data-testid="hero-section">
-      <button onClick={() => onSmartSearch('test search')} data-testid="search-button">Search</button>
+      <button onClick={() => onSmartSearch('test search')} data-testid="search-button">
+        Search
+      </button>
     </section>
   ),
 }));
@@ -80,7 +84,9 @@ vi.mock('../components/AuthModal', () => ({
       <button onClick={() => onSuccess('test@example.com', 'cliente')} data-testid="auth-success">
         Login Success
       </button>
-      <button onClick={onClose} data-testid="auth-close">Close</button>
+      <button onClick={onClose} data-testid="auth-close">
+        Close
+      </button>
     </div>
   ),
 }));
@@ -141,7 +147,7 @@ describe('App Component', () => {
     render(<App />);
     const loginButton = screen.getByTestId('login-button');
     fireEvent.click(loginButton);
-    
+
     await waitFor(() => {
       expect(screen.getByTestId('auth-modal')).toBeInTheDocument();
     });
@@ -151,7 +157,7 @@ describe('App Component', () => {
     render(<App />);
     const loginButton = screen.getByTestId('login-button');
     fireEvent.click(loginButton);
-    
+
     await waitFor(() => {
       const authModal = screen.getByTestId('auth-modal');
       expect(authModal).toBeInTheDocument();
@@ -265,7 +271,7 @@ describe('App Component', () => {
 
   it('should clean up error listeners on unmount', async () => {
     const removeEventListenerSpy = vi.spyOn(globalThis, 'removeEventListener');
-    
+
     const { unmount } = render(<App />);
     unmount();
 
@@ -279,7 +285,7 @@ describe('App Component', () => {
     const API = await import('../services/api');
     const mockUsers = [{ email: 'provider@example.com', name: 'Provider' }];
     const mockJobs = [{ id: 'job-1', category: 'reparos' }];
-    
+
     vi.mocked(API.fetchAllUsers).mockResolvedValue(mockUsers as any);
     vi.mocked(API.fetchJobs).mockResolvedValue(mockJobs as any);
 
@@ -290,7 +296,7 @@ describe('App Component', () => {
 
   it('should handle view navigation', () => {
     render(<App />);
-    
+
     expect(screen.getByTestId('hero-section')).toBeInTheDocument();
   });
 

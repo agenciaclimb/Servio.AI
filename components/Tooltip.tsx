@@ -20,7 +20,7 @@ const Tooltip: React.FC<TooltipProps> = ({ content, children, position = 'top' }
   };
 
   return (
-    <div 
+    <div
       className="relative inline-block"
       onMouseEnter={() => setIsVisible(true)}
       onMouseLeave={() => setIsVisible(false)}
@@ -34,10 +34,16 @@ const Tooltip: React.FC<TooltipProps> = ({ content, children, position = 'top' }
           data-testid="tooltip-content"
         >
           {content}
-          <div 
+          <div
             className="absolute w-2 h-2 bg-gray-900 transform rotate-45"
             style={{
-              [position === 'top' ? 'bottom' : position === 'bottom' ? 'top' : position === 'left' ? 'right' : 'left']: '-4px',
+              [position === 'top'
+                ? 'bottom'
+                : position === 'bottom'
+                  ? 'top'
+                  : position === 'left'
+                    ? 'right'
+                    : 'left']: '-4px',
               [position === 'top' || position === 'bottom' ? 'left' : 'top']: '50%',
               [position === 'top' || position === 'bottom' ? 'marginLeft' : 'marginTop']: '-4px',
             }}

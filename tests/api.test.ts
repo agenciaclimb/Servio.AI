@@ -442,14 +442,19 @@ describe('API Service', () => {
     it('deve lançar erro em operações críticas sem fallback', async () => {
       mockFetch.mockRejectedValueOnce(new Error('Network error'));
 
-      await expect(API.createJob({
-        description: 'Test',
-        category: 'reparos' as any,
-        serviceType: 'Encanador' as any,
-        urgency: '3dias' as any,
-        address: 'Test Address',
-        jobMode: 'normal' as any,
-      }, 'client@test.com')).rejects.toThrow();
+      await expect(
+        API.createJob(
+          {
+            description: 'Test',
+            category: 'reparos' as any,
+            serviceType: 'Encanador' as any,
+            urgency: '3dias' as any,
+            address: 'Test Address',
+            jobMode: 'normal' as any,
+          },
+          'client@test.com'
+        )
+      ).rejects.toThrow();
     });
   });
 });

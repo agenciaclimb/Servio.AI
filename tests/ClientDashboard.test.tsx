@@ -6,7 +6,7 @@ import { act } from 'react';
 
 // Mock do skeleton ANTES de importar o componente principal
 vi.mock('../components/skeletons/ClientDashboardSkeleton', () => ({
-  default: () => <div data-testid="skeleton" />
+  default: () => <div data-testid="skeleton" />,
 }));
 
 import ClientDashboard from '../components/ClientDashboard';
@@ -14,25 +14,31 @@ import * as API from '../services/api';
 
 function renderDashboard(overrides: Partial<any> = {}) {
   // Mock de dados mais completo para os testes de pagamento
-  const mockJobs = [{
-    id: 'job-1',
-    clientId: 'cliente@servio.ai',
-    category: 'Encanamento',
-    description: 'Vazamento na pia',
-    status: 'ativo',
-  }];
-  const mockProposals = [{
-    id: 'proposal-1',
-    jobId: 'job-1',
-    providerId: 'provider@servio.ai',
-    price: 150,
-  }];
-  const mockUsers = [{
-    email: 'provider@servio.ai',
-    name: 'Carlos Prestador',
-    type: 'prestador',
-    status: 'ativo',
-  }];
+  const mockJobs = [
+    {
+      id: 'job-1',
+      clientId: 'cliente@servio.ai',
+      category: 'Encanamento',
+      description: 'Vazamento na pia',
+      status: 'ativo',
+    },
+  ];
+  const mockProposals = [
+    {
+      id: 'proposal-1',
+      jobId: 'job-1',
+      providerId: 'provider@servio.ai',
+      price: 150,
+    },
+  ];
+  const mockUsers = [
+    {
+      email: 'provider@servio.ai',
+      name: 'Carlos Prestador',
+      type: 'prestador',
+      status: 'ativo',
+    },
+  ];
   const props: any = {
     user: {
       email: 'cliente@servio.ai',
@@ -152,7 +158,10 @@ describe('ClientDashboard', () => {
 
       // Simula a abertura do modal de propostas
       await act(async () => {
-        renderDashboard({ viewingProposalsForJob: props.userJobs[0], initialUserJobs: props.userJobs });
+        renderDashboard({
+          viewingProposalsForJob: props.userJobs[0],
+          initialUserJobs: props.userJobs,
+        });
       });
 
       // Clica em "Aceitar Proposta" dentro do modal de propostas (simulado)
@@ -164,18 +173,20 @@ describe('ClientDashboard', () => {
         expect(screen.getByTestId('payment-modal')).toBeInTheDocument();
       });
 
-  // Verifica o conteúdo do modal de pagamento
-  expect(screen.getByText('Finalizar Pagamento')).toBeInTheDocument();
-  const modal = screen.getByTestId('payment-modal');
-  expect(within(modal).getByText('R$ 150,00')).toBeInTheDocument();
+      // Verifica o conteúdo do modal de pagamento
+      expect(screen.getByText('Finalizar Pagamento')).toBeInTheDocument();
+      const modal = screen.getByTestId('payment-modal');
+      expect(within(modal).getByText('R$ 150,00')).toBeInTheDocument();
     });
 
     it('deve chamar a API de checkout e redirecionar ao confirmar o pagamento', async () => {
-  const { props } = renderDashboard({ initialUserJobs: [] });
+      const { props } = renderDashboard({ initialUserJobs: [] });
       const user = userEvent.setup();
 
       // Mock da API e do redirecionamento
-      const createCheckoutSessionMock = vi.spyOn(API, 'createCheckoutSession').mockResolvedValue({ url: 'https://stripe.com/mock-checkout' });
+      const createCheckoutSessionMock = vi
+        .spyOn(API, 'createCheckoutSession')
+        .mockResolvedValue({ url: 'https://stripe.com/mock-checkout' });
       Object.defineProperty(window, 'location', {
         writable: true,
         value: { href: '' },

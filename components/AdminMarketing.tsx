@@ -40,7 +40,7 @@ const AdminMarketing: React.FC = () => {
     try {
       const [usersData, campaignsData] = await Promise.all([
         API.fetchAllUsers(),
-        API.fetchCampaigns().catch(() => []) // Mock if not implemented
+        API.fetchCampaigns().catch(() => []), // Mock if not implemented
       ]);
       setUsers(usersData);
       setCampaigns(campaignsData);
@@ -76,7 +76,7 @@ const AdminMarketing: React.FC = () => {
 
       // TODO: Call API to create campaign
       // await API.createCampaign(newCampaign);
-      
+
       setCampaigns([...campaigns, newCampaign]);
       addToast('Campanha criada com sucesso!', 'success');
       setShowCreateModal(false);
@@ -93,10 +93,14 @@ const AdminMarketing: React.FC = () => {
     try {
       // TODO: Implement send campaign API
       // await API.sendCampaign(campaignId);
-      
-      setCampaigns(campaigns.map(c => 
-        c.id === campaignId ? { ...c, status: 'sent', sentCount: getTargetCount(c.targetAudience) } : c
-      ));
+
+      setCampaigns(
+        campaigns.map(c =>
+          c.id === campaignId
+            ? { ...c, status: 'sent', sentCount: getTargetCount(c.targetAudience) }
+            : c
+        )
+      );
       addToast('Campanha enviada com sucesso!', 'success');
     } catch (error) {
       logError('Error sending campaign:', error);
@@ -130,9 +134,10 @@ const AdminMarketing: React.FC = () => {
     totalCampaigns: campaigns.length,
     activeCampaigns: campaigns.filter(c => c.status === 'active').length,
     totalSent: campaigns.reduce((sum, c) => sum + (c.sentCount || 0), 0),
-    avgOpenRate: campaigns.length > 0 
-      ? (campaigns.reduce((sum, c) => sum + (c.openRate || 0), 0) / campaigns.length).toFixed(1)
-      : '0.0',
+    avgOpenRate:
+      campaigns.length > 0
+        ? (campaigns.reduce((sum, c) => sum + (c.openRate || 0), 0) / campaigns.length).toFixed(1)
+        : '0.0',
   };
 
   if (isLoading) {
@@ -243,37 +248,47 @@ const AdminMarketing: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        campaign.type === 'email' ? 'bg-blue-100 text-blue-800' :
-                        campaign.type === 'sms' ? 'bg-green-100 text-green-800' :
-                        'bg-purple-100 text-purple-800'
-                      }`}>
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          campaign.type === 'email'
+                            ? 'bg-blue-100 text-blue-800'
+                            : campaign.type === 'sms'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-purple-100 text-purple-800'
+                        }`}
+                      >
                         {campaign.type.toUpperCase()}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {campaign.targetAudience === 'all' ? 'Todos' :
-                       campaign.targetAudience === 'clients' ? 'Clientes' : 'Prestadores'}
+                      {campaign.targetAudience === 'all'
+                        ? 'Todos'
+                        : campaign.targetAudience === 'clients'
+                          ? 'Clientes'
+                          : 'Prestadores'}
                       <div className="text-xs text-gray-500">
                         ({getTargetCount(campaign.targetAudience)} usuários)
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        campaign.status === 'draft' ? 'bg-gray-100 text-gray-800' :
-                        campaign.status === 'scheduled' ? 'bg-yellow-100 text-yellow-800' :
-                        campaign.status === 'sent' ? 'bg-green-100 text-green-800' :
-                        'bg-blue-100 text-blue-800'
-                      }`}>
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          campaign.status === 'draft'
+                            ? 'bg-gray-100 text-gray-800'
+                            : campaign.status === 'scheduled'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : campaign.status === 'sent'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-blue-100 text-blue-800'
+                        }`}
+                      >
                         {campaign.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       {campaign.sentCount || 0}
                       {campaign.openRate && (
-                        <div className="text-xs text-gray-500">
-                          {campaign.openRate}% abertos
-                        </div>
+                        <div className="text-xs text-gray-500">{campaign.openRate}% abertos</div>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
@@ -285,9 +300,7 @@ const AdminMarketing: React.FC = () => {
                           Enviar
                         </button>
                       )}
-                      <button className="text-blue-600 hover:text-blue-900">
-                        Ver Detalhes
-                      </button>
+                      <button className="text-blue-600 hover:text-blue-900">Ver Detalhes</button>
                     </td>
                   </tr>
                 ))
@@ -301,9 +314,7 @@ const AdminMarketing: React.FC = () => {
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">
-              Nova Campanha de Marketing
-            </h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Nova Campanha de Marketing</h3>
 
             <div className="space-y-4">
               <div>
@@ -313,7 +324,7 @@ const AdminMarketing: React.FC = () => {
                 <input
                   type="text"
                   value={formData.name || ''}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Ex: Promoção de Verão 2025"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -321,13 +332,18 @@ const AdminMarketing: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="campaign-type" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="campaign-type"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Tipo *
                   </label>
                   <select
                     id="campaign-type"
                     value={formData.type}
-                    onChange={(e) => setFormData({...formData, type: e.target.value as Campaign['type']})}
+                    onChange={e =>
+                      setFormData({ ...formData, type: e.target.value as Campaign['type'] })
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="email">Email</option>
@@ -337,18 +353,30 @@ const AdminMarketing: React.FC = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="campaign-audience" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="campaign-audience"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Audiência *
                   </label>
                   <select
                     id="campaign-audience"
                     value={formData.targetAudience}
-                    onChange={(e) => setFormData({...formData, targetAudience: e.target.value as Campaign['targetAudience']})}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        targetAudience: e.target.value as Campaign['targetAudience'],
+                      })
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="all">Todos ({users.length})</option>
-                    <option value="clients">Clientes ({users.filter(u => u.type === 'cliente').length})</option>
-                    <option value="providers">Prestadores ({users.filter(u => u.type === 'prestador').length})</option>
+                    <option value="clients">
+                      Clientes ({users.filter(u => u.type === 'cliente').length})
+                    </option>
+                    <option value="providers">
+                      Prestadores ({users.filter(u => u.type === 'prestador').length})
+                    </option>
                   </select>
                 </div>
               </div>
@@ -361,7 +389,7 @@ const AdminMarketing: React.FC = () => {
                   <input
                     type="text"
                     value={formData.subject || ''}
-                    onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                    onChange={e => setFormData({ ...formData, subject: e.target.value })}
                     placeholder="Assunto do email"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -369,12 +397,10 @@ const AdminMarketing: React.FC = () => {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mensagem *
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Mensagem *</label>
                 <textarea
                   value={formData.message || ''}
-                  onChange={(e) => setFormData({...formData, message: e.target.value})}
+                  onChange={e => setFormData({ ...formData, message: e.target.value })}
                   placeholder="Digite a mensagem da campanha..."
                   rows={6}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -388,7 +414,9 @@ const AdminMarketing: React.FC = () => {
                 <div className="text-sm font-medium text-blue-800 mb-2">📊 Resumo da Campanha</div>
                 <div className="text-sm text-blue-700 space-y-1">
                   <div>• Tipo: {formData.type?.toUpperCase()}</div>
-                  <div>• Destinatários: {getTargetCount(formData.targetAudience || 'all')} usuários</div>
+                  <div>
+                    • Destinatários: {getTargetCount(formData.targetAudience || 'all')} usuários
+                  </div>
                   <div>• Status: Rascunho (será salva para envio posterior)</div>
                 </div>
               </div>

@@ -48,7 +48,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
           )}
         </div>
       )}
-      <div 
+      <div
         className={`w-full bg-gray-200 rounded-full overflow-hidden ${sizeClasses[size]}`}
         role="progressbar"
         aria-valuenow={value}

@@ -1,9 +1,9 @@
 // Setup global para testes
 // Este arquivo é carregado antes de cada teste (via vitest.config.ts)
-// 
+//
 // NOTA: Não adicione vi.mock() aqui pois eles precisam ser hoisted e podem
 // conflitar com mocks específicos de cada teste.
-// 
+//
 // Use este arquivo apenas para:
 // - Configurações globais
 // - Polyfills

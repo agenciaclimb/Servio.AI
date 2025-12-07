@@ -16,7 +16,12 @@ export function generateDefaultSequence(hasEmail: boolean): SequenceStep[] {
   // Simple, effective multi-touch sequence
   const seq: SequenceStep[] = [
     { id: 's1', channel: 'whatsapp', templateKey: 'intro_value', delayHours: 0 },
-    { id: 's2', channel: hasEmail ? 'email' : 'whatsapp', templateKey: 'case_study', delayHours: 24 },
+    {
+      id: 's2',
+      channel: hasEmail ? 'email' : 'whatsapp',
+      templateKey: 'case_study',
+      delayHours: 24,
+    },
     { id: 's3', channel: 'whatsapp', templateKey: 'question_nudge', delayHours: 48 },
     { id: 's4', channel: 'call', templateKey: 'call_script_short', delayHours: 72 },
   ];

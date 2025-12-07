@@ -71,9 +71,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
   describe('Rendering', () => {
     it('should render provider card with basic information', () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-card')).toBeInTheDocument();
       expect(screen.getByTestId('provider-name')).toHaveTextContent('John Developer');
@@ -82,9 +80,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
 
     it('should display all provider details', () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-name')).toBeInTheDocument();
       expect(screen.getByTestId('provider-rating')).toBeInTheDocument();
@@ -96,10 +92,8 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
     it('should render without errors for minimal data', () => {
       const mockSelect = vi.fn();
       const minimalProvider = { id: 'test' };
-      
-      render(
-        <ProviderCard provider={minimalProvider} onSelect={mockSelect} />
-      );
+
+      render(<ProviderCard provider={minimalProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-card')).toBeInTheDocument();
     });
@@ -107,10 +101,8 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
     it('should display default values when data is missing', () => {
       const mockSelect = vi.fn();
       const incompleteProvider = { displayName: 'Partial Dev' };
-      
-      render(
-        <ProviderCard provider={incompleteProvider} onSelect={mockSelect} />
-      );
+
+      render(<ProviderCard provider={incompleteProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-name')).toHaveTextContent('Partial Dev');
       expect(screen.getByTestId('provider-rating')).toHaveTextContent('0');
@@ -120,9 +112,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
   describe('Provider Information Display', () => {
     it('should display provider name correctly', () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       expect(screen.getByText('John Developer')).toBeInTheDocument();
     });
@@ -137,9 +127,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
       ];
 
       providers.forEach(provider => {
-        const { unmount } = render(
-          <ProviderCard provider={provider} onSelect={mockSelect} />
-        );
+        const { unmount } = render(<ProviderCard provider={provider} onSelect={mockSelect} />);
         expect(screen.getByTestId('provider-rating')).toBeInTheDocument();
         unmount();
       });
@@ -147,9 +135,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
 
     it('should display skills list', () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-skills')).toHaveTextContent('React');
       expect(screen.getByTestId('provider-skills')).toHaveTextContent('Node.js');
@@ -158,18 +144,14 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
 
     it('should display completed jobs count', () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-jobs')).toHaveTextContent('45');
     });
 
     it('should display hourly rate when available', () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-price')).toHaveTextContent('85');
     });
@@ -177,7 +159,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
     it('should handle missing hourly rate', () => {
       const mockSelect = vi.fn();
       const noRateProvider = { ...mockProvider, hourlyRate: undefined };
-      
+
       const { container } = render(
         <ProviderCard provider={noRateProvider} onSelect={mockSelect} />
       );
@@ -189,9 +171,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
   describe('Skills Display', () => {
     it('should display multiple skills', () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       const skillsText = screen.getByTestId('provider-skills').textContent;
       expect(skillsText).toContain('React');
@@ -202,10 +182,8 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
     it('should handle empty skills array', () => {
       const mockSelect = vi.fn();
       const noSkillsProvider = { ...mockProvider, skills: [] };
-      
-      render(
-        <ProviderCard provider={noSkillsProvider} onSelect={mockSelect} />
-      );
+
+      render(<ProviderCard provider={noSkillsProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-skills')).toHaveTextContent('No skills');
     });
@@ -213,10 +191,8 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
     it('should handle single skill', () => {
       const mockSelect = vi.fn();
       const singleSkillProvider = { ...mockProvider, skills: ['JavaScript'] };
-      
-      render(
-        <ProviderCard provider={singleSkillProvider} onSelect={mockSelect} />
-      );
+
+      render(<ProviderCard provider={singleSkillProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-skills')).toHaveTextContent('JavaScript');
     });
@@ -227,10 +203,8 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
         ...mockProvider,
         skills: ['C#', 'C++', '.NET', 'ASP.NET'],
       };
-      
-      render(
-        <ProviderCard provider={specialSkillsProvider} onSelect={mockSelect} />
-      );
+
+      render(<ProviderCard provider={specialSkillsProvider} onSelect={mockSelect} />);
 
       const skillsText = screen.getByTestId('provider-skills').textContent;
       expect(skillsText).toContain('C#');
@@ -241,9 +215,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
   describe('Interactive Actions', () => {
     it('should call onSelect when provider is selected', async () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       const selectBtn = screen.getByTestId('provider-select-btn');
       await user.click(selectBtn);
@@ -254,9 +226,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
 
     it('should pass correct provider data to onSelect', async () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       await user.click(screen.getByTestId('provider-select-btn'));
 
@@ -268,9 +238,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
 
     it('should handle multiple selections', async () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       const selectBtn = screen.getByTestId('provider-select-btn');
       await user.click(selectBtn);
@@ -281,9 +249,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
     });
 
     it('should not call onSelect if callback is not provided', async () => {
-      const { container } = render(
-        <ProviderCard provider={mockProvider} />
-      );
+      const { container } = render(<ProviderCard provider={mockProvider} />);
 
       const selectBtn = container.querySelector('[data-testid="provider-select-btn"]');
       if (selectBtn) {
@@ -298,10 +264,8 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
     it('should handle very high ratings', () => {
       const mockSelect = vi.fn();
       const highRatingProvider = { ...mockProvider, rating: 5.0 };
-      
-      render(
-        <ProviderCard provider={highRatingProvider} onSelect={mockSelect} />
-      );
+
+      render(<ProviderCard provider={highRatingProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-rating')).toHaveTextContent('5');
     });
@@ -309,10 +273,8 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
     it('should handle zero rating', () => {
       const mockSelect = vi.fn();
       const zeroRatingProvider = { ...mockProvider, rating: 0 };
-      
-      render(
-        <ProviderCard provider={zeroRatingProvider} onSelect={mockSelect} />
-      );
+
+      render(<ProviderCard provider={zeroRatingProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-rating')).toHaveTextContent('0');
     });
@@ -320,10 +282,8 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
     it('should handle very high completed jobs', () => {
       const mockSelect = vi.fn();
       const manyJobsProvider = { ...mockProvider, completedJobs: 9999 };
-      
-      render(
-        <ProviderCard provider={manyJobsProvider} onSelect={mockSelect} />
-      );
+
+      render(<ProviderCard provider={manyJobsProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-jobs')).toHaveTextContent('9999');
     });
@@ -334,10 +294,8 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
         ...mockProvider,
         displayName: 'José María da Silva-Costa',
       };
-      
-      render(
-        <ProviderCard provider={specialNameProvider} onSelect={mockSelect} />
-      );
+
+      render(<ProviderCard provider={specialNameProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-name')).toHaveTextContent('José María da Silva-Costa');
     });
@@ -348,10 +306,8 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
         ...mockProvider,
         displayName: 'A'.repeat(100),
       };
-      
-      render(
-        <ProviderCard provider={longNameProvider} onSelect={mockSelect} />
-      );
+
+      render(<ProviderCard provider={longNameProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-name')).toBeInTheDocument();
     });
@@ -359,19 +315,15 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
     it('should handle very long hourly rate', () => {
       const mockSelect = vi.fn();
       const highRateProvider = { ...mockProvider, hourlyRate: 9999999 };
-      
-      render(
-        <ProviderCard provider={highRateProvider} onSelect={mockSelect} />
-      );
+
+      render(<ProviderCard provider={highRateProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-price')).toHaveTextContent('9999999');
     });
 
     it('should handle null provider gracefully', () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={null} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={null} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-card')).toBeInTheDocument();
     });
@@ -380,9 +332,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
   describe('Accessibility', () => {
     it('should have accessible button', () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       const button = screen.getByTestId('provider-select-btn');
       // Native <button> has implicit role='button' - verify it's a button element
@@ -391,9 +341,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
 
     it('should support keyboard navigation', async () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       const button = screen.getByTestId('provider-select-btn');
       button.focus();
@@ -405,9 +353,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
 
     it('should have semantic HTML structure', () => {
       const mockSelect = vi.fn();
-      const { container } = render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      const { container } = render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       // Should have structured content
       expect(container.querySelector('[data-testid="provider-card"]')).toBeInTheDocument();
@@ -417,9 +363,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
   describe('Styling and Layout', () => {
     it('should have proper CSS classes', () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       const card = screen.getByTestId('provider-card');
       expect(card).toHaveClass('p-4', 'border', 'rounded-lg');
@@ -427,9 +371,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
 
     it('should render button with proper styling', () => {
       const mockSelect = vi.fn();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       const button = screen.getByTestId('provider-select-btn');
       expect(button).toHaveClass('bg-blue-600', 'text-white', 'rounded');
@@ -448,9 +390,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
         hourlyRate: 200,
       };
 
-      render(
-        <ProviderCard provider={expertProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={expertProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-name')).toHaveTextContent('Senior Expert');
       expect(screen.getByTestId('provider-price')).toHaveTextContent('200');
@@ -467,9 +407,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
         hourlyRate: 25,
       };
 
-      render(
-        <ProviderCard provider={newProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={newProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-name')).toHaveTextContent('Junior Developer');
       expect(screen.getByTestId('provider-jobs')).toHaveTextContent('0');
@@ -484,9 +422,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
       ];
 
       specializers.forEach(provider => {
-        const { unmount } = render(
-          <ProviderCard provider={provider} onSelect={mockSelect} />
-        );
+        const { unmount } = render(<ProviderCard provider={provider} onSelect={mockSelect} />);
         expect(screen.getByTestId('provider-name')).toBeInTheDocument();
         unmount();
       });
@@ -497,9 +433,7 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
     it('should render quickly', () => {
       const mockSelect = vi.fn();
       const start = performance.now();
-      render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
       const duration = performance.now() - start;
 
       expect(duration).toBeLessThan(1000);
@@ -507,14 +441,10 @@ describe('ProviderCard - Comprehensive Quality Tests', () => {
 
     it('should handle re-renders efficiently', () => {
       const mockSelect = vi.fn();
-      const { rerender } = render(
-        <ProviderCard provider={mockProvider} onSelect={mockSelect} />
-      );
+      const { rerender } = render(<ProviderCard provider={mockProvider} onSelect={mockSelect} />);
 
       const updatedProvider = { ...mockProvider, rating: 4.9 };
-      rerender(
-        <ProviderCard provider={updatedProvider} onSelect={mockSelect} />
-      );
+      rerender(<ProviderCard provider={updatedProvider} onSelect={mockSelect} />);
 
       expect(screen.getByTestId('provider-rating')).toHaveTextContent('4.9');
     });

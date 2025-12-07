@@ -8,7 +8,7 @@
     "esbenp.prettier-vscode"
   ],
   "unwantedRecommendations": [],
-  
+
   // Se o Gemini travar, desabilite temporariamente extensões pesadas:
   // Ctrl+Shift+X → Encontre a extensão → Engrenagem → Disable (Workspace)
   // Candidatas: SonarLint, GitLens, Docker, Azure, etc.

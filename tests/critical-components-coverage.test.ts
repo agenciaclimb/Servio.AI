@@ -1,6 +1,6 @@
 /**
  * Testes de cobertura para componentes críticos com 0% coverage
- * 
+ *
  * Objetivo: Aumentar cobertura geral de 50.76% para 80%+
  * Foco: Componentes com 0% que são críticos para o sistema
  */
@@ -11,7 +11,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('../firebaseConfig', () => ({
   auth: {
     currentUser: null,
-    onAuthStateChanged: vi.fn((callback) => {
+    onAuthStateChanged: vi.fn(callback => {
       callback(null);
       return vi.fn();
     }),
@@ -26,7 +26,7 @@ describe('Cobertura de Componentes Criticos com 0%', () => {
 
   describe('App.tsx - Roteamento Principal (0% to 80%+)', () => {
     it('deve renderizar HeroSection quando view = "hero"', () => {
-      // Mock AppContext com view = "hero" 
+      // Mock AppContext com view = "hero"
       // (Implementacao depende da estrutura do App.tsx)
       const view = 'hero';
       expect(view).toBe('hero');
@@ -174,7 +174,7 @@ describe('Cobertura de Componentes Criticos com 0%', () => {
       ];
 
       const filterByCategory = (providers: any[], category: string) => {
-        return providers.filter((p) => p.specialties.includes(category));
+        return providers.filter(p => p.specialties.includes(category));
       };
 
       const encanadores = filterByCategory(providers, 'encanamento');
@@ -264,12 +264,12 @@ describe('Cobertura de Componentes Criticos com 0%', () => {
     it('deve calcular comissão por rating', () => {
       const calculateCommission = (rating: number) => {
         if (rating >= 4.8) return 0.15; // 15% comissão, 85% para prestador
-        if (rating >= 4.5) return 0.20; // 20% comissão, 80% para prestador
+        if (rating >= 4.5) return 0.2; // 20% comissão, 80% para prestador
         return 0.25; // 25% comissão, 75% para prestador
       };
 
       expect(calculateCommission(4.9)).toBe(0.15);
-      expect(calculateCommission(4.7)).toBe(0.20);
+      expect(calculateCommission(4.7)).toBe(0.2);
       expect(calculateCommission(4.2)).toBe(0.25);
     });
   });

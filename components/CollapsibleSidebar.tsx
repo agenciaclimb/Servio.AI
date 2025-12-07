@@ -1,6 +1,13 @@
-
 import React, { useState } from 'react';
-import { HomeIcon, UsersIcon, LinkIcon, DocumentTextIcon, ChartBarIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import {
+  HomeIcon,
+  UsersIcon,
+  LinkIcon,
+  DocumentTextIcon,
+  ChartBarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from '@heroicons/react/24/outline';
 import Tooltip from './Tooltip'; // Assuming a Tooltip component exists
 
 type NavItem = 'dashboard' | 'crm' | 'links' | 'materials' | 'overview';
@@ -31,7 +38,11 @@ const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({ activeItem, onI
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="p-1 rounded-full text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          {isCollapsed ? <ChevronRightIcon className="h-6 w-6" /> : <ChevronLeftIcon className="h-6 w-6" />}
+          {isCollapsed ? (
+            <ChevronRightIcon className="h-6 w-6" />
+          ) : (
+            <ChevronLeftIcon className="h-6 w-6" />
+          )}
         </button>
       </div>
       <nav className="flex-grow mt-4">
@@ -40,11 +51,12 @@ const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({ activeItem, onI
             <a
               href="#"
               key={id}
-              onClick={(e) => {
+              onClick={e => {
                 e.preventDefault();
                 onItemClick(id as NavItem);
               }}
-              className={`flex items-center px-4 py-3 my-1 text-gray-700 transition-colors duration-200 ease-in-out hover:bg-indigo-50 ${activeItem === id ? 'bg-indigo-50 text-indigo-600 border-r-4 border-indigo-500' : ''}`}>
+              className={`flex items-center px-4 py-3 my-1 text-gray-700 transition-colors duration-200 ease-in-out hover:bg-indigo-50 ${activeItem === id ? 'bg-indigo-50 text-indigo-600 border-r-4 border-indigo-500' : ''}`}
+            >
               <Icon className="h-6 w-6" />
               {!isCollapsed && <span className="ml-4 font-medium">{label}</span>}
             </a>

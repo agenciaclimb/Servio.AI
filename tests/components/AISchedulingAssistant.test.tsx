@@ -9,9 +9,7 @@ describe('AISchedulingAssistant', () => {
 
     const schedule = { date: '2025-11-20', time: '09:00' } as const;
 
-    render(
-      <AISchedulingAssistant schedule={schedule} onConfirm={onConfirm} onClose={onClose} />
-    );
+    render(<AISchedulingAssistant schedule={schedule} onConfirm={onConfirm} onClose={onClose} />);
 
     expect(screen.getByText('Sugestão da IA')).toBeInTheDocument();
     // Garante que a hora está visível no prompt

@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { db } from '../../../firebaseConfig';
-import { collection, query, where, getDocs, updateDoc, doc, Timestamp, addDoc } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  doc,
+  Timestamp,
+  addDoc,
+} from 'firebase/firestore';
 
 interface Lead {
   id: string;
@@ -47,13 +56,16 @@ export default function ProspectorCRMProfessional({ prospectorId }: { prospector
       const leadsSnapshot = await getDocs(
         query(collection(db, 'prospector_prospects'), where('prospectorId', '==', prospectorId))
       );
-      const leadsData = leadsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate?.(),
-        updatedAt: doc.data().updatedAt?.toDate?.(),
-        nextActionDate: doc.data().nextActionDate?.toDate?.(),
-      } as Lead));
+      const leadsData = leadsSnapshot.docs.map(
+        doc =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: doc.data().createdAt?.toDate?.(),
+            updatedAt: doc.data().updatedAt?.toDate?.(),
+            nextActionDate: doc.data().nextActionDate?.toDate?.(),
+          }) as Lead
+      );
       setLeads(leadsData);
     } catch (error) {
       console.error('Erro ao carregar leads:', error);
@@ -68,13 +80,14 @@ export default function ProspectorCRMProfessional({ prospectorId }: { prospector
   }, [loadLeads]);
 
   const filteredLeads = leads.filter(lead => {
-    const matchesSearch = !searchTerm || 
+    const matchesSearch =
+      !searchTerm ||
       lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.phone.includes(searchTerm) ||
       lead.email?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesSource = !filterSource || lead.source === filterSource;
-    
+
     return matchesSearch && matchesSource;
   });
 
@@ -145,14 +158,17 @@ export default function ProspectorCRMProfessional({ prospectorId }: { prospector
 
   // Calcular métricas
   const totalValue = filteredLeads.reduce((sum, l) => sum + (l.value || 0), 0);
-  const conversionRate = leads.length > 0 ? ((leads.filter(l => l.stage === 'ganhado').length / leads.length) * 100).toFixed(1) : 0;
+  const conversionRate =
+    leads.length > 0
+      ? ((leads.filter(l => l.stage === 'ganhado').length / leads.length) * 100).toFixed(1)
+      : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-6">
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
         <h1 className="text-4xl font-bold text-white mb-4">🎯 Pipeline CRM</h1>
-        
+
         {/* Métricas */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
@@ -161,7 +177,9 @@ export default function ProspectorCRMProfessional({ prospectorId }: { prospector
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
             <div className="text-gray-300 text-sm">Valor em Pipeline</div>
-            <div className="text-3xl font-bold text-green-400">R$ {totalValue.toLocaleString('pt-BR')}</div>
+            <div className="text-3xl font-bold text-green-400">
+              R$ {totalValue.toLocaleString('pt-BR')}
+            </div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
             <div className="text-gray-300 text-sm">Taxa de Conversão</div>
@@ -169,7 +187,9 @@ export default function ProspectorCRMProfessional({ prospectorId }: { prospector
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
             <div className="text-gray-300 text-sm">Ganhados (Mês)</div>
-            <div className="text-3xl font-bold text-yellow-400">{leads.filter(l => l.stage === 'ganhado').length}</div>
+            <div className="text-3xl font-bold text-yellow-400">
+              {leads.filter(l => l.stage === 'ganhado').length}
+            </div>
           </div>
         </div>
 
@@ -210,7 +230,9 @@ export default function ProspectorCRMProfessional({ prospectorId }: { prospector
                 className="bg-white/5 backdrop-blur-sm rounded-lg p-4 min-h-screen border border-white/10"
               >
                 {/* Column Header */}
-                <div className={`${column.color} text-white rounded-lg p-3 mb-4 font-semibold flex items-center justify-between`}>
+                <div
+                  className={`${column.color} text-white rounded-lg p-3 mb-4 font-semibold flex items-center justify-between`}
+                >
                   <span>{column.title}</span>
                   <span className="bg-white/30 px-2 py-1 rounded text-sm">{column.count}</span>
                 </div>
@@ -233,11 +255,17 @@ export default function ProspectorCRMProfessional({ prospectorId }: { prospector
                       >
                         <h3 className="font-semibold text-gray-900 truncate">{lead.name}</h3>
                         <p className="text-sm text-gray-600 truncate">📱 {lead.phone}</p>
-                        {lead.email && <p className="text-xs text-gray-500 truncate">✉️ {lead.email}</p>}
-                        {lead.category && <p className="text-xs text-blue-600 mt-2 font-medium">{lead.category}</p>}
+                        {lead.email && (
+                          <p className="text-xs text-gray-500 truncate">✉️ {lead.email}</p>
+                        )}
+                        {lead.category && (
+                          <p className="text-xs text-blue-600 mt-2 font-medium">{lead.category}</p>
+                        )}
                         {lead.value && (
                           <div className="mt-2 pt-2 border-t border-gray-200">
-                            <p className="text-sm font-bold text-green-600">R$ {lead.value.toLocaleString('pt-BR')}</p>
+                            <p className="text-sm font-bold text-green-600">
+                              R$ {lead.value.toLocaleString('pt-BR')}
+                            </p>
                           </div>
                         )}
                         {lead.nextAction && (
@@ -264,21 +292,25 @@ export default function ProspectorCRMProfessional({ prospectorId }: { prospector
           >
             <div className="bg-red-500 text-white rounded-lg p-3 mb-4 font-semibold flex items-center justify-between">
               <span>Perdido</span>
-              <span className="bg-white/30 px-2 py-1 rounded text-sm">{filteredLeads.filter(l => l.stage === 'perdido').length}</span>
+              <span className="bg-white/30 px-2 py-1 rounded text-sm">
+                {filteredLeads.filter(l => l.stage === 'perdido').length}
+              </span>
             </div>
 
             <div className="space-y-3">
-              {filteredLeads.filter(l => l.stage === 'perdido').map(lead => (
-                <div
-                  key={lead.id}
-                  draggable
-                  onDragStart={() => handleDragStart(lead)}
-                  className="bg-white rounded-lg p-4 shadow-lg hover:shadow-xl transition-all cursor-grab opacity-70"
-                >
-                  <h3 className="font-semibold text-gray-900 truncate">{lead.name}</h3>
-                  <p className="text-sm text-gray-600 truncate">📱 {lead.phone}</p>
-                </div>
-              ))}
+              {filteredLeads
+                .filter(l => l.stage === 'perdido')
+                .map(lead => (
+                  <div
+                    key={lead.id}
+                    draggable
+                    onDragStart={() => handleDragStart(lead)}
+                    className="bg-white rounded-lg p-4 shadow-lg hover:shadow-xl transition-all cursor-grab opacity-70"
+                  >
+                    <h3 className="font-semibold text-gray-900 truncate">{lead.name}</h3>
+                    <p className="text-sm text-gray-600 truncate">📱 {lead.phone}</p>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
@@ -320,7 +352,9 @@ export default function ProspectorCRMProfessional({ prospectorId }: { prospector
                   <label className="block text-sm font-medium text-gray-600">Estágio</label>
                   <select
                     value={selectedLead.stage}
-                    onChange={e => updateLeadStage(selectedLead.id, e.target.value as Lead['stage'])}
+                    onChange={e =>
+                      updateLeadStage(selectedLead.id, e.target.value as Lead['stage'])
+                    }
                     className="w-full border border-gray-300 rounded px-2 py-1 text-gray-900"
                   >
                     <option value="novo">Novo</option>
@@ -332,13 +366,17 @@ export default function ProspectorCRMProfessional({ prospectorId }: { prospector
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-600">Valor Esperado</label>
-                  <p className="text-green-600 font-semibold">R$ {selectedLead.value?.toLocaleString('pt-BR') || '—'}</p>
+                  <p className="text-green-600 font-semibold">
+                    R$ {selectedLead.value?.toLocaleString('pt-BR') || '—'}
+                  </p>
                 </div>
               </div>
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-2">Adicionar Anotação</label>
+                <label className="block text-sm font-medium text-gray-600 mb-2">
+                  Adicionar Anotação
+                </label>
                 <div className="flex gap-2">
                   <input
                     type="text"

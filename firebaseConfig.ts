@@ -39,7 +39,7 @@ export const getStorageInstance = async (): Promise<FirebaseStorage> => {
 
 export const getAnalyticsIfSupported = async (): Promise<Analytics | null> => {
   if (analyticsInstance) return analyticsInstance;
-  
+
   const { getAnalytics, isSupported } = await import('firebase/analytics');
   if (await isSupported()) {
     analyticsInstance = getAnalytics(app);
@@ -55,7 +55,7 @@ export const storage = new Proxy({} as FirebaseStorage, {
     console.warn('⚠️ Direct storage access deprecated. Use getStorageInstance() instead.');
     // Use Reflect.get to safely support symbol keys and avoid TS index errors
     return getStorageInstance().then(s => Reflect.get(s as object, prop));
-  }
+  },
 });
 
 export default app;

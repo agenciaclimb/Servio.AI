@@ -10,16 +10,60 @@ function d(daysFromNow: number) {
 
 describe('computeAnalytics', () => {
   const users: User[] = [
-    { email: 'prov1@example.com', name: 'Prov 1', type: 'prestador', status: 'ativo', verificationStatus: 'verificado' } as any,
-    { email: 'prov2@example.com', name: 'Prov 2', type: 'prestador', status: 'ativo', verificationStatus: 'pendente' } as any,
-    { email: 'client@example.com', name: 'Cli 1', type: 'cliente', status: 'ativo', verificationStatus: 'verificado' } as any,
-    { email: 'susp@example.com', name: 'Susp', type: 'cliente', status: 'suspenso', verificationStatus: 'verificado' } as any,
+    {
+      email: 'prov1@example.com',
+      name: 'Prov 1',
+      type: 'prestador',
+      status: 'ativo',
+      verificationStatus: 'verificado',
+    } as any,
+    {
+      email: 'prov2@example.com',
+      name: 'Prov 2',
+      type: 'prestador',
+      status: 'ativo',
+      verificationStatus: 'pendente',
+    } as any,
+    {
+      email: 'client@example.com',
+      name: 'Cli 1',
+      type: 'cliente',
+      status: 'ativo',
+      verificationStatus: 'verificado',
+    } as any,
+    {
+      email: 'susp@example.com',
+      name: 'Susp',
+      type: 'cliente',
+      status: 'suspenso',
+      verificationStatus: 'verificado',
+    } as any,
   ];
 
   const jobs: Job[] = [
-    { id: 'j1', category: 'Elétrica', status: 'concluido', providerId: 'prov1@example.com', createdAt: d(-5), earnings: { totalAmount: 1000, platformFee: 150 } } as any,
-    { id: 'j2', category: 'Elétrica', status: 'concluido', providerId: 'prov1@example.com', createdAt: d(-10), earnings: { totalAmount: 800, platformFee: 120 } } as any,
-    { id: 'j3', category: 'Hidráulica', status: 'ativo', providerId: 'prov2@example.com', createdAt: d(-2) } as any,
+    {
+      id: 'j1',
+      category: 'Elétrica',
+      status: 'concluido',
+      providerId: 'prov1@example.com',
+      createdAt: d(-5),
+      earnings: { totalAmount: 1000, platformFee: 150 },
+    } as any,
+    {
+      id: 'j2',
+      category: 'Elétrica',
+      status: 'concluido',
+      providerId: 'prov1@example.com',
+      createdAt: d(-10),
+      earnings: { totalAmount: 800, platformFee: 120 },
+    } as any,
+    {
+      id: 'j3',
+      category: 'Hidráulica',
+      status: 'ativo',
+      providerId: 'prov2@example.com',
+      createdAt: d(-2),
+    } as any,
     { id: 'j4', category: 'Pintura', status: 'cancelado', createdAt: d(-40) } as any,
   ];
 

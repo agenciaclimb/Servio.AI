@@ -7,9 +7,14 @@ test.describe('[E2E] Prestador - Fluxos críticos', () => {
   test('ver lista de jobs compatíveis e abrir detalhes', async ({ page, loginAsProvider }) => {
     await loginAsProvider();
 
-    await expect(page.getByText(/jobs disponíveis|serviços perto de você|oportunidades/i).first()).toBeVisible();
+    await expect(
+      page.getByText(/jobs disponíveis|serviços perto de você|oportunidades/i).first()
+    ).toBeVisible();
 
-    const jobCard = page.getByRole('button', { name: /ver detalhes|detalhes/i }).first().or(page.getByText(/detalhes/i).first());
+    const jobCard = page
+      .getByRole('button', { name: /ver detalhes|detalhes/i })
+      .first()
+      .or(page.getByText(/detalhes/i).first());
     await jobCard.click();
 
     await expect(page.getByText(/descrição do serviço|detalhes do job/i).first()).toBeVisible();
@@ -21,7 +26,10 @@ test.describe('[E2E] Prestador - Fluxos críticos', () => {
     const jobCard = page.getByText(/serviço|job|vaga/i).first();
     await jobCard.click();
 
-    await page.getByRole('button', { name: /enviar proposta|propor/i }).first().click();
+    await page
+      .getByRole('button', { name: /enviar proposta|propor/i })
+      .first()
+      .click();
     const modal = page.getByRole('dialog', { name: /proposta|enviar proposta/i });
 
     await modal.getByLabelText(/preço|valor/i).fill('120');

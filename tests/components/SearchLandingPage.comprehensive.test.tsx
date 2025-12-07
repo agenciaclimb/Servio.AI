@@ -414,7 +414,7 @@ describe('SearchLandingPage - Comprehensive Quality Tests', () => {
       buttons.forEach(button => {
         expect(button).toHaveClass(/p-|px-|py-|m-/); // Has padding/margin classes
       });
-      
+
       expect(buttons.length).toBeGreaterThan(0);
     });
   });

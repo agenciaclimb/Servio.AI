@@ -61,7 +61,7 @@ const AdminUserManagement: React.FC = () => {
 
       // Call API to create user
       await API.createUser(newUser as Omit<User, 'memberSince'>);
-      
+
       addToast('Usuário criado com sucesso!', 'success');
       setShowCreateModal(false);
       resetForm();
@@ -125,8 +125,9 @@ const AdminUserManagement: React.FC = () => {
   };
 
   const filteredUsers = users.filter(u => {
-    const matchesSearch = u.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         u.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = filterType === 'all' || u.type === filterType;
     return matchesSearch && matchesType;
   });
@@ -165,19 +166,22 @@ const AdminUserManagement: React.FC = () => {
               id="user-search"
               type="text"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               placeholder="Nome ou email..."
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label htmlFor="user-type-filter" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="user-type-filter"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Tipo de Usuário
             </label>
             <select
               id="user-type-filter"
               value={filterType}
-              onChange={(e) => setFilterType(e.target.value as UserType | 'all')}
+              onChange={e => setFilterType(e.target.value as UserType | 'all')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">Todos</option>
@@ -246,20 +250,28 @@ const AdminUserManagement: React.FC = () => {
                     <div className="text-sm text-gray-600">{user.email}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      user.type === 'admin' ? 'bg-purple-100 text-purple-800' :
-                      user.type === 'prestador' ? 'bg-green-100 text-green-800' :
-                      'bg-blue-100 text-blue-800'
-                    }`}>
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        user.type === 'admin'
+                          ? 'bg-purple-100 text-purple-800'
+                          : user.type === 'prestador'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-blue-100 text-blue-800'
+                      }`}
+                    >
                       {user.type}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      user.status === 'ativo' ? 'bg-green-100 text-green-800' :
-                      user.status === 'suspenso' ? 'bg-red-100 text-red-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        user.status === 'ativo'
+                          ? 'bg-green-100 text-green-800'
+                          : user.status === 'suspenso'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
                       {user.status}
                     </span>
                   </td>
@@ -290,7 +302,9 @@ const AdminUserManagement: React.FC = () => {
         {totalPages > 1 && (
           <div className="px-4 py-3 bg-gray-50 border-t flex items-center justify-between">
             <div className="text-sm text-gray-700">
-              Mostrando {((page - 1) * ITEMS_PER_PAGE) + 1} a {Math.min(page * ITEMS_PER_PAGE, filteredUsers.length)} de {filteredUsers.length} usuários
+              Mostrando {(page - 1) * ITEMS_PER_PAGE + 1} a{' '}
+              {Math.min(page * ITEMS_PER_PAGE, filteredUsers.length)} de {filteredUsers.length}{' '}
+              usuários
             </div>
             <div className="flex gap-2">
               <button
@@ -325,40 +339,49 @@ const AdminUserManagement: React.FC = () => {
 
             <div className="space-y-4">
               <div>
-                <label htmlFor="modal-email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="modal-email"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Email *
                 </label>
                 <input
                   id="modal-email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  onChange={e => setFormData({ ...formData, email: e.target.value })}
                   disabled={!!editingUser}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                 />
               </div>
 
               <div>
-                <label htmlFor="modal-name" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="modal-name"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Nome *
                 </label>
                 <input
                   id="modal-name"
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
-                <label htmlFor="modal-type" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="modal-type"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Tipo *
                 </label>
                 <select
                   id="modal-type"
                   value={formData.type}
-                  onChange={(e) => setFormData({...formData, type: e.target.value as UserType})}
+                  onChange={e => setFormData({ ...formData, type: e.target.value as UserType })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="cliente">Cliente</option>
@@ -368,13 +391,16 @@ const AdminUserManagement: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="modal-status" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="modal-status"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Status
                 </label>
                 <select
                   id="modal-status"
                   value={formData.status}
-                  onChange={(e) => setFormData({...formData, status: e.target.value as UserStatus})}
+                  onChange={e => setFormData({ ...formData, status: e.target.value as UserStatus })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="ativo">Ativo</option>
@@ -383,14 +409,17 @@ const AdminUserManagement: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="modal-phone" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="modal-phone"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Telefone
                 </label>
                 <input
                   id="modal-phone"
                   type="tel"
                   value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  onChange={e => setFormData({ ...formData, phone: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -403,7 +432,7 @@ const AdminUserManagement: React.FC = () => {
                   id="modal-cpf"
                   type="text"
                   value={formData.cpf}
-                  onChange={(e) => setFormData({...formData, cpf: e.target.value})}
+                  onChange={e => setFormData({ ...formData, cpf: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>

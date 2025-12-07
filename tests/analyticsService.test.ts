@@ -1,4 +1,3 @@
-
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as firestore from 'firebase/firestore';
 import * as logger from '../utils/logger';
@@ -19,15 +18,15 @@ import {
 
 // Mock dependencies
 vi.mock('../firebaseConfig', () => ({
-    db: {},
-    auth: {}
+  db: {},
+  auth: {},
 }));
 
 vi.mock('firebase/firestore', () => ({
   collection: vi.fn(),
   addDoc: vi.fn(),
   Timestamp: {
-    fromDate: (date) => date,
+    fromDate: date => date,
   },
 }));
 
@@ -54,9 +53,7 @@ const sessionStorageMock = (() => {
 })();
 Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock });
 
-
 describe('Analytics Service', () => {
-
   beforeEach(() => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2025-01-01T12:00:00.000Z'));
@@ -78,7 +75,7 @@ describe('Analytics Service', () => {
 
       expect(firestore.addDoc).toHaveBeenCalledOnce();
       const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
-      
+
       expect(addDocCall.eventName).toBe(eventName);
       expect(addDocCall.userId).toBe(userId);
       expect(addDocCall.prospectorId).toBe(userId);
@@ -86,7 +83,10 @@ describe('Analytics Service', () => {
       expect(addDocCall.sessionId).toMatch(/^session_\d+_\w+$/);
       expect(addDocCall.timestamp).toBeInstanceOf(Date);
 
-      expect(logger.logInfo).toHaveBeenCalledWith(`[Analytics] Event tracked: ${eventName}`, properties);
+      expect(logger.logInfo).toHaveBeenCalledWith(
+        `[Analytics] Event tracked: ${eventName}`,
+        properties
+      );
       expect(logger.logError).not.toHaveBeenCalled();
     });
 
@@ -104,7 +104,10 @@ describe('Analytics Service', () => {
       expect(firestore.addDoc).toHaveBeenCalledOnce();
       const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
       expect(addDocCall.properties).toEqual({});
-      expect(logger.logInfo).toHaveBeenCalledWith('[Analytics] Event tracked: simple_event', undefined);
+      expect(logger.logInfo).toHaveBeenCalledWith(
+        '[Analytics] Event tracked: simple_event',
+        undefined
+      );
     });
 
     it('should log an error if Firestore call fails', async () => {
@@ -120,31 +123,31 @@ describe('Analytics Service', () => {
 
   describe('getSessionId', () => {
     it('should create a new session if one does not exist', () => {
-        trackEvent('test', 'user1'); //This calls getSessionId internally
-        const sessionData = JSON.parse(sessionStorageMock.getItem('servio_session_id'));
-        expect(sessionData.id).toMatch(/^session_\d+_\w+$/);
-        expect(sessionData.timestamp).toBe(new Date('2025-01-01T12:00:00.000Z').getTime());
+      trackEvent('test', 'user1'); //This calls getSessionId internally
+      const sessionData = JSON.parse(sessionStorageMock.getItem('servio_session_id'));
+      expect(sessionData.id).toMatch(/^session_\d+_\w+$/);
+      expect(sessionData.timestamp).toBe(new Date('2025-01-01T12:00:00.000Z').getTime());
     });
 
     it('should retrieve an existing session if it is not expired', () => {
-        const existingSession = { id: 'session_abc', timestamp: Date.now() - 10 * 60 * 1000 }; // 10 mins ago
-        sessionStorageMock.setItem('servio_session_id', JSON.stringify(existingSession));
-        
-        trackEvent('test', 'user1');
-        const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
+      const existingSession = { id: 'session_abc', timestamp: Date.now() - 10 * 60 * 1000 }; // 10 mins ago
+      sessionStorageMock.setItem('servio_session_id', JSON.stringify(existingSession));
 
-        expect(addDocCall.sessionId).toBe('session_abc');
+      trackEvent('test', 'user1');
+      const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
+
+      expect(addDocCall.sessionId).toBe('session_abc');
     });
 
     it('should create a new session if the existing one is expired', () => {
-        const expiredSession = { id: 'session_xyz', timestamp: Date.now() - 40 * 60 * 1000 }; // 40 mins ago
-        sessionStorageMock.setItem('servio_session_id', JSON.stringify(expiredSession));
+      const expiredSession = { id: 'session_xyz', timestamp: Date.now() - 40 * 60 * 1000 }; // 40 mins ago
+      sessionStorageMock.setItem('servio_session_id', JSON.stringify(expiredSession));
 
-        trackEvent('test', 'user1');
-        const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
+      trackEvent('test', 'user1');
+      const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
 
-        expect(addDocCall.sessionId).not.toBe('session_xyz');
-        expect(addDocCall.sessionId).toMatch(/^session_\d+_\w+$/);
+      expect(addDocCall.sessionId).not.toBe('session_xyz');
+      expect(addDocCall.sessionId).toMatch(/^session_\d+_\w+$/);
     });
   });
 
@@ -172,11 +175,11 @@ describe('Analytics Service', () => {
       expect(addDocCall.properties).toEqual({
         pageName,
         timeSpent: 5,
-        timeSpentFormatted: '5s'
+        timeSpentFormatted: '5s',
       });
     });
 
-     it('should format duration correctly for over a minute', () => {
+    it('should format duration correctly for over a minute', () => {
       const cleanup = trackPageView('SettingsPage', 'user789');
       vi.advanceTimersByTime(75000); // 1 minute 15 seconds
       cleanup();
@@ -185,7 +188,7 @@ describe('Analytics Service', () => {
       expect(addDocCall.properties.timeSpentFormatted).toBe('1m 15s');
     });
   });
-  
+
   // Test specific event trackers
   describe('Specific Event Trackers', () => {
     const userId = 'user-specific';
@@ -204,10 +207,10 @@ describe('Analytics Service', () => {
       expect(addDocCall.properties).toEqual({
         feature: 'prospector_onboarding',
         completionTimeSeconds: 125,
-        completionTimeFormatted: '2m 5s'
+        completionTimeFormatted: '2m 5s',
       });
     });
-    
+
     it('trackTourSkipped should track the step number', () => {
       trackTourSkipped(userId, 3);
       const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
@@ -219,14 +222,21 @@ describe('Analytics Service', () => {
       trackQuickActionUsed(userId, 'copy_whatsapp');
       const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
       expect(addDocCall.eventName).toBe('quick_action_used');
-      expect(addDocCall.properties).toEqual({ feature: 'quick_actions_bar', action: 'copy_whatsapp' });
+      expect(addDocCall.properties).toEqual({
+        feature: 'quick_actions_bar',
+        action: 'copy_whatsapp',
+      });
     });
-    
+
     it('trackDashboardEngagement should track section and action', () => {
-        trackDashboardEngagement(userId, 'leaderboard', 'click');
-        const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
-        expect(addDocCall.eventName).toBe('dashboard_engagement');
-        expect(addDocCall.properties).toEqual({ feature: 'dashboard_unified', section: 'leaderboard', action: 'click' });
+      trackDashboardEngagement(userId, 'leaderboard', 'click');
+      const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
+      expect(addDocCall.eventName).toBe('dashboard_engagement');
+      expect(addDocCall.properties).toEqual({
+        feature: 'dashboard_unified',
+        section: 'leaderboard',
+        action: 'click',
+      });
     });
 
     it('trackNotificationPermission should handle granted', () => {
@@ -244,31 +254,41 @@ describe('Analytics Service', () => {
     });
 
     it('trackNotificationReceived should track the notification type', () => {
-        trackNotificationReceived(userId, 'commission');
-        const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
-        expect(addDocCall.eventName).toBe('notification_received');
-        expect(addDocCall.properties).toEqual({ feature: 'fcm_notifications', notificationType: 'commission' });
+      trackNotificationReceived(userId, 'commission');
+      const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
+      expect(addDocCall.eventName).toBe('notification_received');
+      expect(addDocCall.properties).toEqual({
+        feature: 'fcm_notifications',
+        notificationType: 'commission',
+      });
     });
 
     it('trackNotificationClicked should track the notification type', () => {
-        trackNotificationClicked(userId, 'badge');
-        const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
-        expect(addDocCall.eventName).toBe('notification_clicked');
-        expect(addDocCall.properties).toEqual({ feature: 'fcm_notifications', notificationType: 'badge' });
+      trackNotificationClicked(userId, 'badge');
+      const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
+      expect(addDocCall.eventName).toBe('notification_clicked');
+      expect(addDocCall.properties).toEqual({
+        feature: 'fcm_notifications',
+        notificationType: 'badge',
+      });
     });
 
     it('trackReferralShare should track the share method', () => {
-        trackReferralShare(userId, 'qr');
-        const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
-        expect(addDocCall.eventName).toBe('referral_share');
-        expect(addDocCall.properties).toEqual({ feature: 'referral_links', method: 'qr' });
+      trackReferralShare(userId, 'qr');
+      const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
+      expect(addDocCall.eventName).toBe('referral_share');
+      expect(addDocCall.properties).toEqual({ feature: 'referral_links', method: 'qr' });
     });
 
     it('trackTemplateUsed should track template and platform', () => {
-        trackTemplateUsed(userId, 'template-123', 'email');
-        const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
-        expect(addDocCall.eventName).toBe('template_used');
-        expect(addDocCall.properties).toEqual({ feature: 'message_templates', templateId: 'template-123', platform: 'email' });
+      trackTemplateUsed(userId, 'template-123', 'email');
+      const addDocCall = (firestore.addDoc as any).mock.calls[0][1];
+      expect(addDocCall.eventName).toBe('template_used');
+      expect(addDocCall.properties).toEqual({
+        feature: 'message_templates',
+        templateId: 'template-123',
+        platform: 'email',
+      });
     });
   });
 });

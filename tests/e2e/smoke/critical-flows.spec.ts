@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 
 test.describe('🚨 SMOKE TESTS - Critical Flows', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('header', { timeout: 15000 });
   });
 
   test('✅ SMOKE-01: Sistema acessível', async ({ page }) => {
@@ -15,7 +15,9 @@ test.describe('🚨 SMOKE TESTS - Critical Flows', () => {
   test('✅ SMOKE-02: Modal de autenticação', async ({ page }) => {
     await page.getByTestId('header-login-button').click();
     await page.waitForTimeout(1000);
-    const inputFields = page.locator('input[type="email"], input[type="text"], input[type="password"]');
+    const inputFields = page.locator(
+      'input[type="email"], input[type="text"], input[type="password"]'
+    );
     expect(await inputFields.count()).toBeGreaterThan(0);
   });
 
@@ -40,14 +42,14 @@ test.describe('🚨 SMOKE TESTS - Critical Flows', () => {
 
   test('✅ SMOKE-06: Responsividade mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('header', { timeout: 15000 });
     await expect(page.locator('header')).toBeVisible();
   });
 
   test('✅ SMOKE-07: Sem erros de console', async ({ page }) => {
     const errors: string[] = [];
-    page.on('console', (msg) => {
+    page.on('console', msg => {
       if (msg.type() === 'error') errors.push(msg.text());
     });
     await page.waitForTimeout(1000);

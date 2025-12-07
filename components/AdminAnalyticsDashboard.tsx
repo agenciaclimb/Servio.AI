@@ -10,10 +10,17 @@ const AdminAnalyticsDashboard: React.FC = () => {
 
   // Determina a granularidade e o título do gráfico com base no período selecionado
   const chartGranularity = timePeriod === 30 ? 'day' : 'month';
-  const chartTitle = timePeriod === 30 ? 'Crescimento Diário (Últimos 30 dias)' : 'Crescimento Mensal';
+  const chartTitle =
+    timePeriod === 30 ? 'Crescimento Diário (Últimos 30 dias)' : 'Crescimento Mensal';
 
-  const analytics = useMemo(() => computeAnalytics(jobs, allUsers, disputes, allFraudAlerts), [jobs, allUsers, disputes, allFraudAlerts]);
-  const timeSeries = useMemo(() => computeTimeSeriesData(jobs, chartGranularity), [jobs, chartGranularity]);
+  const analytics = useMemo(
+    () => computeAnalytics(jobs, allUsers, disputes, allFraudAlerts),
+    [jobs, allUsers, disputes, allFraudAlerts]
+  );
+  const timeSeries = useMemo(
+    () => computeTimeSeriesData(jobs, chartGranularity),
+    [jobs, chartGranularity]
+  );
 
   if (isLoading) {
     return <div className="p-4 text-sm text-gray-600">Carregando métricas...</div>;
@@ -61,10 +68,17 @@ const AdminAnalyticsDashboard: React.FC = () => {
             <div>
               <p className="text-sm text-gray-600 mb-1">Receita Plataforma</p>
               <p className="text-3xl font-bold text-gray-900">
-                {analytics.revenue.platform.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                {analytics.revenue.platform.toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                })}
               </p>
               <p className="text-xs text-gray-600 mt-2">
-                Ticket médio: {analytics.revenue.avgJobValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                Ticket médio:{' '}
+                {analytics.revenue.avgJobValue.toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                })}
               </p>
             </div>
             <span className="text-3xl">💰</span>
@@ -113,7 +127,9 @@ const AdminAnalyticsDashboard: React.FC = () => {
         <div className="bg-white rounded-lg shadow p-4">
           <p className="text-sm text-gray-600 mb-2">Prestadores</p>
           <div className="flex justify-between items-center">
-            <span className="text-2xl font-bold text-indigo-600">{analytics.users.verifiedProviders}</span>
+            <span className="text-2xl font-bold text-indigo-600">
+              {analytics.users.verifiedProviders}
+            </span>
             <div className="text-right">
               <p className="text-xs text-gray-600">verificados</p>
               <p className="text-xs text-red-600">{analytics.users.suspendedUsers} suspensos</p>
@@ -141,7 +157,9 @@ const AdminAnalyticsDashboard: React.FC = () => {
                       style={{ width: `${(count / analytics.jobs.total) * 100}%` }}
                     ></div>
                   </div>
-                  <span className="text-sm font-semibold text-gray-700 w-12 text-right">{count}</span>
+                  <span className="text-sm font-semibold text-gray-700 w-12 text-right">
+                    {count}
+                  </span>
                 </div>
               </div>
             ))}

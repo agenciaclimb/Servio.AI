@@ -2,19 +2,21 @@ import { getMessaging, getToken, onMessage, Messaging, MessagePayload } from 'fi
 import { getApp } from 'firebase/app';
 import { logInfo, logWarn, logError } from '../../utils/logger';
 
-const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY || 'BKuUCO3Txjcom91NDIbwHDOn4VlDFsf8S_1QvcRRF5cUjw4RpKtEZj2dMs65i02IBxCv2jM4Y6tXnJDCeGAqphk';
+const VAPID_KEY =
+  import.meta.env.VITE_FIREBASE_VAPID_KEY ||
+  'BKuUCO3Txjcom91NDIbwHDOn4VlDFsf8S_1QvcRRF5cUjw4RpKtEZj2dMs65i02IBxCv2jM4Y6tXnJDCeGAqphk';
 
 let messagingInstance: Messaging | null = null;
 
 /**
  * FCM Service - Firebase Cloud Messaging para notificações push
- * 
+ *
  * Features:
  * - Request permission para notificações
  * - Registra FCM token no backend
  * - Listen mensagens em foreground
  * - Dispatch custom events para UI updates
- * 
+ *
  * Eventos Suportados:
  * - prospector-click: Alguém clicou no link
  * - prospector-conversion: Novo recrutado
@@ -27,7 +29,7 @@ let messagingInstance: Messaging | null = null;
  */
 function getMessagingInstance(): Messaging | null {
   if (messagingInstance) return messagingInstance;
-  
+
   try {
     const app = getApp();
     messagingInstance = getMessaging(app);
@@ -42,7 +44,9 @@ function getMessagingInstance(): Messaging | null {
  * Verifica se notificações são suportadas no browser
  */
 export function isNotificationSupported(): boolean {
-  return 'Notification' in globalThis && 'serviceWorker' in navigator && 'PushManager' in globalThis;
+  return (
+    'Notification' in globalThis && 'serviceWorker' in navigator && 'PushManager' in globalThis
+  );
 }
 
 /**
@@ -68,7 +72,7 @@ export async function requestNotificationPermission(userId: string): Promise<{
   try {
     // Solicitar permissão
     const permission = await Notification.requestPermission();
-    
+
     if (permission !== 'granted') {
       return { success: false, error: 'Permission denied' };
     }
@@ -80,7 +84,7 @@ export async function requestNotificationPermission(userId: string): Promise<{
     }
 
     const token = await getToken(messaging, { vapidKey: VAPID_KEY });
-    
+
     if (!token) {
       return { success: false, error: 'Failed to get FCM token' };
     }
@@ -90,8 +94,8 @@ export async function requestNotificationPermission(userId: string): Promise<{
     await fetch(`${backendUrl}/prospector/fcm-token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        prospectorId: userId, 
+      body: JSON.stringify({
+        prospectorId: userId,
         fcmToken: token,
         platform: 'web',
       }),
@@ -100,8 +104,8 @@ export async function requestNotificationPermission(userId: string): Promise<{
     return { success: true, token };
   } catch (error) {
     logError('Error requesting notification permission:', error);
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
@@ -133,9 +137,11 @@ export function setupForegroundListener(): () => void {
 
     // Dispatch custom event para atualizar UI
     if (data?.type) {
-      globalThis.dispatchEvent(new CustomEvent(`prospector-${data.type}`, {
-        detail: data,
-      }));
+      globalThis.dispatchEvent(
+        new CustomEvent(`prospector-${data.type}`, {
+          detail: data,
+        })
+      );
     }
   });
 

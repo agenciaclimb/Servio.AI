@@ -16,7 +16,7 @@ vi.mock('firebase/firestore', () => ({
   updateDoc: vi.fn(),
   doc: vi.fn(),
   Timestamp: {
-    fromDate: vi.fn((date) => ({ toDate: () => date })),
+    fromDate: vi.fn(date => ({ toDate: () => date })),
   },
   serverTimestamp: vi.fn(() => new Date()),
 }));
@@ -24,7 +24,7 @@ vi.mock('firebase/firestore', () => ({
 describe('ProspectorCRM', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock getDocs to return empty leads
     vi.mocked(firebaseModule.getDocs).mockResolvedValue({
       docs: [],
@@ -37,7 +37,7 @@ describe('ProspectorCRM', () => {
 
   it('renders without crashing', async () => {
     const { container } = render(<ProspectorCRM prospectorId="prospector1" />);
-    
+
     await waitFor(() => {
       expect(container).toBeTruthy();
     });
@@ -256,9 +256,7 @@ describe('ProspectorCRM', () => {
   // ============================================
 
   it('handles Firebase errors gracefully', async () => {
-    vi.mocked(firebaseModule.getDocs).mockRejectedValue(
-      new Error('Firebase error')
-    );
+    vi.mocked(firebaseModule.getDocs).mockRejectedValue(new Error('Firebase error'));
 
     render(<ProspectorCRM prospectorId="prospector1" />);
 

@@ -51,6 +51,7 @@ firebase deploy --only functions:omnichannelWebhook
 ```
 
 **URL da Cloud Function** (anotar para próximos passos):
+
 ```
 https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWebhook
 ```
@@ -58,6 +59,7 @@ https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWeb
 ### 3️⃣ Configurar Webhooks no Meta Developers (15 min)
 
 #### A. WhatsApp
+
 1. Acessar: https://developers.facebook.com/apps/784914627901299/whatsapp-business/wa-settings
 2. Configuração > Webhooks:
    - **Callback URL**: `https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWebhook?channel=whatsapp`
@@ -69,6 +71,7 @@ https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWeb
 4. Salvar
 
 #### B. Instagram
+
 1. Acessar: https://developers.facebook.com/apps/784914627901299/messenger/settings
 2. Webhooks:
    - **Callback URL**: `https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWebhook?channel=instagram`
@@ -79,6 +82,7 @@ https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWeb
 4. Conectar Instagram Business Account (se ainda não conectado)
 
 #### C. Facebook Messenger
+
 1. Acessar: https://developers.facebook.com/apps/784914627901299/messenger/settings
 2. Webhooks:
    - **Callback URL**: `https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWebhook?channel=facebook`
@@ -91,6 +95,7 @@ https://us-central1-gen-lang-client-0737507616.cloudfunctions.net/omnichannelWeb
 ### 4️⃣ Testar Integração (10 min)
 
 #### Teste WhatsApp
+
 ```bash
 # Enviar mensagem de teste para o número WhatsApp Business
 # Verificar logs da Cloud Function
@@ -101,16 +106,19 @@ firebase functions:log --only omnichannelWebhook
 ```
 
 #### Teste Instagram
+
 1. Enviar DM para a conta Instagram conectada
 2. Verificar resposta automática da IA
 3. Verificar logs
 
 #### Teste Facebook Messenger
+
 1. Enviar mensagem para a página Facebook conectada
 2. Verificar resposta automática
 3. Verificar logs
 
 #### Teste WebChat (Frontend)
+
 ```bash
 # Acessar painel admin
 https://gen-lang-client-0737507616.web.app/admin/omnichannel
@@ -141,15 +149,17 @@ gcloud scheduler jobs list --location=us-west1
 ### 6️⃣ Monitoramento e Alertas (5 min)
 
 #### Cloud Monitoring Dashboard
+
 1. Acessar: https://console.cloud.google.com/monitoring
 2. Criar dashboard "Omnichannel Health"
 3. Adicionar métricas:
    - Cloud Function invocations (omnichannelWebhook)
-   - Cloud Run requests (servio-backend /api/omni/*)
+   - Cloud Run requests (servio-backend /api/omni/\*)
    - Firestore writes (collections: conversations, messages)
    - Error rate (4xx, 5xx)
 
 #### Alertas
+
 ```bash
 # Criar alerta para webhook failures
 gcloud alpha monitoring policies create \
@@ -166,6 +176,7 @@ gcloud alpha monitoring policies create \
 Após completar os passos acima, verificar:
 
 ### Infraestrutura
+
 - [ ] Secrets configurados no Cloud Run
 - [ ] Cloud Function deployed e rodando
 - [ ] Webhooks registrados no Meta Developers (WA/IG/FB)
@@ -173,6 +184,7 @@ Após completar os passos acima, verificar:
 - [ ] Monitoring dashboard configurado
 
 ### Funcionalidades
+
 - [ ] Enviar mensagem WhatsApp → Receber resposta da IA
 - [ ] Enviar DM Instagram → Receber resposta da IA
 - [ ] Enviar mensagem Facebook → Receber resposta da IA
@@ -182,12 +194,14 @@ Após completar os passos acima, verificar:
 - [ ] Envio manual de mensagens funcional
 
 ### Automações
+
 - [ ] Trigger `followup_48h` executando (verificar logs)
 - [ ] Trigger `followup_proposta` executando
 - [ ] Mensagens automáticas marcadas com 🤖 Auto
 - [ ] Opt-out sendo respeitado
 
 ### Monitoramento
+
 - [ ] Logs da Cloud Function visíveis no Firebase Console
 - [ ] Logs do Cloud Run visíveis no GCP Console
 - [ ] Dashboard de métricas mostrando dados
@@ -198,23 +212,27 @@ Após completar os passos acima, verificar:
 ## 🚨 Troubleshooting
 
 ### Webhook não está recebendo mensagens
+
 1. Verificar URL no Meta Developers (deve incluir `?channel=whatsapp`)
 2. Testar manualmente: `curl -X POST "https://FUNCTION_URL/omnichannelWebhook?channel=whatsapp"`
 3. Verificar logs: `firebase functions:log --only omnichannelWebhook`
 4. Verificar token de verificação (deve ser exatamente igual ao configurado)
 
 ### IA não está respondendo
+
 1. Verificar `GEMINI_API_KEY` está configurado
 2. Verificar logs da Cloud Function (buscar por "Omni IA")
 3. Verificar coleção `ia_logs` no Firestore
 4. Verificar quota do Gemini (free tier: 1500 req/day)
 
 ### Mensagens duplicadas
+
 1. Verificar lógica de validação de duplicação (`isDuplicate` function)
 2. Verificar se `messageId` está sendo salvo corretamente
 3. Meta pode reenviar mensagens se não receber 200 OK em 20s
 
 ### Automações não executando
+
 1. Verificar Cloud Scheduler job: `gcloud scheduler jobs describe omni-automation --location=us-west1`
 2. Verificar logs do endpoint `/api/omni/automation/run`
 3. Verificar se há conversas/propostas/escrow que atendem aos critérios dos triggers

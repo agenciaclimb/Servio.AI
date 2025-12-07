@@ -37,6 +37,7 @@ O arquivo `public/firebase-messaging-sw.js` já está configurado. Apenas certif
 2. O Content-Type é `application/javascript`
 
 Para testar localmente:
+
 ```bash
 npm run dev
 # Abra: http://localhost:5173/firebase-messaging-sw.js
@@ -95,7 +96,8 @@ async function sendNotification(fcmToken, title, body, data = {}) {
  */
 async function notifyLinkClicked(prospectorId, prospectName, source) {
   // Get prospector's FCM token from Firestore
-  const prospectorDoc = await admin.firestore()
+  const prospectorDoc = await admin
+    .firestore()
     .collection('notification_preferences')
     .doc(prospectorId)
     .get();
@@ -106,7 +108,7 @@ async function notifyLinkClicked(prospectorId, prospectName, source) {
   }
 
   const { fcmToken, clickNotifications, enabled } = prospectorDoc.data();
-  
+
   if (!enabled || !clickNotifications) {
     console.log('[FCM] Click notifications disabled for:', prospectorId);
     return;
@@ -129,7 +131,8 @@ async function notifyLinkClicked(prospectorId, prospectName, source) {
  * Send notification when prospect converts (registers)
  */
 async function notifyConversion(prospectorId, providerName, category) {
-  const prospectorDoc = await admin.firestore()
+  const prospectorDoc = await admin
+    .firestore()
     .collection('notification_preferences')
     .doc(prospectorId)
     .get();
@@ -156,7 +159,8 @@ async function notifyConversion(prospectorId, providerName, category) {
  * Send notification when commission is generated
  */
 async function notifyCommission(prospectorId, amount, providerName) {
-  const prospectorDoc = await admin.firestore()
+  const prospectorDoc = await admin
+    .firestore()
     .collection('notification_preferences')
     .doc(prospectorId)
     .get();
@@ -190,6 +194,7 @@ module.exports = {
 ### 2.3 Integrar com Eventos do Sistema
 
 **Quando link é clicado** (`referralLinkService.trackClick`):
+
 ```javascript
 // Em trackClick() após salvar no Firestore:
 const fcmService = require('./fcmService');
@@ -197,6 +202,7 @@ await fcmService.notifyLinkClicked(prospectorId, prospectName, source);
 ```
 
 **Quando prospect se registra** (`providerRegistration`):
+
 ```javascript
 // Após criar documento do provider:
 const fcmService = require('./fcmService');
@@ -204,6 +210,7 @@ await fcmService.notifyConversion(prospectorId, providerName, category);
 ```
 
 **Quando comissão é gerada** (`paymentService`):
+
 ```javascript
 // Após calcular comissão:
 const fcmService = require('./fcmService');
@@ -235,8 +242,9 @@ admin.initializeApp({
 async function testNotification() {
   // Get a prospector's FCM token from Firestore
   const prospectorId = 'TEST_PROSPECTOR_ID'; // Replace with real ID
-  
-  const doc = await admin.firestore()
+
+  const doc = await admin
+    .firestore()
     .collection('notification_preferences')
     .doc(prospectorId)
     .get();
@@ -272,6 +280,7 @@ testNotification();
 ```
 
 Executar:
+
 ```bash
 node backend/scripts/test_fcm.js
 ```
@@ -320,7 +329,8 @@ Evite spamming de notificações:
 
 ```javascript
 // Máximo 5 notificações por hora por usuário
-const recentNotifs = await admin.firestore()
+const recentNotifs = await admin
+  .firestore()
   .collection('notifications')
   .where('prospectorId', '==', prospectorId)
   .where('sentAt', '>', new Date(Date.now() - 3600000))
@@ -354,6 +364,7 @@ async function sendWithRetry(token, title, body, data, maxRetries = 3) {
 ### Problema: "Notification permission denied"
 
 **Solução**: Usuário bloqueou notificações. Instruções:
+
 1. Chrome: Ícone de cadeado → Permissões → Notificações → Permitir
 2. Firefox: Ícone de escudo → Permissões → Notificações → Permitir
 3. Safari: Preferências → Sites → Notificações → Permitir
@@ -361,6 +372,7 @@ async function sendWithRetry(token, title, body, data, maxRetries = 3) {
 ### Problema: "Service worker not found"
 
 **Solução**: Verifique que `firebase-messaging-sw.js` está sendo servido da raiz:
+
 - ✅ `https://servio-ai.com/firebase-messaging-sw.js`
 - ❌ `https://servio-ai.com/assets/firebase-messaging-sw.js`
 
@@ -369,6 +381,7 @@ Em Vite, coloque em `/public`, não em `/src`.
 ### Problema: "Token registration failed"
 
 **Solução**: Verifique VAPID key no `.env`:
+
 ```bash
 # .env
 VITE_FIREBASE_VAPID_KEY=BJa...sua_key...xyz
@@ -377,6 +390,7 @@ VITE_FIREBASE_VAPID_KEY=BJa...sua_key...xyz
 ### Problema: "No FCM token in Firestore"
 
 **Solução**: Usuário não ativou notificações ainda. Verificar:
+
 ```javascript
 const doc = await getDoc(doc(db, 'notification_preferences', userId));
 console.log('FCM Token:', doc.data()?.fcmToken);

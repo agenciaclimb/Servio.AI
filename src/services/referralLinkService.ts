@@ -1,9 +1,9 @@
 /**
  * Referral Link Generator Service
- * 
+ *
  * Generates personalized referral links for prospectors with UTM parameters
  * to track conversions and attribute commissions correctly.
- * 
+ *
  * Features:
  * - Unique link per prospector
  * - UTM tracking for analytics
@@ -13,7 +13,15 @@
  */
 
 import { db } from '../../firebaseConfig';
-import { collection, doc, getDoc, setDoc, updateDoc, increment, Timestamp } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  increment,
+  Timestamp,
+} from 'firebase/firestore';
 
 export interface ReferralLink {
   prospectorId: string;
@@ -58,7 +66,7 @@ export async function generateReferralLink(
 ): Promise<ReferralLink> {
   // Check if link already exists
   const existingLinkDoc = await getDoc(doc(db, 'referral_links', prospectorId));
-  
+
   if (existingLinkDoc.exists()) {
     return existingLinkDoc.data() as ReferralLink;
   }
@@ -142,10 +150,7 @@ export async function trackClick(
 /**
  * Track conversion (when prospect registers)
  */
-export async function trackConversion(
-  prospectorId: string,
-  providerId: string
-): Promise<void> {
+export async function trackConversion(prospectorId: string, providerId: string): Promise<void> {
   const linkRef = doc(db, 'referral_links', prospectorId);
 
   // Increment conversion count
@@ -168,7 +173,7 @@ export async function trackConversion(
  */
 export async function resolveShortLink(shortCode: string): Promise<string | null> {
   const shortLinkDoc = await getDoc(doc(db, 'short_links', shortCode));
-  
+
   if (!shortLinkDoc.exists()) {
     return null;
   }
@@ -186,7 +191,7 @@ export async function resolveShortLink(shortCode: string): Promise<string | null
  */
 export async function getReferralLink(prospectorId: string): Promise<ReferralLink | null> {
   const linkDoc = await getDoc(doc(db, 'referral_links', prospectorId));
-  
+
   if (!linkDoc.exists()) {
     return null;
   }
@@ -199,7 +204,7 @@ export async function getReferralLink(prospectorId: string): Promise<ReferralLin
  */
 export async function getLinkAnalytics(prospectorId: string): Promise<LinkAnalytics> {
   const linkDoc = await getDoc(doc(db, 'referral_links', prospectorId));
-  
+
   if (!linkDoc.exists()) {
     return {
       totalClicks: 0,
@@ -249,7 +254,10 @@ export function generateQRCodeUrl(url: string, size: number = 300): string {
 /**
  * Generate social media share URLs
  */
-export function generateShareUrls(referralUrl: string, message: string): {
+export function generateShareUrls(
+  referralUrl: string,
+  message: string
+): {
   facebook: string;
   twitter: string;
   linkedin: string;
@@ -276,25 +284,27 @@ function generateShortCode(prospectorId: string): string {
   // In production, could use a proper short URL service
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let code = '';
-  
+
   for (let i = 0; i < 6; i++) {
     const index = prospectorId.charCodeAt(i % prospectorId.length) % chars.length;
     code += chars[index];
   }
-  
+
   return code;
 }
 
 /**
  * Get leaderboard of top performing referral links
  */
-export async function getTopReferralLinks(_limit: number = 10): Promise<Array<{
-  prospectorId: string;
-  prospectorName: string;
-  clicks: number;
-  conversions: number;
-  conversionRate: number;
-}>> {
+export async function getTopReferralLinks(_limit: number = 10): Promise<
+  Array<{
+    prospectorId: string;
+    prospectorName: string;
+    clicks: number;
+    conversions: number;
+    conversionRate: number;
+  }>
+> {
   // TODO: Implement proper query with ordering
   // For now, return empty array
   return [];

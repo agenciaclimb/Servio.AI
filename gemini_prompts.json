@@ -5,8 +5,5 @@
   "repository": "agenciaclimb/Servio.AI",
   "goal": "Levar o sistema ao MVP funcional com deploy no Google Cloud",
   "assistant_role": "Agente técnico autônomo com logs e commit automatizado",
-  "important_files": [
-    "doc/DOCUMENTO_MESTRE_SERVIO_AI.md",
-    "server.js"
-  ]
+  "important_files": ["doc/DOCUMENTO_MESTRE_SERVIO_AI.md", "server.js"]
 }

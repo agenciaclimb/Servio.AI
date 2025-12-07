@@ -135,7 +135,7 @@ export async function registerUserFcmToken(userEmail: string) {
 **2. Foreground Handler** (`App.tsx`):
 
 ```typescript
-onForegroundMessage((payload) => {
+onForegroundMessage(payload => {
   if (payload?.notification) {
     alert(`🔔 ${payload.notification.title}\n${payload.notification.body}`);
   }
@@ -145,11 +145,11 @@ onForegroundMessage((payload) => {
 **3. Background Handler** (`public/firebase-messaging-sw.js`):
 
 ```javascript
-messaging.onBackgroundMessage((payload) => {
-  const title = payload.notification?.title || "Servio.AI";
+messaging.onBackgroundMessage(payload => {
+  const title = payload.notification?.title || 'Servio.AI';
   const options = {
     body: payload.notification?.body,
-    icon: "/icons/icon-192.png",
+    icon: '/icons/icon-192.png',
     data: payload.data || {},
   };
   self.registration.showNotification(title, options);

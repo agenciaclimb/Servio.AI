@@ -30,11 +30,11 @@ vi.mock('firebase/firestore', () => {
     onSnapshot: vi.fn((_, onNext) => {
       if (typeof onNext === 'function') {
         const snapshot = {
-          docs: [] as Array<{ id: string; data: () => Record<string, unknown> }> ,
+          docs: [] as Array<{ id: string; data: () => Record<string, unknown> }>,
           empty: true,
           forEach(cb: (doc: { id: string; data: () => Record<string, unknown> }) => void) {
             snapshot.docs.forEach(cb);
-          }
+          },
         };
         onNext(snapshot);
       }
@@ -100,11 +100,7 @@ describe('ClientDashboard – chat & agendamento (integração leve)', () => {
     };
 
     const ui = render(
-      <ClientDashboard
-        {...props}
-        disableSkeleton
-        initialUserJobs={props.initialUserJobs}
-      />
+      <ClientDashboard {...props} disableSkeleton initialUserJobs={props.initialUserJobs} />
     );
     return { ui, props };
   }
@@ -135,13 +131,17 @@ describe('ClientDashboard – chat & agendamento (integração leve)', () => {
     // Valida efeitos colaterais via setters de estado
     // 1) Primeira chamada adiciona mensagem do sistema confirmando agendamento
     expect(props.setAllMessages).toHaveBeenCalled();
-    const addSystemCall = props.setAllMessages.mock.calls.find((c: any[]) => typeof c[0] === 'function');
+    const addSystemCall = props.setAllMessages.mock.calls.find(
+      (c: any[]) => typeof c[0] === 'function'
+    );
     expect(addSystemCall).toBeTruthy();
     const updater = addSystemCall[0] as (prev: any[]) => any[];
     expect(typeof updater).toBe('function');
 
     // 2) Outra chamada marca a mensagem original como confirmada
-    const markCall = props.setAllMessages.mock.calls.find((c: any[]) => typeof c[0] === 'function' && c[0] !== updater);
+    const markCall = props.setAllMessages.mock.calls.find(
+      (c: any[]) => typeof c[0] === 'function' && c[0] !== updater
+    );
     if (markCall) {
       const markUpdater = markCall[0] as (prev: any[]) => any[];
       const marked = markUpdater([scheduleMsg]);
@@ -153,20 +153,20 @@ describe('ClientDashboard – chat & agendamento (integração leve)', () => {
   });
 
   it('mostra aviso ao tentar salvar perfil sem campos obrigatórios', async () => {
-  renderDash({});
+    renderDash({});
 
-  // Abrir modal de conta
-  await userEvent.click(screen.getByRole('button', { name: /Conta Pessoal/i }));
+    // Abrir modal de conta
+    await userEvent.click(screen.getByRole('button', { name: /Conta Pessoal/i }));
 
-  // Limpa campos obrigatórios e tenta salvar
-  const nameInput = screen.getByDisplayValue('Ana Cliente');
-  const addressInput = screen.getByPlaceholderText('Rua, nº, bairro');
-  const whatsappInput = screen.getByPlaceholderText('(DDD) 9 9999-9999');
-  await userEvent.clear(nameInput as HTMLInputElement);
-  await userEvent.clear(addressInput as HTMLInputElement);
-  await userEvent.clear(whatsappInput as HTMLInputElement);
+    // Limpa campos obrigatórios e tenta salvar
+    const nameInput = screen.getByDisplayValue('Ana Cliente');
+    const addressInput = screen.getByPlaceholderText('Rua, nº, bairro');
+    const whatsappInput = screen.getByPlaceholderText('(DDD) 9 9999-9999');
+    await userEvent.clear(nameInput as HTMLInputElement);
+    await userEvent.clear(addressInput as HTMLInputElement);
+    await userEvent.clear(whatsappInput as HTMLInputElement);
 
-  await userEvent.click(screen.getByRole('button', { name: /Salvar/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Salvar/i }));
 
     // Toast de validação obrigatória
     await waitFor(() => {
@@ -177,17 +177,17 @@ describe('ClientDashboard – chat & agendamento (integração leve)', () => {
   it('exibe toast de erro ao falhar envio de mensagem', async () => {
     vi.spyOn(API, 'createMessage').mockRejectedValueOnce(new Error('fail'));
 
-  renderDash({});
+    renderDash({});
     await userEvent.click(screen.getByRole('button', { name: /Meus Serviços/i }));
     const chatButtons = screen.getAllByRole('button', { name: /^Chat$/i });
     await userEvent.click(chatButtons[0]);
 
     // Digita e envia mensagem
-  const input = await screen.findByPlaceholderText('Digite sua mensagem...');
-  await userEvent.type(input, 'Olá!');
-  const form = input.closest('form') as HTMLElement;
-  const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
-  await userEvent.click(submitBtn);
+    const input = await screen.findByPlaceholderText('Digite sua mensagem...');
+    await userEvent.type(input, 'Olá!');
+    const form = input.closest('form') as HTMLElement;
+    const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    await userEvent.click(submitBtn);
 
     await waitFor(() => {
       expect((toastSpy as any).mock.calls.join('\n')).toMatch(/Erro ao enviar mensagem/i);

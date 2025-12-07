@@ -5,13 +5,19 @@ import { test as rolesTest } from '../fixtures/roles.fixture';
 const test = rolesTest.extend({});
 
 test.describe('[E2E] Chat interno - Fluxos críticos', () => {
-  test('cliente abre chat de um job em andamento e envia mensagem', async ({ page, loginAsClient }) => {
+  test('cliente abre chat de um job em andamento e envia mensagem', async ({
+    page,
+    loginAsClient,
+  }) => {
     await loginAsClient();
 
     const jobCard = page.getByText(/em andamento|in progress|in_progress/i).first();
     await jobCard.click();
 
-    await page.getByRole('button', { name: /chat|conversar|mensagens/i }).first().click();
+    await page
+      .getByRole('button', { name: /chat|conversar|mensagens/i })
+      .first()
+      .click();
 
     const modal = page.getByRole('dialog', { name: /chat|mensagens/i });
     await expect(modal).toBeVisible();

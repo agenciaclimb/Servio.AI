@@ -13,10 +13,20 @@ const tierColors = {
   Platina: 'text-blue-500',
 };
 
-const BonusItem: React.FC<{ label: string; value: number; achieved: boolean }> = ({ label, value, achieved }) => (
-  <li className={`flex justify-between items-center text-sm ${achieved ? 'text-green-600' : 'text-gray-500'}`}>
-    <span>{achieved ? '✅' : '⬜️'} {label}</span>
-    <span className="font-semibold">{achieved ? `+${(value * 100).toFixed(0)}%` : 'Ganhe +'+(value * 100).toFixed(0)+'%'}</span>
+const BonusItem: React.FC<{ label: string; value: number; achieved: boolean }> = ({
+  label,
+  value,
+  achieved,
+}) => (
+  <li
+    className={`flex justify-between items-center text-sm ${achieved ? 'text-green-600' : 'text-gray-500'}`}
+  >
+    <span>
+      {achieved ? '✅' : '⬜️'} {label}
+    </span>
+    <span className="font-semibold">
+      {achieved ? `+${(value * 100).toFixed(0)}%` : 'Ganhe +' + (value * 100).toFixed(0) + '%'}
+    </span>
   </li>
 );
 
@@ -29,9 +39,12 @@ const EarningsProfileCard: React.FC<EarningsProfileCardProps> = ({ user, authTok
       if (!user || !authToken) return;
       setIsLoading(true);
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/${user.email}/earnings-profile`, {
-          headers: { 'Authorization': `Bearer ${authToken}` },
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_API_URL}/users/${user.email}/earnings-profile`,
+          {
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
         if (!response.ok) throw new Error('Failed to fetch earnings profile');
         const data = await response.json();
         setProfile(data);
@@ -44,7 +57,12 @@ const EarningsProfileCard: React.FC<EarningsProfileCardProps> = ({ user, authTok
     fetchEarningsProfile();
   }, [user, authToken]);
 
-  if (isLoading) return <div className="p-6 bg-white rounded-lg shadow-sm border animate-pulse">Carregando perfil de ganhos...</div>;
+  if (isLoading)
+    return (
+      <div className="p-6 bg-white rounded-lg shadow-sm border animate-pulse">
+        Carregando perfil de ganhos...
+      </div>
+    );
   if (!profile) return null;
 
   const { baseRate, bonuses, currentRate, tier } = profile;
@@ -54,12 +72,16 @@ const EarningsProfileCard: React.FC<EarningsProfileCardProps> = ({ user, authTok
       <div className="text-center">
         <h3 className="text-lg font-bold text-gray-800">Seu Perfil de Ganhos</h3>
         <p className={`text-3xl font-bold ${tierColors[tier]}`}>{tier}</p>
-        <p className="text-5xl font-extrabold text-gray-900 mt-2">{(currentRate * 100).toFixed(1)}%</p>
+        <p className="text-5xl font-extrabold text-gray-900 mt-2">
+          {(currentRate * 100).toFixed(1)}%
+        </p>
         <p className="text-sm text-gray-500">dos valores dos serviços concluídos</p>
       </div>
       {(tier === 'Ouro' || tier === 'Platina') && (
         <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
-          <p className="text-sm font-semibold text-yellow-800">⭐ Parabéns! Você tem destaque nos resultados de busca.</p>
+          <p className="text-sm font-semibold text-yellow-800">
+            ⭐ Parabéns! Você tem destaque nos resultados de busca.
+          </p>
         </div>
       )}
       <div className="mt-6 pt-4 border-t">
@@ -67,12 +89,20 @@ const EarningsProfileCard: React.FC<EarningsProfileCardProps> = ({ user, authTok
         <ul className="space-y-2">
           <li className="flex justify-between items-center text-sm text-gray-600">
             <span>Taxa Base</span>
-            <span className="font-semibold">{(baseRate * 100)}%</span>
+            <span className="font-semibold">{baseRate * 100}%</span>
           </li>
           <BonusItem label="Perfil Completo" value={0.02} achieved={bonuses.profileComplete > 0} />
-          <BonusItem label="Avaliação Excelente (4.8+)" value={0.02} achieved={bonuses.highRating > 0} />
+          <BonusItem
+            label="Avaliação Excelente (4.8+)"
+            value={0.02}
+            achieved={bonuses.highRating > 0}
+          />
           <BonusItem label="Volume de Serviços" value={0.03} achieved={bonuses.volumeTier > 0} />
-          <BonusItem label="Baixa Taxa de Disputas" value={0.01} achieved={bonuses.lowDisputeRate > 0} />
+          <BonusItem
+            label="Baixa Taxa de Disputas"
+            value={0.01}
+            achieved={bonuses.lowDisputeRate > 0}
+          />
         </ul>
       </div>
     </div>

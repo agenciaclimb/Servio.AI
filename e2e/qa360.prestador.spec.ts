@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 /**
  * QA 360 - PAINEL PRESTADOR COMPLETO
- * 
+ *
  * Cobertura:
  * 1. Onboarding (cadastro + verificação)
  * 2. Receber matching (/api/match-providers)
@@ -11,7 +11,7 @@ import { test, expect } from '@playwright/test';
  * 5. Conectar Stripe Connect (mock)
  * 6. Ver histórico de jobs
  * 7. Perfil e catálogo de serviços
- * 
+ *
  * Critérios de aceite:
  * - Prestador só vê jobs compatíveis com seu perfil
  * - Propostas enviadas persistem
@@ -20,27 +20,32 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('QA 360 - Painel Prestador', () => {
-  
   test.beforeEach(async ({ page: _page }) => {
     await page.addInitScript(() => {
-      window.localStorage.setItem('mockUser', JSON.stringify({
-        uid: 'provider-qa-001',
-        email: 'prestador.qa@servio.ai',
-        displayName: 'Prestador QA',
-        emailVerified: true
-      }));
-      
-      window.localStorage.setItem('userProfile', JSON.stringify({
-        email: 'prestador.qa@servio.ai',
-        name: 'Prestador QA',
-        type: 'prestador',
-        status: 'ativo',
-        memberSince: new Date().toISOString(),
-        location: 'São Paulo, SP',
-        specialties: ['eletricista', 'instalacao'],
-        averageRating: 4.8,
-        stripeAccountId: 'acct_mock_123'
-      }));
+      window.localStorage.setItem(
+        'mockUser',
+        JSON.stringify({
+          uid: 'provider-qa-001',
+          email: 'prestador.qa@servio.ai',
+          displayName: 'Prestador QA',
+          emailVerified: true,
+        })
+      );
+
+      window.localStorage.setItem(
+        'userProfile',
+        JSON.stringify({
+          email: 'prestador.qa@servio.ai',
+          name: 'Prestador QA',
+          type: 'prestador',
+          status: 'ativo',
+          memberSince: new Date().toISOString(),
+          location: 'São Paulo, SP',
+          specialties: ['eletricista', 'instalacao'],
+          averageRating: 4.8,
+          stripeAccountId: 'acct_mock_123',
+        })
+      );
     });
   });
 
@@ -48,16 +53,16 @@ test.describe('QA 360 - Painel Prestador', () => {
     const profile = await page.evaluate(() => {
       return JSON.parse(window.localStorage.getItem('userProfile') || '{}');
     });
-    
+
     expect(profile.type).toBe('prestador');
     expect(profile.specialties).toContain('eletricista');
-    
+
     console.log('✅ Prestador cadastrado com especialidades');
   });
 
   test('2. Matching IA - Receber jobs compatíveis', async ({ page: _page }) => {
     // Mock do endpoint match-providers
-    await page.route('**/api/match-providers', async (route) => {
+    await page.route('**/api/match-providers', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -66,14 +71,14 @@ test.describe('QA 360 - Painel Prestador', () => {
             providerId: 'prestador.qa@servio.ai',
             name: 'Prestador QA',
             score: 0.85,
-            reason: 'Match por categoria e localização + reputação'
-          }
-        ])
+            reason: 'Match por categoria e localização + reputação',
+          },
+        ]),
       });
     });
 
     await page.goto('/');
-    
+
     console.log('✅ Matching IA configurado');
   });
 
@@ -97,4 +102,3 @@ test.describe('QA 360 - Painel Prestador', () => {
     // TODO: Abrir modal de serviços, adicionar item, salvar
   });
 });
-

@@ -103,7 +103,7 @@ Consulte `src/index.js` para a lista completa de endpoints.
 Para adicionar novos testes, crie arquivos `.test.js` em `tests/` seguindo o padrão de injeção de dependência:
 
 ```javascript
-import { createApp } from "../src/index.js";
+import { createApp } from '../src/index.js';
 
 const mockDb = {
   /* mock do Firestore */

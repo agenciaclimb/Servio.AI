@@ -23,6 +23,7 @@
 ## 📊 Analytics Layer
 
 ### ConversionFunnelDashboard
+
 **Purpose**: Visualize conversion pipeline and identify bottlenecks
 
 ```
@@ -66,6 +67,7 @@
 ```
 
 **Metrics**:
+
 - Stage count & percentage
 - Conversion rate between stages
 - Average days in stage
@@ -77,6 +79,7 @@
 ## ⚙️ Productivity Layer
 
 ### 1. SmartFiltersBar
+
 **Purpose**: Quick access to common lead segments
 
 ```
@@ -91,6 +94,7 @@
 ```
 
 **6 Pre-built Filters**:
+
 1. 🔥 Alta Prioridade: `hot && high priority`
 2. 📅 Follow-up Hoje: `followUpDate === today`
 3. ⏰ Atrasados: `followUpDate < now`
@@ -99,6 +103,7 @@
 6. ⭐ Score Alto: `score >= 80`
 
 ### 2. ProspectCardV2
+
 **Purpose**: Rich card with quick actions
 
 ```
@@ -124,6 +129,7 @@
 ```
 
 **Features**:
+
 - Temperature bar indicator at top
 - Inline name/source editing
 - Score with animated progress bar
@@ -132,6 +138,7 @@
 - Quick action buttons (WhatsApp, Email, Automation toggle)
 
 ### 3. BulkActionsBar
+
 **Purpose**: Mass operations on selected leads
 
 ```
@@ -152,6 +159,7 @@
 ```
 
 **Campaign Modal**:
+
 ```
 ┌─────────────────────────────────────────┐
 │  CAMPANHA EM MASSA                      │
@@ -173,6 +181,7 @@
 ```
 
 ### 4. AIActionCard
+
 **Purpose**: Intelligent action suggestions per lead
 
 ```
@@ -197,6 +206,7 @@
 ```
 
 **10 AI Rules**:
+
 1. Follow-up overdue (high, +35%)
 2. High score but cold (high, +40%)
 3. Inactive 7+ days (high, +25%)
@@ -209,6 +219,7 @@
 10. Try different channel (medium, +25%)
 
 ### 5. SavedViewsBar
+
 **Purpose**: Save and load custom filter configurations
 
 ```
@@ -226,6 +237,7 @@
 ## 🔄 Automation Layer
 
 ### FollowUpSequences
+
 **Purpose**: Automated multi-touch follow-up campaigns
 
 ```
@@ -263,15 +275,18 @@
 ```
 
 **3 Templates**:
+
 1. **Onboarding Rápido** (4 days): D+0 WhatsApp → D+1 Email → D+3 WhatsApp → D+7 Call
 2. **Nutrição Longa** (14 days): D+0 Email → D+3 WhatsApp → D+7 Email → D+14 WhatsApp
 3. **Reativação** (2 days): D+0 WhatsApp special offer → D+2 Email urgency
 
 **Personalization**:
+
 - `{nome}` → Lead name
 - `{categoria}` → Lead category
 
 **Storage**:
+
 ```javascript
 // Firestore: prospector_followups
 {
@@ -300,6 +315,7 @@
 ## 🔄 Complete User Journey
 
 ### Scenario 1: New Lead Arrives
+
 ```
 1. Lead appears in 🆕 Novos stage
 2. ProspectCardV2 displays with score (auto-calculated by AI)
@@ -313,6 +329,7 @@
 ```
 
 ### Scenario 2: Follow-up Overdue
+
 ```
 1. SmartFiltersBar shows "⏰ Atrasados (5)" badge
 2. Prospector clicks filter
@@ -329,6 +346,7 @@
 ```
 
 ### Scenario 3: Conversion Bottleneck
+
 ```
 1. Prospector clicks "📊 Dashboard de Conversão"
 2. Funnel reveals: 🤝 Negociando has 18 avg days (>14 threshold)
@@ -345,6 +363,7 @@
 ```
 
 ### Scenario 4: Bulk Stage Movement
+
 ```
 1. SmartFiltersBar: "🤝 Negociando (22)" active
 2. Prospector reviews 22 leads
@@ -365,33 +384,36 @@
 
 ## 🎯 Feature Matrix
 
-| Feature | Purpose | Impact | Status |
-|---------|---------|--------|--------|
-| **ConversionFunnelDashboard** | Analytics & bottleneck detection | Identify conversion leaks | ✅ LIVE |
-| **FollowUpSequences** | Automated multi-touch campaigns | Save time, increase contact rate | ✅ LIVE |
-| **ProspectCardV2** | Rich lead information + quick actions | Faster decisions | ✅ LIVE |
-| **BulkActionsBar** | Mass operations (stage, temp, campaigns) | 10x productivity | ✅ LIVE |
-| **SmartFiltersBar** | Intelligent lead segments | Focus on high-value leads | ✅ LIVE |
-| **AIActionCard** | AI-powered suggestions | Data-driven actions | ✅ LIVE |
-| **SavedViewsBar** | Custom filter presets | Workflow efficiency | ✅ LIVE |
+| Feature                       | Purpose                                  | Impact                           | Status  |
+| ----------------------------- | ---------------------------------------- | -------------------------------- | ------- |
+| **ConversionFunnelDashboard** | Analytics & bottleneck detection         | Identify conversion leaks        | ✅ LIVE |
+| **FollowUpSequences**         | Automated multi-touch campaigns          | Save time, increase contact rate | ✅ LIVE |
+| **ProspectCardV2**            | Rich lead information + quick actions    | Faster decisions                 | ✅ LIVE |
+| **BulkActionsBar**            | Mass operations (stage, temp, campaigns) | 10x productivity                 | ✅ LIVE |
+| **SmartFiltersBar**           | Intelligent lead segments                | Focus on high-value leads        | ✅ LIVE |
+| **AIActionCard**              | AI-powered suggestions                   | Data-driven actions              | ✅ LIVE |
+| **SavedViewsBar**             | Custom filter presets                    | Workflow efficiency              | ✅ LIVE |
 
 ---
 
 ## 📊 Metrics & KPIs
 
 ### Before Enhancements (Baseline)
+
 - Average time per lead: 5 minutes
 - Leads contacted per day: 12
 - Conversion rate: 18%
 - Follow-up miss rate: 30%
 
 ### After Enhancements (Target)
+
 - Average time per lead: 2 minutes (-60%)
 - Leads contacted per day: 30 (+150%)
 - Conversion rate: 28% (+55%)
 - Follow-up miss rate: 5% (-83%)
 
 ### Automation Impact
+
 - Manual follow-ups: 100% → 20% (80% automated)
 - Time saved per week: 10 hours
 - Sequence completion rate: 85%
@@ -405,6 +427,7 @@
 **Feature Flags**: `VITE_CRM_V2_ENABLED=true`, `VITE_CRM_VIEWS_ENABLED=true`
 
 **Command**:
+
 ```powershell
 npm run build
 firebase deploy --only hosting

@@ -15,10 +15,10 @@ Sistema de comissionamento para equipe de prospecção, que incentiva o recrutam
 
 ### Taxas de Comissão
 
-| Tipo de Recrutamento | Taxa | Descrição |
-|---------------------|------|-----------|
-| **Manual** | 1.0% | Prospector humano convidou diretamente |
-| **IA Automática** | 0.25% | IA encontrou e convidou automaticamente |
+| Tipo de Recrutamento | Taxa  | Descrição                               |
+| -------------------- | ----- | --------------------------------------- |
+| **Manual**           | 1.0%  | Prospector humano convidou diretamente  |
+| **IA Automática**    | 0.25% | IA encontrou e convidou automaticamente |
 
 ### Cálculo de Comissão
 
@@ -55,6 +55,7 @@ Exemplo (IA - 0.25%):
 ```
 
 **Código de Convite:**
+
 - Formato: `NOME + 4 dígitos aleatórios`
 - Exemplo: `JOAO2025`, `MARIA3K4L`
 - Único por prospector
@@ -62,11 +63,13 @@ Exemplo (IA - 0.25%):
 ### 2. Link de Convite
 
 **URL Gerada:**
+
 ```
 https://servio-ai.com/register?type=provider&invite=JOAO2025
 ```
 
 **Funcionalidades:**
+
 - ✅ Link copiável com um clique
 - ✅ Mostra mensagem de boas-vindas ao registrar
 - ✅ Associa prestador ao prospector automaticamente
@@ -96,9 +99,9 @@ if (job.status === 'concluido' && provider.prospectorId) {
     jobId: job.id,
     amount: calculateCommission(job.price, provider),
     rate: provider.prospectorCommissionRate,
-    status: 'pending'
+    status: 'pending',
   };
-  
+
   await db.collection('commissions').add(commission);
 }
 ```
@@ -109,16 +112,16 @@ if (job.status === 'concluido' && provider.prospectorId) {
 
 ```typescript
 interface Prospector {
-  id: string;                    // Email do prospector
-  name: string;                  // Nome completo
-  email: string;                 // Email de contato
-  inviteCode: string;            // Código único (ex: "JOAO2025")
-  totalRecruits: number;         // Total de prestadores recrutados
-  activeRecruits: number;        // Prestadores ativos
+  id: string; // Email do prospector
+  name: string; // Nome completo
+  email: string; // Email de contato
+  inviteCode: string; // Código único (ex: "JOAO2025")
+  totalRecruits: number; // Total de prestadores recrutados
+  activeRecruits: number; // Prestadores ativos
   totalCommissionsEarned: number; // Total ganho em comissões (R$)
-  commissionRate: number;        // Taxa padrão (0.01 ou 0.0025)
-  providersSupported: string[];  // IDs dos prestadores
-  createdAt: string;             // Data de criação
+  commissionRate: number; // Taxa padrão (0.01 ou 0.0025)
+  providersSupported: string[]; // IDs dos prestadores
+  createdAt: string; // Data de criação
 }
 ```
 
@@ -126,18 +129,18 @@ interface Prospector {
 
 ```typescript
 interface Commission {
-  id: string;                    // ID único da comissão
-  prospectorId: string;          // Email do prospector
-  providerId: string;            // Email do prestador
-  jobId: string;                 // ID do job concluído
-  amount: number;                // Valor da comissão (R$)
-  rate: number;                  // Taxa aplicada (0.01 ou 0.0025)
-  providerEarnings: number;      // Ganhos do prestador neste job
-  jobPrice: number;              // Preço total do job
-  providerRate: number;          // Taxa do prestador (ex: 0.75)
+  id: string; // ID único da comissão
+  prospectorId: string; // Email do prospector
+  providerId: string; // Email do prestador
+  jobId: string; // ID do job concluído
+  amount: number; // Valor da comissão (R$)
+  rate: number; // Taxa aplicada (0.01 ou 0.0025)
+  providerEarnings: number; // Ganhos do prestador neste job
+  jobPrice: number; // Preço total do job
+  providerRate: number; // Taxa do prestador (ex: 0.75)
   status: 'pending' | 'paid' | 'cancelled';
-  paidAt?: string;               // Data de pagamento
-  createdAt: string;             // Data de criação
+  paidAt?: string; // Data de pagamento
+  createdAt: string; // Data de criação
 }
 ```
 
@@ -146,10 +149,10 @@ interface Commission {
 ```typescript
 interface User {
   // ... campos existentes
-  prospectorId?: string;         // Email de quem recrutou
+  prospectorId?: string; // Email de quem recrutou
   prospectorCommissionRate?: number; // 0.01 ou 0.0025
-  inviteCode?: string;           // Se for prospector
-  recruitedAt?: string;          // Data de recrutamento
+  inviteCode?: string; // Se for prospector
+  recruitedAt?: string; // Data de recrutamento
   recruitmentSource?: 'manual' | 'ai_auto' | 'organic';
 }
 ```
@@ -159,6 +162,7 @@ interface User {
 ### Gestão de Prospectores
 
 **Funcionalidades:**
+
 - ✅ Listar todos os prospectores
 - ✅ Criar novo prospector
 - ✅ Ver estatísticas individuais
@@ -166,12 +170,14 @@ interface User {
 - ✅ Ver histórico de comissões
 
 **Estatísticas Exibidas:**
+
 - Total de prospectores ativos
 - Total de prestadores recrutados
 - Comissões pendentes (R$)
 - Comissões pagas (R$)
 
 **Por Prospector:**
+
 - Nome e email
 - Código de convite
 - Total recrutados / Ativos
@@ -182,11 +188,13 @@ interface User {
 ### Histórico de Comissões
 
 **Filtros:**
+
 - Por prospector
 - Por status (pending/paid/cancelled)
 - Por período
 
 **Informações:**
+
 - Data de criação
 - Prestador que gerou
 - Job relacionado
@@ -325,7 +333,7 @@ Quando IA encontra e convida prestadores automaticamente:
 const prospect = {
   email: 'profissional@email.com',
   inviteCode: 'IA_AUTO', // Código especial da IA
-  source: 'ai_auto'
+  source: 'ai_auto',
 };
 
 // Taxa de comissão reduzida: 0.25%
@@ -333,6 +341,7 @@ commissionRate = 0.0025;
 ```
 
 **Benefícios:**
+
 - IA trabalha 24/7
 - Prospector ainda ganha (0.25%)
 - Incentiva uso inteligente da IA
@@ -377,18 +386,21 @@ commissionRate = 0.0025;
 ## 🚀 Próximos Passos
 
 ### Fase 1 - MVP (Atual)
+
 - ✅ Sistema de convites
 - ✅ Rastreamento de comissões
 - ✅ Painel administrativo
 - ✅ Integração com IA
 
 ### Fase 2 - Expansão
+
 - [ ] Painel exclusivo para prospectores
 - [ ] Relatórios detalhados
 - [ ] Exportação de dados
 - [ ] Notificações em tempo real
 
 ### Fase 3 - Automação
+
 - [ ] Pagamento automático via PIX
 - [ ] Integração bancária
 - [ ] Dashboard de analytics
@@ -397,6 +409,7 @@ commissionRate = 0.0025;
 ## 📞 Suporte
 
 Para dúvidas sobre o sistema de comissões:
+
 - **Admin**: Acesse "Gestão de Prospectores" no painel
 - **Documentação**: Este arquivo
 - **Backend**: `/backend/src/index.js` (rotas de comissões)

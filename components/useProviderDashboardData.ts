@@ -37,9 +37,8 @@ export function useProviderDashboardData(user: User | null) {
         setMyBids(bids);
         setAllUsers(users);
         setAllMessages(messages);
-
       } catch (error) {
-        console.error("Failed to load provider dashboard data:", error);
+        console.error('Failed to load provider dashboard data:', error);
         // Idealmente, usar um toast para notificar o erro
       } finally {
         setIsLoading(false);

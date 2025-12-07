@@ -14,26 +14,26 @@ O **SERVIO.AI** é uma plataforma de marketplace inteligente projetada para cone
 
 A versão MVP da plataforma está funcionalmente completa e inclui:
 
-*   **Jornada Completa do Usuário:**
-    *   Cadastro e autenticação para Clientes, Prestadores e Administradores.
-    *   Fluxo de onboarding guiado para prestadores, com verificação de documentos assistida por IA.
-    *   Dashboards personalizados para cada tipo de usuário.
+- **Jornada Completa do Usuário:**
+  - Cadastro e autenticação para Clientes, Prestadores e Administradores.
+  - Fluxo de onboarding guiado para prestadores, com verificação de documentos assistida por IA.
+  - Dashboards personalizados para cada tipo de usuário.
 
-*   **Ciclo de Vida do Serviço:**
-    *   **Criação Inteligente:** Cliente descreve sua necessidade em linguagem natural, e a IA estrutura o pedido de serviço.
-    *   **Matching Algorítmico:** Um algoritmo ponderado, auxiliado por IA, recomenda os melhores prestadores para cada job.
-    *   **Propostas e Chat:** Prestadores enviam propostas, e a comunicação é centralizada no chat da plataforma.
-    *   **Agendamento com IA:** O assistente de IA detecta acordos no chat e sugere o agendamento com um clique.
+- **Ciclo de Vida do Serviço:**
+  - **Criação Inteligente:** Cliente descreve sua necessidade em linguagem natural, e a IA estrutura o pedido de serviço.
+  - **Matching Algorítmico:** Um algoritmo ponderado, auxiliado por IA, recomenda os melhores prestadores para cada job.
+  - **Propostas e Chat:** Prestadores enviam propostas, e a comunicação é centralizada no chat da plataforma.
+  - **Agendamento com IA:** O assistente de IA detecta acordos no chat e sugere o agendamento com um clique.
 
-*   **Segurança e Pagamentos:**
-    *   **Pagamento em Custódia (Escrow):** Integração com Stripe para reter o pagamento até a confirmação da conclusão do serviço.
-    *   **Sistema de Disputas:** Ferramentas para o administrador mediar e resolver conflitos.
-    *   **Autenticação Robusta:** Proteção de APIs e regras de banco de dados para garantir que apenas usuários autorizados realizem ações.
+- **Segurança e Pagamentos:**
+  - **Pagamento em Custódia (Escrow):** Integração com Stripe para reter o pagamento até a confirmação da conclusão do serviço.
+  - **Sistema de Disputas:** Ferramentas para o administrador mediar e resolver conflitos.
+  - **Autenticação Robusta:** Proteção de APIs e regras de banco de dados para garantir que apenas usuários autorizados realizem ações.
 
-*   **Ecossistema e Qualidade:**
-    *   **Perfis Públicos com SEO:** Páginas de perfil otimizadas por IA para atrair clientes organicamente.
-    *   **Gamificação do Perfil:** Sistema que incentiva prestadores a completarem seus perfis para aumentar a pontuação e visibilidade.
-    *   **Sistema de Avaliação:** Clientes podem avaliar os serviços concluídos, construindo a reputação dos prestadores.
+- **Ecossistema e Qualidade:**
+  - **Perfis Públicos com SEO:** Páginas de perfil otimizadas por IA para atrair clientes organicamente.
+  - **Gamificação do Perfil:** Sistema que incentiva prestadores a completarem seus perfis para aumentar a pontuação e visibilidade.
+  - **Sistema de Avaliação:** Clientes podem avaliar os serviços concluídos, construindo a reputação dos prestadores.
 
 ---
 
@@ -41,11 +41,11 @@ A versão MVP da plataforma está funcionalmente completa e inclui:
 
 A plataforma foi construída sobre uma stack moderna e escalável, primariamente no ecossistema Google Cloud:
 
--   **Frontend:** React + Vite + TypeScript
--   **Backend:** Node.js no Google Cloud Run (separado para API de dados e API de IA)
--   **Banco de Dados:** Firestore
--   **Inteligência Artificial:** Google Gemini
--   **Pagamentos:** Stripe
+- **Frontend:** React + Vite + TypeScript
+- **Backend:** Node.js no Google Cloud Run (separado para API de dados e API de IA)
+- **Banco de Dados:** Firestore
+- **Inteligência Artificial:** Google Gemini
+- **Pagamentos:** Stripe
 
 ---
 

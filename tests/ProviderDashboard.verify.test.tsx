@@ -5,19 +5,21 @@ import ProviderDashboard from '../components/ProviderDashboard';
 
 // Mocks de componentes filhos para isolar fluxos de verificação/onboarding
 // Use real ProviderOnboarding to assert actual onboarding content instead of a test id
-vi.mock('../components/ProviderDashboardSkeleton', () => ({ default: () => <div data-testid="skeleton">Loading...</div> }));
-vi.mock('../components/ProfileStrength', () => ({ default: () => <div/> }));
-vi.mock('../components/ProfileTips', () => ({ default: () => <div/> }));
-vi.mock('../components/ReferralProgram', () => ({ default: () => <div/> }));
-vi.mock('../components/PaymentSetupCard', () => ({ default: () => <div/> }));
-vi.mock('../components/ProviderEarningsCard', () => ({ default: () => <div/> }));
-vi.mock('../components/ProposalModal', () => ({ default: () => <div/> }));
-vi.mock('../components/AuctionRoomModal', () => ({ default: () => <div/> }));
-vi.mock('../components/ProfileModal', () => ({ default: () => <div/> }));
-vi.mock('../components/ReferralInvitationModal', () => ({ default: () => <div/> }));
-vi.mock('../components/ChatModal', () => ({ default: () => <div/> }));
-vi.mock('../components/ProviderJobCard', () => ({ default: () => <div/> }));
-vi.mock('../components/JobCard', () => ({ default: () => <div/> }));
+vi.mock('../components/ProviderDashboardSkeleton', () => ({
+  default: () => <div data-testid="skeleton">Loading...</div>,
+}));
+vi.mock('../components/ProfileStrength', () => ({ default: () => <div /> }));
+vi.mock('../components/ProfileTips', () => ({ default: () => <div /> }));
+vi.mock('../components/ReferralProgram', () => ({ default: () => <div /> }));
+vi.mock('../components/PaymentSetupCard', () => ({ default: () => <div /> }));
+vi.mock('../components/ProviderEarningsCard', () => ({ default: () => <div /> }));
+vi.mock('../components/ProposalModal', () => ({ default: () => <div /> }));
+vi.mock('../components/AuctionRoomModal', () => ({ default: () => <div /> }));
+vi.mock('../components/ProfileModal', () => ({ default: () => <div /> }));
+vi.mock('../components/ReferralInvitationModal', () => ({ default: () => <div /> }));
+vi.mock('../components/ChatModal', () => ({ default: () => <div /> }));
+vi.mock('../components/ProviderJobCard', () => ({ default: () => <div /> }));
+vi.mock('../components/JobCard', () => ({ default: () => <div /> }));
 
 vi.mock('../components/useProviderDashboardData', () => ({
   useProviderDashboardData: () => ({
@@ -36,7 +38,7 @@ vi.mock('../components/useProviderDashboardData', () => ({
       setAllMessages: vi.fn(),
     },
     isLoading: false,
-  })
+  }),
 }));
 
 vi.mock('../contexts/ToastContext', () => ({
@@ -45,10 +47,10 @@ vi.mock('../contexts/ToastContext', () => ({
 }));
 
 const base = {
-  email:'prov@ex.com',
-  name:'Prestador',
-  type:'prestador',
-  specialties:[],
+  email: 'prov@ex.com',
+  name: 'Prestador',
+  type: 'prestador',
+  specialties: [],
 } as any;
 
 describe('ProviderDashboard – verificação & onboarding', () => {

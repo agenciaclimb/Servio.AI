@@ -7,12 +7,12 @@ import type { User, Job, Proposal, _Message } from '../types';
 
 // Mock de skeleton component
 vi.mock('../components/skeletons/ProviderDashboardSkeleton', () => ({
-  default: () => <div data-testid="skeleton" />
+  default: () => <div data-testid="skeleton" />,
 }));
 
 // Mock de ProfileTips para evitar efeitos assíncronos que geram warnings de act
 vi.mock('../components/ProfileTips', () => ({
-  default: () => <div data-testid="profile-tips" />
+  default: () => <div data-testid="profile-tips" />,
 }));
 
 // Mock de useNavigate
@@ -20,7 +20,7 @@ vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
   return {
     ...actual,
-    useNavigate: () => vi.fn()
+    useNavigate: () => vi.fn(),
   };
 });
 
@@ -37,9 +37,9 @@ describe('ProviderDashboard', () => {
       categories: ['encanamento', 'eletricista'],
       rating: 4.8,
       completedJobs: 50,
-      location: { city: 'São Paulo', state: 'SP' }
+      location: { city: 'São Paulo', state: 'SP' },
     },
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   };
 
   const _mockJobs: Job[] = [
@@ -55,8 +55,8 @@ describe('ProviderDashboard', () => {
       status: 'aberto',
       budget: 150,
       location: { city: 'São Paulo', state: 'SP' },
-      createdAt: new Date().toISOString()
-    }
+      createdAt: new Date().toISOString(),
+    },
   ];
 
   const _mockProposals: Proposal[] = [
@@ -68,8 +68,8 @@ describe('ProviderDashboard', () => {
       description: 'Posso fazer hoje',
       estimatedDuration: '2h',
       status: 'pendente',
-      createdAt: new Date().toISOString()
-    }
+      createdAt: new Date().toISOString(),
+    },
   ];
 
   const renderDashboard = (props = {}) => {
@@ -79,7 +79,7 @@ describe('ProviderDashboard', () => {
       onPlaceBid: vi.fn(),
       disableOnboarding: true,
       disableSkeleton: true,
-      ...props
+      ...props,
     };
 
     return render(
@@ -103,9 +103,9 @@ describe('ProviderDashboard', () => {
   it('exibe onboarding para provedor não verificado quando não desabilitado', () => {
     const unverifiedUser = {
       ...mockUser,
-      verificationStatus: 'pendente'
+      verificationStatus: 'pendente',
     };
-    
+
     renderDashboard({ user: unverifiedUser, disableOnboarding: false });
 
     // Deve exibir onboarding quando não verificado
@@ -115,14 +115,12 @@ describe('ProviderDashboard', () => {
   it('bypassa onboarding quando disableOnboarding=true', () => {
     const unverifiedUser = {
       ...mockUser,
-      verificationStatus: 'pendente'
+      verificationStatus: 'pendente',
     };
-    
+
     renderDashboard({ user: unverifiedUser, disableOnboarding: true });
 
     // Dashboard é renderizado mesmo não verificado
     expect(screen.getByText(/Força do Perfil/i)).toBeInTheDocument();
   });
 });
-
-

@@ -64,7 +64,7 @@ The service worker (`public/firebase-messaging-sw.js`) is automatically register
 Already handled automatically in `App.tsx`. Can also call manually:
 
 ```typescript
-import { registerUserFcmToken } from "./services/messagingService";
+import { registerUserFcmToken } from './services/messagingService';
 
 await registerUserFcmToken(currentUser.email);
 ```
@@ -74,19 +74,19 @@ await registerUserFcmToken(currentUser.email);
 In `functions/index.js` (already scaffolded with TODO):
 
 ```javascript
-const admin = require("firebase-admin");
+const admin = require('firebase-admin');
 
-const userDoc = await db.collection("users").doc(recipientId).get();
+const userDoc = await db.collection('users').doc(recipientId).get();
 if (userDoc.exists && userDoc.data().fcmToken) {
   await admin.messaging().send({
     token: userDoc.data().fcmToken,
     notification: {
-      title: "Nova Mensagem",
+      title: 'Nova Mensagem',
       body: notification.text,
     },
     webpush: {
       fcmOptions: {
-        link: "https://servio.ai/dashboard",
+        link: 'https://servio.ai/dashboard',
       },
     },
   });

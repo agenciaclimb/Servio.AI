@@ -1,9 +1,9 @@
 /**
  * 🎯 JORNADA COMPLETA DO PRESTADOR - Teste E2E
- * 
+ *
  * Cobre: Cadastro → Onboarding (4 steps + Stripe Connect) → Aprovação Admin →
  *        Ver Jobs → Propor → Aceito → Executar → Marcar Concluído → Receber Pagamento
- * 
+ *
  * Este teste garante que TODO o fluxo do prestador funciona end-to-end
  */
 
@@ -22,7 +22,7 @@ vi.mock('../src/services/geminiService');
 vi.mock('../src/firebaseConfig', () => ({
   auth: {
     currentUser: null,
-    onAuthStateChanged: vi.fn((callback) => {
+    onAuthStateChanged: vi.fn(callback => {
       callback(null);
       return vi.fn();
     }),
@@ -39,7 +39,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
   beforeEach(() => {
     user = userEvent.setup();
     vi.clearAllMocks();
-    
+
     mockApi.fetchUser.mockResolvedValue(null);
     mockApi.fetchJobs.mockResolvedValue([]);
     mockApi.fetchProviders.mockResolvedValue([]);
@@ -55,7 +55,9 @@ describe('🎯 Jornada Completa do Prestador', () => {
     );
 
     // Clicar no botão "Seja um Prestador"
-    const sejaPrestadorButton = await screen.findByRole('button', { name: /seja um prestador|quero prestar/i });
+    const sejaPrestadorButton = await screen.findByRole('button', {
+      name: /seja um prestador|quero prestar/i,
+    });
     await user.click(sejaPrestadorButton);
 
     // Modal de autenticação deve abrir com opção de prestador
@@ -70,7 +72,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
     const emailInput = within(modal).getByLabelText(/email/i);
     const senhaInput = within(modal).getByLabelText(/senha/i);
     const nomeInput = within(modal).getByLabelText(/nome/i);
-    
+
     await user.type(emailInput, 'prestador-teste@example.com');
     await user.type(senhaInput, 'senha123456');
     await user.type(nomeInput, 'João Prestador');
@@ -185,7 +187,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
     // Selecionar especialidades (mínimo 1, máximo 10)
     const encanamentoCheckbox = screen.getByLabelText(/encanamento/i);
     const eletricistaCheckbox = screen.getByLabelText(/eletricista|elétrica/i);
-    
+
     await user.click(encanamentoCheckbox);
     await user.click(eletricistaCheckbox);
 
@@ -299,7 +301,9 @@ describe('🎯 Jornada Completa do Prestador', () => {
     window.location.assign = mockRedirect as any;
 
     // Clicar no botão de conectar Stripe
-    const connectStripeButton = screen.getByRole('button', { name: /conectar stripe|vincular conta/i });
+    const connectStripeButton = screen.getByRole('button', {
+      name: /conectar stripe|vincular conta/i,
+    });
     await user.click(connectStripeButton);
 
     // Verificar que a conta foi criada
@@ -309,9 +313,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
 
     // Verificar redirecionamento para Stripe
     await waitFor(() => {
-      expect(mockRedirect).toHaveBeenCalledWith(
-        expect.stringContaining('connect.stripe.com')
-      );
+      expect(mockRedirect).toHaveBeenCalledWith(expect.stringContaining('connect.stripe.com'));
     });
   });
 
@@ -468,7 +470,10 @@ describe('🎯 Jornada Completa do Prestador', () => {
     // Editar mensagem
     const messageTextarea = within(proposalModal).getByLabelText(/mensagem/i);
     await user.clear(messageTextarea);
-    await user.type(messageTextarea, 'Olá! Posso fazer hoje às 14h. Preço: R$ 120. Trabalho garantido!');
+    await user.type(
+      messageTextarea,
+      'Olá! Posso fazer hoje às 14h. Preço: R$ 120. Trabalho garantido!'
+    );
 
     // Mock enviar proposta
     mockApi.createProposal.mockResolvedValue({
@@ -594,12 +599,12 @@ describe('🎯 Jornada Completa do Prestador', () => {
 
     // Marcar como "A caminho"
     const aCaminhoButton = await screen.findByRole('button', { name: /a caminho|estou indo/i });
-    
+
     mockApi.updateJobStatus.mockResolvedValue({
       ...mockJob,
       status: 'on_the_way',
     });
-    
+
     await user.click(aCaminhoButton);
 
     await waitFor(() => {
@@ -609,12 +614,12 @@ describe('🎯 Jornada Completa do Prestador', () => {
 
     // Marcar como "Em andamento"
     const emAndamentoButton = await screen.findByRole('button', { name: /em andamento|iniciar/i });
-    
+
     mockApi.updateJobStatus.mockResolvedValue({
       ...mockJob,
       status: 'in_progress',
     });
-    
+
     await user.click(emAndamentoButton);
 
     await waitFor(() => {
@@ -624,12 +629,12 @@ describe('🎯 Jornada Completa do Prestador', () => {
 
     // Marcar como "Concluído"
     const concluidoButton = await screen.findByRole('button', { name: /concluir|finalizar/i });
-    
+
     mockApi.updateJobStatus.mockResolvedValue({
       ...mockJob,
       status: 'awaiting_review',
     });
-    
+
     await user.click(concluidoButton);
 
     await waitFor(() => {
@@ -667,7 +672,7 @@ describe('🎯 Jornada Completa do Prestador', () => {
         jobId: 'job-1',
         providerId: 'prov-123',
         amount: 120,
-        commission: 0.20, // 20% da plataforma
+        commission: 0.2, // 20% da plataforma
         netAmount: 96, // R$ 96 para o prestador (80%)
         status: 'paid',
         paidAt: new Date().toISOString(),
@@ -776,7 +781,9 @@ describe('🎯 Jornada Completa do Prestador', () => {
 
     // Confirmação
     await waitFor(() => {
-      expect(within(auctionModal).getByText(/lance enviado|você está ganhando/i)).toBeInTheDocument();
+      expect(
+        within(auctionModal).getByText(/lance enviado|você está ganhando/i)
+      ).toBeInTheDocument();
     });
   });
 });

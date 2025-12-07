@@ -12,7 +12,10 @@ export interface WhatsAppSendResult {
   error?: string;
 }
 
-export async function sendWhatsAppInvite(providerPhone: string, template: string): Promise<WhatsAppSendResult> {
+export async function sendWhatsAppInvite(
+  providerPhone: string,
+  template: string
+): Promise<WhatsAppSendResult> {
   if (!providerPhone) {
     return { success: false, provider: providerPhone, template, error: 'missing_phone' };
   }

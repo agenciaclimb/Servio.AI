@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { applyAdvancedFilters, useAdvancedFiltersHook, type FilterCondition } from '../useAdvancedFilters';
+import {
+  applyAdvancedFilters,
+  useAdvancedFiltersHook,
+  type FilterCondition,
+} from '../useAdvancedFilters';
 import type { ProspectLead } from '../../components/ProspectorCRM';
 
 // Mock data
@@ -20,7 +24,7 @@ const mockLeads: ProspectLead[] = [
     createdAt: new Date('2025-01-01'),
     updatedAt: new Date('2025-01-01'),
     lastActivity: new Date('2025-11-30'),
-    activities: []
+    activities: [],
   },
   {
     id: '2',
@@ -36,7 +40,7 @@ const mockLeads: ProspectLead[] = [
     priority: 'medium',
     createdAt: new Date('2025-02-01'),
     updatedAt: new Date('2025-02-01'),
-    activities: []
+    activities: [],
   },
   {
     id: '3',
@@ -52,15 +56,15 @@ const mockLeads: ProspectLead[] = [
     priority: 'low',
     createdAt: new Date('2025-03-01'),
     updatedAt: new Date('2025-03-01'),
-    activities: []
-  }
+    activities: [],
+  },
 ];
 
 describe('applyAdvancedFilters', () => {
   describe('Operador contains', () => {
     it('deve filtrar por substring case insensitive', () => {
       const conditions: FilterCondition[] = [
-        { field: 'name', operator: 'contains', value: 'joão' }
+        { field: 'name', operator: 'contains', value: 'joão' },
       ];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(1);
@@ -69,7 +73,7 @@ describe('applyAdvancedFilters', () => {
 
     it('deve retornar vazio se substring não encontrada', () => {
       const conditions: FilterCondition[] = [
-        { field: 'name', operator: 'contains', value: 'inexistente' }
+        { field: 'name', operator: 'contains', value: 'inexistente' },
       ];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(0);
@@ -79,7 +83,7 @@ describe('applyAdvancedFilters', () => {
   describe('Operador equals', () => {
     it('deve filtrar por igualdade exata (string)', () => {
       const conditions: FilterCondition[] = [
-        { field: 'temperature', operator: 'equals', value: 'hot' }
+        { field: 'temperature', operator: 'equals', value: 'hot' },
       ];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(1);
@@ -87,9 +91,7 @@ describe('applyAdvancedFilters', () => {
     });
 
     it('deve filtrar por igualdade exata (number)', () => {
-      const conditions: FilterCondition[] = [
-        { field: 'score', operator: 'equals', value: 45 }
-      ];
+      const conditions: FilterCondition[] = [{ field: 'score', operator: 'equals', value: 45 }];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(1);
       expect(result[0].score).toBe(45);
@@ -99,7 +101,7 @@ describe('applyAdvancedFilters', () => {
   describe('Operadores startsWith/endsWith', () => {
     it('deve filtrar por prefixo case insensitive', () => {
       const conditions: FilterCondition[] = [
-        { field: 'name', operator: 'startsWith', value: 'maria' }
+        { field: 'name', operator: 'startsWith', value: 'maria' },
       ];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(1);
@@ -108,7 +110,7 @@ describe('applyAdvancedFilters', () => {
 
     it('deve filtrar por sufixo', () => {
       const conditions: FilterCondition[] = [
-        { field: 'phone', operator: 'endsWith', value: '321' }
+        { field: 'phone', operator: 'endsWith', value: '321' },
       ];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(1);
@@ -118,36 +120,28 @@ describe('applyAdvancedFilters', () => {
 
   describe('Operadores numéricos', () => {
     it('deve filtrar por maior que (gt)', () => {
-      const conditions: FilterCondition[] = [
-        { field: 'score', operator: 'gt', value: 50 }
-      ];
+      const conditions: FilterCondition[] = [{ field: 'score', operator: 'gt', value: 50 }];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(1);
       expect(result[0].score).toBe(75);
     });
 
     it('deve filtrar por menor que (lt)', () => {
-      const conditions: FilterCondition[] = [
-        { field: 'score', operator: 'lt', value: 40 }
-      ];
+      const conditions: FilterCondition[] = [{ field: 'score', operator: 'lt', value: 40 }];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(1);
       expect(result[0].score).toBe(30);
     });
 
     it('deve filtrar por maior ou igual (gte)', () => {
-      const conditions: FilterCondition[] = [
-        { field: 'score', operator: 'gte', value: 45 }
-      ];
+      const conditions: FilterCondition[] = [{ field: 'score', operator: 'gte', value: 45 }];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(2);
       expect(result.map(l => l.score).sort()).toEqual([45, 75]);
     });
 
     it('deve filtrar por menor ou igual (lte)', () => {
-      const conditions: FilterCondition[] = [
-        { field: 'score', operator: 'lte', value: 45 }
-      ];
+      const conditions: FilterCondition[] = [{ field: 'score', operator: 'lte', value: 45 }];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(2);
       expect(result.map(l => l.score).sort()).toEqual([30, 45]);
@@ -157,7 +151,7 @@ describe('applyAdvancedFilters', () => {
   describe('Operadores de array', () => {
     it('deve filtrar por inclusão (in)', () => {
       const conditions: FilterCondition[] = [
-        { field: 'source', operator: 'in', value: ['referral', 'event'] }
+        { field: 'source', operator: 'in', value: ['referral', 'event'] },
       ];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(2);
@@ -166,7 +160,7 @@ describe('applyAdvancedFilters', () => {
 
     it('deve filtrar por exclusão (notIn)', () => {
       const conditions: FilterCondition[] = [
-        { field: 'temperature', operator: 'notIn', value: ['cold'] }
+        { field: 'temperature', operator: 'notIn', value: ['cold'] },
       ];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(2);
@@ -176,18 +170,14 @@ describe('applyAdvancedFilters', () => {
 
   describe('Operadores de existência', () => {
     it('deve filtrar por campo existente (exists)', () => {
-      const conditions: FilterCondition[] = [
-        { field: 'email', operator: 'exists' }
-      ];
+      const conditions: FilterCondition[] = [{ field: 'email', operator: 'exists' }];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(2);
       expect(result.every(l => l.email != null && l.email !== '')).toBe(true);
     });
 
     it('deve filtrar por campo não existente (notExists)', () => {
-      const conditions: FilterCondition[] = [
-        { field: 'email', operator: 'notExists' }
-      ];
+      const conditions: FilterCondition[] = [{ field: 'email', operator: 'notExists' }];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(1);
       expect(result[0].email).toBeUndefined();
@@ -198,7 +188,7 @@ describe('applyAdvancedFilters', () => {
     it('deve aplicar todas as condições (AND lógico)', () => {
       const conditions: FilterCondition[] = [
         { field: 'temperature', operator: 'equals', value: 'hot' },
-        { field: 'score', operator: 'gte', value: 70 }
+        { field: 'score', operator: 'gte', value: 70 },
       ];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(1);
@@ -208,7 +198,7 @@ describe('applyAdvancedFilters', () => {
     it('deve retornar vazio se qualquer condição falhar', () => {
       const conditions: FilterCondition[] = [
         { field: 'temperature', operator: 'equals', value: 'hot' },
-        { field: 'score', operator: 'lt', value: 50 } // João tem score 75
+        { field: 'score', operator: 'lt', value: 50 }, // João tem score 75
       ];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(0);
@@ -223,7 +213,7 @@ describe('applyAdvancedFilters', () => {
 
     it('deve lidar com lista vazia de leads', () => {
       const conditions: FilterCondition[] = [
-        { field: 'name', operator: 'contains', value: 'test' }
+        { field: 'name', operator: 'contains', value: 'test' },
       ];
       const result = applyAdvancedFilters([], conditions);
       expect(result).toHaveLength(0);
@@ -231,7 +221,7 @@ describe('applyAdvancedFilters', () => {
 
     it('deve normalizar strings apenas uma vez (performance)', () => {
       const conditions: FilterCondition[] = [
-        { field: 'name', operator: 'contains', value: 'JOÃO' }
+        { field: 'name', operator: 'contains', value: 'JOÃO' },
       ];
       const result = applyAdvancedFilters(mockLeads, conditions);
       expect(result).toHaveLength(1);
@@ -250,7 +240,7 @@ describe('useAdvancedFiltersHook', () => {
     it('deve aplicar filtros imediatamente', () => {
       const { result } = renderHook(() => useAdvancedFiltersHook(100));
       const conditions: FilterCondition[] = [
-        { field: 'temperature', operator: 'equals', value: 'hot' }
+        { field: 'temperature', operator: 'equals', value: 'hot' },
       ];
       const filtered = result.current.runImmediate(mockLeads, conditions);
       expect(filtered).toHaveLength(1);
@@ -262,7 +252,7 @@ describe('useAdvancedFiltersHook', () => {
     it('deve retornar resultado cacheado para mesmas condições', () => {
       const { result } = renderHook(() => useAdvancedFiltersHook(100));
       const conditions: FilterCondition[] = [
-        { field: 'temperature', operator: 'equals', value: 'hot' }
+        { field: 'temperature', operator: 'equals', value: 'hot' },
       ];
 
       // Primeira chamada
@@ -276,11 +266,9 @@ describe('useAdvancedFiltersHook', () => {
 
     it('deve recalcular quando condições mudarem', () => {
       const { result } = renderHook(() => useAdvancedFiltersHook(100));
-      const cond1: FilterCondition[] = [
-        { field: 'temperature', operator: 'equals', value: 'hot' }
-      ];
+      const cond1: FilterCondition[] = [{ field: 'temperature', operator: 'equals', value: 'hot' }];
       const cond2: FilterCondition[] = [
-        { field: 'temperature', operator: 'equals', value: 'warm' }
+        { field: 'temperature', operator: 'equals', value: 'warm' },
       ];
 
       const first = result.current.runMemoized(mockLeads, cond1);
@@ -299,7 +287,7 @@ describe('useAdvancedFiltersHook', () => {
       const { result } = renderHook(() => useAdvancedFiltersHook(100));
       const callback = vi.fn();
       const conditions: FilterCondition[] = [
-        { field: 'name', operator: 'contains', value: 'joão' }
+        { field: 'name', operator: 'contains', value: 'joão' },
       ];
 
       act(() => {
@@ -319,12 +307,8 @@ describe('useAdvancedFiltersHook', () => {
     it('deve cancelar timeout anterior em chamadas rápidas', () => {
       const { result } = renderHook(() => useAdvancedFiltersHook(100));
       const callback = vi.fn();
-      const cond1: FilterCondition[] = [
-        { field: 'name', operator: 'contains', value: 'joão' }
-      ];
-      const cond2: FilterCondition[] = [
-        { field: 'name', operator: 'contains', value: 'maria' }
-      ];
+      const cond1: FilterCondition[] = [{ field: 'name', operator: 'contains', value: 'joão' }];
+      const cond2: FilterCondition[] = [{ field: 'name', operator: 'contains', value: 'maria' }];
 
       act(() => {
         result.current.runDebounced(mockLeads, cond1, callback);
@@ -347,7 +331,7 @@ describe('useAdvancedFiltersHook', () => {
       const { result } = renderHook(() => useAdvancedFiltersHook(200)); // 200ms custom
       const callback = vi.fn();
       const conditions: FilterCondition[] = [
-        { field: 'name', operator: 'contains', value: 'pedro' }
+        { field: 'name', operator: 'contains', value: 'pedro' },
       ];
 
       act(() => {
