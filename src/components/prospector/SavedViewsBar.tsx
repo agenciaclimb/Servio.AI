@@ -1,13 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { db } from '../../../firebaseConfig';
 import { collection, addDoc, getDocs, deleteDoc, doc, Timestamp } from 'firebase/firestore';
+
+interface FilterCondition {
+  field?: string;
+  operator?: string;
+  value?: unknown;
+  [key: string]: unknown;
+}
 
 interface SavedView {
   id: string;
   name: string;
   prospectorId: string;
   density: 'compact' | 'detailed';
-  conditions: any[];
+  conditions: FilterCondition[];
   createdAt: Date;
   description?: string;
 }
@@ -22,8 +29,8 @@ export default function SavedViewsBar({
   prospectorId: string;
   density: 'compact' | 'detailed';
   setDensity: (d: 'compact' | 'detailed') => void;
-  conditions: any[];
-  setConditions: (c: any[]) => void;
+  conditions: FilterCondition[];
+  setConditions: (c: FilterCondition[]) => void;
 }) {
   const [views, setViews] = useState<SavedView[]>([]);
   const [loading, setLoading] = useState(false);
@@ -61,9 +68,11 @@ export default function SavedViewsBar({
     }
   }
 
+  const memoLoadViews = useCallback(loadViews, [prospectorId]);
+
   useEffect(() => {
-    loadViews();
-  }, [prospectorId]);
+    memoLoadViews();
+  }, [memoLoadViews]);
 
   async function saveView() {
     if (!newViewName.trim()) {
