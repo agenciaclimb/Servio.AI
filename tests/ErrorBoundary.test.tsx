@@ -67,5 +67,3 @@ describe('ErrorBoundary', () => {
     expect(preElements.length).toBeGreaterThanOrEqual(1);
   });
 });
-
-

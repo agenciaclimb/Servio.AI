@@ -61,10 +61,10 @@ whois servioai.com
 
 ### Decisão
 
-- [ ] Domínio escolhido: ******\_\_\_\_******
-- [ ] Registrado em: ******\_\_\_\_******
-- [ ] Data de registro: ******\_\_\_\_******
-- [ ] Data de expiração: ******\_\_\_\_******
+- [ ] Domínio escolhido: **\*\***\_\_\_\_**\*\***
+- [ ] Registrado em: **\*\***\_\_\_\_**\*\***
+- [ ] Data de registro: **\*\***\_\_\_\_**\*\***
+- [ ] Data de expiração: **\*\***\_\_\_\_**\*\***
 
 ---
 

@@ -19,7 +19,7 @@ const MOCK_COORDS: { [key: string]: { top: string; left: string } } = {
   'Curitiba, PR': { top: '75%', left: '49%' },
   'Florianópolis, SC': { top: '78%', left: '51%' },
   // Default fallback
-  'default': { top: '50%', left: '50%' }
+  default: { top: '50%', left: '50%' },
 };
 
 const LocationMap: React.FC<LocationMapProps> = ({ locations }) => {

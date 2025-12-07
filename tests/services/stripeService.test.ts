@@ -92,9 +92,7 @@ describe('Stripe Service (Frontend)', () => {
     });
 
     it('should handle network timeout during session creation', async () => {
-      (global.fetch as any).mockRejectedValueOnce(
-        new Error('The user aborted a fetch request.')
-      );
+      (global.fetch as any).mockRejectedValueOnce(new Error('The user aborted a fetch request.'));
 
       try {
         await fetch('/api/create-checkout-session', {

@@ -3,26 +3,28 @@
 ## 🎯 Scripts de Apresentação
 
 ### Script 1: Pitch Rápido (30 segundos)
-```
-Oi [Nome], tudo bem? 
 
-Você conhece a Servio.AI? É uma plataforma que conecta prestadores de serviço 
+```
+Oi [Nome], tudo bem?
+
+Você conhece a Servio.AI? É uma plataforma que conecta prestadores de serviço
 como você com clientes que precisam exatamente do que você faz.
 
-O melhor: você só paga uma pequena comissão quando FECHAR um serviço. 
+O melhor: você só paga uma pequena comissão quando FECHAR um serviço.
 Nada de mensalidade, nada de custo fixo.
 
 Quer dar uma olhada? Te mando o link para criar seu perfil gratuitamente.
 ```
 
 ### Script 2: Apresentação Completa (2 minutos)
+
 ```
 Oi [Nome]!
 
-Vi seu trabalho em [onde você viu - Instagram/indicação/etc] e fiquei impressionado 
+Vi seu trabalho em [onde você viu - Instagram/indicação/etc] e fiquei impressionado
 com a qualidade. Queria te apresentar uma oportunidade.
 
-A Servio.AI é uma plataforma que está revolucionando como prestadores de serviço 
+A Servio.AI é uma plataforma que está revolucionando como prestadores de serviço
 encontram clientes. Funciona assim:
 
 ✅ Você cria um perfil GRATUITO com seu portfólio
@@ -43,6 +45,7 @@ Quer entrar? Vou te mandar o link com um código especial de cadastro.
 ```
 
 ### Script 3: Para Grupos e Redes Sociais
+
 ```
 🚀 OPORTUNIDADE PARA PRESTADORES DE SERVIÇO 🚀
 
@@ -67,25 +70,28 @@ Dúvidas? Chama no direct!
 ## 💬 Respostas para Objeções Comuns
 
 ### "Por que tenho que pagar comissão?"
+
 **Resposta:**
-"Entendo sua preocupação! Mas pensa assim: você só paga quando GANHA. 
+"Entendo sua preocupação! Mas pensa assim: você só paga quando GANHA.
 É diferente de anúncio no Google ou Instagram onde você paga e pode não vir cliente nenhum.
 
 Aqui, se você fez R$ 1.000 em um serviço, você paga R$ 150 e leva R$ 850 limpos.
 Sem risco, sem investimento inicial. É praticamente um sócio que só ganha quando você ganha!"
 
 ### "Já tenho meus clientes"
+
 **Resposta:**
 "Que ótimo que você já tem uma base! A Servio.AI não é para substituir, é para SOMAR.
 
-Pensa: nos dias que você tá livre, ou quando termina um serviço mais cedo, 
-a plataforma pode te trazer trabalho extra. É uma forma de aumentar sua renda 
+Pensa: nos dias que você tá livre, ou quando termina um serviço mais cedo,
+a plataforma pode te trazer trabalho extra. É uma forma de aumentar sua renda
 sem depender só de indicação.
 
-E o melhor: você não perde nada testando. Cria o perfil, e se aparecer serviço 
+E o melhor: você não perde nada testando. Cria o perfil, e se aparecer serviço
 na sua região, você decide se quer ou não."
 
 ### "Não confio em plataforma online"
+
 **Resposta:**
 "Entendo 100%! Por isso a Servio.AI tem algumas proteções:
 
@@ -98,34 +104,38 @@ Além disso, já tem [X] prestadores usando e a nota média é [Y] estrelas.
 Quer ver alguns depoimentos?"
 
 ### "É muito caro, 15% é muito"
+
 **Resposta:**
 "Vou te mostrar a conta real:
 
 Opção 1 (marketing tradicional):
+
 - Panfleto: R$ 200/mês
-- Google Ads: R$ 500/mês  
+- Google Ads: R$ 500/mês
 - Instagram: R$ 300/mês
-= R$ 1.000/mês SEM GARANTIA de cliente
+  = R$ 1.000/mês SEM GARANTIA de cliente
 
 Opção 2 (Servio.AI):
+
 - Cadastro: R$ 0
 - Mensalidade: R$ 0
 - Comissão: só paga se trabalhar
 
-Se você fizer R$ 4.000 em serviços no mês, vai pagar R$ 600 de comissão 
+Se você fizer R$ 4.000 em serviços no mês, vai pagar R$ 600 de comissão
 e ainda economizar R$ 400 comparado com marketing tradicional.
 
 Faz sentido?"
 
 ### "Vou pensar"
+
 **Resposta:**
-"Tranquilo! Mas deixa eu te fazer uma pergunta: quanto tempo você gasta 
+"Tranquilo! Mas deixa eu te fazer uma pergunta: quanto tempo você gasta
 por semana buscando cliente novo? 2h? 5h? 10h?
 
-O cadastro leva 10 minutos. E se nos próximos 30 dias você conseguir 
+O cadastro leva 10 minutos. E se nos próximos 30 dias você conseguir
 NEM QUE SEJA 1 serviço extra, já valeu a pena.
 
-Que tal criar o perfil hoje e testar por 1 mês? Se não gostar, só não aceitar 
+Que tal criar o perfil hoje e testar por 1 mês? Se não gostar, só não aceitar
 mais propostas. Sem multa, sem compromisso."
 
 ---
@@ -133,36 +143,39 @@ mais propostas. Sem multa, sem compromisso."
 ## 📱 Mensagens WhatsApp Personalizáveis
 
 ### Primeiro Contato
+
 ```
 Oi [Nome]! 👋
 
 Vi que você trabalha com [serviço] e queria te mostrar uma coisa legal.
 
-Conhece a Servio.AI? É uma plataforma que tá ajudando prestadores como você 
+Conhece a Servio.AI? É uma plataforma que tá ajudando prestadores como você
 a encontrar mais clientes.
 
-O cadastro é gratuito e você só paga se fechar serviço. 
+O cadastro é gratuito e você só paga se fechar serviço.
 
 Posso te mandar mais detalhes? 😊
 ```
 
 ### Follow-up (48h depois)
+
 ```
 Oi [Nome]!
 
 Conseguiu dar uma olhada na Servio.AI?
 
-Deixa eu resumir em uma frase: é como se fosse um Uber para prestadores 
+Deixa eu resumir em uma frase: é como se fosse um Uber para prestadores
 de serviço. Clientes pedem, você aceita, faz o trabalho, recebe.
 
 Quer que eu te ajude a criar o perfil? Leva 5 minutos! 🚀
 ```
 
 ### Follow-up 2 (Caso de sucesso)
+
 ```
 [Nome], só passando aqui de novo! 😊
 
-Acabei de saber que o [outro prestador] fechou R$ 2.400 em serviços 
+Acabei de saber que o [outro prestador] fechou R$ 2.400 em serviços
 essa semana usando a Servio.AI.
 
 Achei que você ia querer saber. Quer entrar também?
@@ -175,18 +188,21 @@ Mando o link: [seu link]
 ## 🎁 Benefícios para Destacar
 
 ### Para Prestadores Iniciantes:
+
 - ✅ Credibilidade instantânea (plataforma séria)
 - ✅ Portfolio digital profissional
 - ✅ Primeiras avaliações
 - ✅ Suporte para precificação
 
 ### Para Prestadores Experientes:
+
 - ✅ Escala (atender mais clientes)
 - ✅ Otimização de agenda (serviços na sua rota)
 - ✅ Diversificação (não depender de poucos clientes)
 - ✅ Analytics (quantos orçamentos, taxa de conversão)
 
 ### Para Todos:
+
 - ✅ Pagamento garantido (plataforma retém até finalizar)
 - ✅ Sem surpresas (você vê o serviço antes de aceitar)
 - ✅ Flexibilidade total (aceita quando quer)
@@ -197,6 +213,7 @@ Mando o link: [seu link]
 ## 📊 Argumentos com Dados
 
 ### Use estes números em suas conversas:
+
 - "Já temos mais de [X] prestadores cadastrados"
 - "Taxa média de conversão de 35% (de cada 3 propostas, 1 vira serviço)"
 - "Ticket médio de R$ [X] por serviço"
@@ -208,24 +225,28 @@ Mando o link: [seu link]
 ## 🎯 Técnicas de Prospecção Eficazes
 
 ### 1. Prospecção em Grupos do Facebook
+
 - Entre em grupos de serviços da sua cidade
 - Poste ofertas de forma educativa, não spam
 - Responda perguntas e seja útil
 - Envie DM para quem demonstrar interesse
 
 ### 2. Instagram Local
+
 - Busque hashtags: #eletricistasp #encanadorsp
 - Comente posts de forma genuína
 - Ofereça valor antes de pedir cadastro
 - Use stories para mostrar benefícios
 
 ### 3. Indicação Presencial
+
 - Fale com prestadores que você conhece pessoalmente
 - Mostre o app no celular (visual convence)
 - Ofereça ajuda no cadastro
 - Foque em 1 ou 2 pessoas por dia
 
 ### 4. Pontos Estratégicos
+
 - Lojas de material de construção
 - Feiras de casa e decoração
 - Eventos de empreendedorismo
@@ -236,6 +257,7 @@ Mando o link: [seu link]
 ## ✅ Checklist do Prospector de Sucesso
 
 ### Toda Semana:
+
 - [ ] Contatar pelo menos 20 novos prestadores
 - [ ] Fazer follow-up de 10 contatos anteriores
 - [ ] Ajudar 3 prestadores a completarem o cadastro
@@ -243,6 +265,7 @@ Mando o link: [seu link]
 - [ ] Checar seu dashboard de métricas
 
 ### Todo Mês:
+
 - [ ] Coletar feedback de 5 prestadores recrutados
 - [ ] Otimizar suas mensagens (teste A/B)
 - [ ] Identificar novas fontes de prospecção
@@ -269,7 +292,7 @@ Mando o link: [seu link]
 
 ---
 
-**Lembre-se**: Você não está vendendo, está OFERECENDO uma oportunidade real 
+**Lembre-se**: Você não está vendendo, está OFERECENDO uma oportunidade real
 de crescimento profissional. Acredite nisso e seu sucesso será natural! 🚀
 
 **Dúvidas?** Entre em contato com o time de suporte a qualquer momento.

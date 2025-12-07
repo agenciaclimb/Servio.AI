@@ -48,11 +48,12 @@
   type="text"
   placeholder="🔍 Buscar por nome, telefone, email ou categoria..."
   value={searchTerm}
-  onChange={(e) => setSearchTerm(e.target.value)}
+  onChange={e => setSearchTerm(e.target.value)}
 />
 ```
 
 **Benefícios**:
+
 - Filtro instantâneo conforme digita
 - Busca em múltiplos campos simultaneamente
 - Botão limpar (X) para resetar rapidamente
@@ -64,14 +65,15 @@
 **Localização**: `ProspectorCRMEnhanced.tsx` (linha ~482)
 
 ```tsx
-{stage.id === 'new' && (
-  <button onClick={() => setShowQuickAddModal(true)}>
-    + Adicionar Lead
-  </button>
-)}
+{
+  stage.id === 'new' && (
+    <button onClick={() => setShowQuickAddModal(true)}>+ Adicionar Lead</button>
+  );
+}
 ```
 
 **Benefícios**:
+
 - Adicionar lead direto na coluna "Novos Leads"
 - Modal compacto com campos essenciais (nome, telefone, email, categoria)
 - Formulário validado automaticamente
@@ -91,6 +93,7 @@ useEffect(() => {
 ```
 
 **Benefícios**:
+
 - Mensagem gerada automaticamente ao abrir
 - Regenera ao trocar canal (WhatsApp → Email → SMS)
 - Template personalizado por stage do lead (new, contacted, negotiating)
@@ -102,17 +105,23 @@ useEffect(() => {
 **Localização**: `ProspectorCRMEnhanced.tsx` (linha ~437)
 
 ```tsx
-{lead.activities && lead.activities.length > 0 && (
-  <div className="text-xs text-gray-500">
-    <div className="font-medium">Últimas atividades:</div>
-    {lead.activities.slice(-2).reverse().map((activity, idx) => (
-      <div key={idx}>• {activity.description}</div>
-    ))}
-  </div>
-)}
+{
+  lead.activities && lead.activities.length > 0 && (
+    <div className="text-xs text-gray-500">
+      <div className="font-medium">Últimas atividades:</div>
+      {lead.activities
+        .slice(-2)
+        .reverse()
+        .map((activity, idx) => (
+          <div key={idx}>• {activity.description}</div>
+        ))}
+    </div>
+  );
+}
 ```
 
 **Benefícios**:
+
 - Contexto imediato sem abrir modal
 - Últimas 2 atividades sempre visíveis
 - Formatação compacta (10px font)
@@ -134,6 +143,7 @@ onChange={(e) => {
 ```
 
 **Benefícios**:
+
 - Formato padronizado: (11) 98765-4321
 - Remove caracteres não numéricos automaticamente
 - Limita a 11 dígitos (DDD + celular)
@@ -155,6 +165,7 @@ onChange={(e) => {
 ```
 
 **Benefícios**:
+
 - Sugestões ao digitar
 - Padronização de nomes de categorias
 - Reduz erros de digitação
@@ -179,6 +190,7 @@ onChange={(e) => {
 ```
 
 **Benefícios**:
+
 - Ações executadas com 1 clique
 - Feedback visual (toast notification)
 - Animação de hover para indicar interatividade
@@ -198,6 +210,7 @@ setTimeout(() => toast.remove(), 3000);
 ```
 
 **Eventos com Toast**:
+
 - ✅ Lead adicionado com sucesso
 - 🎉 Lead convertido (com confetti)
 - 🤖 Ação IA iniciada
@@ -207,13 +220,13 @@ setTimeout(() => toast.remove(), 3000);
 
 ## 📊 Métricas de Produtividade Esperadas
 
-| Ação | Antes | Depois | Economia |
-|------|-------|--------|----------|
-| Adicionar lead | 15s (navegar + preencher) | 5s (quick add) | **67% mais rápido** |
-| Encontrar lead específico | 30s (scroll manual) | 2s (busca) | **93% mais rápido** |
-| Gerar mensagem IA | 8s (clicar + esperar) | 0s (automático) | **100% mais rápido** |
-| Ver contexto do lead | 5s (abrir modal) | 0s (card inline) | **100% mais rápido** |
-| Formatar telefone | 10s (digitar + corrigir) | 3s (máscara auto) | **70% mais rápido** |
+| Ação                      | Antes                     | Depois            | Economia             |
+| ------------------------- | ------------------------- | ----------------- | -------------------- |
+| Adicionar lead            | 15s (navegar + preencher) | 5s (quick add)    | **67% mais rápido**  |
+| Encontrar lead específico | 30s (scroll manual)       | 2s (busca)        | **93% mais rápido**  |
+| Gerar mensagem IA         | 8s (clicar + esperar)     | 0s (automático)   | **100% mais rápido** |
+| Ver contexto do lead      | 5s (abrir modal)          | 0s (card inline)  | **100% mais rápido** |
+| Formatar telefone         | 10s (digitar + corrigir)  | 3s (máscara auto) | **70% mais rápido**  |
 
 **Economia total por lead processado**: ~60 segundos  
 **100 leads/dia**: **1,5 horas economizadas diariamente** 🚀
@@ -223,18 +236,21 @@ setTimeout(() => toast.remove(), 3000);
 ## 🎨 Melhorias de UX/UI
 
 ### Visual Feedback
+
 - **Hover effects**: Scale 1.02x em cards clicáveis
 - **Loading states**: Skeleton screens durante carregamento
 - **Color coding**: Red (urgente), Yellow (médio), Blue (normal)
 - **Animations**: Confetti ao converter, toast slide-in
 
 ### Acessibilidade
+
 - **Placeholders descritivos**: "🔍 Buscar por nome, telefone..."
-- **Labels claros**: "Nome *" (asterisco para obrigatório)
+- **Labels claros**: "Nome \*" (asterisco para obrigatório)
 - **Tooltips**: Hover em ícones mostra ação (WhatsApp, IA Message)
 - **Keyboard shortcuts**: Enter para submeter formulários
 
 ### Responsividade
+
 - **Mobile-first**: Grid adaptativo (5 colunas desktop → 2 mobile)
 - **Touch-friendly**: Botões mínimo 44px altura
 - **Scroll otimizado**: Sticky headers nas colunas kanban
@@ -312,6 +328,7 @@ AIMessageGenerator
 ## 🧪 Como Testar as Melhorias
 
 ### Teste 1: Busca em Tempo Real
+
 1. Acesse Pipeline CRM
 2. Digite "João" no campo de busca
 3. ✅ Apenas leads com "João" devem aparecer
@@ -319,6 +336,7 @@ AIMessageGenerator
 5. ✅ Todos leads voltam
 
 ### Teste 2: Quick Add Lead
+
 1. Vá para coluna "🆕 Novos Leads"
 2. Se vazia, clique em "+ Adicionar Lead"
 3. Preencha: Nome "Teste", Telefone "11987654321"
@@ -328,6 +346,7 @@ AIMessageGenerator
 7. ✅ Lead aparece no kanban
 
 ### Teste 3: Auto-Geração IA
+
 1. Clique em qualquer lead do kanban
 2. ✅ Modal abre com mensagem JÁ gerada
 3. Troque canal para "Email"
@@ -336,6 +355,7 @@ AIMessageGenerator
 6. ✅ Versão curta é gerada
 
 ### Teste 4: Histórico Inline
+
 1. Adicione um lead
 2. Mova-o para "Contatados"
 3. ✅ Card mostra "• Movido para Contatados"

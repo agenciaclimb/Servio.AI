@@ -2,7 +2,10 @@ import { describe, it, expect, vi } from 'vitest';
 import * as API from '../../services/api';
 
 function simulateResponse(status: number, body: any = { message: 'x' }) {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
 
 describe('[E2E-SMOKE] Pagamentos/Stripe Errors', () => {

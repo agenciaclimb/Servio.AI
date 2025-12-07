@@ -1,5 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
-import { handleKeyDown, handleModalOverlayKeyDown, getModalOverlayProps, getModalContentProps } from '../components/utils/a11yHelpers';
+import {
+  handleKeyDown,
+  handleModalOverlayKeyDown,
+  getModalOverlayProps,
+  getModalContentProps,
+} from '../components/utils/a11yHelpers';
 
 describe('a11yHelpers', () => {
   it('handleKeyDown dispara callback em Enter e Espaço e previne default', () => {
@@ -67,4 +72,3 @@ describe('a11yHelpers', () => {
     expect(stopPropagation).not.toHaveBeenCalled();
   });
 });
-

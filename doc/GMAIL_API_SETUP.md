@@ -5,6 +5,7 @@
 Usar **Gmail API** (Google Cloud) para envio de emails transacionais e marketing no Servio.AI.
 
 **Vantagens:**
+
 - ✅ 100% Google (já temos GCP configurado)
 - ✅ Limite generoso: **500 emails/dia** por conta Gmail gratuita
 - ✅ **2.000 emails/dia** com Google Workspace
@@ -17,11 +18,13 @@ Usar **Gmail API** (Google Cloud) para envio de emails transacionais e marketing
 ## 🎯 Estratégia Recomendada
 
 ### Opção 1: Gmail API (Mais Robusto) ⭐ RECOMENDADO
+
 - Melhor para: Alto volume, controle fino, analytics
 - Limite: 500/dia (Gmail) ou 2.000/dia (Workspace)
 - Setup: OAuth2 + Service Account
 
 ### Opção 2: Nodemailer + Gmail SMTP (Mais Simples)
+
 - Melhor para: Setup rápido, menos configuração
 - Limite: 500/dia (Gmail) ou 2.000/dia (Workspace)
 - Setup: App Password do Gmail
@@ -39,6 +42,7 @@ gcloud services list --enabled --project=gen-lang-client-0737507616 | grep gmail
 ```
 
 Ou via Console:
+
 1. Acesse [Google Cloud Console](https://console.cloud.google.com/apis/library/gmail.googleapis.com?project=gen-lang-client-0737507616)
 2. Clique em **ENABLE**
 
@@ -80,6 +84,7 @@ Se você tem Google Workspace:
 ### Passo 4: Implementar Backend Service (Gmail API)
 
 Instalar dependências:
+
 ```bash
 cd backend
 npm install googleapis nodemailer
@@ -195,9 +200,8 @@ class GmailSMTPService {
 }
 
 // Choose which service to use based on environment
-const emailService = process.env.USE_GMAIL_API === 'true' 
-  ? new GmailAPIService() 
-  : new GmailSMTPService();
+const emailService =
+  process.env.USE_GMAIL_API === 'true' ? new GmailAPIService() : new GmailSMTPService();
 
 module.exports = emailService;
 ```
@@ -443,6 +447,7 @@ module.exports = {
 7. Copie a senha de 16 caracteres (formato: `xxxx xxxx xxxx xxxx`)
 
 Adicione ao `.env`:
+
 ```bash
 # Backend .env
 GMAIL_USER=seu-email@gmail.com
@@ -492,6 +497,7 @@ testEmail();
 ```
 
 Executar:
+
 ```bash
 node backend/scripts/test_email.js
 ```
@@ -500,9 +506,9 @@ node backend/scripts/test_email.js
 
 ### Limites do Gmail
 
-| Conta | Limite Diário | Limite por Email |
-|-------|---------------|------------------|
-| Gmail Gratuito | 500 emails/dia | 100 destinatários |
+| Conta            | Limite Diário    | Limite por Email    |
+| ---------------- | ---------------- | ------------------- |
+| Gmail Gratuito   | 500 emails/dia   | 100 destinatários   |
 | Google Workspace | 2.000 emails/dia | 2.000 destinatários |
 
 ### Boas Práticas

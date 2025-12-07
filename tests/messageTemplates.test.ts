@@ -24,7 +24,7 @@ describe('messageTemplates utilities', () => {
     it('should filter templates by platform', () => {
       const whatsappTemplates = getTemplates('whatsapp');
       expect(whatsappTemplates.length).toBeGreaterThan(0);
-      
+
       // All returned templates should be whatsapp or 'all' platform
       whatsappTemplates.forEach(template => {
         expect(['whatsapp', 'all']).toContain(template.platform);
@@ -33,7 +33,7 @@ describe('messageTemplates utilities', () => {
 
     it('should filter templates by platform facebook', () => {
       const facebookTemplates = getTemplates('facebook');
-      
+
       facebookTemplates.forEach(template => {
         expect(['facebook', 'all']).toContain(template.platform);
       });
@@ -41,7 +41,7 @@ describe('messageTemplates utilities', () => {
 
     it('should filter templates by category', () => {
       const templates = getTemplates(undefined, 'Limpeza');
-      
+
       templates.forEach(template => {
         // Category should match or be undefined
         expect(!template.category || template.category === 'Limpeza').toBe(true);
@@ -50,7 +50,7 @@ describe('messageTemplates utilities', () => {
 
     it('should filter by both platform and category', () => {
       const templates = getTemplates('whatsapp', 'Limpeza');
-      
+
       templates.forEach(template => {
         const platformMatch = template.platform === 'whatsapp' || template.platform === 'all';
         const categoryMatch = !template.category || template.category === 'Limpeza';
@@ -90,7 +90,7 @@ describe('messageTemplates utilities', () => {
       if (templates.length > 0) {
         const firstTemplate = templates[0];
         const retrieved = getTemplateById(firstTemplate.id);
-        
+
         expect(retrieved?.id).toBe(firstTemplate.id);
         expect(retrieved?.message).toBe(firstTemplate.message);
         expect(retrieved?.platform).toBe(firstTemplate.platform);
@@ -107,10 +107,10 @@ describe('messageTemplates utilities', () => {
         emoji: '🔗',
         bestTime: '10h-12h',
       };
-      
+
       const link = 'https://servio.ai/ref/abc123';
       const formatted = formatTemplate(template, link);
-      
+
       expect(formatted).toContain(link);
       expect(formatted).not.toContain('[LINK]');
       expect(formatted).toBe('Confira este link: https://servio.ai/ref/abc123');
@@ -125,10 +125,10 @@ describe('messageTemplates utilities', () => {
         bestTime: '19h-21h',
         hashtags: ['#servio', '#marketplace', '#profissionais'],
       };
-      
+
       const link = 'https://servio.ai/ref/xyz';
       const formatted = formatTemplate(template, link);
-      
+
       expect(formatted).toContain(link);
       expect(formatted).toContain('#servio');
       expect(formatted).toContain('#marketplace');
@@ -145,10 +145,10 @@ describe('messageTemplates utilities', () => {
         bestTime: '14h-16h',
         hashtags: [],
       };
-      
+
       const link = 'https://servio.ai/ref/test';
       const formatted = formatTemplate(template, link);
-      
+
       expect(formatted).toBe('Confira: https://servio.ai/ref/test');
       expect(formatted).not.toContain('\n\n');
     });
@@ -161,10 +161,10 @@ describe('messageTemplates utilities', () => {
         emoji: '🐦',
         bestTime: '11h-13h',
       };
-      
+
       const link = 'https://servio.ai/ref/test2';
       const formatted = formatTemplate(template, link);
-      
+
       expect(formatted).toBe('Confira: https://servio.ai/ref/test2');
       expect(formatted).not.toContain('\n\n');
     });
@@ -177,10 +177,10 @@ describe('messageTemplates utilities', () => {
         emoji: '💼',
         bestTime: '09h-17h',
       };
-      
+
       const link = 'https://servio.ai/ref/multi';
       const formatted = formatTemplate(template, link);
-      
+
       // replace() replaces first occurrence only
       expect(formatted).toContain(link);
       expect((formatted.match(/https:\/\/servio\.ai\/ref\/multi/g) || []).length).toBe(1);
@@ -194,7 +194,7 @@ describe('messageTemplates utilities', () => {
         emoji: '✉️',
         bestTime: '10h-12h',
       };
-      
+
       const formatted = formatTemplate(template, '');
       expect(formatted).toBe('Confira: ');
     });
@@ -208,10 +208,10 @@ describe('messageTemplates utilities', () => {
         bestTime: '20h-22h',
         hashtags: ['#gratis'],
       };
-      
+
       const link = 'https://servio.ai/ref/special';
       const formatted = formatTemplate(template, link);
-      
+
       expect(formatted).toContain('Olá! 👋');
       expect(formatted).toContain('Obrigado!');
       expect(formatted).toContain(link);
@@ -240,22 +240,20 @@ describe('messageTemplates utilities', () => {
 
     it('should only include categories from templates that have category', () => {
       const categories = getCategories();
-      
+
       // Get all categories from templates
       const allTemplates = getTemplates();
       const templateCategories = new Set(
-        allTemplates
-          .filter(t => t.category)
-          .map(t => t.category as string)
+        allTemplates.filter(t => t.category).map(t => t.category as string)
       );
-      
+
       // Categories returned should match
       expect(new Set(categories)).toEqual(templateCategories);
     });
 
     it('should include common service categories', () => {
       const categories = getCategories();
-      
+
       // Should include common categories (adjust based on actual data)
       expect(categories.length).toBeGreaterThan(0);
       categories.forEach(cat => {
@@ -275,7 +273,7 @@ describe('messageTemplates utilities', () => {
     it('should include specific platforms', () => {
       const platforms = getPlatforms();
       const expectedPlatforms = ['all', 'whatsapp', 'facebook', 'instagram', 'linkedin', 'twitter'];
-      
+
       expectedPlatforms.forEach(platform => {
         expect(platforms).toContain(platform);
       });
@@ -283,7 +281,7 @@ describe('messageTemplates utilities', () => {
 
     it('should return correct platform types', () => {
       const platforms = getPlatforms();
-      
+
       platforms.forEach(platform => {
         expect(typeof platform).toBe('string');
         expect(platform.length).toBeGreaterThan(0);
@@ -297,7 +295,14 @@ describe('messageTemplates utilities', () => {
 
     it('should have 6 platforms', () => {
       const platforms = getPlatforms();
-      expect(platforms).toEqual(['all', 'whatsapp', 'facebook', 'instagram', 'linkedin', 'twitter']);
+      expect(platforms).toEqual([
+        'all',
+        'whatsapp',
+        'facebook',
+        'instagram',
+        'linkedin',
+        'twitter',
+      ]);
     });
   });
 
@@ -305,11 +310,11 @@ describe('messageTemplates utilities', () => {
     it('should correctly filter when using all filter combinations', () => {
       const platforms = getPlatforms();
       const categories = getCategories();
-      
+
       for (const platform of platforms.slice(0, 3)) {
         for (const category of categories.slice(0, 2)) {
           const templates = getTemplates(platform as any, category);
-          
+
           templates.forEach(template => {
             const platformMatch = template.platform === platform || template.platform === 'all';
             const categoryMatch = !template.category || template.category === category;
@@ -322,7 +327,7 @@ describe('messageTemplates utilities', () => {
     it('should return consistent results for repeated queries', () => {
       const result1 = getTemplates('whatsapp', 'Limpeza');
       const result2 = getTemplates('whatsapp', 'Limpeza');
-      
+
       expect(result1.length).toBe(result2.length);
       expect(result1.map(t => t.id)).toEqual(result2.map(t => t.id));
     });

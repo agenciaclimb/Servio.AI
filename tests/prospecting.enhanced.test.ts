@@ -46,11 +46,7 @@ describe('Enhanced Prospecting Service', () => {
         json: async () => mockResponse,
       });
 
-      const result = await analyzeProspectWithAI(
-        mockProspect,
-        'Eletricista',
-        'Instalar tomadas'
-      );
+      const result = await analyzeProspectWithAI(mockProspect, 'Eletricista', 'Instalar tomadas');
 
       expect(result.qualityScore).toBeGreaterThanOrEqual(0);
       expect(result.qualityScore).toBeLessThanOrEqual(100);
@@ -67,11 +63,7 @@ describe('Enhanced Prospecting Service', () => {
 
       (global.fetch as any).mockRejectedValueOnce(new Error('AI service down'));
 
-      const result = await analyzeProspectWithAI(
-        mockProspect,
-        'Encanador',
-        'Consertar vazamento'
-      );
+      const result = await analyzeProspectWithAI(mockProspect, 'Encanador', 'Consertar vazamento');
 
       expect(result.qualityScore).toBe(80); // 4.0 * 20
       expect(result.matchScore).toBe(50);
@@ -86,11 +78,7 @@ describe('Enhanced Prospecting Service', () => {
 
       (global.fetch as any).mockRejectedValueOnce(new Error('No rating'));
 
-      const result = await analyzeProspectWithAI(
-        mockProspect,
-        'Pintor',
-        'Pintar apartamento'
-      );
+      const result = await analyzeProspectWithAI(mockProspect, 'Pintor', 'Pintar apartamento');
 
       expect(result.qualityScore).toBe(50); // Default
       expect(result.matchScore).toBe(50);
@@ -123,11 +111,7 @@ Equipe Servio.AI`;
         json: async () => ({ emailBody: mockEmailBody }),
       });
 
-      const result = await generatePersonalizedEmail(
-        mockProspect,
-        'Eletricista',
-        'São Paulo'
-      );
+      const result = await generatePersonalizedEmail(mockProspect, 'Eletricista', 'São Paulo');
 
       expect(result).toContain('João Silva');
       expect(result).toContain('Eletricista');
@@ -144,11 +128,7 @@ Equipe Servio.AI`;
 
       (global.fetch as any).mockRejectedValueOnce(new Error('AI unavailable'));
 
-      const result = await generatePersonalizedEmail(
-        mockProspect,
-        'Encanador',
-        'Rio de Janeiro'
-      );
+      const result = await generatePersonalizedEmail(mockProspect, 'Encanador', 'Rio de Janeiro');
 
       expect(result).toContain('Maria Santos');
       expect(result).toContain('Encanador');
@@ -178,11 +158,7 @@ Cadastre-se: https://servio-ai.com/register?type=provider`;
         json: async () => ({ emailBody: mockEmailBody }),
       });
 
-      const result = await generatePersonalizedEmail(
-        mockProspect,
-        'Pintor',
-        'Belo Horizonte'
-      );
+      const result = await generatePersonalizedEmail(mockProspect, 'Pintor', 'Belo Horizonte');
 
       expect(result).toContain('Pintura');
     });
@@ -210,12 +186,9 @@ Cadastre-se: https://servio-ai.com/register?type=provider`;
         json: async () => ({ success: true }),
       });
 
-      const result = await sendMultiChannelInvite(
-        mockProspect,
-        'Eletricista',
-        'São Paulo',
-        ['email']
-      );
+      const result = await sendMultiChannelInvite(mockProspect, 'Eletricista', 'São Paulo', [
+        'email',
+      ]);
 
       expect(result.email).toBe(true);
       expect(result.sms).toBe(false);
@@ -236,12 +209,9 @@ Cadastre-se: https://servio-ai.com/register?type=provider`;
         json: async () => ({ success: true }),
       });
 
-      const result = await sendMultiChannelInvite(
-        mockProspect,
-        'Encanador',
-        'Rio de Janeiro',
-        ['sms']
-      );
+      const result = await sendMultiChannelInvite(mockProspect, 'Encanador', 'Rio de Janeiro', [
+        'sms',
+      ]);
 
       expect(result.email).toBe(false);
       expect(result.sms).toBe(true);
@@ -262,12 +232,7 @@ Cadastre-se: https://servio-ai.com/register?type=provider`;
         json: async () => ({ success: true }),
       });
 
-      const result = await sendMultiChannelInvite(
-        mockProspect,
-        'Pintor',
-        'Curitiba',
-        ['whatsapp']
-      );
+      const result = await sendMultiChannelInvite(mockProspect, 'Pintor', 'Curitiba', ['whatsapp']);
 
       expect(result.email).toBe(false);
       expect(result.sms).toBe(false);
@@ -290,12 +255,11 @@ Cadastre-se: https://servio-ai.com/register?type=provider`;
         .mockResolvedValueOnce({ ok: true, json: async () => ({ success: true }) })
         .mockResolvedValueOnce({ ok: true, json: async () => ({ success: true }) });
 
-      const result = await sendMultiChannelInvite(
-        mockProspect,
-        'Arquiteto',
-        'São Paulo',
-        ['email', 'sms', 'whatsapp']
-      );
+      const result = await sendMultiChannelInvite(mockProspect, 'Arquiteto', 'São Paulo', [
+        'email',
+        'sms',
+        'whatsapp',
+      ]);
 
       expect(result.email).toBe(true);
       expect(result.sms).toBe(true);
@@ -318,12 +282,11 @@ Cadastre-se: https://servio-ai.com/register?type=provider`;
         .mockRejectedValueOnce(new Error('SMS service down'))
         .mockResolvedValueOnce({ ok: true, json: async () => ({ success: true }) });
 
-      const result = await sendMultiChannelInvite(
-        mockProspect,
-        'Marceneiro',
-        'Brasília',
-        ['email', 'sms', 'whatsapp']
-      );
+      const result = await sendMultiChannelInvite(mockProspect, 'Marceneiro', 'Brasília', [
+        'email',
+        'sms',
+        'whatsapp',
+      ]);
 
       expect(result.email).toBe(true);
       expect(result.sms).toBe(false); // Failed
@@ -400,11 +363,7 @@ Cadastre-se: https://servio-ai.com/register?type=provider`;
         }),
       });
 
-      const email = await generatePersonalizedEmail(
-        analysis,
-        'Eletricista',
-        'São Paulo'
-      );
+      const email = await generatePersonalizedEmail(analysis, 'Eletricista', 'São Paulo');
 
       expect(email).toContain('Roberto');
 
@@ -414,12 +373,10 @@ Cadastre-se: https://servio-ai.com/register?type=provider`;
         .mockResolvedValueOnce({ ok: true, json: async () => ({ success: true }) })
         .mockResolvedValueOnce({ ok: true, json: async () => ({ success: true }) });
 
-      const sendResult = await sendMultiChannelInvite(
-        analysis,
-        'Eletricista',
-        'São Paulo',
-        ['email', 'whatsapp']
-      );
+      const sendResult = await sendMultiChannelInvite(analysis, 'Eletricista', 'São Paulo', [
+        'email',
+        'whatsapp',
+      ]);
 
       expect(sendResult.email).toBe(true);
       expect(sendResult.whatsapp).toBe(true);

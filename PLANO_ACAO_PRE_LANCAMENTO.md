@@ -36,12 +36,13 @@
 expect(after.some(m => String(m.text || '').includes('Agendamento'))).toBe(true);
 
 // Depois
-await waitFor(() => {
-  const messages = updater([]);
-  expect(messages.some(m => 
-    String(m.text || '').includes('Agendamento')
-  )).toBe(true);
-}, { timeout: 5000 });
+await waitFor(
+  () => {
+    const messages = updater([]);
+    expect(messages.some(m => String(m.text || '').includes('Agendamento'))).toBe(true);
+  },
+  { timeout: 5000 }
+);
 ```
 
 **Tempo estimado**: 10 minutos  
@@ -55,6 +56,7 @@ await waitFor(() => {
 ### 1. Teste Manual Rápido (15 min)
 
 **Checklist**:
+
 ```powershell
 # 1. Iniciar app local
 npm run dev
@@ -109,6 +111,7 @@ watch -n 30 'gcloud run services describe servio-backend --region=us-west1 --for
 ```
 
 **Verificar a cada 15 min**:
+
 - [ ] Logs sem ERRORs críticos
 - [ ] Latency < 1s
 - [ ] Uptime 100%
@@ -117,6 +120,7 @@ watch -n 30 'gcloud run services describe servio-backend --region=us-west1 --for
 ### Primeiro Dia
 
 **Métricas para monitorar**:
+
 - Total de requests
 - Error rate (deve ser < 1%)
 - Latency p95 (deve ser < 1s)
@@ -124,6 +128,7 @@ watch -n 30 'gcloud run services describe servio-backend --region=us-west1 --for
 - CPU usage (deve ser < 80%)
 
 **Ações se métricas ruins**:
+
 - Error rate > 5%: Investigar logs imediatamente
 - Latency > 2s: Verificar database queries
 - Memory > 90%: Considerar aumentar limite
@@ -131,6 +136,7 @@ watch -n 30 'gcloud run services describe servio-backend --region=us-west1 --for
 ### Primeira Semana
 
 **KPIs**:
+
 - [ ] Uptime > 99.9%
 - [ ] 0 incidentes críticos
 - [ ] 50+ usuários cadastrados
@@ -147,6 +153,7 @@ watch -n 30 'gcloud run services describe servio-backend --region=us-west1 --for
 **Meta**: 48% → 60%
 
 **Áreas prioritárias**:
+
 ```
 services/api.ts: 51% → 70%
 services/geminiService.ts: 0% → 50%
@@ -160,6 +167,7 @@ components críticos: 60% → 80%
 **Ferramentas**: Playwright
 
 **Cenários**:
+
 - ✅ Smoke tests (já existe)
 - [ ] User journeys completos
 - [ ] Cross-browser testing
@@ -170,6 +178,7 @@ components críticos: 60% → 80%
 ### 3. Melhorar Logging (Sprint 2)
 
 **Implementar**:
+
 - Winston para logs estruturados
 - Levels: ERROR, WARN, INFO, DEBUG
 - Context tracking (request ID)
@@ -180,6 +189,7 @@ components críticos: 60% → 80%
 ### 4. Cache Strategy (Sprint 3)
 
 **Implementar**:
+
 - Redis para queries frequentes
 - Cache de perfis de usuário
 - Cache de catálogo de serviços
@@ -213,6 +223,7 @@ components críticos: 60% → 80%
 ### HOJE (19/11/2025)
 
 **Fase 1: Validação Final** (30 min)
+
 - [x] Diagnóstico completo ✅
 - [x] Plano de ação criado ✅
 - [ ] Teste manual rápido (15 min)
@@ -220,6 +231,7 @@ components críticos: 60% → 80%
 - [ ] Teste webhook Stripe (5 min)
 
 **Fase 2: Deploy** (30 min)
+
 - [ ] Commit mudanças na documentação
 - [ ] Build final
 - [ ] Deploy para produção
@@ -250,6 +262,7 @@ components críticos: 60% → 80%
 **DECISÃO**: ✅ SIM
 
 **Justificativa**:
+
 - 633/634 testes passando (99.8%)
 - Teste não afeta funcionalidade real
 - Impacto: ZERO no usuário final
@@ -260,6 +273,7 @@ components críticos: 60% → 80%
 **DECISÃO**: ❌ NÃO
 
 **Justificativa**:
+
 - Sistema base 100% funcional
 - Pagamentos funcionam
 - Escrow protege transações
@@ -271,6 +285,7 @@ components críticos: 60% → 80%
 **DECISÃO**: ✅ SIM (opcional)
 
 **Recomendação**: Deploy entre 14h-16h (horário Brasil)
+
 - Menor número de usuários online
 - Time disponível para monitorar
 - Fácil rollback se necessário
@@ -279,16 +294,16 @@ components críticos: 60% → 80%
 
 ## 📊 MÉTRICAS DE QUALIDADE ALCANÇADAS
 
-| Métrica | Meta | Atual | Status |
-|---------|------|-------|--------|
-| Testes Passando | >95% | 99.8% | ✅ |
-| Cobertura | >40% | 48.36% | ✅ |
-| Vulnerabilidades | 0 | 0 | ✅ |
-| Build Errors | 0 | 0 | ✅ |
-| TypeScript Errors | 0 | 0 | ✅ |
-| ESLint Errors | 0 | 0 | ✅ |
-| Bundle Size | <300KB | 243KB | ✅ |
-| Performance | >60 | 85 | ✅ |
+| Métrica           | Meta   | Atual  | Status |
+| ----------------- | ------ | ------ | ------ |
+| Testes Passando   | >95%   | 99.8%  | ✅     |
+| Cobertura         | >40%   | 48.36% | ✅     |
+| Vulnerabilidades  | 0      | 0      | ✅     |
+| Build Errors      | 0      | 0      | ✅     |
+| TypeScript Errors | 0      | 0      | ✅     |
+| ESLint Errors     | 0      | 0      | ✅     |
+| Bundle Size       | <300KB | 243KB  | ✅     |
+| Performance       | >60    | 85     | ✅     |
 
 **TODAS AS METAS ATINGIDAS** ✅
 
@@ -328,6 +343,7 @@ components críticos: 60% → 80%
 ### Sistema está PRONTO para lançamento
 
 **Evidências**:
+
 1. ✅ 99.8% testes passando
 2. ✅ 0 vulnerabilidades
 3. ✅ 0 erros de build
@@ -346,6 +362,7 @@ components críticos: 60% → 80%
 **Próxima ação**: Executar Fase 1 (Validação Final)
 
 **Comando para lançar**:
+
 ```powershell
 npm run build && firebase deploy --only hosting
 ```

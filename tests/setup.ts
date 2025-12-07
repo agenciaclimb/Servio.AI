@@ -40,20 +40,18 @@ const originalWarn = console.warn;
 const originalError = console.error;
 
 const shouldSilenceMsg = (msg: string) =>
-  (
-    // Fallbacks e mocks esperados
-    msg.includes('Failed to fetch') ||
-    msg.includes('using mock data') ||
-    msg.includes('Fallback heuristic used') ||
-    msg.includes('AI matching failed, using basic local matching') ||
-    // Warnings de libs durante testes
-    msg.includes('not wrapped in act(') ||
-    msg.includes('React Router Future Flag Warning') ||
+  // Fallbacks e mocks esperados
+  msg.includes('Failed to fetch') ||
+  msg.includes('using mock data') ||
+  msg.includes('Fallback heuristic used') ||
+  msg.includes('AI matching failed, using basic local matching') ||
+  // Warnings de libs durante testes
+  msg.includes('not wrapped in act(') ||
+  msg.includes('React Router Future Flag Warning') ||
   msg.includes('ReactDOMTestUtils.act is deprecated') ||
   msg.includes('ReactDOMTestUtils.act') ||
-    // Firebase Messaging em ambiente de teste/jsdom
-    msg.includes('Messaging not supported in this browser')
-  );
+  // Firebase Messaging em ambiente de teste/jsdom
+  msg.includes('Messaging not supported in this browser');
 
 const shouldSilenceArgs = (args: any[]) => {
   try {
@@ -61,13 +59,22 @@ const shouldSilenceArgs = (args: any[]) => {
       // Verifica string direta
       if (typeof a === 'string' && shouldSilenceMsg(a)) return true;
       // Verifica Error com message
-      if (a && typeof a === 'object' && typeof a.message === 'string' && shouldSilenceMsg(a.message)) {
+      if (
+        a &&
+        typeof a === 'object' &&
+        typeof a.message === 'string' &&
+        shouldSilenceMsg(a.message)
+      ) {
         return true;
       }
       // Tenta serializar objetos simples
       if (a && typeof a === 'object') {
         const maybe = (() => {
-          try { return JSON.stringify(a); } catch { return undefined; }
+          try {
+            return JSON.stringify(a);
+          } catch {
+            return undefined;
+          }
         })();
         if (maybe && shouldSilenceMsg(maybe)) return true;
       }

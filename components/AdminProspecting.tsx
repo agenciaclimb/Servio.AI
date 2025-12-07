@@ -48,11 +48,14 @@ const AdminProspecting: React.FC = () => {
       const prospect = prospects.find(p => p.id === prospectId);
       if (!prospect) return;
 
-      const updatedNotes = [...(prospect.notes || []), {
-        text: note,
-        createdAt: new Date().toISOString(),
-        createdBy: 'admin' // In real app, use actual admin user
-      }];
+      const updatedNotes = [
+        ...(prospect.notes || []),
+        {
+          text: note,
+          createdAt: new Date().toISOString(),
+          createdBy: 'admin', // In real app, use actual admin user
+        },
+      ];
 
       await API.updateProspect(prospectId, { notes: updatedNotes });
       addToast('Nota adicionada com sucesso!', 'success');
@@ -69,7 +72,10 @@ const AdminProspecting: React.FC = () => {
   });
 
   const totalPages = Math.ceil(filteredProspects.length / ITEMS_PER_PAGE);
-  const paginatedProspects = filteredProspects.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const paginatedProspects = filteredProspects.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  );
 
   const stats = {
     total: prospects.length,
@@ -79,7 +85,8 @@ const AdminProspecting: React.FC = () => {
     perdido: prospects.filter(p => p.status === 'perdido').length,
   };
 
-  const conversionRate = stats.total > 0 ? ((stats.convertido / stats.total) * 100).toFixed(1) : '0.0';
+  const conversionRate =
+    stats.total > 0 ? ((stats.convertido / stats.total) * 100).toFixed(1) : '0.0';
 
   if (isLoading) {
     return <div className="p-4 text-sm text-gray-600">Carregando prospectos...</div>;
@@ -123,7 +130,7 @@ const AdminProspecting: React.FC = () => {
         <select
           id="prospect-filter"
           value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value as 'all' | Prospect['status'])}
+          onChange={e => setFilterStatus(e.target.value as 'all' | Prospect['status'])}
           className="w-full md:w-64 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="all">Todos</option>
@@ -181,12 +188,20 @@ const AdminProspecting: React.FC = () => {
                       <select
                         aria-label={`Atualizar status de ${prospect.name}`}
                         value={prospect.status}
-                        onChange={(e) => handleUpdateProspectStatus(prospect.id, e.target.value as Prospect['status'])}
+                        onChange={e =>
+                          handleUpdateProspectStatus(
+                            prospect.id,
+                            e.target.value as Prospect['status']
+                          )
+                        }
                         className={`px-2 text-xs leading-5 font-semibold rounded-full border-0 focus:ring-2 focus:ring-blue-500 ${
-                          prospect.status === 'pendente' ? 'bg-yellow-100 text-yellow-800' :
-                          prospect.status === 'contactado' ? 'bg-blue-100 text-blue-800' :
-                          prospect.status === 'convertido' ? 'bg-green-100 text-green-800' :
-                          'bg-red-100 text-red-800'
+                          prospect.status === 'pendente'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : prospect.status === 'contactado'
+                              ? 'bg-blue-100 text-blue-800'
+                              : prospect.status === 'convertido'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
                         }`}
                       >
                         <option value="pendente">Pendente</option>
@@ -225,7 +240,9 @@ const AdminProspecting: React.FC = () => {
         {totalPages > 1 && (
           <div className="px-4 py-3 bg-gray-50 border-t flex items-center justify-between">
             <div className="text-sm text-gray-700">
-              Mostrando {((page - 1) * ITEMS_PER_PAGE) + 1} a {Math.min(page * ITEMS_PER_PAGE, filteredProspects.length)} de {filteredProspects.length} prospectos
+              Mostrando {(page - 1) * ITEMS_PER_PAGE + 1} a{' '}
+              {Math.min(page * ITEMS_PER_PAGE, filteredProspects.length)} de{' '}
+              {filteredProspects.length} prospectos
             </div>
             <div className="flex gap-2">
               <button

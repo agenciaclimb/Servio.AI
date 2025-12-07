@@ -1,6 +1,6 @@
 /**
  * Prospector Marketing Materials
- * 
+ *
  * Banco de recursos para prospectores:
  * - Templates de mensagens
  * - Imagens para redes sociais
@@ -158,9 +158,8 @@ export default function ProspectorMaterials() {
     { id: 'training', label: '📖 Treinamento', icon: '📖' },
   ];
 
-  const filteredMaterials = selectedCategory === 'all'
-    ? MATERIALS
-    : MATERIALS.filter(m => m.category === selectedCategory);
+  const filteredMaterials =
+    selectedCategory === 'all' ? MATERIALS : MATERIALS.filter(m => m.category === selectedCategory);
 
   const copyToClipboard = async (content: string, id: string) => {
     try {
@@ -299,10 +298,19 @@ export default function ProspectorMaterials() {
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
         <h3 className="font-semibold text-blue-900 mb-2">💡 Dicas de Uso</h3>
         <ul className="text-sm text-blue-800 space-y-2">
-          <li><strong>Templates WhatsApp:</strong> Copie e personalize com o nome do prospect e seu link</li>
-          <li><strong>Imagens:</strong> Use nos seus stories e posts para atrair prospects</li>
-          <li><strong>PDFs:</strong> Envie como anexo em emails ou compartilhe no WhatsApp</li>
-          <li><strong>Vídeos:</strong> Compartilhe o link direto ou baixe para usar offline</li>
+          <li>
+            <strong>Templates WhatsApp:</strong> Copie e personalize com o nome do prospect e seu
+            link
+          </li>
+          <li>
+            <strong>Imagens:</strong> Use nos seus stories e posts para atrair prospects
+          </li>
+          <li>
+            <strong>PDFs:</strong> Envie como anexo em emails ou compartilhe no WhatsApp
+          </li>
+          <li>
+            <strong>Vídeos:</strong> Compartilhe o link direto ou baixe para usar offline
+          </li>
         </ul>
       </div>
     </div>

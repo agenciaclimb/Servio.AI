@@ -1,4 +1,3 @@
-
 import { FiUsers, FiClipboard, FiTarget, FiBarChart2 } from 'react-icons/fi';
 import { useProspectorStats } from '../../../hooks/useProspectorStats';
 import React from 'react'; // Adicionado para React.ReactNode
@@ -38,7 +37,9 @@ const QuickPanel: React.FC<QuickPanelProps> = ({ prospectorId }) => {
   }
 
   if (error) {
-    return <div className="p-4 bg-red-100 text-red-700 rounded-lg">Erro ao carregar dados: {error}</div>;
+    return (
+      <div className="p-4 bg-red-100 text-red-700 rounded-lg">Erro ao carregar dados: {error}</div>
+    );
   }
 
   const activeRecruits = stats?.activeRecruits || 0;
@@ -48,29 +49,29 @@ const QuickPanel: React.FC<QuickPanelProps> = ({ prospectorId }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
-      <StatCard 
-        icon={<FiUsers />} 
-        label="Recrutas Ativos" 
-        value={activeRecruits} 
-        color="border-blue-500" 
+      <StatCard
+        icon={<FiUsers />}
+        label="Recrutas Ativos"
+        value={activeRecruits}
+        color="border-blue-500"
       />
-      <StatCard 
-        icon={<FiClipboard />} 
-        label="Total de Leads" 
-        value={totalLeads} 
-        color="border-purple-500" 
+      <StatCard
+        icon={<FiClipboard />}
+        label="Total de Leads"
+        value={totalLeads}
+        color="border-purple-500"
       />
-      <StatCard 
-        icon={<FiTarget />} 
-        label="Taxa de Conversão" 
-        value={`${conversionRate}%`} 
-        color="border-green-500" 
+      <StatCard
+        icon={<FiTarget />}
+        label="Taxa de Conversão"
+        value={`${conversionRate}%`}
+        color="border-green-500"
       />
-      <StatCard 
-        icon={<FiBarChart2 />} 
-        label="Comissões (R$)" 
-        value={totalCommissions} 
-        color="border-yellow-500" 
+      <StatCard
+        icon={<FiBarChart2 />}
+        label="Comissões (R$)"
+        value={totalCommissions}
+        color="border-yellow-500"
       />
     </div>
   );

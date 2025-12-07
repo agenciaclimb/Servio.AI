@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { computeAnalytics, computeTimeSeriesData, formatCurrencyBRL } from '../src/analytics/adminMetrics';
+import {
+  computeAnalytics,
+  computeTimeSeriesData,
+  formatCurrencyBRL,
+} from '../src/analytics/adminMetrics';
 import type { Job, User, Dispute, FraudAlert } from '../types';
 
 describe('adminMetrics', () => {
@@ -116,7 +120,7 @@ describe('adminMetrics', () => {
   describe('computeAnalytics', () => {
     it('deve calcular métricas de usuários corretamente', () => {
       const analytics = computeAnalytics(mockJobs, mockUsers, mockDisputes, mockFraudAlerts);
-      
+
       expect(analytics.users.total).toBe(3);
       expect(analytics.users.activeProviders).toBe(1);
       expect(analytics.users.verifiedProviders).toBe(1);
@@ -125,7 +129,7 @@ describe('adminMetrics', () => {
 
     it('deve calcular métricas de jobs corretamente', () => {
       const analytics = computeAnalytics(mockJobs, mockUsers, mockDisputes, mockFraudAlerts);
-      
+
       expect(analytics.jobs.total).toBe(4);
       expect(analytics.jobs.completed).toBe(2);
       expect(analytics.jobs.active).toBe(1);
@@ -135,7 +139,7 @@ describe('adminMetrics', () => {
 
     it('deve calcular métricas de receita corretamente', () => {
       const analytics = computeAnalytics(mockJobs, mockUsers, mockDisputes, mockFraudAlerts);
-      
+
       expect(analytics.revenue.total).toBe(1500);
       expect(analytics.revenue.platform).toBe(225);
       expect(analytics.revenue.avgJobValue).toBe(750);
@@ -143,7 +147,7 @@ describe('adminMetrics', () => {
 
     it('deve calcular métricas de disputas corretamente', () => {
       const analytics = computeAnalytics(mockJobs, mockUsers, mockDisputes, mockFraudAlerts);
-      
+
       expect(analytics.disputes.total).toBe(1);
       expect(analytics.disputes.open).toBe(1);
       expect(analytics.disputes.resolved).toBe(0);
@@ -152,7 +156,7 @@ describe('adminMetrics', () => {
 
     it('deve calcular métricas de fraude corretamente', () => {
       const analytics = computeAnalytics(mockJobs, mockUsers, mockDisputes, mockFraudAlerts);
-      
+
       expect(analytics.fraud.total).toBe(2);
       expect(analytics.fraud.new).toBe(1);
       expect(analytics.fraud.highRisk).toBe(1); // riskScore >= 7
@@ -161,7 +165,7 @@ describe('adminMetrics', () => {
     it('deve calcular métricas recentes (últimos 30 dias)', () => {
       const now = new Date('2024-11-11T12:00:00.000Z');
       const analytics = computeAnalytics(mockJobs, mockUsers, mockDisputes, mockFraudAlerts, now);
-      
+
       // Jobs criados após 2024-10-12 (30 dias antes de 2024-11-11)
       // Todos os 4 jobs estão dentro dos últimos 30 dias
       expect(analytics.recent.jobs).toBe(4);
@@ -170,7 +174,7 @@ describe('adminMetrics', () => {
 
     it('deve identificar top 5 categorias', () => {
       const analytics = computeAnalytics(mockJobs, mockUsers, mockDisputes, mockFraudAlerts);
-      
+
       expect(analytics.topCategories).toHaveLength(3);
       expect(analytics.topCategories[0]).toEqual(['Eletricista', 2]);
       expect(analytics.topCategories[1][0]).toBe('Encanador');
@@ -179,7 +183,7 @@ describe('adminMetrics', () => {
 
     it('deve identificar top 5 prestadores por número de jobs', () => {
       const analytics = computeAnalytics(mockJobs, mockUsers, mockDisputes, mockFraudAlerts);
-      
+
       expect(analytics.topProviders).toHaveLength(2);
       expect(analytics.topProviders[0].email).toBe('prov1@test.com');
       expect(analytics.topProviders[0].count).toBe(1);
@@ -188,7 +192,7 @@ describe('adminMetrics', () => {
 
     it('deve lidar com arrays vazios sem erros', () => {
       const analytics = computeAnalytics([], [], [], []);
-      
+
       expect(analytics.users.total).toBe(0);
       expect(analytics.jobs.total).toBe(0);
       expect(analytics.jobs.completionRate).toBe('0.0');
@@ -202,12 +206,12 @@ describe('adminMetrics', () => {
   describe('computeTimeSeriesData', () => {
     it('deve agrupar jobs por mês corretamente', () => {
       const timeSeries = computeTimeSeriesData(mockJobs, 'month');
-      
+
       expect(timeSeries).toHaveLength(2);
       expect(timeSeries[0].label).toBe('2024-10');
       expect(timeSeries[0].jobs).toBe(1);
       expect(timeSeries[0].revenue).toBe(500);
-      
+
       expect(timeSeries[1].label).toBe('2024-11');
       expect(timeSeries[1].jobs).toBe(3);
       expect(timeSeries[1].revenue).toBe(1000);
@@ -215,11 +219,11 @@ describe('adminMetrics', () => {
 
     it('deve agrupar jobs por dia corretamente', () => {
       const timeSeries = computeTimeSeriesData(mockJobs, 'day');
-      
+
       expect(timeSeries.length).toBeGreaterThanOrEqual(3);
       expect(timeSeries[0].label).toBe('2024-10-15');
       expect(timeSeries[0].jobs).toBe(1);
-      
+
       const nov01 = timeSeries.find(t => t.label === '2024-11-01');
       expect(nov01?.jobs).toBe(1);
       expect(nov01?.revenue).toBe(1000);
@@ -227,7 +231,7 @@ describe('adminMetrics', () => {
 
     it('deve ordenar série temporal por data', () => {
       const timeSeries = computeTimeSeriesData(mockJobs, 'month');
-      
+
       for (let i = 1; i < timeSeries.length; i++) {
         expect(timeSeries[i].label.localeCompare(timeSeries[i - 1].label)).toBeGreaterThan(0);
       }
@@ -235,10 +239,10 @@ describe('adminMetrics', () => {
 
     it('deve somar receita apenas de jobs com earnings', () => {
       const timeSeries = computeTimeSeriesData(mockJobs, 'month');
-      
+
       const outubro = timeSeries.find(t => t.label === '2024-10');
       expect(outubro?.revenue).toBe(500); // apenas job3 tem earnings em outubro
-      
+
       const novembro = timeSeries.find(t => t.label === '2024-11');
       expect(novembro?.revenue).toBe(1000); // apenas job1 tem earnings em novembro
     });
@@ -250,7 +254,7 @@ describe('adminMetrics', () => {
 
     it('deve usar granularidade month por padrão', () => {
       const timeSeries = computeTimeSeriesData(mockJobs);
-      
+
       expect(timeSeries[0].label).toMatch(/^\d{4}-\d{2}$/); // formato YYYY-MM
     });
   });
@@ -262,7 +266,7 @@ describe('adminMetrics', () => {
       expect(formatted).toContain('1');
       expect(formatted).toContain('000');
       expect(formatted).toMatch(/R\$|BRL/);
-      
+
       const small = formatCurrencyBRL(0);
       expect(small).toContain('0');
     });

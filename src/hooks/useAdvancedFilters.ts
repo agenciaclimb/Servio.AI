@@ -1,29 +1,46 @@
 import type { ProspectLead } from '../components/ProspectorCRM';
 import { useMemo, useRef, useCallback } from 'react';
 
-export type Operator = 'contains' | 'equals' | 'startsWith' | 'endsWith' | 'gt' | 'lt' | 'gte' | 'lte' | 'in' | 'notIn' | 'exists' | 'notExists';
+export type Operator =
+  | 'contains'
+  | 'equals'
+  | 'startsWith'
+  | 'endsWith'
+  | 'gt'
+  | 'lt'
+  | 'gte'
+  | 'lte'
+  | 'in'
+  | 'notIn'
+  | 'exists'
+  | 'notExists';
 export interface FilterCondition {
   field: keyof ProspectLead | 'followUpDate' | 'lastActivity';
   operator: Operator;
   value?: string | number | Array<string | number>;
 }
 
-export function applyAdvancedFilters(leads: ProspectLead[], conditions: FilterCondition[]): ProspectLead[] {
+export function applyAdvancedFilters(
+  leads: ProspectLead[],
+  conditions: FilterCondition[]
+): ProspectLead[] {
   if (!conditions || conditions.length === 0) return leads;
   // Normaliza condições para acelerar comparações (lowercase pré-calculado)
-  const normalized = conditions.map((cond) => {
+  const normalized = conditions.map(cond => {
     if (
-      (cond.operator === 'contains' || cond.operator === 'startsWith' || cond.operator === 'endsWith') &&
+      (cond.operator === 'contains' ||
+        cond.operator === 'startsWith' ||
+        cond.operator === 'endsWith') &&
       typeof cond.value === 'string'
     ) {
       return { ...cond, value: (cond.value as string).toLowerCase() };
     }
     return cond;
   });
-  return leads.filter((lead) => {
+  return leads.filter(lead => {
     for (let i = 0; i < normalized.length; i++) {
       const cond = normalized[i];
-      const raw = (lead as any)[cond.field];
+      const raw = (lead as any)[cond.field as string];
       const valStr = String(raw ?? '').toLowerCase();
       switch (cond.operator) {
         case 'contains':
@@ -51,10 +68,10 @@ export function applyAdvancedFilters(leads: ProspectLead[], conditions: FilterCo
           if (!(Number(raw ?? 0) <= Number(cond.value ?? 0))) return false;
           break;
         case 'in':
-          if (!Array.isArray(cond.value) || !cond.value.includes(raw)) return false;
+          if (!Array.isArray(cond.value) || !cond.value.includes(raw as string | number)) return false;
           break;
         case 'notIn':
-          if (Array.isArray(cond.value) && cond.value.includes(raw)) return false;
+          if (Array.isArray(cond.value) && cond.value.includes(raw as string | number)) return false;
           break;
         case 'exists':
           if (raw === undefined || raw === null || raw === '') return false;
@@ -96,14 +113,18 @@ export function useAdvancedFiltersHook(debounceMs = 120) {
   }, [runImmediate]);
 
   const runDebounced = useCallback(
-    (leads: ProspectLead[], conditions: FilterCondition[], callback: (res: ProspectLead[]) => void) => {
+    (
+      leads: ProspectLead[],
+      conditions: FilterCondition[],
+      callback: (res: ProspectLead[]) => void
+    ) => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
-      timerRef.current = (setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         const res = runMemoized(leads, conditions);
         callback(res);
-      }, debounceMs) as unknown) as number;
+      }, debounceMs) as unknown as number;
     },
     [runMemoized, debounceMs]
   );

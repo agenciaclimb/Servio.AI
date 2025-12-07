@@ -41,7 +41,7 @@ describe('types.ts - Comprehensive Data Type Tests', () => {
 
     it('should have valid job status combinations', () => {
       const jobStatuses = ['aberto', 'em_progresso', 'concluido', 'cancelado'];
-      
+
       // Test progression: open -> in_progress -> completed
       const progression = ['aberto', 'em_progresso', 'concluido'];
       progression.forEach(status => {
@@ -79,11 +79,7 @@ describe('types.ts - Comprehensive Data Type Tests', () => {
 
   describe('Email-Based ID Convention', () => {
     it('should support email addresses as user IDs', () => {
-      const emails = [
-        'user@example.com',
-        'provider@servio.ai',
-        'admin+test@domain.co.uk',
-      ];
+      const emails = ['user@example.com', 'provider@servio.ai', 'admin+test@domain.co.uk'];
 
       emails.forEach(email => {
         expect(email).toMatch(/@/);
@@ -94,7 +90,7 @@ describe('types.ts - Comprehensive Data Type Tests', () => {
     it('should handle email IDs in collections', () => {
       const userId = 'user@example.com';
       const jobsOwnedByUser = `jobs.clientId = '${userId}'`;
-      
+
       expect(jobsOwnedByUser).toContain(userId);
       expect(jobsOwnedByUser).toContain('jobs.clientId');
     });
@@ -218,7 +214,7 @@ describe('types.ts - Comprehensive Data Type Tests', () => {
 
     it('should not mix English and Portuguese in enums', () => {
       const statuses = ['aberto', 'em_progresso', 'concluido', 'cancelado'];
-      
+
       statuses.forEach(status => {
         expect(status.toLowerCase()).toBe(status);
         expect(status).not.toMatch(/[A-Z]/);
@@ -228,13 +224,7 @@ describe('types.ts - Comprehensive Data Type Tests', () => {
 
   describe('Field Requirements', () => {
     it('should identify required user fields', () => {
-      const requiredUserFields = [
-        'id',
-        'email',
-        'displayName',
-        'type',
-        'status',
-      ];
+      const requiredUserFields = ['id', 'email', 'displayName', 'type', 'status'];
 
       requiredUserFields.forEach(field => {
         expect(typeof field).toBe('string');
@@ -242,13 +232,7 @@ describe('types.ts - Comprehensive Data Type Tests', () => {
     });
 
     it('should identify required job fields', () => {
-      const requiredJobFields = [
-        'id',
-        'title',
-        'description',
-        'clientId',
-        'status',
-      ];
+      const requiredJobFields = ['id', 'title', 'description', 'clientId', 'status'];
 
       requiredJobFields.forEach(field => {
         expect(typeof field).toBe('string');
@@ -256,13 +240,7 @@ describe('types.ts - Comprehensive Data Type Tests', () => {
     });
 
     it('should identify optional job fields', () => {
-      const optionalJobFields = [
-        'providerId',
-        'assignedAt',
-        'completedAt',
-        'rating',
-        'review',
-      ];
+      const optionalJobFields = ['providerId', 'assignedAt', 'completedAt', 'rating', 'review'];
 
       optionalJobFields.forEach(field => {
         expect(typeof field).toBe('string');
@@ -273,7 +251,7 @@ describe('types.ts - Comprehensive Data Type Tests', () => {
   describe('Type Safety', () => {
     it('should enforce role types', () => {
       const validRoles = ['cliente', 'prestador', 'admin', 'prospector'];
-      
+
       const user = {
         email: 'test@example.com',
         type: 'cliente',
@@ -284,7 +262,7 @@ describe('types.ts - Comprehensive Data Type Tests', () => {
 
     it('should enforce status types for jobs', () => {
       const validStatuses = ['aberto', 'em_progresso', 'concluido', 'cancelado'];
-      
+
       const job = {
         id: 'job-1',
         status: 'em_progresso',
@@ -304,7 +282,7 @@ describe('types.ts - Comprehensive Data Type Tests', () => {
   describe('Data Transformation', () => {
     it('should convert role to lowercase', () => {
       const roles = ['CLIENTE', 'Prestador', 'ADMIN'];
-      
+
       roles.forEach(role => {
         const normalized = role.toLowerCase();
         expect(normalized).toBe(normalized);
@@ -312,11 +290,7 @@ describe('types.ts - Comprehensive Data Type Tests', () => {
     });
 
     it('should validate email format', () => {
-      const emails = [
-        'user@example.com',
-        'provider+test@servio.ai',
-        'admin.user@domain.co.uk',
-      ];
+      const emails = ['user@example.com', 'provider+test@servio.ai', 'admin.user@domain.co.uk'];
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       emails.forEach(email => {
@@ -355,13 +329,7 @@ describe('types.ts - Comprehensive Data Type Tests', () => {
 
   describe('Backward Compatibility', () => {
     it('should maintain field names across versions', () => {
-      const fieldNames = [
-        'id',
-        'email',
-        'displayName',
-        'createdAt',
-        'updatedAt',
-      ];
+      const fieldNames = ['id', 'email', 'displayName', 'createdAt', 'updatedAt'];
 
       fieldNames.forEach(field => {
         expect(field).toBeDefined();
@@ -383,13 +351,7 @@ describe('types.ts - Comprehensive Data Type Tests', () => {
 
   describe('Type Export Patterns', () => {
     it('should export core types', () => {
-      const exports = [
-        'User',
-        'Job',
-        'Proposal',
-        'Review',
-        'Referral',
-      ];
+      const exports = ['User', 'Job', 'Proposal', 'Review', 'Referral'];
 
       exports.forEach(exp => {
         expect(typeof exp).toBe('string');

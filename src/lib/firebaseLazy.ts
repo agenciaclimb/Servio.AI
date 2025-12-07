@@ -87,4 +87,3 @@ export const getStorage = async (): Promise<FirebaseStorage> => {
   }
   return storageInstance;
 };
-

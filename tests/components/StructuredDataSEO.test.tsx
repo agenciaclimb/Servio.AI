@@ -10,9 +10,7 @@ describe('StructuredDataSEO', () => {
       telephone: '+55 11 99999-9999',
     };
 
-    const { container } = render(
-      <StructuredDataSEO schemaType="LocalBusiness" data={data} />
-    );
+    const { container } = render(<StructuredDataSEO schemaType="LocalBusiness" data={data} />);
 
     const script = container.querySelector('script[type="application/ld+json"]');
     expect(script).not.toBeNull();

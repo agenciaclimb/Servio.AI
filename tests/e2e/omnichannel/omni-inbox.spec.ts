@@ -1,4 +1,3 @@
-
 import { test, expect } from '../fixtures/roles.fixture';
 
 /**
@@ -25,26 +24,26 @@ test.describe('OmniInbox - Painel de Conversas do Admin', () => {
     await channelFilter.selectOption('whatsapp');
 
     // Aguarda uma resposta da rede ou um timeout para o filtro ser aplicado
-    await page.waitForTimeout(500); 
+    await page.waitForTimeout(500);
 
     const conversations = page.locator('[data-testid="conversation-item"]');
-    if (await conversations.count() > 0) {
-        await expect(conversations.first().getByText(/whatsapp/i)).toBeVisible();
+    if ((await conversations.count()) > 0) {
+      await expect(conversations.first().getByText(/whatsapp/i)).toBeVisible();
     }
   });
 
   test('deve abrir uma conversa e exibir o painel de mensagens', async ({ page }) => {
     const firstConversation = page.locator('[data-testid="conversation-item"]').first();
-    if (await firstConversation.count() > 0) {
-        await firstConversation.click();
-        await expect(page.getByTestId('message-viewer')).toBeVisible();
-        await expect(page.getByPlaceholder('Digite sua mensagem...')).toBeVisible();
+    if ((await firstConversation.count()) > 0) {
+      await firstConversation.click();
+      await expect(page.getByTestId('message-viewer')).toBeVisible();
+      await expect(page.getByPlaceholder('Digite sua mensagem...')).toBeVisible();
     }
   });
 
   test('deve enviar uma mensagem manual em uma conversa', async ({ page }) => {
     const firstConversation = page.locator('[data-testid="conversation-item"]').first();
-    if (await firstConversation.count() > 0) {
+    if ((await firstConversation.count()) > 0) {
       await firstConversation.click();
       const input = page.getByPlaceholder('Digite sua mensagem...');
       await input.fill('Teste de mensagem E2E');
@@ -78,7 +77,7 @@ test.describe('OmniChannelStatus - Status dos Canais do Admin', () => {
   test('deve exibir um indicador visual para canais com problemas', async ({ page }) => {
     // Este teste não falha se não houver canais com erro, ele apenas confirma a existência do indicador se houver um problema.
     const problemIndicator = page.locator('text=⚠️, text=❌');
-    if (await problemIndicator.count() > 0) {
+    if ((await problemIndicator.count()) > 0) {
       await expect(problemIndicator.first()).toBeVisible();
     }
   });

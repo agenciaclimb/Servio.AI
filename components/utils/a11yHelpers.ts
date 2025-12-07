@@ -5,10 +5,10 @@
 /**
  * Handle keyboard events for clickable elements.
  * Triggers the callback when Enter or Space is pressed.
- * 
+ *
  * @param callback - Function to call on key press
  * @returns Event handler for onKeyDown
- * 
+ *
  * @example
  * <div onClick={handleClick} onKeyDown={handleKeyDown(handleClick)} tabIndex={0} role="button">
  *   Click me
@@ -26,10 +26,10 @@ export const handleKeyDown = (callback: (e?: React.KeyboardEvent | React.MouseEv
 /**
  * Handle keyboard events specifically for modal overlays.
  * Triggers close on Escape or when Enter/Space pressed on overlay.
- * 
+ *
  * @param onClose - Function to call to close modal
  * @returns Event handler for onKeyDown
- * 
+ *
  * @example
  * <div onClick={onClose} onKeyDown={handleModalOverlayKeyDown(onClose)} tabIndex={0}>
  */

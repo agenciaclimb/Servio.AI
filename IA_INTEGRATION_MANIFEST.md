@@ -62,6 +62,7 @@ Quando 100% dos testes estão verdes:
 ## 🚨 **3. PROTOCOLO HOTFIX 1.0 (OBRIGATÓRIO)**
 
 ### Quando ativar:
+
 - ❌ Qualquer teste E2E falha
 - ❌ Qualquer teste de integração falha
 - ❌ Qualquer teste unitário falha
@@ -174,13 +175,13 @@ Antes de declarar o sistema "pronto", confirme:
 // ✅ SEMPRE use email como ID
 
 // ERRADO:
-const userId = auth.currentUser.uid;  // ❌ PROIBIDO
+const userId = auth.currentUser.uid; // ❌ PROIBIDO
 
 // CORRETO:
 const userId = auth.currentUser.email; // ✅ OBRIGATÓRIO
 
 // Exemplo correto em Firestore:
-db.collection('users').doc(auth.currentUser.email).get()
+db.collection('users').doc(auth.currentUser.email).get();
 ```
 
 ### Colégios Firestore
@@ -275,14 +276,14 @@ Impacto: Por que precisa disso?
 
 Você **DEVE** ler e entender:
 
-| Arquivo | Conteúdo | Tempo |
-|---------|----------|-------|
-| DOCUMENTO_MESTRE_SERVIO_AI.md | Estado, arquitetura, protocolo | 30 min |
-| API_ENDPOINTS.md | Todas as rotas backend | 15 min |
-| types.ts | Interfaces TypeScript | 10 min |
-| firestore.rules | Regras de segurança | 15 min |
-| STRIPE_GUIA_RAPIDO.md | Integração de pagamentos | 10 min |
-| OMNICHANNEL_WEBHOOKS_CONFIG.md | Webhooks multicanal | 15 min |
+| Arquivo                        | Conteúdo                       | Tempo  |
+| ------------------------------ | ------------------------------ | ------ |
+| DOCUMENTO_MESTRE_SERVIO_AI.md  | Estado, arquitetura, protocolo | 30 min |
+| API_ENDPOINTS.md               | Todas as rotas backend         | 15 min |
+| types.ts                       | Interfaces TypeScript          | 10 min |
+| firestore.rules                | Regras de segurança            | 15 min |
+| STRIPE_GUIA_RAPIDO.md          | Integração de pagamentos       | 10 min |
+| OMNICHANNEL_WEBHOOKS_CONFIG.md | Webhooks multicanal            | 15 min |
 
 **Total recomendado: 1h 15 min**
 

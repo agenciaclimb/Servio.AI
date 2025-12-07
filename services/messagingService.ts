@@ -51,7 +51,7 @@ export async function onForegroundMessage(callback: (payload: MessagePayload) =>
   const supported = await isSupported();
   if (!supported) return;
   const messaging = getMessaging(app);
-  onMessage(messaging, (payload) => {
+  onMessage(messaging, payload => {
     callback(payload);
   });
 }

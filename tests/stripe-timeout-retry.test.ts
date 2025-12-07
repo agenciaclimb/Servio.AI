@@ -25,7 +25,9 @@ describe('[E2E-SMOKE] Stripe Timeout + Retry', () => {
     } as any);
 
     // 1ª: deve falhar com E_TIMEOUT
-    await expect(API.createCheckoutSession(job, amount)).rejects.toMatchObject({ code: 'E_TIMEOUT' });
+    await expect(API.createCheckoutSession(job, amount)).rejects.toMatchObject({
+      code: 'E_TIMEOUT',
+    });
 
     // 2ª: retry manual (sucesso)
     const res = await API.createCheckoutSession(job, amount);

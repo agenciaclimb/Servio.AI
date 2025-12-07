@@ -46,7 +46,8 @@ const AnalyticsCard = ({ title, value, change, trend }: any) => (
             change > 0 ? 'text-green-600' : change < 0 ? 'text-red-600' : 'text-gray-600'
           }`}
         >
-          {change > 0 ? '+' : ''}{change}% from last month
+          {change > 0 ? '+' : ''}
+          {change}% from last month
         </p>
       )}
     </div>
@@ -117,10 +118,12 @@ describe('Chart - Comprehensive Quality Tests', () => {
     });
 
     it('should handle large datasets', () => {
-      const largeData = Array(1000).fill(null).map((_, i) => ({
-        label: `Point ${i}`,
-        value: Math.random() * 100,
-      }));
+      const largeData = Array(1000)
+        .fill(null)
+        .map((_, i) => ({
+          label: `Point ${i}`,
+          value: Math.random() * 100,
+        }));
 
       render(<Chart data={largeData} title="Large Dataset" />);
       expect(screen.getByTestId('chart-content')).toHaveTextContent('1000 data points');
@@ -399,9 +402,11 @@ describe('AnalyticsCard - Comprehensive Quality Tests', () => {
     it('should handle many cards efficiently', () => {
       const { container } = render(
         <div>
-          {Array(100).fill(null).map((_, i) => (
-            <AnalyticsCard key={i} title={`Card ${i}`} value={i * 100} />
-          ))}
+          {Array(100)
+            .fill(null)
+            .map((_, i) => (
+              <AnalyticsCard key={i} title={`Card ${i}`} value={i * 100} />
+            ))}
         </div>
       );
 

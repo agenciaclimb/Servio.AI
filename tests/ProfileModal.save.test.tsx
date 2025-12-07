@@ -18,9 +18,7 @@ describe('ProfileModal', () => {
     const onClose = vi.fn();
     const onSave = vi.fn();
 
-    render(
-      <ProfileModal user={baseUser} onClose={onClose} onSave={onSave} />
-    );
+    render(<ProfileModal user={baseUser} onClose={onClose} onSave={onSave} />);
 
     // fill some fields
     fireEvent.change(screen.getByLabelText(/Nome Completo/i), { target: { value: 'Novo Nome' } });
@@ -31,6 +29,6 @@ describe('ProfileModal', () => {
     expect(onSave).toHaveBeenCalled();
     const payload = onSave.mock.calls[0][0] as Partial<User>;
     expect(payload.name).toBe('Novo Nome');
-    expect(payload.specialties).toEqual(['A','B','C']);
+    expect(payload.specialties).toEqual(['A', 'B', 'C']);
   });
 });

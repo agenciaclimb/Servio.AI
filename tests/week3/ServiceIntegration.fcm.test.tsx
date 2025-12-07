@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 /**
  * Firebase Cloud Messaging (FCM) Service Integration Tests
- * 
+ *
  * Coverage:
  * - FCM token generation and registration
  * - Notification permission requests
@@ -176,9 +176,7 @@ describe('FCM Service Integration', () => {
       const initialToken = 'fcm_token_old';
       const refreshedToken = 'fcm_token_new';
 
-      mockGetToken
-        .mockResolvedValueOnce(initialToken)
-        .mockResolvedValueOnce(refreshedToken);
+      mockGetToken.mockResolvedValueOnce(initialToken).mockResolvedValueOnce(refreshedToken);
 
       const token1 = await mockGetToken({} as any, {
         vapidKey: 'test_vapid_key',
@@ -216,7 +214,7 @@ describe('FCM Service Integration', () => {
       const messaging = mockGetMessaging();
 
       let receivedMessage: any;
-      const unsubscribe = mockOnMessage(messaging, (message) => {
+      const unsubscribe = mockOnMessage(messaging, message => {
         receivedMessage = message;
       });
 
@@ -250,7 +248,7 @@ describe('FCM Service Integration', () => {
       });
 
       const messaging = mockGetMessaging();
-      mockOnMessage(messaging, (message) => {
+      mockOnMessage(messaging, message => {
         const event = new CustomEvent(message.data.type, {
           detail: message.data,
         });
@@ -288,7 +286,12 @@ describe('FCM Service Integration', () => {
       ];
 
       mockMessages.forEach(msg => {
-        expect(['prospector-click', 'prospector-conversion', 'prospector-commission', 'prospector-badge']).toContain(msg.type);
+        expect([
+          'prospector-click',
+          'prospector-conversion',
+          'prospector-commission',
+          'prospector-badge',
+        ]).toContain(msg.type);
       });
     });
 
@@ -315,7 +318,7 @@ describe('FCM Service Integration', () => {
       const messaging = mockGetMessaging();
 
       let receivedData: any;
-      mockOnMessage(messaging, (message) => {
+      mockOnMessage(messaging, message => {
         receivedData = message.data;
       });
 
@@ -383,9 +386,7 @@ describe('FCM Service Integration', () => {
       (Notification.permission as any) = 'default';
       expect(Notification.permission).toBe('default');
 
-      (Notification.requestPermission as any) = vi
-        .fn()
-        .mockResolvedValue('granted');
+      (Notification.requestPermission as any) = vi.fn().mockResolvedValue('granted');
 
       const permission = await Notification.requestPermission();
       (Notification.permission as any) = permission;

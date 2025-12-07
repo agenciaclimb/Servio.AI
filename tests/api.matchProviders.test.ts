@@ -16,8 +16,8 @@ describe('matchProvidersForJob', () => {
       {
         provider: { ...MOCK_USERS.find(u => u.type === 'prestador')!, email: 'prov@ok.com' },
         score: 0.92,
-        reason: 'Alta afinidade por categoria'
-      }
+        reason: 'Alta afinidade por categoria',
+      },
     ];
 
     vi.spyOn(global, 'fetch').mockResolvedValueOnce({
@@ -59,8 +59,8 @@ describe('matchProvidersForJob', () => {
       {
         provider: { ...MOCK_USERS[0], email: 'near@test.com', location: 'São Paulo, SP' },
         score: 0.95,
-        reason: 'Próximo ao local (2km)'
-      }
+        reason: 'Próximo ao local (2km)',
+      },
     ];
 
     vi.spyOn(global, 'fetch').mockResolvedValueOnce({
@@ -69,7 +69,7 @@ describe('matchProvidersForJob', () => {
     } as any);
 
     const res = await matchProvidersForJob(JOB_ID);
-    
+
     expect(res).toHaveLength(1);
     expect(res[0].reason).toContain('Próximo');
     expect(res[0].score).toBeGreaterThan(0.9);
@@ -90,18 +90,18 @@ describe('matchProvidersForJob', () => {
       {
         provider: { ...MOCK_USERS[0], email: 'low@test.com' },
         score: 0.6,
-        reason: 'Score baixo'
+        reason: 'Score baixo',
       },
       {
         provider: { ...MOCK_USERS[1], email: 'high@test.com' },
         score: 0.95,
-        reason: 'Score alto'
+        reason: 'Score alto',
       },
       {
         provider: { ...MOCK_USERS[2], email: 'medium@test.com' },
         score: 0.8,
-        reason: 'Score médio'
-      }
+        reason: 'Score médio',
+      },
     ];
 
     vi.spyOn(global, 'fetch').mockResolvedValueOnce({
@@ -110,7 +110,7 @@ describe('matchProvidersForJob', () => {
     } as any);
 
     const res = await matchProvidersForJob(JOB_ID);
-    
+
     // Backend deve retornar ordenado, mas validamos estrutura
     expect(res).toHaveLength(3);
     expect(res[0].score).toBe(0.6);
@@ -123,13 +123,13 @@ describe('matchProvidersForJob', () => {
       {
         provider: { ...MOCK_USERS[0], email: 'reason1@test.com' },
         score: 0.9,
-        reason: 'Especialista em categoria elétrica, 5 anos experiência'
+        reason: 'Especialista em categoria elétrica, 5 anos experiência',
       },
       {
         provider: { ...MOCK_USERS[1], email: 'reason2@test.com' },
         score: 0.85,
-        reason: 'Alta avaliação (4.9★), disponibilidade imediata'
-      }
+        reason: 'Alta avaliação (4.9★), disponibilidade imediata',
+      },
     ];
 
     vi.spyOn(global, 'fetch').mockResolvedValueOnce({
@@ -138,7 +138,7 @@ describe('matchProvidersForJob', () => {
     } as any);
 
     const res = await matchProvidersForJob(JOB_ID);
-    
+
     expect(res).toHaveLength(2);
     expect(res[0].reason).toContain('Especialista');
     expect(res[1].reason).toContain('Alta avaliação');

@@ -7,7 +7,7 @@ describe('AIJobRequestWizard - Coverage Tests', () => {
     const hasInitialData = true;
     const hasInitialPrompt = false;
 
-    const step = hasInitialData ? 'review' : (hasInitialPrompt ? 'loading' : 'initial');
+    const step = hasInitialData ? 'review' : hasInitialPrompt ? 'loading' : 'initial';
     expect(step).toBe('review');
   });
 
@@ -15,7 +15,7 @@ describe('AIJobRequestWizard - Coverage Tests', () => {
     const hasInitialData = false;
     const hasInitialPrompt = true;
 
-    const step = hasInitialData ? 'review' : (hasInitialPrompt ? 'loading' : 'initial');
+    const step = hasInitialData ? 'review' : hasInitialPrompt ? 'loading' : 'initial';
     expect(step).toBe('loading');
   });
 
@@ -23,7 +23,7 @@ describe('AIJobRequestWizard - Coverage Tests', () => {
     const hasInitialData = false;
     const hasInitialPrompt = false;
 
-    const step = hasInitialData ? 'review' : (hasInitialPrompt ? 'loading' : 'initial');
+    const step = hasInitialData ? 'review' : hasInitialPrompt ? 'loading' : 'initial';
     expect(step).toBe('initial');
   });
 
@@ -41,19 +41,22 @@ describe('AIJobRequestWizard - Coverage Tests', () => {
 
   it('tests job mode determination for diagnosis', () => {
     const serviceType = 'diagnostico';
-    const jobMode = serviceType === 'diagnostico' ? 'diagnosis' : (serviceType === 'leilao' ? 'auction' : 'normal');
+    const jobMode =
+      serviceType === 'diagnostico' ? 'diagnosis' : serviceType === 'leilao' ? 'auction' : 'normal';
     expect(jobMode).toBe('diagnosis');
   });
 
   it('tests job mode determination for auction', () => {
     const serviceType = 'leilao';
-    const jobMode = serviceType === 'diagnostico' ? 'diagnosis' : (serviceType === 'leilao' ? 'auction' : 'normal');
+    const jobMode =
+      serviceType === 'diagnostico' ? 'diagnosis' : serviceType === 'leilao' ? 'auction' : 'normal';
     expect(jobMode).toBe('auction');
   });
 
   it('tests job mode determination for normal', () => {
     const serviceType = 'personalizado';
-    const jobMode = serviceType === 'diagnostico' ? 'diagnosis' : (serviceType === 'leilao' ? 'auction' : 'normal');
+    const jobMode =
+      serviceType === 'diagnostico' ? 'diagnosis' : serviceType === 'leilao' ? 'auction' : 'normal';
     expect(jobMode).toBe('normal');
   });
 

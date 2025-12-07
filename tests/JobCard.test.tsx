@@ -11,23 +11,29 @@ vi.mock('../services/geminiService', () => ({
   ]),
 }));
 
-const baseJob = (over: Partial<Job> = {}): Job => ({
-  id: 'job-1',
-  title: 'Reparo em porta',
-  category: 'reparos' as any,
-  description: 'Porta desalinhada, precisa ajuste de dobradiça.',
-  clientId: 'client-1',
-  status: 'open' as any,
-  serviceType: 'tabelado' as any,
-  fixedPrice: 200,
-  jobMode: 'normal' as any,
-  createdAt: new Date().toISOString(),
-  ...over,
-} as Job);
+const baseJob = (over: Partial<Job> = {}): Job =>
+  ({
+    id: 'job-1',
+    title: 'Reparo em porta',
+    category: 'reparos' as any,
+    description: 'Porta desalinhada, precisa ajuste de dobradiça.',
+    clientId: 'client-1',
+    status: 'open' as any,
+    serviceType: 'tabelado' as any,
+    fixedPrice: 200,
+    jobMode: 'normal' as any,
+    createdAt: new Date().toISOString(),
+    ...over,
+  }) as Job;
 
-const bids = (...amounts: number[]): Bid[] => amounts.map((a, i) => ({
-  id: `bid-${i+1}`, jobId: 'job-1', providerId: `p-${i+1}`, amount: a, createdAt: new Date().toISOString(),
-})) as Bid[];
+const bids = (...amounts: number[]): Bid[] =>
+  amounts.map((a, i) => ({
+    id: `bid-${i + 1}`,
+    jobId: 'job-1',
+    providerId: `p-${i + 1}`,
+    amount: a,
+    createdAt: new Date().toISOString(),
+  })) as Bid[];
 
 describe('JobCard', () => {
   beforeEach(() => vi.clearAllMocks());
@@ -60,7 +66,9 @@ describe('JobCard', () => {
 
   it('em modo leilão exibe menor lance atual', () => {
     const job = baseJob({ jobMode: 'leilao', serviceType: 'personalizado', fixedPrice: undefined });
-    render(<JobCard job={job} bids={bids(350, 220, 280)} onProposeClick={vi.fn()} hasProposed={false} />);
+    render(
+      <JobCard job={job} bids={bids(350, 220, 280)} onProposeClick={vi.fn()} hasProposed={false} />
+    );
 
     expect(screen.getByText(/Leilão/i)).toBeInTheDocument();
     expect(screen.getByText(/Menor Lance Atual/i)).toBeInTheDocument();
@@ -101,7 +109,7 @@ describe('JobCard', () => {
 
   it('exibe selo de Diagnóstico e não mostra preço fixo quando serviceType=diagnostico', () => {
     const job = baseJob({ jobMode: 'normal', serviceType: 'diagnostico', fixedPrice: undefined });
-  render(<JobCard job={job} bids={[]} onProposeClick={vi.fn()} hasProposed={false} />);
+    render(<JobCard job={job} bids={[]} onProposeClick={vi.fn()} hasProposed={false} />);
 
     expect(screen.getByText(/Diagnóstico/i)).toBeInTheDocument();
     expect(screen.queryByText(/Preço Fixo/i)).not.toBeInTheDocument();

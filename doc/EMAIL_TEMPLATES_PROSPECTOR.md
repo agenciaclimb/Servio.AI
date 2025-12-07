@@ -22,6 +22,7 @@ A Servio.AI oferece uma forma inteligente de aumentar sua carteira de clientes s
 - Garante pagamento seguro através de nossa mediação
 
 **Números que importam:**
+
 - Taxa de conversão média: 35% (1 em cada 3 propostas vira serviço)
 - Ticket médio: R$ [valor] por serviço
 - Avaliação da plataforma: [X] estrelas
@@ -56,6 +57,7 @@ Sou [Seu Nome] e ajudo prestadores de serviço como você a encontrar mais traba
 Direto ao ponto: você conhece aquele tempo que você perde procurando cliente? A Servio.AI resolve isso.
 
 **Como?**
+
 - Você cria um perfil gratuito
 - Clientes da sua região te encontram
 - Você recebe propostas no WhatsApp
@@ -113,7 +115,7 @@ Abraço,
 
 Oi [Nome],
 
-Você conhece o [Nome de Prestador Local - se aplicável]? 
+Você conhece o [Nome de Prestador Local - se aplicável]?
 
 Ele estava na mesma situação que muitos: bom profissional, mas dependendo muito de indicação pra conseguir trabalho.
 
@@ -122,6 +124,7 @@ Há 2 semanas ele entrou na Servio.AI. Resultado? 8 novos clientes e R$ [valor] 
 **O que ele fez de diferente?**
 
 Nada de mágico. Ele simplesmente:
+
 1. Criou um perfil completo na plataforma (levou 15 minutos)
 2. Ativou as notificações de oportunidades na região dele
 3. Respondeu rápido as propostas que faziam sentido
@@ -157,17 +160,20 @@ Que legal que você quer fazer parte da Servio.AI! 🎉
 Vou te guiar nos próximos passos para começar a receber propostas ainda esta semana:
 
 **Passo 1: Criar seu perfil**
+
 - Acesse: [seu link personalizado]
 - Cadastro básico (nome, e-mail, telefone) - 2 minutos
 - Código de convite: [seu código] ← use este!
 
 **Passo 2: Completar informações profissionais**
+
 - Adicione fotos dos seus trabalhos (quanto mais, melhor!)
 - Descreva seus serviços
 - Defina suas áreas de atuação
 - Configure sua disponibilidade
 
 **Passo 3: Ativar notificações**
+
 - Baixe o app ou ative notificações no navegador
 - Você receberá alertas de novas propostas
 
@@ -176,6 +182,7 @@ Vou te guiar nos próximos passos para começar a receber propostas ainda esta s
 Estou aqui! Posso fazer uma videochamada rápida pra te ajudar a configurar tudo certinho. Ou se preferir, me manda print das telas e te oriento por WhatsApp.
 
 **Dicas para começar bem:**
+
 - Responda propostas em até 1 hora (aumenta muito sua taxa de conversão)
 - Seja educado mesmo em propostas que você vai recusar
 - Peça avaliação após cada serviço (constrói reputação)
@@ -199,6 +206,7 @@ Abraço e sucesso!
 Não quero encher sua caixa de entrada, então este é meu último e-mail sobre a Servio.AI.
 
 **Nos últimos 7 dias:**
+
 - 47 novos prestadores se cadastraram na plataforma
 - R$ 86.400 em serviços foram fechados
 - 213 novas propostas foram enviadas
@@ -229,31 +237,37 @@ P.S.: Se você conhecer alguém que possa se interessar, fica à vontade pra enc
 ## 🎯 Dicas de Uso dos Templates
 
 ### Personalização é Chave:
+
 - **Sempre** troque [Nome] pelo nome real da pessoa
 - Pesquise o trabalho dela (Instagram, Google) e mencione algo específico
 - Use linguagem que combine com o perfil (formal para corporativo, casual para autônomos jovens)
 
 ### Timing Importa:
+
 - **Melhor dia**: Terça ou Quarta-feira
 - **Melhor horário**: 10h-11h ou 14h-15h (evite segunda cedo e sexta tarde)
 - **Follow-up**: Espere 48h antes do primeiro, depois 5-7 dias
 
 ### Linhas de Assunto que Funcionam:
+
 ✅ "Como [nome local] conseguiu X clientes em Y tempo"  
 ✅ "Uma pergunta rápida sobre seu negócio de [serviço]"  
 ✅ "[Nome], você já pensou em [benefício específico]?"  
-✅ "Oportunidade sem risco para [categoria profissional]"  
+✅ "Oportunidade sem risco para [categoria profissional]"
 
 ❌ Evite: "URGENTE", "Última chance", "Você foi selecionado" (parecem spam)
 
 ### Teste A/B:
+
 - Envie versões diferentes para grupos pequenos
 - Veja qual tem melhor taxa de abertura
 - Veja qual gera mais respostas
 - Ajuste com base nos dados
 
 ### Call-to-Action (CTA):
+
 Sempre tenha UMA ação clara:
+
 - "Responda este e-mail com 'SIM' se quiser saber mais"
 - "Clique aqui para criar seu perfil: [link]"
 - "Me chama no WhatsApp: [número]"
@@ -269,6 +283,7 @@ Sempre tenha UMA ação clara:
 - **Taxa de Conversão (cadastro)**: Ideal 2-5%
 
 Se suas taxas estiverem abaixo, revise:
+
 1. Linha de assunto (se baixa abertura)
 2. Corpo do e-mail (se baixa resposta)
 3. CTA e processo de cadastro (se baixa conversão)

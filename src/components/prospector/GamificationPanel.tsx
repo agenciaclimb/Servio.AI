@@ -22,20 +22,35 @@ export default function GamificationPanel({ leads, onClose }: GamificationPanelP
     const ranking = [
       { name: 'Você', score: won * 10 + negotiating * 5 + contacted * 2 },
       { name: 'Prospector A', score: 280 },
-      { name: 'Prospector B', score: 195 }
+      { name: 'Prospector B', score: 195 },
     ].sort((a, b) => b.score - a.score);
 
     const position = ranking.findIndex(r => r.name === 'Você') + 1;
 
-    return { contacted, negotiating, won, total, conversion, dailyGoal, progressPercent, ranking, position };
+    return {
+      contacted,
+      negotiating,
+      won,
+      total,
+      conversion,
+      dailyGoal,
+      progressPercent,
+      ranking,
+      position,
+    };
   }, [leads]);
 
   return (
     <div className="fixed inset-0 bg-black/50 grid place-items-center z-[76]" onClick={onClose}>
-      <div className="bg-white rounded-xl shadow-2xl w-[760px] max-w-[92vw] max-h-[85vh] overflow-auto p-6" onClick={e => e.stopPropagation()}>
+      <div
+        className="bg-white rounded-xl shadow-2xl w-[760px] max-w-[92vw] max-h-[85vh] overflow-auto p-6"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-2xl font-bold text-gray-900">🏆 Painel de Gamificação</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">
+            ✕
+          </button>
         </div>
 
         <div className="grid grid-cols-3 gap-4 mb-6">
@@ -44,13 +59,18 @@ export default function GamificationPanel({ leads, onClose }: GamificationPanelP
             <div className="text-3xl font-extrabold text-blue-800">{metrics.contacted}</div>
             <div className="text-xs text-blue-700 mt-1">Meta: {metrics.dailyGoal}</div>
             <div className="h-2 bg-blue-100 rounded mt-2 overflow-hidden">
-              <div style={{ width: `${metrics.progressPercent}%` }} className="h-full bg-blue-500 transition-all"></div>
+              <div
+                style={{ width: `${metrics.progressPercent}%` }}
+                className="h-full bg-blue-500 transition-all"
+              ></div>
             </div>
           </div>
           <div className="p-4 rounded-lg border bg-purple-50">
             <div className="text-xs font-bold text-purple-600">NEGOCIANDO</div>
             <div className="text-3xl font-extrabold text-purple-800">{metrics.negotiating}</div>
-            <div className="text-xs text-purple-700 mt-1">Conversão atual: {metrics.conversion}%</div>
+            <div className="text-xs text-purple-700 mt-1">
+              Conversão atual: {metrics.conversion}%
+            </div>
           </div>
           <div className="p-4 rounded-lg border bg-green-50">
             <div className="text-xs font-bold text-green-600">CONVERTIDOS</div>
@@ -61,7 +81,9 @@ export default function GamificationPanel({ leads, onClose }: GamificationPanelP
 
         <div className="mb-6 p-4 rounded-lg border bg-yellow-50">
           <div className="font-bold text-yellow-700 mb-1">📈 Pontuação & Ranking</div>
-          <div className="text-sm text-yellow-800">Sua posição no ranking atual: <strong>#{metrics.position}</strong></div>
+          <div className="text-sm text-yellow-800">
+            Sua posição no ranking atual: <strong>#{metrics.position}</strong>
+          </div>
           <table className="w-full mt-3 text-sm">
             <thead>
               <tr className="text-left text-xs text-gray-500">
@@ -72,7 +94,10 @@ export default function GamificationPanel({ leads, onClose }: GamificationPanelP
             </thead>
             <tbody>
               {metrics.ranking.map((r, idx) => (
-                <tr key={r.name} className={`border-t text-gray-700 ${r.name === 'Você' ? 'font-bold bg-indigo-50' : ''}`}> 
+                <tr
+                  key={r.name}
+                  className={`border-t text-gray-700 ${r.name === 'Você' ? 'font-bold bg-indigo-50' : ''}`}
+                >
                   <td className="py-1">#{idx + 1}</td>
                   <td>{r.name}</td>
                   <td>{r.score}</td>
@@ -102,11 +127,17 @@ export default function GamificationPanel({ leads, onClose }: GamificationPanelP
         </div>
 
         <div className="mt-6 flex justify-end">
-          <button onClick={onClose} className="px-5 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300">Fechar</button>
+          <button
+            onClick={onClose}
+            className="px-5 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300"
+          >
+            Fechar
+          </button>
         </div>
 
         <div className="mt-4 text-xs text-gray-500">
-          * Pontuação e ranking são placeholders. Próximas fases: sistema real baseado em atividades.
+          * Pontuação e ranking são placeholders. Próximas fases: sistema real baseado em
+          atividades.
         </div>
       </div>
     </div>

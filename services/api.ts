@@ -39,13 +39,18 @@ const BACKEND_URL =
 const USE_MOCK = false; // Always try real backend first, fallback to mock on error
 
 // Optional debug flag to reduce noisy console.log in production builds
-const DEBUG = (import.meta as unknown as { env?: Record<string, string> })?.env?.VITE_DEBUG === 'true';
+const DEBUG =
+  (import.meta as unknown as { env?: Record<string, string> })?.env?.VITE_DEBUG === 'true';
 if (DEBUG) console.warn('[api] Service initialized', { BACKEND_URL, USE_MOCK });
 
 // ----------------------------------------------------------------------------
 // Error catalog & helper
 // ----------------------------------------------------------------------------
-export interface ApiError extends Error { code: string; status?: number; details?: unknown }
+export interface ApiError extends Error {
+  code: string;
+  status?: number;
+  details?: unknown;
+}
 
 const ErrorCatalog = {
   NETWORK: { code: 'E_NETWORK', message: 'Falha de rede. Verifique sua conexão.' },
@@ -56,7 +61,11 @@ const ErrorCatalog = {
   UNKNOWN: { code: 'E_UNKNOWN', message: 'Erro desconhecido.' },
 } as const;
 
-function makeApiError(key: keyof typeof ErrorCatalog, status?: number, details?: unknown): ApiError {
+function makeApiError(
+  key: keyof typeof ErrorCatalog,
+  status?: number,
+  details?: unknown
+): ApiError {
   const base = ErrorCatalog[key] || ErrorCatalog.UNKNOWN;
   const err = new Error(base.message) as ApiError;
   err.code = base.code;
@@ -87,9 +96,7 @@ async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
       if (response.status === 401 || response.status === 403) errKey = 'AUTH';
       else if (response.status === 404) errKey = 'NOT_FOUND';
       else if (response.status >= 500) errKey = 'SERVER';
-      const details = await response
-        .json()
-        .catch(() => ({ message: response.statusText }));
+      const details = await response.json().catch(() => ({ message: response.statusText }));
       throw makeApiError(errKey, response.status, details);
     }
     return await response.json();
@@ -113,7 +120,7 @@ async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
 
 export async function fetchAllUsers(): Promise<User[]> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock users');
+    if (DEBUG) console.warn('[api] mock users');
     return MOCK_USERS;
   }
 
@@ -127,7 +134,7 @@ export async function fetchAllUsers(): Promise<User[]> {
 
 export async function fetchProviders(): Promise<User[]> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock providers');
+    if (DEBUG) console.warn('[api] mock providers');
     return MOCK_USERS.filter(u => u.type === 'prestador' && u.verificationStatus === 'verificado');
   }
 
@@ -141,7 +148,7 @@ export async function fetchProviders(): Promise<User[]> {
 
 export async function fetchUserById(userId: string): Promise<User | null> {
   if (USE_MOCK) {
-    const user = MOCK_USERS.find((u) => u.email === userId);
+    const user = MOCK_USERS.find(u => u.email === userId);
     return user || null;
   }
 
@@ -149,7 +156,7 @@ export async function fetchUserById(userId: string): Promise<User | null> {
     return await apiCall<User>(`/users/${userId}`);
   } catch (error) {
     console.warn(`Failed to fetch user ${userId}, using mock data`);
-    const user = MOCK_USERS.find((u) => u.email === userId);
+    const user = MOCK_USERS.find(u => u.email === userId);
     return user || null;
   }
 }
@@ -161,7 +168,7 @@ export async function createUser(user: Omit<User, 'memberSince'>): Promise<User>
       memberSince: new Date().toISOString(),
     };
     MOCK_USERS.push(newUser);
-  if (DEBUG) console.warn('[api] mock create user', newUser);
+    if (DEBUG) console.warn('[api] mock create user', newUser);
     return newUser;
   }
 
@@ -178,8 +185,8 @@ export async function createUser(user: Omit<User, 'memberSince'>): Promise<User>
 
 export async function updateUser(userId: string, updates: Partial<User>): Promise<User> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock update user', userId, updates);
-    const existingUser = MOCK_USERS.find((u) => u.email === userId);
+    if (DEBUG) console.warn('[api] mock update user', userId, updates);
+    const existingUser = MOCK_USERS.find(u => u.email === userId);
     if (!existingUser) throw new Error('User not found');
     return { ...existingUser, ...updates };
   }
@@ -198,7 +205,7 @@ export async function updateUser(userId: string, updates: Partial<User>): Promis
 export async function deleteUser(userId: string): Promise<void> {
   if (USE_MOCK) {
     if (DEBUG) console.warn('[api] mock delete user', userId);
-    const index = MOCK_USERS.findIndex((u) => u.email === userId);
+    const index = MOCK_USERS.findIndex(u => u.email === userId);
     if (index > -1) MOCK_USERS.splice(index, 1);
     return;
   }
@@ -231,7 +238,10 @@ export async function fetchProspects(): Promise<Prospect[]> {
   }
 }
 
-export async function updateProspect(prospectId: string, updates: Partial<Prospect>): Promise<Prospect> {
+export async function updateProspect(
+  prospectId: string,
+  updates: Partial<Prospect>
+): Promise<Prospect> {
   if (USE_MOCK) {
     if (DEBUG) console.warn('[api] mock update prospect', prospectId, updates);
     return { id: prospectId, ...updates } as Prospect;
@@ -335,7 +345,7 @@ export async function registerWithInvite(providerEmail: string, inviteCode: stri
   try {
     await apiCall('/register-with-invite', {
       method: 'POST',
-      body: JSON.stringify({ providerEmail, inviteCode, source: 'manual' })
+      body: JSON.stringify({ providerEmail, inviteCode, source: 'manual' }),
     });
   } catch (error) {
     console.error('Failed to register with invite:', error);
@@ -378,12 +388,14 @@ export async function fetchProspectorStats(prospectorId: string): Promise<Prospe
         { name: 'Prata', min: 5 },
         { name: 'Ouro', min: 10 },
         { name: 'Platina', min: 25 },
-        { name: 'Diamante', min: 50 }
-      ]
+        { name: 'Diamante', min: 50 },
+      ],
     };
   }
   try {
-    return await apiCall<ProspectorStats>(`/prospector/stats?prospectorId=${encodeURIComponent(prospectorId)}`);
+    return await apiCall<ProspectorStats>(
+      `/prospector/stats?prospectorId=${encodeURIComponent(prospectorId)}`
+    );
   } catch (e) {
     console.error('Failed to fetch prospector stats', e);
     return null;
@@ -398,16 +410,39 @@ export interface LeaderboardEntry {
   rank: number;
 }
 
-export async function fetchProspectorLeaderboard(sort: 'commissions' | 'recruits' = 'commissions', limit = 10): Promise<LeaderboardEntry[]> {
+export async function fetchProspectorLeaderboard(
+  sort: 'commissions' | 'recruits' = 'commissions',
+  limit = 10
+): Promise<LeaderboardEntry[]> {
   if (USE_MOCK) {
     return [
-      { prospectorId: 'c@example.com', name: 'Carol', totalRecruits: 30, totalCommissionsEarned: 450, rank: 1 },
-      { prospectorId: 'a@example.com', name: 'Alice', totalRecruits: 12, totalCommissionsEarned: 120, rank: 2 },
-      { prospectorId: 'b@example.com', name: 'Bob', totalRecruits: 4, totalCommissionsEarned: 40, rank: 3 }
+      {
+        prospectorId: 'c@example.com',
+        name: 'Carol',
+        totalRecruits: 30,
+        totalCommissionsEarned: 450,
+        rank: 1,
+      },
+      {
+        prospectorId: 'a@example.com',
+        name: 'Alice',
+        totalRecruits: 12,
+        totalCommissionsEarned: 120,
+        rank: 2,
+      },
+      {
+        prospectorId: 'b@example.com',
+        name: 'Bob',
+        totalRecruits: 4,
+        totalCommissionsEarned: 40,
+        rank: 3,
+      },
     ];
   }
   try {
-    const resp = await apiCall<{ sort: string; total: number; results: LeaderboardEntry[] }>(`/prospectors/leaderboard?sort=${sort}&limit=${limit}`);
+    const resp = await apiCall<{ sort: string; total: number; results: LeaderboardEntry[] }>(
+      `/prospectors/leaderboard?sort=${sort}&limit=${limit}`
+    );
     return resp.results || [];
   } catch (e) {
     console.error('Failed to fetch prospector leaderboard', e);
@@ -422,7 +457,7 @@ export function computeBadgeProgress(totalRecruits: number) {
     { name: 'Prata', min: 5 },
     { name: 'Ouro', min: 10 },
     { name: 'Platina', min: 25 },
-    { name: 'Diamante', min: 50 }
+    { name: 'Diamante', min: 50 },
   ];
   let current = tiers[0].name;
   let next: string | null = null;
@@ -435,7 +470,13 @@ export function computeBadgeProgress(totalRecruits: number) {
   }
   const nextThreshold = next ? tiers.find(t => t.name === next)!.min : null;
   const currentBase = tiers.find(t => t.name === current)!.min;
-  const progress = nextThreshold === null ? 100 : Math.min(100, Math.round(((totalRecruits - currentBase) / (nextThreshold - currentBase)) * 100));
+  const progress =
+    nextThreshold === null
+      ? 100
+      : Math.min(
+          100,
+          Math.round(((totalRecruits - currentBase) / (nextThreshold - currentBase)) * 100)
+        );
   return { currentBadge: current, nextBadge: next, progressToNextBadge: progress, tiers };
 }
 // STRIPE CONNECT
@@ -443,7 +484,7 @@ export function computeBadgeProgress(totalRecruits: number) {
 
 export async function createStripeConnectAccount(userId: string): Promise<{ accountId: string }> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock create stripe connect', userId);
+    if (DEBUG) console.warn('[api] mock create stripe connect', userId);
     // In mock, we'll just pretend and update the user object
     const user = MOCK_USERS.find(u => u.email === userId);
     if (user) {
@@ -460,7 +501,7 @@ export async function createStripeConnectAccount(userId: string): Promise<{ acco
 
 export async function createStripeAccountLink(userId: string): Promise<{ url: string }> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock create stripe account link', userId);
+    if (DEBUG) console.warn('[api] mock create stripe account link', userId);
     return { url: 'https://mock.stripe.com/onboarding-link' };
   }
 
@@ -474,12 +515,9 @@ export async function createStripeAccountLink(userId: string): Promise<{ url: st
 // STRIPE CHECKOUT & PAYMENTS
 // ============================================================================
 
-export async function createCheckoutSession(
-  job: Job, 
-  amount: number
-): Promise<{ id: string }> {
+export async function createCheckoutSession(job: Job, amount: number): Promise<{ id: string }> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock create checkout', { jobId: job.id, amount });
+    if (DEBUG) console.warn('[api] mock create checkout', { jobId: job.id, amount });
     return { id: `cs_mock_${Date.now()}` };
   }
 
@@ -489,9 +527,11 @@ export async function createCheckoutSession(
   });
 }
 
-export async function releasePayment(jobId: string): Promise<{ success: boolean; message: string }> {
+export async function releasePayment(
+  jobId: string
+): Promise<{ success: boolean; message: string }> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock release payment', jobId);
+    if (DEBUG) console.warn('[api] mock release payment', jobId);
     return { success: true, message: 'Pagamento liberado com sucesso (mock)' };
   }
 
@@ -500,14 +540,13 @@ export async function releasePayment(jobId: string): Promise<{ success: boolean;
   });
 }
 
-
 // ============================================================================
 // JOBS
 // ============================================================================
 
 export async function fetchJobs(): Promise<Job[]> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock jobs');
+    if (DEBUG) console.warn('[api] mock jobs');
     return MOCK_JOBS;
   }
 
@@ -521,7 +560,7 @@ export async function fetchJobs(): Promise<Job[]> {
 
 export async function fetchJobsForUser(userId: string): Promise<Job[]> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock jobs for user', userId);
+    if (DEBUG) console.warn('[api] mock jobs for user', userId);
     return MOCK_JOBS.filter(job => job.clientId === userId);
   }
 
@@ -535,7 +574,7 @@ export async function fetchJobsForUser(userId: string): Promise<Job[]> {
 
 export async function fetchOpenJobs(): Promise<Job[]> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock open jobs');
+    if (DEBUG) console.warn('[api] mock open jobs');
     return MOCK_JOBS.filter(job => job.status === 'ativo' || job.status === 'em_leilao');
   }
 
@@ -552,7 +591,7 @@ export async function fetchOpenJobs(): Promise<Job[]> {
 
 export async function fetchJobsForProvider(providerId: string): Promise<Job[]> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock jobs for provider', providerId);
+    if (DEBUG) console.warn('[api] mock jobs for provider', providerId);
     return MOCK_JOBS.filter(job => job.providerId === providerId);
   }
 
@@ -566,7 +605,7 @@ export async function fetchJobsForProvider(providerId: string): Promise<Job[]> {
 
 export async function fetchJobById(jobId: string): Promise<Job | null> {
   if (USE_MOCK) {
-    const job = MOCK_JOBS.find((j) => j.id === jobId);
+    const job = MOCK_JOBS.find(j => j.id === jobId);
     return job || null;
   }
 
@@ -574,7 +613,7 @@ export async function fetchJobById(jobId: string): Promise<Job | null> {
     return await apiCall<Job>(`/jobs/${jobId}`);
   } catch (error) {
     console.warn(`Failed to fetch job ${jobId}, using mock data`);
-    const job = MOCK_JOBS.find((j) => j.id === jobId);
+    const job = MOCK_JOBS.find(j => j.id === jobId);
     return job || null;
   }
 }
@@ -590,8 +629,8 @@ export async function createJob(jobData: JobData, clientId: string): Promise<Job
     media: jobData.media,
     fixedPrice: jobData.fixedPrice,
     visitFee: jobData.visitFee,
-  status: jobData.jobMode === 'leilao' ? 'em_leilao' : 'ativo',
-  createdAt: new Date().toISOString(),
+    status: jobData.jobMode === 'leilao' ? 'em_leilao' : 'ativo',
+    createdAt: new Date().toISOString(),
     jobMode: jobData.jobMode || 'normal',
     auctionEndDate:
       jobData.jobMode === 'leilao' && jobData.auctionDurationHours
@@ -605,7 +644,7 @@ export async function createJob(jobData: JobData, clientId: string): Promise<Job
       id: `job-${Date.now()}`,
       createdAt: new Date().toISOString(),
     };
-  if (DEBUG) console.warn('[api] mock create job', job);
+    if (DEBUG) console.warn('[api] mock create job', job);
     return job;
   }
 
@@ -622,8 +661,8 @@ export async function createJob(jobData: JobData, clientId: string): Promise<Job
 
 export async function updateJob(jobId: string, updates: Partial<Job>): Promise<Job> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock update job', jobId, updates);
-    const existingJob = MOCK_JOBS.find((j) => j.id === jobId);
+    if (DEBUG) console.warn('[api] mock update job', jobId, updates);
+    const existingJob = MOCK_JOBS.find(j => j.id === jobId);
     if (!existingJob) throw new Error('Job not found');
     return { ...existingJob, ...updates };
   }
@@ -658,26 +697,30 @@ export async function fetchProposals(): Promise<Proposal[]> {
 
 export async function fetchProposalsForProvider(providerId: string): Promise<Proposal[]> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock proposals for provider', providerId);
+    if (DEBUG) console.warn('[api] mock proposals for provider', providerId);
     return MOCK_PROPOSALS.filter(p => p.providerId === providerId);
   }
 
   try {
     return await apiCall<Proposal[]>(`/proposals?providerId=${providerId}`);
   } catch (error) {
-    console.warn(`Failed to fetch proposals for provider ${providerId} from backend, using mock data`);
+    console.warn(
+      `Failed to fetch proposals for provider ${providerId} from backend, using mock data`
+    );
     return MOCK_PROPOSALS.filter(p => p.providerId === providerId);
   }
 }
 
-export async function createProposal(proposal: Omit<Proposal, 'id' | 'createdAt'>): Promise<Proposal> {
+export async function createProposal(
+  proposal: Omit<Proposal, 'id' | 'createdAt'>
+): Promise<Proposal> {
   if (USE_MOCK) {
     const newProposal: Proposal = {
       ...proposal,
       id: `prop-${Date.now()}`,
       createdAt: new Date().toISOString(),
     };
-  if (DEBUG) console.warn('[api] mock create proposal', newProposal);
+    if (DEBUG) console.warn('[api] mock create proposal', newProposal);
     return newProposal;
   }
 
@@ -692,10 +735,13 @@ export async function createProposal(proposal: Omit<Proposal, 'id' | 'createdAt'
   }
 }
 
-export async function updateProposal(proposalId: string, updates: Partial<Proposal>): Promise<Proposal> {
+export async function updateProposal(
+  proposalId: string,
+  updates: Partial<Proposal>
+): Promise<Proposal> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock update proposal', proposalId, updates);
-    const existing = MOCK_PROPOSALS.find((p) => p.id === proposalId);
+    if (DEBUG) console.warn('[api] mock update proposal', proposalId, updates);
+    const existing = MOCK_PROPOSALS.find(p => p.id === proposalId);
     if (!existing) throw new Error('Proposal not found');
     return { ...existing, ...updates };
   }
@@ -736,7 +782,7 @@ export async function createMessage(message: Omit<Message, 'id' | 'createdAt'>):
       id: `msg-${Date.now()}`,
       createdAt: new Date().toISOString(),
     };
-  if (DEBUG) console.warn('[api] mock create message', newMessage);
+    if (DEBUG) console.warn('[api] mock create message', newMessage);
     return newMessage;
   }
 
@@ -757,18 +803,20 @@ export async function createMessage(message: Omit<Message, 'id' | 'createdAt'>):
 
 export async function fetchMaintainedItems(clientId: string): Promise<MaintainedItem[]> {
   if (USE_MOCK) {
-    return MOCK_ITEMS.filter((item) => item.clientId === clientId);
+    return MOCK_ITEMS.filter(item => item.clientId === clientId);
   }
 
   try {
     return await apiCall<MaintainedItem[]>(`/maintained-items?clientId=${clientId}`);
   } catch (error) {
     console.warn('Failed to fetch maintained items, using mock data');
-    return MOCK_ITEMS.filter((item) => item.clientId === clientId);
+    return MOCK_ITEMS.filter(item => item.clientId === clientId);
   }
 }
 
-export async function createMaintainedItem(item: Omit<MaintainedItem, 'id' | 'createdAt' | 'maintenanceHistory'>): Promise<MaintainedItem> {
+export async function createMaintainedItem(
+  item: Omit<MaintainedItem, 'id' | 'createdAt' | 'maintenanceHistory'>
+): Promise<MaintainedItem> {
   if (USE_MOCK) {
     const newItem: MaintainedItem = {
       ...item,
@@ -776,7 +824,7 @@ export async function createMaintainedItem(item: Omit<MaintainedItem, 'id' | 'cr
       createdAt: new Date().toISOString(),
       maintenanceHistory: [],
     };
-  if (DEBUG) console.warn('[api] mock create maintained item', newItem);
+    if (DEBUG) console.warn('[api] mock create maintained item', newItem);
     return newItem;
   }
 
@@ -797,25 +845,27 @@ export async function createMaintainedItem(item: Omit<MaintainedItem, 'id' | 'cr
 
 export async function fetchNotifications(userId: string): Promise<Notification[]> {
   if (USE_MOCK) {
-    return MOCK_NOTIFICATIONS.filter((n) => n.userId === userId);
+    return MOCK_NOTIFICATIONS.filter(n => n.userId === userId);
   }
 
   try {
     return await apiCall<Notification[]>(`/notifications?userId=${userId}`);
   } catch (error) {
     console.warn('Failed to fetch notifications, using mock data');
-    return MOCK_NOTIFICATIONS.filter((n) => n.userId === userId);
+    return MOCK_NOTIFICATIONS.filter(n => n.userId === userId);
   }
 }
 
-export async function createNotification(notification: Omit<Notification, 'id' | 'createdAt'>): Promise<Notification> {
+export async function createNotification(
+  notification: Omit<Notification, 'id' | 'createdAt'>
+): Promise<Notification> {
   if (USE_MOCK) {
     const newNotification: Notification = {
       ...notification,
       id: `notif-${Date.now()}`,
       createdAt: new Date().toISOString(),
     };
-  if (DEBUG) console.warn('[api] mock create notification', newNotification);
+    if (DEBUG) console.warn('[api] mock create notification', newNotification);
     return newNotification;
   }
 
@@ -848,17 +898,17 @@ export async function fetchBids(): Promise<Bid[]> {
 }
 
 export async function fetchBidsForProvider(providerId: string): Promise<Bid[]> {
-    if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock bids for provider', providerId);
+  if (USE_MOCK) {
+    if (DEBUG) console.warn('[api] mock bids for provider', providerId);
     return MOCK_BIDS.filter(b => b.providerId === providerId);
-    }
+  }
 
-    try {
-        return await apiCall<Bid[]>(`/bids?providerId=${providerId}`);
-    } catch (error) {
-        console.warn(`Failed to fetch bids for provider ${providerId} from backend, using mock data`);
-        return MOCK_BIDS.filter(b => b.providerId === providerId);
-    }
+  try {
+    return await apiCall<Bid[]>(`/bids?providerId=${providerId}`);
+  } catch (error) {
+    console.warn(`Failed to fetch bids for provider ${providerId} from backend, using mock data`);
+    return MOCK_BIDS.filter(b => b.providerId === providerId);
+  }
 }
 
 // ============================================================================
@@ -866,17 +916,17 @@ export async function fetchBidsForProvider(providerId: string): Promise<Bid[]> {
 // ============================================================================
 
 export async function fetchDisputes(): Promise<Dispute[]> {
-    if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock disputes (empty array)');
+  if (USE_MOCK) {
+    if (DEBUG) console.warn('[api] mock disputes (empty array)');
     return [];
-    }
+  }
 
-    try {
-        return await apiCall<Dispute[]>('/disputes');
-    } catch (error) {
-        console.warn('Failed to fetch disputes from backend, using mock data');
-        return [];
-    }
+  try {
+    return await apiCall<Dispute[]>('/disputes');
+  } catch (error) {
+    console.warn('Failed to fetch disputes from backend, using mock data');
+    return [];
+  }
 }
 
 // ============================================================================
@@ -902,9 +952,9 @@ export async function fetchSentimentAlerts(): Promise<FraudAlert[]> {
 }
 
 /**
- * @deprecated Use fetchSentimentAlerts() instead. 
+ * @deprecated Use fetchSentimentAlerts() instead.
  * This function is maintained for backward compatibility.
- * 
+ *
  * The term "fraud alerts" was originally used but the backend now calls these
  * "sentiment alerts" to better reflect that they are generated from multiple
  * risk signals (sentiment analysis, disputes, etc), not just fraud.
@@ -929,7 +979,7 @@ export interface MatchingProvider {
  */
 export async function matchProvidersForJob(jobId: string): Promise<MatchingProvider[]> {
   if (USE_MOCK) {
-  if (DEBUG) console.warn('[api] mock match providers', jobId);
+    if (DEBUG) console.warn('[api] mock match providers', jobId);
     // Basic mock matching - just return verified providers
     const providers = MOCK_USERS.filter(
       u => u.type === 'prestador' && u.verificationStatus === 'verificado'
@@ -937,7 +987,7 @@ export async function matchProvidersForJob(jobId: string): Promise<MatchingProvi
     return providers.map(p => ({
       provider: p,
       score: 0.8,
-      reason: 'Prestador verificado com experiência na categoria'
+      reason: 'Prestador verificado com experiência na categoria',
     }));
   }
 
@@ -953,7 +1003,7 @@ export async function matchProvidersForJob(jobId: string): Promise<MatchingProvi
     return providers.slice(0, 3).map(p => ({
       provider: p,
       score: 0.7,
-      reason: 'Prestador disponível'
+      reason: 'Prestador disponível',
     }));
   }
 }
@@ -962,16 +1012,23 @@ export async function matchProvidersForJob(jobId: string): Promise<MatchingProvi
 // ADMIN PROVIDER MANAGEMENT (stubs for future backend integration)
 // ============================================================================
 
-interface ProviderStatusResponse { success: boolean; message: string; user?: User }
+interface ProviderStatusResponse {
+  success: boolean;
+  message: string;
+  user?: User;
+}
 
 /**
  * Suspends a provider (admin action). Backend should validate admin auth and persist status + audit log.
  * Stub: Performs API call; if fails, throws (no mock fallback – suspension must be explicit).
  */
-export async function suspendProvider(userId: string, reason: string): Promise<ProviderStatusResponse> {
+export async function suspendProvider(
+  userId: string,
+  reason: string
+): Promise<ProviderStatusResponse> {
   return apiCall<ProviderStatusResponse>(`/admin/providers/${userId}/suspend`, {
     method: 'POST',
-    body: JSON.stringify({ reason })
+    body: JSON.stringify({ reason }),
   });
 }
 
@@ -980,17 +1037,21 @@ export async function suspendProvider(userId: string, reason: string): Promise<P
  */
 export async function reactivateProvider(userId: string): Promise<ProviderStatusResponse> {
   return apiCall<ProviderStatusResponse>(`/admin/providers/${userId}/reactivate`, {
-    method: 'POST'
+    method: 'POST',
   });
 }
 
 /**
  * Sets verification status for a provider. Used by admin identity review workflow.
  */
-export async function setVerificationStatus(userId: string, status: 'pendente' | 'verificado' | 'recusado', note?: string): Promise<ProviderStatusResponse> {
+export async function setVerificationStatus(
+  userId: string,
+  status: 'pendente' | 'verificado' | 'recusado',
+  note?: string
+): Promise<ProviderStatusResponse> {
   return apiCall<ProviderStatusResponse>(`/admin/providers/${userId}/verification`, {
     method: 'POST',
-    body: JSON.stringify({ status, note })
+    body: JSON.stringify({ status, note }),
   });
 }
 
@@ -1009,14 +1070,17 @@ export interface CreateDisputeData {
 export async function createDispute(data: CreateDisputeData): Promise<Dispute> {
   return apiCall<Dispute>('/api/disputes', {
     method: 'POST',
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   });
 }
 
-export async function resolveDispute(disputeId: string, resolution: { decision: string; notes: string }): Promise<Dispute> {
+export async function resolveDispute(
+  disputeId: string,
+  resolution: { decision: string; notes: string }
+): Promise<Dispute> {
   return apiCall<Dispute>(`/api/disputes/${disputeId}/resolve`, {
     method: 'PATCH',
-    body: JSON.stringify(resolution)
+    body: JSON.stringify(resolution),
   });
 }
 
@@ -1024,9 +1088,12 @@ export async function resolveDispute(disputeId: string, resolution: { decision: 
 // PAYMENT CONFIRMATION
 // ============================================================================
 
-export async function confirmPayment(jobId: string, sessionId: string): Promise<{ success: boolean }> {
+export async function confirmPayment(
+  jobId: string,
+  sessionId: string
+): Promise<{ success: boolean }> {
   return apiCall<{ success: boolean }>('/api/payments/confirm', {
     method: 'POST',
-    body: JSON.stringify({ jobId, sessionId })
+    body: JSON.stringify({ jobId, sessionId }),
   });
 }

@@ -25,28 +25,33 @@ Complete CRM productivity suite with **conversion analytics** and **automated fo
 ### Features
 
 ✅ **Visual Funnel** (4 stages):
+
 - 🆕 Novos (blue)
 - 📞 Contatados (yellow)
 - 🤝 Negociando (purple)
 - ✅ Convertidos (green)
 
 ✅ **KPI Header**:
+
 - Overall conversion rate (Novos → Convertidos)
 - Active leads count (excludes won/lost)
 - Lost leads count
 
 ✅ **Stage Metrics**:
+
 - Lead count and percentage of total
 - Dynamic bar width based on percentage
 - Conversion rate to next stage
 - Average days in stage
 
 ✅ **Bottleneck Detection**:
+
 - Algorithm: `conversionRate < 50% || avgDaysInStage > 14`
 - Visual warning section when bottlenecks detected
 - Action buttons per affected stage
 
 ✅ **Temperature Distribution**:
+
 - Hot/Warm/Cold counts per stage
 - Color-coded cards (red, amber, blue)
 
@@ -55,7 +60,7 @@ Complete CRM productivity suite with **conversion analytics** and **automated fo
 ```tsx
 import ConversionFunnelDashboard from './ConversionFunnelDashboard';
 
-<ConversionFunnelDashboard leads={allLeads} />
+<ConversionFunnelDashboard leads={allLeads} />;
 ```
 
 ### Implementation Details
@@ -92,16 +97,19 @@ import ConversionFunnelDashboard from './ConversionFunnelDashboard';
    - D+2: Email with 48h expiry urgency
 
 ✅ **Personalization**:
+
 - `{nome}` → Lead name
 - `{categoria}` → Lead category
 - Auto-populated on activation
 
 ✅ **Multi-Channel**:
+
 - 📲 WhatsApp
 - ✉️ Email
 - 📞 Call (manual reminder)
 
 ✅ **Firestore Integration**:
+
 - Collection: `prospector_followups`
 - Fields: `prospectorId`, `leadId`, `sequenceId`, `currentStep`, `steps[]`, `status`
 - Each step: `dayOffset`, `scheduledFor`, `channel`, `template`, `completed`, `sentAt`
@@ -115,18 +123,20 @@ import FollowUpSequences from './FollowUpSequences';
   prospectorId={prospectorId}
   selectedLeads={selectedLeads}
   onClose={() => setShowModal(false)}
-/>
+/>;
 ```
 
 ### Architecture
 
 **Modal UI**:
+
 - Radio selection of sequence
 - Timeline preview with D+X labels
 - Channel badges (📲/✉️/📞)
 - Activation confirmation
 
 **Data Flow**:
+
 1. User selects leads in CRM
 2. Opens sequence modal
 3. Chooses template
@@ -135,6 +145,7 @@ import FollowUpSequences from './FollowUpSequences';
 6. Backend job (future) sends messages on schedule
 
 **Future Enhancement**:
+
 - Cloud Function to auto-send at `scheduledFor` timestamp
 - Email/SMS API integration
 - Progress tracking dashboard
@@ -147,24 +158,25 @@ import FollowUpSequences from './FollowUpSequences';
 ### ProspectorCRMEnhanced.tsx
 
 **New State**:
+
 ```tsx
 const [showFunnelDashboard, setShowFunnelDashboard] = useState(false);
 const [showFollowUpSequences, setShowFollowUpSequences] = useState(false);
 ```
 
 **Toolbar** (above kanban):
+
 ```tsx
 <div className="flex gap-2 mb-3 px-2">
   <button onClick={() => setShowFunnelDashboard(!showFunnelDashboard)}>
     📊 Dashboard de Conversão
   </button>
-  <button onClick={() => setShowFollowUpSequences(true)}>
-    🔄 Sequências Automáticas
-  </button>
+  <button onClick={() => setShowFollowUpSequences(true)}>🔄 Sequências Automáticas</button>
 </div>
 ```
 
 **Conditional Renders**:
+
 - `{showFunnelDashboard && <ConversionFunnelDashboard leads={leads} />}`
 - `{showFollowUpSequences && <FollowUpSequences ... />}`
 
@@ -172,14 +184,15 @@ const [showFollowUpSequences, setShowFollowUpSequences] = useState(false);
 
 ## 📈 Performance
 
-| Metric | Value |
-|--------|-------|
-| Build Time | 22.77s |
+| Metric                     | Value                       |
+| -------------------------- | --------------------------- |
+| Build Time                 | 22.77s                      |
 | ProspectorDashboard Bundle | 454.39 kB (gzip: 113.99 kB) |
-| TypeScript Errors | 0 |
-| Component Render | useMemo optimized |
+| TypeScript Errors          | 0                           |
+| Component Render           | useMemo optimized           |
 
 **Optimization Techniques**:
+
 - useMemo for funnel calculations (expensive)
 - Lazy Analytics loading preserved
 - Memoized components (React.memo)
@@ -233,6 +246,7 @@ test('activates follow-up sequence for selected leads', async ({ page }) => {
 ## 📊 Analytics Events
 
 ### Implementados (produção)
+
 - `funnel_dashboard_opened` → quando o dashboard é aberto (payload: `lead_count`)
 - `sequence_activated` → ao confirmar ativação (payload: `sequence_id`, `sequence_name`, `lead_count`)
 - `sequence_activated_callback` → callback pós-criação (redundância para auditoria)
@@ -241,29 +255,32 @@ test('activates follow-up sequence for selected leads', async ({ page }) => {
 - `gamification_opened` → painel de gamificação exibido (payload: `lead_count`)
 
 ### Planejados (próximas fases)
+
 - `funnel_bottleneck_action_clicked` → ação de correção de gargalo
 - `sequence_step_completed` → step disparado automaticamente
 - `sequence_auto_paused` → pausa ao detectar resposta manual
 - `leaderboard_viewed` → gamificação expandida
 
 ### Convenções
+
 Todos eventos usam snake_case e possuem payload mínimo (>0 e <6 propriedades) para manter performance de Analytics.
 
 ### Monitoramento Sugerido (Looker Studio / BigQuery)
-| Métrica | Fonte | Objetivo |
-|---------|-------|----------|
-| Taxa de abertura do dashboard | `funnel_dashboard_opened / sessões` | >60% usuários ativos |
-| Adoção de sequências | `sequence_activated / total_leads` | >35% leads novos |
-| Conversão pós-sequência | `won_leads / sequence_activated.lead_count` | +20% sobre baseline |
-| Uso enriquecimento | `enrichment_opened / sessões` | >15% |
-| Gamificação engajamento | `gamification_opened / sessões` | >25% |
 
+| Métrica                       | Fonte                                       | Objetivo             |
+| ----------------------------- | ------------------------------------------- | -------------------- |
+| Taxa de abertura do dashboard | `funnel_dashboard_opened / sessões`         | >60% usuários ativos |
+| Adoção de sequências          | `sequence_activated / total_leads`          | >35% leads novos     |
+| Conversão pós-sequência       | `won_leads / sequence_activated.lead_count` | +20% sobre baseline  |
+| Uso enriquecimento            | `enrichment_opened / sessões`               | >15%                 |
+| Gamificação engajamento       | `gamification_opened / sessões`             | >25%                 |
 
 ---
 
 ## 🚀 Deployment
 
 **Command**:
+
 ```powershell
 npm run build
 firebase deploy --only hosting
@@ -272,6 +289,7 @@ firebase deploy --only hosting
 **URL**: https://gen-lang-client-0737507616.web.app
 
 **Feature Flags**:
+
 - `VITE_CRM_V2_ENABLED=true` (required)
 - `VITE_CRM_VIEWS_ENABLED=true` (recommended)
 
@@ -280,6 +298,7 @@ firebase deploy --only hosting
 ## 🎨 UI/UX Highlights
 
 ### Conversion Funnel
+
 - Gradient overlays on bars (visual depth)
 - Dynamic bar width (reflects stage size)
 - Color-coded stages (blue → yellow → purple → green)
@@ -287,6 +306,7 @@ firebase deploy --only hosting
 - Action buttons per stage
 
 ### Follow-Up Sequences
+
 - Radio button selection (clear choice)
 - Timeline preview (D+0, D+1, D+3, D+7...)
 - Channel badges (📲 WhatsApp, ✉️ Email, 📞 Call)
@@ -299,6 +319,7 @@ firebase deploy --only hosting
 ## 🔮 Future Roadmap
 
 ### Phase 1: Backend Automation (Next Sprint)
+
 - [ ] Cloud Function: `sendScheduledFollowUp`
 - [ ] Cron job: check `prospector_followups` every hour
 - [ ] WhatsApp API integration (Twilio/MessageBird)
@@ -306,6 +327,7 @@ firebase deploy --only hosting
 - [ ] SMS fallback for phone-only leads
 
 ### Phase 2: Advanced Features (Fase 4)
+
 - [ ] Custom sequence builder (drag-and-drop)
 - [ ] A/B testing (template variations)
 - [ ] Sequence performance dashboard
@@ -313,6 +335,7 @@ firebase deploy --only hosting
 - [ ] Dynamic step adjustments (if lead moves stage)
 
 ### Phase 3: AI Enhancement (Fase 5)
+
 - [ ] AI-generated templates (Gemini)
 - [ ] Optimal send time prediction
 - [ ] Response likelihood scoring
@@ -333,6 +356,7 @@ firebase deploy --only hosting
 ## 🔗 Related Components
 
 **Existing Productivity Features**:
+
 1. ProspectCardV2 - Enhanced card with quick actions
 2. BulkActionsBar - Mass operations (stage, temperature, campaigns)
 3. SmartFiltersBar - 6 intelligent filters (hot, today, overdue, etc.)
@@ -340,6 +364,7 @@ firebase deploy --only hosting
 5. SavedViewsBar - Custom filter views
 
 **Full Stack**:
+
 - Frontend: React 18 + TypeScript + Vite
 - Database: Firestore (prospector_prospects, prospector_followups)
 - Analytics: Firebase Analytics (lazy-loaded)
@@ -350,12 +375,14 @@ firebase deploy --only hosting
 ## 💡 Tips
 
 **For Prospectors**:
+
 1. Use **Funnel Dashboard** daily to identify bottlenecks
 2. Activate **Onboarding Sequence** for hot leads immediately
 3. Use **Nurture Sequence** for cold leads (avoid spam)
 4. Check **Temperature Distribution** to balance focus
 
 **For Admins**:
+
 1. Monitor `prospector_followups` collection for automation status
 2. Set up Cloud Function for auto-send (Phase 1)
 3. Track conversion rate improvements pre/post sequences

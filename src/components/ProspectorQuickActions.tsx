@@ -4,8 +4,8 @@ import { useState, useCallback } from 'react';
 interface ProspectorStats {
   totalRecruits: number;
   totalCommissionsEarned: number;
-  currentBadge?: string;  // opcional para retrocompatibilidade
-  currentBadgeName?: string;  // novo nome do campo
+  currentBadge?: string; // opcional para retrocompatibilidade
+  currentBadgeName?: string; // novo nome do campo
 }
 
 interface ProspectorQuickActionsProps {
@@ -19,7 +19,7 @@ type CopiedAction = 'link' | 'whatsapp' | 'email' | 'sms' | null;
 
 /**
  * ProspectorQuickActions - Barra de ações rápidas sticky top
- * 
+ *
  * Features:
  * - Copiar link de indicação (1 clique)
  * - Copiar templates WhatsApp/Email/SMS (1 clique)
@@ -27,10 +27,10 @@ type CopiedAction = 'link' | 'whatsapp' | 'email' | 'sms' | null;
  * - Stats inline (recrutas, comissões, badge)
  * - Feedback visual de "copiado"
  * - Sticky positioning para acesso constante
- * 
+ *
  * @example
  * ```tsx
- * <ProspectorQuickActions 
+ * <ProspectorQuickActions
  *   prospectorId={userId}
  *   referralLink="https://servio-ai.com?ref=ABC123"
  *   stats={prospectorStats}
@@ -54,25 +54,28 @@ export function ProspectorQuickActions({
     }
   }, []);
 
-  const quickCopyTemplate = useCallback(async (type: 'whatsapp' | 'email' | 'sms') => {
-    // Templates simplificados para quick copy
-    const templates = {
-      whatsapp: `Oi! 👋 Quero te apresentar a Servio.AI, uma plataforma que conecta prestadores de serviço com clientes. Cadastro GRATUITO: ${referralLink}`,
-      email: `Olá!\n\nGostaria de te apresentar a Servio.AI, uma plataforma que ajuda prestadores de serviço a encontrar novos clientes.\n\nCadastro gratuito: ${referralLink}\n\nQualquer dúvida, estou à disposição!`,
-      sms: `Servio.AI - Plataforma GRÁTIS para prestadores de serviço encontrarem clientes. Cadastre-se: ${referralLink}`,
-    };
+  const quickCopyTemplate = useCallback(
+    async (type: 'whatsapp' | 'email' | 'sms') => {
+      // Templates simplificados para quick copy
+      const templates = {
+        whatsapp: `Oi! 👋 Quero te apresentar a Servio.AI, uma plataforma que conecta prestadores de serviço com clientes. Cadastro GRATUITO: ${referralLink}`,
+        email: `Olá!\n\nGostaria de te apresentar a Servio.AI, uma plataforma que ajuda prestadores de serviço a encontrar novos clientes.\n\nCadastro gratuito: ${referralLink}\n\nQualquer dúvida, estou à disposição!`,
+        sms: `Servio.AI - Plataforma GRÁTIS para prestadores de serviço encontrarem clientes. Cadastre-se: ${referralLink}`,
+      };
 
-    await copyToClipboard(templates[type], type);
-  }, [referralLink, copyToClipboard]);
+      await copyToClipboard(templates[type], type);
+    },
+    [referralLink, copyToClipboard]
+  );
 
   const getBadgeIcon = (badgeName: string | undefined) => {
     if (!badgeName) return '🥉';
     const icons: Record<string, string> = {
-      'Bronze': '🥉',
-      'Prata': '🥈',
-      'Ouro': '🥇',
-      'Platina': '💎',
-      'Diamante': '👑',
+      Bronze: '🥉',
+      Prata: '🥈',
+      Ouro: '🥇',
+      Platina: '💎',
+      Diamante: '👑',
     };
     return icons[badgeName] || '🏅';
   };
@@ -83,8 +86,10 @@ export function ProspectorQuickActions({
         <div className="flex items-center justify-between flex-wrap gap-3">
           {/* Ações Rápidas */}
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-white font-semibold text-sm hidden sm:inline">⚡ Ações Rápidas:</span>
-            
+            <span className="text-white font-semibold text-sm hidden sm:inline">
+              ⚡ Ações Rápidas:
+            </span>
+
             {/* Copiar Link */}
             <button
               onClick={() => copyToClipboard(referralLink, 'link')}
@@ -187,12 +192,21 @@ export function ProspectorQuickActions({
                 <span className="opacity-80 hidden sm:inline">recrutas</span>
               </div>
               <div className="flex items-center gap-1" title="Comissões ganhas">
-                <span className="font-bold text-lg">R$ {stats.totalCommissionsEarned.toFixed(0)}</span>
+                <span className="font-bold text-lg">
+                  R$ {stats.totalCommissionsEarned.toFixed(0)}
+                </span>
                 <span className="opacity-80 hidden sm:inline">ganhos</span>
               </div>
-              <div className="flex items-center gap-1" title={`Badge atual: ${stats.currentBadgeName || stats.currentBadge}`}>
-                <span className="text-2xl">{getBadgeIcon(stats.currentBadgeName || stats.currentBadge || '')}</span>
-                <span className="hidden lg:inline">{stats.currentBadgeName || stats.currentBadge}</span>
+              <div
+                className="flex items-center gap-1"
+                title={`Badge atual: ${stats.currentBadgeName || stats.currentBadge}`}
+              >
+                <span className="text-2xl">
+                  {getBadgeIcon(stats.currentBadgeName || stats.currentBadge || '')}
+                </span>
+                <span className="hidden lg:inline">
+                  {stats.currentBadgeName || stats.currentBadge}
+                </span>
               </div>
             </div>
           )}

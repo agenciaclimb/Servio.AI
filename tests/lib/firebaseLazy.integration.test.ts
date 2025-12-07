@@ -101,12 +101,7 @@ describe('firebaseLazy - Integration Tests', () => {
 
     it('should support concurrent getAuth and getDb calls', async () => {
       try {
-        const promises = [
-          module.getAuth(),
-          module.getDb(),
-          module.getAuth(),
-          module.getDb(),
-        ];
+        const promises = [module.getAuth(), module.getDb(), module.getAuth(), module.getDb()];
 
         await Promise.allSettled(promises);
         // If we get here without throwing, concurrent calls are supported
@@ -134,7 +129,7 @@ describe('firebaseLazy - Integration Tests', () => {
 
     it('each function should return a Promise', () => {
       const functions = ['initFirebase', 'getAuth', 'getDb', 'getStorage'] as const;
-      
+
       for (const fnName of functions) {
         const fn = module[fnName];
         if (typeof fn === 'function') {
@@ -247,11 +242,7 @@ describe('firebaseLazy - Integration Tests', () => {
 
     it('should be safe to call getStorage multiple times', async () => {
       try {
-        const promises = [
-          module.getStorage(),
-          module.getStorage(),
-          module.getStorage(),
-        ];
+        const promises = [module.getStorage(), module.getStorage(), module.getStorage()];
         await Promise.allSettled(promises);
         expect(true).toBe(true);
       } catch (_error) {
@@ -310,7 +301,7 @@ describe('firebaseLazy - Integration Tests', () => {
           module.getDb(),
           module.getStorage(),
         ]);
-        
+
         expect(auth).toBeDefined();
         expect(db).toBeDefined();
         expect(storage).toBeDefined();

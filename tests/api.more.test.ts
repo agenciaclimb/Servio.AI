@@ -22,9 +22,7 @@ describe('API Service – additional coverage', () => {
         { id: 'job-a1', status: 'ativo' },
         { id: 'job-a2', status: 'ativo' },
       ];
-      const auction = [
-        { id: 'job-l1', status: 'em_leilao' },
-      ];
+      const auction = [{ id: 'job-l1', status: 'em_leilao' }];
 
       vi.spyOn(global, 'fetch')
         .mockResolvedValueOnce({ ok: true, json: async () => active } as any)
@@ -51,9 +49,7 @@ describe('API Service – additional coverage', () => {
   describe('Maintained Items', () => {
     it('busca itens mantidos para um cliente (sucesso)', async () => {
       const clientId = 'cliente@servio.ai';
-      const items = [
-        { id: 'item-x', clientId, name: 'Ar Condicionado' },
-      ];
+      const items = [{ id: 'item-x', clientId, name: 'Ar Condicionado' }];
 
       vi.spyOn(global, 'fetch').mockResolvedValueOnce({
         ok: true,
@@ -106,9 +102,7 @@ describe('API Service – additional coverage', () => {
 
   describe('Bids', () => {
     it('lista bids (sucesso)', async () => {
-      const bids = [
-        { id: 'bid-1', jobId: 'job-6', providerId: 'prov1', amount: 100 },
-      ];
+      const bids = [{ id: 'bid-1', jobId: 'job-6', providerId: 'prov1', amount: 100 }];
       vi.spyOn(global, 'fetch').mockResolvedValueOnce({
         ok: true,
         json: async () => bids,
@@ -145,10 +139,7 @@ describe('API Service – additional coverage', () => {
         json: async () => alerts,
       } as any);
 
-      const [fraud, sentiment] = await Promise.all([
-        fetchFraudAlerts(),
-        fetchSentimentAlerts(),
-      ]);
+      const [fraud, sentiment] = await Promise.all([fetchFraudAlerts(), fetchSentimentAlerts()]);
 
       expect(fraud).toEqual(sentiment);
       expect(fraud[0].id).toBe('a1');

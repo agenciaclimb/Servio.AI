@@ -1,8 +1,8 @@
 /**
  * OmniInbox - Central de Conversas Omnichannel
- * 
+ *
  * Painel unificado para gerenciar conversas de WhatsApp, Instagram, Facebook e WebChat.
- * 
+ *
  * Features:
  * - Lista de conversas com filtros por canal e userType
  * - Visualização de mensagens em tempo real
@@ -10,13 +10,22 @@
  * - Métricas de tempo de resposta
  * - Status dos canais
  * - Logs da IA
- * 
+ *
  * Usuários: Admin + Prestadores
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { db } from '../../../firebaseConfig';
-import { collection, query, where, orderBy, limit, onSnapshot, addDoc, Timestamp } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  onSnapshot,
+  addDoc,
+  Timestamp,
+} from 'firebase/firestore';
 import type { User } from '../../../types';
 
 interface Conversation {
@@ -50,14 +59,14 @@ const CHANNEL_ICONS = {
   whatsapp: '📱',
   instagram: '📷',
   facebook: '👥',
-  webchat: '💬'
+  webchat: '💬',
 };
 
 const CHANNEL_COLORS = {
   whatsapp: 'bg-green-100 text-green-800',
   instagram: 'bg-pink-100 text-pink-800',
   facebook: 'bg-blue-100 text-blue-800',
-  webchat: 'bg-gray-100 text-gray-800'
+  webchat: 'bg-gray-100 text-gray-800',
 };
 
 export default function OmniInbox({ currentUser }: OmniInboxProps) {
@@ -72,11 +81,7 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
 
   // Buscar conversas com filtros
   useEffect(() => {
-    let q = query(
-      collection(db, 'conversations'),
-      orderBy('lastMessageAt', 'desc'),
-      limit(50)
-    );
+    let q = query(collection(db, 'conversations'), orderBy('lastMessageAt', 'desc'), limit(50));
 
     if (filterChannel !== 'all') {
       q = query(q, where('channel', '==', filterChannel));
@@ -86,11 +91,14 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
       q = query(q, where('userType', '==', filterUserType));
     }
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const convs = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as Conversation));
+    const unsubscribe = onSnapshot(q, snapshot => {
+      const convs = snapshot.docs.map(
+        doc =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as Conversation
+      );
       setConversations(convs);
       setLoading(false);
     });
@@ -112,11 +120,14 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
       limit(100)
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const msgs = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as Message));
+    const unsubscribe = onSnapshot(q, snapshot => {
+      const msgs = snapshot.docs.map(
+        doc =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as Message
+      );
       setMessages(msgs);
     });
 
@@ -139,7 +150,7 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
         senderType: currentUser.type,
         text: newMessage,
         timestamp: Timestamp.now(),
-        createdAt: Timestamp.now()
+        createdAt: Timestamp.now(),
       });
 
       // TODO: Chamar API para enviar ao canal externo (WhatsApp, IG, FB)
@@ -161,7 +172,7 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
     return {
       total: conversations.length,
       active: activeConversations.length,
-      avgResponseTime
+      avgResponseTime,
     };
   }, [conversations]);
 
@@ -195,7 +206,7 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
       <div className="bg-white border-b px-6 py-3 flex gap-4">
         <select
           value={filterChannel}
-          onChange={(e) => setFilterChannel(e.target.value)}
+          onChange={e => setFilterChannel(e.target.value)}
           className="border rounded px-3 py-1 text-sm"
         >
           <option value="all">Todos os canais</option>
@@ -207,7 +218,7 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
 
         <select
           value={filterUserType}
-          onChange={(e) => setFilterUserType(e.target.value)}
+          onChange={e => setFilterUserType(e.target.value)}
           className="border rounded px-3 py-1 text-sm"
         >
           <option value="all">Todos os tipos</option>
@@ -227,7 +238,7 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
           ) : conversations.length === 0 ? (
             <div className="p-4 text-center text-gray-500">Nenhuma conversa</div>
           ) : (
-            conversations.map((conv) => (
+            conversations.map(conv => (
               <button
                 key={conv.id}
                 onClick={() => setSelectedConversation(conv.id)}
@@ -237,7 +248,9 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
               >
                 <div className="flex items-start justify-between mb-1">
                   <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${CHANNEL_COLORS[conv.channel]}`}>
+                    <span
+                      className={`px-2 py-1 rounded text-xs font-medium ${CHANNEL_COLORS[conv.channel]}`}
+                    >
                       {CHANNEL_ICONS[conv.channel]} {conv.channel}
                     </span>
                     <span className="text-xs text-gray-500 capitalize">{conv.userType}</span>
@@ -246,12 +259,8 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                   )}
                 </div>
-                <div className="text-sm text-gray-700 font-medium mb-1">
-                  {conv.participants[0]}
-                </div>
-                <div className="text-xs text-gray-500 truncate">
-                  {conv.lastMessage}
-                </div>
+                <div className="text-sm text-gray-700 font-medium mb-1">{conv.participants[0]}</div>
+                <div className="text-xs text-gray-500 truncate">{conv.lastMessage}</div>
                 <div className="text-xs text-gray-400 mt-1">
                   {conv.lastMessageAt?.toDate().toLocaleString('pt-BR')}
                 </div>
@@ -268,10 +277,14 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
               <div className="bg-white border-b px-6 py-3 flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${CHANNEL_COLORS[selectedConv.channel]}`}>
+                    <span
+                      className={`px-2 py-1 rounded text-xs font-medium ${CHANNEL_COLORS[selectedConv.channel]}`}
+                    >
                       {CHANNEL_ICONS[selectedConv.channel]} {selectedConv.channel}
                     </span>
-                    <span className="text-sm text-gray-600 capitalize">{selectedConv.userType}</span>
+                    <span className="text-sm text-gray-600 capitalize">
+                      {selectedConv.userType}
+                    </span>
                   </div>
                   <div className="text-sm font-medium text-gray-900">
                     {selectedConv.participants[0]}
@@ -287,7 +300,7 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
 
               {/* Mensagens */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                {messages.map((msg) => (
+                {messages.map(msg => (
                   <div
                     key={msg.id}
                     className={`flex ${msg.senderType === 'bot' || msg.sender === currentUser.email ? 'justify-end' : 'justify-start'}`}
@@ -297,8 +310,8 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
                         msg.senderType === 'bot'
                           ? 'bg-purple-100 text-purple-900'
                           : msg.sender === currentUser.email
-                          ? 'bg-blue-100 text-blue-900'
-                          : 'bg-gray-200 text-gray-900'
+                            ? 'bg-blue-100 text-blue-900'
+                            : 'bg-gray-200 text-gray-900'
                       }`}
                     >
                       <div className="text-xs text-gray-600 mb-1 flex items-center gap-2">
@@ -320,8 +333,8 @@ export default function OmniInbox({ currentUser }: OmniInboxProps) {
                   <input
                     type="text"
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                    onChange={e => setNewMessage(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
                     placeholder="Digite sua mensagem..."
                     className="flex-1 border rounded px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     disabled={sending}

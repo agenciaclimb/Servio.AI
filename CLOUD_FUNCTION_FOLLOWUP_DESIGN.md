@@ -3,11 +3,13 @@
 ## Arquitetura
 
 ### Trigger
+
 - **Tipo**: Scheduled (Pub/Sub + Cloud Scheduler)
 - **Frequência**: A cada hora (cron: `0 * * * *`)
 - **Region**: `us-west1` (mesma do Cloud Run backend)
 
 ### Fluxo
+
 1. Cloud Scheduler dispara Pub/Sub topic `send-followups`
 2. Cloud Function `processFollowUps` recebe trigger
 3. Query Firestore: `prospector_followups` where `status == 'active'`
@@ -21,6 +23,7 @@
 5. Se todos steps completados: atualiza followup `status: 'completed'`
 
 ### Firestore Schema (revisão)
+
 ```typescript
 interface FollowUpSchedule {
   prospectorId: string;
@@ -67,7 +70,8 @@ exports.processFollowUps = async (message, context) => {
   const now = Firestore.Timestamp.now();
 
   try {
-    const snapshot = await db.collection('prospector_followups')
+    const snapshot = await db
+      .collection('prospector_followups')
       .where('status', '==', 'active')
       .get();
 
@@ -105,11 +109,14 @@ exports.processFollowUps = async (message, context) => {
 
       if (updated) {
         const allCompleted = schedule.steps.every(s => s.completed);
-        await db.collection('prospector_followups').doc(doc.id).update({
-          steps: schedule.steps,
-          status: allCompleted ? 'completed' : 'active',
-          updatedAt: now
-        });
+        await db
+          .collection('prospector_followups')
+          .doc(doc.id)
+          .update({
+            steps: schedule.steps,
+            status: allCompleted ? 'completed' : 'active',
+            updatedAt: now,
+          });
       }
     }
 
@@ -127,11 +134,11 @@ async function sendWhatsApp(step, schedule) {
   if (!lead?.phone) throw new Error('Lead sem telefone');
 
   const phone = lead.phone.replace(/\D/g, '');
-  
+
   await twilioClient.messages.create({
     from: process.env.TWILIO_WHATSAPP_NUMBER, // Ex: whatsapp:+14155238886
     to: `whatsapp:+55${phone}`,
-    body: step.template
+    body: step.template,
   });
 }
 
@@ -145,7 +152,7 @@ async function sendEmail(step, schedule) {
     from: process.env.SENDGRID_FROM_EMAIL, // Ex: noreply@servio.ai
     subject: step.subject || 'Mensagem da Servio.AI',
     text: step.template,
-    html: `<p>${step.template.replace(/\n/g, '<br>')}</p>`
+    html: `<p>${step.template.replace(/\n/g, '<br>')}</p>`,
   });
 }
 
@@ -158,7 +165,7 @@ async function createCallReminder(step, schedule) {
     leadName: schedule.leadName,
     message: step.template,
     createdAt: Firestore.Timestamp.now(),
-    read: false
+    read: false,
   });
 }
 ```
@@ -181,6 +188,7 @@ async function createCallReminder(step, schedule) {
 ```
 
 **Deploy Command** (PowerShell):
+
 ```powershell
 # 1. Criar função no GCP
 gcloud functions deploy processFollowUps `
@@ -203,6 +211,7 @@ gcloud scheduler jobs create pubsub send-followups-hourly `
 ### 3. Variáveis de Ambiente Necessárias
 
 No Secret Manager ou env vars:
+
 - `SENDGRID_API_KEY`: Chave da API SendGrid
 - `SENDGRID_FROM_EMAIL`: Email verificado (ex: `noreply@servio.ai`)
 - `TWILIO_ACCOUNT_SID`: SID da conta Twilio
@@ -211,43 +220,49 @@ No Secret Manager ou env vars:
 
 ## Custos Estimados (1000 leads/mês)
 
-| Serviço | Uso | Custo/mês |
-|---------|-----|-----------|
-| Cloud Function | 720 invocações/mês + 2s/exec | $0.00 (free tier) |
-| Cloud Scheduler | 720 jobs/mês | $0.10 |
-| SendGrid | 3000 emails (média 3 per lead) | $14.95 (plan Essentials) |
-| Twilio WhatsApp | 2000 msgs | $12.00 ($0.006/msg) |
-| **TOTAL** | | **~$27/mês** |
+| Serviço         | Uso                            | Custo/mês                |
+| --------------- | ------------------------------ | ------------------------ |
+| Cloud Function  | 720 invocações/mês + 2s/exec   | $0.00 (free tier)        |
+| Cloud Scheduler | 720 jobs/mês                   | $0.10                    |
+| SendGrid        | 3000 emails (média 3 per lead) | $14.95 (plan Essentials) |
+| Twilio WhatsApp | 2000 msgs                      | $12.00 ($0.006/msg)      |
+| **TOTAL**       |                                | **~$27/mês**             |
 
 ## Monitoramento
 
 ### Logs (Cloud Logging)
+
 ```bash
 gcloud logging read "resource.type=cloud_function AND resource.labels.function_name=processFollowUps" --limit 50
 ```
 
 ### Métricas (Cloud Monitoring)
+
 - `cloud.googleapis.com/function/execution_count`: Total de execuções
 - `cloud.googleapis.com/function/execution_times`: Latência
 - Custom metric: `followup_steps_sent` (via OpenTelemetry)
 
 ### Alertas
+
 - Execução falha 3x seguidas → email para DevOps
 - Taxa de erro > 10% → Slack alert
 
 ## Rollout Plan
 
 ### Fase 1: Test (1 semana)
+
 - Deploy em projeto de staging
 - 10 leads fictícios com sequências curtas (D+0, D+1)
 - Validar envio real de emails/WhatsApp
 
 ### Fase 2: Pilot (2 semanas)
+
 - 50 leads reais (voluntários)
 - Monitorar taxa de abertura, resposta, erros
 - Ajustar templates conforme feedback
 
 ### Fase 3: Production (escalável)
+
 - Rollout gradual: 10% → 50% → 100%
 - Adicionar circuit breaker (pausar se taxa erro > 15%)
 - Implementar retry com exponential backoff
@@ -280,14 +295,17 @@ gcloud logging read "resource.type=cloud_function AND resource.labels.function_n
 ## Troubleshooting
 
 ### Problema: Função não executa
+
 **Causa**: Cloud Scheduler não disparando  
 **Fix**: Verificar `gcloud scheduler jobs list --location=us-west1`
 
 ### Problema: WhatsApp não envia
+
 **Causa**: Número não aprovado no Twilio  
 **Fix**: Seguir processo de aprovação Twilio WhatsApp Business
 
 ### Problema: Email vai para spam
+
 **Causa**: Falta autenticação SPF/DKIM  
 **Fix**: Configurar DNS records no SendGrid
 

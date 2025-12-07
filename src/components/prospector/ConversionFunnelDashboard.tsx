@@ -24,7 +24,7 @@ export default function ConversionFunnelDashboard({ leads }: ConversionFunnelDas
       { id: 'new', title: 'Novos', icon: '🆕', color: 'blue' },
       { id: 'contacted', title: 'Contatados', icon: '📞', color: 'yellow' },
       { id: 'negotiating', title: 'Negociando', icon: '🤝', color: 'purple' },
-      { id: 'won', title: 'Convertidos', icon: '✅', color: 'green' }
+      { id: 'won', title: 'Convertidos', icon: '✅', color: 'green' },
     ];
 
     const totalLeads = leads.filter(l => l.stage !== 'lost').length;
@@ -41,9 +41,10 @@ export default function ConversionFunnelDashboard({ leads }: ConversionFunnelDas
       const daysInStage = stageLeads
         .filter(l => l.updatedAt)
         .map(l => Math.floor((now - new Date(l.updatedAt).getTime()) / (24 * 60 * 60 * 1000)));
-      const avgDaysInStage = daysInStage.length > 0 
-        ? Math.round(daysInStage.reduce((sum, d) => sum + d, 0) / daysInStage.length)
-        : 0;
+      const avgDaysInStage =
+        daysInStage.length > 0
+          ? Math.round(daysInStage.reduce((sum, d) => sum + d, 0) / daysInStage.length)
+          : 0;
 
       // Detect bottleneck (conversion < 50% or avg > 14 days)
       const bottleneck = index > 0 && (conversionRate < 50 || avgDaysInStage > 14);
@@ -58,7 +59,7 @@ export default function ConversionFunnelDashboard({ leads }: ConversionFunnelDas
         percentage,
         conversionRate: index === 0 ? 100 : conversionRate,
         avgDaysInStage,
-        bottleneck
+        bottleneck,
       };
 
       previousCount = count;
@@ -81,7 +82,9 @@ export default function ConversionFunnelDashboard({ leads }: ConversionFunnelDas
         </div>
         <div className="flex gap-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{overallConversionRate.toFixed(1)}%</div>
+            <div className="text-2xl font-bold text-green-600">
+              {overallConversionRate.toFixed(1)}%
+            </div>
             <div className="text-xs text-gray-600">Taxa Geral</div>
           </div>
           <div className="text-center">
@@ -104,7 +107,7 @@ export default function ConversionFunnelDashboard({ leads }: ConversionFunnelDas
             blue: 'bg-blue-500',
             yellow: 'bg-yellow-500',
             purple: 'bg-purple-500',
-            green: 'bg-green-500'
+            green: 'bg-green-500',
           };
           const bgColor = colorMap[stage.color as keyof typeof colorMap] || 'bg-gray-500';
 
@@ -117,7 +120,7 @@ export default function ConversionFunnelDashboard({ leads }: ConversionFunnelDas
               >
                 {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/20" />
-                
+
                 {/* Content */}
                 <div className="relative z-10 flex items-center gap-3">
                   <span className="text-3xl">{stage.icon}</span>
@@ -130,7 +133,9 @@ export default function ConversionFunnelDashboard({ leads }: ConversionFunnelDas
                 <div className="relative z-10 text-right">
                   <div className="text-white font-bold text-xl">{stage.percentage.toFixed(1)}%</div>
                   {index > 0 && (
-                    <div className={`text-sm font-semibold ${stage.conversionRate < 50 ? 'text-red-200' : 'text-white/80'}`}>
+                    <div
+                      className={`text-sm font-semibold ${stage.conversionRate < 50 ? 'text-red-200' : 'text-white/80'}`}
+                    >
                       ↓ {stage.conversionRate.toFixed(0)}% conversão
                     </div>
                   )}
@@ -167,16 +172,21 @@ export default function ConversionFunnelDashboard({ leads }: ConversionFunnelDas
             <div className="flex-1">
               <div className="font-bold text-red-900 mb-2">Gargalos Detectados</div>
               <ul className="space-y-1 text-sm text-red-800">
-                {funnelData.filter(s => s.bottleneck).map(stage => (
-                  <li key={stage.id} className="flex items-center gap-2">
-                    <span className="font-semibold">{stage.icon} {stage.title}:</span>
-                    <span>
-                      {stage.conversionRate < 50 && `Taxa de conversão baixa (${stage.conversionRate.toFixed(0)}%)`}
-                      {stage.conversionRate < 50 && stage.avgDaysInStage > 14 && ' • '}
-                      {stage.avgDaysInStage > 14 && `Leads estagnados (${stage.avgDaysInStage}d)`}
-                    </span>
-                  </li>
-                ))}
+                {funnelData
+                  .filter(s => s.bottleneck)
+                  .map(stage => (
+                    <li key={stage.id} className="flex items-center gap-2">
+                      <span className="font-semibold">
+                        {stage.icon} {stage.title}:
+                      </span>
+                      <span>
+                        {stage.conversionRate < 50 &&
+                          `Taxa de conversão baixa (${stage.conversionRate.toFixed(0)}%)`}
+                        {stage.conversionRate < 50 && stage.avgDaysInStage > 14 && ' • '}
+                        {stage.avgDaysInStage > 14 && `Leads estagnados (${stage.avgDaysInStage}d)`}
+                      </span>
+                    </li>
+                  ))}
               </ul>
               <div className="mt-3 flex gap-2">
                 <button className="px-3 py-1 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors">
@@ -198,7 +208,10 @@ export default function ConversionFunnelDashboard({ leads }: ConversionFunnelDas
           const icon = temp === 'hot' ? '🔥' : temp === 'warm' ? '⚡' : '❄️';
           const color = temp === 'hot' ? 'red' : temp === 'warm' ? 'amber' : 'blue';
           return (
-            <div key={temp} className={`bg-${color}-50 border-2 border-${color}-200 rounded-lg p-3 text-center`}>
+            <div
+              key={temp}
+              className={`bg-${color}-50 border-2 border-${color}-200 rounded-lg p-3 text-center`}
+            >
               <div className="text-3xl mb-1">{icon}</div>
               <div className={`text-2xl font-bold text-${color}-700`}>{count}</div>
               <div className="text-xs text-gray-600 capitalize">{temp}</div>

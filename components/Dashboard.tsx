@@ -23,7 +23,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, allUsers, allJobs }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!description || !selectedCategory) {
-      setError("Por favor, descreva o serviço e selecione uma categoria.");
+      setError('Por favor, descreva o serviço e selecione uma categoria.');
       return;
     }
 
@@ -39,14 +39,16 @@ const Dashboard: React.FC<DashboardProps> = ({ user, allUsers, allJobs }) => {
         category: selectedCategory,
         description,
         status: 'ativo',
-  createdAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
         serviceType: 'personalizado', // Assume a default service type
         urgency: '1semana', // Assume a default urgency
       };
       const matchingResults = await getMatchingProviders(job, allUsers, allJobs);
       setResults(matchingResults);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Ocorreu um erro desconhecido. Tente novamente.");
+      setError(
+        err instanceof Error ? err.message : 'Ocorreu um erro desconhecido. Tente novamente.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -63,49 +65,58 @@ const Dashboard: React.FC<DashboardProps> = ({ user, allUsers, allJobs }) => {
 
   return (
     <div>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-8">Seu Painel, {user.email}!</h1>
-        <div className="max-w-4xl mx-auto">
-            <ServiceRequestForm
-                description={description}
-                setDescription={setDescription}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-                onSubmit={handleSubmit}
-                isLoading={isLoading}
-                // FIX: Add the missing 'submitButtonText' prop required by ServiceRequestFormProps.
-                submitButtonText="Encontrar Profissionais"
-            />
+      <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-8">
+        Seu Painel, {user.email}!
+      </h1>
+      <div className="max-w-4xl mx-auto">
+        <ServiceRequestForm
+          description={description}
+          setDescription={setDescription}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          onSubmit={handleSubmit}
+          isLoading={isLoading}
+          // FIX: Add the missing 'submitButtonText' prop required by ServiceRequestFormProps.
+          submitButtonText="Encontrar Profissionais"
+        />
 
-            <div className="mt-12">
-                {isLoading && <LoadingSpinner />}
-                
-                {error && (
-                    <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert">
-                        <p className="font-bold">Erro</p>
-                        <p>{error}</p>
-                    </div>
-                )}
-                
-                {!isLoading && !results && !error && <WelcomeMessage />}
+        <div className="mt-12">
+          {isLoading && <LoadingSpinner />}
 
-                {results && results.length > 0 && (
-                    <div>
-                        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">Resultados Encontrados</h2>
-                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            {results.map((result, index) => (
-                                <ProviderCard key={index} result={result} />
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {results && results.length === 0 && (
-                    <div className="text-center py-10">
-                        <p className="text-lg text-gray-600">Nenhum profissional encontrado. Tente refinar sua busca.</p>
-                    </div>
-                )}
+          {error && (
+            <div
+              className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md"
+              role="alert"
+            >
+              <p className="font-bold">Erro</p>
+              <p>{error}</p>
             </div>
+          )}
+
+          {!isLoading && !results && !error && <WelcomeMessage />}
+
+          {results && results.length > 0 && (
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
+                Resultados Encontrados
+              </h2>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {results.map((result, index) => (
+                  <ProviderCard key={index} result={result} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {results && results.length === 0 && (
+            <div className="text-center py-10">
+              <p className="text-lg text-gray-600">
+                Nenhum profissional encontrado. Tente refinar sua busca.
+              </p>
+            </div>
+          )}
         </div>
+      </div>
     </div>
   );
 };

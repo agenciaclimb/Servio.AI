@@ -23,7 +23,10 @@ describe('API Service – positive paths (no fallback)', () => {
   });
 
   it('createStripeAccountLink returns url on success', async () => {
-    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ url: 'https://stripe.test' }) });
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ url: 'https://stripe.test' }),
+    });
     const res = await API.createStripeAccountLink('user@test.com');
     expect(res).toEqual({ url: 'https://stripe.test' });
   });
@@ -35,7 +38,10 @@ describe('API Service – positive paths (no fallback)', () => {
   });
 
   it('releasePayment returns success on success', async () => {
-    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ success: true, message: 'ok' }) });
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ success: true, message: 'ok' }),
+    });
     const res = await API.releasePayment('job-1');
     expect(res).toEqual({ success: true, message: 'ok' });
   });

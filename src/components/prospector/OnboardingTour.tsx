@@ -1,9 +1,9 @@
 /**
  * OnboardingTour - Tour Interativo Guiado por IA
- * 
+ *
  * Sistema de onboarding que ensina prospectores a usar a plataforma
  * com checklist inteligente e dicas contextuais geradas por IA.
- * 
+ *
  * Features:
  * - Tour passo-a-passo com react-joyride
  * - Checklist de tarefas essenciais
@@ -49,7 +49,8 @@ const TOUR_STEPS: Step[] = [
         </p>
         <div className="bg-indigo-50 p-3 rounded-lg">
           <p className="text-sm text-indigo-800">
-            💡 <strong>Dica IA:</strong> Prospectores que completam o onboarding convertem 3x mais leads!
+            💡 <strong>Dica IA:</strong> Prospectores que completam o onboarding convertem 3x mais
+            leads!
           </p>
         </div>
       </div>
@@ -63,7 +64,8 @@ const TOUR_STEPS: Step[] = [
       <div className="space-y-2">
         <h3 className="font-bold text-lg">🔗 Seu Link de Indicação</h3>
         <p className="text-gray-700">
-          Este é seu link único de prospecção. Compartilhe com pessoas interessadas em oferecer serviços na plataforma.
+          Este é seu link único de prospecção. Compartilhe com pessoas interessadas em oferecer
+          serviços na plataforma.
         </p>
         <div className="bg-yellow-50 p-2 rounded text-sm">
           <strong>✅ Tarefa:</strong> Clique em "Copiar Link" e salve em algum lugar.
@@ -78,7 +80,8 @@ const TOUR_STEPS: Step[] = [
       <div className="space-y-2">
         <h3 className="font-bold text-lg">💬 Compartilhar no WhatsApp</h3>
         <p className="text-gray-700">
-          Use este botão para enviar seu link diretamente no WhatsApp. Já vem com uma mensagem pronta otimizada por IA!
+          Use este botão para enviar seu link diretamente no WhatsApp. Já vem com uma mensagem
+          pronta otimizada por IA!
         </p>
         <div className="bg-green-50 p-2 rounded text-sm">
           <strong>✅ Tarefa:</strong> Compartilhe com pelo menos 1 contato agora.
@@ -93,7 +96,8 @@ const TOUR_STEPS: Step[] = [
       <div className="space-y-2">
         <h3 className="font-bold text-lg">🎯 Pipeline de Prospecção</h3>
         <p className="text-gray-700">
-          Organize seus leads neste quadro Kanban. Arraste e solte para mudar o status. A IA calcula o "score" de cada lead automaticamente!
+          Organize seus leads neste quadro Kanban. Arraste e solte para mudar o status. A IA calcula
+          o "score" de cada lead automaticamente!
         </p>
         <div className="bg-purple-50 p-2 rounded text-sm">
           <strong>💡 Dica:</strong> Leads com 🔥 são prioridade máxima.
@@ -108,7 +112,8 @@ const TOUR_STEPS: Step[] = [
       <div className="space-y-2">
         <h3 className="font-bold text-lg">➕ Adicionar Lead</h3>
         <p className="text-gray-700">
-          Cadastre manualmente leads que você contatou. Quanto mais informações você adicionar, maior o score do lead!
+          Cadastre manualmente leads que você contatou. Quanto mais informações você adicionar,
+          maior o score do lead!
         </p>
         <div className="bg-blue-50 p-2 rounded text-sm">
           <strong>✅ Tarefa:</strong> Adicione seu primeiro lead agora.
@@ -123,7 +128,8 @@ const TOUR_STEPS: Step[] = [
       <div className="space-y-2">
         <h3 className="font-bold text-lg">🔔 Notificações Inteligentes</h3>
         <p className="text-gray-700">
-          Configure notificações para não perder nenhum follow-up. A IA te avisa quando é hora de contatar um lead!
+          Configure notificações para não perder nenhum follow-up. A IA te avisa quando é hora de
+          contatar um lead!
         </p>
         <div className="bg-red-50 p-2 rounded text-sm">
           <strong>✅ Tarefa:</strong> Ative notificações push.
@@ -154,7 +160,8 @@ const TOUR_STEPS: Step[] = [
         <div className="text-6xl">🎉</div>
         <h2 className="text-2xl font-bold text-green-600">Parabéns!</h2>
         <p className="text-gray-700">
-          Você completou o onboarding! Agora você está pronto para recrutar prestadores e ganhar comissões.
+          Você completou o onboarding! Agora você está pronto para recrutar prestadores e ganhar
+          comissões.
         </p>
         <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg">
           <p className="font-semibold text-green-800 mb-2">🎯 Próximos Passos:</p>
@@ -182,15 +189,15 @@ export default function OnboardingTour({ prospectorId }: OnboardingTourProps) {
   const loadProgress = useCallback(async () => {
     try {
       const progressDoc = await getDoc(doc(db, 'prospector_onboarding', prospectorId));
-      
+
       if (progressDoc.exists()) {
         const data = progressDoc.data();
         setProgress({
           ...data,
           startedAt: data.startedAt?.toDate() || new Date(),
-          completedAt: data.completedAt?.toDate()
+          completedAt: data.completedAt?.toDate(),
         } as OnboardingProgress);
-        
+
         // Se não completou, perguntar se quer continuar
         if (!data.completed) {
           const shouldContinue = confirm(
@@ -211,16 +218,16 @@ export default function OnboardingTour({ prospectorId }: OnboardingTourProps) {
             sharedWhatsApp: false,
             addedLead: false,
             configuredNotifications: false,
-            exploredMaterials: false
+            exploredMaterials: false,
           },
-          startedAt: new Date()
+          startedAt: new Date(),
         };
-        
+
         await setDoc(doc(db, 'prospector_onboarding', prospectorId), {
           ...newProgress,
-          startedAt: new Date()
+          startedAt: new Date(),
         });
-        
+
         setProgress(newProgress);
         setRunTour(true);
       }
@@ -258,19 +265,19 @@ export default function OnboardingTour({ prospectorId }: OnboardingTourProps) {
     // Onboarding completado
     if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
       setRunTour(false);
-      
+
       if (status === STATUS.FINISHED) {
         updateProgress({
           completed: true,
           currentStep: TOUR_STEPS.length - 1,
-          completedAt: new Date()
+          completedAt: new Date(),
         });
 
         // Celebração épica
         confetti({
           particleCount: 200,
           spread: 100,
-          origin: { y: 0.6 }
+          origin: { y: 0.6 },
         });
 
         setTimeout(() => {
@@ -278,19 +285,20 @@ export default function OnboardingTour({ prospectorId }: OnboardingTourProps) {
             particleCount: 100,
             angle: 60,
             spread: 55,
-            origin: { x: 0 }
+            origin: { x: 0 },
           });
           confetti({
             particleCount: 100,
             angle: 120,
             spread: 55,
-            origin: { x: 1 }
+            origin: { x: 1 },
           });
         }, 250);
 
         // Toaster de parabéns
         const toast = document.createElement('div');
-        toast.className = 'fixed top-4 right-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-6 rounded-xl shadow-2xl z-50 animate-bounce';
+        toast.className =
+          'fixed top-4 right-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-6 rounded-xl shadow-2xl z-50 animate-bounce';
         toast.innerHTML = `
           <div class="text-center">
             <div class="text-5xl mb-2">🏆</div>
@@ -307,7 +315,7 @@ export default function OnboardingTour({ prospectorId }: OnboardingTourProps) {
     }
   }
 
-  const completedTasksCount = progress 
+  const completedTasksCount = progress
     ? Object.values(progress.tasksCompleted).filter(Boolean).length
     : 0;
   const totalTasks = 5;
@@ -389,8 +397,9 @@ export default function OnboardingTour({ prospectorId }: OnboardingTourProps) {
               { key: 'addedLead', label: 'Adicionar primeiro lead', icon: '➕' },
               { key: 'configuredNotifications', label: 'Ativar notificações', icon: '🔔' },
               { key: 'exploredMaterials', label: 'Explorar materiais', icon: '📚' },
-            ].map((task) => {
-              const completed = progress.tasksCompleted[task.key as keyof typeof progress.tasksCompleted];
+            ].map(task => {
+              const completed =
+                progress.tasksCompleted[task.key as keyof typeof progress.tasksCompleted];
               return (
                 <div
                   key={task.key}
@@ -399,7 +408,9 @@ export default function OnboardingTour({ prospectorId }: OnboardingTourProps) {
                   }`}
                 >
                   <span className="text-2xl">{completed ? '✅' : task.icon}</span>
-                  <span className={`text-sm flex-1 ${completed ? 'text-green-700 line-through' : 'text-gray-700'}`}>
+                  <span
+                    className={`text-sm flex-1 ${completed ? 'text-green-700 line-through' : 'text-gray-700'}`}
+                  >
                     {task.label}
                   </span>
                 </div>
@@ -424,8 +435,10 @@ export default function OnboardingTour({ prospectorId }: OnboardingTourProps) {
 
       {/* Badge de Conquista */}
       {progress?.completed && (
-        <div className="fixed bottom-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-full p-4 shadow-2xl z-40 cursor-pointer hover:scale-110 transition-transform"
-             title="Onboarding Completo! 🏆">
+        <div
+          className="fixed bottom-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-full p-4 shadow-2xl z-40 cursor-pointer hover:scale-110 transition-transform"
+          title="Onboarding Completo! 🏆"
+        >
           <span className="text-3xl">🏆</span>
         </div>
       )}
@@ -437,7 +450,10 @@ export default function OnboardingTour({ prospectorId }: OnboardingTourProps) {
  * Hook para marcar tarefas como completas
  * Uso: Em cada componente, chamar quando tarefa for executada
  */
-export function useOnboardingTask(prospectorId: string, taskKey: keyof OnboardingProgress['tasksCompleted']) {
+export function useOnboardingTask(
+  prospectorId: string,
+  taskKey: keyof OnboardingProgress['tasksCompleted']
+) {
   return async () => {
     try {
       const progressDoc = await getDoc(doc(db, 'prospector_onboarding', prospectorId));
@@ -447,14 +463,14 @@ export function useOnboardingTask(prospectorId: string, taskKey: keyof Onboardin
       if (tasksCompleted[taskKey]) return; // Já completada
 
       await updateDoc(doc(db, 'prospector_onboarding', prospectorId), {
-        [`tasksCompleted.${taskKey}`]: true
+        [`tasksCompleted.${taskKey}`]: true,
       });
 
       // Micro-celebração
       confetti({
         particleCount: 50,
         spread: 60,
-        origin: { y: 0.8 }
+        origin: { y: 0.8 },
       });
     } catch (error) {
       console.error('[Onboarding] Erro ao marcar tarefa:', error);

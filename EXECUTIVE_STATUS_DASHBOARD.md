@@ -8,16 +8,16 @@
 
 ## 🟢 STATUS GERAL DO SISTEMA
 
-| Aspecto | Status | Detalhes |
-|---------|--------|----------|
-| **Sistema Operacional** | 🟢 OPERACIONAL | 100% funcional, produção |
-| **Frontend** | 🟢 ESTÁVEL | Firebase Hosting, build sem erros |
-| **Backend** | 🟢 ESTÁVEL | Cloud Run 128 rotas, health ✅ |
-| **Firestore** | 🟢 OPERACIONAL | Todas as coleções ativas |
-| **Webhooks** | 🟢 ATIVO | SendGrid ✅, WhatsApp ✅ |
-| **Testes** | 🟢 PASSANDO | E2E + Integração + Unitários |
-| **Deploy Pipeline** | 🟢 FUNCIONAL | CI/CD automatizado |
-| **Segurança** | 🟢 VALIDADA | Secrets mapeados, regras Firestore OK |
+| Aspecto                 | Status         | Detalhes                              |
+| ----------------------- | -------------- | ------------------------------------- |
+| **Sistema Operacional** | 🟢 OPERACIONAL | 100% funcional, produção              |
+| **Frontend**            | 🟢 ESTÁVEL     | Firebase Hosting, build sem erros     |
+| **Backend**             | 🟢 ESTÁVEL     | Cloud Run 128 rotas, health ✅        |
+| **Firestore**           | 🟢 OPERACIONAL | Todas as coleções ativas              |
+| **Webhooks**            | 🟢 ATIVO       | SendGrid ✅, WhatsApp ✅              |
+| **Testes**              | 🟢 PASSANDO    | E2E + Integração + Unitários          |
+| **Deploy Pipeline**     | 🟢 FUNCIONAL   | CI/CD automatizado                    |
+| **Segurança**           | 🟢 VALIDADA    | Secrets mapeados, regras Firestore OK |
 
 ---
 
@@ -78,31 +78,31 @@
 
 ### Testes
 
-| Tipo | Total | Passando | Taxa | Trend |
-|------|-------|----------|------|-------|
-| E2E | 10 | 10 | ✅ 100% | ⬆️ Estável |
-| Integração | 25 | 25 | ✅ 100% | ⬆️ Estável |
-| Unitários | 450+ | 450+ | ✅ 100% | ⬆️ Cobertura >45% |
+| Tipo       | Total | Passando | Taxa    | Trend             |
+| ---------- | ----- | -------- | ------- | ----------------- |
+| E2E        | 10    | 10       | ✅ 100% | ⬆️ Estável        |
+| Integração | 25    | 25       | ✅ 100% | ⬆️ Estável        |
+| Unitários  | 450+  | 450+     | ✅ 100% | ⬆️ Cobertura >45% |
 
 ### Build
 
-| Métrica | Valor | Status |
-|---------|-------|--------|
-| Frontend Build Time | 20-30s | ✅ Rápido |
-| Backend Build Time | 5-10s | ✅ Rápido |
-| Bundle Size | ~350KB (gzip) | ✅ OK |
-| TypeScript Errors | 0 | ✅ Nenhum |
+| Métrica             | Valor         | Status    |
+| ------------------- | ------------- | --------- |
+| Frontend Build Time | 20-30s        | ✅ Rápido |
+| Backend Build Time  | 5-10s         | ✅ Rápido |
+| Bundle Size         | ~350KB (gzip) | ✅ OK     |
+| TypeScript Errors   | 0             | ✅ Nenhum |
 
 ### Produção (Cloud Run)
 
-| Métrica | Valor | Status |
-|---------|-------|--------|
-| Health Status | HEALTHY | ✅ OK |
-| Total Routes | 128 | ✅ OK |
-| Avg Response Time | <200ms | ✅ OK |
-| Error Rate | <0.1% | ✅ Excelente |
-| Memory Usage | ~180MB | ✅ OK |
-| CPU Usage | <20% | ✅ OK |
+| Métrica           | Valor   | Status       |
+| ----------------- | ------- | ------------ |
+| Health Status     | HEALTHY | ✅ OK        |
+| Total Routes      | 128     | ✅ OK        |
+| Avg Response Time | <200ms  | ✅ OK        |
+| Error Rate        | <0.1%   | ✅ Excelente |
+| Memory Usage      | ~180MB  | ✅ OK        |
+| CPU Usage         | <20%    | ✅ OK        |
 
 ---
 
@@ -133,6 +133,7 @@
 ### Fase 2: Autenticação Real + Validações Completas (✅ COMPLETA)
 
 **Entregáveis**:
+
 - ✅ Autenticação Firebase em todos os endpoints
 - ✅ Validação de papéis (prospector type)
 - ✅ Deduplicação e normalização de dados
@@ -144,6 +145,7 @@
 - ✅ Frontend deploy sem erros
 
 **Commits**:
+
 - `9bdba25` - Fase 2 prospecção completa
 - `74c2a86` - Banner oficial, fluxograma, JSON, IA mode 2.0
 - `fb07020` - IA Integration Manifest
@@ -160,18 +162,18 @@
 
 ## 🔐 SEGURANÇA – STATUS VERIFICADO
 
-| Aspecto | Status | Detalhes |
-|---------|--------|----------|
-| **Firebase Auth** | ✅ | Email-based IDs, rules enforced |
-| **Firestore Rules** | ✅ | Role-based access (isClient, isProvider, isAdmin, isProspector) |
-| **Secret Manager** | ✅ | 5 secrets mapeados, acesso restrito |
-| **API Authentication** | ✅ | Todos endpoints usam requireAuth |
-| **HTTPS** | ✅ | Cloud Run + Firebase Hosting |
-| **Data Validation** | ✅ | Tipos validados no backend |
-| **SQL Injection** | ✅ | Firestore (NoSQL) sem risco |
-| **CORS** | ✅ | Configurado para desenvolvimento e produção |
-| **Rate Limiting** | ✅ | Implementado (email 100/batch, WhatsApp 15ms) |
-| **Webhook Verification** | ✅ | HMAC SHA-256 validado |
+| Aspecto                  | Status | Detalhes                                                        |
+| ------------------------ | ------ | --------------------------------------------------------------- |
+| **Firebase Auth**        | ✅     | Email-based IDs, rules enforced                                 |
+| **Firestore Rules**      | ✅     | Role-based access (isClient, isProvider, isAdmin, isProspector) |
+| **Secret Manager**       | ✅     | 5 secrets mapeados, acesso restrito                             |
+| **API Authentication**   | ✅     | Todos endpoints usam requireAuth                                |
+| **HTTPS**                | ✅     | Cloud Run + Firebase Hosting                                    |
+| **Data Validation**      | ✅     | Tipos validados no backend                                      |
+| **SQL Injection**        | ✅     | Firestore (NoSQL) sem risco                                     |
+| **CORS**                 | ✅     | Configurado para desenvolvimento e produção                     |
+| **Rate Limiting**        | ✅     | Implementado (email 100/batch, WhatsApp 15ms)                   |
+| **Webhook Verification** | ✅     | HMAC SHA-256 validado                                           |
 
 ---
 
@@ -227,6 +229,7 @@ Toda IA e desenvolvedor **DEVE** seguir:
 5. ✅ Revalidação completa de testes
 
 Documentado em:
+
 - `DOCUMENTO_MESTRE_SERVIO_AI.md` (Protocolo HOTFIX)
 - `IA_INTEGRATION_MANIFEST.md` (Instruções para IAs)
 
@@ -236,13 +239,13 @@ Documentado em:
 
 ### Documentação Crítica
 
-| Arquivo | Conteúdo | Atualizado |
-|---------|----------|-----------|
-| DOCUMENTO_MESTRE_SERVIO_AI.md | Arquitetura + protocolo | ✅ 04/12 |
-| IA_INTEGRATION_MANIFEST.md | Instruções para IAs | ✅ 04/12 |
-| API_ENDPOINTS.md | Todas as rotas | ✅ Ativa |
-| STRIPE_GUIA_RAPIDO.md | Pagamentos | ✅ Ativa |
-| OMNICHANNEL_WEBHOOKS_CONFIG.md | Webhooks | ✅ Ativa |
+| Arquivo                        | Conteúdo                | Atualizado |
+| ------------------------------ | ----------------------- | ---------- |
+| DOCUMENTO_MESTRE_SERVIO_AI.md  | Arquitetura + protocolo | ✅ 04/12   |
+| IA_INTEGRATION_MANIFEST.md     | Instruções para IAs     | ✅ 04/12   |
+| API_ENDPOINTS.md               | Todas as rotas          | ✅ Ativa   |
+| STRIPE_GUIA_RAPIDO.md          | Pagamentos              | ✅ Ativa   |
+| OMNICHANNEL_WEBHOOKS_CONFIG.md | Webhooks                | ✅ Ativa   |
 
 ### Links Importantes
 
@@ -286,12 +289,12 @@ Documentado em:
 
 ## 📊 HISTÓRICO DE VERSÕES
 
-| Versão | Data | Mudança Principal | Status |
-|--------|------|------------------|--------|
-| 2.2.0 | 04/12 | Protocolo HOTFIX + IA Mode 2.0 | 🟢 Ativa |
-| 2.1.0 | 03/12 | Fase 1 prospecção autônoma | 🟢 Completa |
-| 2.0.0 | 01/12 | Marketplace funcional | 🟢 Produção |
-| 1.0.0 | Inicial | MVP base | 🟢 Arquivo |
+| Versão | Data    | Mudança Principal              | Status      |
+| ------ | ------- | ------------------------------ | ----------- |
+| 2.2.0  | 04/12   | Protocolo HOTFIX + IA Mode 2.0 | 🟢 Ativa    |
+| 2.1.0  | 03/12   | Fase 1 prospecção autônoma     | 🟢 Completa |
+| 2.0.0  | 01/12   | Marketplace funcional          | 🟢 Produção |
+| 1.0.0  | Inicial | MVP base                       | 🟢 Arquivo  |
 
 ---
 

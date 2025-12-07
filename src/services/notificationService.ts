@@ -1,6 +1,6 @@
 /**
  * Firebase Cloud Messaging Service
- * 
+ *
  * Manages push notifications for prospectors:
  * - Click notifications (when prospect clicks referral link)
  * - Conversion notifications (when prospect registers)
@@ -9,7 +9,16 @@
  */
 
 import { getMessaging, getToken, onMessage, type MessagePayload } from 'firebase/messaging';
-import { doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import {
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 
 // VAPID key for web push (generate at Firebase Console > Project Settings > Cloud Messaging)
@@ -94,7 +103,9 @@ export async function updateFCMToken(prospectorId: string, token: string): Promi
 /**
  * Get notification preferences
  */
-export async function getNotificationPreferences(prospectorId: string): Promise<NotificationPreferences | null> {
+export async function getNotificationPreferences(
+  prospectorId: string
+): Promise<NotificationPreferences | null> {
   const prefDoc = await getDoc(doc(db, 'notification_preferences', prospectorId));
   if (!prefDoc.exists()) return null;
 
@@ -178,7 +189,7 @@ export function setupForegroundMessageListener(
   onNotification: (payload: MessagePayload) => void
 ): () => void {
   const messaging = getMessaging();
-  return onMessage(messaging, (payload) => {
+  return onMessage(messaging, payload => {
     // Handle foreground notification
     if (payload.notification) {
       // Show browser notification

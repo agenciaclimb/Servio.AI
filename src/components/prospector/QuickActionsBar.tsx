@@ -1,12 +1,12 @@
 /**
  * QuickActionsBar - Barra de Ações Rápidas Sticky
- * 
+ *
  * Barra flutuante com as 4 ações mais importantes para prospectores:
  * - Compartilhar Link (WhatsApp 1-click)
  * - Adicionar Lead (modal rápido)
  * - Notificações (badge count + configurações)
  * - Próxima Tarefa IA (sugestão inteligente)
- * 
+ *
  * Features:
  * - Sticky no topo do viewport
  * - Mobile: FAB (Floating Action Button) expansível
@@ -33,7 +33,7 @@ export default function QuickActionsBar({
   unreadNotifications,
   onAddLead,
   onOpenNotifications,
-  onOpenCampaign
+  onOpenCampaign,
 }: QuickActionsBarProps) {
   const [nextAction, setNextAction] = useState<SmartAction | null>(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -60,7 +60,7 @@ export default function QuickActionsBar({
         currentBadge: 'Iniciante',
         nextBadge: 'Bronze',
         progressToNextBadge: 0,
-        badgeTiers: []
+        badgeTiers: [],
       };
       const actions = await generateSmartActions(prospectorId, mockStats, [], []);
       if (actions.length > 0) {
@@ -229,8 +229,8 @@ export default function QuickActionsBar({
                   nextAction.priority === 'high'
                     ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white animate-pulse'
                     : nextAction.priority === 'medium'
-                    ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white'
-                    : 'bg-gradient-to-r from-blue-400 to-indigo-400 text-white'
+                      ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white'
+                      : 'bg-gradient-to-r from-blue-400 to-indigo-400 text-white'
                 }`}
                 title={nextAction.description}
               >

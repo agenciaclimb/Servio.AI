@@ -48,7 +48,9 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   const [proposingForJob, setProposingForJob] = useState<Job | null>(null);
   const [viewingAuctionForJob, setViewingAuctionForJob] = useState<Job | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [referralEmail, setReferralEmail] = useState<{subject: string, body: string} | null>(null);
+  const [referralEmail, setReferralEmail] = useState<{ subject: string; body: string } | null>(
+    null
+  );
   const [chattingWithJob, setChattingWithJob] = useState<Job | null>(null);
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   // Filters for available jobs
@@ -75,7 +77,8 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   // Filter available jobs
   const filteredJobs = availableJobs.filter(job => {
     const matchesCategory = categoryFilter === 'Todos' || job.category === categoryFilter;
-    const matchesLocation = !locationFilter || 
+    const matchesLocation =
+      !locationFilter ||
       job.location?.address?.toLowerCase().includes(locationFilter.toLowerCase()) ||
       job.location?.city?.toLowerCase().includes(locationFilter.toLowerCase());
     return matchesCategory && matchesLocation;
@@ -83,7 +86,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
 
   // Get unique categories from available jobs
   const categories = ['Todos', ...new Set(availableJobs.map(j => j.category))];
-  
+
   const handleSendProposal = async (proposalData: { message: string; price: number }) => {
     if (!proposingForJob) return;
 
@@ -104,9 +107,9 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         price: proposalData.price,
         status: 'pendente',
       });
-      
+
       setMyProposals(prev => [...prev, newProposal]);
-      
+
       // Notify client
       API.createNotification({
         userId: proposingForJob.clientId,
@@ -117,25 +120,27 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
       setProposingForJob(null);
 
       // Fraud check
-      const analysis = await analyzeProviderBehaviorForFraud(user, { type: 'proposal', data: newProposal as unknown as Record<string, unknown> });
+      const analysis = await analyzeProviderBehaviorForFraud(user, {
+        type: 'proposal',
+        data: newProposal as unknown as Record<string, unknown>,
+      });
       if (analysis?.isSuspicious) {
-          const newAlert: FraudAlert = {
-              id: `fra-${Date.now()}`,
-              providerId: user.email,
-              riskScore: analysis.riskScore,
-              reason: analysis.reason,
-              status: 'novo',
-              createdAt: new Date().toISOString(),
-          };
-          setAllFraudAlerts((prev: FraudAlert[]) => [newAlert, ...prev]);
+        const newAlert: FraudAlert = {
+          id: `fra-${Date.now()}`,
+          providerId: user.email,
+          riskScore: analysis.riskScore,
+          reason: analysis.reason,
+          status: 'novo',
+          createdAt: new Date().toISOString(),
+        };
+        setAllFraudAlerts((prev: FraudAlert[]) => [newAlert, ...prev]);
       }
     } catch (error) {
-
-      addToast("Erro ao enviar proposta. Tente novamente.", 'error');
+      addToast('Erro ao enviar proposta. Tente novamente.', 'error');
       setProposingForJob(null);
     }
   };
-  
+
   const handleSaveProfile = async (updatedData: Partial<User>) => {
     const updatedUser = { ...user, ...updatedData };
     try {
@@ -152,30 +157,35 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
 
     // Fraud check
     try {
-        const analysis = await analyzeProviderBehaviorForFraud(updatedUser, { type: 'profile_update', data: updatedData as unknown as Record<string, unknown> });
-        if (analysis?.isSuspicious) {
-            const newAlert: FraudAlert = {
-                id: `fra-${Date.now()}`,
-                providerId: user.email,
-                riskScore: analysis.riskScore,
-                reason: analysis.reason,
-                status: 'novo',
-                createdAt: new Date().toISOString(),
-            };
-            setAllFraudAlerts(prev => [newAlert, ...prev]);
-        }
-    } catch (error) { /* Intentionally ignored - análise de fraude é best-effort */ }
+      const analysis = await analyzeProviderBehaviorForFraud(updatedUser, {
+        type: 'profile_update',
+        data: updatedData as unknown as Record<string, unknown>,
+      });
+      if (analysis?.isSuspicious) {
+        const newAlert: FraudAlert = {
+          id: `fra-${Date.now()}`,
+          providerId: user.email,
+          riskScore: analysis.riskScore,
+          reason: analysis.reason,
+          status: 'novo',
+          createdAt: new Date().toISOString(),
+        };
+        setAllFraudAlerts(prev => [newAlert, ...prev]);
+      }
+    } catch (error) {
+      /* Intentionally ignored - análise de fraude é best-effort */
+    }
   };
 
   const handleUpdateJobStatus = (jobId: string, newStatus: JobStatus) => {
     const job = myJobs.find(j => j.id === jobId);
-    if(!job) return;
+    if (!job) return;
 
     const updatedJob = { ...job, status: newStatus };
-    setMyJobs(prev => prev.map(j => j.id === jobId ? updatedJob : j));
-    
+    setMyJobs(prev => prev.map(j => (j.id === jobId ? updatedJob : j)));
+
     API.updateJob(jobId, { status: newStatus });
-    
+
     API.createNotification({
       userId: job.clientId,
       text: `Atualização no seu job: ${user.name} está ${newStatus.replace('_', ' ')}.`,
@@ -192,19 +202,20 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
     };
     setAllMessages(prev => [...prev, statusUpdateMessage]);
   };
-  
+
   const handleSendReferral = async (friendEmail: string) => {
     try {
-        const emailContent = await generateReferralEmail(user.name, friendEmail);
-        setReferralEmail(emailContent);
-        // In a real app, you'd send the email here.
-
+      const emailContent = await generateReferralEmail(user.name, friendEmail);
+      setReferralEmail(emailContent);
+      // In a real app, you'd send the email here.
     } catch (error) {
-        addToast("Falha ao gerar e-mail de indicação.", 'error');
+      addToast('Falha ao gerar e-mail de indicação.', 'error');
     }
   };
 
-  const handleSendMessage = async (messageData: Partial<Message> & { chatId: string, text: string }) => {
+  const handleSendMessage = async (
+    messageData: Partial<Message> & { chatId: string; text: string }
+  ) => {
     try {
       // Save message to backend (Firestore)
       const savedMessage = await API.createMessage({
@@ -213,7 +224,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         text: messageData.text,
         type: messageData.type || 'text',
       });
-      
+
       // Update local state with saved message
       setAllMessages(prev => [...prev, savedMessage]);
 
@@ -226,14 +237,16 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
           isRead: false,
         });
       }
-
     } catch (error) {
-
       addToast('Erro ao enviar mensagem. Tente novamente.', 'error');
     }
   };
 
-  const handleConfirmSchedule = (jobId: string, schedule: ScheduledDateTime, messageId?: string) => {
+  const handleConfirmSchedule = (
+    jobId: string,
+    schedule: ScheduledDateTime,
+    messageId?: string
+  ) => {
     const job = myJobs.find(j => j.id === jobId);
     if (!job) return;
 
@@ -241,18 +254,23 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
     const updatedJob = { ...job, status: 'agendado' as JobStatus };
     setMyJobs(prev => prev.map(j => (j.id === jobId ? updatedJob : j)));
     API.updateJob(jobId, { status: 'agendado' });
-    
-    const formattedDate = new Date(`${schedule.date}T00:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    const formattedDate = new Date(`${schedule.date}T00:00:00`).toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
     const confirmationText = `✅ Agendamento confirmado para ${formattedDate} às ${schedule.time}.`;
 
     // 2. Add System Message to Chat
     const systemMessage: Message = {
-        id: `msg-system-${Date.now()}`,
-        chatId: jobId,
-        senderId: 'system',
-        text: confirmationText,
-        createdAt: new Date().toISOString(),
-        type: 'system_notification',
+      id: `msg-system-${Date.now()}`,
+      chatId: jobId,
+      senderId: 'system',
+      text: confirmationText,
+      createdAt: new Date().toISOString(),
+      type: 'system_notification',
     };
     setAllMessages(prev => [...prev, systemMessage]);
 
@@ -265,17 +283,19 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
 
     // 4. Mark the proposal message as confirmed
     if (messageId) {
-        setAllMessages(prev => prev.map(m => m.id === messageId ? { ...m, isScheduleConfirmed: true } : m));
+      setAllMessages(prev =>
+        prev.map(m => (m.id === messageId ? { ...m, isScheduleConfirmed: true } : m))
+      );
     }
   };
-  
-    const handleJobClick = (job: Job) => {
-        if (job.jobMode === 'leilao') {
-            setViewingAuctionForJob(job);
-        } else {
-            setProposingForJob(job);
-        }
-    };
+
+  const handleJobClick = (job: Job) => {
+    if (job.jobMode === 'leilao') {
+      setViewingAuctionForJob(job);
+    } else {
+      setProposingForJob(job);
+    }
+  };
 
   if (isLoading && !disableSkeleton) {
     return <ProviderDashboardSkeleton />;
@@ -289,9 +309,8 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   // Calculate provider stats
   const totalJobs = completedJobs.length + myJobs.filter(j => j.status === 'concluido').length;
   const allReviews = completedJobs.filter(j => j.review?.rating).map(j => j.review!.rating);
-  const averageRating = allReviews.length > 0 
-    ? allReviews.reduce((sum, r) => sum + r, 0) / allReviews.length 
-    : 5.0;
+  const averageRating =
+    allReviews.length > 0 ? allReviews.reduce((sum, r) => sum + r, 0) / allReviews.length : 5.0;
   const currentRate = user.providerRate || 0.85; // Default 85% commission
 
   return (
@@ -301,13 +320,24 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg shadow-sm">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              <svg
+                className="h-5 w-5 text-yellow-400"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
             <div className="ml-3">
               <p className="text-sm text-yellow-700">
-                <strong>Análise em Andamento</strong> Seus documentos estão sendo analisados. Você poderá enviar propostas assim que a verificação for concluída (geralmente em até 24h).
+                <strong>Análise em Andamento</strong> Seus documentos estão sendo analisados. Você
+                poderá enviar propostas assim que a verificação for concluída (geralmente em até
+                24h).
               </p>
             </div>
           </div>
@@ -315,28 +345,40 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
       )}
 
       {/* Card de call-to-action para verificação */}
-      {user.verificationStatus !== 'verificado' && user.verificationStatus !== 'pendente' && user.verificationStatus !== 'recusado' && (
-        <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg shadow-sm">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3 flex-1">
-              <p className="text-sm text-blue-700 mb-2">
-                <strong>Complete sua verificação:</strong> Para enviar propostas e começar a trabalhar, você precisa verificar sua identidade. É rápido e seguro!
-              </p>
-              <button
-                onClick={() => setShowVerificationPrompt(true)}
-                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Verificar Agora
-              </button>
+      {user.verificationStatus !== 'verificado' &&
+        user.verificationStatus !== 'pendente' &&
+        user.verificationStatus !== 'recusado' && (
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg shadow-sm">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-5 w-5 text-blue-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-sm text-blue-700 mb-2">
+                  <strong>Complete sua verificação:</strong> Para enviar propostas e começar a
+                  trabalhar, você precisa verificar sua identidade. É rápido e seguro!
+                </p>
+                <button
+                  onClick={() => setShowVerificationPrompt(true)}
+                  className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Verificar Agora
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Exibe o card de Força do Perfil apenas se não estiver 100% completo */}
       {((user.specialties?.length || 0) === 0 || !user.bio || !user.headline) && (
@@ -345,39 +387,39 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         </div>
       )}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Meus Serviços em Andamento</h2>
-          </div>
-          <div className="flex flex-col space-y-4">
-              <ProviderEarningsCard 
-                completedJobs={completedJobs}
-                currentRate={currentRate}
-                totalJobs={totalJobs}
-                averageRating={averageRating}
-              />
-              <ProfileTips user={user} onEditProfile={() => setIsProfileModalOpen(true)} />
-              <ReferralProgram onSendReferral={handleSendReferral} />
-              <PaymentSetupCard user={user} />
-          </div>
+        <div className="lg:col-span-2">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Meus Serviços em Andamento</h2>
+        </div>
+        <div className="flex flex-col space-y-4">
+          <ProviderEarningsCard
+            completedJobs={completedJobs}
+            currentRate={currentRate}
+            totalJobs={totalJobs}
+            averageRating={averageRating}
+          />
+          <ProfileTips user={user} onEditProfile={() => setIsProfileModalOpen(true)} />
+          <ReferralProgram onSendReferral={handleSendReferral} />
+          <PaymentSetupCard user={user} />
+        </div>
       </div>
 
-        {myJobs.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {myJobs.map(job => (
-              <ProviderJobCard
-                key={job.id}
-                job={job}
-                client={allUsers.find(u => u.email === job.clientId)}
-                onChat={() => setChattingWithJob(job)}
-                onUpdateStatus={handleUpdateJobStatus}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-10 bg-white rounded-lg shadow-sm border">
-            <p className="text-gray-600">Você não tem nenhum serviço em andamento.</p>
-          </div>
-        )}
+      {myJobs.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {myJobs.map(job => (
+            <ProviderJobCard
+              key={job.id}
+              job={job}
+              client={allUsers.find(u => u.email === job.clientId)}
+              onChat={() => setChattingWithJob(job)}
+              onUpdateStatus={handleUpdateJobStatus}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-10 bg-white rounded-lg shadow-sm border">
+          <p className="text-gray-600">Você não tem nenhum serviço em andamento.</p>
+        </div>
+      )}
 
       <div>
         <div className="flex justify-between items-center mb-4">
@@ -391,11 +433,13 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
             <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
             <select
               value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
+              onChange={e => setCategoryFilter(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
             >
               {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
               ))}
             </select>
           </div>
@@ -404,7 +448,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
             <input
               type="text"
               value={locationFilter}
-              onChange={(e) => setLocationFilter(e.target.value)}
+              onChange={e => setLocationFilter(e.target.value)}
               placeholder="Buscar por cidade ou endereço..."
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
@@ -432,14 +476,16 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
                 job={job}
                 bids={myBids.filter(b => b.jobId === job.id)}
                 onProposeClick={() => handleJobClick(job)}
-                hasProposed={job.jobMode === 'leilao' ? biddedJobIds.has(job.id) : proposedJobIds.has(job.id)}
+                hasProposed={
+                  job.jobMode === 'leilao' ? biddedJobIds.has(job.id) : proposedJobIds.has(job.id)
+                }
               />
             ))}
           </div>
         ) : (
-           <div className="text-center py-10 bg-white rounded-lg shadow-sm border">
+          <div className="text-center py-10 bg-white rounded-lg shadow-sm border">
             <p className="text-gray-600">
-              {availableJobs.length === 0 
+              {availableJobs.length === 0
                 ? 'Nenhuma oportunidade nova no momento. Volte em breve!'
                 : 'Nenhum job encontrado com os filtros selecionados. Tente ajustar os filtros.'}
             </p>
@@ -465,10 +511,10 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         />
       )}
       {isProfileModalOpen && (
-        <ProfileModal 
-            user={user}
-            onClose={() => setIsProfileModalOpen(false)}
-            onSave={handleSaveProfile}
+        <ProfileModal
+          user={user}
+          onClose={() => setIsProfileModalOpen(false)}
+          onSave={handleSaveProfile}
         />
       )}
       {referralEmail && (
@@ -476,14 +522,14 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
       )}
       {chattingWithJob && (
         <ChatModal
-            job={chattingWithJob}
-            currentUser={user}
-            otherParty={allUsers.find(u => u.email === chattingWithJob.clientId)}
-            messages={allMessages.filter(m => m.chatId === chattingWithJob.id)}
-            onClose={() => setChattingWithJob(null)}
-            onSendMessage={handleSendMessage}
-            onConfirmSchedule={handleConfirmSchedule}
-            setAllMessages={setAllMessages}
+          job={chattingWithJob}
+          currentUser={user}
+          otherParty={allUsers.find(u => u.email === chattingWithJob.clientId)}
+          messages={allMessages.filter(m => m.chatId === chattingWithJob.id)}
+          onClose={() => setChattingWithJob(null)}
+          onSendMessage={handleSendMessage}
+          onConfirmSchedule={handleConfirmSchedule}
+          setAllMessages={setAllMessages}
         />
       )}
     </div>
@@ -491,4 +537,3 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
 };
 
 export default ProviderDashboard;
-

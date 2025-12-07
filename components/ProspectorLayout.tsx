@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import CollapsibleSidebar from './CollapsibleSidebar';
 import QuickPanel from '../src/components/prospector/QuickPanel';
@@ -36,9 +35,7 @@ const ProspectorLayout: React.FC<ProspectorLayoutProps> = ({ userId }) => {
   return (
     <div className="flex h-screen bg-gray-50">
       <CollapsibleSidebar activeItem={activeView} onItemClick={setActiveView} />
-      <main className="flex-1 overflow-y-auto p-8">
-        {renderContent()}
-      </main>
+      <main className="flex-1 overflow-y-auto p-8">{renderContent()}</main>
     </div>
   );
 };

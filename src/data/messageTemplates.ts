@@ -1,6 +1,6 @@
 /**
  * Social Media Message Templates for Prospectors
- * 
+ *
  * Ready-to-use templates for different platforms and service categories.
  * Prospectors can copy-paste these with their personalized referral link.
  */
@@ -308,16 +308,17 @@ export function getTemplates(
   platform?: MessageTemplate['platform'],
   category?: string
 ): MessageTemplate[] {
-    return messageTemplates.filter(template => {
-        const platformMatch = !platform || template.platform === 'all' || template.platform === platform;
-        const categoryMatch = !category || (template.category === category) || !template.category;
-        
-        if (category && !getCategories().includes(category)) {
-            return false;
-        }
+  return messageTemplates.filter(template => {
+    const platformMatch =
+      !platform || template.platform === 'all' || template.platform === platform;
+    const categoryMatch = !category || template.category === category || !template.category;
 
-        return platformMatch && categoryMatch;
-    });
+    if (category && !getCategories().includes(category)) {
+      return false;
+    }
+
+    return platformMatch && categoryMatch;
+  });
 }
 
 /**
@@ -332,11 +333,11 @@ export function getTemplateById(id: string): MessageTemplate | undefined {
  */
 export function formatTemplate(template: MessageTemplate, referralLink: string): string {
   let formatted = template.message.replace('[LINK]', referralLink);
-  
+
   if (template.hashtags && template.hashtags.length > 0) {
     formatted += '\n\n' + template.hashtags.join(' ');
   }
-  
+
   return formatted;
 }
 
@@ -345,9 +346,7 @@ export function formatTemplate(template: MessageTemplate, referralLink: string):
  */
 export function getCategories(): string[] {
   const categories = new Set(
-    messageTemplates
-      .filter(t => t.category)
-      .map(t => t.category as string)
+    messageTemplates.filter(t => t.category).map(t => t.category as string)
   );
   return Array.from(categories).sort();
 }

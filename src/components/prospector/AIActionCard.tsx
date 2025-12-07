@@ -11,7 +11,7 @@ interface AINextActionSuggestion {
 export function generateNextActionSuggestions(lead: ProspectLead): AINextActionSuggestion[] {
   const suggestions: AINextActionSuggestion[] = [];
   const now = new Date();
-  const lastActivityDays = lead.lastActivity 
+  const lastActivityDays = lead.lastActivity
     ? Math.floor((now.getTime() - lead.lastActivity.getTime()) / (24 * 60 * 60 * 1000))
     : 999;
 
@@ -22,7 +22,7 @@ export function generateNextActionSuggestions(lead: ProspectLead): AINextActionS
       icon: '🔔',
       reason: `Follow-up atrasado há ${Math.floor((now.getTime() - new Date(lead.followUpDate).getTime()) / (24 * 60 * 60 * 1000))} dias`,
       priority: 'high',
-      estimatedImpact: '+35% conversão'
+      estimatedImpact: '+35% conversão',
     });
   }
 
@@ -33,7 +33,7 @@ export function generateNextActionSuggestions(lead: ProspectLead): AINextActionS
       icon: '📄',
       reason: 'Score alto indica alto potencial de conversão',
       priority: 'high',
-      estimatedImpact: '+40% conversão'
+      estimatedImpact: '+40% conversão',
     });
   }
 
@@ -44,7 +44,7 @@ export function generateNextActionSuggestions(lead: ProspectLead): AINextActionS
       icon: '💎',
       reason: `Sem contato há ${lastActivityDays} dias - risco de perda`,
       priority: 'high',
-      estimatedImpact: '+25% reativação'
+      estimatedImpact: '+25% reativação',
     });
   }
 
@@ -55,7 +55,7 @@ export function generateNextActionSuggestions(lead: ProspectLead): AINextActionS
       icon: '🎯',
       reason: 'Lead em negociação precisa de atenção constante',
       priority: 'high',
-      estimatedImpact: '+50% conversão'
+      estimatedImpact: '+50% conversão',
     });
   }
 
@@ -67,7 +67,7 @@ export function generateNextActionSuggestions(lead: ProspectLead): AINextActionS
       icon: '✉️',
       reason: 'Já houve contato, mas falta formalização por email',
       priority: 'medium',
-      estimatedImpact: '+20% confiança'
+      estimatedImpact: '+20% confiança',
     });
   }
 
@@ -78,7 +78,7 @@ export function generateNextActionSuggestions(lead: ProspectLead): AINextActionS
       icon: '🔥',
       reason: 'Lead quente precisa ser contatado imediatamente',
       priority: 'high',
-      estimatedImpact: '+60% engajamento'
+      estimatedImpact: '+60% engajamento',
     });
   }
 
@@ -89,7 +89,7 @@ export function generateNextActionSuggestions(lead: ProspectLead): AINextActionS
       icon: '📱',
       reason: 'WhatsApp tem 3x mais taxa de resposta',
       priority: 'medium',
-      estimatedImpact: '+30% resposta'
+      estimatedImpact: '+30% resposta',
     });
   }
 
@@ -100,7 +100,7 @@ export function generateNextActionSuggestions(lead: ProspectLead): AINextActionS
       icon: '📅',
       reason: 'Momento ideal para avançar para próxima etapa',
       priority: 'medium',
-      estimatedImpact: '+35% progressão'
+      estimatedImpact: '+35% progressão',
     });
   }
 
@@ -111,7 +111,7 @@ export function generateNextActionSuggestions(lead: ProspectLead): AINextActionS
       icon: '🏷️',
       reason: 'Categorizar permite ofertas mais precisas',
       priority: 'low',
-      estimatedImpact: '+15% relevância'
+      estimatedImpact: '+15% relevância',
     });
   }
 
@@ -119,19 +119,22 @@ export function generateNextActionSuggestions(lead: ProspectLead): AINextActionS
   const lastActivity = lead.activities?.[lead.activities.length - 1];
   if (lastActivity && lastActivityDays >= 5) {
     const lastChannel = lastActivity.type;
-    const suggestedChannel = lastChannel === 'email' ? 'WhatsApp' : lastChannel === 'message' ? 'Email' : 'Ligação';
+    const suggestedChannel =
+      lastChannel === 'email' ? 'WhatsApp' : lastChannel === 'message' ? 'Email' : 'Ligação';
     suggestions.push({
       action: `Tentar contato via ${suggestedChannel}`,
       icon: suggestedChannel === 'WhatsApp' ? '💬' : suggestedChannel === 'Email' ? '✉️' : '📞',
       reason: 'Mudar de canal pode aumentar taxa de resposta',
       priority: 'medium',
-      estimatedImpact: '+25% resposta'
+      estimatedImpact: '+25% resposta',
     });
   }
 
   // Sort by priority
   const priorityOrder = { high: 0, medium: 1, low: 2 };
-  return suggestions.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]).slice(0, 3);
+  return suggestions
+    .sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority])
+    .slice(0, 3);
 }
 
 interface AIActionCardProps {
@@ -149,7 +152,9 @@ export default function AIActionCard({ lead, onAction }: AIActionCardProps) {
           <span className="text-3xl">✅</span>
           <div>
             <div className="font-bold text-green-800">Lead está bem encaminhado!</div>
-            <div className="text-sm text-green-600">Nenhuma ação urgente necessária no momento.</div>
+            <div className="text-sm text-green-600">
+              Nenhuma ação urgente necessária no momento.
+            </div>
           </div>
         </div>
       </div>
@@ -170,11 +175,11 @@ export default function AIActionCard({ lead, onAction }: AIActionCardProps) {
         <div
           key={idx}
           className={`bg-white rounded-lg p-3 border-2 ${
-            s.priority === 'high' 
-              ? 'border-red-200' 
-              : s.priority === 'medium' 
-              ? 'border-amber-200' 
-              : 'border-gray-200'
+            s.priority === 'high'
+              ? 'border-red-200'
+              : s.priority === 'medium'
+                ? 'border-amber-200'
+                : 'border-gray-200'
           }`}
         >
           <div className="flex items-start gap-3">
@@ -182,14 +187,20 @@ export default function AIActionCard({ lead, onAction }: AIActionCardProps) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <span className="font-bold text-gray-900 text-sm">{s.action}</span>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-                  s.priority === 'high' 
-                    ? 'bg-red-100 text-red-700' 
-                    : s.priority === 'medium' 
-                    ? 'bg-amber-100 text-amber-700' 
-                    : 'bg-gray-100 text-gray-600'
-                }`}>
-                  {s.priority === 'high' ? 'URGENTE' : s.priority === 'medium' ? 'IMPORTANTE' : 'SUGESTÃO'}
+                <span
+                  className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                    s.priority === 'high'
+                      ? 'bg-red-100 text-red-700'
+                      : s.priority === 'medium'
+                        ? 'bg-amber-100 text-amber-700'
+                        : 'bg-gray-100 text-gray-600'
+                  }`}
+                >
+                  {s.priority === 'high'
+                    ? 'URGENTE'
+                    : s.priority === 'medium'
+                      ? 'IMPORTANTE'
+                      : 'SUGESTÃO'}
                 </span>
               </div>
               <p className="text-xs text-gray-600 mb-2">{s.reason}</p>

@@ -1,8 +1,8 @@
-import { defineConfig } from "cypress";
+import { defineConfig } from 'cypress';
 
 export default defineConfig({
   e2e: {
-    baseUrl: "http://localhost:3000", // A porta do seu dev server Vite
+    baseUrl: 'http://localhost:3000', // A porta do seu dev server Vite
     supportFile: false,
   },
 });

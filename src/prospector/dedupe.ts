@@ -41,15 +41,24 @@ export function fingerprint(p: ProspectMinimal): string {
 
 export function isDuplicate(a: ProspectMinimal, b: ProspectMinimal): boolean {
   // Strong match by email or phone
-  const emailMatch = !!normalizeEmail(a.email) && normalizeEmail(a.email) === normalizeEmail(b.email);
-  const phoneMatch = !!normalizePhone(a.phone) && normalizePhone(a.phone) === normalizePhone(b.phone);
+  const emailMatch =
+    !!normalizeEmail(a.email) && normalizeEmail(a.email) === normalizeEmail(b.email);
+  const phoneMatch =
+    !!normalizePhone(a.phone) && normalizePhone(a.phone) === normalizePhone(b.phone);
   if (emailMatch || phoneMatch) return true;
   // Soft match by name + company
-  const nameCompanyMatch = !!normalizeName(a.name) && !!(a.company && b.company) && normalizeName(a.name) === normalizeName(b.name) && a.company!.trim().toLowerCase() === b.company!.trim().toLowerCase();
+  const nameCompanyMatch =
+    !!normalizeName(a.name) &&
+    !!(a.company && b.company) &&
+    normalizeName(a.name) === normalizeName(b.name) &&
+    a.company!.trim().toLowerCase() === b.company!.trim().toLowerCase();
   return !!nameCompanyMatch;
 }
 
-export function filterDuplicates(existing: ProspectMinimal[], incoming: ProspectMinimal[]): { unique: ProspectMinimal[]; dupes: ProspectMinimal[] } {
+export function filterDuplicates(
+  existing: ProspectMinimal[],
+  incoming: ProspectMinimal[]
+): { unique: ProspectMinimal[]; dupes: ProspectMinimal[] } {
   const index = new Map<string, ProspectMinimal>();
   for (const e of existing) {
     index.set(fingerprint(e), e);

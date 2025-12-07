@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 /**
  * QA 360 - PAINEL ADMIN COMPLETO
- * 
+ *
  * Cobertura:
  * 1. Analytics - Visualizar todas as abas (overview, receita, jobs, usuários)
  * 2. Suspender prestador (fraud detection)
@@ -10,7 +10,7 @@ import { test, expect } from '@playwright/test';
  * 4. Ver alertas de fraude
  * 5. Exportar relatórios
  * 6. Gerenciar verificações pendentes
- * 
+ *
  * Critérios de aceite:
  * - Admin vê métricas agregadas corretas
  * - Ações de suspensão persistem
@@ -19,23 +19,28 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('QA 360 - Painel Admin', () => {
-  
   test.beforeEach(async ({ page: _page }) => {
     await page.addInitScript(() => {
-      window.localStorage.setItem('mockUser', JSON.stringify({
-        uid: 'admin-qa-001',
-        email: 'admin.qa@servio.ai',
-        displayName: 'Admin QA',
-        emailVerified: true
-      }));
-      
-      window.localStorage.setItem('userProfile', JSON.stringify({
-        email: 'admin.qa@servio.ai',
-        name: 'Admin QA',
-        type: 'admin',
-        status: 'ativo',
-        memberSince: new Date().toISOString()
-      }));
+      window.localStorage.setItem(
+        'mockUser',
+        JSON.stringify({
+          uid: 'admin-qa-001',
+          email: 'admin.qa@servio.ai',
+          displayName: 'Admin QA',
+          emailVerified: true,
+        })
+      );
+
+      window.localStorage.setItem(
+        'userProfile',
+        JSON.stringify({
+          email: 'admin.qa@servio.ai',
+          name: 'Admin QA',
+          type: 'admin',
+          status: 'ativo',
+          memberSince: new Date().toISOString(),
+        })
+      );
     });
   });
 
@@ -43,7 +48,7 @@ test.describe('QA 360 - Painel Admin', () => {
     const profile = await page.evaluate(() => {
       return JSON.parse(window.localStorage.getItem('userProfile') || '{}');
     });
-    
+
     expect(profile.type).toBe('admin');
     console.log('✅ Admin autenticado');
   });
@@ -84,4 +89,3 @@ test.describe('QA 360 - Painel Admin', () => {
     // TODO: Ver lista de prestadores com isVerified=false, aprovar
   });
 });
-
