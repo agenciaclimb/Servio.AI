@@ -68,10 +68,12 @@ export function applyAdvancedFilters(
           if (!(Number(raw ?? 0) <= Number(cond.value ?? 0))) return false;
           break;
         case 'in':
-          if (!Array.isArray(cond.value) || !cond.value.includes(raw as string | number)) return false;
+          if (!Array.isArray(cond.value) || !cond.value.includes(raw as string | number))
+            return false;
           break;
         case 'notIn':
-          if (Array.isArray(cond.value) && cond.value.includes(raw as string | number)) return false;
+          if (Array.isArray(cond.value) && cond.value.includes(raw as string | number))
+            return false;
           break;
         case 'exists':
           if (raw === undefined || raw === null || raw === '') return false;

@@ -41,13 +41,13 @@ interface UseAIRecommendationsReturn {
 
 /**
  * Hook para buscar recomendações de IA para um lead
- * 
+ *
  * Integra com backend API `/api/prospector/ai-recommendations`
- * 
+ *
  * @param leadId - ID do lead
  * @param prospectorId - ID do prospector
  * @returns Recomendações, loading state e error handling
- * 
+ *
  * @example
  * const { recommendations, loading, error } = useAIRecommendations('lead-1', 'prospect-1');
  */
@@ -167,7 +167,9 @@ export function useNextAction(
 export function useConversionPrediction(
   leadId: string,
   prospectorId: string
-): Omit<UseAIRecommendationsReturn, 'recommendations'> & { prediction: ConversionPrediction | null } {
+): Omit<UseAIRecommendationsReturn, 'recommendations'> & {
+  prediction: ConversionPrediction | null;
+} {
   const [prediction, setPrediction] = useState<ConversionPrediction | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
