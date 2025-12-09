@@ -27,7 +27,9 @@ const ProductListing = lazy(() => import('./src/components/ProductListing'));
 const ShoppingCart = lazy(() => import('./src/components/ShoppingCart'));
 const CheckoutFlow = lazy(() => import('./src/components/CheckoutFlow'));
 const OrderTracking = lazy(() => import('./src/components/OrderTracking'));
-const AdvancedAnalyticsDashboard = lazy(() => import('./src/components/AdvancedAnalyticsDashboard'));
+const AdvancedAnalyticsDashboard = lazy(
+  () => import('./src/components/AdvancedAnalyticsDashboard')
+);
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-[400px]">
@@ -491,10 +493,7 @@ const App: React.FC = () => {
         }
         return (
           <Suspense fallback={<LoadingFallback />}>
-            <ShoppingCart
-              userId={currentUser.email}
-              onCheckout={() => handleSetView('checkout')}
-            />
+            <ShoppingCart userId={currentUser.email} onCheckout={() => handleSetView('checkout')} />
           </Suspense>
         );
       case 'checkout':
