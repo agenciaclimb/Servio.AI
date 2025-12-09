@@ -3770,6 +3770,42 @@ Retorne apenas o corpo do email, sem assunto.`;
   app.use('/api/scheduler', schedulerRouter);
 
   // =================================================================
+  // CRM INTEGRATION ROUTES (Phase 4 - Scalability)
+  // =================================================================
+  // Bidirectional sync with external CRMs (Pipedrive, HubSpot)
+  // Routes: POST /api/crm/sync-lead, /api/crm/sync-batch, /api/crm/webhook/*
+  //         GET /api/crm/health, /api/crm/sync-status/:prospectId
+  const CRMService = require('./services/crmService');
+  const crmService = new CRMService(defaultDb);
+  const crmRouter = require('./routes/crm');
+  app.use('/api/crm', crmRouter({ db: defaultDb, crmService }));
+
+  // =================================================================
+  // TWILIO INTEGRATION ROUTES (Phase 4 - Scalability)
+  // =================================================================
+  // SMS, WhatsApp, and Call integration via Twilio API
+  // Routes: POST /api/twilio/send-sms, /api/twilio/send-whatsapp, /api/twilio/make-call
+  //         POST /api/twilio/send-batch, /api/twilio/webhook/*
+  //         GET /api/twilio/health, /api/twilio/history/:prospectId
+  const TwilioService = require('./services/twilioService');
+  const twilioService = new TwilioService(defaultDb);
+  const twilioRouter = require('./routes/twilio');
+  app.use('/api/twilio', twilioRouter({ db: defaultDb, twilioService }));
+
+  // =================================================================
+  // LANDING PAGES GENERATOR ROUTES (Phase 4 - Scalability)
+  // =================================================================
+  // AI-powered landing page generation with Gemini
+  // Routes: POST /api/landing-pages/generate, /:id/variant, /:id/publish
+  //         GET /api/landing-pages, /:id, /:id/analytics, /:id/html
+  //         POST /api/landing-pages/:id/event, /form
+  //         DELETE /api/landing-pages/:id
+  const LandingPageService = require('./services/landingPageService');
+  const landingPageService = new LandingPageService(defaultDb);
+  const landingPagesRouter = require('./routes/landingPages');
+  app.use('/api/landing-pages', landingPagesRouter({ db: defaultDb, landingPageService }));
+
+  // =================================================================
   // ANALYTICS ROUTES (Phase 3)
   // =================================================================
   // Prospecting and campaign analytics endpoints
