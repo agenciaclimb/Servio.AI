@@ -4248,7 +4248,50 @@ GET  /api/whatsapp/multi-role/templates/:userType
 
 ---
 
-**Documento Mestre v1.0.6 - Backend Memory Fallback Complete | 28/11/2025 00:40 BRT**
+## 🗂️ Phase 4 Reference Files
 
-_Última atualização: Sistema de fallback em memória implementado e validado_  
-_Próxima revisão: 01/12/2025 | E2E Tests Execution Phase_
+### E-Commerce Backend
+
+| Arquivo                                    | Linhas | Função                                      | Status |
+| ------------------------------------------ | ------ | ------------------------------------------- | ------ |
+| `backend/src/services/ecommerceService.js` | 468    | Product, cart, checkout, order management   | ✅     |
+| `backend/src/routes/ecommerce.js`          | 274    | 14 REST endpoints for e-commerce operations | ✅     |
+
+### E-Commerce Frontend
+
+| Arquivo                             | Linhas | Função                                    | Status |
+| ----------------------------------- | ------ | ----------------------------------------- | ------ |
+| `src/components/ProductListing.tsx` | 475    | Product catalog with filters & pagination | ✅     |
+| `src/components/ShoppingCart.tsx`   | 434    | Cart management with totals & checkout    | ✅     |
+| `src/components/CheckoutFlow.tsx`   | 578    | 5-step checkout wizard with Stripe        | ✅     |
+| `src/components/OrderTracking.tsx`  | 300    | Order search & tracking with timeline     | ✅     |
+
+### Analytics Backend
+
+| Arquivo                                             | Linhas | Função                                                                                 | Status |
+| --------------------------------------------------- | ------ | -------------------------------------------------------------------------------------- | ------ |
+| `backend/src/services/ecommerceAnalyticsService.js` | 402    | 9 analytics functions (metrics, revenue, funnel, reports, scheduling, cohorts, events) | ✅     |
+| `backend/src/routes/ecommerceAnalytics.js`          | 158    | 8 REST endpoints for analytics dashboard                                               | ✅     |
+
+### Analytics Frontend
+
+| Arquivo                                         | Linhas | Função                                                           | Status |
+| ----------------------------------------------- | ------ | ---------------------------------------------------------------- | ------ |
+| `src/components/AdvancedAnalyticsDashboard.tsx` | 470    | Real-time metrics, revenue, funnel, reports, scheduling, cohorts | ✅     |
+| `src/components/AdvancedAnalyticsDashboard.css` | ~200   | Responsive styling with gradients & charts                       | ✅     |
+
+### Main Application Files (Updated)
+
+| Arquivo                     | Linhas | Mudanças Phase 4                                                                     | Status |
+| --------------------------- | ------ | ------------------------------------------------------------------------------------ | ------ |
+| `src/App.tsx`               | 654    | Added 5 lazy imports + 5 routing cases (products, cart, checkout, orders, analytics) | ✅     |
+| `src/components/Header.tsx` | 148    | Added 4 navigation buttons (Loja, Carrinho, Pedidos, Analytics)                      | ✅     |
+| `backend/src/index.js`      | 4065   | Registered ecommerceAnalytics router at line 3815-3823                               | ✅     |
+
+---
+
+**Documento Mestre v4.0.0 - Phase 4 E-Commerce + Advanced Analytics Complete | 09/12/2025 18:00 BRT**
+
+_Phase 4 Completion: E-commerce platform (4 components, 14 endpoints) + Advanced Analytics Dashboard (8 endpoints, 1 UI component)_  
+_Build: 877 modules, 17.5s compile, 0 lint errors, 60/60 tests passing_  
+_Próxima Phase: Fase 5 - Growth & Optimization (Mobile app, Affiliate program, Advanced AI recommendations)_
