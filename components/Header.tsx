@@ -21,7 +21,8 @@ interface HeaderProps {
       | 'products'
       | 'cart'
       | 'checkout'
-      | 'order-tracking',
+      | 'order-tracking'
+      | 'analytics',
     data?: Record<string, unknown>
   ) => void;
   onMarkAsRead: (id: string) => void;
@@ -101,6 +102,15 @@ const Header: React.FC<HeaderProps> = ({
                 >
                   Painel
                 </button>
+                {user && ['admin', 'prospector'].includes(user.type) && (
+                  <button
+                    onClick={() => onSetView('analytics')}
+                    className="px-4 py-2 text-sm font-medium text-purple-700 bg-purple-100 rounded-md hover:bg-purple-200"
+                    title="Visualizar análises"
+                  >
+                    📊 Analytics
+                  </button>
+                )}
                 <button
                   onClick={onLogoutClick}
                   className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-100 rounded-md hover:bg-blue-200"

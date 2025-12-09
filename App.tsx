@@ -27,6 +27,7 @@ const ProductListing = lazy(() => import('./src/components/ProductListing'));
 const ShoppingCart = lazy(() => import('./src/components/ShoppingCart'));
 const CheckoutFlow = lazy(() => import('./src/components/CheckoutFlow'));
 const OrderTracking = lazy(() => import('./src/components/OrderTracking'));
+const AdvancedAnalyticsDashboard = lazy(() => import('./src/components/AdvancedAnalyticsDashboard'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-[400px]">
@@ -61,7 +62,8 @@ type View =
   | { name: 'products' }
   | { name: 'cart'; data: { userId: string } }
   | { name: 'checkout' }
-  | { name: 'order-tracking' };
+  | { name: 'order-tracking' }
+  | { name: 'analytics' };
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -518,6 +520,19 @@ const App: React.FC = () => {
         return (
           <Suspense fallback={<LoadingFallback />}>
             <OrderTracking />
+          </Suspense>
+        );
+      case 'analytics':
+        if (!currentUser || !['admin', 'prospector'].includes(currentUser.type)) {
+          return (
+            <div className="p-8 text-center text-red-600">
+              Acesso negado. Apenas admins podem visualizar análises avançadas.
+            </div>
+          );
+        }
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <AdvancedAnalyticsDashboard />
           </Suspense>
         );
       case 'home':
