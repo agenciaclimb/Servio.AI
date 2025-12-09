@@ -1,0 +1,16 @@
+
+> servio-ai-frontend@0.0.0 e2e
+> playwright test
+
+[WebServer] npm error Missing script: "backend:start"
+[WebServer] npm error
+[WebServer] npm error To see a list of scripts, run:
+[WebServer] npm error   npm run
+[WebServer] npm error A complete log of this run can be found in: C:\Users\JE\AppData\Local\npm-cache\_logs\2025-12-09T14_50_48_810Z-debug-0.log
+Error: Process from config.webServer was not able to start. Exit code: 1
+
+
+To open last HTML report run:
+[36m[39m
+[36m  npx playwright show-report[39m
+[36m[39m
