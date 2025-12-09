@@ -191,14 +191,46 @@ function createApp({
   }));
 
   app.use(cors());
-  // Lightweight test/dev auth: allow injecting user via header in non-authenticated environments
-  app.use((req, _res, next) => {
+  
+  // ===========================
+  // Firebase Auth Middleware (Task 1.2)
+  // Decodifica token e anexa custom claims em req.user
+  // ===========================
+  app.use(async (req, res, next) => {
+    // Verificar se há token Authorization
+    const authHeader = req.headers.authorization;
+    
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split('Bearer ')[1];
+      
+      try {
+        // Decodificar token e extrair custom claims
+        const decodedToken = await admin.auth().verifyIdToken(token);
+        
+        // Anexar user com custom claims ao request
+        req.user = {
+          uid: decodedToken.uid,
+          email: decodedToken.email,
+          role: decodedToken.role || 'cliente' // Custom claim definido na Task 1.1
+        };
+        
+        return next();
+      } catch (error) {
+        console.error('[Auth] Token verification failed:', error.message);
+        // Token inválido, mas não bloqueamos - deixa endpoints protegidos rejeitarem
+      }
+    }
+    
+    // Lightweight test/dev auth: allow injecting user via header in non-authenticated environments
+    // IMPORTANTE: Isso busca role do Firestore em modo dev (ver getCurrentUser)
     if (!req.user) {
       const injected = req.headers['x-user-email'];
       if (injected && typeof injected === 'string') {
         req.user = { email: injected };
+        // Role será buscado do Firestore por getCurrentUser() em authorizationMiddleware
       }
     }
+    
     next();
   });
   
