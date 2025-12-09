@@ -10,6 +10,7 @@ import AdminUserManagement from './AdminUserManagement';
 import AdminProspecting from './AdminProspecting';
 import AdminMarketing from './AdminMarketing';
 import AdminProspectorManagement from './AdminProspectorManagement';
+import OmniInbox from './OmniInbox';
 import DisputeDetailsModal from './DisputeDetailsModal';
 import * as API from '../services/api';
 
@@ -26,7 +27,8 @@ type AdminTab =
   | 'users'
   | 'prospecting'
   | 'marketing'
-  | 'prospectors';
+  | 'prospectors'
+  | 'omnichannel';
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
   const { addToast } = useToast();
@@ -104,6 +106,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
         return <AdminMarketing />;
       case 'prospectors':
         return <AdminProspectorManagement />;
+      case 'omnichannel':
+        return <OmniInbox userId={user.email} />;
       default:
         return null;
     }
@@ -125,6 +129,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
             'prospecting',
             'marketing',
             'prospectors',
+            'omnichannel',
           ].map(tabId => (
             <button
               data-testid={`admin-tab-${tabId}`}
