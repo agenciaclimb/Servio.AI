@@ -4,11 +4,19 @@ import './CheckoutFlow.css';
 
 interface CheckoutFlowProps {
   userId: string;
-  cartItems?: any[];
+  cartItems?: CartItem[];
   cartTotal?: number;
 }
 
 type Step = 1 | 2 | 3 | 4 | 5;
+
+interface CartItem {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image?: string;
+}
 
 interface ShippingAddress {
   fullName: string;
@@ -37,7 +45,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
   const [error, setError] = useState<string | null>(null);
 
   // Cart state
-  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartTotals, setCartTotals] = useState({
     subtotal: 0,
     tax: 0,
@@ -67,30 +75,28 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
     { id: 'same-day', name: 'Entrega no Mesmo Dia', price: 50, deliveryTime: 'Hoje' },
   ];
 
-  // Order confirmation state
-  const [orderId, setOrderId] = useState<string | null>(null);
-
   useEffect(() => {
     fetchCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const fetchCart = async () => {
     try {
       const response = await fetch(`/api/ecommerce/cart/${userId}`);
       if (!response.ok) throw new Error('Falha ao carregar carrinho');
-      
+
       const data = await response.json();
       setCartItems(data.items || []);
-      
+
       const subtotal = (data.items || []).reduce(
-        (sum: number, item: any) => sum + item.price * item.quantity,
+        (sum: number, item: CartItem) => sum + item.price * item.quantity,
         0
       );
-      const tax = subtotal * 0.10;
+      const tax = subtotal * 0.1;
       const shipping = selectedShipping
-        ? shippingMethods.find((m) => m.id === selectedShipping)?.price || 0
+        ? shippingMethods.find(m => m.id === selectedShipping)?.price || 0
         : 0;
-      
+
       setCartTotals({
         subtotal,
         tax,
@@ -103,7 +109,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
   };
 
   const handleAddressChange = (field: keyof ShippingAddress, value: string) => {
-    setShippingAddress((prev) => ({ ...prev, [field]: value }));
+    setShippingAddress(prev => ({ ...prev, [field]: value }));
   };
 
   const fetchAddressByZipCode = async (zipCode: string) => {
@@ -112,9 +118,9 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
     try {
       const response = await fetch(`https://viacep.com.br/ws/${zipCode}/json/`);
       const data = await response.json();
-      
+
       if (!data.erro) {
-        setShippingAddress((prev) => ({
+        setShippingAddress(prev => ({
           ...prev,
           street: data.logradouro,
           neighborhood: data.bairro,
@@ -138,7 +144,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
         }
         return true;
 
-      case 2:
+      case 2: {
         const requiredFields: (keyof ShippingAddress)[] = [
           'fullName',
           'email',
@@ -150,7 +156,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
           'city',
           'state',
         ];
-        
+
         for (const field of requiredFields) {
           if (!shippingAddress[field]) {
             setError(`Campo obrigatório: ${getFieldLabel(field)}`);
@@ -166,6 +172,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
         }
 
         return true;
+      }
 
       case 3:
         if (!selectedShipping) {
@@ -203,14 +210,14 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
       if (currentStep === 4) {
         processPayment();
       } else {
-        setCurrentStep((prev) => (prev + 1) as Step);
+        setCurrentStep(prev => (prev + 1) as Step);
       }
     }
   };
 
   const handleBack = () => {
     if (currentStep > 1) {
-      setCurrentStep((prev) => (prev - 1) as Step);
+      setCurrentStep(prev => (prev - 1) as Step);
     }
   };
 
@@ -234,7 +241,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
       }
 
       const data = await response.json();
-      
+
       // Redirect to Stripe Checkout
       if (data.url) {
         window.location.href = data.url;
@@ -270,11 +277,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
               <span className="step-label">{step.label}</span>
             </div>
             {index < steps.length - 1 && (
-              <div
-                className={`progress-line ${
-                  currentStep > step.number ? 'active' : ''
-                }`}
-              />
+              <div className={`progress-line ${currentStep > step.number ? 'active' : ''}`} />
             )}
           </React.Fragment>
         ))}
@@ -286,7 +289,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
     <div className="step-content">
       <h2>Revise seu Carrinho</h2>
       <div className="cart-review">
-        {cartItems.map((item) => (
+        {cartItems.map(item => (
           <div key={item.productId} className="review-item">
             <div className="review-item-image">
               {item.image ? (
@@ -298,9 +301,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
             <div className="review-item-details">
               <h3>{item.name}</h3>
               <p>Quantidade: {item.quantity}</p>
-              <p className="review-item-price">
-                R$ {(item.price * item.quantity).toFixed(2)}
-              </p>
+              <p className="review-item-price">R$ {(item.price * item.quantity).toFixed(2)}</p>
             </div>
           </div>
         ))}
@@ -328,7 +329,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
             <input
               type="text"
               value={shippingAddress.fullName}
-              onChange={(e) => handleAddressChange('fullName', e.target.value)}
+              onChange={e => handleAddressChange('fullName', e.target.value)}
               placeholder="João da Silva"
             />
           </div>
@@ -340,7 +341,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
             <input
               type="email"
               value={shippingAddress.email}
-              onChange={(e) => handleAddressChange('email', e.target.value)}
+              onChange={e => handleAddressChange('email', e.target.value)}
               placeholder="joao@example.com"
             />
           </div>
@@ -349,7 +350,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
             <input
               type="tel"
               value={shippingAddress.phone}
-              onChange={(e) => handleAddressChange('phone', e.target.value)}
+              onChange={e => handleAddressChange('phone', e.target.value)}
               placeholder="(11) 99999-9999"
             />
           </div>
@@ -361,7 +362,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
             <input
               type="text"
               value={shippingAddress.zipCode}
-              onChange={(e) => {
+              onChange={e => {
                 const value = e.target.value.replace(/\D/g, '');
                 handleAddressChange('zipCode', value);
                 if (value.length === 8) {
@@ -380,7 +381,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
             <input
               type="text"
               value={shippingAddress.street}
-              onChange={(e) => handleAddressChange('street', e.target.value)}
+              onChange={e => handleAddressChange('street', e.target.value)}
               placeholder="Rua das Flores"
             />
           </div>
@@ -389,7 +390,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
             <input
               type="text"
               value={shippingAddress.number}
-              onChange={(e) => handleAddressChange('number', e.target.value)}
+              onChange={e => handleAddressChange('number', e.target.value)}
               placeholder="123"
             />
           </div>
@@ -401,7 +402,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
             <input
               type="text"
               value={shippingAddress.complement}
-              onChange={(e) => handleAddressChange('complement', e.target.value)}
+              onChange={e => handleAddressChange('complement', e.target.value)}
               placeholder="Apto 45"
             />
           </div>
@@ -410,7 +411,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
             <input
               type="text"
               value={shippingAddress.neighborhood}
-              onChange={(e) => handleAddressChange('neighborhood', e.target.value)}
+              onChange={e => handleAddressChange('neighborhood', e.target.value)}
               placeholder="Centro"
             />
           </div>
@@ -422,7 +423,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
             <input
               type="text"
               value={shippingAddress.city}
-              onChange={(e) => handleAddressChange('city', e.target.value)}
+              onChange={e => handleAddressChange('city', e.target.value)}
               placeholder="São Paulo"
             />
           </div>
@@ -431,7 +432,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
             <input
               type="text"
               value={shippingAddress.state}
-              onChange={(e) => handleAddressChange('state', e.target.value)}
+              onChange={e => handleAddressChange('state', e.target.value)}
               placeholder="SP"
               maxLength={2}
             />
@@ -445,14 +446,14 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
     <div className="step-content">
       <h2>Método de Entrega</h2>
       <div className="shipping-methods">
-        {shippingMethods.map((method) => (
+        {shippingMethods.map(method => (
           <label key={method.id} className="shipping-method">
             <input
               type="radio"
               name="shipping"
               value={method.id}
               checked={selectedShipping === method.id}
-              onChange={(e) => setSelectedShipping(e.target.value)}
+              onChange={e => setSelectedShipping(e.target.value)}
             />
             <div className="method-info">
               <h3>{method.name}</h3>
@@ -474,8 +475,8 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
         <div className="info-box">
           <h3>🔒 Pagamento Seguro</h3>
           <p>
-            Ao clicar em "Finalizar Pedido", você será redirecionado para uma
-            página segura do Stripe para completar o pagamento.
+            Ao clicar em "Finalizar Pedido", você será redirecionado para uma página segura do
+            Stripe para completar o pagamento.
           </p>
           <p>Aceitamos:</p>
           <div className="payment-methods">
@@ -513,10 +514,9 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
       <div className="success-icon">✓</div>
       <h2>Pedido Confirmado!</h2>
       <p>Seu pedido foi realizado com sucesso.</p>
-      {orderId && <p className="order-id">Número do pedido: #{orderId}</p>}
       <div className="success-actions">
-        <button onClick={() => navigate(`/orders/${orderId}`)} className="track-order-btn">
-          Acompanhar Pedido
+        <button onClick={() => navigate('/orders')} className="track-order-btn">
+          Ver Meus Pedidos
         </button>
         <button onClick={() => navigate('/products')} className="continue-btn">
           Continuar Comprando
@@ -545,11 +545,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
                 ← Voltar
               </button>
             )}
-            <button
-              onClick={handleNext}
-              className="next-btn"
-              disabled={loading}
-            >
+            <button onClick={handleNext} className="next-btn" disabled={loading}>
               {loading ? (
                 <>
                   <span className="spinner-small"></span>

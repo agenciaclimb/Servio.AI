@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Logger utility for error and diagnostic logging
  */
@@ -34,3 +35,4 @@ export function logInfo(message: string, context?: LogContext): void {
     console.log(`${timestamp} ${prefix} INFO: ${message}`, context);
   }
 }
+/* eslint-enable no-console */

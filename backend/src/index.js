@@ -3817,6 +3817,16 @@ Retorne apenas o corpo do email, sem assunto.`;
   app.use('/api/ecommerce', ecommerceRouter(defaultDb));
 
   // =================================================================
+  // ECOMMERCE ANALYTICS ROUTES (Phase 4)
+  // =================================================================
+  // Real-time analytics, revenue metrics, funnel analysis, custom reports
+  // Routes: GET /api/ecommerce-analytics/dashboard, /revenue, /funnel, /cohorts
+  //         POST /api/ecommerce-analytics/reports/custom, /reports/schedule, /events
+  //         GET /api/ecommerce-analytics/reports/:id/export
+  const ecommerceAnalyticsRouter = require('./routes/ecommerceAnalytics');
+  app.use('/api/ecommerce-analytics', ecommerceAnalyticsRouter(defaultDb));
+
+  // =================================================================
   // ANALYTICS ROUTES (Phase 3)
   // =================================================================
   // Prospecting and campaign analytics endpoints

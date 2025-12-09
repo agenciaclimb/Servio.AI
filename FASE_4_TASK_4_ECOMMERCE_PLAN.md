@@ -2,7 +2,7 @@
 
 **Status**: 🔵 Pronto para Iniciar  
 **Estimativa**: 2-3 dias de desenvolvimento  
-**Escopo**: 12 endpoints + 18 testes + 2,500+ linhas de código  
+**Escopo**: 12 endpoints + 18 testes + 2,500+ linhas de código
 
 ---
 
@@ -11,6 +11,7 @@
 ### Fase 1: Backend Services (Day 1)
 
 #### Service 1: `ecommerceService.js` (700+ linhas)
+
 ```
 ✅ Product Management
   - getProducts() - Listar com filtros (categoria, preço, avaliação)
@@ -54,6 +55,7 @@
 ```
 
 #### Routes: `routes/ecommerce.js` (400+ linhas)
+
 ```javascript
 // Products
 POST   /api/ecommerce/products              // create
@@ -86,6 +88,7 @@ GET    /api/ecommerce/orders/:id/tracking   // tracking info
 ### Fase 2: Frontend Components (Day 1-2)
 
 #### Component 1: `ProductListing.tsx` (400+ linhas)
+
 ```
 - Grid/list view toggle
 - Filtros (categoria, preço min/max, avaliação, em estoque)
@@ -98,6 +101,7 @@ GET    /api/ecommerce/orders/:id/tracking   // tracking info
 ```
 
 #### Component 2: `ShoppingCart.tsx` (500+ linhas)
+
 ```
 - Tabela de items (imagem, nome, preço, quantidade)
 - Update quantity spinner
@@ -111,6 +115,7 @@ GET    /api/ecommerce/orders/:id/tracking   // tracking info
 ```
 
 #### Component 3: `CheckoutFlow.tsx` (600+ linhas)
+
 ```
 - Step 1: Review cart items
 - Step 2: Shipping address
@@ -122,6 +127,7 @@ GET    /api/ecommerce/orders/:id/tracking   // tracking info
 ```
 
 #### Component 4: `OrderTrackingDashboard.tsx` (300+ linhas)
+
 ```
 - Busca de pedido (order ID ou email)
 - Timeline de status (processando → despachado → entregue)
@@ -133,6 +139,7 @@ GET    /api/ecommerce/orders/:id/tracking   // tracking info
 ```
 
 #### Dashboard Integration: `EcommerceIntegrationDashboard.tsx` (500+ linhas)
+
 ```
 - Sales metrics (total revenue, orders, avg order value)
 - Best sellers (top 5 produtos)
@@ -148,6 +155,7 @@ GET    /api/ecommerce/orders/:id/tracking   // tracking info
 ### Fase 3: Database Schema (Firestore)
 
 #### Collections Structure
+
 ```
 Firestore Collections:
 ├── products/
@@ -226,6 +234,7 @@ Firestore Collections:
 ### Fase 4: Integrations
 
 #### 1. Stripe (Payment Processing)
+
 ```javascript
 // Usar SDK Stripe existente
 - Criar Payment Intent
@@ -235,6 +244,7 @@ Firestore Collections:
 ```
 
 #### 2. Correios (Shipping)
+
 ```javascript
 // API Rastreamento
 - Calcular frete (CEP → CEP)
@@ -243,6 +253,7 @@ Firestore Collections:
 ```
 
 #### 3. Algolia (Search - Optional)
+
 ```javascript
 // Full-text search com filtros
 - Index produtos automaticamente
@@ -255,6 +266,7 @@ Firestore Collections:
 ### Fase 5: Testing (18 testes)
 
 #### Unit Tests: `ecommerceService.test.js` (18 testes)
+
 ```
 ✅ Product Management (3)
   - createProduct() com validações
@@ -292,12 +304,14 @@ Firestore Collections:
 ## 🎯 CRITÉRIOS DE SUCESSO
 
 ### Code Quality
+
 - ✅ 18/18 testes passando
 - ✅ Zero ESLint warnings em files novos
 - ✅ TypeScript strict mode compilando
 - ✅ 100+ lines de comentários de documentação
 
 ### Functionality
+
 - ✅ Usuário consegue adicionar item ao carrinho
 - ✅ Checkout flow funciona end-to-end
 - ✅ Pagamento testado com Stripe test card
@@ -305,11 +319,13 @@ Firestore Collections:
 - ✅ Admin consegue ver orders em dashboard
 
 ### Performance
+
 - ✅ Product listing carrega em < 2s (lazy loading images)
 - ✅ Cart totals calculam em < 100ms
 - ✅ Checkout submit em < 3s (Stripe API call)
 
 ### Security
+
 - ✅ Validação de entrada em todos endpoints
 - ✅ Autorização: usuários veem apenas seus pedidos
 - ✅ Admin-only endpoints validam role=admin
@@ -320,32 +336,35 @@ Firestore Collections:
 
 ## 📅 TIMELINE
 
-| Dia | Task | Horas | Status |
-|-----|------|-------|--------|
-| 1 | Backend Services (ecommerceService.js + routes) | 8h | ⏳ Ready |
-| 1 | Firestore Schema + Stripe integration | 4h | ⏳ Ready |
-| 1-2 | Frontend Components (ProductListing, Cart, Checkout) | 12h | ⏳ Ready |
-| 2 | OrderTracking + Dashboard | 6h | ⏳ Ready |
-| 2-3 | Unit tests (18 testes) | 6h | ⏳ Ready |
-| 3 | E2E tests + integration | 4h | ⏳ Ready |
-| 3 | Documentation + Final review | 2h | ⏳ Ready |
-| **Total** | | **42h (~3 days)** | |
+| Dia       | Task                                                 | Horas             | Status   |
+| --------- | ---------------------------------------------------- | ----------------- | -------- |
+| 1         | Backend Services (ecommerceService.js + routes)      | 8h                | ⏳ Ready |
+| 1         | Firestore Schema + Stripe integration                | 4h                | ⏳ Ready |
+| 1-2       | Frontend Components (ProductListing, Cart, Checkout) | 12h               | ⏳ Ready |
+| 2         | OrderTracking + Dashboard                            | 6h                | ⏳ Ready |
+| 2-3       | Unit tests (18 testes)                               | 6h                | ⏳ Ready |
+| 3         | E2E tests + integration                              | 4h                | ⏳ Ready |
+| 3         | Documentation + Final review                         | 2h                | ⏳ Ready |
+| **Total** |                                                      | **42h (~3 days)** |          |
 
 ---
 
 ## 📊 FASE 4 OVERALL STATUS
 
 ### Completed (60%)
+
 - ✅ Task 1: CRM Integration (7 endpoints, 14 tests)
 - ✅ Task 2: Twilio Integration (9 endpoints, 16 tests)
 - ✅ Task 3: Landing Pages (9 endpoints, 11 tests)
 - ✅ OmniInbox Component (6/7 E2E tests passing)
 
 ### In Progress (40%)
+
 - 🔄 Task 4: E-commerce Integration (this task)
 - ⏳ Task 5: Advanced Analytics
 
 ### Success Metrics
+
 ```
 Code Written:      12,000+ lines (to be)
 Endpoints Created: 12 (this task)
@@ -359,6 +378,7 @@ GitHub Commits:    3 (Phase 4 + E2E fixes)
 ## 🚀 PRÓXIMA AÇÃO
 
 Iniciar implementação do Backend Service (ecommerceService.js) com:
+
 1. ✅ Product management (CRUD + search)
 2. ✅ Cart logic (add, update, remove, calculate)
 3. ✅ Checkout & payment (Stripe integration)

@@ -27,6 +27,7 @@
 #### Backend Services
 
 **Arquivo**: `backend/src/services/crmService.js` (400+ linhas)
+
 - Classe `CRMService` com suporte para Pipedrive e HubSpot
 - Métodos principais:
   - `syncLeadToCRM()` - Sincroniza lead individual para CRM
@@ -36,6 +37,7 @@
   - `getSyncStatus()` - Histórico de sincronizações
 
 **Features**:
+
 - ✅ Autenticação via API tokens (Pipedrive) e API keys (HubSpot)
 - ✅ Deduplicação inteligente (verifica contatos existentes)
 - ✅ Mapeamento automático de campos entre sistemas
@@ -46,6 +48,7 @@
 #### Backend Routes
 
 **Arquivo**: `backend/src/routes/crm.js` (250+ linhas)
+
 - **POST /api/crm/sync-lead** - Sincroniza um lead individual
 - **POST /api/crm/sync-batch** - Sincronização em batch
 - **POST /api/crm/webhook/pipedrive** - Webhook de Pipedrive
@@ -57,6 +60,7 @@
 #### Frontend Components
 
 **Arquivo**: `src/components/CRMIntegrationDashboard.tsx` (300+ linhas)
+
 - Dashboard completo para gerenciamento de sincronizações
 - Seleção múltipla de prospects
 - Sincronização em batch
@@ -67,6 +71,7 @@
 #### Tests
 
 **Arquivo**: `tests/services/crmService.test.js` (350+ linhas)
+
 - Testes para Pipedrive Integration
 - Testes para HubSpot Integration
 - Testes de Batch Sync
@@ -96,11 +101,13 @@ GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json
 ### Webhook Setup
 
 #### Pipedrive
+
 1. Ir para **Settings → Webhooks**
 2. Adicionar webhook: `https://servio-backend-v2-1000250760228.us-west1.run.app/api/crm/webhook/pipedrive`
 3. Eventos: `added.person`, `updated.person`, `deleted.person`
 
 #### HubSpot
+
 1. Ir para **Settings → Developer & API → Webhooks**
 2. Adicionar webhook: `https://servio-backend-v2-1000250760228.us-west1.run.app/api/crm/webhook/hubspot`
 3. Eventos: `contact.creation`, `contact.propertyChange`, `contact.deletion`
@@ -237,6 +244,7 @@ npm test -- tests/services/crmService.test.js
 ### Firestore Collections
 
 #### Collection: `prospects`
+
 ```json
 {
   "prospectId": "string",
@@ -255,6 +263,7 @@ npm test -- tests/services/crmService.test.js
 ```
 
 #### Collection: `sync_logs`
+
 ```json
 {
   "prospectId": "string",
@@ -281,13 +290,13 @@ npm test -- tests/services/crmService.test.js
 
 ## 📈 KPIs - Fase 4 Task 1
 
-| Métrica | Target | Atual | Status |
-|---------|--------|-------|--------|
-| Test Coverage | ≥90% | 95% | ✅ |
-| Endpoint Availability | 99.5% | 99.9% | ✅ |
-| Sync Success Rate | ≥98% | 98.5% | ✅ |
-| Webhook Latency | <1s | ~200ms | ✅ |
-| Batch Sync (100 leads) | <30s | ~8s | ✅ |
+| Métrica                | Target | Atual  | Status |
+| ---------------------- | ------ | ------ | ------ |
+| Test Coverage          | ≥90%   | 95%    | ✅     |
+| Endpoint Availability  | 99.5%  | 99.9%  | ✅     |
+| Sync Success Rate      | ≥98%   | 98.5%  | ✅     |
+| Webhook Latency        | <1s    | ~200ms | ✅     |
+| Batch Sync (100 leads) | <30s   | ~8s    | ✅     |
 
 ---
 

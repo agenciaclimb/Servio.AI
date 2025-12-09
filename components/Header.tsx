@@ -17,7 +17,12 @@ interface HeaderProps {
       | 'dashboard'
       | 'profile'
       | 'service-landing'
-      | 'payment-success',
+      | 'payment-success'
+      | 'products'
+      | 'cart'
+      | 'checkout'
+      | 'order-tracking'
+      | 'analytics',
     data?: Record<string, unknown>
   ) => void;
   onMarkAsRead: (id: string) => void;
@@ -53,6 +58,12 @@ const Header: React.FC<HeaderProps> = ({
             >
               Encontrar Profissionais
             </button>
+            <button
+              onClick={() => onSetView('products')}
+              className="px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100"
+            >
+              Loja
+            </button>
             {!user && (
               <button
                 onClick={() => onSetView('provider-landing')}
@@ -70,6 +81,20 @@ const Header: React.FC<HeaderProps> = ({
                   onMarkAsRead={onMarkAsRead}
                   onMarkAllAsRead={onMarkAllAsRead}
                 />
+                <button
+                  onClick={() => onSetView('cart', { userId: user.email })}
+                  className="relative px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100"
+                  title="Ir para carrinho"
+                >
+                  🛒 Carrinho
+                </button>
+                <button
+                  onClick={() => onSetView('order-tracking')}
+                  className="px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100"
+                  title="Rastrear pedidos"
+                >
+                  📦 Meus Pedidos
+                </button>
                 <span className="hidden sm:block text-sm text-gray-600">Olá, {user.name}!</span>
                 <button
                   onClick={() => onSetView('dashboard')}
@@ -77,6 +102,15 @@ const Header: React.FC<HeaderProps> = ({
                 >
                   Painel
                 </button>
+                {user && ['admin', 'prospector'].includes(user.type) && (
+                  <button
+                    onClick={() => onSetView('analytics')}
+                    className="px-4 py-2 text-sm font-medium text-purple-700 bg-purple-100 rounded-md hover:bg-purple-200"
+                    title="Visualizar análises"
+                  >
+                    📊 Analytics
+                  </button>
+                )}
                 <button
                   onClick={onLogoutClick}
                   className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-100 rounded-md hover:bg-blue-200"

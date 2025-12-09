@@ -40,7 +40,7 @@ export function applyAdvancedFilters(
   return leads.filter(lead => {
     for (let i = 0; i < normalized.length; i++) {
       const cond = normalized[i];
-      const raw = (lead as any)[cond.field as string];
+      const raw = (lead as unknown as Record<string, unknown>)[cond.field as string];
       const valStr = String(raw ?? '').toLowerCase();
       switch (cond.operator) {
         case 'contains':
