@@ -57,6 +57,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
 
   useEffect(() => {
     fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, priceRange, minRating, inStockOnly, sortBy, currentPage]);
 
   const fetchProducts = async () => {
