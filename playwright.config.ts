@@ -26,7 +26,7 @@ export default defineConfig({
       timeout: 120_000,
     },
     {
-      command: 'npm run backend:start',
+      command: 'npm --prefix backend start',
       url: 'http://localhost:8081',
       reuseExistingServer: true,
       timeout: 120_000,

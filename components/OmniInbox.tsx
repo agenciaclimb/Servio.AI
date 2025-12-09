@@ -35,11 +35,11 @@ interface OmniInboxProps {
   userId?: string;
 }
 
-const OmniInbox: React.FC<OmniInboxProps> = ({ userId }) => {
+const OmniInbox: React.FC<OmniInboxProps> = ({ userId: _userId }) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [messageText, setMessageText] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
   const [filterChannel, setFilterChannel] = useState<'all' | 'sms' | 'whatsapp' | 'email' | 'chat'>('all');
   const [filterUserType, setFilterUserType] = useState<'all' | 'client' | 'provider' | 'admin'>('all');
 
@@ -177,7 +177,7 @@ const OmniInbox: React.FC<OmniInboxProps> = ({ userId }) => {
     }
   };
 
-  const getChannelColor = (channel: string) => {
+  const getChannelColor = (channel: string): string => {
     switch (channel) {
       case 'whatsapp':
         return '#25D366';

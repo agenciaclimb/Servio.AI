@@ -1,0 +1,28 @@
+
+> servio-ai-frontend@0.0.0 e2e
+> playwright test --project chromium
+
+[WebServer] [DB] ÔÜá´©Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[WebServer] [Stripe] STRIPE_SECRET_KEY missing ÔÇô Stripe features disabled
+[WebServer] ÔÜá´©Å  SENDGRID_API_KEY n├úo configurada - emails n├úo ser├úo enviados
+[WebServer] ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+[WebServer] ÔÜá´©Å GEMINI_API_KEY not configured. Service will run in mock mode.
+
+Running 53 tests using 1 worker
+
+  Ô£ÿ   1 [chromium] ÔÇ║ tests\e2e\admin\admin-flows.spec.ts:7:3 ÔÇ║ [E2E] Admin - Fluxos cr├¡ticos ÔÇ║ ver dashboard com KPIs principais (19.9s)
+  Ô£ÿ   2 [chromium] ÔÇ║ tests\e2e\admin\admin-flows.spec.ts:12:3 ÔÇ║ [E2E] Admin - Fluxos cr├¡ticos ÔÇ║ acessar lista de disputas e abrir detalhes (12.4s)
+  Ô£ô   3 [chromium] ÔÇ║ tests\e2e\auth\login-flows.spec.ts:7:3 ÔÇ║ [E2E] Login - Fluxos principais ÔÇ║ cliente consegue fazer login e ver dashboard b├ísico (5.4s)
+  Ô£ÿ   4 [chromium] ÔÇ║ tests\e2e\auth\login-flows.spec.ts:12:3 ÔÇ║ [E2E] Login - Fluxos principais ÔÇ║ prestador consegue fazer login e ver painel do prestador (6.7s)
+  Ô£ÿ   5 [chromium] ÔÇ║ tests\e2e\auth\login-flows.spec.ts:22:3 ÔÇ║ [E2E] Login - Fluxos principais ÔÇ║ admin consegue fazer login e acessar painel administrativo (11.6s)
+  Ô£ÿ   6 [chromium] ÔÇ║ tests\e2e\chat\chat-flows.spec.ts:8:3 ÔÇ║ [E2E] Chat interno - Fluxos cr├¡ticos ÔÇ║ cliente abre chat de um job em andamento e envia mensagem (33.1s)
+  Ô£ÿ   7 [chromium] ÔÇ║ tests\e2e\client\client-flows.spec.ts:7:3 ÔÇ║ [E2E] Cliente - Fluxos cr├¡ticos ÔÇ║ criar job simples e visualizar na lista (4.5s)
+  Ô£ÿ   8 [chromium] ÔÇ║ tests\e2e\client\client-flows.spec.ts:25:3 ÔÇ║ [E2E] Cliente - Fluxos cr├¡ticos ÔÇ║ abrir disputa a partir de job em andamento (happy path visual) (31.7s)
+  Ô£ÿ   9 [chromium] ÔÇ║ tests\e2e\disputes\dispute-flows.spec.ts:7:3 ÔÇ║ [E2E] Disputas - Fluxos cr├¡ticos ÔÇ║ cliente v├¬ disputa aberta na lista de jobs (8.4s)
+  Ô£ÿ  10 [chromium] ÔÇ║ tests\e2e\disputes\dispute-flows.spec.ts:12:3 ÔÇ║ [E2E] Disputas - Fluxos cr├¡ticos ÔÇ║ admin abre disputa espec├¡fica a partir do painel (11.6s)
+  Ô£ÿ  11 [chromium] ÔÇ║ tests\e2e\omnichannel\omni-inbox.spec.ts:16:3 ÔÇ║ OmniInbox - Painel de Conversas do Admin ÔÇ║ deve exibir m├®tricas de conversas (11.7s)
+  Ô£ÿ  12 [chromium] ÔÇ║ tests\e2e\omnichannel\omni-inbox.spec.ts:22:3 ÔÇ║ OmniInbox - Painel de Conversas do Admin ÔÇ║ deve filtrar conversas por canal (ex: WhatsApp) (11.5s)
+  Ô£ÿ  13 [chromium] ÔÇ║ tests\e2e\omnichannel\omni-inbox.spec.ts:35:3 ÔÇ║ OmniInbox - Painel de Conversas do Admin ÔÇ║ deve abrir uma conversa e exibir o painel de mensagens (11.6s)
+  Ô£ÿ  14 [chromium] ÔÇ║ tests\e2e\omnichannel\omni-inbox.spec.ts:44:3 ÔÇ║ OmniInbox - Painel de Conversas do Admin ÔÇ║ deve enviar uma mensagem manual em uma conversa (11.8s)
+  Ô£ÿ  15 [chromium] ÔÇ║ tests\e2e\omnichannel\omni-inbox.spec.ts:64:3 ÔÇ║ OmniChannelStatus - Status dos Canais do Admin ÔÇ║ deve exibir o status de todos os principais canais (11.5s)
+  Ô£ÿ  16 [chromium] ÔÇ║ tests\e2e\omnichannel\omni-inbox.spec.ts:71:3 ÔÇ║ OmniChannelStatus - Status dos Canais do Admin ÔÇ║ deve exibir m├®tricas espec├¡ficas para cada canal (11.7s)
