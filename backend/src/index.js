@@ -3806,6 +3806,17 @@ Retorne apenas o corpo do email, sem assunto.`;
   app.use('/api/landing-pages', landingPagesRouter({ db: defaultDb, landingPageService }));
 
   // =================================================================
+  // E-COMMERCE ROUTES (Phase 4 Task 4)
+  // =================================================================
+  // Product catalog, shopping cart, checkout, and order management
+  // Routes: GET /api/ecommerce/products, /products/:id, /cart/:userId, /orders, /orders/:id
+  //         POST /api/ecommerce/products, /cart/add, /checkout, /webhooks/stripe
+  //         PUT /api/ecommerce/products/:id, /cart/update, /orders/:id/status
+  //         DELETE /api/ecommerce/products/:id, /cart/:userId/:productId
+  const ecommerceRouter = require('./routes/ecommerce');
+  app.use('/api/ecommerce', ecommerceRouter(defaultDb));
+
+  // =================================================================
   // ANALYTICS ROUTES (Phase 3)
   // =================================================================
   // Prospecting and campaign analytics endpoints
