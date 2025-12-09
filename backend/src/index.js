@@ -1612,12 +1612,21 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // Create a new user (with /api prefix)
-  app.post("/api/users", async (req, res) => {
+  // Task 1.3: Protected by requireAuth, includes uid from token
+  app.post("/api/users", requireAuth, async (req, res) => {
     try {
       const userData = req.body;
       if (!userData.email) {
         return res.status(400).json({ error: "User email is required." });
       }
+
+      // Task 1.3: Add uid from authenticated user token
+      if (req.user?.uid) {
+        userData.uid = req.user.uid;
+      } else {
+        console.warn('[POST /api/users] No uid found in req.user. User:', req.user);
+      }
+
       // Use merge:true to avoid overwriting existing docs
       await db.collection("users").doc(userData.email).set(userData, { merge: true });
 
@@ -1654,12 +1663,21 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // Create a new user (legacy route)
-  app.post("/users", async (req, res) => {
+  // Task 1.3: Protected by requireAuth, includes uid from token
+  app.post("/users", requireAuth, async (req, res) => {
     try {
       const userData = req.body;
       if (!userData.email) {
         return res.status(400).json({ error: "User email is required." });
       }
+
+      // Task 1.3: Add uid from authenticated user token
+      if (req.user?.uid) {
+        userData.uid = req.user.uid;
+      } else {
+        console.warn('[POST /users] No uid found in req.user. User:', req.user);
+      }
+
       // Use merge:true to avoid overwriting existing docs
       await db.collection("users").doc(userData.email).set(userData, { merge: true });
       res
