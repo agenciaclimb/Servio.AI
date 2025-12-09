@@ -44,6 +44,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
 
   useEffect(() => {
     fetchCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const fetchCart = async () => {
@@ -304,13 +305,14 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
                     type="number"
                     value={item.quantity}
                     onChange={(e) => {
-                      const newQty = parseInt(e.target.value) || 1;
+                      const newQty = Number.parseInt(e.target.value, 10) || 1;
                       updateQuantity(item.productId, newQty);
                     }}
                     className="quantity-input"
                     min="1"
                     max={item.stock}
                     disabled={isUpdating}
+                    aria-label="Quantidade do produto"
                   />
                   <button
                     className="quantity-btn"

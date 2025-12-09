@@ -243,7 +243,7 @@ const OmniInbox: React.FC<OmniInboxProps> = ({ userId: _userId }) => {
             </label>
             <select 
               value={filterChannel} 
-              onChange={(e) => setFilterChannel(e.target.value as any)}
+              onChange={e => setFilterChannel(e.target.value as 'all' | 'sms' | 'whatsapp' | 'email' | 'chat')}
               style={{
                 width: '100%',
                 padding: '6px',
@@ -266,7 +266,7 @@ const OmniInbox: React.FC<OmniInboxProps> = ({ userId: _userId }) => {
             </label>
             <select 
               value={filterUserType} 
-              onChange={(e) => setFilterUserType(e.target.value as any)}
+              onChange={e => setFilterUserType(e.target.value as 'all' | 'client' | 'provider' | 'admin')}
               style={{
                 width: '100%',
                 padding: '6px',

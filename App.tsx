@@ -23,6 +23,10 @@ const ProviderLandingPage = lazy(() => import('./components/ProviderLandingPage'
 const PaymentSuccessPage = lazy(() => import('./components/PaymentSuccessPage'));
 const FindProvidersPage = lazy(() => import('./components/FindProvidersPage'));
 const MetricsDashboard = lazy(() => import('./src/components/MetricsPageDashboard'));
+const ProductListing = lazy(() => import('./src/components/ProductListing'));
+const ShoppingCart = lazy(() => import('./src/components/ShoppingCart'));
+const CheckoutFlow = lazy(() => import('./src/components/CheckoutFlow'));
+const OrderTracking = lazy(() => import('./src/components/OrderTracking'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-[400px]">
@@ -53,7 +57,11 @@ type View =
   | { name: 'provider-landing' }
   | { name: 'find-providers' }
   | { name: 'payment-success' }
-  | { name: 'metrics' };
+  | { name: 'metrics' }
+  | { name: 'products' }
+  | { name: 'cart'; data: { userId: string } }
+  | { name: 'checkout' }
+  | { name: 'order-tracking' };
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -457,6 +465,59 @@ const App: React.FC = () => {
             fallback={<div className="p-8 text-center text-slate-600">Carregando métricas…</div>}
           >
             <MetricsDashboard />
+          </Suspense>
+        );
+      case 'products':
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <ProductListing />
+          </Suspense>
+        );
+      case 'cart':
+        if (!currentUser) {
+          return (
+            <div className="p-8 text-center text-slate-600">
+              <p className="mb-4">Faça login para acessar seu carrinho</p>
+              <button
+                onClick={() => setAuthModal({ mode: 'login', userType: 'cliente' })}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Fazer Login
+              </button>
+            </div>
+          );
+        }
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <ShoppingCart
+              userId={currentUser.email}
+              onCheckout={() => handleSetView('checkout')}
+            />
+          </Suspense>
+        );
+      case 'checkout':
+        if (!currentUser) {
+          return (
+            <div className="p-8 text-center text-slate-600">
+              <p className="mb-4">Faça login para continuar</p>
+              <button
+                onClick={() => setAuthModal({ mode: 'login', userType: 'cliente' })}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Fazer Login
+              </button>
+            </div>
+          );
+        }
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <CheckoutFlow userId={currentUser.email} />
+          </Suspense>
+        );
+      case 'order-tracking':
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <OrderTracking />
           </Suspense>
         );
       case 'home':

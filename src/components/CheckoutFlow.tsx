@@ -4,11 +4,19 @@ import './CheckoutFlow.css';
 
 interface CheckoutFlowProps {
   userId: string;
-  cartItems?: any[];
+  cartItems?: CartItem[];
   cartTotal?: number;
 }
 
 type Step = 1 | 2 | 3 | 4 | 5;
+
+interface CartItem {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image?: string;
+}
 
 interface ShippingAddress {
   fullName: string;
@@ -37,7 +45,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
   const [error, setError] = useState<string | null>(null);
 
   // Cart state
-  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartTotals, setCartTotals] = useState({
     subtotal: 0,
     tax: 0,
@@ -67,11 +75,9 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
     { id: 'same-day', name: 'Entrega no Mesmo Dia', price: 50, deliveryTime: 'Hoje' },
   ];
 
-  // Order confirmation state
-  const [orderId, setOrderId] = useState<string | null>(null);
-
   useEffect(() => {
     fetchCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const fetchCart = async () => {
@@ -83,7 +89,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
       setCartItems(data.items || []);
       
       const subtotal = (data.items || []).reduce(
-        (sum: number, item: any) => sum + item.price * item.quantity,
+        (sum: number, item: CartItem) => sum + item.price * item.quantity,
         0
       );
       const tax = subtotal * 0.10;
@@ -138,7 +144,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
         }
         return true;
 
-      case 2:
+      case 2: {
         const requiredFields: (keyof ShippingAddress)[] = [
           'fullName',
           'email',
@@ -166,6 +172,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
         }
 
         return true;
+      }
 
       case 3:
         if (!selectedShipping) {
@@ -513,10 +520,9 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ userId }) => {
       <div className="success-icon">✓</div>
       <h2>Pedido Confirmado!</h2>
       <p>Seu pedido foi realizado com sucesso.</p>
-      {orderId && <p className="order-id">Número do pedido: #{orderId}</p>}
       <div className="success-actions">
-        <button onClick={() => navigate(`/orders/${orderId}`)} className="track-order-btn">
-          Acompanhar Pedido
+        <button onClick={() => navigate('/orders')} className="track-order-btn">
+          Ver Meus Pedidos
         </button>
         <button onClick={() => navigate('/products')} className="continue-btn">
           Continuar Comprando
