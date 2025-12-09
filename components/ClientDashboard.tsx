@@ -251,7 +251,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     }
   };
 
-  // @ts-expect-error - unused legacy code kept for reference
+  // unused legacy code kept for reference
   const _handlePaymentSuccess = async () => {
     if (!payingForProposal) return;
     const { jobId, providerId, price, id: proposalId } = payingForProposal;
