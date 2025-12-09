@@ -127,7 +127,7 @@ const OmniInbox: React.FC<OmniInboxProps> = ({ userId: _userId }) => {
       setConversations(mockConversations);
       setLoading(false);
     }, 500);
-  }, [userId]);
+  }, []);
 
   // Filtrar conversas
   const filteredConversations = conversations.filter(conv => {
@@ -300,7 +300,6 @@ const OmniInbox: React.FC<OmniInboxProps> = ({ userId: _userId }) => {
                   cursor: 'pointer',
                   backgroundColor: selectedConversation?.id === conv.id ? '#f0f0f0' : '#fff',
                   transition: 'background-color 0.2s',
-                  ':hover': { backgroundColor: '#fafafa' }
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
