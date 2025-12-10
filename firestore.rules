@@ -104,6 +104,17 @@ service cloud.firestore {
                     || isAdmin();
       
       allow delete: if false;
+
+      // Marketplace matching subcollection (read-only for client/admin, write via backend/admin)
+      match /potential_matches/{matchId} {
+        allow read: if isAdmin() || (
+          isSignedIn() &&
+          get(/databases/$(database)/documents/jobs/$(jobId)).data.clientId == authEmail()
+        );
+
+        // Writes devem ocorrer apenas pelo backend (service account/admin)
+        allow create, update, delete: if isAdmin();
+      }
     }
 
     match /proposals/{proposalId} {
