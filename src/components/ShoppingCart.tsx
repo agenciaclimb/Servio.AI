@@ -53,7 +53,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
 
     try {
       const response = await fetch(`/api/ecommerce/cart/${userId}`);
-      
+
       if (!response.ok) {
         throw new Error('Falha ao carregar carrinho');
       }
@@ -71,9 +71,9 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
 
   const calculateTotals = (items: CartItem[]) => {
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const tax = subtotal * 0.10; // 10% tax
+    const tax = subtotal * 0.1; // 10% tax
     const shipping = subtotal >= 100 ? 0 : 10; // Free shipping over R$100
-    const discount = couponApplied ? subtotal * 0.10 : 0; // 10% discount with coupon
+    const discount = couponApplied ? subtotal * 0.1 : 0; // 10% discount with coupon
     const total = subtotal + tax + shipping - discount;
 
     setTotals({
@@ -90,7 +90,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
       return removeItem(productId);
     }
 
-    setUpdatingItems((prev) => new Set(prev).add(productId));
+    setUpdatingItems(prev => new Set(prev).add(productId));
 
     try {
       const response = await fetch('/api/ecommerce/cart/update', {
@@ -109,7 +109,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
       }
 
       // Update local state
-      const updatedItems = cartItems.map((item) =>
+      const updatedItems = cartItems.map(item =>
         item.productId === productId ? { ...item, quantity: newQuantity } : item
       );
       setCartItems(updatedItems);
@@ -117,7 +117,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Erro ao atualizar quantidade');
     } finally {
-      setUpdatingItems((prev) => {
+      setUpdatingItems(prev => {
         const newSet = new Set(prev);
         newSet.delete(productId);
         return newSet;
@@ -130,7 +130,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
       return;
     }
 
-    setUpdatingItems((prev) => new Set(prev).add(productId));
+    setUpdatingItems(prev => new Set(prev).add(productId));
 
     try {
       const response = await fetch(`/api/ecommerce/cart/${userId}/${productId}`, {
@@ -141,13 +141,13 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
         throw new Error('Falha ao remover item');
       }
 
-      const updatedItems = cartItems.filter((item) => item.productId !== productId);
+      const updatedItems = cartItems.filter(item => item.productId !== productId);
       setCartItems(updatedItems);
       calculateTotals(updatedItems);
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Erro ao remover item');
     } finally {
-      setUpdatingItems((prev) => {
+      setUpdatingItems(prev => {
         const newSet = new Set(prev);
         newSet.delete(productId);
         return newSet;
@@ -165,7 +165,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
 
     // Simulate coupon validation (in real app, validate with API)
     const validCoupons = ['DESCONTO10', 'PRIMEIRACOMPRA', 'BEMVINDO'];
-    
+
     if (validCoupons.includes(couponCode.toUpperCase())) {
       setCouponApplied(true);
       calculateTotals(cartItems);
@@ -198,7 +198,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
     const today = new Date();
     const deliveryDate = new Date(today);
     deliveryDate.setDate(today.getDate() + 7); // 7 days delivery
-    
+
     return deliveryDate.toLocaleDateString('pt-BR', {
       day: 'numeric',
       month: 'long',
@@ -249,7 +249,9 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
     <div className="shopping-cart-container">
       <div className="cart-header">
         <h1>Carrinho de Compras</h1>
-        <p className="cart-items-count">{cartItems.length} {cartItems.length === 1 ? 'item' : 'itens'}</p>
+        <p className="cart-items-count">
+          {cartItems.length} {cartItems.length === 1 ? 'item' : 'itens'}
+        </p>
       </div>
 
       <div className="cart-content">
@@ -262,9 +264,9 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
             <span className="header-action"></span>
           </div>
 
-          {cartItems.map((item) => {
+          {cartItems.map(item => {
             const isUpdating = updatingItems.has(item.productId);
-            
+
             return (
               <div key={item.productId} className={`cart-item ${isUpdating ? 'updating' : ''}`}>
                 <div className="item-product">
@@ -273,7 +275,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
                       <img
                         src={item.image}
                         alt={item.name}
-                        onError={(e) => {
+                        onError={e => {
                           (e.target as HTMLImageElement).src = '/placeholder-product.png';
                         }}
                       />
@@ -289,9 +291,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
                   </div>
                 </div>
 
-                <div className="item-price">
-                  R$ {item.price.toFixed(2)}
-                </div>
+                <div className="item-price">R$ {item.price.toFixed(2)}</div>
 
                 <div className="item-quantity">
                   <button
@@ -304,7 +304,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
                   <input
                     type="number"
                     value={item.quantity}
-                    onChange={(e) => {
+                    onChange={e => {
                       const newQty = Number.parseInt(e.target.value, 10) || 1;
                       updateQuantity(item.productId, newQty);
                     }}
@@ -317,15 +317,15 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
                   <button
                     className="quantity-btn"
                     onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                    disabled={isUpdating || (item.stock !== undefined && item.quantity >= item.stock)}
+                    disabled={
+                      isUpdating || (item.stock !== undefined && item.quantity >= item.stock)
+                    }
                   >
                     +
                   </button>
                 </div>
 
-                <div className="item-total">
-                  R$ {(item.price * item.quantity).toFixed(2)}
-                </div>
+                <div className="item-total">R$ {(item.price * item.quantity).toFixed(2)}</div>
 
                 <div className="item-action">
                   <button
@@ -347,7 +347,9 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
 
           <div className="summary-section">
             <div className="summary-row">
-              <span>Subtotal ({cartItems.length} {cartItems.length === 1 ? 'item' : 'itens'})</span>
+              <span>
+                Subtotal ({cartItems.length} {cartItems.length === 1 ? 'item' : 'itens'})
+              </span>
               <span>R$ {totals.subtotal.toFixed(2)}</span>
             </div>
             <div className="summary-row">
@@ -393,7 +395,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
                 <input
                   type="text"
                   value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                  onChange={e => setCouponCode(e.target.value.toUpperCase())}
                   placeholder="Digite o código"
                   className="coupon-input"
                 />
@@ -418,10 +420,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ userId, onCheckout }) => {
             Finalizar Compra
           </button>
 
-          <button
-            onClick={() => navigate('/products')}
-            className="continue-shopping-link"
-          >
+          <button onClick={() => navigate('/products')} className="continue-shopping-link">
             ← Continuar comprando
           </button>
         </div>

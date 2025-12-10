@@ -8,7 +8,8 @@
     "start": "node src/index.js",
     "dev": "node src/index.js",
     "test": "vitest run --coverage",
-    "prod:check": "node scripts/stripe_readiness.mjs"
+    "prod:check": "node scripts/stripe_readiness.mjs",
+    "deploy:functions": "firebase deploy --only functions"
   },
   "dependencies": {
     "@google-cloud/storage": "^7.13.0",
