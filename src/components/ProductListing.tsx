@@ -28,20 +28,20 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // View and filter state
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const productsPerPage = 12;
-  
+
   // Filter state
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
   const [minRating, setMinRating] = useState(0);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
-  
+
   // Categories (in real app, fetch from API)
   const categories = [
     'all',
@@ -52,7 +52,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
     'Pedreiro',
     'Jardineiro',
     'Limpeza',
-    'Outros'
+    'Outros',
   ];
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
 
     try {
       const params = new URLSearchParams();
-      
+
       if (selectedCategory !== 'all') {
         params.append('category', selectedCategory);
       }
@@ -82,7 +82,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
       params.append('limit', productsPerPage.toString());
 
       const response = await fetch(`/api/ecommerce/products?${params.toString()}`);
-      
+
       if (!response.ok) {
         throw new Error('Falha ao carregar produtos');
       }
@@ -92,9 +92,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
 
       // Apply rating filter
       if (minRating > 0) {
-        fetchedProducts = fetchedProducts.filter((p: Product) => 
-          (p.rating || 0) >= minRating
-        );
+        fetchedProducts = fetchedProducts.filter((p: Product) => (p.rating || 0) >= minRating);
       }
 
       // Apply sorting
@@ -108,7 +106,6 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
       const startIndex = (currentPage - 1) * productsPerPage;
       const endIndex = startIndex + productsPerPage;
       setProducts(fetchedProducts.slice(startIndex, endIndex));
-
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro desconhecido');
       console.error('Error fetching products:', err);
@@ -119,7 +116,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
 
   const sortProducts = (prods: Product[], sort: SortOption): Product[] => {
     const sorted = [...prods];
-    
+
     switch (sort) {
       case 'price_asc':
         return sorted.sort((a, b) => a.price - b.price);
@@ -179,7 +176,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
   const renderStars = (rating: number) => {
     return (
       <div className="product-rating">
-        {[1, 2, 3, 4, 5].map((star) => (
+        {[1, 2, 3, 4, 5].map(star => (
           <span key={star} className={star <= rating ? 'star filled' : 'star'}>
             ★
           </span>
@@ -208,7 +205,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
       <div className="pagination">
         <button
           className="pagination-btn"
-          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
           disabled={currentPage === 1}
         >
           ← Anterior
@@ -216,7 +213,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
         {pages}
         <button
           className="pagination-btn"
-          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+          onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
           disabled={currentPage === totalPages}
         >
           Próxima →
@@ -272,7 +269,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
           </div>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as SortOption)}
+            onChange={e => setSortBy(e.target.value as SortOption)}
             className="sort-select"
           >
             <option value="relevance">Relevância</option>
@@ -296,14 +293,14 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
           <div className="filter-group">
             <h3>Categoria</h3>
             <div className="category-filters">
-              {categories.map((cat) => (
+              {categories.map(cat => (
                 <label key={cat} className="filter-checkbox">
                   <input
                     type="radio"
                     name="category"
                     value={cat}
                     checked={selectedCategory === cat}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    onChange={e => setSelectedCategory(e.target.value)}
                   />
                   <span>{cat === 'all' ? 'Todas' : cat}</span>
                 </label>
@@ -319,9 +316,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
                   type="number"
                   placeholder="Mín"
                   value={priceRange.min}
-                  onChange={(e) =>
-                    setPriceRange({ ...priceRange, min: Number(e.target.value) })
-                  }
+                  onChange={e => setPriceRange({ ...priceRange, min: Number(e.target.value) })}
                   className="price-input"
                 />
                 <span>-</span>
@@ -329,9 +324,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
                   type="number"
                   placeholder="Máx"
                   value={priceRange.max}
-                  onChange={(e) =>
-                    setPriceRange({ ...priceRange, max: Number(e.target.value) })
-                  }
+                  onChange={e => setPriceRange({ ...priceRange, max: Number(e.target.value) })}
                   className="price-input"
                 />
               </div>
@@ -341,9 +334,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
                 max="10000"
                 step="100"
                 value={priceRange.max}
-                onChange={(e) =>
-                  setPriceRange({ ...priceRange, max: Number(e.target.value) })
-                }
+                onChange={e => setPriceRange({ ...priceRange, max: Number(e.target.value) })}
                 className="price-slider"
               />
             </div>
@@ -352,7 +343,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
           <div className="filter-group">
             <h3>Avaliação Mínima</h3>
             <div className="rating-filters">
-              {[0, 3, 4, 5].map((rating) => (
+              {[0, 3, 4, 5].map(rating => (
                 <label key={rating} className="filter-checkbox">
                   <input
                     type="radio"
@@ -361,9 +352,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
                     checked={minRating === rating}
                     onChange={() => setMinRating(rating)}
                   />
-                  <span>
-                    {rating === 0 ? 'Todas' : `${rating}+ estrelas`}
-                  </span>
+                  <span>{rating === 0 ? 'Todas' : `${rating}+ estrelas`}</span>
                 </label>
               ))}
             </div>
@@ -374,7 +363,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
               <input
                 type="checkbox"
                 checked={inStockOnly}
-                onChange={(e) => setInStockOnly(e.target.checked)}
+                onChange={e => setInStockOnly(e.target.checked)}
               />
               <span>Apenas em estoque</span>
             </label>
@@ -392,7 +381,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
           ) : (
             <>
               <div className={`products-${viewMode}`}>
-                {products.map((product) => (
+                {products.map(product => (
                   <div key={product.id} className="product-card">
                     <div className="product-image">
                       {product.images && product.images.length > 0 ? (
@@ -400,24 +389,18 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
                           src={product.images[0]}
                           alt={product.name}
                           loading="lazy"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src =
-                              '/placeholder-product.png';
+                          onError={e => {
+                            (e.target as HTMLImageElement).src = '/placeholder-product.png';
                           }}
                         />
                       ) : (
                         <div className="image-placeholder">📦</div>
                       )}
-                      {product.stock === 0 && (
-                        <div className="out-of-stock-badge">Sem estoque</div>
-                      )}
+                      {product.stock === 0 && <div className="out-of-stock-badge">Sem estoque</div>}
                     </div>
 
                     <div className="product-info">
-                      <h3
-                        className="product-name"
-                        onClick={() => handleViewProduct(product.id)}
-                      >
+                      <h3 className="product-name" onClick={() => handleViewProduct(product.id)}>
                         {product.name}
                       </h3>
                       <p className="product-category">{product.category}</p>
@@ -426,9 +409,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
                         <div className="product-rating-section">
                           {renderStars(product.rating)}
                           {product.reviews && (
-                            <span className="reviews-count">
-                              ({product.reviews} avaliações)
-                            </span>
+                            <span className="reviews-count">({product.reviews} avaliações)</span>
                           )}
                         </div>
                       )}
@@ -440,9 +421,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
                       </p>
 
                       <div className="product-footer">
-                        <div className="product-price">
-                          R$ {product.price.toFixed(2)}
-                        </div>
+                        <div className="product-price">R$ {product.price.toFixed(2)}</div>
                         <button
                           className="add-to-cart-btn"
                           onClick={() => handleAddToCart(product.id)}
@@ -453,9 +432,7 @@ const ProductListing: React.FC<ProductListingProps> = ({ onAddToCart }) => {
                       </div>
 
                       {product.stock > 0 && product.stock <= 5 && (
-                        <p className="low-stock-warning">
-                          ⚠️ Apenas {product.stock} em estoque
-                        </p>
+                        <p className="low-stock-warning">⚠️ Apenas {product.stock} em estoque</p>
                       )}
                     </div>
                   </div>

@@ -28,8 +28,12 @@ interface CohortData {
 }
 
 export const AdvancedAnalyticsDashboard: React.FC = () => {
-  const [dateRange, setDateRange] = useState<'last7days' | 'last30days' | 'last90days' | 'year'>('last30days');
-  const [revenueGranularity, setRevenueGranularity] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+  const [dateRange, setDateRange] = useState<'last7days' | 'last30days' | 'last90days' | 'year'>(
+    'last30days'
+  );
+  const [revenueGranularity, setRevenueGranularity] = useState<'daily' | 'weekly' | 'monthly'>(
+    'daily'
+  );
   const [metrics, setMetrics] = useState<MetricCard[]>([]);
   const [revenueData, setRevenueData] = useState<RevenueDataPoint[]>([]);
   const [funnelData, setFunnelData] = useState<FunnelStep[]>([]);
@@ -233,7 +237,13 @@ export const AdvancedAnalyticsDashboard: React.FC = () => {
       <div className="dashboard-header">
         <h1>📊 Advanced Analytics Dashboard</h1>
         <div className="header-controls">
-          <select value={dateRange} onChange={e => setDateRange(e.target.value as 'last7days' | 'last30days' | 'last90days' | 'year')} className="date-range-select">
+          <select
+            value={dateRange}
+            onChange={e =>
+              setDateRange(e.target.value as 'last7days' | 'last30days' | 'last90days' | 'year')
+            }
+            className="date-range-select"
+          >
             <option value="last7days">Last 7 Days</option>
             <option value="last30days">Last 30 Days</option>
             <option value="last90days">Last 90 Days</option>
@@ -256,7 +266,9 @@ export const AdvancedAnalyticsDashboard: React.FC = () => {
                 <div className="metric-icon">{metric.icon}</div>
                 <div className="metric-label">{metric.label}</div>
                 <div className="metric-value">{metric.value}</div>
-                {metric.trend !== undefined && <div className="metric-trend">↑ {metric.trend}%</div>}
+                {metric.trend !== undefined && (
+                  <div className="metric-trend">↑ {metric.trend}%</div>
+                )}
               </div>
             ))}
           </div>
@@ -281,7 +293,11 @@ export const AdvancedAnalyticsDashboard: React.FC = () => {
           {revenueData.length > 0 ? (
             <div className="chart-bars">
               {revenueData.map((point, idx) => (
-                <div key={idx} className="chart-bar-container" title={`${point.period}: $${point.revenue.toFixed(2)}`}>
+                <div
+                  key={idx}
+                  className="chart-bar-container"
+                  title={`${point.period}: $${point.revenue.toFixed(2)}`}
+                >
                   <div
                     className="chart-bar"
                     style={{
@@ -307,7 +323,9 @@ export const AdvancedAnalyticsDashboard: React.FC = () => {
               {funnelData.map((step, idx) => (
                 <div key={idx} className="funnel-step" style={{ width: `${100 - idx * 15}%` }}>
                   <div className="step-label">{step.step.toUpperCase()}</div>
-                  <div className="step-value">{step.count} ({step.percentage.toFixed(1)}%)</div>
+                  <div className="step-value">
+                    {step.count} ({step.percentage.toFixed(1)}%)
+                  </div>
                 </div>
               ))}
             </div>
@@ -398,7 +416,10 @@ export const AdvancedAnalyticsDashboard: React.FC = () => {
           <button onClick={() => handleExport('pdf')} className="btn btn-secondary">
             📥 Export PDF
           </button>
-          <button onClick={() => setShowReportScheduler(!showReportScheduler)} className="btn btn-secondary">
+          <button
+            onClick={() => setShowReportScheduler(!showReportScheduler)}
+            className="btn btn-secondary"
+          >
             📅 Schedule Report
           </button>
         </div>
@@ -449,7 +470,9 @@ export const AdvancedAnalyticsDashboard: React.FC = () => {
       {/* Event Tracking Placeholder */}
       <section className="events-section">
         <h2>Event Tracking</h2>
-        <p className="info-text">Real-time event tracking is enabled. Custom events are automatically logged for:</p>
+        <p className="info-text">
+          Real-time event tracking is enabled. Custom events are automatically logged for:
+        </p>
         <ul className="event-list">
           <li>✓ Product Views</li>
           <li>✓ Cart Additions</li>

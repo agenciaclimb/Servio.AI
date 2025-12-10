@@ -47,7 +47,7 @@ const OrderTracking: React.FC<OrderTrackingProps> = ({ orderId: propOrderId }) =
 
     try {
       const response = await fetch(`/api/ecommerce/orders/${id}`);
-      
+
       if (!response.ok) {
         if (response.status === 404) {
           throw new Error('Pedido não encontrado');
@@ -67,7 +67,7 @@ const OrderTracking: React.FC<OrderTrackingProps> = ({ orderId: propOrderId }) =
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!orderId.trim()) {
       setError('Digite o número do pedido');
       return;
@@ -103,7 +103,7 @@ const OrderTracking: React.FC<OrderTrackingProps> = ({ orderId: propOrderId }) =
 
   const getCurrentStepIndex = () => {
     if (!order) return 0;
-    
+
     switch (order.status) {
       case 'processing':
         return 0;
@@ -158,13 +158,13 @@ const OrderTracking: React.FC<OrderTrackingProps> = ({ orderId: propOrderId }) =
         <div className="search-section">
           <h1>Rastrear Pedido</h1>
           <p>Digite o número do seu pedido ou email para acompanhar o status</p>
-          
+
           <form onSubmit={handleSearch} className="search-form">
             <div className="search-inputs">
               <input
                 type="text"
                 value={orderId}
-                onChange={(e) => setOrderId(e.target.value)}
+                onChange={e => setOrderId(e.target.value)}
                 placeholder="Número do pedido (ex: ORD-12345)"
                 className="search-input"
               />
@@ -172,7 +172,7 @@ const OrderTracking: React.FC<OrderTrackingProps> = ({ orderId: propOrderId }) =
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 placeholder="Seu email"
                 className="search-input"
               />
@@ -195,7 +195,13 @@ const OrderTracking: React.FC<OrderTrackingProps> = ({ orderId: propOrderId }) =
           <div className="error-icon">❌</div>
           <h2>{error}</h2>
           <p>Verifique o número do pedido e tente novamente</p>
-          <button onClick={() => { setOrder(null); setError(null); }} className="back-btn">
+          <button
+            onClick={() => {
+              setOrder(null);
+              setError(null);
+            }}
+            className="back-btn"
+          >
             ← Voltar para busca
           </button>
         </div>
@@ -232,9 +238,7 @@ const OrderTracking: React.FC<OrderTrackingProps> = ({ orderId: propOrderId }) =
                     index === currentStep ? 'current' : ''
                   }`}
                 >
-                  <div className="timeline-marker">
-                    {index < currentStep ? '✓' : index + 1}
-                  </div>
+                  <div className="timeline-marker">{index < currentStep ? '✓' : index + 1}</div>
                   <div className="timeline-content">
                     <h3>{step.label}</h3>
                     {step.date && <p className="timeline-date">{formatDate(step.date)}</p>}
@@ -318,7 +322,11 @@ const OrderTracking: React.FC<OrderTrackingProps> = ({ orderId: propOrderId }) =
                     className="form-textarea"
                   />
                   <div className="form-actions">
-                    <button type="button" onClick={() => setShowContactForm(false)} className="cancel-btn">
+                    <button
+                      type="button"
+                      onClick={() => setShowContactForm(false)}
+                      className="cancel-btn"
+                    >
                       Cancelar
                     </button>
                     <button type="submit" className="submit-btn">
@@ -355,7 +363,11 @@ const OrderTracking: React.FC<OrderTrackingProps> = ({ orderId: propOrderId }) =
                     />
                   </label>
                   <div className="form-actions">
-                    <button type="button" onClick={() => setShowReturnForm(false)} className="cancel-btn">
+                    <button
+                      type="button"
+                      onClick={() => setShowReturnForm(false)}
+                      className="cancel-btn"
+                    >
                       Cancelar
                     </button>
                     <button type="submit" className="submit-btn">
@@ -384,13 +396,15 @@ const OrderTracking: React.FC<OrderTrackingProps> = ({ orderId: propOrderId }) =
               <span>Total:</span>
               <span>R$ {order!.total.toFixed(2)}</span>
             </div>
-            
+
             <div className="payment-status">
               <span>Pagamento:</span>
               <span className={`payment-badge ${order!.paymentStatus}`}>
-                {order!.paymentStatus === 'paid' ? '✓ Pago' : 
-                 order!.paymentStatus === 'refunded' ? '↩️ Reembolsado' : 
-                 '⏳ Pendente'}
+                {order!.paymentStatus === 'paid'
+                  ? '✓ Pago'
+                  : order!.paymentStatus === 'refunded'
+                    ? '↩️ Reembolsado'
+                    : '⏳ Pendente'}
               </span>
             </div>
 

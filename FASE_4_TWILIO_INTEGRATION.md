@@ -13,7 +13,7 @@ Integração completa com Twilio API para comunicação multicanal (SMS, WhatsAp
 ### ✅ Deliverables
 
 1. **TwilioService** (backend/src/services/twilioService.js) - 600+ linhas
-2. **Twilio Routes** (backend/src/routes/twilio.js) - 350+ linhas  
+2. **Twilio Routes** (backend/src/routes/twilio.js) - 350+ linhas
 3. **Frontend Dashboard** (src/components/TwilioIntegrationDashboard.tsx) - 650+ linhas
 4. **Test Suite** (tests/services/twilioService.test.js) - 16/16 passing ✅
 5. **Documentação** (este arquivo)
@@ -23,6 +23,7 @@ Integração completa com Twilio API para comunicação multicanal (SMS, WhatsAp
 ## 🎯 FUNCIONALIDADES IMPLEMENTADAS
 
 ### 1. Envio de SMS
+
 - **Endpoint**: `POST /api/twilio/send-sms`
 - **Validação**: Formato E.164 (+5511999999999)
 - **Logging**: Firestore collection `communications`
@@ -39,6 +40,7 @@ curl -X POST https://servio-backend-v2.run.app/api/twilio/send-sms \
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -53,6 +55,7 @@ curl -X POST https://servio-backend-v2.run.app/api/twilio/send-sms \
 ```
 
 ### 2. Envio de WhatsApp
+
 - **Endpoint**: `POST /api/twilio/send-whatsapp`
 - **Suporte a mídia**: Images, videos, PDFs
 - **WhatsApp Business API** via Twilio
@@ -69,6 +72,7 @@ curl -X POST https://servio-backend-v2.run.app/api/twilio/send-whatsapp \
 ```
 
 ### 3. Chamadas Telefônicas com Gravação
+
 - **Endpoint**: `POST /api/twilio/make-call`
 - **Gravação automática**: Recording stored in Twilio
 - **TwiML callback**: Custom call flow
@@ -85,6 +89,7 @@ curl -X POST https://servio-backend-v2.run.app/api/twilio/make-call \
 ```
 
 ### 4. Envio em Batch
+
 - **Endpoint**: `POST /api/twilio/send-batch`
 - **Limite**: 100 mensagens por batch
 - **Error handling**: Graceful com relatório detalhado
@@ -101,6 +106,7 @@ curl -X POST https://servio-backend-v2.run.app/api/twilio/send-batch \
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -115,22 +121,27 @@ curl -X POST https://servio-backend-v2.run.app/api/twilio/send-batch \
 ```
 
 ### 5. Webhooks Bidirecionais
+
 Twilio → Servio.AI automatic updates
 
 #### Message Status Webhook
+
 - **Endpoint**: `POST /api/twilio/webhook/message-status`
 - **Trigger**: sent → delivered → read (SMS/WhatsApp)
 - **Verification**: HMAC-SHA1 signature (DESCOMENTE EM PRODUÇÃO)
 
 #### Call Status Webhook
+
 - **Endpoint**: `POST /api/twilio/webhook/call-status`
 - **Trigger**: initiated → ringing → in-progress → completed
 
 #### Recording Status Webhook
+
 - **Endpoint**: `POST /api/twilio/webhook/recording-status`
 - **Armazena**: RecordingUrl, RecordingSid, Duration
 
 **Configuração no Twilio**:
+
 ```
 SMS/WhatsApp Status Callback:
 https://servio-backend-v2.run.app/api/twilio/webhook/message-status
@@ -143,6 +154,7 @@ https://servio-backend-v2.run.app/api/twilio/webhook/recording-status
 ```
 
 ### 6. Histórico de Comunicações
+
 - **Endpoint**: `GET /api/twilio/history/:prospectId?type=all`
 - **Tipos**: all, sms, whatsapp, call
 - **Limit**: 50 últimas comunicações
@@ -152,6 +164,7 @@ curl https://servio-backend-v2.run.app/api/twilio/history/prospect_123?type=sms
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -177,6 +190,7 @@ curl https://servio-backend-v2.run.app/api/twilio/history/prospect_123?type=sms
 ```
 
 ### 7. Health Check
+
 - **Endpoint**: `GET /api/twilio/health`
 - **Valida**: Account status, phone numbers, connectivity
 
@@ -185,6 +199,7 @@ curl https://servio-backend-v2.run.app/api/twilio/health
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -228,6 +243,7 @@ curl https://servio-backend-v2.run.app/api/twilio/health
 ```
 
 **Indexes necessários**:
+
 ```
 Collection: communications
 - prospectId (ASC) + timestamp (DESC)
@@ -267,18 +283,21 @@ BACKEND_URL=https://servio-backend-v2-1000250760228.us-west1.run.app
 **Console → Phone Numbers → Manage → Active Numbers → [Seu número]**
 
 #### SMS Status Callback:
+
 ```
 URL: https://servio-backend-v2.run.app/api/twilio/webhook/message-status
 Method: POST
 ```
 
 #### Voice Status Callback:
+
 ```
 URL: https://servio-backend-v2.run.app/api/twilio/webhook/call-status
 Method: POST
 ```
 
 #### Recording Status Callback:
+
 ```
 URL: https://servio-backend-v2.run.app/api/twilio/webhook/recording-status
 Method: POST
@@ -311,6 +330,7 @@ npm test -- tests/services/twilioService.test.js
 ```
 
 **Resultado esperado**:
+
 ```
 ✅ Test Files  1 passed (1)
 ✅ Tests  16 passed (16)
@@ -326,11 +346,13 @@ npm test -- tests/services/twilioService.test.js
 ### Testes Manuais com curl
 
 #### 1. Health Check
+
 ```bash
 curl https://servio-backend-v2.run.app/api/twilio/health
 ```
 
 #### 2. Enviar SMS de Teste
+
 ```bash
 curl -X POST https://servio-backend-v2.run.app/api/twilio/send-sms \
   -H "Content-Type: application/json" \
@@ -342,6 +364,7 @@ curl -X POST https://servio-backend-v2.run.app/api/twilio/send-sms \
 ```
 
 #### 3. Consultar Histórico
+
 ```bash
 curl https://servio-backend-v2.run.app/api/twilio/history/test_prospect_1
 ```
@@ -350,20 +373,21 @@ curl https://servio-backend-v2.run.app/api/twilio/history/test_prospect_1
 
 ## 📈 KPIs - FASE 4 TASK 2
 
-| Métrica | Target | Atual | Status |
-|---------|--------|-------|--------|
-| Test Coverage | ≥90% | 95% | ✅ |
-| Tests Passing | 100% | 100% (16/16) | ✅ |
-| API Endpoints | 9 | 9 | ✅ |
-| Code Quality | A+ | A+ | ✅ |
-| Documentation | 100% | 100% | ✅ |
-| Type Safety | Strict | Strict | ✅ |
+| Métrica       | Target | Atual        | Status |
+| ------------- | ------ | ------------ | ------ |
+| Test Coverage | ≥90%   | 95%          | ✅     |
+| Tests Passing | 100%   | 100% (16/16) | ✅     |
+| API Endpoints | 9      | 9            | ✅     |
+| Code Quality  | A+     | A+           | ✅     |
+| Documentation | 100%   | 100%         | ✅     |
+| Type Safety   | Strict | Strict       | ✅     |
 
 ---
 
 ## 🔐 SEGURANÇA
 
 ### ✅ Implementado
+
 - API tokens em variáveis de ambiente (não hardcoded)
 - Webhook verification preparado (HMAC-SHA1)
 - Rate limiting aplicável (TODO: Implementar middleware)
@@ -372,6 +396,7 @@ curl https://servio-backend-v2.run.app/api/twilio/history/test_prospect_1
 - Error handling graceful
 
 ### 🚧 TODO (Produção)
+
 - [ ] Ativar webhook signature verification
 - [ ] Implementar rate limiting (10 reqs/min por prospect)
 - [ ] Configurar alerts para falhas de envio
@@ -382,18 +407,22 @@ curl https://servio-backend-v2.run.app/api/twilio/history/test_prospect_1
 ## 💰 CUSTOS ESTIMADOS (Twilio Pricing)
 
 ### SMS
+
 - **Brasil**: $0.0290 USD por SMS enviado
 - **EUA**: $0.0079 USD por SMS enviado
 
 ### WhatsApp
+
 - **Conversas iniciadas pelo negócio**: $0.0500 USD (primeiras 1000 mensagens/mês GRÁTIS)
 - **Conversas iniciadas pelo usuário**: $0.0300 USD
 
 ### Calls
+
 - **Outbound**: $0.013 USD/min (Brasil) + $0.0085 USD/min (Twilio US)
 - **Recording**: $0.0025 USD/min
 
 ### Exemplo de Custos Mensais
+
 **Cenário**: 100 prospects, 500 interações/mês
 
 ```
@@ -421,6 +450,7 @@ TOTAL MENSAL: ~$18 USD (~R$ 90 BRL)
 ## 🚀 PRÓXIMOS PASSOS (FASE 4 TASK 3)
 
 ### Task 3: Landing Pages Generator (AI-powered)
+
 - Templates com IA Gemini
 - Deploy automático (Cloud Run ou Firebase Hosting)
 - Analytics integrado
@@ -431,6 +461,7 @@ TOTAL MENSAL: ~$18 USD (~R$ 90 BRL)
 ## 📝 CHANGELOG
 
 ### v1.0.0 (09/12/2025)
+
 - ✅ TwilioService backend completo (600+ linhas)
 - ✅ 9 endpoints REST funcionais
 - ✅ Frontend dashboard Material-UI (650+ linhas)
