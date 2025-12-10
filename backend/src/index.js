@@ -1342,6 +1342,66 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // =================================================================
+  // MARKETPLACE MATCHING ENDPOINTS (Task 2.2)
+  // =================================================================
+
+  /**
+   * POST /api/v2/jobs/{jobId}/trigger-matching
+   * 
+   * Initiates the marketplace matching process for a job.
+   * - Validates if the job exists
+   * - Sets matching_status to 'in_progress'
+   * - Returns success response
+   * 
+   * Note: Actual matching logic will be implemented in subsequent tasks
+   */
+  app.post("/api/v2/jobs/:jobId/trigger-matching", async (req, res) => {
+    const { jobId } = req.params;
+
+    // Validate jobId is provided
+    if (!jobId || typeof jobId !== 'string' || jobId.trim() === '') {
+      return res.status(400).json({ error: 'jobId is required and must be a non-empty string.' });
+    }
+
+    try {
+      const jobRef = db.collection("jobs").doc(jobId);
+      const jobDoc = await jobRef.get();
+
+      // Validate if job exists
+      if (!jobDoc.exists) {
+        return res.status(404).json({ error: 'Job not found.' });
+      }
+
+      const jobData = jobDoc.data();
+
+      // Verify current matching_status is valid for triggering
+      const currentStatus = jobData.matching_status || 'pending';
+      if (currentStatus === 'in_progress') {
+        return res.status(409).json({ error: 'Matching is already in progress for this job.' });
+      }
+
+      if (currentStatus === 'completed') {
+        return res.status(409).json({ error: 'Matching has already been completed for this job.' });
+      }
+
+      // Update job matching_status to 'in_progress'
+      await jobRef.update({
+        matching_status: 'in_progress',
+        matching_started_at: new Date().toISOString(),
+      });
+
+      res.status(200).json({
+        status: 'matching_started',
+        jobId: jobId,
+        message: 'Marketplace matching has been initiated.',
+      });
+    } catch (error) {
+      console.error("Error triggering marketplace matching:", error);
+      res.status(500).json({ error: "Failed to trigger marketplace matching." });
+    }
+  });
+
+  // =================================================================
   // FILE UPLOAD ENDPOINTS
   // =================================================================
 
@@ -3221,17 +3281,68 @@ Retorne apenas o corpo do email, sem assunto.`;
   // Get all jobs (with /api prefix for frontend compatibility)
   app.get("/api/jobs", requireAuth, async (req, res) => {
     try {
-      const { providerId, status } = req.query;
+      // Task 2.1: Server-side pagination and filtering
+      const { 
+        providerId, 
+        status, 
+        category, 
+        location,
+        limit = '20', 
+        startAfter,
+        sortBy = 'createdAt',
+        sortOrder = 'desc'
+      } = req.query;
+
+      // Build dynamic Firestore query
       let query = db.collection("jobs");
+
+      // Apply filters conditionally
       if (providerId) {
         query = query.where("providerId", "==", providerId);
       }
       if (status) {
         query = query.where("status", "==", status);
       }
+      if (category) {
+        query = query.where("category", "==", category);
+      }
+      if (location) {
+        query = query.where("location", "==", location);
+      }
+
+      // Add ordering
+      query = query.orderBy(sortBy, sortOrder);
+
+      // Cursor-based pagination: start after previous page
+      if (startAfter) {
+        const startAfterDoc = await db.collection("jobs").doc(startAfter).get();
+        if (startAfterDoc.exists) {
+          query = query.startAfter(startAfterDoc);
+        }
+      }
+
+      // Apply limit
+      const limitNum = parseInt(limit, 10);
+      query = query.limit(limitNum);
+
+      // Execute query
       const snapshot = await query.get();
       const jobs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      res.status(200).json(jobs);
+
+      // Pagination metadata
+      const nextPageCursor = jobs.length === limitNum && jobs.length > 0 
+        ? jobs[jobs.length - 1].id 
+        : null;
+
+      // Return paginated response
+      res.status(200).json({
+        jobs,
+        nextPageCursor,
+        page: {
+          limit: limitNum,
+          hasMore: nextPageCursor !== null
+        }
+      });
     } catch (error) {
       console.error("Error getting jobs:", error);
       res.status(500).json({ error: "Failed to retrieve jobs." });
@@ -3239,19 +3350,71 @@ Retorne apenas o corpo do email, sem assunto.`;
   });
 
   // Get all jobs (legacy route without /api)
+  // Task 2.1: Updated with same pagination logic as /api/jobs
   app.get("/jobs", requireAuth, async (req, res) => {
     try {
-      const { providerId, status } = req.query;
+      // Server-side pagination and filtering
+      const { 
+        providerId, 
+        status, 
+        category, 
+        location,
+        limit = '20', 
+        startAfter,
+        sortBy = 'createdAt',
+        sortOrder = 'desc'
+      } = req.query;
+
+      // Build dynamic Firestore query
       let query = db.collection("jobs");
+
+      // Apply filters conditionally
       if (providerId) {
         query = query.where("providerId", "==", providerId);
       }
       if (status) {
         query = query.where("status", "==", status);
       }
+      if (category) {
+        query = query.where("category", "==", category);
+      }
+      if (location) {
+        query = query.where("location", "==", location);
+      }
+
+      // Add ordering
+      query = query.orderBy(sortBy, sortOrder);
+
+      // Cursor-based pagination: start after previous page
+      if (startAfter) {
+        const startAfterDoc = await db.collection("jobs").doc(startAfter).get();
+        if (startAfterDoc.exists) {
+          query = query.startAfter(startAfterDoc);
+        }
+      }
+
+      // Apply limit
+      const limitNum = parseInt(limit, 10);
+      query = query.limit(limitNum);
+
+      // Execute query
       const snapshot = await query.get();
       const jobs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      res.status(200).json(jobs);
+
+      // Pagination metadata
+      const nextPageCursor = jobs.length === limitNum && jobs.length > 0 
+        ? jobs[jobs.length - 1].id 
+        : null;
+
+      // Return paginated response
+      res.status(200).json({
+        jobs,
+        nextPageCursor,
+        page: {
+          limit: limitNum,
+          hasMore: nextPageCursor !== null
+        }
+      });
     } catch (error) {
       console.error("Error getting jobs:", error);
       res.status(500).json({ error: "Failed to retrieve jobs." });
@@ -3261,10 +3424,17 @@ Retorne apenas o corpo do email, sem assunto.`;
   // Create a new job (with /api prefix)
   app.post("/api/jobs", async (req, res) => {
     try {
+      const allowedMatchingStatus = ['pending', 'in_progress', 'completed', 'failed'];
+      const requestedMatchingStatus = req.body.matching_status;
+      const matchingStatus = allowedMatchingStatus.includes(requestedMatchingStatus)
+        ? requestedMatchingStatus
+        : 'pending';
+
       const jobData = {
         ...req.body,
         createdAt: new Date().toISOString(),
         status: req.body.status || "aberto",
+        matching_status: matchingStatus,
       };
       const jobRef = db.collection("jobs").doc();
       await jobRef.set(jobData);
@@ -3278,10 +3448,17 @@ Retorne apenas o corpo do email, sem assunto.`;
   // Create a new job (legacy route)
   app.post("/jobs", async (req, res) => {
     try {
+      const allowedMatchingStatus = ['pending', 'in_progress', 'completed', 'failed'];
+      const requestedMatchingStatus = req.body.matching_status;
+      const matchingStatus = allowedMatchingStatus.includes(requestedMatchingStatus)
+        ? requestedMatchingStatus
+        : 'pending';
+
       const jobData = {
         ...req.body,
         createdAt: new Date().toISOString(),
         status: req.body.status || "aberto",
+        matching_status: matchingStatus,
       };
       const jobRef = db.collection("jobs").doc();
       await jobRef.set(jobData);

@@ -99,6 +99,17 @@ export type JobStatus =
   | 'em_disputa'
   | 'concluido'
   | 'cancelado';
+
+export type MatchingStatus = 'pending' | 'in_progress' | 'completed' | 'failed';
+export type PotentialMatchStatus = 'suggested' | 'rejected' | 'accepted';
+
+export interface PotentialMatch {
+  provider_id: string;
+  score: number;
+  status: PotentialMatchStatus;
+  matched_at?: string; // ISO date string from Firestore timestamp
+}
+
 export type ServiceType = 'personalizado' | 'tabelado' | 'diagnostico';
 export type JobMode = 'normal' | 'leilao';
 
@@ -146,6 +157,8 @@ export interface Job {
     platformFee: number;
     paidAt?: string; // ISO Date string
   };
+  // Marketplace matching
+  matching_status?: MatchingStatus;
 }
 
 export interface Bid {
