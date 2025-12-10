@@ -36,6 +36,7 @@ Gemini auditou PR #15 e identificou uma **divergência crítica** em relação a
    - Total: ~8 get() calls distribuídas entre coleções
 
 2. **Verificação em `/proposals` update**:
+
    ```javascript
    allow update: if get(/databases/$(database)/documents/jobs/$(resource.data.jobId)).data.clientId == authEmail()
    ```
