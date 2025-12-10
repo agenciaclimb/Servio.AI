@@ -11,6 +11,7 @@ import {
   ScheduledDateTime,
   DisputeMessage,
   Bid,
+  MatchingResult,
 } from '../types';
 import { useToast } from '../contexts/ToastContext'; // 1. Importar o hook
 import * as API from '../services/api';
@@ -26,6 +27,7 @@ import ItemDetailModal from './ItemDetailModal';
 import JobLocationModal from './JobLocationModal';
 import ChatModal from './ChatModal';
 import AuctionRoomModal from './AuctionRoomModal';
+import MatchingResultsModal from './MatchingResultsModal';
 import MaintenanceSuggestions from './MaintenanceSuggestions';
 import ClientDashboardSkeleton from './skeletons/ClientDashboardSkeleton';
 
@@ -149,6 +151,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
   const [viewingItem, setViewingItem] = useState<MaintainedItem | null>(null);
   const [viewingJobOnMap, setViewingJobOnMap] = useState<Job | null>(null);
   const [chattingWithJob, setChattingWithJob] = useState<Job | null>(null);
+  const [isMatchingModalOpen, setIsMatchingModalOpen] = useState(false);
+  const [matchingResults, setMatchingResults] = useState<MatchingResult[]>([]);
+  const [matchingJobId, setMatchingJobId] = useState<string | null>(null);
 
   // Load messages from Firestore when chat is opened
   useEffect(() => {
@@ -200,6 +205,46 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
 
   const handleClosePaymentModal = () => {
     setProposalToPay(null);
+  };
+
+  const handleViewRecommendations = async (job: Job) => {
+    setMatchingJobId(job.id);
+    setIsMatchingModalOpen(true);
+    setIsLoadingMatches(true);
+
+    try {
+      const results = await API.fetchMatchingProviders(job.id);
+      setMatchingResults(results);
+      addToast('Profissionais recomendados carregados com sucesso!', 'success');
+    } catch (error) {
+      console.error('Erro ao buscar profissionais recomendados:', error);
+      addToast('Erro ao carregar profissionais recomendados. Tente novamente.', 'error');
+      setIsMatchingModalOpen(false);
+    } finally {
+      setIsLoadingMatches(false);
+    }
+  };
+
+  const handleInviteProvider = async (providerId: string) => {
+    if (!matchingJobId) return;
+
+    try {
+      const result = await API.inviteProvider(matchingJobId, providerId);
+      if (result.success) {
+        addToast('Prestador convidado com sucesso!', 'success');
+      } else {
+        addToast('Erro ao convidar prestador. Tente novamente.', 'error');
+      }
+    } catch (error) {
+      console.error('Erro ao convidar prestador:', error);
+      addToast('Erro ao enviar convite. Tente novamente.', 'error');
+    }
+  };
+
+  const handleCloseMatchingModal = () => {
+    setIsMatchingModalOpen(false);
+    setMatchingResults([]);
+    setMatchingJobId(null);
   };
 
   const handleConfirmPayment = async (proposal: Proposal) => {
@@ -819,6 +864,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                         else setJobInFocus({ job, action: 'dispute' });
                       }}
                       onViewOnMap={setViewingJobOnMap}
+                      onViewRecommendations={() => handleViewRecommendations(job)}
                     />
                   ))}
                 </div>
@@ -929,6 +975,13 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
           provider={allUsers.find(u => u.email === proposalToPay.providerId)!}
           onClose={handleClosePaymentModal}
           onConfirmPayment={handleConfirmPayment}
+        />
+      )}
+      {isMatchingModalOpen && (
+        <MatchingResultsModal
+          results={matchingResults}
+          onClose={handleCloseMatchingModal}
+          onInvite={handleInviteProvider}
         />
       )}
       {jobInFocus?.action === 'review' && (

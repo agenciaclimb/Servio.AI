@@ -262,9 +262,9 @@ export interface Dispute {
 }
 
 export interface MatchingResult {
-  provider: ProviderProfile;
-  compatibilityScore: number;
-  justification: string;
+  provider: User;
+  matchScore: number;
+  matchReason: string;
 }
 
 export interface Prospector {
