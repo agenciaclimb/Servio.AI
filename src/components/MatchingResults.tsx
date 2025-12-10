@@ -8,11 +8,11 @@ interface MatchingResultsProps {
 
 /**
  * MatchingResults Component
- * 
+ *
  * Displays a list of potential matching providers for a job.
  * Fetches provider data from the potential_matches subcollection in Firestore.
  * Shows loading, empty, and error states appropriately.
- * 
+ *
  * @component
  * @param {string} jobId - The ID of the job to fetch matching providers for
  * @returns {React.ReactElement} The rendered component
@@ -158,7 +158,7 @@ const MatchingResults: React.FC<MatchingResultsProps> = ({ jobId }) => {
       </div>
 
       <div data-testid="matching-results-list" className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {matches.map((match) => (
+        {matches.map(match => (
           <div
             key={match.provider_id}
             data-testid={`matching-result-${match.provider_id}`}
@@ -189,7 +189,7 @@ const MatchingResults: React.FC<MatchingResultsProps> = ({ jobId }) => {
               <div className="mb-3">
                 <p className="text-xs font-medium text-gray-700 mb-1">Especialidades:</p>
                 <div className="flex flex-wrap gap-1">
-                  {match.provider.specialties.slice(0, 3).map((specialty) => (
+                  {match.provider.specialties.slice(0, 3).map(specialty => (
                     <span
                       key={specialty}
                       className="inline-block bg-gray-100 px-2 py-1 rounded text-xs text-gray-700"
