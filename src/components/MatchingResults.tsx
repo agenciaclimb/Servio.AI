@@ -1,16 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import type { PotentialMatch, User } from '../types';
-import { logError, logInfo } from '../utils/logger';
+import { logInfo } from '../utils/logger';
 
 interface MatchingResultsProps {
   jobId: string;
 }
 
 /**
+ * Fetch potential matches for a job from the API
+ * @param jobId - The job ID to fetch matches for
+ * @returns Promise with matches array
+ */
+async function fetchMatchesForJob(jobId: string): Promise<(PotentialMatch & { provider?: User })[]> {
+  if (!jobId) {
+    throw new Error('Job ID is required');
+  }
+
+  const response = await fetch(`/api/v2/jobs/${jobId}/potential-matches`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      return [];
+    }
+    throw new Error(`Failed to fetch matches: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.matches || [];
+}
+
+/**
  * MatchingResults Component
  *
  * Displays a list of potential matching providers for a job.
- * Fetches provider data from the potential_matches subcollection in Firestore.
+ * Fetches provider data from the potential_matches subcollection in Firestore
+ * using React Query for caching, revalidation, and background updates.
  * Shows loading, empty, and error states appropriately.
  *
  * @component
@@ -18,57 +43,23 @@ interface MatchingResultsProps {
  * @returns {React.ReactElement} The rendered component
  */
 const MatchingResults: React.FC<MatchingResultsProps> = ({ jobId }) => {
-  const [matches, setMatches] = useState<(PotentialMatch & { provider?: User })[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchMatches = async () => {
-      if (!jobId) {
-        setError('Job ID is required');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Fetch potential matches from backend
-        const response = await fetch(`/api/v2/jobs/${jobId}/potential-matches`);
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            setMatches([]);
-            logInfo('No matching results found', { component: 'MatchingResults', action: 'fetch' });
-          } else {
-            throw new Error(`Failed to fetch matches: ${response.statusText}`);
-          }
-        } else {
-          const data = await response.json();
-          setMatches(data.matches || []);
-          logInfo(`Fetched ${data.matches?.length || 0} matching results`, {
-            component: 'MatchingResults',
-            action: 'fetch',
-          });
-        }
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-        setError(errorMessage);
-        logError('Failed to fetch matching results', {
-          component: 'MatchingResults',
-          action: 'fetch',
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMatches();
-  }, [jobId]);
+  const {
+    data: matches = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['potentialMatches', jobId],
+    queryFn: () => fetchMatchesForJob(jobId),
+    enabled: !!jobId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes (cache time)
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
 
   // Loading state
-  if (loading) {
+  if (isLoading) {
     return (
       <div
         data-testid="matching-results-loading"
@@ -83,7 +74,8 @@ const MatchingResults: React.FC<MatchingResultsProps> = ({ jobId }) => {
   }
 
   // Error state
-  if (error) {
+  const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+  if (isError) {
     return (
       <div
         data-testid="matching-results-error"
@@ -107,7 +99,7 @@ const MatchingResults: React.FC<MatchingResultsProps> = ({ jobId }) => {
           </div>
           <div className="ml-3">
             <h3 className="text-sm font-medium text-red-800">Erro ao carregar resultados</h3>
-            <div className="mt-2 text-sm text-red-700">{error}</div>
+            <div className="mt-2 text-sm text-red-700">{errorMessage}</div>
           </div>
         </div>
       </div>
