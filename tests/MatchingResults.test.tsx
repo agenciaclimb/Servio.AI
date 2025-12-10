@@ -31,9 +31,7 @@ global.fetch = vi.fn();
 
 // Wrapper component with QueryClient
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <QueryClientProvider client={createTestQueryClient()}>
-    {children}
-  </QueryClientProvider>
+  <QueryClientProvider client={createTestQueryClient()}>{children}</QueryClientProvider>
 );
 
 describe('MatchingResults Component', () => {
@@ -219,7 +217,9 @@ describe('MatchingResults Component', () => {
 
       await waitFor(() => {
         const heading = screen.getByText((content, element) => {
-          return element?.tagName === 'H3' && content.includes('Encontramos') && content.includes('2');
+          return (
+            element?.tagName === 'H3' && content.includes('Encontramos') && content.includes('2')
+          );
         });
         expect(heading).toBeInTheDocument();
       });
@@ -236,7 +236,9 @@ describe('MatchingResults Component', () => {
 
       await waitFor(() => {
         const heading = screen.getByText((content, element) => {
-          return element?.tagName === 'H3' && content.includes('Encontramos') && content.includes('1');
+          return (
+            element?.tagName === 'H3' && content.includes('Encontramos') && content.includes('1')
+          );
         });
         expect(heading).toBeInTheDocument();
       });

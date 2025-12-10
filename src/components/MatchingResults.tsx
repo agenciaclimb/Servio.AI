@@ -12,7 +12,9 @@ interface MatchingResultsProps {
  * @param jobId - The job ID to fetch matches for
  * @returns Promise with matches array
  */
-async function fetchMatchesForJob(jobId: string): Promise<(PotentialMatch & { provider?: User })[]> {
+async function fetchMatchesForJob(
+  jobId: string
+): Promise<(PotentialMatch & { provider?: User })[]> {
   if (!jobId) {
     throw new Error('Job ID is required');
   }
@@ -55,7 +57,7 @@ const MatchingResults: React.FC<MatchingResultsProps> = ({ jobId }) => {
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (cache time)
     retry: 2,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
   // Loading state
