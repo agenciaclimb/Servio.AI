@@ -1,0 +1,68 @@
+## VEREDITO: Rejeitado
+
+## Lista de violações:
+
+1.  **Violação do Princípio Supremo (Seção 1):** O Documento Mestre (versão 3.0) foi diretamente modificado para incorporar a nova versão do protocolo (v4.0), quando o correto, segundo o princípio supremo, seria atualizar o Documento Mestre com um bloco gerado pela auditoria do PR, mantendo o histórico e a rastreabilidade.
+2.  **Violação da Hierarquia e Ordem do Ciclo (Seções 2 e 3):** A atualização do Documento Mestre com o Protocolo v4.0 foi feita *antes* da auditoria e aprovação do PR #25, que está relacionado à Task 2.5 (Rate Limiting). O Documento Mestre não pode ser alterado antes que os PRs pendentes sejam auditados e aprovados.
+3.  **Inconsistência no Status Atual do Sistema:** O Status Atual do Sistema (tanto na versão 3.0 quanto na 4.0) indica que o PR #25 está em revisão e que a Task 2.5 está em desenvolvimento, mas o Documento Mestre foi atualizado *antes* da conclusão destas etapas.
+4.  **Duplicação de Conteúdo:** A criação do arquivo `PROTOCOLO_SUPREMO_V4.0.md` é desnecessária, pois o Documento Mestre é a única fonte de verdade. O conteúdo deste arquivo deve estar integrado no Documento Mestre.
+5.  **Mistura de Responsabilidades:** A ação de atualizar o Documento Mestre com uma nova versão do protocolo foi realizada sem a devida auditoria e aprovação, infringindo a separação de responsabilidades entre Gemini (auditoria) e Copilot (execução).
+6.  **Violação do Protocolo de Execução (Seção 6):** Copilot atualizou o Documento Mestre sem aguardar o bloco de atualização vindo do Gemini.
+7.  **Branch incorreta:** A atualização do Documento Mestre deveria ter sido feita em uma branch `feature/task-X` e aberta como um PR para ser auditada.
+
+## Lista de sugestões:
+
+1.  Reverter a atualização do Documento Mestre para a versão anterior (3.0).
+2.  Criar uma task para Copilot implementar as mudanças no `ClientJobCard.tsx`.
+3.  Gerar um bloco de atualização para o Documento Mestre com as alterações implementadas em `ClientJobCard.tsx`.
+4.  Auditar e aprovar o PR #25.
+5.  Gerar um bloco de atualização para o Documento Mestre com o conteúdo do Protocolo v4.0.
+6.  Solicitar que Copilot atualize o Documento Mestre com o bloco gerado.
+7.  Validar a atualização do Documento Mestre com o Protocolo v4.0.
+8.  Acompanhar PR #23 para aplicar as sugestões de documentação e logs.
+9.  Remover o arquivo `PROTOCOLO_SUPREMO_V4.0.md`.
+10. O processo de update do `ClientJobCard.tsx` deve ser feito antes da migração para o Protocolo Supremo v4.0.
+
+## Bloco:
+
+```
+=== ATUALIZAÇÃO DO DOCUMENTO MESTRE — PR 25 (REJEITADO) ===
+
+**Data**: 11/12/2025 15:22 BRT
+**Responsável**: Gemini (Auditoria Rejeitada - Protocolo Supremo A+)
+
+**PR #25: Atualização para o Protocolo Supremo v4.0**
+
+**Resumo Técnico**: Este PR visa atualizar o Documento Mestre para a versão 4.0 do Protocolo Supremo, que visa otimizar o fluxo de trabalho com IA e garantir maior consistência e rastreabilidade. Além disso, modifica `ClientJobCard.tsx` adicionando a função de exibir recomendações da IA.
+
+**Impactos na Arquitetura**:
+
+-   Introdução do Protocolo Supremo v4.0: Define novas regras e responsabilidades para as IAs (Gemini e Copilot) e o Orchestrator.
+-   Fluxo de Trabalho Unificado: Define a ordem das tarefas a serem seguidas pelas IAs e pelos desenvolvedores.
+-   Integração do ClientJobCard.tsx: Permite ao cliente visualizar as recomendações da IA.
+
+**Impactos em API, Componentes e Fluxo do Cliente**:
+
+*   Componentes: A alteração afeta o componente `ClientJobCard.tsx`, adicionando a funcionalidade de exibir as recomendações da IA.
+
+*   Fluxo do Cliente: O cliente agora tem acesso às recomendações da IA diretamente no `ClientJobCard.tsx`.
+
+**Testes Implementados**:
+
+*   Este PR não contém testes para o novo protocolo, pois ele é uma atualização do Documento Mestre.
+
+**Decisões Arquiteturais**:
+
+*   A introdução do Protocolo Supremo v4.0 visa garantir maior consistência e rastreabilidade no fluxo de trabalho com IA.
+
+**Garantia de Convergência com o Documento Mestre**:
+
+*   Este PR introduz uma nova versão do Protocolo Supremo e, portanto, precisa ser auditado para garantir a convergência com as diretrizes existentes.
+
+**Observações**:
+
+*   Este PR foi rejeitado devido à violação do princípio supremo do Documento Mestre, que define que o Documento Mestre é a única fonte de verdade e deve ser atualizado de forma rastreável, mantendo o histórico.
+
+**Status**: ❌ **REJEITADO - Documento Mestre não atualizado — Refazer o processo conforme o Protocolo Supremo v3.0**
+```
+

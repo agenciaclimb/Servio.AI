@@ -1,0 +1,86 @@
+{
+  "day": 2,
+  "area": "Backend Security",
+  "source": "gemini",
+  "tasks": [
+    {
+      "id": "2.1",
+      "title": "Implementar rate limiting nos endpoints da API",
+      "priority": "critical",
+      "description": "Implementar rate limiting em todos os endpoints públicos da API para mitigar ataques de negação de serviço (DoS) e força bruta. Usar um middleware robusto como `express-rate-limit` com configurações ajustáveis por ambiente (dev/prod). O rate limiting deve ser aplicado em diferentes níveis de granularidade: por endereço IP, por usuário autenticado (se aplicável). Configurar logging detalhado para monitorar e ajustar os limites.",
+      "labels": ["security", "backend", "api"],
+      "acceptanceCriteria": [
+        "Rate limiting implementado em todos os endpoints da API.",
+        "Middleware configurado com opções ajustáveis por ambiente.",
+        "Logging detalhado para monitoramento e ajuste.",
+        "Documentação atualizada com informações sobre rate limiting."
+      ]
+    },
+    {
+      "id": "2.2",
+      "title": "Adicionar validação de input nos endpoints da API",
+      "priority": "high",
+      "description": "Adicionar validação de input em todos os endpoints da API para prevenir vulnerabilidades de injeção (SQL, XSS, etc.) e garantir a integridade dos dados. Usar uma biblioteca de validação de schema como `Joi` ou `yup` para definir schemas de validação para cada endpoint. Os schemas devem validar o tipo, formato, tamanho e valores permitidos de cada parâmetro de entrada. Implementar tratamento de erros robusto para retornar mensagens de erro claras e informativas ao cliente em caso de falha na validação.",
+      "labels": ["security", "backend", "api"],
+      "acceptanceCriteria": [
+        "Validação de input implementada em todos os endpoints da API.",
+        "Schemas de validação definidos para cada endpoint.",
+        "Tratamento de erros robusto com mensagens claras e informativas.",
+        "Testes unitários para validar a validação de input."
+      ]
+    },
+    {
+      "id": "2.3",
+      "title": "Implementar autenticação e autorização robustas",
+      "priority": "critical",
+      "description": "Reforçar a autenticação e autorização em todos os endpoints da API para garantir que apenas usuários autenticados e autorizados possam acessar recursos protegidos. Utilizar Firebase Authentication para autenticação e Firestore Security Rules para autorização. Implementar middleware de autenticação para verificar a validade do token JWT e obter as informações do usuário. Definir Security Rules que concedam acesso com base no papel do usuário (client, provider, prospector, admin) e nas permissões necessárias para cada recurso. Testar rigorosamente as Security Rules para garantir que apenas usuários autorizados possam acessar os recursos apropriados.",
+      "labels": ["security", "backend", "authentication", "authorization"],
+      "acceptanceCriteria": [
+        "Autenticação e autorização reforçadas em todos os endpoints da API.",
+        "Firebase Authentication e Firestore Security Rules configurados.",
+        "Middleware de autenticação implementado.",
+        "Security Rules definidos com base no papel do usuário.",
+        "Testes rigorosos das Security Rules."
+      ]
+    },
+    {
+      "id": "2.4",
+      "title": "Atualizar dependências do backend para versões seguras",
+      "priority": "high",
+      "description": "Analisar as dependências do backend (package.json) para identificar vulnerabilidades conhecidas e atualizar as dependências para as versões mais recentes e seguras. Usar o comando `npm audit` ou `yarn audit` para identificar vulnerabilidades. Atualizar as dependências para as versões corrigidas, levando em consideração possíveis breaking changes. Documentar as atualizações e as vulnerabilidades corrigidas.",
+      "labels": ["security", "backend", "dependencies"],
+      "acceptanceCriteria": [
+        "Dependências do backend atualizadas para versões seguras.",
+        "`npm audit` ou `yarn audit` executado e vulnerabilidades corrigidas.",
+        "Atualizações documentadas.",
+        "Testes executados para garantir que as atualizações não introduziram bugs."
+      ]
+    },
+    {
+      "id": "2.5",
+      "title": "Implementar logs de segurança abrangentes",
+      "priority": "medium",
+      "description": "Implementar logs de segurança abrangentes para monitorar atividades suspeitas e facilitar a detecção de incidentes de segurança. Utilizar uma biblioteca de logging robusta como `Winston` ou `Morgan` para registrar eventos relevantes como: autenticação, autorização, acesso a recursos protegidos, erros de validação, tentativas de injeção, etc. Os logs devem incluir informações como: timestamp, endereço IP, ID do usuário, endpoint acessado, parâmetros de entrada, mensagem de erro (se aplicável). Configurar um sistema de monitoramento para analisar os logs e gerar alertas em caso de atividades suspeitas.",
+      "labels": ["security", "backend", "logging"],
+      "acceptanceCriteria": [
+        "Logs de segurança implementados para eventos relevantes.",
+        "Biblioteca de logging configurada.",
+        "Logs incluem informações detalhadas sobre as atividades.",
+        "Sistema de monitoramento configurado para analisar os logs e gerar alertas."
+      ]
+    },
+    {
+      "id": "2.6",
+      "title": "Adicionar testes de segurança automatizados",
+      "priority": "medium",
+      "description": "Integrar testes de segurança automatizados ao pipeline de CI/CD para detectar vulnerabilidades antes que cheguem à produção. Utilizar ferramentas de análise estática de código (SAST) e análise dinâmica de código (DAST) para identificar vulnerabilidades como: injeção de código, XSS, CSRF, etc. Configurar as ferramentas para rodar automaticamente em cada commit e gerar relatórios de vulnerabilidades. Priorizar a correção de vulnerabilidades de alta e crítica severidade.",
+      "labels": ["security", "backend", "testing", "ci/cd"],
+      "acceptanceCriteria": [
+        "Testes de segurança automatizados integrados ao pipeline de CI/CD.",
+        "Ferramentas SAST e DAST configuradas.",
+        "Relatórios de vulnerabilidades gerados automaticamente.",
+        "Vulnerabilidades de alta e crítica severidade corrigidas."
+      ]
+    }
+  ]
+}

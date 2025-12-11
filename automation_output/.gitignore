@@ -1,0 +1,5 @@
+# Outputs gerados pelas automações (temporários)
+*.md
+*.txt
+*.json
+!.gitkeep
