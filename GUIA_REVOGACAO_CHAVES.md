@@ -103,22 +103,14 @@ gcloud secrets create GOOGLE_PLACES_API_KEY \
 
 ### 4. ATUALIZAR BACKEND PARA USAR SECRET MANAGER
 
-Verificar se o backend já está configurado para Secret Manager:
+✅ **CONCLUÍDO**: Backend atualizado para usar Secret Manager
 
-```javascript
-// backend/src/index.js (exemplo)
-const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
-const client = new SecretManagerServiceClient();
+- ✅ Arquivo criado: `backend/src/utils/secretHelper.js`
+- ✅ Serviço `servio-backend-v2` atualizado com `--update-secrets`
+- ✅ Mapeamento: `PLACES_API_KEY` → `GOOGLE_PLACES_API_KEY:latest`
+- ✅ Workflow CI/CD atualizado (`.github/workflows/deploy-cloud-run.yml`)
 
-async function accessSecret(secretName) {
-  const [version] = await client.accessSecretVersion({
-    name: `projects/gen-lang-client-0737507616/secrets/${secretName}/versions/latest`,
-  });
-  return version.payload.data.toString();
-}
-
-const PLACES_API_KEY = await accessSecret('GOOGLE_PLACES_API_KEY');
-```
+O backend agora lê o segredo via Cloud Run env var, com fallback seguro em caso de ausência.
 
 ---
 
@@ -145,6 +137,8 @@ const PLACES_API_KEY = await accessSecret('GOOGLE_PLACES_API_KEY');
 | Limpeza histórico Git             | ✅ Concluído    | Automatizado (BFG)               |
 | Force push GitHub                 | ✅ Concluído    | Automatizado                     |
 | Backup repositório                | ✅ Criado       | C:\Users\JE\servio-ai-backup.git |
+| Backend usar Secret Manager       | ✅ Concluído    | Automatizado (Cloud Run)         |
+| Workflow CI/CD atualizado         | ✅ Concluído    | Automatizado                     |
 | Revogar chave Places API          | ⚠️ **PENDENTE** | **Manual (VOCÊ)**                |
 | Revogar chave Firebase servioai   | ⚠️ **PENDENTE** | **Manual (VOCÊ)**                |
 | Revogar chave Firebase production | ⚠️ **PENDENTE** | **Manual (VOCÊ)**                |
