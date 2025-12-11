@@ -1,0 +1,1124 @@
+diff --git a/DOCUMENTO_MESTRE_SERVIO_AI.md b/DOCUMENTO_MESTRE_SERVIO_AI.md
+index 8027ec7..073f57e 100644
+--- a/DOCUMENTO_MESTRE_SERVIO_AI.md
++++ b/DOCUMENTO_MESTRE_SERVIO_AI.md
+@@ -4438,3 +4438,55 @@ GET  /api/whatsapp/multi-role/templates/:userType
+ 
+ _Última atualização: Integração de matching de IA no dashboard do cliente implementada e validada_  
+ _Próxima revisão: Task 2.5 | Advanced Matching Features_
++
++# ========================================
++
++# ATUALIZAÇÃO AUTOMÁTICA — 2025-12-11T14:25:32.0110283-03:00
++
++=== ATUALIZAÇÃO DO DOCUMENTO MESTRE — PR #26 ===
++
++**Data**: 11/12/2025 16:15 BRT  
++**Responsável**: Gemini (Auditoria Aprovada - Protocolo Supremo v4.0)
++
++**PR #26: Protocolo Supremo v4.0 (Isolado e Auditável)**
++
++**Resumo Técnico**: O Protocolo Supremo v4.0 foi apresentado para auditoria e aprovado pelo Gemini. Este protocolo unifica e redefine os processos de desenvolvimento e implementação, com foco em responsabilidades claras, ciclo de vida imutável e rastreabilidade completa.
++
++**Veredito**: ✅ **APROVADO - Sem ressalvas**
++
++**Impactos na Arquitetura**:
++
++- **Hierarquia Oficial**: Gemini (Auditor Global), Copilot (Executor Técnico), Orchestrator (Motor de Tasks)
++- **Princípio Supremo**: Documento Mestre é a fonte única de verdade
++- **Ordem do Ciclo**: Ciclo imutável de 10 passos para rastreabilidade total
++- **Protocolos**: Auditoria (Gemini) e Execução (Copilot) formalmente definidos
++
++**Principais Mudanças**:
++
++- **Seção 2 (Hierarquia)**: Define poderes e proibições de cada agente
++- **Seção 3 (Ciclo)**: 10 passos obrigatórios e imutáveis
++- **Seção 4 (Regra de Branches)**: Estrutura clara de controle de versão
++- **Seção 6 (Protocolo de Auditoria)**: Procedimento rigoroso do Gemini
++- **Seção 7 (Protocolo de Execução)**: Procedimento do Copilot
++
++**Decisões Arquiteturais**:
++
++- O Protocolo v4.0 define o novo padrão operacional do ecossistema Servio.AI
++- Implementação será incremental através de tasks geradas pelo Gemini
++- Cada mudança será auditada conforme protocolo antes de merge
++- Zero tolerância a violações do Protocolo Supremo
++
++**Garantia de Convergência com o Documento Mestre**:
++
++Este PR e auditoria garantem total conformidade com as diretrizes do Protocolo Supremo v3.0 durante a transição para v4.0. A aprovação autoriza o início da fase de implementação incremental.
++
++**Observações**:
++
++- Protocolo v4.0 está oficialmente ativado em main (commit após merge de PR #26)
++- Toda a documentação está integrada no Documento Mestre
++- Histórico de rejeição do PR #25 foi preservado para aprendizado
++- Sistema agora opera sob novo protocolo de forma controlada e rastreável
++
++**Status**: ✅ **APROVADO - Documento Mestre atualizado — Fase de implementação iniciada**
++
++---
+diff --git a/ai-tasks/day-3/task-3.1.md b/ai-tasks/day-3/task-3.1.md
+new file mode 100644
+index 0000000..d7f2bbd
+--- /dev/null
++++ b/ai-tasks/day-3/task-3.1.md
+@@ -0,0 +1,37 @@
++# Task 3.1 — Implementar sistema de tasks automático (ai-tasks/day-X/)
++
++ID: 3.1
++Protocolo: v4.0
++
++Descrição:
++Criação de um sistema automático para leitura e execução de tasks definidas em arquivos JSON.
++
++Critérios de Aceitação:
++
++- Sistema lê e parseia arquivos JSON de tasks
++- Sistema valida o schema dos arquivos
++- Sistema executa as ações descritas
++- Sistema lida com erros apropriadamente
++- Logging básico das ações executadas
++
++Arquivos:
++
++- Criar: `ai-tasks/task_manager.ts`, `ai-tasks/task_interface.ts`, `ai-tasks/task_manager.test.ts`
++- Modificar: (nenhum)
++
++Dependências: (nenhuma)
++Esforço Estimado: 8h
++
++Plano de Implementação:
++
++1. Definir `Task` interface e schemas básicos
++2. Implementar `TaskManager` com: carregar JSON, validar, executar handlers
++3. Adicionar logging simples usando console + hooks para integrar logger posterior (Task 3.3)
++4. Escrever testes unitários básicos com Vitest
++5. Preparar branch `feature/task-3.1` e PR para auditoria Gemini
++
++Observações:
++
++- Integrar com futura camada de auditoria (Task 3.3)
++- Arquitetura simples, extensível para ações como criação de arquivos, abrir issues, etc.
++- Garantir que não dependa de serviços externos na primeira versão.
+diff --git a/ai-tasks/day-3/task-3.2.md b/ai-tasks/day-3/task-3.2.md
+new file mode 100644
+index 0000000..b6336ce
+--- /dev/null
++++ b/ai-tasks/day-3/task-3.2.md
+@@ -0,0 +1,31 @@
++# Task 3.2 — Integrar Gemini CLI com GitHub Actions
++
++ID: 3.2
++Protocolo: v4.0
++
++Descrição:
++Configuração de workflow no GitHub Actions para executar Gemini CLI em eventos de push/PR.
++
++Critérios de Aceitação:
++
++- Workflow do GitHub Actions configurado
++- CLI executada em eventos de push e pull request
++- Workflow gera relatórios e logs
++- Workflow configurável para diferentes ambientes
++- Status da execução visível no GitHub
++
++Arquivos:
++
++- Criar: `.github/workflows/gemini_cli.yml`
++- Modificar: (nenhum)
++
++Dependências: (nenhuma)
++Esforço Estimado: 6h
++
++Plano de Implementação:
++
++1. Adicionar workflow YAML com jobs de audit/validate
++2. Configurar secrets para GEMINI_API_KEY
++3. Executar CLI em `pull_request` e `push`
++4. Artefatos: salvar relatório de auditoria
++5. Validar em branch de teste
+diff --git a/ai-tasks/day-3/task-3.3.md b/ai-tasks/day-3/task-3.3.md
+new file mode 100644
+index 0000000..8db2618
+--- /dev/null
++++ b/ai-tasks/day-3/task-3.3.md
+@@ -0,0 +1,31 @@
++# Task 3.3 — Criar protocolo de logging e auditoria
++
++ID: 3.3
++Protocolo: v4.0
++
++Descrição:
++Sistema de logging centralizado para registrar todas as ações do Protocolo Supremo v4.0.
++
++Critérios de Aceitação:
++
++- Sistema de logging centralizado implementado
++- Logs incluem timestamps e severidade
++- Sistema de auditoria gera relatórios
++- Sistema gera alertas em eventos suspeitos
++- Logs armazenados com segurança
++
++Arquivos:
++
++- Criar: `utils/logger.ts`, `utils/auditor.ts`, `models/log_entry.ts`, `utils/logger.test.ts`
++- Modificar: (nenhum)
++
++Dependências: (nenhuma)
++Esforço Estimado: 8h
++
++Plano de Implementação:
++
++1. Definir `LogEntry` e níveis (info, warn, error)
++2. Implementar `logger.ts` com rotas de saída (console, arquivo)
++3. Implementar `auditor.ts` para gerar relatórios a partir dos logs
++4. Testes unitários para formatos e thresholds
++5. Preparar integração com Task 3.1/3.6
+diff --git a/ai-tasks/day-3/task-3.4.md b/ai-tasks/day-3/task-3.4.md
+new file mode 100644
+index 0000000..534db31
+--- /dev/null
++++ b/ai-tasks/day-3/task-3.4.md
+@@ -0,0 +1,30 @@
++# Task 3.4 — Implementar validação de Documento Mestre (parser)
++
++ID: 3.4
++Protocolo: v4.0
++
++Descrição:
++Parser para validar a estrutura e conteúdo do Documento Mestre v4.0.
++
++Critérios de Aceitação:
++
++- Parser implementado para validar Documento Mestre v4.0
++- Parser verifica a estrutura do documento
++- Parser verifica campos obrigatórios
++- Parser valida os valores dos campos
++- Testes unitários cobrem cenários de validação
++
++Arquivos:
++
++- Criar: `master_document/parser.ts`, `master_document/schema.json`, `master_document/parser.test.ts`
++- Modificar: (nenhum)
++
++Dependências: (nenhuma)
++Esforço Estimado: 10h
++
++Plano de Implementação:
++
++1. Definir `schema.json` com seções obrigatórias e tipos
++2. Implementar `parser.ts` para validar contra schema
++3. Testes unitários com casos válidos e inválidos
++4. Integrar parser ao pipeline local (npm script)
+diff --git a/ai-tasks/day-3/task-3.5.md b/ai-tasks/day-3/task-3.5.md
+new file mode 100644
+index 0000000..28a974d
+--- /dev/null
++++ b/ai-tasks/day-3/task-3.5.md
+@@ -0,0 +1,31 @@
++# Task 3.5 — Criar dashboard de status do Protocolo v4.0
++
++ID: 3.5
++Protocolo: v4.0
++
++Descrição:
++Dashboard para monitorar status do Protocolo Supremo v4.0 com métricas em tempo real.
++
++Critérios de Aceitação:
++
++- Dashboard criado e funcional
++- Exibe versão do protocolo e status das tasks
++- Exibe métricas de erro e tempo de execução
++- Acessível via web com atualização em tempo real
++- UI/UX intuitiva
++
++Arquivos:
++
++- Criar: `dashboard/index.html`, `dashboard/app.js`, `dashboard/style.css`, `dashboard/api.ts`
++- Modificar: (nenhum)
++
++Dependências: (nenhuma)
++Esforço Estimado: 12h
++
++Plano de Implementação:
++
++1. Estruturar HTML/CSS base
++2. Implementar `app.js` com fetch ao `api.ts`
++3. Índice de métricas (status por task, erros, tempos)
++4. Atualização periódica (polling/websocket futuro)
++5. Validar acessibilidade básica
+diff --git a/ai-tasks/day-3/task-3.6.md b/ai-tasks/day-3/task-3.6.md
+new file mode 100644
+index 0000000..a4f20b8
+--- /dev/null
++++ b/ai-tasks/day-3/task-3.6.md
+@@ -0,0 +1,30 @@
++# Task 3.6 — Testes E2E do ciclo completo (10 passos)
++
++ID: 3.6
++Protocolo: v4.0
++
++Descrição:
++Testes End-to-End para validar ciclo completo do Protocolo Supremo v4.0.
++
++Critérios de Aceitação:
++
++- Testes E2E implementados para ciclo completo
++- Testes cobrem os 10 passos do protocolo
++- Componentes funcionam corretamente em conjunto
++- Testes geram relatórios detalhados
++- Cobertura de código acima de 80%
++
++Arquivos:
++
++- Criar: `e2e/protocol_test.ts`, `e2e/test_data.json`
++- Modificar: (nenhum)
++
++Dependências: 3.1, 3.2, 3.3, 3.4, 3.5
++Esforço Estimado: 16h
++
++Plano de Implementação:
++
++1. Escrever cenários cobrindo cada passo do protocolo
++2. Preparar dados de teste em `test_data.json`
++3. Rodar em CI com relatórios
++4. Garantir cobertura mínima de 80%
+diff --git a/ai-tasks/task_interface.ts b/ai-tasks/task_interface.ts
+new file mode 100644
+index 0000000..3ef4db9
+--- /dev/null
++++ b/ai-tasks/task_interface.ts
+@@ -0,0 +1,46 @@
++/**
++ * Interface para definição de Tasks do Protocolo Supremo v4.0
++ */
++
++export interface Task {
++  id: string;
++  title: string;
++  description: string;
++  acceptance_criteria: string[];
++  files_to_create: string[];
++  files_to_modify: string[];
++  dependencies: string[];
++  estimated_effort: string;
++  status?: TaskStatus;
++  created_at?: Date;
++  updated_at?: Date;
++}
++
++export enum TaskStatus {
++  NOT_STARTED = 'not_started',
++  IN_PROGRESS = 'in_progress',
++  BLOCKED = 'blocked',
++  COMPLETED = 'completed',
++  FAILED = 'failed',
++}
++
++export interface TaskExecutionResult {
++  task_id: string;
++  success: boolean;
++  message: string;
++  errors?: string[];
++  logs?: string[];
++  execution_time_ms?: number;
++}
++
++export interface TaskManagerConfig {
++  tasks_directory: string;
++  log_level: 'info' | 'warn' | 'error' | 'debug';
++  enable_validation: boolean;
++}
++
++export interface TaskDay {
++  day: number;
++  protocol_version: string;
++  tasks: Task[];
++}
+diff --git a/ai-tasks/task_manager.ts b/ai-tasks/task_manager.ts
+new file mode 100644
+index 0000000..e28d791
+--- /dev/null
++++ b/ai-tasks/task_manager.ts
+@@ -0,0 +1,251 @@
++/**
++ * TaskManager - Sistema de gerenciamento de tasks do Protocolo Supremo v4.0
++ */
++
++import * as fs from 'node:fs';
++import * as path from 'node:path';
++import { Task, TaskDay, TaskExecutionResult, TaskManagerConfig, TaskStatus } from './task_interface';
++
++export class TaskManager {
++  private config: TaskManagerConfig;
++  private tasks: Map<string, Task> = new Map();
++
++  constructor(config: Partial<TaskManagerConfig> = {}) {
++    this.config = {
++      tasks_directory: config.tasks_directory || './ai-tasks',
++      log_level: config.log_level || 'info',
++      enable_validation: config.enable_validation ?? true,
++    };
++  }
++
++  /**
++   * Carrega tasks de um arquivo JSON
++   */
++  async loadTasksFromFile(filePath: string): Promise<Task[]> {
++    try {
++      const absolutePath = path.resolve(filePath);
++      
++      if (!fs.existsSync(absolutePath)) {
++        throw new Error(`Arquivo não encontrado: ${absolutePath}`);
++      }
++
++      const fileContent = fs.readFileSync(absolutePath, 'utf-8');
++      const data = JSON.parse(fileContent) as TaskDay;
++
++      if (this.config.enable_validation) {
++        this.validateTaskDay(data);
++      }
++
++      // Armazena tasks no Map interno
++      data.tasks.forEach(task => {
++        task.status = task.status || TaskStatus.NOT_STARTED;
++        task.created_at = task.created_at || new Date();
++        this.tasks.set(task.id, task);
++      });
++
++      this.log('info', `✅ Carregadas ${data.tasks.length} tasks do arquivo ${filePath}`);
++      return data.tasks;
++    } catch (error) {
++      this.log('error', `❌ Erro ao carregar tasks: ${error instanceof Error ? error.message : String(error)}`);
++      throw error;
++    }
++  }
++
++  /**
++   * Valida estrutura do TaskDay JSON
++   */
++  private validateTaskDay(data: TaskDay): void {
++    if (!data.day || typeof data.day !== 'number') {
++      throw new Error('Campo "day" inválido ou ausente');
++    }
++
++    if (!data.protocol_version || typeof data.protocol_version !== 'string') {
++      throw new Error('Campo "protocol_version" inválido ou ausente');
++    }
++
++    if (!Array.isArray(data.tasks)) {
++      throw new Error('Campo "tasks" deve ser um array');
++    }
++
++    data.tasks.forEach((task, index) => {
++      this.validateTask(task, index);
++    });
++  }
++
++  /**
++   * Valida estrutura de uma Task individual
++   */
++  private validateTask(task: Task, index: number): void {
++    const requiredFields = ['id', 'title', 'description', 'acceptance_criteria', 'files_to_create', 'files_to_modify', 'dependencies', 'estimated_effort'];
++    
++    requiredFields.forEach(field => {
++      if (!(field in task)) {
++        throw new Error(`Task[${index}]: campo obrigatório "${field}" ausente`);
++      }
++    });
++
++    if (!Array.isArray(task.acceptance_criteria)) {
++      throw new Error(`Task[${index}]: "acceptance_criteria" deve ser array`);
++    }
++
++    if (!Array.isArray(task.files_to_create)) {
++      throw new Error(`Task[${index}]: "files_to_create" deve ser array`);
++    }
++
++    if (!Array.isArray(task.files_to_modify)) {
++      throw new Error(`Task[${index}]: "files_to_modify" deve ser array`);
++    }
++
++    if (!Array.isArray(task.dependencies)) {
++      throw new Error(`Task[${index}]: "dependencies" deve ser array`);
++    }
++  }
++
++  /**
++   * Retorna task por ID
++   */
++  getTask(taskId: string): Task | undefined {
++    return this.tasks.get(taskId);
++  }
++
++  /**
++   * Lista todas as tasks carregadas
++   */
++  getAllTasks(): Task[] {
++    return Array.from(this.tasks.values());
++  }
++
++  /**
++   * Filtra tasks por status
++   */
++  getTasksByStatus(status: TaskStatus): Task[] {
++    return this.getAllTasks().filter(task => task.status === status);
++  }
++
++  /**
++   * Atualiza status de uma task
++   */
++  updateTaskStatus(taskId: string, status: TaskStatus): boolean {
++    const task = this.tasks.get(taskId);
++    if (!task) {
++      this.log('warn', `Task ${taskId} não encontrada`);
++      return false;
++    }
++
++    task.status = status;
++    task.updated_at = new Date();
++    this.log('info', `Task ${taskId} status atualizado para ${status}`);
++    return true;
++  }
++
++  /**
++   * Executa handler de uma task (placeholder para extensão futura)
++   */
++  async executeTask(taskId: string): Promise<TaskExecutionResult> {
++    const startTime = Date.now();
++    const task = this.tasks.get(taskId);
++
++    if (!task) {
++      return {
++        task_id: taskId,
++        success: false,
++        message: `Task ${taskId} não encontrada`,
++        errors: ['Task não existe no gerenciador'],
++      };
++    }
++
++    this.log('info', `🚀 Iniciando execução da task ${taskId}: ${task.title}`);
++    this.updateTaskStatus(taskId, TaskStatus.IN_PROGRESS);
++
++    try {
++      // Placeholder: integração futura com Orchestrator/actions
++      // Por enquanto apenas simula execução bem-sucedida
++      await this.simulateExecution(task);
++
++      this.updateTaskStatus(taskId, TaskStatus.COMPLETED);
++      const executionTime = Date.now() - startTime;
++
++      this.log('info', `✅ Task ${taskId} executada com sucesso em ${executionTime}ms`);
++
++      return {
++        task_id: taskId,
++        success: true,
++        message: `Task ${task.title} executada com sucesso`,
++        execution_time_ms: executionTime,
++        logs: [`Critérios de aceitação: ${task.acceptance_criteria.length}`, `Arquivos a criar: ${task.files_to_create.length}`],
++      };
++    } catch (error) {
++      this.updateTaskStatus(taskId, TaskStatus.FAILED);
++      const executionTime = Date.now() - startTime;
++
++      this.log('error', `❌ Falha na execução da task ${taskId}: ${error instanceof Error ? error.message : String(error)}`);
++
++      return {
++        task_id: taskId,
++        success: false,
++        message: `Falha na execução: ${error instanceof Error ? error.message : String(error)}`,
++        errors: [error instanceof Error ? error.message : String(error)],
++        execution_time_ms: executionTime,
++      };
++    }
++  }
++
++  /**
++   * Simula execução (placeholder)
++   */
++  private async simulateExecution(task: Task): Promise<void> {
++    // Simula delay de processamento
++    await new Promise(resolve => setTimeout(resolve, 100));
++    
++    // Simula validação de dependências
++    if (task.dependencies.length > 0) {
++      this.log('debug', `Verificando dependências: ${task.dependencies.join(', ')}`);
++    }
++  }
++
++  /**
++   * Sistema de logging simples
++   */
++  private log(level: 'info' | 'warn' | 'error' | 'debug', message: string): void {
++    const levels = { debug: 0, info: 1, warn: 2, error: 3 };
++    const configLevel = levels[this.config.log_level];
++    const messageLevel = levels[level];
++
++    if (messageLevel >= configLevel) {
++      const timestamp = new Date().toISOString();
++      const prefix = {
++        info: 'ℹ️',
++        warn: '⚠️',
++        error: '❌',
++        debug: '🔍',
++      }[level];
++
++      console.log(`[${timestamp}] ${prefix} [TaskManager] ${message}`);
++    }
++  }
++
++  /**
++   * Gera relatório de status
++   */
++  getStatusReport(): Record<string, unknown> {
++    const tasks = this.getAllTasks();
++    const byStatus = {
++      not_started: this.getTasksByStatus(TaskStatus.NOT_STARTED).length,
++      in_progress: this.getTasksByStatus(TaskStatus.IN_PROGRESS).length,
++      completed: this.getTasksByStatus(TaskStatus.COMPLETED).length,
++      failed: this.getTasksByStatus(TaskStatus.FAILED).length,
++      blocked: this.getTasksByStatus(TaskStatus.BLOCKED).length,
++    };
++
++    return {
++      total_tasks: tasks.length,
++      by_status: byStatus,
++      tasks: tasks.map(t => ({
++        id: t.id,
++        title: t.title,
++        status: t.status,
++        estimated_effort: t.estimated_effort,
++      })),
++    };
++  }
++}
+diff --git a/generate-tasks-day3.js b/generate-tasks-day3.js
+new file mode 100644
+index 0000000..d033904
+--- /dev/null
++++ b/generate-tasks-day3.js
+@@ -0,0 +1,117 @@
++import { GoogleGenerativeAI } from "@google/generative-ai";
++import fs from "fs";
++
++const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
++
++if (!GEMINI_API_KEY) {
++  console.error("❌ Erro: GEMINI_API_KEY não configurada");
++  process.exit(1);
++}
++
++async function generateTasksDay3() {
++  const client = new GoogleGenerativeAI(GEMINI_API_KEY);
++  const model = client.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
++
++  // Ler Documento Mestre para contexto
++  const masterDoc = fs.readFileSync("DOCUMENTO_MESTRE_SERVIO_AI.md", "utf-8");
++
++  const prompt = `Tu és o Gemini, planejador estratégico do Protocolo Supremo v4.0 do Servio.AI.
++
++## CONTEXTO:
++
++O Protocolo Supremo v4.0 foi APROVADO pelo Gemini e está agora ATIVO em main.
++
++Documento Mestre v4.0 está ativo. Sistema pronto para Fase de Implementação.
++
++## TAREFA:
++
++Gera um JSON de **6 tasks** para o **Dia 3** que:
++
++1. **Implementem incrementalmente** o Protocolo Supremo v4.0
++2. **Sejam pequenas e auditáveis** (máximo 2-3 arquivos por task)
++3. **Sigam ordem lógica** (dependências respeitadas)
++4. **Incluam testes** para cada feature
++5. **Tenham aceitação clara** (DoD - Definition of Done)
++
++## FOCO DAS TASKS:
++
++Dia 3 deve focar em:
++
++- **Task 3.1**: Implementar sistema de tasks automático (ai-tasks/day-X/)
++- **Task 3.2**: Integrar Gemini CLI com GitHub Actions
++- **Task 3.3**: Criar protocolo de logging e auditoria
++- **Task 3.4**: Implementar validação de Documento Mestre (parser)
++- **Task 3.5**: Criar dashboard de status do Protocolo v4.0
++- **Task 3.6**: Testes E2E do ciclo completo (10 passos)
++
++## FORMATO DO JSON:
++
++\`\`\`json
++{
++  "day": 3,
++  "protocol_version": "4.0",
++  "tasks": [
++    {
++      "id": "3.1",
++      "title": "Task Title",
++      "description": "Full description",
++      "acceptance_criteria": ["✅ Criteria 1", "✅ Criteria 2"],
++      "files_to_create": ["file1.ts", "file2.test.ts"],
++      "files_to_modify": ["existing.ts"],
++      "dependencies": ["2.4"],
++      "estimated_effort": "4h",
++      "security_notes": "Se aplicável"
++    }
++  ]
++}
++\`\`\`
++
++## IMPORTANTE:
++
++- JSON deve ser **válido e parseável**
++- Cada task deve ter **descrição técnica completa**
++- Aceitar critérios devem ser **específicos e mensuráveis**
++- Esforço estimado deve ser **realista**
++- Documentar **todas as dependências**
++
++---
++
++**Responde com APENAS o JSON válido, sem explicações adicionais.**`;
++
++  try {
++    console.log("🔍 Gerando tasks para Dia 3...\n");
++
++    const result = await model.generateContent(prompt);
++    const tasksJson = result.response.text();
++
++    // Tentar fazer parse e validar JSON
++    let tasks;
++    try {
++      tasks = JSON.parse(tasksJson);
++      console.log("✅ JSON válido gerado!\n");
++    } catch (error) {
++      console.error("❌ JSON inválido gerado pelo Gemini:");
++      console.error(tasksJson);
++      process.exit(1);
++    }
++
++    // Salvar arquivo
++    fs.writeFileSync(
++      "tasks-day-3-generated.json",
++      JSON.stringify(tasks, null, 2),
++      "utf-8"
++    );
++
++    console.log("📋 Tasks Geradas para Dia 3:\n");
++    console.log("================================");
++    console.log(JSON.stringify(tasks, null, 2));
++    console.log("================================\n");
++
++    console.log(`✅ ${tasks.tasks.length} tasks salvas em: tasks-day-3-generated.json`);
++  } catch (error) {
++    console.error("❌ Erro ao gerar tasks:", error.message);
++    process.exit(1);
++  }
++}
++
++generateTasksDay3();
+diff --git a/tasks-day-3-generated.json b/tasks-day-3-generated.json
+new file mode 100644
+index 0000000..43de27b
+--- /dev/null
++++ b/tasks-day-3-generated.json
+@@ -0,0 +1,102 @@
++{
++  "day": 3,
++  "protocol_version": "4.0",
++  "tasks": [
++    {
++      "id": "3.1",
++      "title": "Implementar sistema de tasks automático (ai-tasks/day-X/)",
++      "description": "Criação de um sistema automático para leitura e execução de tasks definidas em arquivos JSON",
++      "acceptance_criteria": [
++        "Sistema lê e parseia arquivos JSON de tasks",
++        "Sistema valida o schema dos arquivos",
++        "Sistema executa as ações descritas",
++        "Sistema lida com erros apropriadamente",
++        "Logging básico das ações executadas"
++      ],
++      "files_to_create": ["ai-tasks/task_manager.ts", "ai-tasks/task_interface.ts", "ai-tasks/task_manager.test.ts"],
++      "files_to_modify": [],
++      "dependencies": [],
++      "estimated_effort": "8h"
++    },
++    {
++      "id": "3.2",
++      "title": "Integrar Gemini CLI com GitHub Actions",
++      "description": "Configuração de workflow no GitHub Actions para executar Gemini CLI em eventos de push/PR",
++      "acceptance_criteria": [
++        "Workflow do GitHub Actions configurado",
++        "CLI executada em eventos de push e pull request",
++        "Workflow gera relatórios e logs",
++        "Workflow configurável para diferentes ambientes",
++        "Status da execução visível no GitHub"
++      ],
++      "files_to_create": [".github/workflows/gemini_cli.yml"],
++      "files_to_modify": [],
++      "dependencies": [],
++      "estimated_effort": "6h"
++    },
++    {
++      "id": "3.3",
++      "title": "Criar protocolo de logging e auditoria",
++      "description": "Sistema de logging centralizado para registrar todas as ações do Protocolo Supremo v4.0",
++      "acceptance_criteria": [
++        "Sistema de logging centralizado implementado",
++        "Logs incluem timestamps e severidade",
++        "Sistema de auditoria gera relatórios",
++        "Sistema gera alertas em eventos suspeitos",
++        "Logs armazenados com segurança"
++      ],
++      "files_to_create": ["utils/logger.ts", "utils/auditor.ts", "models/log_entry.ts", "utils/logger.test.ts"],
++      "files_to_modify": [],
++      "dependencies": [],
++      "estimated_effort": "8h"
++    },
++    {
++      "id": "3.4",
++      "title": "Implementar validação de Documento Mestre (parser)",
++      "description": "Parser para validar a estrutura e conteúdo do Documento Mestre v4.0",
++      "acceptance_criteria": [
++        "Parser implementado para validar Documento Mestre v4.0",
++        "Parser verifica a estrutura do documento",
++        "Parser verifica campos obrigatórios",
++        "Parser valida os valores dos campos",
++        "Testes unitários cobrem cenários de validação"
++      ],
++      "files_to_create": ["master_document/parser.ts", "master_document/schema.json", "master_document/parser.test.ts"],
++      "files_to_modify": [],
++      "dependencies": [],
++      "estimated_effort": "10h"
++    },
++    {
++      "id": "3.5",
++      "title": "Criar dashboard de status do Protocolo v4.0",
++      "description": "Dashboard para monitorar status do Protocolo Supremo v4.0 com métricas em tempo real",
++      "acceptance_criteria": [
++        "Dashboard criado e funcional",
++        "Exibe versão do protocolo e status das tasks",
++        "Exibe métricas de erro e tempo de execução",
++        "Acessível via web com atualização em tempo real",
++        "UI/UX intuitiva"
++      ],
++      "files_to_create": ["dashboard/index.html", "dashboard/app.js", "dashboard/style.css", "dashboard/api.ts"],
++      "files_to_modify": [],
++      "dependencies": [],
++      "estimated_effort": "12h"
++    },
++    {
++      "id": "3.6",
++      "title": "Testes E2E do ciclo completo (10 passos)",
++      "description": "Testes End-to-End para validar ciclo completo do Protocolo Supremo v4.0",
++      "acceptance_criteria": [
++        "Testes E2E implementados para ciclo completo",
++        "Testes cobrem os 10 passos do protocolo",
++        "Componentes funcionam corretamente em conjunto",
++        "Testes geram relatórios detalhados",
++        "Cobertura de código acima de 80%"
++      ],
++      "files_to_create": ["e2e/protocol_test.ts", "e2e/test_data.json"],
++      "files_to_modify": [],
++      "dependencies": ["3.1", "3.2", "3.3", "3.4", "3.5"],
++      "estimated_effort": "16h"
++    }
++  ]
++}
+diff --git a/tests/task_manager.test.ts b/tests/task_manager.test.ts
+new file mode 100644
+index 0000000..6731078
+--- /dev/null
++++ b/tests/task_manager.test.ts
+@@ -0,0 +1,292 @@
++/**
++ * Testes unitários para TaskManager
++ */
++
++import { describe, it, expect, beforeEach, vi } from 'vitest';
++import * as fs from 'node:fs';
++import { TaskManager } from '../ai-tasks/task_manager';
++import { TaskStatus } from '../ai-tasks/task_interface';
++
++// Mock do módulo fs
++vi.mock('fs');
++
++describe('TaskManager', () => {
++  let taskManager: TaskManager;
++
++  beforeEach(() => {
++    taskManager = new TaskManager({
++      log_level: 'error', // Silencia logs durante testes
++    });
++    vi.clearAllMocks();
++  });
++
++  describe('Inicialização', () => {
++    it('deve criar instância com configuração padrão', () => {
++      const tm = new TaskManager();
++      expect(tm).toBeDefined();
++      expect(tm.getAllTasks()).toEqual([]);
++    });
++
++    it('deve aceitar configuração customizada', () => {
++      const tm = new TaskManager({
++        tasks_directory: './custom-tasks',
++        log_level: 'debug',
++        enable_validation: false,
++      });
++      expect(tm).toBeDefined();
++    });
++  });
++
++  describe('loadTasksFromFile', () => {
++    it('deve carregar tasks válidas de arquivo JSON', async () => {
++      const mockData = {
++        day: 3,
++        protocol_version: '4.0',
++        tasks: [
++          {
++            id: '3.1',
++            title: 'Task de teste',
++            description: 'Descrição teste',
++            acceptance_criteria: ['Critério 1'],
++            files_to_create: ['file1.ts'],
++            files_to_modify: [],
++            dependencies: [],
++            estimated_effort: '2h',
++          },
++        ],
++      };
++
++      vi.mocked(fs.existsSync).mockReturnValue(true);
++      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(mockData));
++
++      const tasks = await taskManager.loadTasksFromFile('test.json');
++
++      expect(tasks).toHaveLength(1);
++      expect(tasks[0].id).toBe('3.1');
++      expect(tasks[0].status).toBe(TaskStatus.NOT_STARTED);
++    });
++
++    it('deve lançar erro se arquivo não existir', async () => {
++      vi.mocked(fs.existsSync).mockReturnValue(false);
++
++      await expect(taskManager.loadTasksFromFile('missing.json')).rejects.toThrow(
++        /Arquivo não encontrado/
++      );
++    });
++
++    it('deve lançar erro para JSON inválido', async () => {
++      vi.mocked(fs.existsSync).mockReturnValue(true);
++      vi.mocked(fs.readFileSync).mockReturnValue('{ invalid json }');
++
++      await expect(taskManager.loadTasksFromFile('invalid.json')).rejects.toThrow();
++    });
++
++    it('deve validar estrutura do TaskDay', async () => {
++      const invalidData = {
++        day: 3,
++        // Falta protocol_version
++        tasks: [],
++      };
++
++      vi.mocked(fs.existsSync).mockReturnValue(true);
++      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(invalidData));
++
++      await expect(taskManager.loadTasksFromFile('test.json')).rejects.toThrow(
++        /protocol_version/
++      );
++    });
++
++    it('deve validar campos obrigatórios de Task', async () => {
++      const invalidData = {
++        day: 3,
++        protocol_version: '4.0',
++        tasks: [
++          {
++            id: '3.1',
++            // Faltam campos obrigatórios
++          },
++        ],
++      };
++
++      vi.mocked(fs.existsSync).mockReturnValue(true);
++      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(invalidData));
++
++      await expect(taskManager.loadTasksFromFile('test.json')).rejects.toThrow(
++        /campo obrigatório/
++      );
++    });
++  });
++
++  describe('Gerenciamento de Tasks', () => {
++    beforeEach(async () => {
++      const mockData = {
++        day: 3,
++        protocol_version: '4.0',
++        tasks: [
++          {
++            id: '3.1',
++            title: 'Task 1',
++            description: 'Desc 1',
++            acceptance_criteria: ['C1'],
++            files_to_create: [],
++            files_to_modify: [],
++            dependencies: [],
++            estimated_effort: '2h',
++          },
++          {
++            id: '3.2',
++            title: 'Task 2',
++            description: 'Desc 2',
++            acceptance_criteria: ['C2'],
++            files_to_create: [],
++            files_to_modify: [],
++            dependencies: ['3.1'],
++            estimated_effort: '4h',
++          },
++        ],
++      };
++
++      vi.mocked(fs.existsSync).mockReturnValue(true);
++      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(mockData));
++
++      await taskManager.loadTasksFromFile('test.json');
++    });
++
++    it('deve retornar task por ID', () => {
++      const task = taskManager.getTask('3.1');
++      expect(task).toBeDefined();
++      expect(task?.title).toBe('Task 1');
++    });
++
++    it('deve retornar undefined para task inexistente', () => {
++      const task = taskManager.getTask('999');
++      expect(task).toBeUndefined();
++    });
++
++    it('deve listar todas as tasks', () => {
++      const tasks = taskManager.getAllTasks();
++      expect(tasks).toHaveLength(2);
++    });
++
++    it('deve filtrar tasks por status', () => {
++      const notStarted = taskManager.getTasksByStatus(TaskStatus.NOT_STARTED);
++      expect(notStarted).toHaveLength(2);
++
++      const completed = taskManager.getTasksByStatus(TaskStatus.COMPLETED);
++      expect(completed).toHaveLength(0);
++    });
++
++    it('deve atualizar status de task', () => {
++      const result = taskManager.updateTaskStatus('3.1', TaskStatus.IN_PROGRESS);
++      expect(result).toBe(true);
++
++      const task = taskManager.getTask('3.1');
++      expect(task?.status).toBe(TaskStatus.IN_PROGRESS);
++      expect(task?.updated_at).toBeDefined();
++    });
++
++    it('deve retornar false ao atualizar task inexistente', () => {
++      const result = taskManager.updateTaskStatus('999', TaskStatus.COMPLETED);
++      expect(result).toBe(false);
++    });
++  });
++
++  describe('executeTask', () => {
++    beforeEach(async () => {
++      const mockData = {
++        day: 3,
++        protocol_version: '4.0',
++        tasks: [
++          {
++            id: '3.1',
++            title: 'Task executável',
++            description: 'Desc',
++            acceptance_criteria: ['C1', 'C2'],
++            files_to_create: ['file1.ts', 'file2.ts'],
++            files_to_modify: [],
++            dependencies: [],
++            estimated_effort: '2h',
++          },
++        ],
++      };
++
++      vi.mocked(fs.existsSync).mockReturnValue(true);
++      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(mockData));
++
++      await taskManager.loadTasksFromFile('test.json');
++    });
++
++    it('deve executar task com sucesso', async () => {
++      const result = await taskManager.executeTask('3.1');
++
++      expect(result.success).toBe(true);
++      expect(result.task_id).toBe('3.1');
++      expect(result.execution_time_ms).toBeGreaterThan(0);
++      expect(result.logs).toBeDefined();
++
++      const task = taskManager.getTask('3.1');
++      expect(task?.status).toBe(TaskStatus.COMPLETED);
++    });
++
++    it('deve retornar erro para task inexistente', async () => {
++      const result = await taskManager.executeTask('999');
++
++      expect(result.success).toBe(false);
++      expect(result.errors).toBeDefined();
++      expect(result.errors?.[0]).toContain('não existe');
++    });
++  });
++
++  describe('getStatusReport', () => {
++    beforeEach(async () => {
++      const mockData = {
++        day: 3,
++        protocol_version: '4.0',
++        tasks: [
++          {
++            id: '3.1',
++            title: 'Task 1',
++            description: 'Desc',
++            acceptance_criteria: [],
++            files_to_create: [],
++            files_to_modify: [],
++            dependencies: [],
++            estimated_effort: '2h',
++          },
++          {
++            id: '3.2',
++            title: 'Task 2',
++            description: 'Desc',
++            acceptance_criteria: [],
++            files_to_create: [],
++            files_to_modify: [],
++            dependencies: [],
++            estimated_effort: '4h',
++          },
++        ],
++      };
++
++      vi.mocked(fs.existsSync).mockReturnValue(true);
++      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(mockData));
++
++      await taskManager.loadTasksFromFile('test.json');
++    });
++
++    it('deve gerar relatório de status', () => {
++      const report = taskManager.getStatusReport();
++
++      expect(report.total_tasks).toBe(2);
++      expect(report.by_status).toBeDefined();
++      expect((report.by_status as Record<string, number>).not_started).toBe(2);
++      expect(report.tasks).toHaveLength(2);
++    });
++
++    it('deve refletir mudanças de status no relatório', () => {
++      taskManager.updateTaskStatus('3.1', TaskStatus.COMPLETED);
++
++      const report = taskManager.getStatusReport();
++      expect((report.by_status as Record<string, number>).completed).toBe(1);
++      expect((report.by_status as Record<string, number>).not_started).toBe(1);
++    });
++  });
++});

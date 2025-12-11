@@ -1,0 +1,555 @@
+diff --git a/DOCUMENTO_MESTRE_SERVIO_AI.md b/DOCUMENTO_MESTRE_SERVIO_AI.md
+index 8027ec7..02de86c 100644
+--- a/DOCUMENTO_MESTRE_SERVIO_AI.md
++++ b/DOCUMENTO_MESTRE_SERVIO_AI.md
+@@ -4438,3 +4438,274 @@ GET  /api/whatsapp/multi-role/templates/:userType
+ 
+ _├Ültima atualiza├º├úo: Integra├º├úo de matching de IA no dashboard do cliente implementada e validada_  
+ _Pr├│xima revis├úo: Task 2.5 | Advanced Matching Features_
++
++# ­ƒƒú PROTOCOLO SUPREMO ÔÇö SERVIO.AI ÔÇö V4.0 (UNIFICADO E ABSOLUTO)
++
++**Data de Ativa├º├úo**: 11/12/2025  
++**Status**: ­ƒö┤ ATIVO ÔÇö Resolu├º├úo definitiva de todos os problemas de contexto, sincroniza├º├úo e auditoria  
++**Vers├úo Anterior**: 3.0 (descontinuada)
++
++---
++
++## ­ƒºá 1. PRINC├ìPIO SUPREMO ÔÇô O DOCUMENTO MESTRE ├ë A LEI ABSOLUTA
++
++O Documento Mestre ├®:
++
++Ô£ö **Fonte ├║nica de verdade**  
++Ô£ö **Central de comando do ecossistema**  
++Ô£ö **Registro hist├│rico de todas decis├Áes**  
++Ô£ö **Manual de auditoria**  
++Ô£ö **Matriz de alinhamento para Copilot e Gemini**
++
++**Regra Absoluta**: Nenhuma IA est├í autorizada a escrever c├│digo, gerar PR, criar task ou auditar algo SEM ANTES verificar o Documento Mestre.
++
++---
++
++## ­ƒƒª 2. HIERARQUIA OFICIAL ÔÇö QUEM FAZ O QU├è (PODERES CLARAMENTE DEFINIDOS)
++
++### 2.1 Gemini ÔÇô Auditor Global + Guardi├úo do Documento Mestre + Planejador
++
++**Gemini s├│ pode:**
++
++Ô£ö Auditar PRs  
++Ô£ö Gerar blocos de atualiza├º├úo do Documento Mestre  
++Ô£ö Gerar tasks (JSON)  
++Ô£ö Gerar diagn├│sticos estrat├®gicos  
++Ô£ö Validar arquitetura, seguran├ºa, fluxo, UX, API  
++Ô£ö Validar coer├¬ncia do Documento Mestre
++
++**Gemini est├í terminantemente proibido de:**
++
++ÔØî Escrever c├│digo  
++ÔØî Alterar arquivos  
++ÔØî Criar PR  
++ÔØî Resolver conflitos  
++ÔØî Fazer push  
++ÔØî Modificar o repo
++
++### 2.2 Copilot ÔÇô Executor T├®cnico Soberano
++
++**Copilot s├│ pode:**
++
++Ô£ö Implementar tasks aprovadas  
++Ô£ö Criar branches  
++Ô£ö Criar PRs  
++Ô£ö Resolver conflitos  
++Ô£ö Escrever c├│digo  
++Ô£ö Atualizar arquivos  
++Ô£ö Subir commits  
++Ô£ö Rodar scripts automatizados
++
++**Copilot est├í proibido de:**
++
++ÔØî Gerar tasks  
++ÔØî Especificar arquitetura  
++ÔØî Fazer auditoria  
++ÔØî Atualizar o Documento Mestre (exceto quando autorizado explicitamente)
++
++### 2.3 Orchestrator ÔÇö Motor de Tasks
++
++Ô£ö Recebe JSON de tasks do Gemini  
++Ô£ö Gera arquivos `ai-tasks/day-X/task-Y.md`  
++Ô£ö Cria issues automaticamente  
++Ô£ö Padroniza tarefas  
++Ô£ö Alimenta Copilot com escopo correto
++
++---
++
++## ­ƒƒº 3. ORDEM DO CICLO (OBRIGAT├ôRIA E IMUT├üVEL)
++
++1. **Gemini gera tasks** (JSON com especifica├º├Áes t├®cnicas)
++2. **Orchestrator cria tasks** no reposit├│rio (ai-tasks/day-X/task-Y.md + issues)
++3. **Copilot implementa a task** (seguindo instru├º├Áes do Documento Mestre)
++4. **Copilot abre PR** (vinculada ├á task do Orchestrator)
++5. **Gemini audita PR** (linha por linha, verificando Documento Mestre)
++6. **Gemini gera bloco de atualiza├º├úo** do Documento Mestre
++7. **Copilot aplica atualiza├º├úo** no Documento Mestre e faz commit
++8. **Gemini valida atualiza├º├úo** (verifica coer├¬ncia total)
++9. **Gemini libera pr├│xima task** (autoriza├º├úo expl├¡cita)
++10. **Ciclo reinicia**
++
++**ÔØù Regra Cr├¡tica**: Nenhuma task pode avan├ºar sem o Documento Mestre estar atualizado e validado.
++
++---
++
++## ­ƒƒÑ 4. REGRA DE BRANCHES (IMUT├üVEL)
++
++| Branch           | Responsabilidade       | Regra                                |
++| ---------------- | ---------------------- | ------------------------------------ |
++| `main`           | Produ├º├úo               | Somente merges aprovados pelo Gemini |
++| `develop`        | Integra├º├úo cont├¡nua    | Integra├º├úo de branches de feature    |
++| `feature/task-X` | Execu├º├úo de task       | Isolada, sem depend├¬ncias externas   |
++| `hotfix/*`       | Corre├º├Áes emergenciais | Merge r├ípido ap├│s auditoria          |
++
++---
++
++## ­ƒƒ® 5. PROTOCOLO DE AUDITORIA (GEMINI ÔÇô A+)
++
++**Gemini deve, obrigatoriamente:**
++
++1. Solicitar lista de arquivos modificados
++2. Solicitar diffs de cada arquivo
++3. Verificar alinhamento com Documento Mestre
++4. Verificar impacto em: API, fluxo de dados, seguran├ºa, UX
++5. Verificar se testes foram criados e **passam**
++6. Avaliar risco t├®cnico (breaking changes, migrations, etc.)
++7. Emitir **nota de auditoria** (1-10)
++8. **Aprovar ou rejeitar PR** com explica├º├úo clara
++9. **Gerar bloco** de atualiza├º├úo do Documento Mestre:
++
++```
++=== ATUALIZA├ç├âO DO DOCUMENTO MESTRE ÔÇö PR #XX ===
++[Explica├º├úo completa do que foi implementado, impactos, decis├Áes]
++[Nenhum c├│digo, apenas texto descritivo]
++=== FIM ===
++```
++
++---
++
++## ­ƒƒª 6. PROTOCOLO DE EXECU├ç├âO (COPILOT ÔÇô EXECUTOR ABSOLUTO)
++
++**Copilot deve:**
++
++Ô£ö Trabalhar somente em tasks oficializadas pelo Gemini  
++Ô£ö Seguir o Documento Mestre fielmente (sem interpreta├º├úo)  
++Ô£ö Criar PR com t├¡tulo padr├úo: `feat: Task X.Y - [Descri├º├úo]`  
++Ô£ö Rodar scripts de valida├º├úo local antes de PR  
++Ô£ö Aguardar bloco de atualiza├º├úo do Documento Mestre vindo do Gemini  
++Ô£ö Aplicar atualiza├º├úo **exatamente como recebido**  
++Ô£ö Enviar commit com mensagem: `update: Atualiza├º├úo Documento Mestre ÔÇö PR #XX`  
++Ô£ö Atualizar descri├º├úo do PR com link para o arquivo de auditoria
++
++---
++
++## ­ƒƒ¿ 7. PROTOCOLO DE SINCRONIZA├ç├âO ENTRE AMBIENTES
++
++**Ambientes diferentes, fluxo ├║nico:**
++
++### VS Code (Local)
++
++- Copilot executa tasks
++- Scripts automatizados rodam via Node (auditPR, generateTasks, etc.)
++- Documento Mestre ├® atualizado automaticamente
++- Commits s├úo feitos localmente
++
++### GitHub (Remoto)
++
++- PRs s├úo criadas e auditadas
++- Hist├│rico completo ├® mantido
++- Auditorias do Gemini s├úo registradas em coment├írios
++- Cada PR vinculada a uma task
++
++### Gemini CLI (IDX ou Terminal)
++
++- Auditorias s├úo executadas
++- Tasks s├úo geradas
++- Atualiza├º├Áes do Documento Mestre s├úo propostas
++- Diagn├│sticos s├úo emitidos
++
++**Fluxo garantido:**
++
++Ô£ö VS Code sempre faz push ap├│s commit  
++Ô£ö Gemini sempre trabalha sobre o estado mais recente da `main`/`develop`  
++Ô£ö Toda diverg├¬ncia ├® resolvida via PR + auditoria, **nunca direto**  
++Ô£ö Documento Mestre ├® fonte ├║nica de sincroniza├º├úo
++
++---
++
++## ­ƒƒ¬ 8. REGRA DE ALINHAMENTO ABSOLUTO
++
++**Se Gemini e Copilot divergirem:**
++
++### O DOCUMENTO MESTRE VENCE.
++
++N├úo h├í debate, n├úo h├í interpreta├º├úo. O que est├í escrito no Documento Mestre ├® a lei.
++
++---
++
++## ­ƒƒ½ 9. PROTOCOLO DE ERRO (CORRUP├ç├âO, DIVERG├èNCIA OU FALHA)
++
++**Se algo falhar:**
++
++1. **Gemini emite relat├│rio**: `DIVERG├èNCIA DETECTADA`
++2. **Copilot cria branch**: `hotfix/divergence-fix`
++3. **Copilot implementa corre├º├úo**: Seguindo instru├º├Áes do Gemini
++4. **Gemini audita**: Valida corre├º├úo
++5. **Documento Mestre recebe bloco**: De corre├º├úo
++6. **Merge ├® liberado**: Ap├│s valida├º├úo completa
++
++---
++
++## ­ƒƒ® 10. NOVA SE├ç├âO PERMANENTE NO DOCUMENTO MESTRE
++
++O documento deve sempre conter, no in├¡cio:
++
++```
++## ­ƒöä Status Atual do Sistema
++
++| M├®trica | Status | Detalhes |
++|---------|--------|----------|
++| PR atual | [n├║mero] | [descri├º├úo] |
++| Task atual | [n├║mero] | [descri├º├úo] |
++| Branch em execu├º├úo | [nome] | [status] |
++| ├Ültima atualiza├º├úo do Documento Mestre | [data/hora] | [autor] |
++| ├Ültima auditoria Gemini | [data/hora] | [nota] |
++| Blocos pendentes | [sim/n├úo] | [quais] |
++| Fluxo sincronizado | [SIM/N├âO] | [motivo se N├âO] |
++```
++
++O sistema **fica imposs├¡vel de perder contexto**.
++
++---
++
++## ­ƒƒª 11. PROTOCOLO DE COMANDO ├ÜNICO
++
++Voc├¬ poder├í rodar o fluxo completo via VS Code com um ├║nico comando:
++
++```bash
++npm run servio:full-cycle
++```
++
++Ele executa automaticamente:
++
++Ô£ö Gerar tasks (Gemini)  
++Ô£ö Orchestrator (criar issue + arquivos)  
++Ô£ö Implementar (Copilot)  
++Ô£ö Criar PR (GitHub)  
++Ô£ö Auditoria (Gemini)  
++Ô£ö Atualizar Documento Mestre (Copilot)  
++Ô£ö Merge (GitHub)
++
++---
++
++## ­ƒææ 12. CONCLUS├âO ÔÇö SERVIO.AI V4.0
++
++**Voc├¬ agora tem:**
++
++Ô£ö Um sistema preparado para **desenvolvimento 100% assistido por IA**  
++Ô£ö **Fluxo unificado** sem exce├º├Áes  
++Ô£ö **Zero perda de contexto**  
++Ô£ö **Documento Mestre como c├®rebro absoluto**  
++Ô£ö **Auditoria rigorosa** em cada mudan├ºa  
++Ô£ö **PRs validadas** antes de merge  
++Ô£ö **VS Code + Gemini funcionando como um time completo**
++
++**Esta ├® a evolu├º├úo definitiva.**
++
++---
++
++## ­ƒöä Status Atual do Sistema (Atualizado 11/12/2025 15:45 BRT)
++
++| M├®trica                                    | Status                           | Detalhes                                              |
++| ------------------------------------------ | -------------------------------- | ----------------------------------------------------- |
++| **PR atual**                               | #25                              | feat(backend): add rate limiting (em desenvolvimento) |
++| **Task atual**                             | 2.5                              | Rate Limiting implementa├º├úo                           |
++| **Branch em execu├º├úo**                     | `feature/task-2.5-rate-limiting` | Ativa                                                 |
++| **├Ültima atualiza├º├úo do Documento Mestre** | 11/12/2025 15:45                 | Protocolo v4.0 ativado                                |
++| **├Ültima auditoria Gemini**                | 11/12/2025 15:10                 | PR #23 - Nota 9.8/10 Ô£à                               |
++| **Blocos pendentes**                       | Nenhum                           | Sistema 100% sincronizado                             |
++| **Fluxo sincronizado**                     | Ô£à SIM                           | VS Code Ôåö GitHub Ôåö Gemini OK                          |
++
++---
++
++**Protocolo Supremo v4.0 ativado com sucesso. O sistema est├í pronto para opera├º├úo.**
+diff --git a/PROTOCOLO_SUPREMO_V4.0.md b/PROTOCOLO_SUPREMO_V4.0.md
+new file mode 100644
+index 0000000..b3d8b41
+--- /dev/null
++++ b/PROTOCOLO_SUPREMO_V4.0.md
+@@ -0,0 +1,270 @@
++# ­ƒƒú PROTOCOLO SUPREMO ÔÇö SERVIO.AI ÔÇö V4.0 (UNIFICADO E ABSOLUTO)
++
++**Data de Ativa├º├úo**: 11/12/2025  
++**Status**: ­ƒö┤ ATIVO ÔÇö Resolu├º├úo definitiva de todos os problemas de contexto, sincroniza├º├úo e auditoria  
++**Vers├úo Anterior**: 3.0 (descontinuada)
++
++---
++
++## ­ƒºá 1. PRINC├ìPIO SUPREMO ÔÇô O DOCUMENTO MESTRE ├ë A LEI ABSOLUTA
++
++O Documento Mestre ├®:
++
++Ô£ö **Fonte ├║nica de verdade**  
++Ô£ö **Central de comando do ecossistema**  
++Ô£ö **Registro hist├│rico de todas decis├Áes**  
++Ô£ö **Manual de auditoria**  
++Ô£ö **Matriz de alinhamento para Copilot e Gemini**
++
++**Regra Absoluta**: Nenhuma IA est├í autorizada a escrever c├│digo, gerar PR, criar task ou auditar algo SEM ANTES verificar o Documento Mestre.
++
++---
++
++## ­ƒƒª 2. HIERARQUIA OFICIAL ÔÇö QUEM FAZ O QU├è (PODERES CLARAMENTE DEFINIDOS)
++
++### 2.1 Gemini ÔÇô Auditor Global + Guardi├úo do Documento Mestre + Planejador
++
++**Gemini s├│ pode:**
++
++Ô£ö Auditar PRs  
++Ô£ö Gerar blocos de atualiza├º├úo do Documento Mestre  
++Ô£ö Gerar tasks (JSON)  
++Ô£ö Gerar diagn├│sticos estrat├®gicos  
++Ô£ö Validar arquitetura, seguran├ºa, fluxo, UX, API  
++Ô£ö Validar coer├¬ncia do Documento Mestre
++
++**Gemini est├í terminantemente proibido de:**
++
++ÔØî Escrever c├│digo  
++ÔØî Alterar arquivos  
++ÔØî Criar PR  
++ÔØî Resolver conflitos  
++ÔØî Fazer push  
++ÔØî Modificar o repo
++
++### 2.2 Copilot ÔÇô Executor T├®cnico Soberano
++
++**Copilot s├│ pode:**
++
++Ô£ö Implementar tasks aprovadas  
++Ô£ö Criar branches  
++Ô£ö Criar PRs  
++Ô£ö Resolver conflitos  
++Ô£ö Escrever c├│digo  
++Ô£ö Atualizar arquivos  
++Ô£ö Subir commits  
++Ô£ö Rodar scripts automatizados
++
++**Copilot est├í proibido de:**
++
++ÔØî Gerar tasks  
++ÔØî Especificar arquitetura  
++ÔØî Fazer auditoria  
++ÔØî Atualizar o Documento Mestre (exceto quando autorizado explicitamente)
++
++### 2.3 Orchestrator ÔÇö Motor de Tasks
++
++Ô£ö Recebe JSON de tasks do Gemini  
++Ô£ö Gera arquivos `ai-tasks/day-X/task-Y.md`  
++Ô£ö Cria issues automaticamente  
++Ô£ö Padroniza tarefas  
++Ô£ö Alimenta Copilot com escopo correto
++
++---
++
++## ­ƒƒº 3. ORDEM DO CICLO (OBRIGAT├ôRIA E IMUT├üVEL)
++
++1. **Gemini gera tasks** (JSON com especifica├º├Áes t├®cnicas)
++2. **Orchestrator cria tasks** no reposit├│rio (ai-tasks/day-X/task-Y.md + issues)
++3. **Copilot implementa a task** (seguindo instru├º├Áes do Documento Mestre)
++4. **Copilot abre PR** (vinculada ├á task do Orchestrator)
++5. **Gemini audita PR** (linha por linha, verificando Documento Mestre)
++6. **Gemini gera bloco de atualiza├º├úo** do Documento Mestre
++7. **Copilot aplica atualiza├º├úo** no Documento Mestre e faz commit
++8. **Gemini valida atualiza├º├úo** (verifica coer├¬ncia total)
++9. **Gemini libera pr├│xima task** (autoriza├º├úo expl├¡cita)
++10. **Ciclo reinicia**
++
++**ÔØù Regra Cr├¡tica**: Nenhuma task pode avan├ºar sem o Documento Mestre estar atualizado e validado.
++
++---
++
++## ­ƒƒÑ 4. REGRA DE BRANCHES (IMUT├üVEL)
++
++| Branch           | Responsabilidade       | Regra                                |
++| ---------------- | ---------------------- | ------------------------------------ |
++| `main`           | Produ├º├úo               | Somente merges aprovados pelo Gemini |
++| `develop`        | Integra├º├úo cont├¡nua    | Integra├º├úo de branches de feature    |
++| `feature/task-X` | Execu├º├úo de task       | Isolada, sem depend├¬ncias externas   |
++| `hotfix/*`       | Corre├º├Áes emergenciais | Merge r├ípido ap├│s auditoria          |
++
++---
++
++## ­ƒƒ® 5. PROTOCOLO DE AUDITORIA (GEMINI ÔÇô A+)
++
++**Gemini deve, obrigatoriamente:**
++
++1. Solicitar lista de arquivos modificados
++2. Solicitar diffs de cada arquivo
++3. Verificar alinhamento com Documento Mestre
++4. Verificar impacto em: API, fluxo de dados, seguran├ºa, UX
++5. Verificar se testes foram criados e **passam**
++6. Avaliar risco t├®cnico (breaking changes, migrations, etc.)
++7. Emitir **nota de auditoria** (1-10)
++8. **Aprovar ou rejeitar PR** com explica├º├úo clara
++9. **Gerar bloco** de atualiza├º├úo do Documento Mestre:
++
++```
++=== ATUALIZA├ç├âO DO DOCUMENTO MESTRE ÔÇö PR #XX ===
++[Explica├º├úo completa do que foi implementado, impactos, decis├Áes]
++[Nenhum c├│digo, apenas texto descritivo]
++=== FIM ===
++```
++
++---
++
++## ­ƒƒª 6. PROTOCOLO DE EXECU├ç├âO (COPILOT ÔÇô EXECUTOR ABSOLUTO)
++
++**Copilot deve:**
++
++Ô£ö Trabalhar somente em tasks oficializadas pelo Gemini  
++Ô£ö Seguir o Documento Mestre fielmente (sem interpreta├º├úo)  
++Ô£ö Criar PR com t├¡tulo padr├úo: `feat: Task X.Y - [Descri├º├úo]`  
++Ô£ö Rodar scripts de valida├º├úo local antes de PR  
++Ô£ö Aguardar bloco de atualiza├º├úo do Documento Mestre vindo do Gemini  
++Ô£ö Aplicar atualiza├º├úo **exatamente como recebido**  
++Ô£ö Enviar commit com mensagem: `update: Atualiza├º├úo Documento Mestre ÔÇö PR #XX`  
++Ô£ö Atualizar descri├º├úo do PR com link para o arquivo de auditoria
++
++---
++
++## ­ƒƒ¿ 7. PROTOCOLO DE SINCRONIZA├ç├âO ENTRE AMBIENTES
++
++**Ambientes diferentes, fluxo ├║nico:**
++
++### VS Code (Local)
++
++- Copilot executa tasks
++- Scripts automatizados rodam via Node (auditPR, generateTasks, etc.)
++- Documento Mestre ├® atualizado automaticamente
++- Commits s├úo feitos localmente
++
++### GitHub (Remoto)
++
++- PRs s├úo criadas e auditadas
++- Hist├│rico completo ├® mantido
++- Auditorias do Gemini s├úo registradas em coment├írios
++- Cada PR vinculada a uma task
++
++### Gemini CLI (IDX ou Terminal)
++
++- Auditorias s├úo executadas
++- Tasks s├úo geradas
++- Atualiza├º├Áes do Documento Mestre s├úo propostas
++- Diagn├│sticos s├úo emitidos
++
++**Fluxo garantido:**
++
++Ô£ö VS Code sempre faz push ap├│s commit  
++Ô£ö Gemini sempre trabalha sobre o estado mais recente da `main`/`develop`  
++Ô£ö Toda diverg├¬ncia ├® resolvida via PR + auditoria, **nunca direto**  
++Ô£ö Documento Mestre ├® fonte ├║nica de sincroniza├º├úo
++
++---
++
++## ­ƒƒ¬ 8. REGRA DE ALINHAMENTO ABSOLUTO
++
++**Se Gemini e Copilot divergirem:**
++
++### O DOCUMENTO MESTRE VENCE.
++
++N├úo h├í debate, n├úo h├í interpreta├º├úo. O que est├í escrito no Documento Mestre ├® a lei.
++
++---
++
++## ­ƒƒ½ 9. PROTOCOLO DE ERRO (CORRUP├ç├âO, DIVERG├èNCIA OU FALHA)
++
++**Se algo falhar:**
++
++1. **Gemini emite relat├│rio**: `DIVERG├èNCIA DETECTADA`
++2. **Copilot cria branch**: `hotfix/divergence-fix`
++3. **Copilot implementa corre├º├úo**: Seguindo instru├º├Áes do Gemini
++4. **Gemini audita**: Valida corre├º├úo
++5. **Documento Mestre recebe bloco**: De corre├º├úo
++6. **Merge ├® liberado**: Ap├│s valida├º├úo completa
++
++---
++
++## ­ƒƒ® 10. NOVA SE├ç├âO PERMANENTE NO DOCUMENTO MESTRE
++
++O documento deve sempre conter, no in├¡cio:
++
++```
++## ­ƒöä Status Atual do Sistema
++
++| M├®trica | Status | Detalhes |
++|---------|--------|----------|
++| PR atual | [n├║mero] | [descri├º├úo] |
++| Task atual | [n├║mero] | [descri├º├úo] |
++| Branch em execu├º├úo | [nome] | [status] |
++| ├Ültima atualiza├º├úo do Documento Mestre | [data/hora] | [autor] |
++| ├Ültima auditoria Gemini | [data/hora] | [nota] |
++| Blocos pendentes | [sim/n├úo] | [quais] |
++| Fluxo sincronizado | [SIM/N├âO] | [motivo se N├âO] |
++```
++
++O sistema **fica imposs├¡vel de perder contexto**.
++
++---
++
++## ­ƒƒª 11. PROTOCOLO DE COMANDO ├ÜNICO
++
++Voc├¬ poder├í rodar o fluxo completo via VS Code com um ├║nico comando:
++
++```bash
++npm run servio:full-cycle
++```
++
++Ele executa automaticamente:
++
++Ô£ö Gerar tasks (Gemini)  
++Ô£ö Orchestrator (criar issue + arquivos)  
++Ô£ö Implementar (Copilot)  
++Ô£ö Criar PR (GitHub)  
++Ô£ö Auditoria (Gemini)  
++Ô£ö Atualizar Documento Mestre (Copilot)  
++Ô£ö Merge (GitHub)
++
++---
++
++## ­ƒææ 12. CONCLUS├âO ÔÇö SERVIO.AI V4.0
++
++**Voc├¬ agora tem:**
++
++Ô£ö Um sistema preparado para **desenvolvimento 100% assistido por IA**  
++Ô£ö **Fluxo unificado** sem exce├º├Áes  
++Ô£ö **Zero perda de contexto**  
++Ô£ö **Documento Mestre como c├®rebro absoluto**  
++Ô£ö **Auditoria rigorosa** em cada mudan├ºa  
++Ô£ö **PRs validadas** antes de merge  
++Ô£ö **VS Code + Gemini funcionando como um time completo**
++
++**Esta ├® a evolu├º├úo definitiva.**
++
++---
++
++## ­ƒöä Status Atual do Sistema (Atualizado 11/12/2025 15:45 BRT)
++
++| M├®trica                                    | Status                           | Detalhes                                              |
++| ------------------------------------------ | -------------------------------- | ----------------------------------------------------- |
++| **PR atual**                               | #25                              | feat(backend): add rate limiting (em desenvolvimento) |
++| **Task atual**                             | 2.5                              | Rate Limiting implementa├º├úo                           |
++| **Branch em execu├º├úo**                     | `feature/task-2.5-rate-limiting` | Ativa                                                 |
++| **├Ültima atualiza├º├úo do Documento Mestre** | 11/12/2025 15:45                 | Protocolo v4.0 ativado                                |
++| **├Ültima auditoria Gemini**                | 11/12/2025 15:10                 | PR #23 - Nota 9.8/10 Ô£à                               |
++| **Blocos pendentes**                       | Nenhum                           | Sistema 100% sincronizado                             |
++| **Fluxo sincronizado**                     | Ô£à SIM                           | VS Code Ôåö GitHub Ôåö Gemini OK                          |
++
++---
++
++**Protocolo Supremo v4.0 ativado com sucesso. O sistema est├í pronto para opera├º├úo.**

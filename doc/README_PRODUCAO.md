@@ -54,7 +54,7 @@ Arquivo `.env.production.example` atualizado com:
 ```env
 VITE_BACKEND_API_URL=https://api.servio-ai.com
 VITE_AI_API_URL=https://ai.servio-ai.com
-VITE_FIREBASE_API_KEY=[REDACTED_FIREBASE_PRODUCTION_KEY]
+VITE_FIREBASE_API_KEY=[REDACTED_FOR_SECURITY]
 VITE_FIREBASE_AUTH_DOMAIN=gen-lang-client-0737507616.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=gen-lang-client-0737507616
 VITE_FIREBASE_STORAGE_BUCKET=gen-lang-client-0737507616.firebasestorage.app

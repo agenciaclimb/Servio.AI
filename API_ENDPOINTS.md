@@ -1199,7 +1199,7 @@ PORT=5000
 NODE_ENV=development
 
 # Opcionais (ativam funcionalidades)
-GEMINI_API_KEY=AIza...           # Habilita IA generativa
+GEMINI_API_KEY=[YOUR_GEMINI_API_KEY]  # Habilita IA generativa
 STRIPE_SECRET_KEY=sk_test_...    # Habilita pagamentos reais
 FIREBASE_PROJECT_ID=servio-ai    # Habilita Firestore
 

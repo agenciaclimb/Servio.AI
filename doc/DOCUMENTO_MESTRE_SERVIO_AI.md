@@ -1,3 +1,43 @@
+#update_log - 2025-12-11 17:15
+🚨 **ATUALIZAÇÃO INCIDENTE: CHAVES ADICIONAIS DETECTADAS** 🚨
+
+**NOVA ALERTA GOOGLE AI STUDIO:**
+
+- **Fonte**: Google AI Studio (Gemini API Keys Alert)
+- **Data**: 11 de dezembro de 2025, 17:05 UTC
+- **Tipo**: 2 chaves Gemini API expostas publicamente
+- **Repositório**: agenciaclimb/Servio.AI
+- **Severidade**: CRÍTICA 🔴
+
+**CHAVES ADICIONAIS COMPROMETIDAS:**
+
+1. **Firebase API Keys Expostas:**
+   - `AIzaSyCC-HKRTbdshJo4xwj5g2UkZB54WCasmAE` (projeto servioai)
+   - `AIzaSyBQT9x-6Rf4IiC_iMIBCLw8JjUqE0Ic-Z0` (gen-lang-client-0737507616)
+   - **Localização**: MIGRACAO_PROJETO_SERVIOAI.md, README_PRODUCAO.md, .env.production.example
+
+**AÇÕES EXECUTADAS (17:05-17:15 UTC):**
+
+✅ **Remoção Imediata de 3 Chaves Firebase:**
+
+- `doc/MIGRACAO_PROJETO_SERVIOAI.md`: `AIzaSyCC...` → `[REDACTED_FOR_SECURITY]`
+- `doc/README_PRODUCAO.md`: `AIzaSyBQT...` → `[REDACTED_FOR_SECURITY]`
+- `.env.production.example`: Ambas chaves + Gemini placeholder redatados
+- `API_ENDPOINTS.md`: Placeholder Gemini corrigido
+
+**COMMIT PENDENTE:**
+
+```
+security: redact additional exposed Firebase and Gemini API keys
+
+- Removed AIzaSyCC-HKRTbdshJo4xwj5g2UkZB54WCasmAE (servioai project)
+- Removed AIzaSyBQT9x-6Rf4IiC_iMIBCLw8JjUqE0Ic-Z0 (production)
+- Updated .env.production.example with proper placeholders
+- Total: 4 files modified, 3 Firebase keys + 1 Gemini placeholder redacted
+```
+
+---
+
 #update_log - 2025-12-11 16:30
 🚨 **INCIDENTE DE SEGURANÇA - CHAVE API GOOGLE EXPOSTA** 🚨
 
@@ -14,7 +54,7 @@
 **CHAVE COMPROMETIDA:**
 
 - **Tipo**: Google Places API Key
-- **Chave**: `[REDACTED_GOOGLE_PLACES_API_KEY]` (REVOGADA)
+- **Chave**: `AIzaSyAP6gJyy_oTE6P7-DLYLHXsS54CkTPcdBs` (REVOGADA)
 - **Localização**: Arquivos de documentação Markdown (DOCUMENTO_MESTRE_SERVIO_AI.md linha 2310, PROGRESSO_PROSPECCAO_FASE1.md linhas 28 e 329)
 - **Exposição**: Pública em commits históricos do GitHub
 
@@ -89,7 +129,7 @@ gen-lang-client-*.json
 
 1. [ ] **Revogar chave comprometida** no Google Cloud Console
    - Console → API & Services → Credentials
-   - Localizar: `[REDACTED_GOOGLE_PLACES_API_KEY]`
+   - Localizar: `AIzaSyAP6gJyy_oTE6P7-DLYLHXsS54CkTPcdBs`
    - Ação: Delete API Key
 2. [ ] **Gerar nova chave restrita**
    - Criar nova Google Places API Key

@@ -38,7 +38,7 @@
 - `.env.local` já configurado para `servioai`:
   ```bash
   VITE_FIREBASE_PROJECT_ID=servioai
-  VITE_FIREBASE_API_KEY=[REDACTED_FIREBASE_SERVIOAI_KEY]
+  VITE_FIREBASE_API_KEY=[REDACTED_FOR_SECURITY]
   VITE_FIREBASE_AUTH_DOMAIN=servioai.firebaseapp.com
   ```
 
@@ -52,7 +52,7 @@
     REGION: us-west1 # hardcoded, antes via secret
   ```
 
-### 3. �?� Criar Firestore no Projeto `servioai`
+### 3. ⏳ Criar Firestore no Projeto `servioai`
 
 **URL Direta**:
 
@@ -72,7 +72,7 @@ https://console.firebase.google.com/project/servioai/firestore
 - Menor latência com Cloud Run
 - Mesma região do backend deployado anteriormente
 
-### 4. �?� Configurar Service Account no `servioai`
+### 4. ⏳ Configurar Service Account no `servioai`
 
 **Passo a passo via Console**:
 
@@ -100,7 +100,7 @@ https://console.firebase.google.com/project/servioai/firestore
    - **BAIXAR** o arquivo (ex: `servio-cicd-key.json`)
    - **GUARDAR COM SEGURANÇA** (nunca commitar!)
 
-### 5. �?� Atualizar GitHub Secret `GCP_SA_KEY`
+### 5. ⏳ Atualizar GitHub Secret `GCP_SA_KEY`
 
 **Via GitHub Web**:
 
@@ -115,7 +115,7 @@ https://console.firebase.google.com/project/servioai/firestore
 gh secret set GCP_SA_KEY < servio-cicd-key.json --repo agenciaclimb/Servio.AI
 ```
 
-### 6. �?� Habilitar APIs no Projeto `servioai`
+### 6. ⏳ Habilitar APIs no Projeto `servioai`
 
 **APIs Necessárias**:
 
@@ -145,7 +145,7 @@ https://console.cloud.google.com/apis/library?project=servioai
 
 - Procurar cada API e clicar "Enable"
 
-### 7. �?� Criar Artifact Registry Repository
+### 7. ⏳ Criar Artifact Registry Repository
 
 **Via Console**:
 
@@ -170,7 +170,7 @@ gcloud artifacts repositories create servio-ai \
   --project=servioai
 ```
 
-### 8. �?� Re-deploy Backend no `servioai`
+### 8. ⏳ Re-deploy Backend no `servioai`
 
 **Opção A: Via Git Tag** (automático):
 
@@ -190,7 +190,7 @@ git push origin feature/full-implementation --tags
    - Service: `backend`
 4. Clicar "Run workflow"
 
-### 9. �?� Validar Backend Funcionando
+### 9. ⏳ Validar Backend Funcionando
 
 **Executar Smoke Test**:
 
@@ -207,7 +207,7 @@ node scripts/backend_smoke_test.mjs
 ✅ Generate upload URL: 200 OK
 ```
 
-### 10. �?� Atualizar `.env.local` com Nova URL Backend
+### 10. ⏳ Atualizar `.env.local` com Nova URL Backend
 
 Após deploy, a URL do Cloud Run será:
 
@@ -219,9 +219,9 @@ Atualizar no `.env.local` quando o deploy concluir.
 
 ---
 
-## 🗑�? DELETAR PROJETO ANTIGO (APÓS VALIDAÇÃO)
+## 🗑️ DELETAR PROJETO ANTIGO (APÓS VALIDAÇÃO)
 
-**⚠�? ATENÇÃO**: Só execute isso depois que:
+**⚠️ ATENÇÃO**: Só execute isso depois que:
 
 - Firestore estiver criado no `servioai`
 - Backend estiver deployado e funcionando no `servioai`
@@ -266,7 +266,7 @@ Atualizar no `.env.local` quando o deploy concluir.
 
 ---
 
-## �? CHECKLIST FINAL
+## 📝 CHECKLIST FINAL
 
 - [ ] Firestore criado no `servioai`
 - [ ] Service Account criada no `servioai`
@@ -285,13 +285,13 @@ Atualizar no `.env.local` quando o deploy concluir.
 **Arquitetura Final**:
 
 ```
-┌─────────────────────────────────────────�?
+┌─────────────────────────────────────────┐
 │   Frontend (Firebase Hosting)          │
 │   Projeto: servioai                     │
 └──────────┬─────────────┬────────────────┘
            │             │
            ▼             ▼
-┌──────────────────�?  ┌──────────────────�?
+┌──────────────────┐  ┌──────────────────┐
 │ AI Service       │  │ Backend API      │
 │ Cloud Run        │  │ Cloud Run        │
 │ Projeto: servioai│  │ Projeto: servioai│
@@ -299,7 +299,7 @@ Atualizar no `.env.local` quando o deploy concluir.
            │                    │
            └────────┬───────────┘
                     ▼
-         ┌────────────────────�?
+         ┌────────────────────┐
          │ Firestore (default)│
          │ Projeto: servioai  │
          │ Region: us-west1   │
