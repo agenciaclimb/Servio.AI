@@ -40,16 +40,7 @@ const LoadingFallback = () => (
   </div>
 );
 
-import {
-  User,
-  Job,
-  Notification,
-  MatchingResult,
-  MaintainedItem,
-  UserType,
-  JobData,
-  Prospect,
-} from './types';
+import { User, Job, Notification, MaintainedItem, UserType, JobData, Prospect } from './types';
 import * as API from './services/api';
 
 type View =
@@ -75,7 +66,7 @@ const App: React.FC = () => {
     userType: UserType;
   } | null>(null);
   const [wizardData, setWizardData] = useState<{ prompt?: string; data?: JobData } | null>(null);
-  const [matchingResults, setMatchingResults] = useState<MatchingResult[] | null>(null);
+  const [matchingResults, setMatchingResults] = useState<API.MatchingProvider[] | null>(null);
   const [prospects, setProspects] = useState<Prospect[] | null>(null);
   const [allUsersForSearch, setAllUsersForSearch] = useState<User[]>([]);
   const [allJobsForSearch, setAllJobsForSearch] = useState<Job[]>([]);

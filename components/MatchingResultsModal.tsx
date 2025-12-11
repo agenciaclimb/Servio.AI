@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
-import { MatchingResult } from '../types';
+import * as API from '../services/api';
 import ProviderCard from './ProviderCard';
 
 interface MatchingResultsModalProps {
-  results: MatchingResult[];
+  results: API.MatchingProvider[];
   onClose: () => void;
   onInvite: (providerId: string) => void;
 }
@@ -61,10 +61,10 @@ const MatchingResultsModal: React.FC<MatchingResultsModalProps> = ({
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {results.map(result => (
               <ProviderCard
-                key={result.provider.id}
+                key={result.provider.email}
                 result={result}
                 onInvite={handleInvite}
-                isInvited={invitedProviders.includes(result.provider.id)}
+                isInvited={invitedProviders.includes(result.provider.email)}
               />
             ))}
           </div>

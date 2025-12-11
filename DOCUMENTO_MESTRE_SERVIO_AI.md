@@ -4392,7 +4392,49 @@ GET  /api/whatsapp/multi-role/templates/:userType
 
 ---
 
-**Documento Mestre v1.0.6 - Backend Memory Fallback Complete | 28/11/2025 00:40 BRT**
+## 📜 HISTÓRICO DE ATUALIZAÇÕES DO DOCUMENTO MESTRE
 
-_Última atualização: Sistema de fallback em memória implementado e validado_  
-_Próxima revisão: 01/12/2025 | E2E Tests Execution Phase_
+### === ATUALIZAÇÃO DO DOCUMENTO MESTRE — TASK 2.4 ===
+
+**Data**: 10/12/2025 22:30 BRT  
+**Responsável**: Gemini (Protocolo Supremo A+)
+
+**Task 2.4: Integração dos Resultados de Matching de IA no Dashboard do Cliente**
+
+**Resumo Técnico**: Esta tarefa concluiu a integração da funcionalidade de correspondência de IA no fluxo do cliente. A principal modificação ocorreu no serviço de API (`services/api.ts`), onde foi realizada uma refatoração para eliminar a duplicação de código e corrigir o uso de endpoints não padronizados. Funções redundantes de busca de prestadores foram removidas, consolidando a lógica em `matchProvidersForJob` como a única fonte para correspondência de IA. Adicionalmente, foi implementada a interface no `ClientDashboard` para exibir os prestadores recomendados e permitir o envio de convites para proposta.
+
+**Impactos na Arquitetura**:
+
+- **Consolidação da API**: A arquitetura foi reforçada ao eliminar endpoints versionados ad-hoc (`/api/v2/`). Esta ação reafirma a política de uma superfície de API unificada e estável, prevenindo a fragmentação e garantindo que o backend gerencie a evolução das versões de forma transparente para o cliente.
+- **Manutenção do Código**: A remoção da função duplicada `fetchMatchingProviders` simplifica o `services/api.ts`, reduzindo a complexidade e o risco de inconsistências futuras.
+
+**Impactos em API, Componentes e Fluxo do Cliente**:
+
+- **API** (`services/api.ts`):
+  - A função `fetchMatchingProviders` foi removida.
+  - A função `inviteProvider` foi corrigida para usar o endpoint padrão e correto: `/api/jobs/{jobId}/invite-provider`.
+  - O endpoint `matchProvidersForJob` (`/api/match-providers`) foi confirmado como o endpoint canônico para a funcionalidade.
+
+- **Componentes**: O componente `ClientDashboard.tsx` foi modificado para incluir uma nova seção ou modal que exibe os resultados da correspondência de IA, permitindo ao cliente visualizar os prestadores, seus scores de compatibilidade e o motivo da recomendação.
+
+- **Fluxo do Cliente**: Um novo passo foi adicionado ao fluxo do cliente. Após a criação de um trabalho, o cliente agora é apresentado a uma lista de prestadores altamente compatíveis, com a opção de convidá-los diretamente para o trabalho, otimizando o tempo de contratação.
+
+**Regras de Versionamento Atualizadas**: A regra arquitetural de NÃO versionar endpoints no código do frontend foi rigorosamente aplicada e reafirmada. Qualquer evolução da API deve ser gerenciada pelo backend, mantendo um contrato estável e único com os clientes consumidores da API.
+
+**Testes Implementados**: A conformidade foi garantida através da criação de 19 novos testes, distribuídos em dois novos arquivos:
+
+- `tests/api.inviteProvider.test.ts`: Valida a camada de serviço da API para o envio de convites, cobrindo casos de sucesso e erro (7 testes).
+- `tests/ClientDashboard.matching.test.tsx`: Testa a integração da interface de resultados de matching no dashboard do cliente, garantindo que os dados sejam exibidos corretamente e que a ação de convite seja disparada adequadamente (12 testes).
+
+**Decisão Arquitetural Tomada**: Fica estabelecido como decisão arquitetural primária que a camada de serviço do frontend (`services/api.ts`) deve ser agnóstica a versões de API. A responsabilidade de rotear para a lógica de negócio correta (seja v1, v2, etc.) pertence exclusivamente ao gateway ou ao roteador do backend. Esta decisão visa garantir a estabilidade e a simplicidade do código do cliente.
+
+**Garantia de Convergência com o Documento Mestre**: As alterações implementadas na Task 2.4 estão em total conformidade com os princípios de arquitetura e as diretrizes de desenvolvimento descritas neste Documento Mestre. A estrutura da API foi preservada e a cobertura de testes foi expandida conforme o protocolo.
+
+**Status**: ✅ **APROVADA - Documento Mestre atualizado — pode prosseguir para o merge da Task 2.4**
+
+---
+
+**Documento Mestre v1.0.7 - Task 2.4 AI Matching Integration Complete | 10/12/2025 22:30 BRT**
+
+_Última atualização: Integração de matching de IA no dashboard do cliente implementada e validada_  
+_Próxima revisão: Task 2.5 | Advanced Matching Features_

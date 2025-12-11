@@ -7,12 +7,12 @@
 
 ## 📈 Distribuição por Prioridade
 
-| Prioridade | Quantidade | Tasks |
-|------------|------------|-------|
-| 🔴 Critical | 0 | nenhuma |
-| 🟠 High | 2 | 2.1, 2.2 |
-| 🟡 Medium | 3 | 2.3, 2.4, 2.5 |
-| 🟢 Low | 0 | nenhuma |
+| Prioridade  | Quantidade | Tasks         |
+| ----------- | ---------- | ------------- |
+| 🔴 Critical | 0          | nenhuma       |
+| 🟠 High     | 2          | 2.1, 2.2      |
+| 🟡 Medium   | 3          | 2.3, 2.4, 2.5 |
+| 🟢 Low      | 0          | nenhuma       |
 
 ---
 
