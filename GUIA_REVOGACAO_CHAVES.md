@@ -33,71 +33,48 @@
 
 ### 1. REVOGAR CHAVES NO GOOGLE CLOUD CONSOLE
 
-#### 🔴 Chave 1: Google Places API Key
+✅ **CONCLUÍDO**: Chaves antigas revogadas com sucesso
 
-1. Abra [Google Cloud Console](https://console.cloud.google.com/)
-2. Navegue para: **APIs & Services** → **Credentials**
-3. Procure pela chave: `AIzaSyAP6gJyy_oTE6P7-DLYLHXsS54CkTPcdBs`
-4. Clique nos **3 pontos** → **Delete API Key**
-5. Confirme a exclusão
-
-#### 🔴 Chave 2: Firebase API Key (servioai)
-
-1. Abra [Firebase Console](https://console.firebase.google.com/)
-2. Selecione o projeto: **servioai**
-3. Configurações do Projeto → **Chaves da Web API**
-4. Procure pela chave: `AIzaSyCC-HKRTbdshJo4xwj5g2UkZB54WCasmAE`
-5. **Revogue** ou **Restrinja** com Application Restrictions
-
-#### 🔴 Chave 3: Firebase API Key (gen-lang-client-0737507616)
-
-1. Abra [Firebase Console](https://console.firebase.google.com/)
-2. Selecione o projeto: **gen-lang-client-0737507616**
-3. Configurações do Projeto → **Chaves da Web API**
-4. Procure pela chave: `AIzaSyBQT9x-6Rf4IiC_iMIBCLw8JjUqE0Ic-Z0`
-5. **Revogue** ou **Restrinja** com HTTP referrers
+- ✅ Google Places API Key revogada
+- ✅ Firebase API Keys antigas revogadas/restritas
+- ✅ Nova chave "Nova Chave Servio-AI" criada (11/12/2025)
 
 ---
 
 ### 2. GERAR NOVAS CHAVES RESTRITAS
 
-#### Google Places API Key (nova)
+✅ **CONCLUÍDO**: Nova chave criada no Google AI Studio
 
-```bash
-# Google Cloud Console → APIs & Services → Credentials → Create Credentials → API Key
-# Configurar restrições:
-- Application Restrictions: IP addresses (adicionar IPs do Cloud Run)
-- API Restrictions: Places API, Geocoding API
-```
-
-#### Firebase API Keys (novas)
-
-**NOTA**: Firebase Web API Keys são públicas por design, mas devem ter restrições:
-
-1. **servioai** (desenvolvimento):
-   - Firebase Console → Project Settings → Web API Key
-   - Add → HTTP referrers: `localhost:*`, `127.0.0.1:*`
-2. **gen-lang-client-0737507616** (produção):
-   - Firebase Console → Project Settings → Web API Key
-   - Add → HTTP referrers: `gen-lang-client-0737507616.web.app`, `*.firebaseapp.com`
+- ✅ "Nova Chave Servio-AI" gerada (11/12/2025)
+- ⚠️ **Próximo passo**: Configurar restrições na chave (opcional mas recomendado)
+  - Google AI Studio → Chave → Settings → Application restrictions
+  - Adicionar domínios permitidos ou IPs do Cloud Run
 
 ---
 
 ### 3. ADICIONAR NOVAS CHAVES AO SECRET MANAGER
 
-```bash
-# Google Places API Key
-gcloud secrets create GOOGLE_PLACES_API_KEY \
-  --data-file=- <<< "NOVA_CHAVE_AQUI" \
-  --project=gen-lang-client-0737507616
+⚠️ **AÇÃO NECESSÁRIA AGORA**: Copie a nova chave e adicione ao Secret Manager
 
-# Ou via Console:
-# Cloud Console → Secret Manager → Create Secret
-# Name: GOOGLE_PLACES_API_KEY
-# Secret value: [cole a nova chave]
+**Opção 1 - Via Console (Recomendado):**
+
+1. Abra [Secret Manager Console](https://console.cloud.google.com/security/secret-manager?project=gen-lang-client-0737507616)
+2. Encontre o secret `GOOGLE_PLACES_API_KEY`
+3. Clique em "New Version"
+4. Cole a nova chave (da aba "Nova Chave Servio-AI" no AI Studio)
+5. Salve
+
+**Opção 2 - Via gcloud:**
+
+```powershell
+# Cole sua nova chave quando solicitado
+$novaChave = Read-Host -Prompt "Cole a nova chave aqui" -AsSecureString
+$novaChavePlainText = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($novaChave))
+
+echo $novaChavePlainText | gcloud secrets versions add GOOGLE_PLACES_API_KEY --data-file=- --project=gen-lang-client-0737507616
 ```
 
-**NUNCA commite as novas chaves ao Git!**
+**NUNCA commite a nova chave ao Git!**
 
 ---
 
@@ -132,19 +109,18 @@ O backend agora lê o segredo via Cloud Run env var, com fallback seguro em caso
 
 ## 📊 RESUMO EXECUTIVO
 
-| Ação                              | Status          | Responsável                      |
-| --------------------------------- | --------------- | -------------------------------- |
-| Limpeza histórico Git             | ✅ Concluído    | Automatizado (BFG)               |
-| Force push GitHub                 | ✅ Concluído    | Automatizado                     |
-| Backup repositório                | ✅ Criado       | C:\Users\JE\servio-ai-backup.git |
-| Backend usar Secret Manager       | ✅ Concluído    | Automatizado (Cloud Run)         |
-| Workflow CI/CD atualizado         | ✅ Concluído    | Automatizado                     |
-| Revogar chave Places API          | ⚠️ **PENDENTE** | **Manual (VOCÊ)**                |
-| Revogar chave Firebase servioai   | ⚠️ **PENDENTE** | **Manual (VOCÊ)**                |
-| Revogar chave Firebase production | ⚠️ **PENDENTE** | **Manual (VOCÊ)**                |
-| Gerar novas chaves restritas      | ⚠️ **PENDENTE** | **Manual (VOCÊ)**                |
-| Adicionar ao Secret Manager       | ⚠️ **PENDENTE** | **Manual (VOCÊ)**                |
-| Verificar GitGuardian             | ⚠️ **PENDENTE** | **Manual (VOCÊ)**                |
+| Ação                             | Status              | Responsável                      |
+| -------------------------------- | ------------------- | -------------------------------- |
+| Limpeza histórico Git            | ✅ Concluído        | Automatizado (BFG)               |
+| Force push GitHub                | ✅ Concluído        | Automatizado                     |
+| Backup repositório               | ✅ Criado           | C:\Users\JE\servio-ai-backup.git |
+| Backend usar Secret Manager      | ✅ Concluído        | Automatizado (Cloud Run)         |
+| Workflow CI/CD atualizado        | ✅ Concluído        | Automatizado                     |
+| Revogar chaves antigas           | ✅ Concluído        | **Manual (VOCÊ)**                |
+| Gerar nova chave (AI Studio)     | ✅ Concluído        | **Manual (VOCÊ)**                |
+| Adicionar ao Secret Manager      | ⚠️ **EM ANDAMENTO** | **Manual (VOCÊ)**                |
+| Verificar GitGuardian            | ⚠️ **PENDENTE**     | **Manual (VOCÊ)**                |
+| Verificar GitHub Secret Scanning | ⚠️ **PENDENTE**     | **Manual (VOCÊ)**                |
 
 ---
 
