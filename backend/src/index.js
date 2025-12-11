@@ -2,6 +2,7 @@ const express = require("express");
 const admin = require("firebase-admin");
 const cors = require("cors");
 const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 const { Storage } = require("@google-cloud/storage");
 // Stripe config helper (mode detection + safe init)
 const { createStripe } = require('./stripeConfig');
@@ -40,6 +41,24 @@ const whatsappMultiRoleRouter = require('./routes/whatsappMultiRole');
 const LEADERBOARD_CACHE_MS = Number.parseInt(process.env.LEADERBOARD_CACHE_MS || '300000', 10);
 const LEADERBOARD_RATE_LIMIT = Number.parseInt(process.env.LEADERBOARD_RATE_LIMIT || '60', 10);
 const LEADERBOARD_RATE_WINDOW_MS = Number.parseInt(process.env.LEADERBOARD_RATE_WINDOW_MS || '300000', 10);
+
+// API rate limiting (critical endpoints)
+const DEFAULT_RATE_LIMIT_WINDOW_MS = Number.parseInt(process.env.API_RATE_LIMIT_WINDOW_MS || '60000', 10);
+const DEFAULT_RATE_LIMIT_MAX = Number.parseInt(process.env.API_RATE_LIMIT_MAX || '20', 10);
+
+function buildRateLimiter(options = {}) {
+  const windowMs = options.windowMs || DEFAULT_RATE_LIMIT_WINDOW_MS;
+  const max = options.max || DEFAULT_RATE_LIMIT_MAX;
+  return rateLimit({
+    windowMs,
+    max,
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: (_req, res) => {
+      res.status(429).json({ error: 'Too many requests, please try again later.' });
+    },
+  });
+}
 
 const leaderboardCache = {
   totalCommissionsEarned: { expiresAt: 0, payload: null },
@@ -152,6 +171,7 @@ function createApp({
   genAI = defaultGenAI,
   leaderboardRateConfig,
   leaderboardCacheMs,
+  rateLimitConfig,
 } = {}) {
   const app = express();
   // Instance-specific rate limiting configuration
@@ -163,6 +183,21 @@ function createApp({
   const leaderboardRateDataLocal = new Map();
   // Allow overriding cache TTL per instance
   const cacheTtlMs = leaderboardCacheMs || LEADERBOARD_CACHE_MS;
+
+  // Rate limiting (configurable via env or injection for tests)
+  const baseRateLimitConfig = rateLimitConfig && rateLimitConfig.base ? rateLimitConfig.base : {};
+  const authRateLimiter = buildRateLimiter(rateLimitConfig?.auth || baseRateLimitConfig);
+  const userRateLimiter = buildRateLimiter(rateLimitConfig?.users || baseRateLimitConfig);
+  const proposalsRateLimiter = buildRateLimiter(rateLimitConfig?.proposals || baseRateLimitConfig);
+
+  // Apply rate limiters to critical auth/user/proposal endpoints
+  const authPaths = ['/login', '/api/login', '/register', '/api/register', '/api/register-with-invite'];
+  authPaths.forEach(path => app.use(path, authRateLimiter));
+
+  const userPaths = ['/users', '/api/users'];
+  userPaths.forEach(path => app.use(path, userRateLimiter));
+
+  app.use('/proposals', proposalsRateLimiter);
 
   // ===========================
   // Security Middleware (Helmet)
