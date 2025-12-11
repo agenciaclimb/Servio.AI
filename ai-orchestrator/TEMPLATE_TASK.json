@@ -1,0 +1,36 @@
+{
+  "tasks": [
+    {
+      "id": "1.0",
+      "titulo": "Exemplo: Implementar Feature X",
+      "descricao": "Esta é uma task de exemplo para demonstrar o formato esperado. Substitua pelos dados reais.",
+      "prioridade": "NORMAL",
+      "estimativa": "2h",
+      "day": 1,
+      "arquivos": [
+        "src/components/ExampleComponent.tsx",
+        "src/components/ExampleComponent.test.tsx"
+      ],
+      "alteracoes": [
+        {
+          "arquivo": "src/components/ExampleComponent.tsx",
+          "mudanca": "Criar novo componente"
+        }
+      ],
+      "testes": ["Testar renderização do componente", "Testar props e estados", "Testar callbacks"],
+      "criterios": [
+        "Componente renderiza sem erros",
+        "Todos os testes passam",
+        "Coverage ≥ 80%",
+        "Linting ok"
+      ]
+    }
+  ],
+  "instrucoes": {
+    "1": "Reemplace 'tasks' com array de tarefas reais",
+    "2": "Cada task DEVE ter: id, titulo, descricao, prioridade",
+    "3": "Orchestrator carregará este JSON",
+    "4": "Copilot executará tasks na ordem",
+    "5": "Gemini auditará cada PR"
+  }
+}
