@@ -1,0 +1,25 @@
+{
+  "status": "aguardando-primeira-task",
+  "dia": 1,
+  "tarefas": [],
+  "exemplo": {
+    "id": "1.0",
+    "titulo": "Exemplo de Task",
+    "descricao": "Implementar feature X conforme especificado",
+    "prioridade": "CRÍTICA",
+    "arquivo": "day-1/task-1.0.md",
+    "status": "not-started",
+    "branch": "feature/task-1.0",
+    "pr": null,
+    "data_criacao": "2025-12-11",
+    "data_conclusao": null,
+    "autor": "Jeferson"
+  },
+  "instrucoes": {
+    "1": "Você alimenta este JSON com novas tasks",
+    "2": "Eu liso a task do arquivo task-X.Y.md",
+    "3": "Sigo protocolo até conclusão",
+    "4": "Você marca como DONE quando auditado",
+    "5": "Ciclo infinito"
+  }
+}
