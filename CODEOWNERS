@@ -1,0 +1,52 @@
+# CODEOWNERS — Responsabilidades de Código
+
+**Versão**: 1.0  
+**Data**: 11 de dezembro de 2025
+
+---
+
+## Frontend
+
+```
+/src/                           @copilot-executor
+/src/components/                @copilot-executor
+/src/hooks/                     @copilot-executor
+/src/services/                  @copilot-executor
+/src/types.ts                   @gemini-auditor
+```
+
+## Backend
+
+```
+/backend/src/                   @copilot-executor
+/backend/tests/                 @copilot-executor
+```
+
+## Infraestrutura
+
+```
+/firestore.rules                @gemini-auditor
+/.github/workflows/             @orchestrator
+/docs/                          @gemini-auditor
+```
+
+## AI Engine
+
+```
+/ai-engine/                     @gemini-auditor
+/ai-orchestrator/               @orchestrator
+/ai-tasks/                      @orchestrator
+```
+
+---
+
+## Regras
+
+- Mudanças em `DOCUMENTO_MESTRE_SERVIO_AI.md` requerem aprovação Gemini
+- Mudanças em `firestore.rules` requerem deploy manual
+- Mudanças em workflow requerem validação em staging
+- Mudanças em padrões requerem atualização Documento Mestre
+
+---
+
+*Codeowners | Servio.AI | Production*

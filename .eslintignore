@@ -18,6 +18,10 @@ backend/
 functions/
 server.js
 
+# AI Engine (Node scripts)
+ai-engine/
+ai-orchestrator/
+
 # Documentation
 doc/
 
