@@ -35,6 +35,8 @@ const EXCEPTIONS = [
   '.env.production.example',
   'lighthouse-report',
   'firebaseConfig.ts', // Firebase public API key (seguro no frontend)
+  'DOCUMENTO_MESTRE_SERVIO_AI.md', // Incident reports com chaves [REDACTED]
+  'PROGRESSO_PROSPECCAO_FASE1.md', // Histórico de desenvolvimento
 ];
 
 function getStagedFiles() {
