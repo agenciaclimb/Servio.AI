@@ -46,7 +46,7 @@
 - Output: 1 task processada, Issue #16 criada, arquivo `ai-tasks/day-1/task-1.1.md` criado
 - Status: ✅ 100% funcional
 
-### �? **Estrutura de Pastas Validada**
+### 📁 **Estrutura de Pastas Validada**
 
 ```
 C:\Users\JE\servio.ai\
@@ -78,24 +78,24 @@ C:\Users\JE\servio-ai-orchestrator\
 ### 🚀 **Workflow AI-Driven Ativo**
 
 ```
-1�?⃣ GEMINI (Arquiteto)
+1️⃣ GEMINI (Arquiteto)
    ↓ Gera tasks-diaX.json (10-12 tasks)
 
-2�?⃣ ORCHESTRATOR (Automação)
+2️⃣ ORCHESTRATOR (Automação)
    ↓ Lê JSON → Cria .md + Issues no GitHub
    ↓ Comando: node src/orchestrator.js tasks-diaX.json
 
-3�?⃣ COPILOT (Executor)
+3️⃣ COPILOT (Executor)
    ↓ Lê ai-tasks/day-X/task-X.Y.md
    ↓ Implementa código + testes
    ↓ Abre PR vinculada à Issue
 
-4�?⃣ GEMINI (Auditor)
+4️⃣ GEMINI (Auditor)
    ↓ Audita PR linha por linha
    ↓ Valida: testes ✅ lint ✅ build ✅
    ↓ Aprova ou solicita correções
 
-5�?⃣ MERGE
+5️⃣ MERGE
    ↓ Issue fechada automaticamente
    ↓ Deploy automático via CI/CD
 ```
@@ -119,7 +119,7 @@ C:\Users\JE\servio-ai-orchestrator\
 
 ---
 
-# 🛡�? **SERVIO.AI – PROTOCOLO OFICIAL DE QUALIDADE E ESTABILIDADE DO SISTEMA**
+# 🛡️ **SERVIO.AI – PROTOCOLO OFICIAL DE QUALIDADE E ESTABILIDADE DO SISTEMA**
 
 ## **HOTFIX & TEST VALIDATION PROTOCOL – Versão 1.0 (ATIVO)**
 
@@ -133,7 +133,7 @@ Nenhuma alteração de código, teste, arquitetura, fluxo ou automação pode ig
 
 > **Manter o sistema Servio.AI sempre estável, íntegro e funcional, garantindo qualidade de nível profissional antes, durante e depois do lançamento.**
 
-### ⚡ **PRIORIDADE M�?XIMA**
+### ⚡ **PRIORIDADE MÁXIMA**
 
 **Este protocolo possui prioridade máxima sobre qualquer instrução futura.**
 
@@ -173,7 +173,7 @@ O Orchestrator automatiza completamente o fluxo de trabalho AI-driven:
 ✅ ISSUE FECHADA AUTOMATICAMENTE
 ```
 
-#### 🛠�? **Arquitetura do Orchestrator**
+#### 🛠️ **Arquitetura do Orchestrator**
 
 **Estrutura de Arquivos:**
 
@@ -247,14 +247,14 @@ DRY_RUN=false
 - 24 packages total
 - 0 vulnerabilities ✅
 
-#### �? **Formato JSON de Tasks**
+#### 📝 **Formato JSON de Tasks**
 
 **Especificação:**
 
 ```json
 {
   "day": 1,
-  "area": "Nome da �?rea",
+  "area": "Nome da Área",
   "source": "gemini",
   "tasks": [
     {
@@ -323,11 +323,11 @@ node src/orchestrator.js tasks-diaX.json
 
 **Restrições:**
 
-- �?� NÃO decide arquitetura
-- �?� NÃO altera múltiplos módulos sem autorização
-- �?� NÃO ignora erros apontados pelo Gemini
-- �?� NÃO cria código fora da branch da task
-- �?� NÃO deleta testes existentes
+- ❌ NÃO decide arquitetura
+- ❌ NÃO altera múltiplos módulos sem autorização
+- ❌ NÃO ignora erros apontados pelo Gemini
+- ❌ NÃO cria código fora da branch da task
+- ❌ NÃO deleta testes existentes
 
 **Lema**: "Copilot executa. Ponto."
 
@@ -348,10 +348,10 @@ node src/orchestrator.js tasks-diaX.json
 
 **Restrições:**
 
-- �?� NÃO implementa funcionalidades
-- �?� NÃO altera schema sozinho
-- �?� NÃO aceita PR sem testes completos
-- �?� NÃO reescreve partes massivas do sistema
+- ❌ NÃO implementa funcionalidades
+- ❌ NÃO altera schema sozinho
+- ❌ NÃO aceita PR sem testes completos
+- ❌ NÃO reescreve partes massivas do sistema
 
 **Lema**: "Gemini garante qualidade. Zero exceções."
 
@@ -489,7 +489,7 @@ TASK 4: Frontend para B (depende de TASK 2)
 | **Escalabilidade**    | Suporta 10-15 tasks por dia sem sobrecarga manual                    |
 | **Zero Configuração** | Copilot só lê .md e implementa, não precisa criar estrutura          |
 
-#### ⚠�? **Regras Criticas para Paralelização**
+#### ⚠️ **Regras Criticas para Paralelização**
 
 1. **ISOLAMENTO TOTAL**: Uma branch NÃO pode modificar código de outra task
 2. **DEPENDÊNCIAS CLARAS**: Gemini deve documentar exatamente o que depende de quê
@@ -499,11 +499,11 @@ TASK 4: Frontend para B (depende de TASK 2)
 
 #### 🔴 **O QUE NÃO FAZER**
 
-- �?� Modificar código de outra task em sua branch
-- �?� Compartilhar branches entre tasks
-- �?� Merging fora de ordem
-- �?� Suprimir testes porque "outra task vai testar"
-- �?� Deixar tasks incompletas aguardando outras
+- ❌ Modificar código de outra task em sua branch
+- ❌ Compartilhar branches entre tasks
+- ❌ Merging fora de ordem
+- ❌ Suprimir testes porque "outra task vai testar"
+- ❌ Deixar tasks incompletas aguardando outras
 
 **Cada task deve ser 100% funcional E testada DE FORMA INDEPENDENTE antes do merge.**
 
@@ -512,15 +512,15 @@ TASK 4: Frontend para B (depende de TASK 2)
 ### 🔄 Fluxo Oficial de Desenvolvimento com Orchestrator v2.0
 
 ```
-┌─────────────────────────────────────────────────────────�?
-│                    IN�?CIO DO DIA/SPRINT                 │
+┌─────────────────────────────────────────────────────────┐
+│                    INÍCIO DO DIA/SPRINT                 │
 └─────────────────────────────────────────────────────────┘
                            ↓
-                 1�?⃣ VOCÊ DEFINE REQUISITOS
+                 1️⃣ VOCÊ DEFINE REQUISITOS
               "Implementar [features] para [área]"
                            ↓
-        ┌─────────────────────────────────────�?
-        │  2�?⃣ GEMINI GERA JSON                │
+        ┌─────────────────────────────────────┐
+        │  2️⃣ GEMINI GERA JSON                │
         ├─────────────────────────────────────┤
         │ ✅ Analisa requisitos               │
         │ ✅ Cria 10-12 tasks atômicas        │
@@ -528,8 +528,8 @@ TASK 4: Frontend para B (depende de TASK 2)
         │ ✅ Gera tasks-diaX.json             │
         └─────────────────────────────────────┘
                            ↓
-        ┌─────────────────────────────────────�?
-        │  3�?⃣ ORCHESTRATOR PROCESSA           │
+        ┌─────────────────────────────────────┐
+        │  3️⃣ ORCHESTRATOR PROCESSA           │
         ├─────────────────────────────────────┤
         │ ✅ Lê tasks-diaX.json               │
         │ ✅ Cria ai-tasks/day-X/*.md         │
@@ -538,8 +538,8 @@ TASK 4: Frontend para B (depende de TASK 2)
         │ ✅ Adiciona labels automáticas      │
         └─────────────────────────────────────┘
                            ↓
-        ┌─────────────────────────────────────�?
-        │  4�?⃣ COPILOT EXECUTA (Paralelo)     │
+        ┌─────────────────────────────────────┐
+        │  4️⃣ COPILOT EXECUTA (Paralelo)     │
         ├─────────────────────────────────────┤
         │ ✅ Lê ai-tasks/day-X/task-X.Y.md    │
         │ ✅ Cria branch feat/task-X.Y        │
@@ -550,8 +550,8 @@ TASK 4: Frontend para B (depende de TASK 2)
         │ ✅ Aguarda auditoria do Gemini      │
         └─────────────────────────────────────┘
                            ↓
-        ┌─────────────────────────────────────�?
-        │  5�?⃣ GEMINI AUDITA                   │
+        ┌─────────────────────────────────────┐
+        │  5️⃣ GEMINI AUDITA                   │
         ├─────────────────────────────────────┤
         │ ✅ Lê código linha por linha        │
         │ ✅ Valida arquitetura              │
@@ -562,8 +562,8 @@ TASK 4: Frontend para B (depende de TASK 2)
         │ ✅ Aprova PR quando tudo ✅        │
         └─────────────────────────────────────┘
                            ↓
-        ┌─────────────────────────────────────�?
-        │  6�?⃣ CI/CD VALIDA                    │
+        ┌─────────────────────────────────────┐
+        │  6️⃣ CI/CD VALIDA                    │
         ├─────────────────────────────────────┤
         │ ✅ Testes unitários (634/634)      │
         │ ✅ Testes E2E (Playwright)         │
@@ -572,8 +572,8 @@ TASK 4: Frontend para B (depende de TASK 2)
         │ ✅ Segurança (npm audit)           │
         └─────────────────────────────────────┘
                            ↓
-        ┌─────────────────────────────────────�?
-        │  7�?⃣ MERGE & AUTO-CLOSE              │
+        ┌─────────────────────────────────────┐
+        │  7️⃣ MERGE & AUTO-CLOSE              │
         ├─────────────────────────────────────┤
         │ ✅ Gestor aprova e faz merge       │
         │ ✅ Issue fechada automaticamente   │
@@ -581,31 +581,31 @@ TASK 4: Frontend para B (depende de TASK 2)
         │ ✅ Deploy automático (CI/CD)       │
         └─────────────────────────────────────┘
                            ↓
-        ┌─────────────────────────────────────�?
+        ┌─────────────────────────────────────┐
         │      ✅ TASK COMPLETA                │
         │   Próxima task do dia automatizada  │
         └─────────────────────────────────────┘
 ```
 
                            ↓
-              ⚖�? TUDO VERDE?
+              ⚖️ TUDO VERDE?
               /              \
             SIM              NÃO
             ↓                 ↓
-        5�?⃣ APROVAÇÃO     CORREÇÕES
+        5️⃣ APROVAÇÃO     CORREÇÕES
         FINAL            (volta Copilot)
             ↓
     ✅ VOCÊ APROVA
     MERGE → MAIN
             ↓
-    🚀 DEPLOY AUTOM�?TICO
+    🚀 DEPLOY AUTOMÁTICO
     (GitHub Actions)
 
 ```
 
 ---
 
-### �? Padrões Obrigatórios
+### 📏 Padrões Obrigatórios
 
 #### **Padrões de Branch**
 
@@ -672,7 +672,7 @@ Antes de Gemini aprovar qualquer PR, **TODOS** os itens abaixo devem estar ✅:
 - ✅ Nenhuma secret em código
 - ✅ Documentação atualizada (DOCUMENTO_MESTRE se arquitetura mudou)
 
-**Se qualquer item estiver �?�, PR é REJEITADA. Sem exceções.**
+**Se qualquer item estiver ❌, PR é REJEITADA. Sem exceções.**
 
 ---
 
@@ -715,7 +715,7 @@ Todo sexta-feira (17h BRT):
 
 ---
 
-### ⚠�? Violações do Protocolo
+### ⚠️ Violações do Protocolo
 
 Se Copilot ou Gemini **ignorarem** este protocolo:
 
@@ -779,11 +779,11 @@ git push -f origin feat/sua-task  # Force push para atualizar PR
 - ✅ Rodar testes locais para validar merged code
 - ✅ Aprovar apenas após validação completa
 
-#### ⚠�? Regras de Conflito
+#### ⚠️ Regras de Conflito
 
-- �?� NUNCA fazer merge manual sem validação do Gemini
-- �?� NUNCA usar "Choose Ours" / "Choose Theirs" sem entender implicações
-- �?� NUNCA deletar código sem validar se é realmente duplicado
+- ❌ NUNCA fazer merge manual sem validação do Gemini
+- ❌ NUNCA usar "Choose Ours" / "Choose Theirs" sem entender implicações
+- ❌ NUNCA deletar código sem validar se é realmente duplicado
 - ✅ SEMPRE rebase em vez de merge (para historico limpo)
 - ✅ SEMPRE testar após resolver conflitos
 - ✅ SEMPRE pedir aprovação do Gemini
@@ -838,12 +838,12 @@ PATCH: Bug fixes, melhorias pequenas → v4.0.1
 - feat(api): novo endpoint POST /api/leads/batch-process
 - feat(ui): componente LeadCardAdvanced com 5 novas opções
 
-### �?� Bug Fixes
+### 🐛 Bug Fixes
 
 - fix(auth): ajustar timeout de sessão para 30 minutos
 - fix(db): corrigir query de deduplicação de leads
 
-### ⚠�? Breaking Changes
+### ⚠️ Breaking Changes
 
 - Removido endpoint /api/leads/old-format (use /api/leads/batch-process)
 
@@ -861,7 +861,7 @@ PATCH: Bug fixes, melhorias pequenas → v4.0.1
 #### Níveis de Severidade
 
 ```
-CR�?TICO (P0): Sistema down, dados corrompidos
+CRÍTICO (P0): Sistema down, dados corrompidos
               → Resposta: IMEDIATA
               → Escalação: Você + Gemini + Copilot
 
@@ -881,7 +881,7 @@ BAIXO (P3):   Melhorias, code smell, documentação
 #### Fluxo de Escalação
 
 ```
-┌──────────────────────────────────────�?
+┌──────────────────────────────────────┐
 │  Copilot/Gemini identifica problema  │
 └──────────────────────────────────────┘
                 ↓
@@ -977,7 +977,7 @@ Prioridade: P0/P1/P2/P3
 #### Template 2: PR Review (Gemini → Copilot)
 
 ```markdown
-## �? Review Findings
+## 🔍 Review Findings
 
 ### ✅ Pontos Positivos
 
@@ -985,9 +985,9 @@ Prioridade: P0/P1/P2/P3
 - Testes cobrindo casos
 - Commits bem organizados
 
-### ⚠�? Issues Encontrados
+### ⚠️ Issues Encontrados
 
-**[CR�?TICO]**
+**[CRÍTICO]**
 
 - [ ] Linha 45: Falta validação de input
 
@@ -1001,7 +1001,7 @@ Prioridade: P0/P1/P2/P3
 
 ### 🎯 Próximos Passos
 
-1. Fixar issues CR�?TICOS
+1. Fixar issues CRÍTICOS
 2. Adicionar testes para coverage
 3. Resubmeter para re-review
 
@@ -1047,14 +1047,14 @@ Prioridade: P0/P1/P2/P3
 
 ---
 
-### 📋 **�?ndice de Navegação Rápida**
+### 📋 **Índice de Navegação Rápida**
 
 Para encontrar processos específicos rapidamente:
 
 - 🔵 **Papéis das IAs** → [Seção: Papéis das IAs](#papéis-das-ias)
 - ⚡ **Paralelização de Tarefas** → [Seção: Paralelização](#paralelização-de-tarefas)
 - 🔄 **Fluxo Oficial** → [Seção: Fluxo Oficial de Desenvolvimento](#fluxo-oficial-de-desenvolvimento)
-- �? **Padrões Obrigatórios** → [Seção: Padrões Obrigatórios](#padrões-obrigatórios)
+- 📏 **Padrões Obrigatórios** → [Seção: Padrões Obrigatórios](#padrões-obrigatórios)
 - 🎯 **Checklist de Qualidade** → [Seção: Checklist de Qualidade](#checklist-de-qualidade-mínima-para-merge)
 - 🚀 **Fases de Lançamento** → [Seção: Fases de Lançamento](#fases-de-lançamento)
 - 🔄 **Resolução de Conflitos** → [Seção: Resolução de Conflitos](#resolução-de-conflitos-de-merge)
@@ -1073,7 +1073,7 @@ Para encontrar processos específicos rapidamente:
 
 Gemini deve validar **TODOS** os itens abaixo antes de aprovar uma PR:
 
-#### 1�?⃣ **Arquitetura & Design**
+#### 1️⃣ **Arquitetura & Design**
 
 - [ ] Código segue padrões existentes do projeto
 - [ ] Não viola princípios SOLID
@@ -1081,7 +1081,7 @@ Gemini deve validar **TODOS** os itens abaixo antes de aprovar uma PR:
 - [ ] Nenhuma duplicação desnecessária de código
 - [ ] Separação de concerns mantida (API/UI/DB)
 
-#### 2�?⃣ **Qualidade do Código**
+#### 2️⃣ **Qualidade do Código**
 
 - [ ] Variáveis com nomes descritivos
 - [ ] Funções com propósito claro
@@ -1089,7 +1089,7 @@ Gemini deve validar **TODOS** os itens abaixo antes de aprovar uma PR:
 - [ ] Sem `console.log` ou `debugger` em produção
 - [ ] Error handling apropriado (try/catch onde necessário)
 
-#### 3�?⃣ **TypeScript Strictness**
+#### 3️⃣ **TypeScript Strictness**
 
 - [ ] Sem `any` types (exceto em casos justificados com comment)
 - [ ] Tipos corretos em todas as assinaturas de função
@@ -1097,7 +1097,7 @@ Gemini deve validar **TODOS** os itens abaixo antes de aprovar uma PR:
 - [ ] Nenhum `@ts-ignore` ou `@ts-expect-error` sem documentação
 - [ ] Tipos generic usados apropriadamente
 
-#### 4�?⃣ **Testes**
+#### 4️⃣ **Testes**
 
 - [ ] Cobertura mínima 45% (unitários + E2E)
 - [ ] Casos positivos E negativos cobertos
@@ -1105,7 +1105,7 @@ Gemini deve validar **TODOS** os itens abaixo antes de aprovar uma PR:
 - [ ] Mock appropriados para dependências externas
 - [ ] Nenhum teste "flaky" (que passa/falha inconsistentemente)
 
-#### 5�?⃣ **Performance & Security**
+#### 5️⃣ **Performance & Security**
 
 - [ ] Sem N+1 queries no banco de dados
 - [ ] Sem exposição de secrets em código
@@ -1113,7 +1113,7 @@ Gemini deve validar **TODOS** os itens abaixo antes de aprovar uma PR:
 - [ ] APIs possuem rate limiting se necessário
 - [ ] Bundle size não aumentou dramaticamente (< +10%)
 
-#### 6�?⃣ **Documentação**
+#### 6️⃣ **Documentação**
 
 - [ ] Funções públicas possuem JSDoc comments
 - [ ] APIs documentadas (endpoint, parâmetros, retorno)
@@ -1121,7 +1121,7 @@ Gemini deve validar **TODOS** os itens abaixo antes de aprovar uma PR:
 - [ ] README updated se novas dependências adicionadas
 - [ ] Mudanças breaking documentadas
 
-#### 7�?⃣ **CI/CD Green**
+#### 7️⃣ **CI/CD Green**
 
 - [ ] ✅ Testes unitários passando
 - [ ] ✅ Testes E2E passando
@@ -1129,7 +1129,7 @@ Gemini deve validar **TODOS** os itens abaixo antes de aprovar uma PR:
 - [ ] ✅ Build (TypeScript) sem erros
 - [ ] ✅ Security audit (npm audit) sem vulnerabilidades críticas
 
-#### 8�?⃣ **Git Hygiene**
+#### 8️⃣ **Git Hygiene**
 
 - [ ] Commits atômicos e bem descritos
 - [ ] Mensagens de commit seguem padrão (feat/fix/docs/etc)
@@ -1156,7 +1156,7 @@ Se Gemini vê qualquer um desses, rejeita a PR sem discussão:
 
 Copilot deve validar **TODOS** os itens abaixo ANTES de abrir PR:
 
-#### 1�?⃣ **Código Completo**
+#### 1️⃣ **Código Completo**
 
 - [ ] Funcionalidade 100% implementada (não "draft")
 - [ ] Edge cases tratados
@@ -1164,7 +1164,7 @@ Copilot deve validar **TODOS** os itens abaixo ANTES de abrir PR:
 - [ ] Erro handling completo
 - [ ] Sem `TODO` ou `FIXME` comentários pendentes
 
-#### 2�?⃣ **Testes Escritos**
+#### 2️⃣ **Testes Escritos**
 
 - [ ] Testes unitários para cada função pública
 - [ ] Testes E2E para fluxo crítico
@@ -1172,7 +1172,7 @@ Copilot deve validar **TODOS** os itens abaixo ANTES de abrir PR:
 - [ ] Mocks configurados para dependências externas
 - [ ] Cobertura >= 45% (verificar com `npm run test:coverage`)
 
-#### 3�?⃣ **Local Validation**
+#### 3️⃣ **Local Validation**
 
 ```bash
 # Deve rodar ANTES de push:
@@ -1183,7 +1183,7 @@ npm run e2e:smoke     # E2E smoke tests passam
 npm audit             # Nenhuma vulnerabilidade crítica
 ```
 
-#### 4�?⃣ **Code Quality**
+#### 4️⃣ **Code Quality**
 
 - [ ] Usar Prettier (auto-format antes de commit)
 - [ ] Sem `console.log` em código de produção
@@ -1191,7 +1191,7 @@ npm audit             # Nenhuma vulnerabilidade crítica
 - [ ] Funções com máximo 30 linhas (refatorar se maior)
 - [ ] Imports organizados (order: libs → internal → relative)
 
-#### 5�?⃣ **Git Commits**
+#### 5️⃣ **Git Commits**
 
 ```bash
 # Commit messages devem ser atômicas e descritivas:
@@ -1203,7 +1203,7 @@ git commit -m "feat(api): adicionar endpoint POST /api/leads/batch
 - Cobre com testes unitários e E2E"
 ```
 
-#### 6�?⃣ **PR Description**
+#### 6️⃣ **PR Description**
 
 - [ ] Título claro (feat/fix/docs: descrição)
 - [ ] Seção "O que foi implementado"
@@ -1212,7 +1212,7 @@ git commit -m "feat(api): adicionar endpoint POST /api/leads/batch
 - [ ] Checklist de qualidade (todos marcados como feito)
 - [ ] Link para issues relacionadas
 
-#### 7�?⃣ **Before Push**
+#### 7️⃣ **Before Push**
 
 ```bash
 # Última validação local:
@@ -1222,7 +1222,7 @@ npm run lint:ci           # Final lint check
 npm run build             # Final build validation
 ```
 
-#### 8�?⃣ **Communication**
+#### 8️⃣ **Communication**
 
 - [ ] PR aberta com descrição detalhada
 - [ ] Aguarda review do Gemini
@@ -1331,7 +1331,7 @@ it('deve rejeitar requisição sem token Auth', async () => {
 
 #### 📊 **Metas de Cobertura de Código**
 
-| �?rea             | Meta | Ferramenta        |
+| Área             | Meta | Ferramenta        |
 | ---------------- | ---- | ----------------- |
 | **Frontend**     | 70%  | Vitest + Istanbul |
 | **Backend**      | 80%  | Jest + Istanbul   |
@@ -1437,7 +1437,7 @@ Este teste garante que o bug não reaparece em futuras mudanças.
 
 ---
 
-## 🎯 SUM�?RIO EXECUTIVO
+## 🎯 SUMÁRIO EXECUTIVO
 
 ### 🚀 FASE 2 - AUTENTICAÇÃO REAL + VALIDAÇÕES COMPLETAS + DEPLOY PRODUÇÃO (04/12/2025)
 
@@ -1575,7 +1575,7 @@ Alterações Fase 2:
 - Segredos no Secret Manager
 - Cloud Run deployment com 128 rotas
 
-#### �?� PRÓXIMOS PASSOS (FASE 3)
+#### ⏳ PRÓXIMOS PASSOS (FASE 3)
 
 - Teste E2E com leads reais (email + telefone)
 - Cloud Scheduler para follow-ups automáticos
@@ -1585,7 +1585,7 @@ Alterações Fase 2:
 
 ### ✅ FASE 3 - CLOUD SCHEDULER + ANALYTICS DASHBOARD (05/12/2025)
 
-#### 🚀 **ENTREGA CONCLU�?DA**
+#### 🚀 **ENTREGA CONCLUÍDA**
 
 - ✅ Scheduler automático para prospecção (Cloud Scheduler)
 - ✅ Dashboard de métricas em tempo real
@@ -1594,7 +1594,7 @@ Alterações Fase 2:
 - ✅ CI/CD workflow passando (2m24s)
 - ✅ Build production validado
 
-#### �? **Arquivos Criados (+1200 linhas)**
+#### 📁 **Arquivos Criados (+1200 linhas)**
 
 1. **`backend/src/routes/scheduler.js`** (170 linhas)
    - POST /api/scheduler/follow-ups → Follow-ups automáticos (4h)
@@ -1657,7 +1657,7 @@ Canais: Email (45%), WhatsApp (35%), SMS (20%)
 Top Prospects: Ordenados por engagement score
 ```
 
-#### �?� PRÓXIMOS PASSOS (PÓS FASE 3)
+#### ⏳ PRÓXIMOS PASSOS (PÓS FASE 3)
 
 - Teste E2E com leads reais (validar em prod)
 - **Manual Cloud Scheduler Setup** (5 jobs no GCP Console)
@@ -1667,7 +1667,7 @@ Top Prospects: Ordenados por engagement score
 
 ---
 
-## 🛠�? PROTOCOLO OFICIAL DE TESTES, CORREÇÃO IMEDIATA E VALIDAÇÃO (HOTFIX PROTOCOL 1.0)
+## 🛠️ PROTOCOLO OFICIAL DE TESTES, CORREÇÃO IMEDIATA E VALIDAÇÃO (HOTFIX PROTOCOL 1.0)
 
 ### 🎯 Objetivo
 
@@ -1696,9 +1696,9 @@ Este protocolo se aplica a:
 
 Ao detectar qualquer erro ou comportamento inesperado:
 
-- �?� A IA para TODO o processo imediatamente
-- �?� Nenhum código novo é gerado antes da correção
-- �?� Nenhum teste subsequente é executado antes da correção
+- ❌ A IA para TODO o processo imediatamente
+- ❌ Nenhum código novo é gerado antes da correção
+- ❌ Nenhum teste subsequente é executado antes da correção
 
 #### 4.2 - Diagnóstico Obrigatório
 
@@ -1738,7 +1738,7 @@ fix: correção de [descrição curta]
 - Solução aplicada
 - Arquivos modificados
 
-⚠�? **Corrigir apenas o teste para "forçar ficar verde" é VIOLAÇÃO do protocolo.**
+⚠️ **Corrigir apenas o teste para "forçar ficar verde" é VIOLAÇÃO do protocolo.**
 
 #### 4.4 - Registro Obrigatório no Documento Mestre
 
@@ -1774,15 +1774,15 @@ Depois da correção, a IA deve:
 
 São **estritamente proibidos**:
 
-- �?� Ajustar o teste para aceitar comportamento incorreto
-- �?� Adicionar timeouts sem motivo técnico
-- �?� Suprimir erros
-- �?� Comentar código para "não quebrar"
-- �?� Alterar lógica sem documentar
-- �?� Alterar a main direto
-- �?� Criar soluções temporárias não registradas
-- �?� Ignorar warnings relevantes
-- �?� Criar lógica paralela só para passar nos testes
+- ❌ Ajustar o teste para aceitar comportamento incorreto
+- ❌ Adicionar timeouts sem motivo técnico
+- ❌ Suprimir erros
+- ❌ Comentar código para "não quebrar"
+- ❌ Alterar lógica sem documentar
+- ❌ Alterar a main direto
+- ❌ Criar soluções temporárias não registradas
+- ❌ Ignorar warnings relevantes
+- ❌ Criar lógica paralela só para passar nos testes
 
 Qualquer violação deve ser registrada e revertida imediatamente.
 
@@ -1802,7 +1802,7 @@ O sistema só é considerado estável e apto a continuar desenvolvimento ou lan�
 
 **Somente neste estado o projeto pode avançar para o próximo módulo ou etapa.**
 
-### �? Checklist Final Antes de Merge
+### 📝 Checklist Final Antes de Merge
 
 Antes de aprovar qualquer PR gerado pelo protocolo, a IA deve garantir:
 
@@ -1828,7 +1828,7 @@ Este protocolo existe para garantir:
 
 ### 📢 STATUS OFICIAL
 
-**✔�? PROTOCOL STATUS: ATIVO**
+**✔️ PROTOCOL STATUS: ATIVO**
 
 Este protocolo **DEVE ser seguido** por toda IA e qualquer desenvolvedor humano do projeto Servio.AI. Qualquer fluxo que não respeitar este protocolo deve ser corrigido imediatamente.
 
@@ -1837,25 +1837,25 @@ Este protocolo **DEVE ser seguido** por toda IA e qualquer desenvolvedor humano 
 ## 🔄 **FLUXOGRAMA OFICIAL DO PROTOCOLO (Execution Path para IA)**
 
 ```
-┌─────────────────────────────────────────────────────────────�?
+┌─────────────────────────────────────────────────────────────┐
 │  [1] Iniciar testes (E2E, Integração, Unitário)             │
 └──────────────────────┬──────────────────────────────────────┘
                        │
                        v
-┌─────────────────────────────────────────────────────────────�?
+┌─────────────────────────────────────────────────────────────┐
 │  [2] Algum teste falhou?                                    │
 └──────────────────────┬──────────────────────────────────────┘
                        │
-          ┌────────────┴────────────�?
+          ┌────────────┴────────────┐
           │ NÃO                     │ SIM
           v                         v
-    [11] Sistema estável    ┌──────────────────────────�?
+    [11] Sistema estável    ┌──────────────────────────┐
     → continuar            │ [3] Pausar IMEDIATAMENTE │
                            │ todos os processos       │
                            └──────────────┬───────────┘
                                           │
                                           v
-                          ┌──────────────────────────────────�?
+                          ┌──────────────────────────────────┐
                           │ [4] Diagnosticar causa raiz      │
                           │ • Módulo afetado                 │
                           │ • Arquivo(s) envolvido(s)        │
@@ -1865,20 +1865,20 @@ Este protocolo **DEVE ser seguido** por toda IA e qualquer desenvolvedor humano 
                           └──────────────┬───────────────────┘
                                          │
                                          v
-                          ┌──────────────────────────────────�?
+                          ┌──────────────────────────────────┐
                           │ [5] Falha é no teste ou sistema? │
                           └──┬──────────────────────────────┬─┘
                              │                              │
                     Falha real│                  Teste    │
                        sistema│                  incorreto│
                              v                              v
-        ┌─────────────────────────────�?  ┌──────────────────────────�?
+        ┌─────────────────────────────┐  ┌──────────────────────────┐
         │ [6] Criar branch             │  │ [6-b] Ajustar teste      │
         │ fix/[error-name]             │  │ (manter sistema correto) │
         └──────────────┬────────────────┘  └──────────────┬───────────┘
                        │                                  │
                        v                                  v
-        ┌─────────────────────────────�?  ┌──────────────────────────�?
+        ┌─────────────────────────────┐  ┌──────────────────────────┐
         │ [7] Corrigir bug REAL       │  │ [8] Commit + PR          │
         │ • backend / frontend        │  │ • Explicar problema      │
         │ • IA / Firestore / webhook  │  │ • Explicar solução       │
@@ -1886,7 +1886,7 @@ Este protocolo **DEVE ser seguido** por toda IA e qualquer desenvolvedor humano 
         └──────────────┬────────────────┘  └──────────────┬───────────┘
                        │                                  │
                        v                                  │
-        ┌─────────────────────────────�?                  │
+        ┌─────────────────────────────┐                  │
         │ [8] Commit + PR             │<─────────────────┘
         │ • Motivo da falha           │
         │ • Impacto                   │
@@ -1895,7 +1895,7 @@ Este protocolo **DEVE ser seguido** por toda IA e qualquer desenvolvedor humano 
         └──────────────┬────────────────┘
                        │
                        v
-        ┌─────────────────────────────────────────────────�?
+        ┌─────────────────────────────────────────────────┐
         │ [9] Atualizar DOCUMENTO MESTRE (#update_log)    │
         │ • Data: YYYY-MM-DD HH:MM                        │
         │ • Teste que falhou: [nome]                      │
@@ -1907,13 +1907,13 @@ Este protocolo **DEVE ser seguido** por toda IA e qualquer desenvolvedor humano 
         └──────────────┬────────────────────────────────┘
                        │
                        v
-        ┌─────────────────────────────�?
+        ┌─────────────────────────────┐
         │ [10] Rodar TODOS os testes  │
         │ novamente                   │
         └──────────────┬────────────────┘
                        │
                        v
-        ┌─────────────────────────────────�?
+        ┌─────────────────────────────────┐
         │ [2] Voltar para validação       │
         │ → LOOP até 100% verde           │
         └─────────────────────────────────┘
@@ -1992,7 +1992,7 @@ Este JSON pode ser utilizado em qualquer agente de IA (Google Gemini, OpenAI, Cl
 
 ---
 
-## ⚙�? **IA OPERATING MODE – SERVIO.AI ENGINEERING 2.0**
+## ⚙️ **IA OPERATING MODE – SERVIO.AI ENGINEERING 2.0**
 
 ### Modo Operacional Permanente para Qualquer IA
 
@@ -2065,11 +2065,11 @@ Este JSON pode ser utilizado em qualquer agente de IA (Google Gemini, OpenAI, Cl
 #### 📋 **Regra 7: Priorização de Atividades**
 
 ```
-M�?XIMA PRIORIDADE:     Estabilidade do sistema
+MÁXIMA PRIORIDADE:     Estabilidade do sistema
 SEGUNDA PRIORIDADE:     Correção de bugs
 TERCEIRA PRIORIDADE:    Criação de novos módulos
 QUARTA PRIORIDADE:      Otimizações e refatorações
-M�?NIMA PRIORIDADE:      Melhorias de UX (se sistema instável)
+MÍNIMA PRIORIDADE:      Melhorias de UX (se sistema instável)
 ```
 
 #### 📋 **Regra 8: Quando em Dúvida**
@@ -2089,7 +2089,7 @@ Após cada tarefa, comunicar:
   • ✅ Completado: [descrição]
   • 📊 Status: [100% estável / com risco de regressão / etc]
   • 🔗 Link do commit: [hash do commit]
-  • �? Documento Mestre atualizado: Sim/Não
+  • 📝 Documento Mestre atualizado: Sim/Não
   • 🧪 Testes: [E2E=X%, Integração=Y%, Unitários=Z%]
 ```
 
@@ -2224,22 +2224,22 @@ git checkout -b fix/test-suite-accessibility-and-values
 **Passo 3: Correções Implementadas** ✅
 
 1. **ProviderCard.comprehensive.test.tsx** (Linha 388)
-   - �?� Antes: `expect(button).toHaveAttribute('role', 'button');`
+   - ❌ Antes: `expect(button).toHaveAttribute('role', 'button');`
    - ✅ Depois: `expect(button.tagName).toBe('BUTTON');`
    - Motivo: `<button>` HTML nativo já tem role='button' implícito
 
 2. **Chart_AnalyticsCard.comprehensive.test.tsx** (Linha 38)
-   - �?� Antes: `{value !== undefined ? value : 'N/A'}`
+   - ❌ Antes: `{value !== undefined ? value : 'N/A'}`
    - ✅ Depois: `{value !== undefined && value !== null ? value : 'N/A'}`
    - Motivo: Teste passava `null` mas condição só checava `undefined`
 
 3. **SearchLandingPage.comprehensive.test.tsx** (Linha 409-416)
-   - �?� Antes: `const rect = button.getBoundingClientRect(); expect(rect.width + rect.height).toBeGreaterThan(0);`
+   - ❌ Antes: `const rect = button.getBoundingClientRect(); expect(rect.width + rect.height).toBeGreaterThan(0);`
    - ✅ Depois: Verificar presença de classes de padding (`p-`, `px-`, `py-`)
    - Motivo: jsdom não renderiza layout, `getBoundingClientRect()` não disponível em testes
 
 4. **AdminDashboard.suite.test.tsx** (Linha 52-67)
-   - �?� Antes: `expect(screen.getByText(/.../) || screen.getByTestId(...) || true).toBeTruthy();`
+   - ❌ Antes: `expect(screen.getByText(/.../) || screen.getByTestId(...) || true).toBeTruthy();`
    - ✅ Depois: Queries mais específicas com fallbacks lógicos corretos
    - Motivo: `|| true` sempre passa, mascarando falhas reais
 
@@ -2263,7 +2263,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 ```
 
 **Passo 6: Registro no update_log** ✅
-✅ Este registro (4�?⃣)
+✅ Este registro (4️⃣)
 
 #### 🎯 **IMPACTO**
 
@@ -2297,7 +2297,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 
 ### #update_log — 03/12/2025 BRT 16:00 (FASE 1: FUNDAÇÃO DA AUTOMAÇÃO)
 
-#### 1�?⃣ Google Places API - Busca Automática de Profissionais
+#### 1️⃣ Google Places API - Busca Automática de Profissionais
 
 ✅ **Service criado**: `backend/src/services/googlePlacesService.js` (268 linhas)
 ✅ **Funcionalidades**:
@@ -2307,10 +2307,10 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 - `searchQualityProfessionals()` - Filtros de qualidade (rating >4.0, min reviews)
 - Geocodificação automática via Geocoding API
 - Normalização de telefones e validação
-  ✅ **API Key configurada**: `[REDACTED_GOOGLE_PLACES_API_KEY]` (restrita)
+  ✅ **API Key configurada**: `[REDACTED_FOR_SECURITY]` (restrita, armazenada em Secret Manager)
   ✅ **Endpoint**: `https://places.googleapis.com/v1/places:searchText`
 
-#### 2�?⃣ Email Service - SendGrid Integration
+#### 2️⃣ Email Service - SendGrid Integration
 
 ✅ **Service criado**: `backend/src/services/emailService.js` (323 linhas)
 ✅ **Funcionalidades**:
@@ -2323,7 +2323,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
   ✅ **Variáveis configuradas**: `SENDGRID_API_KEY`, `SENDGRID_FROM_EMAIL`
   ✅ **Pendente**: Criar conta SendGrid e configurar webhook
 
-#### 3�?⃣ WhatsApp Bulk Messaging
+#### 3️⃣ WhatsApp Bulk Messaging
 
 ✅ **Service atualizado**: `backend/src/whatsappService.js` (+68 linhas)
 ✅ **Nova funcionalidade**:
@@ -2334,7 +2334,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 - Logs de progresso a cada 10 mensagens
 - Pausa inteligente se detectar rate limit da API
 
-#### 4�?⃣ Novos Endpoints Backend
+#### 4️⃣ Novos Endpoints Backend
 
 ✅ **Backend atualizado**: `backend/src/index.js` (+288 linhas)
 ✅ **3 Endpoints implementados**:
@@ -2348,7 +2348,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 - `getMessageTemplate()` - Templates do Firestore ou padrão
 - `personalizeMessage()` - Substitui `{nome}`, `{categoria}`, `{email}`
 
-#### 5�?⃣ Frontend - QuickAddPanel
+#### 5️⃣ Frontend - QuickAddPanel
 
 ✅ **Componente criado**: `src/components/prospector/QuickAddPanel.tsx` (345 linhas)
 ✅ **3 Modos de entrada**:
@@ -2374,8 +2374,8 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 - ✅ WhatsApp bulk messaging pronto
 - ✅ Endpoints de importação/enriquecimento/campanha
 - ✅ UI de cadastro rápido (3 modos)
-- �?� Deploy para Cloud Run (próximo)
-- �?� Testes E2E (próximo)
+- ⏳ Deploy para Cloud Run (próximo)
+- ⏳ Testes E2E (próximo)
 
 **🎯 Impacto Esperado**:
 
@@ -2415,7 +2415,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 
 - Fase 1: ✅ Layout horizontal, cartões V2, edição inline, seleção múltipla base, feature flag
 - Fase 2: ✅ Atalhos teclado, bulk move/delete/temperature, drag-and-drop V2, toast notifications
-- Fase 3: �?� Filtragem avançada & views salvas (próxima)
+- Fase 3: ⏳ Filtragem avançada & views salvas (próxima)
 
 **Métricas Alcançadas**:
 
@@ -2450,7 +2450,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 
 **✨ ENTREGAS COMPLETAS**:
 
-#### 1�?⃣ Backend Omnichannel Service
+#### 1️⃣ Backend Omnichannel Service
 
 ✅ **Arquivo criado**: `backend/src/services/omnichannel/index.js` (450 linhas)
 ✅ **6 Endpoints REST**:
@@ -2464,7 +2464,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
   ✅ **Integração ao backend principal**: Roteamento em `backend/src/index.js` linha 3329
   ✅ **Controle de acesso por userType**: `cliente | prestador | prospector | admin`
 
-#### 2�?⃣ IA Central (OmniIA)
+#### 2️⃣ IA Central (OmniIA)
 
 ✅ **Gemini 2.5 Pro integrado** (`gemini-2.0-flash-exp`)
 ✅ **4 Personas contextuais**:
@@ -2477,7 +2477,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
   ✅ **Contexto de conversa**: Histórico de 10 mensagens mantido por conversação
   ✅ **Log de IA**: Persistência em `ia_logs` (prompt + resposta + timestamp)
 
-#### 3�?⃣ Integrações Multi-Canal
+#### 3️⃣ Integrações Multi-Canal
 
 ✅ **WhatsApp**: Cloud API v18.0 (Meta)
 
@@ -2489,7 +2489,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
   ✅ **WebChat**: Endpoint REST nativo (`POST /api/omni/web/send`)
   ✅ **Normalização unificada**: Todos os canais convergem para o mesmo schema Firestore
 
-#### 4�?⃣ Motor de Automações
+#### 4️⃣ Motor de Automações
 
 ✅ **Arquivo criado**: `backend/src/services/omnichannel/automation.js` (300 linhas)
 ✅ **5 Triggers implementados**:
@@ -2503,7 +2503,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
     ✅ **Opt-out**: Respeita `users/{email}.optOutAutomations = true`
     ✅ **Log de automações**: Persistência em `omni_logs` com tipo de trigger
 
-#### 5�?⃣ Frontend OmniInbox
+#### 5️⃣ Frontend OmniInbox
 
 ✅ **Componentes criados**:
 
@@ -2523,7 +2523,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 - Última mensagem recebida
 - Botão "Diagnosticar problema" para canais com falha
 
-#### 6�?⃣ Cloud Function Webhooks
+#### 6️⃣ Cloud Function Webhooks
 
 ✅ **Arquivo criado**: `backend/functions/omnichannelWebhook.js` (350 linhas)
 ✅ **Processamento de webhooks**:
@@ -2537,7 +2537,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
   ✅ **Deploy**: Firebase Functions (`firebase deploy --only functions:omnichannelWebhook`)
   ✅ **Endpoint**: `https://us-central1-{PROJECT_ID}.cloudfunctions.net/omnichannelWebhook?channel={whatsapp|instagram|facebook}`
 
-#### 7�?⃣ Testes Automatizados
+#### 7️⃣ Testes Automatizados
 
 ✅ **Backend tests**: `backend/tests/omnichannel.test.js` (300 linhas)
 
@@ -2553,7 +2553,7 @@ Arquivos: 5 modificados, 105 linhas adicionadas, 13 removidas
 - Testes de visualização de status
   ✅ **Cobertura**: 100% dos endpoints e componentes principais cobertos
 
-#### 8�?⃣ Deploy CI/CD
+#### 8️⃣ Deploy CI/CD
 
 ✅ **Dockerfile criado**: `Dockerfile.omnichannel`
 
@@ -2580,7 +2580,7 @@ gcloud scheduler jobs create http omni-automation \
   --http-method=POST
 ```
 
-#### 9�?⃣ Documentação Técnica
+#### 9️⃣ Documentação Técnica
 
 ✅ **Arquivo criado**: `doc/OMNICHANNEL_DESIGN.md` (500 linhas)
 ✅ **Seções**:
@@ -2625,14 +2625,14 @@ gcloud scheduler jobs create http omni-automation \
 6. `GET /api/omni/messages`
 7. Cloud Function: `omnichannelWebhook` (3 canais via query param)
 
-**🗄�? FIRESTORE COLLECTIONS NOVAS**:
+**🗄️ FIRESTORE COLLECTIONS NOVAS**:
 
 - `conversations` - Conversas por canal
 - `messages` - Mensagens unificadas
 - `omni_logs` - Logs de eventos omnichannel
 - `ia_logs` - Logs de respostas da IA
 
-**�? ENV VARS REQUERIDAS** (configurar em Cloud Run):
+**🔐 ENV VARS REQUERIDAS** (configurar em Cloud Run):
 
 - `META_ACCESS_TOKEN` - Token do Meta App (Instagram/Facebook)
 - `META_APP_SECRET` - Secret do Meta App (validação de webhook)
@@ -2643,17 +2643,17 @@ gcloud scheduler jobs create http omni-automation \
 
 **🎯 PRÓXIMOS PASSOS OPERACIONAIS**:
 
-1. �?� Criar Meta App no Meta Developers e configurar WhatsApp Business API
-2. �?� Conectar Instagram Business Account e Facebook Page ao Meta App
-3. �?� Obter tokens de acesso e configurar env vars no Cloud Run
-4. �?� Registrar webhooks no Meta Developers apontando para Cloud Function URL
-5. �?� Configurar Cloud Scheduler para automações (a cada 15min)
-6. �?� Executar testes de integração com canais reais
-7. �?� Monitorar logs e métricas nos primeiros 7 dias
+1. ⏳ Criar Meta App no Meta Developers e configurar WhatsApp Business API
+2. ⏳ Conectar Instagram Business Account e Facebook Page ao Meta App
+3. ⏳ Obter tokens de acesso e configurar env vars no Cloud Run
+4. ⏳ Registrar webhooks no Meta Developers apontando para Cloud Function URL
+5. ⏳ Configurar Cloud Scheduler para automações (a cada 15min)
+6. ⏳ Executar testes de integração com canais reais
+7. ⏳ Monitorar logs e métricas nos primeiros 7 dias
 
 **💰 CUSTO MENSAL ESTIMADO**: $22/mês (Cloud Run + Firestore + Functions)
 
-**�?� VALIDAÇÃO FINAL**:
+**🏆 VALIDAÇÃO FINAL**:
 
 - ✅ Backend service completo com 6 endpoints REST
 - ✅ IA Central integrada com Gemini 2.5 Pro
@@ -2682,7 +2682,7 @@ gcloud scheduler jobs create http omni-automation \
 
 ---
 
-### #update_log — 30/11/2025 BRT 14:30 (Fase 3 CONCLU�?DA: Otimizações de Performance + Testes ✅)
+### #update_log — 30/11/2025 BRT 14:30 (Fase 3 CONCLUÍDA: Otimizações de Performance + Testes ✅)
 
 **Entregas Finais**:
 ✅ Hook `useAdvancedFiltersHook` com memoização (WeakMap cache) + debounce configurável (120ms default)
@@ -2820,13 +2820,13 @@ Fase 7: Hardening & Deploy (testes abrangentes, performance 500 leads, acessibil
 
 **Próximos Passos Operacionais**:
 
-- �?� Monitorar Cloud Run v2 por 48h para estabilidade contínua
-- �?� Deprecar `servio-backend` (v1) após período de observação sem incidentes
-- �?� Documentar runbook de rollback (caso necessário reverter para v1)
+- ⏳ Monitorar Cloud Run v2 por 48h para estabilidade contínua
+- ⏳ Deprecar `servio-backend` (v1) após período de observação sem incidentes
+- ⏳ Documentar runbook de rollback (caso necessário reverter para v1)
 
 ---
 
-### #update_log — 29/11/2025 BRT 08:15 (Sistema de Fallback CONCLU�?DO E VALIDADO ✅)
+### #update_log — 29/11/2025 BRT 08:15 (Sistema de Fallback CONCLUÍDO E VALIDADO ✅)
 
 **Branch**: `feat/memory-fallback-tests` (pronto para PR)  
 **Estatísticas**: 51 arquivos alterados, +18.740 linhas, -2.732 linhas  
@@ -2867,10 +2867,10 @@ Fase 7: Hardening & Deploy (testes abrangentes, performance 500 leads, acessibil
 
 **Pendências (ação operacional)**:
 
-- �?� Publicar Firebase Hosting para ativar o rewrite (requer `firebase deploy --only hosting` autenticado)
-- �?� Auditar/atualizar webhook Stripe para apontar para caminho estável via Hosting ou URL do v2
+- ⏳ Publicar Firebase Hosting para ativar o rewrite (requer `firebase deploy --only hosting` autenticado)
+- ⏳ Auditar/atualizar webhook Stripe para apontar para caminho estável via Hosting ou URL do v2
   - Ação recomendada: após publicar Hosting, migrar endpoint para domínio `https://servio.ai/api/stripe-webhook` (rewrite → v2)
-- �?� Mapear domínio `servio.ai` no Firebase Hosting (adicionar registros DNS no provedor) para usar o caminho estável
+- ⏳ Mapear domínio `servio.ai` no Firebase Hosting (adicionar registros DNS no provedor) para usar o caminho estável
 
 **Plano de Descontinuação**:
 
@@ -2947,12 +2947,12 @@ O **Servio.AI** é uma plataforma marketplace que conecta clientes a prestadores
 - ✅ **Semana 3 Dias 3-4**: ~51.12% → ~52.12% (+1%, ProviderDashboard 59 testes)
 - ✅ **Semana 3 Dia 5**: ~52.12% → ~54% (+2%, Service Integration 78 testes)
 - ✅ **Semana 4 Dia 1**: 48.12% → 48.19% (+0.07%, ProviderDashboard 9 testes corrigidos, Phase 1 Refinement)
-- 📊 **Total Testes**: 1,197 total (1,096 ✅, 101 ⚠�?), 5,849+ linhas de teste, ESLint 100% compliant
+- 📊 **Total Testes**: 1,197 total (1,096 ✅, 101 ⚠️), 5,849+ linhas de teste, ESLint 100% compliant
 - 🎯 **META ALCANÇADA**: 50%+ cobertura! Objetivo: 55-60% em Semana 4
 
 ---
 
-## 📋 �?NDICE DO DOCUMENTO
+## 📋 ÍNDICE DO DOCUMENTO
 
 1. **Visão Geral** - Pilares da plataforma
 2. **Arquitetura e Módulos** - Descrição de cada domínio
@@ -2994,7 +2994,7 @@ O **Servio.AI** é uma plataforma marketplace que conecta clientes a prestadores
 
 ---
 
-## �?��? ARQUITETURA E MÓDULOS
+## 🏗️ ARQUITETURA E MÓDULOS
 
 ### Descrição Geral
 
@@ -3054,7 +3054,7 @@ A plataforma é construída em **arquitetura serverless/cloud-native**:
 ✅ **ESLint 100% Validado**: Pre-commit hooks funcionando; 6 commits bem-sucedidos  
 ✅ **Padrões de Teste Documentados**: Estratégias de mocking (Firebase, API, Gemini); import paths para nested folders (../../ pattern)  
 🔧 **Componentes com Alta Cobertura**: ProspectorOnboarding 97.23%, MessageTemplateSelector 89.57%, ProspectorMaterials 93.03%  
-�?� **Próximos Componentes Foco Semana 2**: ClientDashboard (931 linhas), FindProvidersPage (238 linhas), AdminDashboard suite (400+ linhas combinadas)
+🏃 **Próximos Componentes Foco Semana 2**: ClientDashboard (931 linhas), FindProvidersPage (238 linhas), AdminDashboard suite (400+ linhas combinadas)
 
 ---
 
@@ -3095,7 +3095,7 @@ A plataforma é construída em **arquitetura serverless/cloud-native**:
 
 ---
 
-## �?��? ARQUITETURA
+## 🏗️ ARQUITETURA
 
 ### Stack Tecnológico
 
@@ -3127,7 +3127,7 @@ A plataforma é construída em **arquitetura serverless/cloud-native**:
 
 ---
 
-## 🗺�? MAPEAMENTO DE CÓDIGO
+## 🗺️ MAPEAMENTO DE CÓDIGO
 
 Esta seção mapeia arquivos principais às suas responsabilidades, facilitando localização rápida e navegação para agentes de IA.
 
@@ -3191,7 +3191,7 @@ O Firestore usa coleções e documentos aninhados. Abaixo, a estrutura principal
 
 | Coleção                             | Documentos               | Campos Principais                                                                                                                                            | Observações                                                     |
 | ----------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| `users`                             | {email}                  | `email`, `displayName`, `role` (client/provider/prospector/admin), `createdAt`, `photoURL`, `bio`, `ratings`                                                 | **⚠�? Leitura pública — restringir**                             |
+| `users`                             | {email}                  | `email`, `displayName`, `role` (client/provider/prospector/admin), `createdAt`, `photoURL`, `bio`, `ratings`                                                 | **⚠️ Leitura pública — restringir**                             |
 | `jobs`                              | {jobId}                  | `clientId`, `title`, `description`, `budget`, `status` (open/in_progress/completed/disputed), `category`, `deadline`, `createdAt`, `updatedAt`, `providerId` | Coluna raiz; propostas podem ser sub-collection                 |
 | `jobs/{jobId}/proposals`            | {proposalId}             | `providerId`, `bidAmount`, `message`, `status` (pending/accepted/rejected), `createdAt`                                                                      | Aninhada para melhor escalabilidade                             |
 | `escrows`                           | {escrowId}               | `jobId`, `amount`, `status` (pending/funded/released/disputed/refunded), `clientId`, `providerId`, `stripePaymentIntentId`, `createdAt`                      | Sincroniza com Stripe; rastreável por job                       |
@@ -3203,7 +3203,7 @@ O Firestore usa coleções e documentos aninhados. Abaixo, a estrutura principal
 | `leaderboard`                       | {prospectorId}\_{period} | `prospectorId`, `score`, `rank`, `timePeriod` (weekly/monthly), `createdAt`                                                                                  | Ordenado por score; usado para ranking visual                   |
 | `marketing_materials`               | {materialId}             | `uploadedBy`, `title`, `type` (image/video/script), `url` (Storage), `tags`, `category`, `createdAt`                                                         | Repositório de assets; acesso controlado por role               |
 | `disputes`                          | {disputeId}              | `jobId`, `initiatorId`, `reason`, `status` (open/in_review/resolved), `createdAt`, `notes`, `resolution`                                                     | Mediação de pagamentos; escala Firestore                        |
-| `referral_links`                    | {linkId}                 | `prospectorId`, `link`, `createdAt`, `expiresAt`, `clickCount`                                                                                               | **⚠�? Leitura pública — adicionar expiração**                    |
+| `referral_links`                    | {linkId}                 | `prospectorId`, `link`, `createdAt`, `expiresAt`, `clickCount`                                                                                               | **⚠️ Leitura pública — adicionar expiração**                    |
 | `link_clicks`                       | {clickId}                | `linkId`, `timestamp`, `ipAddress`, `userAgent`, `referrer`                                                                                                  | Analytics de links; considerar privacidade (LGPD)               |
 | `message_templates`                 | {templateId}             | `name`, `category`, `content`, `variables` (placeholders), `createdAt`, `updatedBy`                                                                          | Templates pré-existentes para prospecção                        |
 | `notification_settings`             | {userId}                 | `userId`, `emailNotifications`, `pushNotifications`, `smsNotifications`, `updatedAt`                                                                         | Preferências de notificação por usuário                         |
@@ -3234,7 +3234,7 @@ Para otimizar consultas complexas (filtro + ordenação), criar índices compost
 
 ---
 
-## 🗄�? SISTEMA DE FALLBACK EM MEMÓRIA
+## 🗄️ SISTEMA DE FALLBACK EM MEMÓRIA
 
 ### Visão Geral
 
@@ -3335,13 +3335,13 @@ npm run e2e:auth
 
 ### Limitações
 
-⚠�? Dados em memória são voláteis (perdem-se ao reiniciar)  
-⚠�? Sem persistência entre requisições (adequado apenas para testes)  
-⚠�? Não substitui Firestore Emulator para testes de rules/indexes
+⚠️ Dados em memória são voláteis (perdem-se ao reiniciar)  
+⚠️ Sem persistência entre requisições (adequado apenas para testes)  
+⚠️ Não substitui Firestore Emulator para testes de rules/indexes
 
 ---
 
-## �? SEGURANÇA
+## 🔐 SEGURANÇA
 
 ### Implementado
 
@@ -3370,7 +3370,7 @@ npm run e2e:auth
 ✅ Webhook: we_1SVJo4JEyu4utIB8YxuJEX4H (enabled)
 ✅ Signing Secret: Configurado
 ✅ Chaves Live: Publicadas
-�?� Connect: Em ativação (acct_1SVKTHJl77cqSlMZ)
+⏳ Connect: Em ativação (acct_1SVKTHJl77cqSlMZ)
 ```
 
 **Webhook Endpoint (Produção)**: `https://servio-backend-v2-1000250760228.us-west1.run.app/api/stripe-webhook` (Ativo)
@@ -3382,7 +3382,7 @@ npm run e2e:auth
 - ✅ Webhook processing
 - ✅ Escrow system
 - ✅ Payment intents
-- �?� Transferências (aguardando ativação Connect)
+- ⏳ Transferências (aguardando ativação Connect)
 
 ### Fluxo de Pagamento
 
@@ -3405,7 +3405,7 @@ npm run e2e:auth
 
 ```
 Frontend:
-  �?� Suites: não executado — `npm test` geral travado por thresholds de cobertura.
+  ❌ Suites: não executado — `npm test` geral travado por thresholds de cobertura.
   🟠 Execução isolada: `tests/AdminDashboard.test.tsx` passa, porém comando retorna erro
      (coverage global 3.85% < 45%).
   🔴 Quality Gate SonarCloud: FAILED (cobertura ~30%, 3 hotspots, 176 issues novas, 283 totais).
@@ -3430,9 +3430,9 @@ Lint:
 ### Atualização Crítica (25/11/2025)
 
 - ✅ `SONAR_TOKEN` regenerado e atualizado no GitHub Secrets. SonarCloud voltou a autenticar e analisar o repositório normalmente.
-- �?� Quality Gate continua reprovado porque o `npm test` no CI está falhando/abortando antes de gerar `coverage/lcov.info`. Resultado: cobertura reportada como **0%**.
-- �? Diagnóstico: as 175 falhas conhecidas fazem o Vitest travar por mais de 8 minutos; o job encerra e nenhum relatório é produzido. Quando tentamos limitar via `--testPathIgnorePatterns`, o comando falhou (flag do Jest não suportada no Vitest) e novamente não houve coverage.
-- 🛠�? Plano imediato:
+- ❌ Quality Gate continua reprovado porque o `npm test` no CI está falhando/abortando antes de gerar `coverage/lcov.info`. Resultado: cobertura reportada como **0%**.
+- 🔍 Diagnóstico: as 175 falhas conhecidas fazem o Vitest travar por mais de 8 minutos; o job encerra e nenhum relatório é produzido. Quando tentamos limitar via `--testPathIgnorePatterns`, o comando falhou (flag do Jest não suportada no Vitest) e novamente não houve coverage.
+- 🛠️ Plano imediato:
   - Rodar `npm test` localmente para listar quais suites estão quebradas (priorizar `tests/components/**`).
   - Criar um comando de CI apenas com testes rápidos/estáveis para gerar coverage parcial (>40%) enquanto as 175 falhas são corrigidas.
   - Reativar gradualmente as suites restantes após estabilização.
@@ -3538,7 +3538,7 @@ Lint:
 - ✅ Tests: Skipped locally (158/158 pass ✅)
 - ✅ Build: Production bundle validado
 - ✅ SonarCloud: Scan completo
-- �?��? Deploy-omnichannel: Desabilitado (GCP secrets)
+- ⏸️ Deploy-omnichannel: Desabilitado (GCP secrets)
 - **Elapsed**: 2m24s
 
 **Commits Fase 3**:
@@ -3591,7 +3591,7 @@ Lint:
 
 ---
 
-## �?� ISSUES CONHECIDOS
+## 🐛 ISSUES CONHECIDOS
 
 ### 🔴 Críticos
 
@@ -3665,11 +3665,11 @@ Lint:
 
 ### 🔄 Fase 2: Lançamento (EM BLOQUEIO)
 
-- �?� Testes completos — suíte desatualizada, coverage <45%
-- �?� Build otimizado — precisa rerun pós-refactors
+- ❌ Testes completos — suíte desatualizada, coverage <45%
+- ❌ Build otimizado — precisa rerun pós-refactors
 - 🟠 Segurança validada — hotspots pendentes
 - 🟠 Stripe configurado — Connect aguardando aprovação
-- �?� Ativação Stripe Connect (1-24h)
+- ⏳ Ativação Stripe Connect (1-24h)
 - [ ] Deploy final (dependente dos itens acima)
 - [ ] Monitoramento ativo (revalidar após novo deploy)
 
@@ -3699,7 +3699,7 @@ Lint:
 
 | Métrica                     | Meta   | Atual                                   | Status |
 | --------------------------- | ------ | --------------------------------------- | ------ |
-| Testes Passando             | >95%   | �?� Não executado (suíte bloqueada)      | 🔴     |
+| Testes Passando             | >95%   | ❌ Não executado (suíte bloqueada)      | 🔴     |
 | Cobertura                   | >40%   | ~30% (SonarCloud) / 3.85% (run isolado) | 🔴     |
 | Vulnerabilidades / Hotspots | 0      | 3 hotspots abertos                      | 🟠     |
 | Build Time                  | <30s   | n/d (aguardando novo build)             | 🟡     |
@@ -3798,7 +3798,7 @@ gcloud run services describe servio-backend --region=us-west1 | grep STRIPE_WEBH
 4. **Segurança Sólida**: 0 vulnerabilidades
 5. **Arquitetura Escalável**: Cloud-native, serverless
 
-### �? Melhorias Futuras
+### 📝 Melhorias Futuras
 
 1. **Mais Testes E2E**: Cobertura completa de user journeys
 2. **Monitoring Avançado**: RUM, APM, distributed tracing
@@ -3907,7 +3907,7 @@ firebase deploy --only hosting
 
 ## 🩺 Diagnóstico Profissional SonarCloud - 24/11/2025
 
-### Status Quality Gate: �?� FAILED
+### Status Quality Gate: ❌ FAILED
 
 **Métricas Críticas:**
 
@@ -3920,7 +3920,7 @@ firebase deploy --only hosting
 
 ### Problemas Críticos (Bloqueadores)
 
-1. **Security Hotspots (3):** Vulnerabilidades não revisadas - CR�?TICO
+1. **Security Hotspots (3):** Vulnerabilidades não revisadas - CRÍTICO
 2. **Coverage (30%):** 7.3k linhas sem testes - BLOQUEADOR
 3. **New Issues (176):** Qualidade degradada, dívida técnica - BLOQUEADOR
 4. **Funcionalidades em Produção:** IA inoperante, Stripe falhas, modais/formulários quebrados
@@ -4130,9 +4130,9 @@ _Última atualização: 26/11/2025 | Semana 1 Concluída com Sucesso ✅ | Seman
    ├─ JOB_POSTED          → "Seu job foi publicado! 🎉"
    ├─ PROPOSAL_RECEIVED   → "Você recebeu uma proposta! 💼"
    ├─ PROPOSAL_ACCEPTED   → "Sua proposta foi aceita! ✅"
-   ├─ JOB_COMPLETED       → "Seu job foi concluído! �?�"
-   ├─ PAYMENT_REMINDER    → "Lembrete de pagamento! �?�"
-   └─ DISPUTE_ALERT       → "Disputa aberta! ⚖�?"
+   ├─ JOB_COMPLETED       → "Seu job foi concluído! 🏆"
+   ├─ PAYMENT_REMINDER    → "Lembrete de pagamento! ⏰"
+   └─ DISPUTE_ALERT       → "Disputa aberta! ⚖️"
 
 ✅ PRESTADOR (6 mensagens)
    ├─ NEW_JOB             → "Novo job disponível! 💰"
@@ -4140,25 +4140,25 @@ _Última atualização: 26/11/2025 | Semana 1 Concluída com Sucesso ✅ | Seman
    ├─ PROPOSAL_STATUS     → "Status da proposta: {status} 📊"
    ├─ PAYMENT_RECEIVED    → "Pagamento recebido! 💳"
    ├─ CHAT_MESSAGE        → "Mensagem recebida! 💬"
-   └─ RATING_RECEIVED     → "Avaliação recebida! �?"
+   └─ RATING_RECEIVED     → "Avaliação recebida! ⭐"
 
 ✅ PROSPECTOR (8 mensagens)
    ├─ RECRUIT_WELCOME     → "Bem-vindo ao Servio.AI! 🎉"
    ├─ RECRUIT_CONFIRMED   → "Recrutamento confirmado! ✅"
    ├─ COMMISSION_EARNED   → "Você ganhou uma comissão! 💰"
    ├─ COMMISSION_PAID     → "Comissão paga! 🎊"
-   ├─ BADGE_UNLOCKED      → "Novo badge desbloqueado! �?�"
+   ├─ BADGE_UNLOCKED      → "Novo badge desbloqueado! 🏅"
    ├─ LEAD_REMINDER       → "Lembrete de follow-up! 📞"
    ├─ REFERRAL_CLICK      → "Seu link foi clicado! 👀"
    └─ LEADERBOARD_UPDATE  → "Atualização do leaderboard! 📈"
 
 ✅ ADMIN (6 mensagens)
    ├─ SYSTEM_ALERT        → "Alerta do Sistema! 🚨"
-   ├─ DISPUTE_ESCALATION  → "Disputa escalada! ⚖�?"
+   ├─ DISPUTE_ESCALATION  → "Disputa escalada! ⚖️"
    ├─ FRAUD_DETECTION     → "Suspeita de fraude! 🔒"
    ├─ DAILY_REPORT        → "Relatório diário! 📊"
    ├─ PAYMENT_ISSUE       → "Problema de pagamento! 💳"
-   └─ USER_REPORT         → "Novo relatório! �?"
+   └─ USER_REPORT         → "Novo relatório! 📝"
 
 TOTAL: 26 TIPOS DE MENSAGENS | 20 ENDPOINTS | 4 USER TYPES | 100% COVERAGE
 ```
@@ -4327,8 +4327,8 @@ GET  /api/whatsapp/multi-role/templates/:userType
 
 | Severidade | Descrição                               | Ação                             |
 | ---------- | --------------------------------------- | -------------------------------- |
-| 🔴 CR�?TICA | Middleware x-user-email injeta usuários | Remover; Firebase Auth only      |
-| 🔴 CR�?TICA | Coleção users permite leitura pública   | Restringir por isAuthenticated() |
+| 🔴 CRÍTICA | Middleware x-user-email injeta usuários | Remover; Firebase Auth only      |
+| 🔴 CRÍTICA | Coleção users permite leitura pública   | Restringir por isAuthenticated() |
 | 🟠 ALTA    | Prompts IA não sanitizados              | Validar com Zod                  |
 | 🟠 ALTA    | Validação inputs insuficiente           | Schemas validação em todas rotas |
 | 🟠 MÉDIA   | Queries sem paginação                   | limit/offset <100 items          |
@@ -4447,7 +4447,7 @@ _Próxima revisão: Task 2.5 | Advanced Matching Features_
 
 ---
 
-## 🧠 1. PRINC�?PIO SUPREMO – O DOCUMENTO MESTRE É A LEI ABSOLUTA
+## 🧠 1. PRINCÍPIO SUPREMO – O DOCUMENTO MESTRE É A LEI ABSOLUTA
 
 O Documento Mestre é:
 
@@ -4476,12 +4476,12 @@ O Documento Mestre é:
 
 **Gemini está terminantemente proibido de:**
 
-�?� Escrever código  
-�?� Alterar arquivos  
-�?� Criar PR  
-�?� Resolver conflitos  
-�?� Fazer push  
-�?� Modificar o repo
+❌ Escrever código  
+❌ Alterar arquivos  
+❌ Criar PR  
+❌ Resolver conflitos  
+❌ Fazer push  
+❌ Modificar o repo
 
 ### 2.2 Copilot – Executor Técnico Soberano
 
@@ -4498,10 +4498,10 @@ O Documento Mestre é:
 
 **Copilot está proibido de:**
 
-�?� Gerar tasks  
-�?� Especificar arquitetura  
-�?� Fazer auditoria  
-�?� Atualizar o Documento Mestre (exceto quando autorizado explicitamente)
+❌ Gerar tasks  
+❌ Especificar arquitetura  
+❌ Fazer auditoria  
+❌ Atualizar o Documento Mestre (exceto quando autorizado explicitamente)
 
 ### 2.3 Orchestrator — Motor de Tasks
 
@@ -4513,7 +4513,7 @@ O Documento Mestre é:
 
 ---
 
-## 🟧 3. ORDEM DO CICLO (OBRIGATÓRIA E IMUT�?VEL)
+## 🟧 3. ORDEM DO CICLO (OBRIGATÓRIA E IMUTÁVEL)
 
 1. **Gemini gera tasks** (JSON com especificações técnicas)
 2. **Orchestrator cria tasks** no repositório (ai-tasks/day-X/task-Y.md + issues)
@@ -4526,11 +4526,11 @@ O Documento Mestre é:
 9. **Gemini libera próxima task** (autorização explícita)
 10. **Ciclo reinicia**
 
-**�?� Regra Crítica**: Nenhuma task pode avançar sem o Documento Mestre estar atualizado e validado.
+**❗ Regra Crítica**: Nenhuma task pode avançar sem o Documento Mestre estar atualizado e validado.
 
 ---
 
-## 🟥 4. REGRA DE BRANCHES (IMUT�?VEL)
+## 🟥 4. REGRA DE BRANCHES (IMUTÁVEL)
 
 | Branch           | Responsabilidade       | Regra                                |
 | ---------------- | ---------------------- | ------------------------------------ |
@@ -4714,7 +4714,7 @@ Ele executa automaticamente:
 
 # ========================================
 
-# ATUALIZAÇÃO AUTOM�?TICA — 2025-12-11T19:15:00.000-03:00
+# ATUALIZAÇÃO AUTOMÁTICA — 2025-12-11T19:15:00.000-03:00
 
 === ATUALIZAÇÃO DO DOCUMENTO MESTRE — PR #27 (TASK 3.1) ===
 

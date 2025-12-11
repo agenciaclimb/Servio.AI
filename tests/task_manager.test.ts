@@ -7,8 +7,8 @@ import * as fs from 'node:fs';
 import { TaskManager } from '../ai-tasks/task_manager';
 import { TaskStatus } from '../ai-tasks/task_interface';
 
-// Mock do módulo fs
-vi.mock('fs');
+// Mock do módulo fs (corresponde à importação node:fs)
+vi.mock('node:fs');
 
 describe('TaskManager', () => {
   let taskManager: TaskManager;

@@ -16,7 +16,7 @@ Critérios de Aceitação:
 
 Arquivos:
 
-- Criar: `ai-tasks/task_manager.ts`, `ai-tasks/task_interface.ts`, `ai-tasks/task_manager.test.ts`
+- Criar: `ai-tasks/task_manager.ts`, `ai-tasks/task_interface.ts`, `tests/task_manager.test.ts`
 - Modificar: (nenhum)
 
 Dependências: (nenhuma)

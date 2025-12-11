@@ -25,7 +25,7 @@
 **API Key configurada:**
 
 ```
-GOOGLE_PLACES_API_KEY=[REDACTED_GOOGLE_PLACES_API_KEY]
+GOOGLE_PLACES_API_KEY=[REDACTED_FOR_SECURITY]
 ```
 
 **Uso da New Places API (2024):**
@@ -326,7 +326,7 @@ import QuickAddPanel from './prospector/QuickAddPanel';
 
 ```powershell
 # Adicionar secrets:
-echo "[REDACTED_GOOGLE_PLACES_API_KEY]" | gcloud secrets create GOOGLE_PLACES_API_KEY --data-file=-
+echo "[YOUR_GOOGLE_PLACES_API_KEY]" | gcloud secrets create GOOGLE_PLACES_API_KEY --data-file=-
 
 # Update Cloud Run service:
 gcloud run services update servio-backend-v2 --region us-west1 --update-secrets=GOOGLE_PLACES_API_KEY=GOOGLE_PLACES_API_KEY:latest
