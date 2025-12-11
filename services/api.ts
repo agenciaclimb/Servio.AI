@@ -1008,6 +1008,28 @@ export async function matchProvidersForJob(jobId: string): Promise<MatchingProvi
   }
 }
 
+/**
+ * Invite a provider to submit a proposal for a job
+ * @param jobId - The job ID
+ * @param providerId - The provider email/ID
+ * @returns Promise with success status
+ */
+export async function inviteProvider(
+  jobId: string,
+  providerId: string
+): Promise<{ success: boolean }> {
+  try {
+    return await apiCall<{ success: boolean }>(`/api/jobs/${jobId}/invite-provider`, {
+      method: 'POST',
+      body: JSON.stringify({ providerId }),
+    });
+  } catch (error) {
+    console.warn('Failed to send provider invite, simulating success:', error);
+    // Mock fallback: simulate successful invitation
+    return { success: true };
+  }
+}
+
 // ============================================================================
 // ADMIN PROVIDER MANAGEMENT (stubs for future backend integration)
 // ============================================================================
@@ -1096,83 +1118,4 @@ export async function confirmPayment(
     method: 'POST',
     body: JSON.stringify({ jobId, sessionId }),
   });
-}
-
-// ============================================================================
-// MATCHING & RECOMMENDATIONS
-// ============================================================================
-
-/**
- * Fetch potential matching providers for a job
- * @param jobId - The job ID to fetch matches for
- * @returns Promise with array of MatchingResult
- */
-export async function fetchMatchingProviders(jobId: string): Promise<MatchingResult[]> {
-  try {
-    // Try backend endpoint first
-    return await apiCall<MatchingResult[]>(`/api/v2/jobs/${jobId}/potential-matches`, {
-      method: 'GET',
-    });
-  } catch (error) {
-    console.warn('Failed to fetch matching providers from backend, using mock data:', error);
-    // Mock fallback with realistic data
-    return [
-      {
-        provider: {
-          email: 'joao.silva@email.com',
-          name: 'João Silva',
-          type: 'prestador',
-          bio: 'Eletricista experiente com 10+ anos de atuação',
-          location: 'São Paulo, SP',
-          memberSince: '2020-01-15',
-          status: 'ativo',
-          headline: 'Eletricista Residencial e Comercial',
-          specialties: ['Elétrica Residencial', 'Manutenção', 'Instalações'],
-          completionRate: 0.95,
-          avgResponseTimeMinutes: 30,
-        },
-        matchScore: 0.92,
-        matchReason: 'Excelente experiência em elétrica residencial e alta taxa de conclusão.',
-      },
-      {
-        provider: {
-          email: 'maria.santos@email.com',
-          name: 'Maria Santos',
-          type: 'prestador',
-          bio: 'Encanadora profissional com certificação',
-          location: 'São Paulo, SP',
-          memberSince: '2019-06-20',
-          status: 'ativo',
-          headline: 'Encanadora Profissional',
-          specialties: ['Encanamento', 'Hidráulica', 'Instalações'],
-          completionRate: 0.88,
-          avgResponseTimeMinutes: 45,
-        },
-        matchScore: 0.85,
-        matchReason: 'Ótima experiência em encanamento com excelentes avaliações de clientes.',
-      },
-    ];
-  }
-}
-
-/**
- * Invite a provider to submit a proposal for a job
- * @param jobId - The job ID
- * @param providerId - The provider email/ID
- * @returns Promise with success status
- */
-export async function inviteProvider(
-  jobId: string,
-  providerId: string
-): Promise<{ success: boolean }> {
-  try {
-    return await apiCall<{ success: boolean }>(`/api/v2/jobs/${jobId}/invite-provider`, {
-      method: 'POST',
-      body: JSON.stringify({ providerId }),
-    });
-  } catch (error) {
-    console.warn('Failed to send provider invite, simulating success:', error);
-    // Mock fallback: simulate successful invitation
-    return { success: true };
-  }
 }

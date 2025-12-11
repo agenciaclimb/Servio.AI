@@ -1,8 +1,8 @@
 import React from 'react';
-import { MatchingResult } from '../types';
+import * as API from '../services/api';
 
 interface ProviderCardProps {
-  result: MatchingResult;
+  result: API.MatchingProvider;
   onInvite?: (providerId: string) => void;
   isInvited?: boolean;
 }
@@ -19,7 +19,7 @@ const StarIcon: React.FC<{ filled: boolean }> = ({ filled }) => (
 );
 
 const ProviderCard: React.FC<ProviderCardProps> = ({ result, onInvite, isInvited }) => {
-  const { provider, compatibilityScore, justification } = result;
+  const { provider, score, reason } = result;
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -28,9 +28,9 @@ const ProviderCard: React.FC<ProviderCardProps> = ({ result, onInvite, isInvited
   };
 
   const scoreColorClass =
-    compatibilityScore > 85
+    score > 0.85
       ? 'bg-green-100 text-green-800'
-      : compatibilityScore > 70
+      : score > 0.7
         ? 'bg-yellow-100 text-yellow-800'
         : 'bg-red-100 text-red-800';
 
@@ -40,7 +40,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({ result, onInvite, isInvited
         <div className="flex justify-between items-start">
           <div className="flex-grow">
             <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">
-              {provider.service}
+              {provider.headline}
             </p>
             <h3 className="block mt-1 text-xl leading-tight font-bold text-black">
               {provider.name}
@@ -48,14 +48,14 @@ const ProviderCard: React.FC<ProviderCardProps> = ({ result, onInvite, isInvited
             <p className="mt-2 text-gray-600 text-sm">{provider.location}</p>
           </div>
           <div className={`text-sm font-bold px-3 py-1 rounded-full ${scoreColorClass}`}>
-            {compatibilityScore}%<span className="hidden sm:inline"> compatível</span>
+            {Math.round(score * 100)}%<span className="hidden sm:inline"> compatível</span>
           </div>
         </div>
 
         <div className="flex items-center mt-4">
-          {renderStars(provider.rating)}
+          {renderStars(provider.completionRate * 5)}
           <span className="text-gray-600 text-sm ml-2">
-            {provider.rating.toFixed(1)} de 5 estrelas
+            {(provider.completionRate * 5).toFixed(1)} de 5 estrelas
           </span>
         </div>
 
@@ -64,14 +64,14 @@ const ProviderCard: React.FC<ProviderCardProps> = ({ result, onInvite, isInvited
             <span className="font-semibold text-gray-800 not-italic">
               Por que é uma boa escolha?
             </span>{' '}
-            "{justification}"
+            "{reason}"
           </p>
         </div>
 
         <div className="mt-6">
           {onInvite ? (
             <button
-              onClick={() => onInvite(provider.id)}
+              onClick={() => onInvite(provider.email)}
               disabled={isInvited}
               className="w-full font-bold py-2 px-4 rounded-lg transition duration-300
                                 disabled:bg-green-100 disabled:border-green-200 disabled:text-green-700 disabled:cursor-not-allowed

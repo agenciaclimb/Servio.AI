@@ -3,7 +3,6 @@ import {
   Job,
   User,
   Review,
-  MatchingResult,
   EnhancedJobRequest,
   FAQItem,
   IdentifiedItem,
@@ -20,6 +19,7 @@ import {
   MaintainedItem,
   MaintenanceSuggestion,
 } from '../types';
+import * as API from './api';
 /**
  * NOTE FOR PRODUCTION ARCHITECTURE:
  * This service has been refactored to act as a client for a secure backend API.
@@ -212,11 +212,11 @@ export async function getMatchingProviders(
   job: Job,
   allUsers: User[],
   allJobs: Job[]
-): Promise<MatchingResult[]> {
+): Promise<API.MatchingProvider[]> {
   // In a real app, we wouldn't send all users/jobs. The backend would have access to the database.
   // This is a simplification for the prototype's transition.
   try {
-    return await fetchFromBackend<MatchingResult[]>('/api/match-providers', {
+    return await fetchFromBackend<API.MatchingProvider[]>('/api/match-providers', {
       job,
       allUsers,
       allJobs,

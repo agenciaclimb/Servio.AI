@@ -261,12 +261,6 @@ export interface Dispute {
   createdAt: string; // ISO Date string
 }
 
-export interface MatchingResult {
-  provider: User;
-  matchScore: number;
-  matchReason: string;
-}
-
 export interface Prospector {
   id: string; // email
   name: string;

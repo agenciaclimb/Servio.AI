@@ -4,7 +4,8 @@ import ProviderCard from './ProviderCard';
 import LoadingSpinner from './LoadingSpinner';
 import { getMatchingProviders } from '../services/geminiService';
 // FIX: Import the Job type to create a valid job object.
-import { MatchingResult, User, Job } from '../types';
+import { User, Job } from '../types';
+import * as API from '../services/api';
 
 interface DashboardProps {
   user: User;
@@ -17,7 +18,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, allUsers, allJobs }) => {
   const [description, setDescription] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [results, setResults] = useState<MatchingResult[] | null>(null);
+  const [results, setResults] = useState<API.MatchingProvider[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
