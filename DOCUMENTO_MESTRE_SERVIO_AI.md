@@ -1,3 +1,124 @@
+# PROTOCOLO SUPREMO — SERVIO.AI — VERSÃO 3.0 (UNIFICADO)
+
+1. O DOCUMENTO MESTRE É A ÚNICA FONTE DE VERDADE
+
+Todas as decisões, regras, tarefas, comportamentos das IAs e fluxos estratégicos devem obrigatoriamente:
+
+existir no DOCUMENTO MESTRE
+
+ser atualizados imediatamente após qualquer PR aprovado
+
+ser citados em qualquer documento auxiliar criado
+
+Nenhuma IA pode ignorar ou contradizer este documento.
+
+2. HIERARQUIA DAS IAs
+
+A partir de agora:
+
+🟦 1º nível – Gemini (A+ Auditor Global)
+
+Auditoria de PRs
+
+Liberação de tasks
+
+Geração de atualizações obrigatórias para o Documento Mestre
+
+Garantir convergência arquitetural
+Nunca codificar. Nunca modificar arquivos.
+
+🟩 2º nível – Copilot (Executor Técnico)
+
+Segue EXCLUSIVAMENTE instruções do DOCUMENTO MESTRE
+
+Implementa código
+
+Cria testes
+
+Faz commits e PRs
+
+Mantém absoluta obediência ao que Gemini determinou
+
+🟧 3º nível – VS Code (Ambiente Local)
+
+Apenas executa comandos
+
+Nunca toma decisões
+
+Jamais altera lógica sem instrução do Documento Mestre
+
+3. NOVO FLUXO OFICIAL DE TRABALHO
+
+Sempre nesta ordem:
+
+1️⃣ Gemini revisa o estado do GitHub
+
+Identifica PRs pendentes
+
+Verifica se existe PR bloqueado anterior
+
+Determina qual PR deve ser resolvido primeiro (PR 23 antes do 25)
+
+2️⃣ Copilot aplica as correções técnicas
+
+Com base nas instruções de Gemini
+
+Nunca interpretar sozinho
+
+Nunca criar código fora da task aprovada
+
+3️⃣ Gemini audita o PR
+
+Se aprovado → gera bloco:
+
+=== ATUALIZAÇÃO DO DOCUMENTO MESTRE — PR XX ===
+
+Se reprovado → Copilot corrige
+
+4️⃣ Copilot atualiza o DOCUMENTO MESTRE
+
+Com o bloco gerado por Gemini
+
+Commita e envia PR
+
+Gemini valida
+
+5️⃣ Só então a Task seguinte pode iniciar 4. REGRAS OBRIGATÓRIAS PARA MANTER CONTEXTO
+
+Todo novo documento criado por Copilot ou Gemini (ex: diagnostico.md, relatorio_task.md) precisa ser citado no DOCUMENTO MESTRE na seção "Referências Oficiais".
+
+Toda mudança de arquitetura ou regra → atualizar no Documento Mestre.
+
+Nenhum branch pode avançar sem atualização sincronizada.
+
+5. SITUAÇÃO ATUAL DO SERVIO.AI
+   PR 23 → deve ser finalizado antes do PR 25
+   PR 25 → somente após PR 23 ser auditado e aprovado
+   Task 2.4 → Aprovada (registrar no documento)
+
+Inclua uma seção:
+
+## 🔄 Status Atual do Projeto
+
+- PR 23: Pendente de ajuste final (frontend Task 2.3)
+- PR 24: Concluída e aprovada
+- PR 25: Em revisão – somente pode continuar após PR 23
+
+6. AÇÃO DO COPILOT
+
+Copilot deve:
+
+Abrir o arquivo DOCUMENTO_MESTRE_SERVIO_AI.md
+
+Inserir o conteúdo desta atualização
+
+Criar commit:
+"update: Protocolo Supremo v3.0 + fluxo unificado de IAs"
+
+Criar PR automaticamente para GitHub
+
+Fim da atualização.
+
 # 📘 DOCUMENTO MESTRE - SERVIO.AI
 
 **Última Atualização**: 10/12/2025 10:30 BRT (ORCHESTRATOR v1.0 IMPLEMENTADO ✅)  
