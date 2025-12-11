@@ -86,3 +86,6 @@ gen-lang-client-*.json
 # Google Cloud Service Accounts
 *-gcp-*.json
 service-account*.json
+secrets-to-remove.txt
+bfg.jar
+*.bfg-report/

@@ -1,3 +1,65 @@
+#update_log - 2025-12-11 17:30
+✅ **LIMPEZA COMPLETA DO HISTÓRICO GIT - CHAVES REMOVIDAS** ✅
+
+**AÇÃO AUTOMATIZADA EXECUTADA:**
+
+- **Ferramenta**: BFG Repo-Cleaner v1.14.0
+- **Data**: 11 de dezembro de 2025, 17:26:50 UTC
+- **Tipo**: Limpeza completa de histórico Git
+- **Commits reescritos**: 714 commits
+- **Objetos modificados**: 1222 object IDs
+
+**RESULTADO DA LIMPEZA:**
+
+✅ **3 Chaves API Removidas de TODO o Histórico:**
+
+1. `AIzaSyAP6gJyy_oTE6P7-DLYLHXsS54CkTPcdBs` → `[REDACTED_GOOGLE_PLACES_API_KEY]`
+2. `AIzaSyCC-HKRTbdshJo4xwj5g2UkZB54WCasmAE` → `[REDACTED_FIREBASE_SERVIOAI_KEY]`
+3. `AIzaSyBQT9x-6Rf4IiC_iMIBCLw8JjUqE0Ic-Z0` → `[REDACTED_FIREBASE_PRODUCTION_KEY]`
+
+**ARQUIVOS MODIFICADOS NO HISTÓRICO:**
+
+- `doc/DOCUMENTO_MESTRE_SERVIO_AI.md` (múltiplas versões)
+- `doc/MIGRACAO_PROJETO_SERVIOAI.md`
+- `doc/PROGRESSO_PROSPECCAO_FASE1.md`
+- `doc/README_PRODUCAO.md`
+- `.env.example`
+- `.env.production.example`
+
+**COMANDOS EXECUTADOS:**
+
+```bash
+# Limpeza BFG
+java -jar bfg.jar --replace-text secrets-to-remove.txt
+
+# Garbage collection agressivo
+git reflog expire --expire=now --all
+git gc --prune=now --aggressive
+
+# Force push
+git push origin main --force
+```
+
+**STATUS:**
+
+- ✅ Backup criado: `C:\Users\JE\servio-ai-backup.git`
+- ✅ Histórico Git reescrito localmente
+- ✅ Force push para GitHub concluído (main branch)
+- ✅ 714 commits limpos e republicados
+- ⚠️ **CRÍTICO**: Chaves ainda ativas no Google Cloud Console
+
+**PRÓXIMAS AÇÕES IMEDIATAS (MANUAL):**
+
+1. [ ] **Revogar 3 chaves no Google Cloud Console** (ver GUIA_REVOGACAO_CHAVES.md)
+2. [ ] Gerar novas chaves restritas (IP/domain restrictions)
+3. [ ] Adicionar novas chaves ao Secret Manager
+4. [ ] Verificar resolução dos alertas GitGuardian
+5. [ ] Notificar colaboradores sobre force push
+
+**REFERÊNCIA**: Ver `GUIA_REVOGACAO_CHAVES.md` para instruções detalhadas
+
+---
+
 #update_log - 2025-12-11 17:15
 🚨 **ATUALIZAÇÃO INCIDENTE: CHAVES ADICIONAIS DETECTADAS** 🚨
 
@@ -25,10 +87,10 @@
 - `.env.production.example`: Ambas chaves + Gemini placeholder redatados
 - `API_ENDPOINTS.md`: Placeholder Gemini corrigido
 
-**COMMIT PENDENTE:**
+**COMMIT APLICADO:**
 
 ```
-security: redact additional exposed Firebase and Gemini API keys
+security: redact additional exposed Firebase and Gemini API keys (148be71)
 
 - Removed AIzaSyCC-HKRTbdshJo4xwj5g2UkZB54WCasmAE (servioai project)
 - Removed AIzaSyBQT9x-6Rf4IiC_iMIBCLw8JjUqE0Ic-Z0 (production)
