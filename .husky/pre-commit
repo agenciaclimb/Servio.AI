@@ -1,6 +1,11 @@
 #!/usr/bin/env sh
 
-# Modern Husky pre-commit hook: run lint-staged only
-# Avoid sourcing Husky shim to keep it portable across environments
+# Modern Husky pre-commit hook
+# 1. Secret scanner (CRITICAL - blocks secrets)
+# 2. Lint-staged (code quality)
 
+# Run secret scanner first
+node scripts/secret-scanner.js || exit 1
+
+# Run lint-staged
 npx --no-install lint-staged

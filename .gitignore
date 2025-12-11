@@ -60,3 +60,29 @@ backend/.env.local
 STRIPE_CONFIGURACAO_COMPLETA.txt
 STRIPE_FINAL_STATUS.md
 scripts/test-stripe-connect.ps1
+
+# Security - API Keys and Secrets (NEVER COMMIT)
+*.key
+*.pem
+*.p12
+*.pfx
+secrets/
+.secrets/
+credentials/
+.credentials/
+*_credentials.json
+*_secret.json
+.env
+.env.*
+!.env.example
+!.env.production.example
+**/config/secrets.*
+**/config/keys.*
+
+# Firebase Service Account Keys
+*-firebase-adminsdk-*.json
+gen-lang-client-*.json
+
+# Google Cloud Service Accounts
+*-gcp-*.json
+service-account*.json
