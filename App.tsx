@@ -40,15 +40,7 @@ const LoadingFallback = () => (
   </div>
 );
 
-import {
-  User,
-  Job,
-  Notification,
-  MaintainedItem,
-  UserType,
-  JobData,
-  Prospect,
-} from './types';
+import { User, Job, Notification, MaintainedItem, UserType, JobData, Prospect } from './types';
 import * as API from './services/api';
 
 type View =

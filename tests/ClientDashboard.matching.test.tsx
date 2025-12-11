@@ -224,7 +224,7 @@ describe('ClientDashboard - Matching Flow Integration Tests', () => {
               headline: 'Good',
               completionRate: 0.85,
             },
-            score: 0.80,
+            score: 0.8,
             reason: 'Good',
           },
         ],
@@ -232,7 +232,10 @@ describe('ClientDashboard - Matching Flow Integration Tests', () => {
 
       vi.spyOn(API, 'inviteProvider').mockResolvedValueOnce({ success: true });
 
-      const result = await API.inviteProvider(state.matchingJobId, state.matchingResults[0].provider.email);
+      const result = await API.inviteProvider(
+        state.matchingJobId,
+        state.matchingResults[0].provider.email
+      );
 
       // Modal deve permanecer aberto com dados intactos
       expect(state.isMatchingModalOpen).toBe(true);
@@ -262,9 +265,7 @@ describe('ClientDashboard - Matching Flow Integration Tests', () => {
     });
 
     it('exibe erro ao falhar carregar recomendações', async () => {
-      vi.spyOn(API, 'matchProvidersForJob').mockRejectedValueOnce(
-        new Error('Failed to fetch')
-      );
+      vi.spyOn(API, 'matchProvidersForJob').mockRejectedValueOnce(new Error('Failed to fetch'));
 
       try {
         await API.matchProvidersForJob('job-fail');

@@ -858,7 +858,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                         else setJobInFocus({ job, action: 'dispute' });
                       }}
                       onViewOnMap={setViewingJobOnMap}
-                      onViewRecommendations={() => { handleViewRecommendations(job); }}
+                      onViewRecommendations={() => {
+                        handleViewRecommendations(job);
+                      }}
                     />
                   ))}
                 </div>
