@@ -1,21 +1,15 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import fs from "fs";
+import fs from "node:fs";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 if (!GEMINI_API_KEY) {
+  // eslint-disable-next-line no-console
   console.error("❌ Erro: GEMINI_API_KEY não configurada");
   process.exit(1);
 }
 
-async function generateTasksDay3() {
-  const client = new GoogleGenerativeAI(GEMINI_API_KEY);
-  const model = client.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
-
-  // Ler Documento Mestre para contexto
-  const masterDoc = fs.readFileSync("DOCUMENTO_MESTRE_SERVIO_AI.md", "utf-8");
-
-  const prompt = `Tu és o Gemini, planejador estratégico do Protocolo Supremo v4.0 do Servio.AI.
+const prompt = `Tu és o Gemini, planejador estratégico do Protocolo Supremo v4.0 do Servio.AI.
 
 ## CONTEXTO:
 
@@ -78,40 +72,35 @@ Dia 3 deve focar em:
 
 **Responde com APENAS o JSON válido, sem explicações adicionais.**`;
 
-  try {
-    console.log("🔍 Gerando tasks para Dia 3...\n");
+const generateTasksDay3 = async () => {
+  const client = new GoogleGenerativeAI(GEMINI_API_KEY);
+  const model = client.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
     const result = await model.generateContent(prompt);
     const tasksJson = result.response.text();
 
-    // Tentar fazer parse e validar JSON
-    let tasks;
-    try {
-      tasks = JSON.parse(tasksJson);
-      console.log("✅ JSON válido gerado!\n");
-    } catch (error) {
-      console.error("❌ JSON inválido gerado pelo Gemini:");
-      console.error(tasksJson);
-      process.exit(1);
-    }
+    // Extrair JSON se vier envolvido em markdown
+    const jsonMatch = tasksJson.match(/```json\n([\s\S]*?)\n```/);
+    const cleanJson = jsonMatch ? jsonMatch[1] : tasksJson;
+
+    // Validar JSON
+    const tasks = JSON.parse(cleanJson);
 
     // Salvar arquivo
-    fs.writeFileSync(
-      "tasks-day-3-generated.json",
-      JSON.stringify(tasks, null, 2),
-      "utf-8"
-    );
+    fs.writeFileSync("tasks-day-3-generated.json", JSON.stringify(tasks, null, 2));
 
-    console.log("📋 Tasks Geradas para Dia 3:\n");
-    console.log("================================");
-    console.log(JSON.stringify(tasks, null, 2));
-    console.log("================================\n");
+    // eslint-disable-next-line no-console
+    console.log("✅ Tasks geradas com sucesso!");
+    // eslint-disable-next-line no-console
+    console.log(`📊 Total: ${tasks.tasks.length} tasks`);
 
-    console.log(`✅ ${tasks.tasks.length} tasks salvas em: tasks-day-3-generated.json`);
-  } catch (error) {
-    console.error("❌ Erro ao gerar tasks:", error.message);
-    process.exit(1);
-  }
-}
+    return tasks;
+  };
 
-generateTasksDay3();
+  generateTasksDay3()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error("❌ Erro:", error);
+      process.exit(1);
+    });
