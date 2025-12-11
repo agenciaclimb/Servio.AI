@@ -9,10 +9,20 @@
  */
 
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { getPlacesApiKey } = require('../utils/secretHelper');
 
 // Inicializar Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+
+async function hasPlacesKey() {
+  try {
+    const key = await getPlacesApiKey();
+    return !!key;
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Gera próximas ações recomendadas para um lead
