@@ -1,0 +1,102 @@
+{
+  "day": 3,
+  "protocol_version": "4.0",
+  "tasks": [
+    {
+      "id": "3.1",
+      "title": "Implementar sistema de tasks automático (ai-tasks/day-X/)",
+      "description": "Criação de um sistema automático para leitura e execução de tasks definidas em arquivos JSON",
+      "acceptance_criteria": [
+        "Sistema lê e parseia arquivos JSON de tasks",
+        "Sistema valida o schema dos arquivos",
+        "Sistema executa as ações descritas",
+        "Sistema lida com erros apropriadamente",
+        "Logging básico das ações executadas"
+      ],
+      "files_to_create": ["ai-tasks/task_manager.ts", "ai-tasks/task_interface.ts", "ai-tasks/task_manager.test.ts"],
+      "files_to_modify": [],
+      "dependencies": [],
+      "estimated_effort": "8h"
+    },
+    {
+      "id": "3.2",
+      "title": "Integrar Gemini CLI com GitHub Actions",
+      "description": "Configuração de workflow no GitHub Actions para executar Gemini CLI em eventos de push/PR",
+      "acceptance_criteria": [
+        "Workflow do GitHub Actions configurado",
+        "CLI executada em eventos de push e pull request",
+        "Workflow gera relatórios e logs",
+        "Workflow configurável para diferentes ambientes",
+        "Status da execução visível no GitHub"
+      ],
+      "files_to_create": [".github/workflows/gemini_cli.yml"],
+      "files_to_modify": [],
+      "dependencies": [],
+      "estimated_effort": "6h"
+    },
+    {
+      "id": "3.3",
+      "title": "Criar protocolo de logging e auditoria",
+      "description": "Sistema de logging centralizado para registrar todas as ações do Protocolo Supremo v4.0",
+      "acceptance_criteria": [
+        "Sistema de logging centralizado implementado",
+        "Logs incluem timestamps e severidade",
+        "Sistema de auditoria gera relatórios",
+        "Sistema gera alertas em eventos suspeitos",
+        "Logs armazenados com segurança"
+      ],
+      "files_to_create": ["utils/logger.ts", "utils/auditor.ts", "models/log_entry.ts", "utils/logger.test.ts"],
+      "files_to_modify": [],
+      "dependencies": [],
+      "estimated_effort": "8h"
+    },
+    {
+      "id": "3.4",
+      "title": "Implementar validação de Documento Mestre (parser)",
+      "description": "Parser para validar a estrutura e conteúdo do Documento Mestre v4.0",
+      "acceptance_criteria": [
+        "Parser implementado para validar Documento Mestre v4.0",
+        "Parser verifica a estrutura do documento",
+        "Parser verifica campos obrigatórios",
+        "Parser valida os valores dos campos",
+        "Testes unitários cobrem cenários de validação"
+      ],
+      "files_to_create": ["master_document/parser.ts", "master_document/schema.json", "master_document/parser.test.ts"],
+      "files_to_modify": [],
+      "dependencies": [],
+      "estimated_effort": "10h"
+    },
+    {
+      "id": "3.5",
+      "title": "Criar dashboard de status do Protocolo v4.0",
+      "description": "Dashboard para monitorar status do Protocolo Supremo v4.0 com métricas em tempo real",
+      "acceptance_criteria": [
+        "Dashboard criado e funcional",
+        "Exibe versão do protocolo e status das tasks",
+        "Exibe métricas de erro e tempo de execução",
+        "Acessível via web com atualização em tempo real",
+        "UI/UX intuitiva"
+      ],
+      "files_to_create": ["dashboard/index.html", "dashboard/app.js", "dashboard/style.css", "dashboard/api.ts"],
+      "files_to_modify": [],
+      "dependencies": [],
+      "estimated_effort": "12h"
+    },
+    {
+      "id": "3.6",
+      "title": "Testes E2E do ciclo completo (10 passos)",
+      "description": "Testes End-to-End para validar ciclo completo do Protocolo Supremo v4.0",
+      "acceptance_criteria": [
+        "Testes E2E implementados para ciclo completo",
+        "Testes cobrem os 10 passos do protocolo",
+        "Componentes funcionam corretamente em conjunto",
+        "Testes geram relatórios detalhados",
+        "Cobertura de código acima de 80%"
+      ],
+      "files_to_create": ["e2e/protocol_test.ts", "e2e/test_data.json"],
+      "files_to_modify": [],
+      "dependencies": ["3.1", "3.2", "3.3", "3.4", "3.5"],
+      "estimated_effort": "16h"
+    }
+  ]
+}
