@@ -6,7 +6,7 @@
  * Gera especificações perfeitas de tasks a partir de backlog
  * 
  * USO:
- *   node generateTasks.js --backlog <arquivo.json>
+ *   node generateTasks.cjs --backlog <arquivo.json>
  * 
  * SAÍDA:
  *   /ai-tasks/day-X/task-X.Y.md
@@ -155,7 +155,7 @@ if (require.main === module) {
   const backlogIndex = args.indexOf('--backlog');
 
   if (backlogIndex === -1) {
-    console.error('USO: node generateTasks.js --backlog <arquivo.json>');
+    console.error('USO: node generateTasks.cjs --backlog <arquivo.json>');
     process.exit(1);
   }
 

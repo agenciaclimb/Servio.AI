@@ -94,7 +94,7 @@ PRÓXIMA TASK
 2. **Só Aprova ou Rejeita**: Resposta final é sempre `{ status: "APROVADO" | "REJEIÇÃO", motivo: "..." }`
 3. **Audita contra Documento Mestre**: Cada PR é auditado contra esta constituição.
 4. **Gera Blocos de Atualização**: Se algo no Documento Mestre precisa mudar, Gemini gera bloco markdown com a exata mudança.
-5. **Sistema Review Quinzenal**: A cada 2 semanas, Gemini executa `system-review.js` e gera relatório de saúde.
+5. **Sistema Review Quinzenal**: A cada 2 semanas, Gemini executa `system-review.cjs` e gera relatório de saúde.
 
 ### 2.2 Regras do Copilot Executor
 
@@ -277,7 +277,7 @@ type JobStatus = 'ativo' | 'em_progresso' | 'concluido';
 
 ### Dia 1: Auditoria Geral + Plano Técnico
 
-- Gemini executa `system-review.js`
+- Gemini executa `system-review.cjs`
 - Gera relatório de saúde completo
 - Lista blockers críticos para lançamento
 

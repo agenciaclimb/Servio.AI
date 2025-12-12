@@ -11,7 +11,7 @@
 **Responsável**: Gemini System Review
 
 ```bash
-node /ai-engine/gemini/system-review.js
+node /ai-engine/gemini/system-review.cjs
 ```
 
 **Deliverables**:

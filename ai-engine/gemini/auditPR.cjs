@@ -6,7 +6,7 @@
  * Auditoria inteligente de Pull Requests contra Documento Mestre
  * 
  * USO:
- *   node auditPR.js --pr <pr_number> --repo <owner/repo>
+ *   node auditPR.cjs --pr <pr_number> --repo <owner/repo>
  * 
  * SAÍDA:
  *   /ai-tasks/logs/audit-{timestamp}.json
@@ -258,7 +258,7 @@ if (require.main === module) {
   const repoIndex = args.indexOf('--repo');
 
   if (prIndex === -1 || repoIndex === -1) {
-    console.error('USO: node auditPR.js --pr <number> --repo <owner/repo>');
+    console.error('USO: node auditPR.cjs --pr <number> --repo <owner/repo>');
     process.exit(1);
   }
 
