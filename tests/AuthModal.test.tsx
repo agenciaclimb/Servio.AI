@@ -1,6 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+// Mock Firebase Auth to evitar chamadas reais de rede
+vi.mock('firebase/auth', () => ({
+  getAuth: vi.fn(() => ({ __mock: true })),
+  signInWithEmailAndPassword: vi.fn(() => Promise.resolve({ user: { email: 'mock@user.com' } })),
+  createUserWithEmailAndPassword: vi.fn(() => Promise.resolve({ user: { email: 'mock@user.com' } })),
+  GoogleAuthProvider: vi.fn(function MockProvider() {}),
+  signInWithPopup: vi.fn(() => Promise.resolve({ user: { email: 'mock@google.com' } })),
+}));
 import AuthModal from '../components/AuthModal';
 import { User } from '../types';
 
@@ -34,7 +42,10 @@ describe('AuthModal', () => {
     fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'senhaSegura' } });
     fireEvent.click(screen.getByTestId('auth-submit-button'));
 
-    expect(onSuccess).toHaveBeenCalledWith('cliente@teste.com', 'cliente');
+    // onSuccess pode ser disparado de forma assíncrona; aguarda
+    return waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledWith('cliente@teste.com', 'cliente');
+    });
   });
 
   it('permite alternar para cadastro e valida senhas diferentes', () => {
@@ -75,8 +86,10 @@ describe('AuthModal', () => {
     fireEvent.change(screen.getByLabelText('Confirmar Senha'), { target: { value: '123456' } });
     fireEvent.click(screen.getByTestId('auth-submit-button'));
 
-    // onSuccess deve ser chamado com userType recebido nas props (prestador)
-    expect(onSuccess).toHaveBeenCalledWith('pro@teste.com', 'prestador');
+    // onSuccess pode ocorrer assincronamente
+    return waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledWith('pro@teste.com', 'prestador');
+    });
   });
 
   it('fecha ao clicar no botão de fechar (X) ou fora do modal', () => {
@@ -104,7 +117,9 @@ describe('AuthModal', () => {
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'pro@teste.com' } });
     fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'senhaOk' } });
     fireEvent.click(screen.getByTestId('auth-submit-button'));
-    expect(onSuccess).toHaveBeenCalledWith('pro@teste.com', 'prestador');
+    return waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledWith('pro@teste.com', 'prestador');
+    });
   });
 
   it('limpa mensagem de erro quando usuário corrige as senhas', () => {
