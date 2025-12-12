@@ -7,6 +7,8 @@ vi.mock('firebase/app', () => ({
 
 vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(() => ({ app: { name: '[DEFAULT]' } })),
+  GoogleAuthProvider: vi.fn(() => ({})),
+  signInWithPopup: vi.fn(),
 }));
 
 vi.mock('firebase/firestore', () => ({

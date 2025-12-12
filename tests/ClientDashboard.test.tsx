@@ -96,7 +96,9 @@ describe('ClientDashboard', () => {
     expect(screen.getByRole('button', { name: /Início/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Meus Serviços/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Meus Itens/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '❓Ajuda' })).toBeInTheDocument();
+    // Evita colisão com "Com ajuda da IA" usando match exato
+    const ajudaButtons = screen.getAllByRole('button', { name: /(^|\s)Ajuda$/i });
+    expect(ajudaButtons.length).toBeGreaterThanOrEqual(1);
 
     // Saudação
     expect(screen.getByText(/Olá, Ana!/)).toBeInTheDocument();
@@ -115,8 +117,9 @@ describe('ClientDashboard', () => {
     expect(screen.getAllByText('Meus Itens').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Nenhum item cadastrado')).toBeInTheDocument();
 
-    // Vai para Ajuda
-    await userEvent.click(screen.getByRole('button', { name: '❓Ajuda' }));
+    // Vai para Ajuda (primeiro botão da sidebar)
+    const ajudaBtns = screen.getAllByRole('button', { name: /(^|\s)Ajuda$/i });
+    await userEvent.click(ajudaBtns[0]);
     expect(screen.getByText('Central de Ajuda')).toBeInTheDocument();
   }, 15000);
 

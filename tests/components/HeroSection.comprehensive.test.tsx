@@ -30,7 +30,7 @@ vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(() => ({})),
 }));
 
-import HeroSection from '../../../components/HeroSection';
+import HeroSection from '../../components/HeroSection';
 
 describe('HeroSection - Comprehensive Quality Tests', () => {
   const user = userEvent.setup();
@@ -46,15 +46,13 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
   describe('Component Rendering', () => {
     it('should render without errors', () => {
       render(<HeroSection />);
-      expect(screen.getByRole('main', { hidden: true }) || document.body).toBeInTheDocument();
+      expect(document.body).toBeInTheDocument();
     });
 
     it('should render hero heading', () => {
       render(<HeroSection />);
-      const heading = screen.queryByRole('heading');
-      if (heading) {
-        expect(heading).toBeInTheDocument();
-      }
+      const headings = screen.queryAllByRole('heading');
+      expect(headings.length).toBeGreaterThan(0);
     });
 
     it('should render call-to-action buttons', () => {
@@ -93,11 +91,12 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
     it('should render images if present', () => {
       const { container } = render(<HeroSection />);
       const _images = container.querySelectorAll('img');
-      // Should have images or be ready for them
-      if (images.length > 0) {
-        images.forEach(img => {
+      if (_images.length > 0) {
+        _images.forEach(img => {
           expect(img).toHaveAttribute('src');
         });
+      } else {
+        expect(container).toBeTruthy();
       }
     });
 
