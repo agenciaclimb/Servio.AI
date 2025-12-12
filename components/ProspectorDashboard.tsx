@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReferralLinkGenerator from '../src/components/ReferralLinkGenerator';
 import NotificationSettings from '../src/components/NotificationSettings';
 import ProspectorMaterials from '../src/components/ProspectorMaterials';
@@ -13,6 +13,13 @@ import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import BulkCampaignModal from '../src/components/prospector/BulkCampaignModal';
 import { useToast } from '../contexts/ToastContext';
 import ProspectorStatistics from './ProspectorStatistics';
+import {
+  computeBadgeProgress,
+  fetchProspectorLeaderboard,
+  fetchProspectorStats,
+  LeaderboardEntry,
+  ProspectorStats,
+} from '../services/api';
 
 type TabType =
   | 'dashboard'
@@ -29,11 +36,16 @@ interface ProspectorDashboardProps {
 
 const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => {
   const prospectorId = userId;
-  const [activeTab, setActiveTab] = useState<TabType>('crm'); // Padrão: CRM Kanban moderno
+  const [activeTab, setActiveTab] = useState<TabType>('dashboard'); // Padrão: painel IA
   const [referralLink, setReferralLink] = useState<string>('');
   const [showAddLeadModal, setShowAddLeadModal] = useState(false);
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
   const [showCampaignModal, setShowCampaignModal] = useState(false);
+  const [dashboardData, setDashboardData] = useState<{
+    stats: ProspectorStats | null;
+    leaderboard: LeaderboardEntry[];
+    badgeProgress: ReturnType<typeof computeBadgeProgress>;
+  }>({ stats: null, leaderboard: [], badgeProgress: computeBadgeProgress(0) });
   const { addToast } = useToast();
 
   // Estados do formulário de novo lead
@@ -52,8 +64,49 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
     // e o estado global via SWR/Zustand (Sprint 4) cuidará da atualização
   };
 
+  useEffect(() => {
+    let active = true;
+
+    const loadDashboardData = async () => {
+      if (!prospectorId) return;
+
+      try {
+        const [statsResult, leaderboardResult] = await Promise.all([
+          fetchProspectorStats(prospectorId),
+          fetchProspectorLeaderboard('commissions', 10),
+        ]);
+
+        const badge = computeBadgeProgress(statsResult?.totalRecruits ?? 0);
+
+        if (!active) return;
+        setDashboardData({
+          stats: statsResult,
+          leaderboard: leaderboardResult,
+          badgeProgress: badge,
+        });
+      } catch (error) {
+        // Mantém o dashboard renderizável mesmo com erro de dados
+        if (!active) return;
+        setDashboardData(prev => ({ ...prev }));
+      }
+    };
+
+    loadDashboardData();
+
+    return () => {
+      active = false;
+    };
+  }, [prospectorId]);
+
+  const { stats, leaderboard, badgeProgress } = dashboardData;
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div
+      className="min-h-screen bg-gray-50"
+      data-badge-tier={badgeProgress.currentBadge}
+      data-leaderboard-count={leaderboard.length}
+      data-stats-loaded={Boolean(stats)}
+    >
       {/* Onboarding Tour */}
       <OnboardingTour prospectorId={prospectorId} prospectorName={'Prospector'} />
 
