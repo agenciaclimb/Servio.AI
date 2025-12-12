@@ -1,6 +1,5 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import type { PotentialMatch, User } from '../types';
+import React, { useEffect, useState } from 'react';
+import type { PotentialMatch, User } from '../../types';
 import { logInfo } from '../utils/logger';
 
 interface MatchingResultsProps {
@@ -45,20 +44,35 @@ async function fetchMatchesForJob(
  * @returns {React.ReactElement} The rendered component
  */
 const MatchingResults: React.FC<MatchingResultsProps> = ({ jobId }) => {
-  const {
-    data: matches = [],
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ['potentialMatches', jobId],
-    queryFn: () => fetchMatchesForJob(jobId),
-    enabled: !!jobId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes (cache time)
-    retry: 2,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-  });
+  const [matches, setMatches] = useState<(PotentialMatch & { provider?: User })[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<unknown>(null);
+  const [isError, setIsError] = useState<boolean>(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      if (!jobId) return;
+      setIsLoading(true);
+      setIsError(false);
+      setError(null);
+      try {
+        const result = await fetchMatchesForJob(jobId);
+        if (!cancelled) setMatches(result);
+      } catch (e) {
+        if (!cancelled) {
+          setError(e);
+          setIsError(true);
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [jobId]);
 
   // Loading state
   if (isLoading) {
