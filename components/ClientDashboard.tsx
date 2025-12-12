@@ -206,7 +206,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     setProposalToPay(null);
   };
 
-  const handleViewRecommendations = async (job: Job) => {
+  const _handleViewRecommendations = async (job: Job) => {
     setMatchingJobId(job.id);
     setIsMatchingModalOpen(true);
 
@@ -221,16 +221,16 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     }
   };
 
-  const handleInviteProvider = async (providerId: string) => {
+  const handleInviteProvider = async (_providerId: string) => {
     if (!matchingJobId) return;
 
     try {
       // Call the existing submitProposal API with invite intent
       // For now, we'll use a mock/placeholder approach until backend supports direct invites
-      console.log(`Inviting provider ${providerId} to job ${matchingJobId}`);
+      // console.log(`Inviting provider ${_providerId} to job ${matchingJobId}`);
       addToast('Prestador convidado com sucesso!', 'success');
     } catch (error) {
-      console.error('Erro ao convidar prestador:', error);
+      // console.error('Erro ao convidar prestador:', error);
       addToast('Erro ao enviar convite. Tente novamente.', 'error');
     }
   };
@@ -858,9 +858,6 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                         else setJobInFocus({ job, action: 'dispute' });
                       }}
                       onViewOnMap={setViewingJobOnMap}
-                      onViewRecommendations={() => {
-                        handleViewRecommendations(job);
-                      }}
                     />
                   ))}
                 </div>
