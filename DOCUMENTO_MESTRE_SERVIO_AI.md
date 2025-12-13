@@ -1,8 +1,8 @@
 # 📘 DOCUMENTO MESTRE - SERVIO.AI
 
-**Última Atualização**: 10/12/2025 10:30 BRT (ORCHESTRATOR v1.0 IMPLEMENTADO ✅)  
-**Status**: 🟢 **PRODUÇÃO 100% FUNCIONAL | Orchestrator Live ✅ | AI-Driven Development Ativo | GitHub API Integrado | CI/CD Passing**  
-**Versão**: 4.0.0 (AI Orchestrator: Gemini → Orchestrator → Copilot → Gemini Workflow)
+**Última Atualização**: 13/12/2025 03:55 BRT (AUDITORIA DE PRODUTO CONCLUÍDA)  
+**Status**: 🟡 **PRONTO COM HARDENING OBRIGATÓRIO | Auditoria SRE Completa | 7 Bloqueadores Identificados | Launch: 2025-01-10**  
+**Versão**: 4.0.0 (AI Orchestrator + Auditoria de Hardening Pré-Lançamento)
 
 ---
 
@@ -4708,6 +4708,13 @@ Ele executa automaticamente:
 
 ---
 
+## 🛡️ Estado Operacional dos Agentes
+
+- **Heartbeat Gemini**: arquivo `ai-tasks/events/gemini-heartbeat.json` com `status`, `last_seen` e SLA (ACK 15m, RESULT 60m, FALLBACK 240m).
+- **Monitoramento**: executar `npm run monitor:events` (ou `RUN_ONCE=1 npm run monitor:events` para checar uma vez). Logs em `ai-tasks/events/event-log.jsonl` e alertas em `ai-tasks/events/process-alert.md`.
+- **Fluxo Oficial**: REQUEST → ACK → RESULT → TIMEOUT (15/60m) → FALLBACK (240m, somente com justificativa). Merge continua proibido sem RESULT aprovado.
+- **Fallback Controlado**: quando `fallback_ready=true` (após 240m), usar `ai-tasks/events/fallback-justification.md` para registrar a exceção antes de qualquer ação manual.
+
 **Protocolo Supremo v4.0 ativado com sucesso. O sistema está pronto para operação.**
 
 ---
@@ -4741,5 +4748,204 @@ Ele executa automaticamente:
 **Status**: ✅ **APROVADO E MERGEADO — Task 3.1 COMPLETA**
 
 **Próximo**: Task 3.2 (Gemini CLI + GitHub Actions)
+
+---
+
+# 🔄 EVENT SYSTEM – PROTOCOLO SUPREMO v4.0 (Sistema de Handoff entre Agentes)
+
+**Data de Implementação**: 12/12/2025 23:30 BRT  
+**Status**: ✅ **OPERACIONAL - Implementado e Testável**  
+**Propósito**: Eliminar "travails silenciosos" e criar comunicação explícita entre agentes EXECUTOR e GEMINI
+
+## 📋 **Visão Geral do Event System**
+
+O sistema de eventos resolve um problema crítico identificado no PROTOCOLO SUPREMO v4.0: **falta de visibilidade explícita** sobre se o agente GEMINI recebeu uma solicitação de auditoria (audit request).
+
+**Antes**: ❌ EXECUTOR bloqueava esperando resposta do GEMINI sem saber se ele estava ciente  
+**Depois**: ✅ Sistema baseado em **eventos JSON** com reconhecimento explícito e timeouts
+
+**Três Fases de Comunicação**:
+
+1. **REQUEST** (EXECUTOR) → udit-request-PR_X.json
+2. **ACK** (GEMINI) → udit-ack-PR_X.json
+3. **RESULT** (GEMINI) → udit-result-PR_X.json com erdict
+
+## 🗂️ **Estrutura de Diretórios**
+
+`ai-tasks/
+├── events/                          # 🔐 Sistema de eventos
+│   ├── README.md                    # Documentação completa (350+ linhas)
+│   ├── audit-request-PR_28.json     # Solicitação de auditoria (CRIADO)
+│   ├── executor-state.json          # Estado do executor (CRIADO)
+│   └── [ACK/RESULT criados por GEMINI]
+├── event-monitor.ts                 # Sistema de monitoramento (250+ linhas)
+└── logs/
+    ├── event-log.jsonl              # Log JSONL de eventos
+    ├── process-alert.md             # Alertas auto-gerados
+    └── gemini-audit-request-pr*.md  # Solicitação estruturada`
+
+## ⏱️ **Timeouts e Proteção**
+
+| Fase   | Timeout | Ação ao Timeout  |
+| ------ | ------- | ---------------- |
+| ACK    | 15 min  | Alert automático |
+| RESULT | 60 min  | Alert automático |
+
+## 📁 **Arquivos Criados**
+
+✅ **\i-tasks/events/README.md\*\* — Documentação completa (350+ linhas)  
+✅ **\i-tasks/events/audit-request-PR_28.json\*\* — Solicitação formal  
+✅ **\i-tasks/events/executor-state.json\*\* — Estado: BLOCKED (awaiting-audit-result-pr28)  
+✅ **\i-tasks/event-monitor.ts\*\* — Monitor em tempo real (250+ linhas)  
+✅ \*\*\i-tasks/logs/process-alert.md\*\* — Alertas auto-gerados
+
+## 🚀 **Como Usar**
+
+\\\powershell
+
+# Iniciar monitoramento em tempo real
+
+npx ts-node ai-tasks/event-monitor.ts
+
+# Simular GEMINI reconhecendo (Terminal 2)
+
+# Criar: ai-tasks/events/audit-ack-PR_28.json
+
+# Simular GEMINI finalizando (Terminal 2)
+
+# Criar: ai-tasks/events/audit-result-PR_28.json com verdict: APPROVED
+
+\\\
+
+---
+
+# 🛡️ SEGREGAÇÃO DE FUNÇÕES E GUARDRAILS (Hardening Final)
+
+**Data de Implementação**: 13/12/2025  
+**Status**: ✅ **IMPLEMENTADO - Proteção Contra Autoavaliação**  
+**Propósito**: Garantir que Executor nunca simule GEMINI e que auditorias tenham autoridade verificável
+
+## 📋 **Princípio Fundamental**
+
+> **Quem executa não audita. Quem audita não escreve código. Quem decide não controla o canal.**
+
+Este princípio elimina conflitos de interesse e garante confiabilidade nas auditorias do PROTOCOLO SUPREMO v4.0.
+
+**Segregação de Papéis**:
+
+| Papel                          | Responsabilidade                                    | O que PODE fazer                                                                                      | O que NÃO PODE fazer                                                               |
+| ------------------------------ | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| **Executor** (Copilot/VS Code) | Implementar código, abrir PRs, processar RESULT     | - Criar `*-request.json`<br>- Bloquear-se ao aguardar resposta<br>- Processar `*-result.json` externo | - Criar `*-ack.json`<br>- Criar `*-result.json`<br>- Decidir sozinho sobre dúvidas |
+| **GEMINI** (Externo)           | Auditar PRs, gerar RESULTs, tomar decisões técnicas | - Analisar código independentemente<br>- Gerar `*-ack.json`<br>- Gerar `*-result.json` com verdict    | - Executar código<br>- Fazer commits<br>- Fazer merge                              |
+
+## 🔐 **Prova de Origem Obrigatória**
+
+Todo arquivo `*-ack.json` ou `*-result.json` deve ter arquivo `proof-of-origin.txt` no mesmo diretório com:
+
+```
+Data: 2025-12-13 10:45:30
+Link: https://chat.openai.com/share/abc123def456
+Hash: a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456
+Autor: João Silva
+Nota: Auditoria de hardening final executada pelo GEMINI 2.0 Flash
+```
+
+**Campos Obrigatórios**:
+
+- **Data/hora**: Quando o RESULT foi coletado
+- **Link**: URL do chat externo (chat.openai.com, claude.ai, etc.)
+- **Hash**: SHA256 do JSON para garantir integridade
+- **Nota**: Contexto adicional (opcional mas recomendado)
+
+## 🛡️ **Guardrails Implementados**
+
+### 1. Script Anti-Simulação
+
+**Arquivos**:
+
+- `scripts/guardrails/deny-local-audit-results.js` (Node.js)
+- `scripts/guardrails/deny-local-audit-results.ps1` (PowerShell)
+- `scripts/guardrails/README.md` (Documentação)
+
+**Comportamento**:
+
+- Varre `ai-tasks/events/**/*-ack*.json` e `*-result*.json`
+- Para cada arquivo, exige `proof-of-origin.txt` válido
+- Se violação detectada → exit code 1 (processo FALHA)
+
+**Uso**:
+
+```bash
+# Validação manual
+npm run guardrail:check
+```
+
+### 2. Pre-commit Hook (Local)
+
+**Arquivo**: `.husky/pre-commit`
+
+**Comportamento**:
+
+- Executa antes de todo commit Git
+- Roda `npm run guardrail:check`
+- Se guardrail falhar → commit bloqueado
+
+### 3. CI Workflow (GitHub Actions)
+
+**Arquivo**: `.github/workflows/pr-validation.yml`
+
+**Comportamento**:
+
+- Executa em todo Pull Request
+- Roda: Lint → TypeCheck → Tests → Build → **Guardrail**
+- Se guardrail falhar → PR bloqueado (merge impedido)
+
+### 4. Event Monitor com Alertas
+
+**Arquivo**: `scripts/events-monitor.js`
+
+**Comportamento**:
+
+- Monitora timeouts de REQUEST sem ACK (5 min) ou sem RESULT (30 min)
+- Gera `ai-tasks/events/process-alert.md` automaticamente
+- Atualiza `ai-tasks/events/executor-state.json` com status
+
+**Uso**:
+
+```bash
+npm run events:monitor        # Monitorar e detectar timeouts
+npm run events:monitor status # Ver status atual
+```
+
+## 🚨 **Executor Rules - Modo Sem Perguntas**
+
+Atualização em `ai-engine/copilot-executor/EXECUTOR_RULES.md`:
+
+**REGRA 4 Expandida**:
+
+- Se houver **qualquer ambiguidade**:
+  1. Criar `ai-tasks/events/questions/question-{timestamp}.md`
+  2. Registrar dúvida com contexto completo
+  3. **BLOQUEAR** executor com status `WAITING_CLARIFICATION`
+  4. Aguardar resposta do GEMINI externo
+- **NUNCA** decidir sozinho ou simular auditor
+
+## ✅ **Garantias do Sistema**
+
+1. ✅ Nenhum arquivo ACK/RESULT sem prova de origem verificável
+2. ✅ Pre-commit hook bloqueia commits inválidos
+3. ✅ CI bloqueia PRs com violações
+4. ✅ Event monitor detecta timeouts e gera alertas
+5. ✅ Executor nunca decide sozinho
+6. ✅ Rastreabilidade completa via logs
+
+## 📁 **Arquivos Relacionados**
+
+- `REGRA_SUPREMA_SEGREGACAO_FUNCOES.md` - Regra inviolável
+- `scripts/guardrails/` - Guardrails de validação
+- `.husky/pre-commit` - Hook Git local
+- `.github/workflows/pr-validation.yml` - CI no GitHub
+- `scripts/events-monitor.js` - Monitor de eventos
+- `ai-engine/copilot-executor/EXECUTOR_RULES.md` - Regras do executor
 
 ---
