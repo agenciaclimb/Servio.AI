@@ -6,7 +6,7 @@
  * Aplica atualizações estruturadas ao Documento Mestre
  * 
  * USO:
- *   node updateMasterDoc.js --block <arquivo.md>
+ *   node updateMasterDoc.cjs --block <arquivo.md>
  * 
  * SAÍDA:
  *   DOCUMENTO_MESTRE_SERVIO_AI.md (atualizado)
@@ -118,7 +118,7 @@ if (require.main === module) {
   const blockIndex = args.indexOf('--block');
 
   if (blockIndex === -1) {
-    console.error('USO: node updateMasterDoc.js --block <arquivo.md>');
+    console.error('USO: node updateMasterDoc.cjs --block <arquivo.md>');
     process.exit(1);
   }
 

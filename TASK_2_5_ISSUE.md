@@ -1,7 +1,9 @@
 ### Objetivo
+
 Implementar um middleware de rate limiting para proteger endpoints sensíveis da API contra abuso e ataques de força bruta.
 
 ### Detalhes Técnicos
+
 - **Biblioteca:** `express-rate-limit` ou similar.
 - **Endpoints a Proteger:**
   - Autenticação (`/login`, `/register`)
@@ -9,6 +11,7 @@ Implementar um middleware de rate limiting para proteger endpoints sensíveis da
   - Submissão de Proposta (`POST /proposals`)
 
 ### Critérios de Aceitação
+
 - [ ] Middleware implementado e aplicado aos endpoints definidos.
 - [ ] Requisições acima do limite retornam HTTP 429.
 - [ ] Configurações são controladas via variáveis de ambiente.

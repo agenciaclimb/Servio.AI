@@ -4,7 +4,13 @@
 
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { Task, TaskDay, TaskExecutionResult, TaskManagerConfig, TaskStatus } from './task_interface';
+import {
+  Task,
+  TaskDay,
+  TaskExecutionResult,
+  TaskManagerConfig,
+  TaskStatus,
+} from './task_interface';
 
 export class TaskManager {
   private config: TaskManagerConfig;
@@ -24,7 +30,7 @@ export class TaskManager {
   async loadTasksFromFile(filePath: string): Promise<Task[]> {
     try {
       const absolutePath = path.resolve(filePath);
-      
+
       if (!fs.existsSync(absolutePath)) {
         throw new Error(`Arquivo não encontrado: ${absolutePath}`);
       }
@@ -46,7 +52,10 @@ export class TaskManager {
       this.log('info', `✅ Carregadas ${data.tasks.length} tasks do arquivo ${filePath}`);
       return data.tasks;
     } catch (error) {
-      this.log('error', `❌ Erro ao carregar tasks: ${error instanceof Error ? error.message : String(error)}`);
+      this.log(
+        'error',
+        `❌ Erro ao carregar tasks: ${error instanceof Error ? error.message : String(error)}`
+      );
       throw error;
     }
   }
@@ -76,8 +85,17 @@ export class TaskManager {
    * Valida estrutura de uma Task individual
    */
   private validateTask(task: Task, index: number): void {
-    const requiredFields = ['id', 'title', 'description', 'acceptance_criteria', 'files_to_create', 'files_to_modify', 'dependencies', 'estimated_effort'];
-    
+    const requiredFields = [
+      'id',
+      'title',
+      'description',
+      'acceptance_criteria',
+      'files_to_create',
+      'files_to_modify',
+      'dependencies',
+      'estimated_effort',
+    ];
+
     requiredFields.forEach(field => {
       if (!(field in task)) {
         throw new Error(`Task[${index}]: campo obrigatório "${field}" ausente`);
@@ -172,13 +190,19 @@ export class TaskManager {
         success: true,
         message: `Task ${task.title} executada com sucesso`,
         execution_time_ms: executionTime,
-        logs: [`Critérios de aceitação: ${task.acceptance_criteria.length}`, `Arquivos a criar: ${task.files_to_create.length}`],
+        logs: [
+          `Critérios de aceitação: ${task.acceptance_criteria.length}`,
+          `Arquivos a criar: ${task.files_to_create.length}`,
+        ],
       };
     } catch (error) {
       this.updateTaskStatus(taskId, TaskStatus.FAILED);
       const executionTime = Date.now() - startTime;
 
-      this.log('error', `❌ Falha na execução da task ${taskId}: ${error instanceof Error ? error.message : String(error)}`);
+      this.log(
+        'error',
+        `❌ Falha na execução da task ${taskId}: ${error instanceof Error ? error.message : String(error)}`
+      );
 
       return {
         task_id: taskId,
@@ -196,7 +220,7 @@ export class TaskManager {
   private async simulateExecution(task: Task): Promise<void> {
     // Simula delay de processamento
     await new Promise(resolve => setTimeout(resolve, 100));
-    
+
     // Simula validação de dependências
     if (task.dependencies.length > 0) {
       this.log('debug', `Verificando dependências: ${task.dependencies.join(', ')}`);

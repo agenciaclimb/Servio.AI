@@ -46,7 +46,7 @@ Crie `tasks.json`:
 
 ```bash
 cd /ai-orchestrator
-node src/orchestrator.js --tasks ../tasks.json
+node src/orchestrator.cjs --tasks ../tasks.json
 ```
 
 ### 3. Acompanhe o Histórico
@@ -211,7 +211,7 @@ Cria template de PR automaticamente.
 ### 2. Executar
 
 ```bash
-node src/orchestrator.js --tasks tasks.json
+node src/orchestrator.cjs --tasks tasks.json
 ```
 
 ### 3. Saída

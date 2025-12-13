@@ -13,7 +13,11 @@
         "Sistema lida com erros apropriadamente",
         "Logging básico das ações executadas"
       ],
-      "files_to_create": ["ai-tasks/task_manager.ts", "ai-tasks/task_interface.ts", "ai-tasks/task_manager.test.ts"],
+      "files_to_create": [
+        "ai-tasks/task_manager.ts",
+        "ai-tasks/task_interface.ts",
+        "ai-tasks/task_manager.test.ts"
+      ],
       "files_to_modify": [],
       "dependencies": [],
       "estimated_effort": "8h"
@@ -45,7 +49,12 @@
         "Sistema gera alertas em eventos suspeitos",
         "Logs armazenados com segurança"
       ],
-      "files_to_create": ["utils/logger.ts", "utils/auditor.ts", "models/log_entry.ts", "utils/logger.test.ts"],
+      "files_to_create": [
+        "utils/logger.ts",
+        "utils/auditor.ts",
+        "models/log_entry.ts",
+        "utils/logger.test.ts"
+      ],
       "files_to_modify": [],
       "dependencies": [],
       "estimated_effort": "8h"
@@ -61,7 +70,11 @@
         "Parser valida os valores dos campos",
         "Testes unitários cobrem cenários de validação"
       ],
-      "files_to_create": ["master_document/parser.ts", "master_document/schema.json", "master_document/parser.test.ts"],
+      "files_to_create": [
+        "master_document/parser.ts",
+        "master_document/schema.json",
+        "master_document/parser.test.ts"
+      ],
       "files_to_modify": [],
       "dependencies": [],
       "estimated_effort": "10h"
@@ -77,7 +90,12 @@
         "Acessível via web com atualização em tempo real",
         "UI/UX intuitiva"
       ],
-      "files_to_create": ["dashboard/index.html", "dashboard/app.js", "dashboard/style.css", "dashboard/api.ts"],
+      "files_to_create": [
+        "dashboard/index.html",
+        "dashboard/app.js",
+        "dashboard/style.css",
+        "dashboard/api.ts"
+      ],
       "files_to_modify": [],
       "dependencies": [],
       "estimated_effort": "12h"

@@ -7,7 +7,7 @@
  * Gera relatório de saúde e recomendações
  * 
  * USO:
- *   node system-review.js
+ *   node system-review.cjs
  * 
  * SAÍDA:
  *   /ai-tasks/logs/system-review-{timestamp}.json

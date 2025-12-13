@@ -33,7 +33,7 @@ ai-tasks/
 ### 2️⃣ **Orchestrator** processa o JSON
 
 ```powershell
-node orchestrator.js tasks-dia1.json
+node orchestrator.cjs tasks-dia1.json
 ```
 
 **Resultado:**
