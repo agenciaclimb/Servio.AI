@@ -1,0 +1,13 @@
+{
+  "source": "github-actions",
+  "workflow_run_id": "20194190210",
+  "run_attempt": "1",
+  "actor": "agenciaclimb",
+  "repo": "agenciaclimb/Servio.AI",
+  "sha": "9aeb6255058f89424ced98ee712bcc2c8e7e4cf4",
+  "pr_number": 28,
+  "timestamp_utc": "2025-12-13T15:36:35.236Z",
+  "gemini_model": "gemini-2.0-flash-exp",
+  "input_hash_sha256": "e308b6aac6ba4a373e5942c27439e185122119f360661a9280c9a9691b6ee1f5",
+  "output_hash_sha256": "2cf4d1e04cad7da7cd5b2b4d9f7725119f8f863d39f2b40082c92c5ea8b63aeb"
+}
