@@ -5,7 +5,9 @@ import '@testing-library/jest-dom';
 vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(() => ({ __mock: true })),
   signInWithEmailAndPassword: vi.fn(() => Promise.resolve({ user: { email: 'mock@user.com' } })),
-  createUserWithEmailAndPassword: vi.fn(() => Promise.resolve({ user: { email: 'mock@user.com' } })),
+  createUserWithEmailAndPassword: vi.fn(() =>
+    Promise.resolve({ user: { email: 'mock@user.com' } })
+  ),
   GoogleAuthProvider: vi.fn(function MockProvider() {}),
   signInWithPopup: vi.fn(() => Promise.resolve({ user: { email: 'mock@google.com' } })),
 }));

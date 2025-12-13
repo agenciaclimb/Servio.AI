@@ -2,7 +2,9 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
-global.fetch = vi.fn(() => Promise.resolve({ json: () => Promise.resolve({ message: 'ok' }) })) as any;
+global.fetch = vi.fn(() =>
+  Promise.resolve({ json: () => Promise.resolve({ message: 'ok' }) })
+) as any;
 
 // Mock dependências ANTES dos imports
 vi.mock('../../../services/geminiService', () => ({
@@ -178,7 +180,9 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
     });
 
     it('should disable send button while loading', async () => {
-      mockGetChat.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({ displayText: 'OK' }), 1000)));
+      mockGetChat.mockImplementation(
+        () => new Promise(resolve => setTimeout(() => resolve({ displayText: 'OK' }), 1000))
+      );
       const user = userEvent.setup();
 
       render(<InternalChat currentUser={mockUser} />);

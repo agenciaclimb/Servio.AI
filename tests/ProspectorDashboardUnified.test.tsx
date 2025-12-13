@@ -182,9 +182,9 @@ describe('ProspectorDashboard - Unified Layout', () => {
     // ProspectorStatistics usa ProspectorDashboardSkeleton durante loading
     await waitFor(() => {
       // Skeleton exibe 4 cards de stats
-      const skeletonCards = screen.getAllByRole('generic').filter(el => 
-        el.className.includes('bg-white') && el.className.includes('rounded')
-      );
+      const skeletonCards = screen
+        .getAllByRole('generic')
+        .filter(el => el.className.includes('bg-white') && el.className.includes('rounded'));
       expect(skeletonCards.length).toBeGreaterThan(0);
     });
   });

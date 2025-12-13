@@ -28,9 +28,7 @@ export const prospectingMocks = {
     adminNotified: true,
     message: 'Prospecção concluída',
     qualityScore: 92,
-    topProspects: [
-      { name: 'Ana', email: 'ana@test.com', qualityScore: 92, matchScore: 90 },
-    ],
+    topProspects: [{ name: 'Ana', email: 'ana@test.com', qualityScore: 92, matchScore: 90 }],
   },
   autoResultFailure: {
     success: false,
@@ -117,7 +115,10 @@ export function createJsonResponse(data: any, ok = true, status = 200) {
   return { ok, status, json: async () => data };
 }
 
-export function mockFetchFromMap(map: FetchMap, fallback?: { ok: boolean; status?: number; json: () => Promise<any> }) {
+export function mockFetchFromMap(
+  map: FetchMap,
+  fallback?: { ok: boolean; status?: number; json: () => Promise<any> }
+) {
   const resolvedFallback = fallback || createJsonResponse({}, true, 200);
   const fn = vi.fn(async (url: string) => {
     const entry = map[url];

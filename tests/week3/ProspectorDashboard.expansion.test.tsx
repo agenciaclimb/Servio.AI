@@ -50,7 +50,10 @@ describe('ProspectorDashboard - Expansion (stabilizado)', () => {
   });
 
   it('renderiza tab padrão e ações rápidas', async () => {
-    vi.spyOn(api, 'fetchProspectorStats').mockResolvedValue({ prospectorId: 'x', totalRecruits: 0 } as any);
+    vi.spyOn(api, 'fetchProspectorStats').mockResolvedValue({
+      prospectorId: 'x',
+      totalRecruits: 0,
+    } as any);
     vi.spyOn(api, 'fetchProspectorLeaderboard').mockResolvedValue([]);
 
     renderDashboard();
@@ -62,7 +65,9 @@ describe('ProspectorDashboard - Expansion (stabilizado)', () => {
   });
 
   it('faz chamadas para stats e leaderboard', async () => {
-    const statsSpy = vi.spyOn(api, 'fetchProspectorStats').mockResolvedValue({ prospectorId: 'x' } as any);
+    const statsSpy = vi
+      .spyOn(api, 'fetchProspectorStats')
+      .mockResolvedValue({ prospectorId: 'x' } as any);
     const lbSpy = vi.spyOn(api, 'fetchProspectorLeaderboard').mockResolvedValue([]);
 
     renderDashboard('p@ex.com');
@@ -96,7 +101,9 @@ describe('ProspectorDashboard - Expansion (stabilizado)', () => {
   });
 
   it('usa backend correto (us-west1) nos serviços canônicos', async () => {
-    const statsSpy = vi.spyOn(api, 'fetchProspectorStats').mockResolvedValue({ prospectorId: 'x' } as any);
+    const statsSpy = vi
+      .spyOn(api, 'fetchProspectorStats')
+      .mockResolvedValue({ prospectorId: 'x' } as any);
     vi.spyOn(api, 'fetchProspectorLeaderboard').mockResolvedValue([]);
 
     renderDashboard('p@ex.com');

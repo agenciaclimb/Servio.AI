@@ -10,7 +10,10 @@ beforeEach(() => {
 
 describe('stripeService.smoke', () => {
   it('pagamento sucesso (mock)', async () => {
-    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ success: true, message: 'ok' }) });
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ success: true, message: 'ok' }),
+    });
     const res = await releasePayment('job-1');
     expect(res.success).toBe(true);
   });

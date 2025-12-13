@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { searchGoogleForProviders, sendProspectInvitation } from '../../services/prospectingService';
+import {
+  searchGoogleForProviders,
+  sendProspectInvitation,
+} from '../../services/prospectingService';
 
 const mockFetch = vi.fn();
 
