@@ -81,7 +81,7 @@ jobs:
 
       - name: Read verdict and enforce gate
         run: |
-          FILE=$(echo ai-tasks/events/audit-result-PR_*.json)
+          FILE="ai-tasks/events/audit-result-PR_${{ steps.ctx.outputs.pr_number }}.json"
           VERDICT=$(node -e "console.log(JSON.parse(require('fs').readFileSync(process.argv[1],'utf8')).verdict)" "$FILE")
           echo "Veredito: $VERDICT"
           if [ "$VERDICT" != "APPROVED" ]; then
