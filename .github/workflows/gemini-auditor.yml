@@ -63,7 +63,7 @@ jobs:
             echo "Nenhum arquivo para commit"
           else
             git commit -m "chore(audit): ACK/RESULT + proof-of-origin (CI)"
-            git push
+            git push https://${{ github.token }}@github.com/${{ github.repository }}.git HEAD:${{ github.head_ref }} || echo "Push falhou, mas artefatos foram gerados localmente"
           fi
 
       - name: Comment verdict on PR
