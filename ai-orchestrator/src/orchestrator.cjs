@@ -11,7 +11,7 @@
  * - Sincroniza com GitHub
  * 
  * USO:
- *   node orchestrator.js --tasks <arquivo.json>
+ *   node orchestrator.cjs --tasks <arquivo.json>
  */
 
 const fs = require('fs');
@@ -286,7 +286,7 @@ if (require.main === module) {
   const tasksIndex = args.indexOf('--tasks');
 
   if (tasksIndex === -1) {
-    console.error('USO: node orchestrator.js --tasks <arquivo.json>');
+    console.error('USO: node orchestrator.cjs --tasks <arquivo.json>');
     process.exit(1);
   }
 

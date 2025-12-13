@@ -1,0 +1,90 @@
+name: Gemini Auditor Bot
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Validate secrets
+        run: |
+          if [ -z "${{ secrets.GEMINI_API_KEY }}" ]; then
+            echo "❌ GEMINI_API_KEY não configurado em GitHub Secrets" >&2
+            exit 1
+          fi
+
+      - name: Collect PR context
+        id: ctx
+        run: |
+          echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          echo "sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+          echo "actor=${{ github.actor }}" >> $GITHUB_OUTPUT
+          echo "repo=${{ github.repository }}" >> $GITHUB_OUTPUT
+          echo "run_id=${{ github.run_id }}" >> $GITHUB_OUTPUT
+          echo "run_attempt=${{ github.run_attempt }}" >> $GITHUB_OUTPUT
+
+      - name: Run Gemini audit
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          node scripts/gemini/run_audit.cjs \
+            --pr ${{ steps.ctx.outputs.pr_number }} \
+            --sha ${{ steps.ctx.outputs.sha }} \
+            --actor "${{ steps.ctx.outputs.actor }}" \
+            --repo "${{ steps.ctx.outputs.repo }}" \
+            --run-id "${{ steps.ctx.outputs.run_id }}" \
+            --run-attempt "${{ steps.ctx.outputs.run_attempt }}"
+
+      - name: Commit ACK/RESULT + proof-of-origin
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ai-tasks/events/audit-ack-PR_*.json ai-tasks/events/audit-result-PR_*.json ai-tasks/events/proof-of-origin-PR_*.json ai-tasks/events/proof-of-origin-PR_*.txt || true
+          if git diff --cached --quiet; then
+            echo "Nenhum arquivo para commit"
+          else
+            git commit -m "chore(audit): ACK/RESULT + proof-of-origin (CI)"
+            git push https://${{ github.token }}@github.com/${{ github.repository }}.git HEAD:${{ github.head_ref }} || echo "Push falhou, mas artefatos foram gerados localmente"
+          fi
+
+      - name: Comment verdict on PR
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ steps.ctx.outputs.pr_number }}
+          body: |
+            🛡️ Auditor Bot (Gemini via CI)
+
+            Resultado disponível em `ai-tasks/events/audit-result-PR_${{ steps.ctx.outputs.pr_number }}.json`.
+            Prova de origem: `ai-tasks/events/proof-of-origin-PR_${{ steps.ctx.outputs.pr_number }}.json`.
+
+            O merge só é permitido se `verdict=APPROVED`.
+
+      - name: Read verdict and enforce gate
+        run: |
+          FILE=$(echo ai-tasks/events/audit-result-PR_*.json)
+          VERDICT=$(node -e "console.log(JSON.parse(require('fs').readFileSync(process.argv[1],'utf8')).verdict)" "$FILE")
+          echo "Veredito: $VERDICT"
+          if [ "$VERDICT" != "APPROVED" ]; then
+            echo "Auditoria reprovada: $VERDICT" >&2
+            exit 1
+          fi

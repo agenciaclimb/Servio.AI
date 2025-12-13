@@ -103,7 +103,7 @@ Exemplos:
 Após abrir PR:
 
 1. NÃO FAZA MERGE YET
-2. Aguarde comando: `node /ai-engine/gemini/auditPR.js --pr <number>`
+2. Aguarde comando: `node /ai-engine/gemini/auditPR.cjs --pr <number>`
 3. Gemini vai responder com `{ status: "APROVADO" | "REJEIÇÃO" }`
 4. Se APROVADO → receberá bloco de atualização Documento Mestre
 5. Aplicar bloco → commit → push → merge

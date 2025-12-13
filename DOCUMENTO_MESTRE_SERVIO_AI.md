@@ -42,7 +42,7 @@
 **Última Execução Bem-Sucedida**:
 
 - Data: 10/12/2025 10:15 BRT
-- Comando: `node src/orchestrator.js tasks-teste.json`
+- Comando: `node src/orchestrator.cjs tasks-teste.json`
 - Output: 1 task processada, Issue #16 criada, arquivo `ai-tasks/day-1/task-1.1.md` criado
 - Status: ✅ 100% funcional
 
@@ -66,7 +66,7 @@ C:\Users\JE\servio.ai\
 
 C:\Users\JE\servio-ai-orchestrator\
 ├── src/
-│   ├── orchestrator.js         ✅ (250+ linhas)
+│   ├── orchestrator.cjs        ✅ (250+ linhas)
 │   ├── githubClient.js         ✅ (150+ linhas)
 │   └── taskRenderer.js         ✅ (180+ linhas)
 ├── package.json                ✅
@@ -83,7 +83,7 @@ C:\Users\JE\servio-ai-orchestrator\
 
 2️⃣ ORCHESTRATOR (Automação)
    ↓ Lê JSON → Cria .md + Issues no GitHub
-   ↓ Comando: node src/orchestrator.js tasks-diaX.json
+   ↓ Comando: node src/orchestrator.cjs tasks-diaX.json
 
 3️⃣ COPILOT (Executor)
    ↓ Lê ai-tasks/day-X/task-X.Y.md
@@ -108,7 +108,7 @@ C:\Users\JE\servio-ai-orchestrator\
    - Status: Aguardando JSON do Gemini
 
 2. **Execução do Orchestrator**
-   - Comando pronto: `node src/orchestrator.js tasks-dia2.json`
+   - Comando pronto: `node src/orchestrator.cjs tasks-dia2.json`
    - Issues serão criadas automaticamente
    - Copilot começará implementação
 
@@ -184,7 +184,7 @@ servio-ai-orchestrator/
 ├── tasks-example.json (exemplos)
 ├── README.md (400+ linhas doc)
 └── src/
-    ├── orchestrator.js (script principal - 250+ linhas)
+   ├── orchestrator.cjs (script principal - 250+ linhas)
     ├── githubClient.js (GitHub API wrapper - 150+ linhas)
     └── taskRenderer.js (Markdown generator - 180+ linhas)
 ```
@@ -274,7 +274,7 @@ DRY_RUN=false
 
 ```bash
 cd C:\Users\JE\servio-ai-orchestrator
-node src/orchestrator.js tasks-diaX.json
+node src/orchestrator.cjs tasks-diaX.json
 ```
 
 **Output:**
@@ -410,7 +410,7 @@ node src/orchestrator.js tasks-diaX.json
 
 ```bash
 cd C:\Users\JE\servio-ai-orchestrator
-node src/orchestrator.js tasks-dia2.json
+node src/orchestrator.cjs tasks-dia2.json
 ```
 
 **Output**: Tasks organizadas no GitHub prontas para Copilot implementar
