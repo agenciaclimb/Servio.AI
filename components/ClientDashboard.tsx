@@ -860,7 +860,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                         if (existingDispute) setJobInFocus({ job, action: 'dispute-details' });
                         else setJobInFocus({ job, action: 'dispute' });
                       }}
-                      onViewOnMap={(j) => setViewingJobOnMap(j)}
+                      onViewOnMap={j => setViewingJobOnMap(j)}
                       // @ts-expect-error: TS fails to pick optional prop from ClientJobCard; component supports it.
                       onViewRecommendations={() => {
                         handleViewRecommendations(job);
