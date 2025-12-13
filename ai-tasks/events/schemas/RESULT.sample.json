@@ -1,0 +1,9 @@
+{
+  "timestamp": "2025-12-13T12:30:00Z",
+  "type": "audit-result",
+  "pr_number": 99,
+  "verdict": "APPROVED",
+  "verdict_reason": "Guardrails implementados e documentados",
+  "update_block": "# Atualização Documento Mestre...",
+  "executor_unblock": true
+}
