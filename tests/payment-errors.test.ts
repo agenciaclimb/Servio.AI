@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import * as API from '../../services/api';
+import * as API from '../services/api';
 
 function simulateResponse(status: number, body: any = { message: 'x' }) {
   return new Response(JSON.stringify(body), {

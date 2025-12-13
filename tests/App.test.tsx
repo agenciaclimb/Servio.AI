@@ -220,13 +220,18 @@ describe('App Component', () => {
 
     render(<App />);
 
-    // Simulate an unhandled rejection from chunk loading
-    const event = new PromiseRejectionEvent('unhandledrejection', {
-      reason: new Error('Failed to fetch dynamically imported module'),
-      promise: Promise.reject(new Error('test')),
-    });
-
-    globalThis.dispatchEvent(event);
+    // Simulate unhandled rejection from chunk loading (jsdom may not have PromiseRejectionEvent)
+    if ('PromiseRejectionEvent' in globalThis) {
+      const event = new (globalThis as any).PromiseRejectionEvent('unhandledrejection', {
+        reason: new Error('Failed to fetch dynamically imported module'),
+        promise: Promise.reject(new Error('test')),
+      });
+      globalThis.dispatchEvent(event);
+    } else {
+      // Fallback: dispatch an error event which the app also handles
+      const errEvent = new ErrorEvent('error', { message: 'Failed to load module script' });
+      globalThis.dispatchEvent(errEvent);
+    }
 
     // Should have set the reload flag
     expect(sessionStorage.getItem('hasReloadedForChunkError')).toBe('true');
@@ -258,12 +263,16 @@ describe('App Component', () => {
 
     render(<App />);
 
-    const event = new PromiseRejectionEvent('unhandledrejection', {
-      reason: new Error('Failed to fetch dynamically imported module'),
-      promise: Promise.reject(new Error('test')),
-    });
-
-    globalThis.dispatchEvent(event);
+    if ('PromiseRejectionEvent' in globalThis) {
+      const event = new (globalThis as any).PromiseRejectionEvent('unhandledrejection', {
+        reason: new Error('Failed to fetch dynamically imported module'),
+        promise: Promise.reject(new Error('test')),
+      });
+      globalThis.dispatchEvent(event);
+    } else {
+      const errEvent = new ErrorEvent('error', { message: 'Failed to load module script' });
+      globalThis.dispatchEvent(errEvent);
+    }
 
     // Should not reload again
     expect(reloadSpy).not.toHaveBeenCalled();

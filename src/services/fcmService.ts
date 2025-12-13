@@ -44,9 +44,10 @@ function getMessagingInstance(): Messaging | null {
  * Verifica se notificações são suportadas no browser
  */
 export function isNotificationSupported(): boolean {
-  return (
-    'Notification' in globalThis && 'serviceWorker' in navigator && 'PushManager' in globalThis
-  );
+  const notificationAvailable = typeof (globalThis as any).Notification !== 'undefined';
+  const hasServiceWorker = typeof (navigator as any).serviceWorker !== 'undefined';
+  const hasPushManager = typeof (globalThis as any).PushManager !== 'undefined';
+  return notificationAvailable && hasServiceWorker && hasPushManager;
 }
 
 /**

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { enhanceJobRequest, generateProfileTip } from '../../services/geminiService';
+import { enhanceJobRequest, generateProfileTip } from '../services/geminiService';
 
 // Simplistic mock of underlying fetch / model call to force failure path
 function forceGeminiFailure() {

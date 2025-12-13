@@ -9,67 +9,46 @@ describe('ServiceLandingPage', () => {
   });
 
   it('shows empty state when no providers match category', async () => {
-    vi.spyOn(API, 'fetchProviders').mockResolvedValueOnce([
-      {
-        email: 'a@a.com',
-        name: 'A',
-        type: 'prestador',
-        bio: '',
-        location: 'sp',
-        memberSince: new Date().toISOString(),
-        status: 'ativo',
-        specialties: ['eletricista'],
-      },
-    ] as any);
+    // ServiceLandingPage agora usa serviceId e fetchJobById
+    vi.spyOn(API, 'fetchJobById').mockResolvedValueOnce(null);
 
-    render(
-      <ServiceLandingPage category="encanador" location="sp" serviceNameToCategory={x => x} />
-    );
+    render(<ServiceLandingPage serviceId="invalid-job" />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Nenhum prestador encontrado/i)).toBeInTheDocument();
+      expect(screen.getByText(/Serviço não encontrado/i)).toBeInTheDocument();
     });
   });
 
   it('lists providers that match the category', async () => {
-    vi.spyOn(API, 'fetchProviders').mockResolvedValueOnce([
-      {
-        email: 'b@b.com',
-        name: 'B',
-        type: 'prestador',
-        bio: '',
-        location: 'sp',
-        memberSince: new Date().toISOString(),
-        status: 'ativo',
-        specialties: ['encanador'],
-      },
-      {
-        email: 'c@c.com',
-        name: 'C',
-        type: 'prestador',
-        bio: '',
-        location: 'sp',
-        memberSince: new Date().toISOString(),
-        status: 'ativo',
-        specialties: ['eletricista'],
-      },
-    ] as any);
+    const mockJob = {
+      id: 'job-123',
+      category: 'Encanador',
+      serviceType: 'Reparo',
+      description: 'Consertar vazamento',
+      fixedPrice: 150,
+      urgency: 'normal',
+      status: 'aberto',
+      clientId: 'client@test.com',
+      createdAt: new Date().toISOString(),
+    };
 
-    render(<ServiceLandingPage category="encanador" />);
+    vi.spyOn(API, 'fetchJobById').mockResolvedValueOnce(mockJob as any);
+
+    render(<ServiceLandingPage serviceId="job-123" />);
 
     await waitFor(() => {
-      // page header always visible
-      expect(screen.getByText(/Prestadores de Serviço/i)).toBeInTheDocument();
+      expect(screen.getByText(/Encanador/i)).toBeInTheDocument();
+      expect(screen.getByText(/Consertar vazamento/i)).toBeInTheDocument();
     });
   });
 
   it('shows error on API failure', async () => {
-    vi.spyOn(API, 'fetchProviders').mockRejectedValueOnce(new Error('network'));
+    vi.spyOn(API, 'fetchJobById').mockRejectedValueOnce(new Error('network'));
 
-    render(<ServiceLandingPage category="encanador" />);
+    render(<ServiceLandingPage serviceId="job-error" />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Não foi possível carregar/i)).toBeInTheDocument();
+      expect(screen.getByText(/Serviço não encontrado ou indisponível/i)).toBeInTheDocument();
     });
   });
 });
