@@ -1,0 +1,16 @@
+{
+  "timestamp": "2025-12-13T12:15:00Z",
+  "type": "audit-request",
+  "pr_number": 99,
+  "pr_title": "chore(protocol): hardening segregação + guardrails auditoria",
+  "executor_status": "blocked",
+  "request_type": "pr-audit",
+  "context": {
+    "branch": "chore/hardening-events-guardrails",
+    "components": ["guardrails", "events-monitor", "ci", "husky"],
+    "docs": ["Documento Mestre", "Regra Suprema"],
+    "lint_status": "pending",
+    "test_status": "pending",
+    "build_status": "pending"
+  }
+}

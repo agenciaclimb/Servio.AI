@@ -1,0 +1,41 @@
+{
+  "id": "audit-produto-001",
+  "type": "REQUEST",
+  "timestamp": "2025-12-13T03:55:00.000Z",
+  "initiator": "user",
+  "target": "GEMINI",
+  "mode": "AUDITORIA_HARDENING_PRE_LANCAMENTO_PRODUTO",
+
+  "audit_scope": {
+    "system": "Servio.AI Production",
+    "focus": "PRODUTO - business logic, failure modes, production readiness",
+    "exclude": ["processo", "protocolo", "infrastructure_governance"],
+    "approach": "SRE - adversarial mindset, real-world scenarios"
+  },
+
+  "deliverables": {
+    "1": "Identificar blocker issues vs acceptable risks",
+    "2": "Analyze business logic vulnerabilities",
+    "3": "Test failure scenarios (payments, DB, timeouts)",
+    "4": "Produce go/no-go launch verdict",
+    "5": "Hardening plan obrigatório (se não-pronto)"
+  },
+
+  "slas": {
+    "ack_timeout_minutes": 15,
+    "result_timeout_minutes": 60,
+    "fallback_after_minutes": 240
+  },
+
+  "context": {
+    "previous_audit": "Process audit completed - event system hardened ✅",
+    "current_status": "Ready for product audit",
+    "critical_domains": [
+      "Payment processing (Stripe integration)",
+      "Job creation and matching",
+      "Database consistency (Firestore + memory fallback)",
+      "Error handling and recovery",
+      "Network resilience"
+    ]
+  }
+}

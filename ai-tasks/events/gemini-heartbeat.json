@@ -1,0 +1,13 @@
+{
+  "status": "degraded",
+  "last_seen": "2025-12-13T03:05:49Z",
+  "sla": {
+    "ack_minutes": 15,
+    "result_minutes": 60,
+    "fallback_minutes": 240
+  },
+  "notes": [
+    "Aguardando ACK/RESULT do PR #28",
+    "Heartbeat inicial criado pelo executor para monitoramento"
+  ]
+}

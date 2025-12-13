@@ -1,0 +1,8 @@
+{"event":"monitor-start","timestamp":"2025-12-13T03:49:31.173Z","events_dir":"C:\\Users\\JE\\servio.ai\\ai-tasks\\events"}
+{"event":"monitor-start","timestamp":"2025-12-13T03:52:54.468Z","events_dir":"C:\\Users\\JE\\servio.ai\\ai-tasks\\events"}
+{"event":"audit-ack-received","pr":28,"status":"under-review","timestamp":"2025-12-13T03:52:54.476Z"}
+{"event":"audit-result-received","pr":28,"verdict":"APPROVED","timestamp":"2025-12-13T03:52:54.477Z"}
+{"event":"executor-unblocked","pr":28,"verdict":"APPROVED","timestamp":"2025-12-13T03:52:54.477Z"}
+{"event":"product-audit-request","id":"audit-produto-001","type":"REQUEST","timestamp":"2025-12-13T04:00:00.000Z","initiator":"user","target":"GEMINI","mode":"AUDITORIA_HARDENING_PRE_LANCAMENTO_PRODUTO","status":"PENDING_GEMINI_RESPONSE"}
+{"event":"executor-blocked","id":"audit-produto-001","timestamp":"2025-12-13T04:00:01.000Z","reason":"PROTOCOLO SUPREMO: Aguardando RESULT genuíno do GEMINI. Proibido criar resultado local.","status":"BLOCKED_UNTIL_GEMINI_RESPONDS"}
+{"event":"timeout-ack","pr":28,"sinceMinutes":624,"timestamp":"2025-12-13T09:54:05.383Z"}

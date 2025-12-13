@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-12-12T23:30:00Z",
+  "pr_number": 28,
+  "pr_title": "fix(build): ajustes Etapa 3 Quality - remover react-query e corrigir props",
+  "pr_url": "https://github.com/agenciaclimb/Servio.AI/pull/28",
+  "executor_status": "blocked",
+  "request_type": "pr-audit",
+  "request_id": "audit-pr28-20251212",
+  "solicitations": [
+    "Aprovação técnica das mudanças (MatchingResults.tsx, ClientDashboard.tsx)",
+    "Update do Documento Mestre com padrões de hooks nativos",
+    "Decisões arquiteturais: React Query como dependência futura?",
+    "Gate de merge: APROVAR ou REJEITAR"
+  ],
+  "context": {
+    "branch": "feature/task-qualidade-etapa3-fix-build",
+    "commit": "6ad4730",
+    "base": "main",
+    "files_changed": ["src/components/MatchingResults.tsx", "components/ClientDashboard.tsx"],
+    "files_added": 5,
+    "files_modified": 2,
+    "test_status": "passing (1556/1556 tests)",
+    "lint_status": "passing (0 errors)",
+    "build_status": "passing (19.39s)",
+    "coverage": "48.36%"
+  },
+  "reference_logs": [
+    "ai-tasks/logs/etapa3-fix-build.log",
+    "ai-tasks/logs/pr-description.md",
+    "ai-tasks/logs/gemini-audit-request-pr28.md"
+  ]
+}
