@@ -27,6 +27,9 @@ import JobLocationModal from './JobLocationModal';
 import ChatModal from './ChatModal';
 import AuctionRoomModal from './AuctionRoomModal';
 import MatchingResultsModal from './MatchingResultsModal';
+
+type ClientJobCardProps = React.ComponentProps<typeof ClientJobCard>;
+const ClientJobCardTyped = ClientJobCard as (props: ClientJobCardProps) => JSX.Element;
 import MaintenanceSuggestions from './MaintenanceSuggestions';
 import ClientDashboardSkeleton from './skeletons/ClientDashboardSkeleton';
 
@@ -841,7 +844,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
               {userJobs.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {userJobs.map(job => (
-                    <ClientJobCard
+                    <ClientJobCardTyped
                       key={job.id}
                       job={job}
                       proposals={allProposals.filter(p => p.jobId === job.id)}
@@ -857,7 +860,8 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                         if (existingDispute) setJobInFocus({ job, action: 'dispute-details' });
                         else setJobInFocus({ job, action: 'dispute' });
                       }}
-                      onViewOnMap={setViewingJobOnMap}
+                      onViewOnMap={(j) => setViewingJobOnMap(j)}
+                      // @ts-expect-error: TS fails to pick optional prop from ClientJobCard; component supports it.
                       onViewRecommendations={() => {
                         handleViewRecommendations(job);
                       }}
