@@ -91,9 +91,7 @@ describe('TaskManager', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
       vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(invalidData));
 
-      await expect(taskManager.loadTasksFromFile('test.json')).rejects.toThrow(
-        /protocol_version/
-      );
+      await expect(taskManager.loadTasksFromFile('test.json')).rejects.toThrow(/protocol_version/);
     });
 
     it('deve validar campos obrigatórios de Task', async () => {
@@ -111,9 +109,7 @@ describe('TaskManager', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
       vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(invalidData));
 
-      await expect(taskManager.loadTasksFromFile('test.json')).rejects.toThrow(
-        /campo obrigatório/
-      );
+      await expect(taskManager.loadTasksFromFile('test.json')).rejects.toThrow(/campo obrigatório/);
     });
   });
 
