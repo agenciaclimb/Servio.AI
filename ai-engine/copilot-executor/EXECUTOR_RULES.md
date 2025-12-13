@@ -86,6 +86,8 @@ Exemplos:
 - Refatorar código não relacionado
 - Alterar fluxo de negócio
 - Mudar nomes de variáveis
+- **SIMULAR respostas de auditores externos (GEMINI, revisores)**
+- **DECIDIR por conta própria quando houver ambiguidade**
 
 **OBRIGATÓRIO**:
 
@@ -93,8 +95,24 @@ Exemplos:
 - Implementar EXATAMENTE o que foi pedido
 - Não questionar, não adaptar, não improvisar
 - Se task for ambígua, PARAR e pedir clarificação via GitHub Issue
+- **Se houver dúvida sobre especificação ou decisão técnica:**
+  1. Criar arquivo em `ai-tasks/events/questions/question-{timestamp}.md`
+  2. Registrar dúvida com contexto completo
+  3. BLOQUEAR executor até receber resposta do GEMINI externo
+  4. NUNCA prosseguir com suposição ou decisão própria
 
-**Ação**: Spec = Lei. Respeitar à risca.
+**Modo Sem Perguntas (Zero-Ambiguity Mode)**:
+
+Quando encontrar qualquer ambiguidade:
+
+- ❌ **NÃO** pergunte ao usuário interativamente
+- ❌ **NÃO** tente decidir sozinho
+- ❌ **NÃO** crie soluções "conservadoras" ou "seguras"
+- ✅ **SIM** registre em `questions/` e aguarde GEMINI
+- ✅ **SIM** bloqueie executor com status `WAITING_CLARIFICATION`
+- ✅ **SIM** mantenha rastreabilidade de toda decisão
+
+**Ação**: Spec = Lei. Respeitar à risca. Dúvidas → questions/ + BLOQUEAR.
 
 ---
 
