@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import type { PotentialMatch, User } from '../types';
+import type { PotentialMatch, User } from '../../types';
 import { logInfo } from '../utils/logger';
 
 interface MatchingResultsProps {

@@ -369,18 +369,35 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({
     setLoading(true);
     try {
       const token = await auth.currentUser?.getIdToken();
-      const baseUrl = import.meta.env.VITE_BACKEND_API_URL || '';
+      const baseUrl = (import.meta.env.VITE_BACKEND_API_URL || '').replace(/\/$/, '');
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
 
-      const response = await fetch(`${baseUrl}/create-stripe-account-link`, {
+      // 1) Cria conta Connect (Express) e persiste stripeAccountId no usuário (email como ID)
+      const accountRes = await fetch(`${baseUrl}/api/stripe/create-connect-account`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ email: user.email }),
+        headers,
+        body: JSON.stringify({ userId: user.email }),
       });
+      if (!accountRes.ok) {
+        throw new Error('Falha ao criar conta Stripe Connect');
+      }
 
-      const { url } = await response.json();
+      // 2) Gera Account Link para onboarding
+      const linkRes = await fetch(`${baseUrl}/api/stripe/create-account-link`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ userId: user.email }),
+      });
+      if (!linkRes.ok) {
+        throw new Error('Falha ao gerar link de onboarding Stripe');
+      }
+
+      const { url } = await linkRes.json();
+      if (!url) throw new Error('Link de onboarding inválido');
+
       window.location.href = url; // Redireciona para Stripe
     } catch (err) {
       setError('Erro ao conectar com Stripe');
