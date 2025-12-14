@@ -1,0 +1,47 @@
+{
+  "type": "SYSTEM_AUDIT",
+  "week_id": "2025-W50",
+  "timestamp_utc": "2025-12-14T13:58:23.857Z",
+  "metrics": {
+    "timestamp_utc": "2025-12-14T13:58:21.848Z",
+    "week_id": "2025-W50",
+    "repo": "agenciaclimb/Servio.AI",
+    "run_id": "20209033006",
+    "total_commits": 379,
+    "contributors": "5",
+    "branches": "65",
+    "source_files": 57,
+    "test_files": 125,
+    "security_issues": [
+      {
+        "type": "potential_secret_leak",
+        "count": 10,
+        "sample": "+Erro de autentica├º├úo: FirebaseError: Firebase: Error (auth/api-key-not-valid.-please-pass-a-valid-api-key.)."
+      }
+    ]
+  },
+  "gemini": {
+    "model": "gemini-2.0-flash-exp",
+    "analysis": {
+      "risk_level": "HIGH",
+      "findings": [
+        "Potential secret leak detected. API keys are exposed in the codebase.",
+        "High number of branches may indicate unstable development practices.",
+        "Potential risk due to a high number of commits."
+      ],
+      "recommendations": [
+        "Immediately revoke and rotate the exposed API keys.",
+        "Implement a secret management solution (e.g., HashiCorp Vault, AWS Secrets Manager) to store and access sensitive credentials securely.",
+        "Enforce stricter branch management policies (e.g., using pull requests and code reviews) to improve code quality and stability.",
+        "Implement static analysis tools to automatically detect and prevent future secret leaks.",
+        "Review commit history and remove any accidentally committed secrets.",
+        "Educate developers on secure coding practices, particularly regarding the handling of sensitive information."
+      ]
+    }
+  },
+  "summary": {
+    "risk_level": "HIGH",
+    "total_findings": 3,
+    "total_recommendations": 6
+  }
+}
