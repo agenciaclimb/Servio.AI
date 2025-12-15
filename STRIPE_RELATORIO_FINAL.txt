@@ -9,14 +9,14 @@ RESUMO EXECUTIVO
 ✅ WEBHOOK DE PRODUÇÃO CONFIGURADO
    ID: we_1SVJo4JEyu4utIB8YxuJEX4H
    URL: https://servio-backend-1000250760228.us-west1.run.app/api/stripe-webhook
-   Secret: whsec_FIZOs8ismaBk0sgTUVyAUiPg2Cg28bpW
+   Secret: whsec_[REDACTED]
    Status: Enabled (Live Mode)
    Eventos: 10 críticos
 
 ✅ CHAVES CONFIGURADAS (LIVE MODE)
    • Publishable Key: pk_live_51OmPLvJEyu4utIB8...
    • Secret Key: sk_live_51OmPLvJEyu4utIB8...
-   • Webhook Secret: whsec_FIZOs8ismaBk0sgTUVyAUiPg2Cg28bpW
+   • Webhook Secret: whsec_[REDACTED]
 
 ✅ AMBIENTES CONFIGURADOS
    • .env.local ✓
