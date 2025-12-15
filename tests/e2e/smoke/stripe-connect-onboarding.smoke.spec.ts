@@ -35,14 +35,18 @@ roleTest.describe('💳 STRIPE CONNECT ONBOARDING SMOKE', () => {
        * Validação: Botão visível em algum lugar da interface
        */
       // Após login, está no dashboard. Procurar por botão Stripe
-      let stripeButton = page.getByRole('button', { name: /conectar stripe|stripe connect/i }).first();
+      let stripeButton = page
+        .getByRole('button', { name: /conectar stripe|stripe connect/i })
+        .first();
 
       // Se não encontrar na tela atual, tentar navegar para /onboarding
       let buttonVisible = await stripeButton.isVisible({ timeout: 2000 }).catch(() => false);
 
       if (!buttonVisible) {
         await page.goto('/onboarding');
-        stripeButton = page.getByRole('button', { name: /conectar stripe|stripe connect/i }).first();
+        stripeButton = page
+          .getByRole('button', { name: /conectar stripe|stripe connect/i })
+          .first();
         buttonVisible = await stripeButton.isVisible({ timeout: 5000 }).catch(() => false);
 
         if (!buttonVisible) {
@@ -109,7 +113,9 @@ roleTest.describe('💳 STRIPE CONNECT ONBOARDING SMOKE', () => {
       await loginAsProvider();
 
       // Procurar por botão Stripe em qualquer lugar da página
-      const stripeButton = page.getByRole('button', { name: /conectar stripe|stripe connect/i }).first();
+      const stripeButton = page
+        .getByRole('button', { name: /conectar stripe|stripe connect/i })
+        .first();
 
       // Se não encontrar na tela atual, navegar para /onboarding explicitamente
       let isVisible = await stripeButton.isVisible({ timeout: 2000 }).catch(() => false);

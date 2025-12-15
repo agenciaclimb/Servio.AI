@@ -6,22 +6,22 @@ import providersData from '../../seo/providers.sample.json';
 
 /**
  * COMPONENTE: PublicProviderPage
- * 
+ *
  * Página pública de prestador de serviços — Landing page de alta conversão
  * com SEO máximo para ranquear nas primeiras posições do Google.
- * 
+ *
  * 🎯 OBJETIVOS PRIMÁRIOS:
  * 1. Ranquear nas primeiras posições do Google por: "{serviço} em {cidade}"
  * 2. Converter visitantes em solicitações de serviço DENTRO da plataforma
  * 3. Conteúdo relevante, extenso e otimizado para SEO
  * 4. Sem contatos diretos (WhatsApp/telefone/e-mail) — tudo via plataforma
- * 
+ *
  * 📊 MÉTRICAS DE SUCESSO:
  * - Índices de rankeamento: Google Search Console
  * - Taxa de conversão: cliques em "Solicitar Orçamento"
  * - Tempo médio de permanência: +2min (conteúdo longo)
  * - Bounce rate: <50%
- * 
+ *
  * 🤖 CAMPOS PREPARADOS PARA GERAÇÃO DE IA (Gemini):
  * - bio: Biografia do profissional. Gerada por Gemini com base em `name`, `service` e evidências de experiência; texto longo, informativo e sem claims não verificáveis (EEAT).
  * - aboutService: Descrição detalhada do serviço. Prompt orientado por `service`, `city` e palavras-chave; ~600–800 palavras, divide em parágrafos curtos, evita linguagem promocional exagerada.
@@ -40,7 +40,7 @@ interface RequestServiceModalProps {
 
 /**
  * Modal de solicitação de serviço — CTA interno centralizado na plataforma.
- * 
+ *
  * Fluxo:
  * 1. Usuário clica "Solicitar Orçamento"
  * 2. Modal abre com formulário simples
@@ -48,7 +48,7 @@ interface RequestServiceModalProps {
  * 4. Job fica visível na dashboard do prestador
  * 5. Prestador envia proposta
  * 6. Tudo dentro da plataforma (escrow, pagamento, etc)
- * 
+ *
  * Decisão: Conversão 100% interna. Evento central do funil (sem contato externo).
  */
 function RequestServiceModal({ providerName, service, isOpen, onClose }: RequestServiceModalProps) {
@@ -81,9 +81,7 @@ function RequestServiceModal({ providerName, service, isOpen, onClose }: Request
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">
-            Solicitar Orçamento
-          </h2>
+          <h2 className="text-xl font-bold text-gray-900">Solicitar Orçamento</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
@@ -96,9 +94,7 @@ function RequestServiceModal({ providerName, service, isOpen, onClose }: Request
         {step === 'form' && (
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Profissional
-              </label>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Profissional</label>
               <input
                 type="text"
                 value={providerName}
@@ -108,9 +104,7 @@ function RequestServiceModal({ providerName, service, isOpen, onClose }: Request
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Serviço
-              </label>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Serviço</label>
               <input
                 type="text"
                 value={service}
@@ -125,7 +119,7 @@ function RequestServiceModal({ providerName, service, isOpen, onClose }: Request
               </label>
               <textarea
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={e => setFormData({ ...formData, description: e.target.value })}
                 required
                 rows={4}
                 placeholder="Ex: Preciso de reparos na rede elétrica da sala..."
@@ -134,12 +128,10 @@ function RequestServiceModal({ providerName, service, isOpen, onClose }: Request
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Urgência
-              </label>
+              <label className="block text-sm font-medium text-gray-900 mb-1">Urgência</label>
               <select
                 value={formData.urgency}
-                onChange={(e) => setFormData({ ...formData, urgency: e.target.value })}
+                onChange={e => setFormData({ ...formData, urgency: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="baixa">Baixa (até 2 semanas)</option>
@@ -150,7 +142,8 @@ function RequestServiceModal({ providerName, service, isOpen, onClose }: Request
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-900">
-              ✓ Ao solicitar, você será conectado com {providerName} de forma segura na plataforma Servio.AI
+              ✓ Ao solicitar, você será conectado com {providerName} de forma segura na plataforma
+              Servio.AI
             </div>
 
             <button
@@ -165,9 +158,7 @@ function RequestServiceModal({ providerName, service, isOpen, onClose }: Request
         {step === 'success' && (
           <div className="p-6 text-center">
             <div className="text-4xl mb-4">✓</div>
-            <p className="text-lg font-bold text-gray-900 mb-2">
-              Solicitação enviada!
-            </p>
+            <p className="text-lg font-bold text-gray-900 mb-2">Solicitação enviada!</p>
             <p className="text-gray-600">
               {providerName} receberá seu pedido e responderá em breve.
             </p>
@@ -180,7 +171,7 @@ function RequestServiceModal({ providerName, service, isOpen, onClose }: Request
 
 /**
  * Componente interno — renderiza a página com dados injetados pelo provider.
- * 
+ *
  * Estrutura:
  * 1. Header minimalista (voltar + breadcrumb)
  * 2. Hero section com H1 otimizado
@@ -243,9 +234,7 @@ function PublicProviderPageContent({
             </h1>
 
             {/* Meta description em forma visual */}
-            <p className="text-lg text-gray-700 leading-relaxed max-w-2xl">
-              {data.description}
-            </p>
+            <p className="text-lg text-gray-700 leading-relaxed max-w-2xl">{data.description}</p>
 
             {/* IA FIELD: Experiência / credibilidade (Gemini)
               - Prompt usa métricas disponíveis (ex.: jobs concluídos) e limites conservadores
@@ -253,11 +242,7 @@ function PublicProviderPageContent({
               - Pode ser omitido se dados não estiverem disponíveis */}
             <div className="mt-6 flex flex-wrap gap-6 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <svg
-                  className="w-5 h-5 text-yellow-500"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
                 <span>4.8 - 47 avaliações</span>
@@ -273,11 +258,7 @@ function PublicProviderPageContent({
                 <span>12 anos de experiência</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg
-                  className="w-5 h-5 text-blue-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v4h8v-4zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
                 </svg>
                 <span>156 jobs concluídos</span>
@@ -298,16 +279,14 @@ function PublicProviderPageContent({
         {data.bio && (
           <section className="bg-white py-12 md:py-16">
             <div className="max-w-4xl mx-auto px-4">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                Sobre {data.name}
-              </h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">Sobre {data.name}</h2>
               <div className="prose prose-lg max-w-none">
                 <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-line">
                   {data.bio}
                 </p>
               </div>
 
-                {/* IA FIELD: Descrição extensa do serviço (Gemini)
+              {/* IA FIELD: Descrição extensa do serviço (Gemini)
                   - Prompt baseado em {data.service} + {data.city} + IA_UNIQUE_KEY
                   - 600–800 palavras; estrutura em introdução, método, diferenciais e garantia
                   - Keywords prioritárias: "{data.service} em {data.city}" e variações sem stuffing */}
@@ -317,8 +296,9 @@ function PublicProviderPageContent({
                 </h3>
                 <div className="space-y-4 text-gray-700 leading-relaxed">
                   <p>
-                    [IA FIELD] Conteúdo gerado por Gemini: descreve benefícios, processo, boas práticas
-                    e garantias usuais do serviço. Usa IA_UNIQUE_KEY={IA_UNIQUE_KEY} para consistência.
+                    [IA FIELD] Conteúdo gerado por Gemini: descreve benefícios, processo, boas
+                    práticas e garantias usuais do serviço. Usa IA_UNIQUE_KEY={IA_UNIQUE_KEY} para
+                    consistência.
                   </p>
                 </div>
               </article>
@@ -339,9 +319,7 @@ function PublicProviderPageContent({
         {/* ===== SEÇÃO: SERVIÇOS OFERECIDOS ===== */}
         <section className="bg-gray-50 py-12 md:py-16 border-b border-gray-200">
           <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">
-              Serviços Oferecidos
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">Serviços Oferecidos</h2>
 
             {/* IA FIELD: Lista de serviços (Gemini)
               - Cada item: título + descrição objetiva (quando usar, passos, normas)
@@ -370,9 +348,7 @@ function PublicProviderPageContent({
                   key={i}
                   className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
                 >
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {service.title}
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{service.title}</h3>
                   <p className="text-gray-700">{service.description}</p>
                 </div>
               ))}
@@ -383,33 +359,36 @@ function PublicProviderPageContent({
         {/* ===== SEÇÃO: ÁREA DE ATENDIMENTO ===== */}
         <section className="bg-white py-12 md:py-16 border-b border-gray-200">
           <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              Área de Atendimento
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">Área de Atendimento</h2>
 
             {/* IA FIELD: Áreas/bairros (Gemini)
               - Baseado em city e regiões adjacentes
               - Evitar claims de cobertura total; preferir exemplos representativos */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
               <p className="text-gray-900 mb-4">
-                {data.name} atende profissionalmente em {data.city} e região metropolitana, com
-                foco em:
+                {data.name} atende profissionalmente em {data.city} e região metropolitana, com foco
+                em:
               </p>
               <ul className="grid md:grid-cols-2 gap-3">
-                {['Centro', 'Zona Sul', 'Zona Norte', 'Zona Leste', 'Zona Oeste', 'Região Metropolitana'].map(
-                  (area) => (
-                    <li key={area} className="flex items-center gap-2 text-gray-900">
-                      <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      {area}
-                    </li>
-                  )
-                )}
+                {[
+                  'Centro',
+                  'Zona Sul',
+                  'Zona Norte',
+                  'Zona Leste',
+                  'Zona Oeste',
+                  'Região Metropolitana',
+                ].map(area => (
+                  <li key={area} className="flex items-center gap-2 text-gray-900">
+                    <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    {area}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -418,9 +397,7 @@ function PublicProviderPageContent({
         {/* ===== SEÇÃO: PERGUNTAS FREQUENTES (FAQ) ===== */}
         <section className="bg-gray-50 py-12 md:py-16 border-b border-gray-200">
           <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">
-              Perguntas Frequentes
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">Perguntas Frequentes</h2>
 
             {/* IA FIELD: FAQs estruturadas (Gemini)
                 - Formato Schema.org FAQPage para rich results
@@ -596,7 +573,7 @@ function PublicProviderPageContent({
 
 /**
  * COMPONENTE EXPORTADO: PublicProviderPage
- * 
+ *
  * Responsabilidades:
  * 1. Capturar params da rota: :cidade, :servico, :slug
  * 2. Buscar dados do prestador em providersData
@@ -604,7 +581,7 @@ function PublicProviderPageContent({
  * 4. Montar dados SEO (title, meta, canonical, schema)
  * 5. Injetar dados via PublicPageDataProvider
  * 6. Renderizar página com CTA de conversão
- * 
+ *
  * INTEGRAÇÃO FUTURA:
  * - Dados virão de Firestore (db.collection('users').doc(providerEmail))
  * - Conteúdo expandido por IA (Gemini API)
@@ -622,7 +599,7 @@ export default function PublicProviderPage() {
 
   // Buscar dados do prestador (atualmente em JSON estático, será Firestore depois)
   const provider = providersData.find(
-    (p) => p.citySlug === cidade && p.serviceSlug === servico && p.slug === slug
+    p => p.citySlug === cidade && p.serviceSlug === servico && p.slug === slug
   );
 
   // 404 se não encontrado

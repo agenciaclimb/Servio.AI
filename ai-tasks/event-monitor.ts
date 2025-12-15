@@ -86,7 +86,8 @@ class EventMonitor {
   private async checkEvents() {
     try {
       const state = this.readExecutorState();
-      const effectiveFallbackThreshold = state.fallback_threshold_minutes || this.fallbackThresholdMinutes;
+      const effectiveFallbackThreshold =
+        state.fallback_threshold_minutes || this.fallbackThresholdMinutes;
 
       if (state.state === 'blocked' && state.pending_pr) {
         const pr = state.pending_pr;
@@ -98,10 +99,7 @@ class EventMonitor {
         this.checkHeartbeat();
 
         // Verificar timeout para ACK
-        if (
-          state.request_created_at &&
-          !state.ack_received_at
-        ) {
+        if (state.request_created_at && !state.ack_received_at) {
           const minutesElapsed = this.getMinutesElapsed(state.request_created_at);
           if (minutesElapsed > state.timeout_threshold_ack_minutes) {
             this.recordAlert(
@@ -113,10 +111,7 @@ class EventMonitor {
         }
 
         // Verificar timeout para RESULT
-        if (
-          state.ack_received_at &&
-          !state.result_received_at
-        ) {
+        if (state.ack_received_at && !state.result_received_at) {
           const minutesElapsed = this.getMinutesElapsed(state.ack_received_at);
           if (minutesElapsed > state.timeout_threshold_result_minutes) {
             this.recordAlert(
@@ -236,7 +231,7 @@ class EventMonitor {
       fs.writeFileSync(
         ALERT_FILE,
         `# ⚠️ Process Alerts - PROTOCOLO SUPREMO v4.0\n\n` +
-        `**Sistema de Monitoramento de Eventos** (auto-gerado)\n\n`,
+          `**Sistema de Monitoramento de Eventos** (auto-gerado)\n\n`,
         'utf-8'
       );
     }
@@ -294,7 +289,9 @@ class EventMonitor {
 
       const now = new Date().getTime();
       if (heartbeat.last_seen) {
-        const deltaMinutes = Math.floor((now - new Date(heartbeat.last_seen).getTime()) / (1000 * 60));
+        const deltaMinutes = Math.floor(
+          (now - new Date(heartbeat.last_seen).getTime()) / (1000 * 60)
+        );
         const slaAck = heartbeat.sla?.ack_minutes || 15;
         if (deltaMinutes > slaAck) {
           this.recordAlert(
@@ -310,7 +307,8 @@ class EventMonitor {
 }
 
 // Iniciar monitor se chamado diretamente
-const isMainModule = import.meta.url.startsWith('file://') && 
+const isMainModule =
+  import.meta.url.startsWith('file://') &&
   import.meta.url.includes(process.argv[1].replace(/\\/g, '/'));
 
 if (isMainModule) {

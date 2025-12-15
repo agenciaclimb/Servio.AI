@@ -83,12 +83,12 @@ interface PublicPageDataProviderProps {
 
 /**
  * Provider de dados para páginas públicas de prestadores.
- * 
+ *
  * Fornece dados estruturados para:
  * - Conteúdo da página
  * - SEO (title, meta, canonical)
  * - Schema.org JSON-LD
- * 
+ *
  * @example
  * ```tsx
  * <PublicPageDataProvider data={pageData}>
@@ -97,20 +97,16 @@ interface PublicPageDataProviderProps {
  * ```
  */
 export function PublicPageDataProvider({ data, children }: PublicPageDataProviderProps) {
-  return (
-    <PublicPageDataContext.Provider value={data}>
-      {children}
-    </PublicPageDataContext.Provider>
-  );
+  return <PublicPageDataContext.Provider value={data}>{children}</PublicPageDataContext.Provider>;
 }
 
 /**
  * Hook para acessar dados da página pública.
- * 
+ *
  * ⚠️ DEVE ser usado dentro de um PublicPageDataProvider.
- * 
+ *
  * @throws {Error} Se usado fora do provider
- * 
+ *
  * @example
  * ```tsx
  * function MyComponent() {
@@ -121,13 +117,13 @@ export function PublicPageDataProvider({ data, children }: PublicPageDataProvide
  */
 export function usePublicPageData(): PublicPageData {
   const ctx = useContext(PublicPageDataContext);
-  
+
   if (!ctx) {
     throw new Error(
       '[PublicPageDataProvider] Nenhum provedor de dados registrado. ' +
-      'Certifique-se de envolver seu componente com <PublicPageDataProvider>.'
+        'Certifique-se de envolver seu componente com <PublicPageDataProvider>.'
     );
   }
-  
+
   return ctx;
 }

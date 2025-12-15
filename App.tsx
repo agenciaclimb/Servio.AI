@@ -582,7 +582,7 @@ const App: React.FC = () => {
                   <Routes>
                     {/* SEO: Página pública de prestador (URL limpa, indexável) */}
                     <Route path="/p/:cidade/:servico/:slug" element={<PublicProviderPage />} />
-                    
+
                     {/* Views internas (dashboard, perfil, etc.) */}
                     <Route path="/*" element={renderContent()} />
                   </Routes>
@@ -637,11 +637,12 @@ const App: React.FC = () => {
             </Suspense>
           )}
 
-          {currentUser && (currentUser.type === 'prospector' || currentUser.type === 'prestador') && (
-            <Suspense fallback={null}>
-              <AIChatFloatingTrigger currentUser={currentUser} />
-            </Suspense>
-          )}
+          {currentUser &&
+            (currentUser.type === 'prospector' || currentUser.type === 'prestador') && (
+              <Suspense fallback={null}>
+                <AIChatFloatingTrigger currentUser={currentUser} />
+              </Suspense>
+            )}
         </div>
       </Router>
     </ToastProvider>

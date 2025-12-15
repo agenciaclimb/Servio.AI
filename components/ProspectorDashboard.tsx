@@ -4,7 +4,9 @@ import NotificationSettings from '../src/components/NotificationSettings';
 import ProspectorMaterials from '../src/components/ProspectorMaterials';
 // Lazy load de componentes pesados para performance
 const QuickPanel = lazy(() => import('../src/components/prospector/QuickPanel'));
-const ProspectorCRMProfessional = lazy(() => import('../src/components/prospector/ProspectorCRMProfessional'));
+const ProspectorCRMProfessional = lazy(
+  () => import('../src/components/prospector/ProspectorCRMProfessional')
+);
 // Componentes mantidos eager para UI crítica
 import QuickActionsBar from '../src/components/prospector/QuickActionsBar';
 import QuickAddPanel from '../src/components/prospector/QuickAddPanel';
@@ -160,7 +162,13 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
         </div>
 
         {/* Tab Content com Suspense para lazy loading */}
-        <Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center p-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            </div>
+          }
+        >
           {/* Tab Content: Dashboard IA (Novo Padrão) */}
           {activeTab === 'dashboard' && <QuickPanel prospectorId={prospectorId} />}
 

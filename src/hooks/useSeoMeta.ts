@@ -3,7 +3,7 @@ import { usePublicPageData } from '../providers/PublicPageDataProvider';
 
 /**
  * Hook para injetar metadados SEO dinamicamente no <head>.
- * 
+ *
  * Atualiza:
  * - <title>
  * - <meta name="description">
@@ -11,7 +11,7 @@ import { usePublicPageData } from '../providers/PublicPageDataProvider';
  * - OpenGraph (og:title, og:description, og:url, og:image)
  * - Twitter Cards
  * - Schema.org JSON-LD
- * 
+ *
  * @example
  * ```tsx
  * function PublicProviderPage() {
@@ -97,15 +97,19 @@ export function useSeoMeta() {
       name: data.schema.name,
       description: data.schema.description,
       url: data.schema.url,
-      ...(data.schema.address && { address: {
-        '@type': 'PostalAddress',
-        ...data.schema.address,
-      }}),
-      ...(data.schema.geo && { geo: {
-        '@type': 'GeoCoordinates',
-        latitude: data.schema.geo.latitude,
-        longitude: data.schema.geo.longitude,
-      }}),
+      ...(data.schema.address && {
+        address: {
+          '@type': 'PostalAddress',
+          ...data.schema.address,
+        },
+      }),
+      ...(data.schema.geo && {
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: data.schema.geo.latitude,
+          longitude: data.schema.geo.longitude,
+        },
+      }),
       ...(data.schema.telephone && { telephone: data.schema.telephone }),
       ...(data.schema.email && { email: data.schema.email }),
     };
