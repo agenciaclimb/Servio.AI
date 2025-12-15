@@ -1,29 +1,25 @@
 #!/usr/bin/env node
 
 /**
- * ORCHESTRATOR — Pipeline Autônomo da Software Factory
- * 
- * Responsabilidades:
- * - Carrega tasks de JSON
- * - Cria pastas day-X
- * - Roteia tasks para Copilot ou Gemini
- * - Registra histórico imutável
- * - Sincroniza com GitHub
- * 
- * USO:
- *   node orchestrator.cjs --tasks <arquivo.json>
+ * ORCHESTRATOR — Pipeline Autônomo com GitHub Integration
+ * Integrado com Octokit para criar Issues automaticamente
  */
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+require('dotenv').config({ path: path.join(process.cwd(), '.env.local') });
+
+const { Octokit } = require('@octokit/rest');
 
 const PROJECT_ROOT = path.join(__dirname, '../../');
 const TASKS_DIR = path.join(PROJECT_ROOT, 'ai-tasks');
 const HISTORY_DIR = path.join(TASKS_DIR, 'history');
 const LOGS_DIR = path.join(TASKS_DIR, 'logs');
 
-// Garante diretórios
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_OWNER = process.env.GITHUB_OWNER || 'JE';
+const GITHUB_REPO = process.env.GITHUB_REPO || 'servio.ai';
+
 [HISTORY_DIR, LOGS_DIR].forEach(dir => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
@@ -35,16 +31,19 @@ class Orchestrator {
     this.tasks = [];
     this.history = [];
     this.startTime = Date.now();
+
+    if (GITHUB_TOKEN) {
+      this.octokit = new Octokit({ auth: GITHUB_TOKEN });
+      console.log(`✅ GitHub API inicializado`);
+    } else {
+      this.octokit = null;
+    }
   }
 
-  /**
-   * PASSO 1: Carrega tasks de arquivo JSON
-   */
   loadTasksFromJSON(filePath) {
     console.log(`\n[ORCHESTRATOR] Carregando tasks de ${filePath}...`);
-
     if (!fs.existsSync(filePath)) {
-      throw new Error(`Arquivo de tasks não encontrado: ${filePath}`);
+      throw new Error(`Arquivo não encontrado: ${filePath}`);
     }
 
     const content = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
@@ -58,61 +57,100 @@ class Orchestrator {
     return this.tasks;
   }
 
-  /**
-   * PASSO 2: Cria pasta day-X automaticamente
-   */
   createDayFolder(dayNumber) {
     const dayFolder = path.join(TASKS_DIR, `day-${dayNumber}`);
-
     if (!fs.existsSync(dayFolder)) {
       fs.mkdirSync(dayFolder, { recursive: true });
       console.log(`✅ Pasta criada: ${dayFolder}`);
     }
-
     return dayFolder;
   }
 
-  /**
-   * PASSO 3: Roteia tasks para Copilot ou Gemini
-   */
-  routeTasksToCopilot(task) {
+  async createGitHubIssue(task) {
+    if (!this.octokit) {
+      console.log(`⚠️ GitHub não configurado, pulando Issue`);
+      return null;
+    }
+
+    try {
+      const issueTitle = `[task-${task.id}] ${task.titulo}`;
+      const issueBody = `# ${task.titulo}
+
+**ID**: ${task.id}  
+**Prioridade**: ${task.prioridade || 'NORMAL'}  
+**Estimativa**: ${task.estimativa || 'N/A'}  
+
+## Descrição
+${task.descricao || 'Sem descrição'}
+
+## Objetivo
+${task.objetivo || 'N/A'}
+
+## Checklist
+- [ ] Código implementado
+- [ ] Testes passando (coverage ≥ 80%)
+- [ ] Linting ok
+- [ ] Build compilando
+
+---
+
+*Gerada automaticamente pelo Orchestrator em ${new Date().toISOString()}*
+`;
+
+      const response = await this.octokit.issues.create({
+        owner: GITHUB_OWNER,
+        repo: GITHUB_REPO,
+        title: issueTitle,
+        body: issueBody,
+        labels: ['task', `priority/${(task.prioridade || 'normal').toLowerCase()}`],
+      });
+
+      const issueNumber = response.data.number;
+      console.log(`✅ GitHub Issue criada: #${issueNumber}`);
+      return issueNumber;
+    } catch (error) {
+      console.warn(`⚠️ Erro criando Issue: ${error.message}`);
+      return null;
+    }
+  }
+
+  routeTasksToCopilot(task, issueNumber) {
     console.log(`\n[ORCHESTRATOR] Roteando task ${task.id}...`);
 
     const day = task.day || 1;
     const dayFolder = this.createDayFolder(day);
     const taskFile = path.join(dayFolder, `task-${task.id}.md`);
 
-    // Gera arquivo task-X.Y.md se não existir
     if (!fs.existsSync(taskFile)) {
-      const taskContent = this.formatTaskMarkdown(task);
+      const taskContent = this.formatTaskMarkdown(task, issueNumber);
       fs.writeFileSync(taskFile, taskContent);
       console.log(`✅ Task file criado: ${taskFile}`);
+    } else if (issueNumber) {
+      let content = fs.readFileSync(taskFile, 'utf-8');
+      if (!content.includes(`#${issueNumber}`)) {
+        const issueLink = `\n\n---\n**GitHub Issue**: [#${issueNumber}](https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/issues/${issueNumber})`;
+        fs.writeFileSync(taskFile, content + issueLink);
+        console.log(`✅ Issue #${issueNumber} adicionada ao .md`);
+      }
     }
 
-    // Registra roteamento
-    this.registerAction({
+    this.registerHistory({
       taskId: task.id,
       action: 'ROUTE_TO_COPILOT',
       taskFile,
+      issueNumber: issueNumber || null,
       status: 'ENFILEIRADA',
     });
 
     return taskFile;
   }
 
-  /**
-   * PASSO 4: Registra histórico imutável
-   */
   registerHistory(action) {
     const timestamp = new Date().toISOString();
-    const historyEntry = {
-      timestamp,
-      ...action,
-    };
+    const historyEntry = { timestamp, ...action };
 
     this.history.push(historyEntry);
 
-    // Salva em arquivo JSON
     const dateStr = new Date().toISOString().split('T')[0];
     const historyFile = path.join(HISTORY_DIR, `${dateStr}.json`);
 
@@ -127,131 +165,63 @@ class Orchestrator {
     console.log(`📋 Registrado em histórico: ${action.action}`);
   }
 
-  /**
-   * PASSO 5: Gera metadados de Pull Request
-   */
-  generatePullRequestMetadata(task) {
-    const prTitle = `[task-${task.id}] ${task.titulo}`;
-    const prBody = `
-# Task ${task.id}
+  formatTaskMarkdown(task, issueNumber) {
+    let md = `# ${task.titulo}
 
-## Descrição
-${task.descricao || 'N/A'}
-
-## Checklist
-- [ ] Código implementado conforme spec
-- [ ] Testes adicionados e passando
-- [ ] Linting ok
-- [ ] Build compilando
-- [ ] Coverage ≥ 80%
-
-## Aguardando Auditoria
-Esta PR aguarda aprovação do Gemini Auditor.
-
----
-*Gerada automaticamente pelo Orchestrator*
+**ID**: ${task.id}  
+**Prioridade**: ${task.prioridade || 'NORMAL'}  
+**Estimativa**: ${task.estimativa || 'N/A'}  
+**Dia**: day-${task.day || 1}  
 `;
 
-    return { prTitle, prBody };
-  }
-
-  /**
-   * PASSO 6: Garante ciclo imutável
-   */
-  ensureImmutableCycle(task) {
-    const required = [
-      'id',
-      'titulo',
-      'descricao',
-      'prioridade',
-    ];
-
-    const missing = required.filter(field => !task[field]);
-
-    if (missing.length > 0) {
-      throw new Error(`Task ${task.id} está incompleta. Faltam: ${missing.join(', ')}`);
+    if (issueNumber) {
+      md += `**GitHub Issue**: [#${issueNumber}](https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/issues/${issueNumber})  \n`;
     }
 
-    return true;
-  }
-
-  /**
-   * Formata task em markdown
-   */
-  formatTaskMarkdown(task) {
-    return `# Task ${task.id} — ${task.titulo}
-
-**Prioridade**: ${task.prioridade || 'NORMAL'}  
-**Status**: Enfileirada  
-**Data Criação**: ${new Date().toISOString().split('T')[0]}
-
----
-
+    md += `
 ## Descrição
+${task.descricao || 'Sem descrição'}
 
-${task.descricao}
+## Objetivo
+${task.objetivo || 'N/A'}
 
----
+## Tipo
+${task.tipo || 'feature'}
 
-## Padrões a Respeitar
-
-- ✅ TypeScript com tipos estritos
-- ✅ Componentes React com Props tipado
-- ✅ Commits atômicos [task-${task.id}]
-- ✅ Coverage ≥ 80%
-- ✅ Sem console.log em produção
-
----
-
-## Checklist de Execução
-
-- [ ] Branch feature/task-${task.id} criada
-- [ ] Código implementado
-- [ ] Testes passando
-- [ ] PR aberta
-- [ ] Auditoria Gemini aprovada
-- [ ] Merge realizado
+## Checklist
+- [ ] Implementado
+- [ ] Testes passando (coverage ≥ 80%)
+- [ ] Linting ok
+- [ ] Build compilando
 
 ---
 
 *Gerada pelo Orchestrator em ${new Date().toISOString()}*
 `;
+    return md;
   }
 
-  /**
-   * Registra ação
-   */
-  registerAction(action) {
-    this.registerHistory(action);
-  }
-
-  /**
-   * Processa fila de tasks
-   */
-  processTasks() {
+  async processTasks() {
     console.log(`\n[ORCHESTRATOR] Processando ${this.tasks.length} task(s)...`);
 
-    this.tasks.forEach(task => {
+    for (const task of this.tasks) {
       try {
-        // Valida ciclo imutável
-        this.ensureImmutableCycle(task);
+        if (!task.id || !task.titulo) {
+          throw new Error('Task inválida: faltam id ou titulo');
+        }
 
-        // Roteia para Copilot
-        this.routeTasksToCopilot(task);
+        const issueNumber = await this.createGitHubIssue(task);
+        this.routeTasksToCopilot(task, issueNumber);
 
-        // Gera metadata de PR
-        const prMetadata = this.generatePullRequestMetadata(task);
-
-        // Registra action
-        this.registerAction({
+        this.registerHistory({
           taskId: task.id,
           action: 'PROCESS_COMPLETE',
           status: 'SUCESSO',
-          prTitle: prMetadata.prTitle,
+          issueNumber: issueNumber || null,
         });
 
       } catch (error) {
-        this.registerAction({
+        this.registerHistory({
           taskId: task.id,
           action: 'PROCESS_ERROR',
           status: 'ERRO',
@@ -260,15 +230,12 @@ ${task.descricao}
 
         console.error(`❌ Erro processando task ${task.id}: ${error.message}`);
       }
-    });
+    }
 
     console.log(`\n✅ Processamento concluído`);
     this.printSummary();
   }
 
-  /**
-   * Imprime resumo de execução
-   */
   printSummary() {
     console.log(`\n${'='.repeat(60)}`);
     console.log(`ORCHESTRATOR — RESUMO DE EXECUÇÃO`);
@@ -276,11 +243,11 @@ ${task.descricao}
     console.log(`Total de tasks: ${this.tasks.length}`);
     console.log(`Histórico registrado: ${this.history.length} ação(ões)`);
     console.log(`Duração: ${Date.now() - this.startTime}ms`);
+    console.log(`GitHub: ${GITHUB_OWNER}/${GITHUB_REPO}`);
     console.log(`${'='.repeat(60)}\n`);
   }
 }
 
-// EXECUÇÃO
 if (require.main === module) {
   const args = process.argv.slice(2);
   const tasksIndex = args.indexOf('--tasks');
@@ -295,7 +262,12 @@ if (require.main === module) {
   try {
     const orchestrator = new Orchestrator();
     orchestrator.loadTasksFromJSON(tasksFile);
-    orchestrator.processTasks();
+    orchestrator.processTasks().then(() => {
+      process.exit(0);
+    }).catch(error => {
+      console.error(`❌ ERRO FATAL: ${error.message}`);
+      process.exit(1);
+    });
   } catch (error) {
     console.error(`❌ ERRO FATAL: ${error.message}`);
     process.exit(1);

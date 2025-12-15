@@ -1,14 +1,14 @@
-# Task 1.0 — Validar Protocolo Supremo v4.0 - Branch Protection
+# Task 2.0 — Corrigir 41 testes falhando - Ajustar mocks/assertions
 
-**Prioridade**: HIGH  
-**Estimativa**: 1h  
+**Prioridade**: MEDIUM  
+**Estimativa**: 2-3h  
 **Data Criação**: 2025-12-15
 
 ---
 
 ## Descrição
 
-Documentar configuração de Branch Protection para main e criar guia de verificação
+Investigar e corrigir 41 testes falhando. Maioria são mock/fallback legítimos (network, AI failures) mas alguns precisam ajuste em assertions ou fixtures Firebase.
 
 ---
 
@@ -30,7 +30,7 @@ Documentar configuração de Branch Protection para main e criar guia de verific
 
 - ✅ TypeScript com tipos estritos
 - ✅ Componentes React com interfaces Props
-- ✅ Commits atômicos com mensagem [task-1.0]
+- ✅ Commits atômicos com mensagem [task-2.0]
 - ✅ Coverage de testes ≥ 80%
 - ✅ Sem console.log em produção
 
@@ -53,4 +53,4 @@ Seguir exatamente esta especificação. Não improvisar.
 
 ---
 
-_Gerada em 2025-12-15T20:18:28.377Z | Versão: 1.0_
+_Gerada em 2025-12-15T20:18:28.393Z | Versão: 1.0_

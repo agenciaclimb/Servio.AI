@@ -11,6 +11,16 @@
       "day": 1,
       "tipo": "documentacao",
       "objetivo": "Garantir que Branch Protection está ativo e documentar o processo"
+    },
+    {
+      "id": "2.0",
+      "titulo": "Corrigir 41 testes falhando - Ajustar mocks/assertions",
+      "descricao": "Investigar e corrigir 41 testes falhando. Maioria são mock/fallback legítimos (network, AI failures) mas alguns precisam ajuste em assertions ou fixtures Firebase.",
+      "prioridade": "MEDIUM",
+      "estimativa": "2-3h",
+      "day": 1,
+      "tipo": "bugfix",
+      "objetivo": "Elevar taxa de sucesso para 100% ou documentar false positives"
     }
   ],
   "instrucoes": {
