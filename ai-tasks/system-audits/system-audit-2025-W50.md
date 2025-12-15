@@ -1,11 +1,11 @@
 # System Audit Report - 2025-W50
 
-**Generated**: 2025-12-15T01:55:52.328Z  
+**Generated**: 2025-12-15T02:29:58.057Z  
 **Repository**: agenciaclimb/Servio.AI
 
 ## Metrics
 
-- **Total commits**: 381
+- **Total commits**: 382
 - **Contributors**: 5
 - **Branches**: 38
 - **Source files**: 57
@@ -15,9 +15,9 @@
 
 [
 {
-"type": "potential*secret_leak",
+"type": "potential_secret_leak",
 "count": 10,
-"sample": "- Remediação de 5 secrets reais em docs (whsec_FIZOs8... → whsec*[REDACTED])"
+"sample": "docs: W50 audit atualizado para LOW após hardening final e secret scanning sucesso"
 }
 ]
 
@@ -29,7 +29,7 @@
 
 1. Potential secret leaks previously detected foram remediados e passam em secret scanning (gitleaks + trufflehog).
 2. High number of commits may indicate frequent changes, requiring careful review.
-3. A substantial number of test files relative to source files suggests good testing practices, but the revealed secrets pose a risk.
+3. A substantial number of test files relative to source files suggests good testing practices.
 
 ### Recommendations
 
