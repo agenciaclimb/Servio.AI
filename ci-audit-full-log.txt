@@ -1,0 +1,330 @@
+audit	Set up job	´╗┐2025-12-13T13:07:34.0326867Z Current runner version: '2.329.0'
+audit	Set up job	2025-12-13T13:07:34.0350809Z ##[group]Runner Image Provisioner
+audit	Set up job	2025-12-13T13:07:34.0351607Z Hosted Compute Agent
+audit	Set up job	2025-12-13T13:07:34.0352265Z Version: 20251202.455
+audit	Set up job	2025-12-13T13:07:34.0352877Z Commit: 6c10caca4910e198df60de23adf20ad317c474e3
+audit	Set up job	2025-12-13T13:07:34.0353523Z Build Date: 2025-12-02T15:56:59Z
+audit	Set up job	2025-12-13T13:07:34.0354251Z Worker ID: {5ed42f87-6875-45b9-9491-86fd11ad2aa8}
+audit	Set up job	2025-12-13T13:07:34.0354925Z ##[endgroup]
+audit	Set up job	2025-12-13T13:07:34.0355437Z ##[group]Operating System
+audit	Set up job	2025-12-13T13:07:34.0356054Z Ubuntu
+audit	Set up job	2025-12-13T13:07:34.0356480Z 24.04.3
+audit	Set up job	2025-12-13T13:07:34.0356916Z LTS
+audit	Set up job	2025-12-13T13:07:34.0357399Z ##[endgroup]
+audit	Set up job	2025-12-13T13:07:34.0357927Z ##[group]Runner Image
+audit	Set up job	2025-12-13T13:07:34.0358452Z Image: ubuntu-24.04
+audit	Set up job	2025-12-13T13:07:34.0359150Z Version: 20251208.163.1
+audit	Set up job	2025-12-13T13:07:34.0360181Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251208.163/images/ubuntu/Ubuntu2404-Readme.md
+audit	Set up job	2025-12-13T13:07:34.0361550Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251208.163
+audit	Set up job	2025-12-13T13:07:34.0362781Z ##[endgroup]
+audit	Set up job	2025-12-13T13:07:34.0363938Z ##[group]GITHUB_TOKEN Permissions
+audit	Set up job	2025-12-13T13:07:34.0365810Z Contents: write
+audit	Set up job	2025-12-13T13:07:34.0366341Z Metadata: read
+audit	Set up job	2025-12-13T13:07:34.0366990Z PullRequests: write
+audit	Set up job	2025-12-13T13:07:34.0367512Z ##[endgroup]
+audit	Set up job	2025-12-13T13:07:34.0370210Z Secret source: Actions
+audit	Set up job	2025-12-13T13:07:34.0371010Z Prepare workflow directory
+audit	Set up job	2025-12-13T13:07:34.0726109Z Prepare all required actions
+audit	Set up job	2025-12-13T13:07:34.0782594Z Getting action download info
+audit	Set up job	2025-12-13T13:07:34.5178489Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+audit	Set up job	2025-12-13T13:07:34.7567628Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+audit	Set up job	2025-12-13T13:07:34.8467944Z Download action repository 'peter-evans/create-or-update-comment@v4' (SHA:71345be0265236311c031f5c7866368bd1eff043)
+audit	Set up job	2025-12-13T13:07:35.5831231Z Complete job name: audit
+audit	Checkout	´╗┐2025-12-13T13:07:35.6565021Z ##[group]Run actions/checkout@v4
+audit	Checkout	2025-12-13T13:07:35.6566048Z with:
+audit	Checkout	2025-12-13T13:07:35.6566479Z   fetch-depth: 0
+audit	Checkout	2025-12-13T13:07:35.6566932Z   repository: agenciaclimb/Servio.AI
+audit	Checkout	2025-12-13T13:07:35.6567630Z   token: ***
+audit	Checkout	2025-12-13T13:07:35.6568057Z   ssh-strict: true
+audit	Checkout	2025-12-13T13:07:35.6568483Z   ssh-user: git
+audit	Checkout	2025-12-13T13:07:35.6569264Z   persist-credentials: true
+audit	Checkout	2025-12-13T13:07:35.6569806Z   clean: true
+audit	Checkout	2025-12-13T13:07:35.6570246Z   sparse-checkout-cone-mode: true
+audit	Checkout	2025-12-13T13:07:35.6570772Z   fetch-tags: false
+audit	Checkout	2025-12-13T13:07:35.6571203Z   show-progress: true
+audit	Checkout	2025-12-13T13:07:35.6571639Z   lfs: false
+audit	Checkout	2025-12-13T13:07:35.6572037Z   submodules: false
+audit	Checkout	2025-12-13T13:07:35.6572497Z   set-safe-directory: true
+audit	Checkout	2025-12-13T13:07:35.6573299Z ##[endgroup]
+audit	Checkout	2025-12-13T13:07:35.7636943Z Syncing repository: agenciaclimb/Servio.AI
+audit	Checkout	2025-12-13T13:07:35.7639241Z ##[group]Getting Git version info
+audit	Checkout	2025-12-13T13:07:35.7640091Z Working directory is '/home/runner/work/Servio.AI/Servio.AI'
+audit	Checkout	2025-12-13T13:07:35.7641330Z [command]/usr/bin/git version
+audit	Checkout	2025-12-13T13:07:35.7707361Z git version 2.52.0
+audit	Checkout	2025-12-13T13:07:35.7734479Z ##[endgroup]
+audit	Checkout	2025-12-13T13:07:35.7748401Z Temporarily overriding HOME='/home/runner/work/_temp/db21e152-05ec-43c9-a094-84e8c5b1d6d5' before making global git config changes
+audit	Checkout	2025-12-13T13:07:35.7750164Z Adding repository directory to the temporary git global config as a safe directory
+audit	Checkout	2025-12-13T13:07:35.7754707Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Servio.AI/Servio.AI
+audit	Checkout	2025-12-13T13:07:35.7793359Z Deleting the contents of '/home/runner/work/Servio.AI/Servio.AI'
+audit	Checkout	2025-12-13T13:07:35.7796945Z ##[group]Initializing the repository
+audit	Checkout	2025-12-13T13:07:35.7801091Z [command]/usr/bin/git init /home/runner/work/Servio.AI/Servio.AI
+audit	Checkout	2025-12-13T13:07:35.7900229Z hint: Using 'master' as the name for the initial branch. This default branch name
+audit	Checkout	2025-12-13T13:07:35.7902364Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+audit	Checkout	2025-12-13T13:07:35.7904380Z hint: to use in all of your new repositories, which will suppress this warning,
+audit	Checkout	2025-12-13T13:07:35.7905501Z hint: call:
+audit	Checkout	2025-12-13T13:07:35.7905922Z hint:
+audit	Checkout	2025-12-13T13:07:35.7906682Z hint: 	git config --global init.defaultBranch <name>
+audit	Checkout	2025-12-13T13:07:35.7907354Z hint:
+audit	Checkout	2025-12-13T13:07:35.7907975Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+audit	Checkout	2025-12-13T13:07:35.7909235Z hint: 'development'. The just-created branch can be renamed via this command:
+audit	Checkout	2025-12-13T13:07:35.7910428Z hint:
+audit	Checkout	2025-12-13T13:07:35.7910991Z hint: 	git branch -m <name>
+audit	Checkout	2025-12-13T13:07:35.7911503Z hint:
+audit	Checkout	2025-12-13T13:07:35.7912165Z hint: Disable this message with "git config set advice.defaultBranchName false"
+audit	Checkout	2025-12-13T13:07:35.7913455Z Initialized empty Git repository in /home/runner/work/Servio.AI/Servio.AI/.git/
+audit	Checkout	2025-12-13T13:07:35.7915696Z [command]/usr/bin/git remote add origin https://github.com/agenciaclimb/Servio.AI
+audit	Checkout	2025-12-13T13:07:35.7950108Z ##[endgroup]
+audit	Checkout	2025-12-13T13:07:35.7951422Z ##[group]Disabling automatic garbage collection
+audit	Checkout	2025-12-13T13:07:35.7953638Z [command]/usr/bin/git config --local gc.auto 0
+audit	Checkout	2025-12-13T13:07:35.7981982Z ##[endgroup]
+audit	Checkout	2025-12-13T13:07:35.7983164Z ##[group]Setting up auth
+audit	Checkout	2025-12-13T13:07:35.7987940Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+audit	Checkout	2025-12-13T13:07:35.8018090Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+audit	Checkout	2025-12-13T13:07:35.8350449Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+audit	Checkout	2025-12-13T13:07:35.8378698Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+audit	Checkout	2025-12-13T13:07:35.8592786Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+audit	Checkout	2025-12-13T13:07:35.8631888Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+audit	Checkout	2025-12-13T13:07:35.8851301Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+audit	Checkout	2025-12-13T13:07:35.8885454Z ##[endgroup]
+audit	Checkout	2025-12-13T13:07:35.8893519Z ##[group]Fetching the repository
+audit	Checkout	2025-12-13T13:07:35.8895364Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +8d9c5f003ffd7087320f4038e0e79d20eca44275:refs/remotes/pull/29/merge
+audit	Checkout	2025-12-13T13:07:37.0084337Z From https://github.com/agenciaclimb/Servio.AI
+audit	Checkout	2025-12-13T13:07:37.0087780Z  * [new branch]      bot/ai-update-20251103-124939            -> origin/bot/ai-update-20251103-124939
+audit	Checkout	2025-12-13T13:07:37.0090919Z  * [new branch]      bot/ai-update-20251104-125142            -> origin/bot/ai-update-20251104-125142
+audit	Checkout	2025-12-13T13:07:37.0093738Z  * [new branch]      bot/ai-update-20251105-124942            -> origin/bot/ai-update-20251105-124942
+audit	Checkout	2025-12-13T13:07:37.0096690Z  * [new branch]      bot/ai-update-20251106-124907            -> origin/bot/ai-update-20251106-124907
+audit	Checkout	2025-12-13T13:07:37.0099732Z  * [new branch]      bot/ai-update-20251107-124713            -> origin/bot/ai-update-20251107-124713
+audit	Checkout	2025-12-13T13:07:37.0102808Z  * [new branch]      bot/ai-update-20251110-125013            -> origin/bot/ai-update-20251110-125013
+audit	Checkout	2025-12-13T13:07:37.0105006Z  * [new branch]      bot/ai-update-20251111-124908            -> origin/bot/ai-update-20251111-124908
+audit	Checkout	2025-12-13T13:07:37.0107065Z  * [new branch]      bot/ai-update-20251112-125010            -> origin/bot/ai-update-20251112-125010
+audit	Checkout	2025-12-13T13:07:37.0109463Z  * [new branch]      bot/ai-update-20251113-125105            -> origin/bot/ai-update-20251113-125105
+audit	Checkout	2025-12-13T13:07:37.0111608Z  * [new branch]      bot/ai-update-20251114-124850            -> origin/bot/ai-update-20251114-124850
+audit	Checkout	2025-12-13T13:07:37.0114135Z  * [new branch]      bot/ai-update-20251117-124946            -> origin/bot/ai-update-20251117-124946
+audit	Checkout	2025-12-13T13:07:37.0116425Z  * [new branch]      bot/ai-update-20251118-124947            -> origin/bot/ai-update-20251118-124947
+audit	Checkout	2025-12-13T13:07:37.0119015Z  * [new branch]      bot/ai-update-20251119-125020            -> origin/bot/ai-update-20251119-125020
+audit	Checkout	2025-12-13T13:07:37.0121620Z  * [new branch]      bot/ai-update-20251120-124839            -> origin/bot/ai-update-20251120-124839
+audit	Checkout	2025-12-13T13:07:37.0124200Z  * [new branch]      bot/ai-update-20251121-124721            -> origin/bot/ai-update-20251121-124721
+audit	Checkout	2025-12-13T13:07:37.0126909Z  * [new branch]      bot/ai-update-20251124-125106            -> origin/bot/ai-update-20251124-125106
+audit	Checkout	2025-12-13T13:07:37.0129797Z  * [new branch]      bot/ai-update-20251125-125032            -> origin/bot/ai-update-20251125-125032
+audit	Checkout	2025-12-13T13:07:37.0132547Z  * [new branch]      bot/ai-update-20251126-125139            -> origin/bot/ai-update-20251126-125139
+audit	Checkout	2025-12-13T13:07:37.0135280Z  * [new branch]      bot/ai-update-20251127-125025            -> origin/bot/ai-update-20251127-125025
+audit	Checkout	2025-12-13T13:07:37.0137966Z  * [new branch]      bot/ai-update-20251128-124914            -> origin/bot/ai-update-20251128-124914
+audit	Checkout	2025-12-13T13:07:37.0140748Z  * [new branch]      bot/ai-update-20251201-125209            -> origin/bot/ai-update-20251201-125209
+audit	Checkout	2025-12-13T13:07:37.0143430Z  * [new branch]      bot/ai-update-20251202-125241            -> origin/bot/ai-update-20251202-125241
+audit	Checkout	2025-12-13T13:07:37.0146128Z  * [new branch]      bot/ai-update-20251203-125303            -> origin/bot/ai-update-20251203-125303
+audit	Checkout	2025-12-13T13:07:37.0148903Z  * [new branch]      bot/ai-update-20251204-125306            -> origin/bot/ai-update-20251204-125306
+audit	Checkout	2025-12-13T13:07:37.0151694Z  * [new branch]      bot/ai-update-20251205-125019            -> origin/bot/ai-update-20251205-125019
+audit	Checkout	2025-12-13T13:07:37.0154652Z  * [new branch]      bot/ai-update-20251208-125154            -> origin/bot/ai-update-20251208-125154
+audit	Checkout	2025-12-13T13:07:37.0157794Z  * [new branch]      bot/ai-update-20251209-125256            -> origin/bot/ai-update-20251209-125256
+audit	Checkout	2025-12-13T13:07:37.0160949Z  * [new branch]      bot/ai-update-20251210-125332            -> origin/bot/ai-update-20251210-125332
+audit	Checkout	2025-12-13T13:07:37.0163935Z  * [new branch]      bot/ai-update-20251211-125437            -> origin/bot/ai-update-20251211-125437
+audit	Checkout	2025-12-13T13:07:37.0166951Z  * [new branch]      bot/ai-update-20251212-125215            -> origin/bot/ai-update-20251212-125215
+audit	Checkout	2025-12-13T13:07:37.0169837Z  * [new branch]      chore/ai-autopr-setup                    -> origin/chore/ai-autopr-setup
+audit	Checkout	2025-12-13T13:07:37.0172534Z  * [new branch]      chore/gemini-auditor-bot-ci              -> origin/chore/gemini-auditor-bot-ci
+audit	Checkout	2025-12-13T13:07:37.0175556Z  * [new branch]      chore/hardening-events-guardrails        -> origin/chore/hardening-events-guardrails
+audit	Checkout	2025-12-13T13:07:37.0179374Z  * [new branch]      chore/protocol-hardening-segregation-guardrails -> origin/chore/protocol-hardening-segregation-guardrails
+audit	Checkout	2025-12-13T13:07:37.0182890Z  * [new branch]      chore/stripe-diag-secret                 -> origin/chore/stripe-diag-secret
+audit	Checkout	2025-12-13T13:07:37.0185507Z  * [new branch]      ci/vida-smart-style                      -> origin/ci/vida-smart-style
+audit	Checkout	2025-12-13T13:07:37.0188077Z  * [new branch]      consolidation/phase-4                    -> origin/consolidation/phase-4
+audit	Checkout	2025-12-13T13:07:37.0190906Z  * [new branch]      docs/phase-4-completion                  -> origin/docs/phase-4-completion
+audit	Checkout	2025-12-13T13:07:37.0193579Z  * [new branch]      docs/update-protocolo                    -> origin/docs/update-protocolo
+audit	Checkout	2025-12-13T13:07:37.0196257Z  * [new branch]      feat/ai-recommendations                  -> origin/feat/ai-recommendations
+audit	Checkout	2025-12-13T13:07:37.0199384Z  * [new branch]      feat/auth-middleware-custom-claims       -> origin/feat/auth-middleware-custom-claims
+audit	Checkout	2025-12-13T13:07:37.0202342Z  * [new branch]      feat/custom-claims-auth                  -> origin/feat/custom-claims-auth
+audit	Checkout	2025-12-13T13:07:37.0205145Z  * [new branch]      feat/e2e-auth-helper                     -> origin/feat/e2e-auth-helper
+audit	Checkout	2025-12-13T13:07:37.0207636Z  * [new branch]      feat/e2e-complete                        -> origin/feat/e2e-complete
+audit	Checkout	2025-12-13T13:07:37.0210479Z  * [new branch]      feat/firestore-security-rules            -> origin/feat/firestore-security-rules
+audit	Checkout	2025-12-13T13:07:37.0213295Z  * [new branch]      feat/frontend-scoring                    -> origin/feat/frontend-scoring
+audit	Checkout	2025-12-13T13:07:37.0215948Z  * [new branch]      feat/lead-scoring-engine                 -> origin/feat/lead-scoring-engine
+audit	Checkout	2025-12-13T13:07:37.0218566Z  * [new branch]      feat/user-uid-field                      -> origin/feat/user-uid-field
+audit	Checkout	2025-12-13T13:07:37.0221625Z  * [new branch]      feature/dia3-auditoria-pre-lancamento    -> origin/feature/dia3-auditoria-pre-lancamento
+audit	Checkout	2025-12-13T13:07:37.0224769Z  * [new branch]      feature/full-implementation              -> origin/feature/full-implementation
+audit	Checkout	2025-12-13T13:07:37.0227615Z  * [new branch]      feature/protocolo-v4-isolado             -> origin/feature/protocolo-v4-isolado
+audit	Checkout	2025-12-13T13:07:37.0231241Z  * [new branch]      feature/task-2.5-rate-limiting           -> origin/feature/task-2.5-rate-limiting
+audit	Checkout	2025-12-13T13:07:37.0234322Z  * [new branch]      feature/task-3.1                         -> origin/feature/task-3.1
+audit	Checkout	2025-12-13T13:07:37.0238723Z  * [new branch]      feature/task-qualidade-etapa3-fix-build  -> origin/feature/task-qualidade-etapa3-fix-build
+audit	Checkout	2025-12-13T13:07:37.0243873Z  * [new branch]      fix/custom-claims-security-audit         -> origin/fix/custom-claims-security-audit
+audit	Checkout	2025-12-13T13:07:37.0248344Z  * [new branch]      fix/e2e-auth-credentials                 -> origin/fix/e2e-auth-credentials
+audit	Checkout	2025-12-13T13:07:37.0252987Z  * [new branch]      fix/protocolo-auditoria-gemini           -> origin/fix/protocolo-auditoria-gemini
+audit	Checkout	2025-12-13T13:07:37.0257680Z  * [new branch]      fix/test-ambiguity-resultsmodal          -> origin/fix/test-ambiguity-resultsmodal
+audit	Checkout	2025-12-13T13:07:37.0262263Z  * [new branch]      fix/test-suite-accessibility-and-values  -> origin/fix/test-suite-accessibility-and-values
+audit	Checkout	2025-12-13T13:07:37.0264841Z  * [new branch]      main                                     -> origin/main
+audit	Checkout	2025-12-13T13:07:37.0267831Z  * [new branch]      task/2.2-trigger-matching                -> origin/task/2.2-trigger-matching
+audit	Checkout	2025-12-13T13:07:37.0271459Z  * [new branch]      task/2.3-matching-results-component      -> origin/task/2.3-matching-results-component
+audit	Checkout	2025-12-13T13:07:37.0274499Z  * [new branch]      task/2.4-matching-results-integration    -> origin/task/2.4-matching-results-integration
+audit	Checkout	2025-12-13T13:07:37.0276949Z  * [new tag]         v0.0.1-fix-build                         -> v0.0.1-fix-build
+audit	Checkout	2025-12-13T13:07:37.0279033Z  * [new tag]         v0.0.1-frontend                          -> v0.0.1-frontend
+audit	Checkout	2025-12-13T13:07:37.0280973Z  * [new tag]         v0.0.10-backend                          -> v0.0.10-backend
+audit	Checkout	2025-12-13T13:07:37.0282956Z  * [new tag]         v0.0.11-backend                          -> v0.0.11-backend
+audit	Checkout	2025-12-13T13:07:37.0284878Z  * [new tag]         v0.0.12-backend                          -> v0.0.12-backend
+audit	Checkout	2025-12-13T13:07:37.0286800Z  * [new tag]         v0.0.13-backend                          -> v0.0.13-backend
+audit	Checkout	2025-12-13T13:07:37.0289914Z  * [new tag]         v0.0.14-backend                          -> v0.0.14-backend
+audit	Checkout	2025-12-13T13:07:37.0292928Z  * [new tag]         v0.0.15-backend                          -> v0.0.15-backend
+audit	Checkout	2025-12-13T13:07:37.0295873Z  * [new tag]         v0.0.16-backend                          -> v0.0.16-backend
+audit	Checkout	2025-12-13T13:07:37.0299013Z  * [new tag]         v0.0.17-backend                          -> v0.0.17-backend
+audit	Checkout	2025-12-13T13:07:37.0301869Z  * [new tag]         v0.0.18-backend                          -> v0.0.18-backend
+audit	Checkout	2025-12-13T13:07:37.0304260Z  * [new tag]         v0.0.19-backend                          -> v0.0.19-backend
+audit	Checkout	2025-12-13T13:07:37.0306364Z  * [new tag]         v0.0.2-fix-deploy                        -> v0.0.2-fix-deploy
+audit	Checkout	2025-12-13T13:07:37.0308568Z  * [new tag]         v0.0.20-backend                          -> v0.0.20-backend
+audit	Checkout	2025-12-13T13:07:37.0311430Z  * [new tag]         v0.0.21-backend                          -> v0.0.21-backend
+audit	Checkout	2025-12-13T13:07:37.0313321Z  * [new tag]         v0.0.22-backend                          -> v0.0.22-backend
+audit	Checkout	2025-12-13T13:07:37.0315140Z  * [new tag]         v0.0.23-backend                          -> v0.0.23-backend
+audit	Checkout	2025-12-13T13:07:37.0316960Z  * [new tag]         v0.0.24-backend                          -> v0.0.24-backend
+audit	Checkout	2025-12-13T13:07:37.0318795Z  * [new tag]         v0.0.25-backend                          -> v0.0.25-backend
+audit	Checkout	2025-12-13T13:07:37.0322012Z  * [new tag]         v0.0.26-backend                          -> v0.0.26-backend
+audit	Checkout	2025-12-13T13:07:37.0324999Z  * [new tag]         v0.0.27-backend                          -> v0.0.27-backend
+audit	Checkout	2025-12-13T13:07:37.0327973Z  * [new tag]         v0.0.28-backend                          -> v0.0.28-backend
+audit	Checkout	2025-12-13T13:07:37.0331150Z  * [new tag]         v0.0.29-backend                          -> v0.0.29-backend
+audit	Checkout	2025-12-13T13:07:37.0334025Z  * [new tag]         v0.0.3-fix-deploy                        -> v0.0.3-fix-deploy
+audit	Checkout	2025-12-13T13:07:37.0336281Z  * [new tag]         v0.0.30-backend                          -> v0.0.30-backend
+audit	Checkout	2025-12-13T13:07:37.0338130Z  * [new tag]         v0.0.31-backend                          -> v0.0.31-backend
+audit	Checkout	2025-12-13T13:07:37.0340505Z  * [new tag]         v0.0.32-backend                          -> v0.0.32-backend
+audit	Checkout	2025-12-13T13:07:37.0343171Z  * [new tag]         v0.0.33-backend                          -> v0.0.33-backend
+audit	Checkout	2025-12-13T13:07:37.0345031Z  * [new tag]         v0.0.34-backend                          -> v0.0.34-backend
+audit	Checkout	2025-12-13T13:07:37.0346849Z  * [new tag]         v0.0.35-backend                          -> v0.0.35-backend
+audit	Checkout	2025-12-13T13:07:37.0348780Z  * [new tag]         v0.0.4-docker-deploy                     -> v0.0.4-docker-deploy
+audit	Checkout	2025-12-13T13:07:37.0351281Z  * [new tag]         v0.0.5-docker-deploy                     -> v0.0.5-docker-deploy
+audit	Checkout	2025-12-13T13:07:37.0353330Z  * [new tag]         v0.0.6-docker-deploy                     -> v0.0.6-docker-deploy
+audit	Checkout	2025-12-13T13:07:37.0355401Z  * [new tag]         v0.0.7-docker-deploy                     -> v0.0.7-docker-deploy
+audit	Checkout	2025-12-13T13:07:37.0357432Z  * [new tag]         v0.0.8-docker-deploy                     -> v0.0.8-docker-deploy
+audit	Checkout	2025-12-13T13:07:37.0359565Z  * [new tag]         v0.0.9-backend                           -> v0.0.9-backend
+audit	Checkout	2025-12-13T13:07:37.0361351Z  * [new tag]         v0.1.0-secfix                            -> v0.1.0-secfix
+audit	Checkout	2025-12-13T13:07:37.0363121Z  * [new tag]         v0.1.0-servioai                          -> v0.1.0-servioai
+audit	Checkout	2025-12-13T13:07:37.0364895Z  * [new tag]         v0.1.1-servioai                          -> v0.1.1-servioai
+audit	Checkout	2025-12-13T13:07:37.0366665Z  * [new tag]         v0.1.2-servioai                          -> v0.1.2-servioai
+audit	Checkout	2025-12-13T13:07:37.0368440Z  * [new tag]         v0.1.3-servioai                          -> v0.1.3-servioai
+audit	Checkout	2025-12-13T13:07:37.0370431Z  * [new tag]         v0.1.4-servioai                          -> v0.1.4-servioai
+audit	Checkout	2025-12-13T13:07:37.0372195Z  * [new tag]         v0.1.5-servioai                          -> v0.1.5-servioai
+audit	Checkout	2025-12-13T13:07:37.0373851Z  * [new tag]         v0.9.1                                   -> v0.9.1
+audit	Checkout	2025-12-13T13:07:37.0375490Z  * [new tag]         v0.9.2-backend                           -> v0.9.2-backend
+audit	Checkout	2025-12-13T13:07:37.0377205Z  * [new tag]         v0.9.3-backend                           -> v0.9.3-backend
+audit	Checkout	2025-12-13T13:07:37.0379107Z  * [new tag]         v0.9.4-backend                           -> v0.9.4-backend
+audit	Checkout	2025-12-13T13:07:37.0380884Z  * [new tag]         v1.5.0-backend                           -> v1.5.0-backend
+audit	Checkout	2025-12-13T13:07:37.0382619Z  * [new tag]         v1.6.0-backend                           -> v1.6.0-backend
+audit	Checkout	2025-12-13T13:07:37.0384564Z  * [new tag]         v1.6.0-servioai                          -> v1.6.0-servioai
+audit	Checkout	2025-12-13T13:07:37.0386416Z  * [new tag]         v2025.11.08-1-backend                    -> v2025.11.08-1-backend
+audit	Checkout	2025-12-13T13:07:37.0388302Z  * [new tag]         v2025.11.08-2-backend                    -> v2025.11.08-2-backend
+audit	Checkout	2025-12-13T13:07:37.0390437Z  * [new tag]         v2025.11.08-3-backend                    -> v2025.11.08-3-backend
+audit	Checkout	2025-12-13T13:07:37.0392313Z  * [new tag]         v2025.11.08-4-backend                    -> v2025.11.08-4-backend
+audit	Checkout	2025-12-13T13:07:37.0394174Z  * [new tag]         v2025.11.08-5-backend                    -> v2025.11.08-5-backend
+audit	Checkout	2025-12-13T13:07:37.0395873Z  * [new tag]         v4.0.0                                   -> v4.0.0
+audit	Checkout	2025-12-13T13:07:37.0397610Z  * [new ref]         8d9c5f003ffd7087320f4038e0e79d20eca44275 -> pull/29/merge
+audit	Checkout	2025-12-13T13:07:37.0401819Z ##[endgroup]
+audit	Checkout	2025-12-13T13:07:37.0403469Z ##[group]Determining the checkout info
+audit	Checkout	2025-12-13T13:07:37.0405314Z ##[endgroup]
+audit	Checkout	2025-12-13T13:07:37.0406283Z [command]/usr/bin/git sparse-checkout disable
+audit	Checkout	2025-12-13T13:07:37.0409484Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+audit	Checkout	2025-12-13T13:07:37.0413177Z ##[group]Checking out the ref
+audit	Checkout	2025-12-13T13:07:37.0414700Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/29/merge
+audit	Checkout	2025-12-13T13:07:37.1210359Z Note: switching to 'refs/remotes/pull/29/merge'.
+audit	Checkout	2025-12-13T13:07:37.1211929Z 
+audit	Checkout	2025-12-13T13:07:37.1213021Z You are in 'detached HEAD' state. You can look around, make experimental
+audit	Checkout	2025-12-13T13:07:37.1215705Z changes and commit them, and you can discard any commits you make in this
+audit	Checkout	2025-12-13T13:07:37.1218372Z state without impacting any branches by switching back to a branch.
+audit	Checkout	2025-12-13T13:07:37.1219926Z 
+audit	Checkout	2025-12-13T13:07:37.1221149Z If you want to create a new branch to retain commits you create, you may
+audit	Checkout	2025-12-13T13:07:37.1224185Z do so (now or later) by using -c with the switch command. Example:
+audit	Checkout	2025-12-13T13:07:37.1225860Z 
+audit	Checkout	2025-12-13T13:07:37.1226650Z   git switch -c <new-branch-name>
+audit	Checkout	2025-12-13T13:07:37.1228397Z 
+audit	Checkout	2025-12-13T13:07:37.1229274Z Or undo this operation with:
+audit	Checkout	2025-12-13T13:07:37.1230372Z 
+audit	Checkout	2025-12-13T13:07:37.1230922Z   git switch -
+audit	Checkout	2025-12-13T13:07:37.1231764Z 
+audit	Checkout	2025-12-13T13:07:37.1233194Z Turn off this advice by setting config variable advice.detachedHead to false
+audit	Checkout	2025-12-13T13:07:37.1235264Z 
+audit	Checkout	2025-12-13T13:07:37.1237551Z HEAD is now at 8d9c5f0 Merge d77a645d5e1077c4fd4f6d34af8ba3a4e6380ecb into a0dc4175a00115d0dea7c3717a216177ad7715b1
+audit	Checkout	2025-12-13T13:07:37.1243252Z ##[endgroup]
+audit	Checkout	2025-12-13T13:07:37.1269903Z [command]/usr/bin/git log -1 --format=%H
+audit	Checkout	2025-12-13T13:07:37.1292328Z 8d9c5f003ffd7087320f4038e0e79d20eca44275
+audit	Setup Node.js	´╗┐2025-12-13T13:07:37.1651031Z ##[group]Run actions/setup-node@v4
+audit	Setup Node.js	2025-12-13T13:07:37.1652092Z with:
+audit	Setup Node.js	2025-12-13T13:07:37.1652810Z   node-version: 20
+audit	Setup Node.js	2025-12-13T13:07:37.1653579Z   cache: npm
+audit	Setup Node.js	2025-12-13T13:07:37.1654330Z   always-auth: false
+audit	Setup Node.js	2025-12-13T13:07:37.1655152Z   check-latest: false
+audit	Setup Node.js	2025-12-13T13:07:37.1656246Z   token: ***
+audit	Setup Node.js	2025-12-13T13:07:37.1656987Z ##[endgroup]
+audit	Setup Node.js	2025-12-13T13:07:37.3431975Z Found in cache @ /opt/hostedtoolcache/node/20.19.6/x64
+audit	Setup Node.js	2025-12-13T13:07:37.3438074Z ##[group]Environment details
+audit	Setup Node.js	2025-12-13T13:07:37.6683155Z node: v20.19.6
+audit	Setup Node.js	2025-12-13T13:07:37.6684667Z npm: 10.8.2
+audit	Setup Node.js	2025-12-13T13:07:37.6685973Z yarn: 1.22.22
+audit	Setup Node.js	2025-12-13T13:07:37.6688437Z ##[endgroup]
+audit	Setup Node.js	2025-12-13T13:07:37.6710168Z [command]/opt/hostedtoolcache/node/20.19.6/x64/bin/npm config get cache
+audit	Setup Node.js	2025-12-13T13:07:37.7872758Z /home/runner/.npm
+audit	Setup Node.js	2025-12-13T13:07:38.0382360Z npm cache is not found
+audit	Install deps	´╗┐2025-12-13T13:07:38.0518115Z ##[group]Run npm ci
+audit	Install deps	2025-12-13T13:07:38.0518399Z [36;1mnpm ci[0m
+audit	Install deps	2025-12-13T13:07:38.0564361Z shell: /usr/bin/bash -e {0}
+audit	Install deps	2025-12-13T13:07:38.0564635Z ##[endgroup]
+audit	Install deps	2025-12-13T13:07:41.5930157Z npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+audit	Install deps	2025-12-13T13:07:42.3835829Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+audit	Install deps	2025-12-13T13:07:42.5182833Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+audit	Install deps	2025-12-13T13:07:43.8817695Z npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+audit	Install deps	2025-12-13T13:07:43.9031589Z npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+audit	Install deps	2025-12-13T13:07:44.6145924Z npm warn deprecated rimraf@2.6.3: Rimraf versions prior to v4 are no longer supported
+audit	Install deps	2025-12-13T13:07:45.3209022Z npm warn deprecated popper.js@1.16.1: You can find the new Popper v2 at @popperjs/core, this package is dedicated to the legacy v1
+audit	Install deps	2025-12-13T13:07:46.5257118Z npm warn deprecated react-beautiful-dnd@13.1.1: react-beautiful-dnd is now deprecated. Context and options: https://github.com/atlassian/react-beautiful-dnd/issues/2672
+audit	Install deps	2025-12-13T13:07:47.7483457Z npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+audit	Install deps	2025-12-13T13:08:04.5399068Z 
+audit	Install deps	2025-12-13T13:08:04.5399698Z > servio-ai-frontend@0.0.0 prepare
+audit	Install deps	2025-12-13T13:08:04.5400110Z > husky
+audit	Install deps	2025-12-13T13:08:04.5400228Z 
+audit	Install deps	2025-12-13T13:08:04.5962397Z 
+audit	Install deps	2025-12-13T13:08:04.5963496Z added 804 packages, and audited 805 packages in 26s
+audit	Install deps	2025-12-13T13:08:04.5963913Z 
+audit	Install deps	2025-12-13T13:08:04.5964171Z 173 packages are looking for funding
+audit	Install deps	2025-12-13T13:08:04.5964588Z   run `npm fund` for details
+audit	Install deps	2025-12-13T13:08:04.6188209Z 
+audit	Install deps	2025-12-13T13:08:04.6189447Z 7 moderate severity vulnerabilities
+audit	Install deps	2025-12-13T13:08:04.6194999Z 
+audit	Install deps	2025-12-13T13:08:04.6195784Z To address all issues (including breaking changes), run:
+audit	Install deps	2025-12-13T13:08:04.6196591Z   npm audit fix --force
+audit	Install deps	2025-12-13T13:08:04.6196973Z 
+audit	Install deps	2025-12-13T13:08:04.6197275Z Run `npm audit` for details.
+audit	Validate secrets	´╗┐2025-12-13T13:08:04.6600039Z ##[group]Run if [ -z "***" ]; then
+audit	Validate secrets	2025-12-13T13:08:04.6600485Z [36;1mif [ -z "***" ]; then[0m
+audit	Validate secrets	2025-12-13T13:08:04.6600869Z [36;1m  echo "ÔØî GEMINI_API_KEY n├úo configurado em GitHub Secrets" >&2[0m
+audit	Validate secrets	2025-12-13T13:08:04.6601210Z [36;1m  exit 1[0m
+audit	Validate secrets	2025-12-13T13:08:04.6601389Z [36;1mfi[0m
+audit	Validate secrets	2025-12-13T13:08:04.6633369Z shell: /usr/bin/bash -e {0}
+audit	Validate secrets	2025-12-13T13:08:04.6633632Z ##[endgroup]
+audit	Collect PR context	´╗┐2025-12-13T13:08:04.6716712Z ##[group]Run echo "pr_number=29" >> $GITHUB_OUTPUT
+audit	Collect PR context	2025-12-13T13:08:04.6717219Z [36;1mecho "pr_number=29" >> $GITHUB_OUTPUT[0m
+audit	Collect PR context	2025-12-13T13:08:04.6717681Z [36;1mecho "sha=8d9c5f003ffd7087320f4038e0e79d20eca44275" >> $GITHUB_OUTPUT[0m
+audit	Collect PR context	2025-12-13T13:08:04.6718089Z [36;1mecho "actor=agenciaclimb" >> $GITHUB_OUTPUT[0m
+audit	Collect PR context	2025-12-13T13:08:04.6718434Z [36;1mecho "repo=agenciaclimb/Servio.AI" >> $GITHUB_OUTPUT[0m
+audit	Collect PR context	2025-12-13T13:08:04.6718768Z [36;1mecho "run_id=20192469378" >> $GITHUB_OUTPUT[0m
+audit	Collect PR context	2025-12-13T13:08:04.6719180Z [36;1mecho "run_attempt=1" >> $GITHUB_OUTPUT[0m
+audit	Collect PR context	2025-12-13T13:08:04.6750199Z shell: /usr/bin/bash -e {0}
+audit	Collect PR context	2025-12-13T13:08:04.6750439Z ##[endgroup]
+audit	Run Gemini audit	´╗┐2025-12-13T13:08:04.6853882Z ##[group]Run node scripts/gemini/run_audit.cjs \
+audit	Run Gemini audit	2025-12-13T13:08:04.6854270Z [36;1mnode scripts/gemini/run_audit.cjs \[0m
+audit	Run Gemini audit	2025-12-13T13:08:04.6854534Z [36;1m  --pr 29 \[0m
+audit	Run Gemini audit	2025-12-13T13:08:04.6854793Z [36;1m  --sha 8d9c5f003ffd7087320f4038e0e79d20eca44275 \[0m
+audit	Run Gemini audit	2025-12-13T13:08:04.6855103Z [36;1m  --actor "agenciaclimb" \[0m
+audit	Run Gemini audit	2025-12-13T13:08:04.6855367Z [36;1m  --repo "agenciaclimb/Servio.AI" \[0m
+audit	Run Gemini audit	2025-12-13T13:08:04.6855634Z [36;1m  --run-id "20192469378" \[0m
+audit	Run Gemini audit	2025-12-13T13:08:04.6855870Z [36;1m  --run-attempt "1"[0m
+audit	Run Gemini audit	2025-12-13T13:08:04.6886171Z shell: /usr/bin/bash -e {0}
+audit	Run Gemini audit	2025-12-13T13:08:04.6886399Z env:
+audit	Run Gemini audit	2025-12-13T13:08:04.6886741Z   GEMINI_API_KEY: ***
+audit	Run Gemini audit	2025-12-13T13:08:04.6886944Z ##[endgroup]
+audit	Run Gemini audit	2025-12-13T13:08:08.7653395Z Auditoria CI: VEREDICTO = REJECTED
+audit	Run Gemini audit	2025-12-13T13:08:08.7701553Z ##[error]Process completed with exit code 2.
+audit	Post Checkout	´╗┐2025-12-13T13:08:08.7805124Z Post job cleanup.
+audit	Post Checkout	2025-12-13T13:08:08.8763062Z [command]/usr/bin/git version
+audit	Post Checkout	2025-12-13T13:08:08.8803736Z git version 2.52.0
+audit	Post Checkout	2025-12-13T13:08:08.8854098Z Temporarily overriding HOME='/home/runner/work/_temp/7f1ce40e-544f-4481-b3b6-1b0d65d941fa' before making global git config changes
+audit	Post Checkout	2025-12-13T13:08:08.8855590Z Adding repository directory to the temporary git global config as a safe directory
+audit	Post Checkout	2025-12-13T13:08:08.8860305Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Servio.AI/Servio.AI
+audit	Post Checkout	2025-12-13T13:08:08.8957005Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+audit	Post Checkout	2025-12-13T13:08:08.8999456Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+audit	Post Checkout	2025-12-13T13:08:08.9423899Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+audit	Post Checkout	2025-12-13T13:08:08.9449044Z http.https://github.com/.extraheader
+audit	Post Checkout	2025-12-13T13:08:08.9462014Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+audit	Post Checkout	2025-12-13T13:08:09.0390297Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+audit	Post Checkout	2025-12-13T13:08:09.0634152Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+audit	Post Checkout	2025-12-13T13:08:09.0667383Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+audit	Complete job	´╗┐2025-12-13T13:08:09.0994136Z Cleaning up orphan processes

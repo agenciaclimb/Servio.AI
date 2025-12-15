@@ -19,3 +19,10 @@ COMANDO DE DEPLOY:
 npm run build && firebase deploy --only hosting
 
 RECOMENDAÇÃO: ✅ LANCE AGORA
+
+---
+2025-12-13 — Governança Financeira (Stripe)
+- Adicionado módulo: Disputes & Refunds (Stripe) — status PLANEJADO
+- Documento Mestre atualizado: DOCUMENTO_MESTRE_SERVIO_AI.md (Módulos Principais)
+- Plano de referência: REFUNDS_DISPUTES_STRIPE_CONNECT.md
+- Próximos passos: validação jurídica + MVP (webhooks + alertas)

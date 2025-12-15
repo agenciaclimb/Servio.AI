@@ -197,11 +197,26 @@ stripe accounts list --api-key="sk_live_..." | ConvertFrom-Json | Select charges
 
 ### Imediatamente após lançamento:
 
-✅ Site no ar e acessível  
-✅ Usuários podem se cadastrar  
-✅ Jobs podem ser criados  
-✅ Propostas podem ser enviadas  
-✅ Pagamentos funcionam
+## ✅ Site no ar e acessível
+
+## 2025-12-13 — Governança Financeira (Stripe)
+
+- Adicionado módulo **Disputes & Refunds (Stripe)** à tabela de Módulos Principais em `DOCUMENTO_MESTRE_SERVIO_AI.md`.
+- Status definido como 🟡 **PLANEJADO**.
+- Plano completo documentado em `REFUNDS_DISPUTES_STRIPE_CONNECT.md`.
+- Seção registrada: **Pagamentos → Refunds & Disputes — Stripe Connect** no Documento Mestre.
+- Próximos passos:
+  - Validação jurídica
+  - Implementação MVP (webhooks + alertas)
+
+Rastreabilidade:
+
+- Documento Mestre: `DOCUMENTO_MESTRE_SERVIO_AI.md`
+- Plano: `REFUNDS_DISPUTES_STRIPE_CONNECT.md`
+  ✅ Usuários podem se cadastrar  
+  ✅ Jobs podem ser criados  
+  ✅ Propostas podem ser enviadas  
+  ✅ Pagamentos funcionam
 
 ### Após ativação do Connect (1-24h):
 

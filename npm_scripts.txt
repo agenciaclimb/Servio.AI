@@ -1,0 +1,76 @@
+Lifecycle scripts included in servio-ai-frontend@0.0.0:
+  test
+    vitest run --coverage
+  prepare
+    husky install
+available via `npm run-script`:
+  dev
+    vite
+  build
+    tsc && vite build
+  lint
+    eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0
+  lint:fix
+    eslint . --ext ts,tsx --fix
+  format
+    prettier --write "**/*.{ts,tsx,js,jsx,json,md,yml,yaml}"
+  format:check
+    prettier --check "**/*.{ts,tsx,js,jsx,json,md,yml,yaml}"
+  typecheck
+    npx tsc -p tsconfig.build.json --noEmit
+  test:watch
+    vitest watch
+  test:ui
+    vitest --ui
+  test:backend
+    npm --prefix backend test
+  test:all
+    npm test && npm run test:backend
+  preview
+    vite preview
+  e2e
+    playwright test
+  e2e:ui
+    playwright test --ui
+  start:ai
+    node server.js
+  validate
+    npm run format:check && npm run lint && npm run typecheck && npm run test:all
+  precommit
+    lint-staged
+  firebase:login
+    firebase login
+  firebase:use
+    firebase use
+  firebase:emulators
+    firebase emulators:start
+  firebase:deploy:rules
+    firebase deploy --only firestore:rules,storage:rules
+  e2e:headed
+    playwright test --headed
+  e2e:report
+    playwright show-report
+  e2e:debug
+    playwright test --debug
+  cy:run
+    npm run build && start-server-and-test preview http://localhost:4173 "cypress run --browser chrome --headless --config-file cypress.config.cjs"
+  security:audit
+    npm audit --audit-level=moderate
+  security:fix
+    npm audit fix
+  deps:check
+    npx depcheck
+  deps:update
+    npx npm-check-updates -i
+  lint:ci
+    eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings=1000
+  e2e:smoke
+    playwright test tests/e2e/smoke/basic-smoke.spec.ts
+  e2e:critical
+    playwright test tests/e2e/smoke/critical-flows.spec.ts
+  validate:prod
+    npm run typecheck && npm test && npm run e2e:smoke && npm run build
+  test:fast
+    vitest run --config vitest.fast.config.ts --coverage tests/AdminDashboard*.test.tsx tests/ClientDashboard.scheduleAndChat.test.tsx tests/ProspectorDashboardUnified.test.tsx tests/ProspectorDashboard.branches.test.tsx
+  analyze
+    source-map-explorer 'dist/assets/*.js'

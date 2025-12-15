@@ -1,31 +1,60 @@
-# Task 3.3 — Criar protocolo de logging e auditoria
+# Task 3.3 — Adicionar Analytics de Conversão
 
-ID: 3.3
-Protocolo: v4.0
+**Prioridade**: MEDIUM  
+**Estimativa**: 2-3h  
+**Data Criação**: 2025-12-15
 
-Descrição:
-Sistema de logging centralizado para registrar todas as ações do Protocolo Supremo v4.0.
+---
 
-Critérios de Aceitação:
+## Descrição
 
-- Sistema de logging centralizado implementado
-- Logs incluem timestamps e severidade
-- Sistema de auditoria gera relatórios
-- Sistema gera alertas em eventos suspeitos
-- Logs armazenados com segurança
+Integrar eventos de analytics para rastrear: jobs criados, propostas enviadas, pagamentos concluídos, conversão de leads.
 
-Arquivos:
+---
 
-- Criar: `utils/logger.ts`, `utils/auditor.ts`, `models/log_entry.ts`, `utils/logger.test.ts`
-- Modificar: (nenhum)
+## Especificação Técnica
 
-Dependências: (nenhuma)
-Esforço Estimado: 8h
+### 1. Arquivos a Modificar/Criar
 
-Plano de Implementação:
+- (Será determinado na implementação)
 
-1. Definir `LogEntry` e níveis (info, warn, error)
-2. Implementar `logger.ts` com rotas de saída (console, arquivo)
-3. Implementar `auditor.ts` para gerar relatórios a partir dos logs
-4. Testes unitários para formatos e thresholds
-5. Preparar integração com Task 3.1/3.6
+### 2. Alterações Exigidas
+
+- (Nenhuma alteração estrutural definida)
+
+### 3. Testes Necessários
+
+- Unit tests para nova funcionalidade
+
+### 4. Padrões a Respeitar
+
+- ✅ TypeScript com tipos estritos
+- ✅ Componentes React com interfaces Props
+- ✅ Commits atômicos com mensagem [task-3.3]
+- ✅ Coverage de testes ≥ 80%
+- ✅ Sem console.log em produção
+
+---
+
+## Critério de Sucesso
+
+- ✅ Implementação exata da spec
+- ✅ Testes passando
+- ✅ Sem warnings de lint
+- ✅ Pronto para produção
+
+---
+
+## Nota da Auditoria
+
+Esta task foi **gerada por Gemini** e está pronta para execução pelo Copilot.
+
+Seguir exatamente esta especificação. Não improvisar.
+
+---
+
+_Gerada em 2025-12-15T21:35:12.218Z | Versão: 1.0_
+
+---
+
+**GitHub Issue**: [#37](https://github.com/agenciaclimb/Servio.AI/issues/37)

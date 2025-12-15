@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import ReferralLinkGenerator from '../src/components/ReferralLinkGenerator';
 import NotificationSettings from '../src/components/NotificationSettings';
 import ProspectorMaterials from '../src/components/ProspectorMaterials';
-// Novos componentes IA
-import QuickPanel from '../src/components/prospector/QuickPanel';
+// Lazy load de componentes pesados para performance
+const QuickPanel = lazy(() => import('../src/components/prospector/QuickPanel'));
+const ProspectorCRMProfessional = lazy(
+  () => import('../src/components/prospector/ProspectorCRMProfessional')
+);
+// Componentes mantidos eager para UI crítica
 import QuickActionsBar from '../src/components/prospector/QuickActionsBar';
 import QuickAddPanel from '../src/components/prospector/QuickAddPanel';
-import ProspectorCRMProfessional from '../src/components/prospector/ProspectorCRMProfessional';
 import OnboardingTour from '../src/components/prospector/OnboardingTour';
 import { db } from '../firebaseConfig';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
@@ -26,6 +29,33 @@ type TabType =
 interface ProspectorDashboardProps {
   userId: string;
 }
+
+// Componente TabButton memoizado para evitar re-renders desnecessários
+interface TabButtonProps {
+  label: string;
+  icon: string;
+  isActive: boolean;
+  onClick: () => void;
+  dataTour?: string;
+}
+
+const TabButton = React.memo<TabButtonProps>(({ label, icon, isActive, onClick, dataTour }) => {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-6 py-3 font-medium transition-colors whitespace-nowrap ${
+        isActive
+          ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
+          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+      }`}
+      data-tour={dataTour}
+    >
+      {icon} {label}
+    </button>
+  );
+});
+
+TabButton.displayName = 'TabButton';
 
 const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => {
   const prospectorId = userId;
@@ -47,10 +77,33 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
   });
   const [isSavingLead, setIsSavingLead] = useState(false);
 
-  const handleLeadsAdded = () => {
+  // Memoização de callbacks para evitar re-renders
+  const handleLeadsAdded = useCallback(() => {
     // Apenas um placeholder, a lógica agora está no QuickAddPanel
     // e o estado global via SWR/Zustand (Sprint 4) cuidará da atualização
-  };
+  }, []);
+
+  const handleAddLead = useCallback(() => {
+    setShowAddLeadModal(true);
+  }, []);
+
+  const handleOpenNotifications = useCallback(() => {
+    setShowNotificationsModal(true);
+  }, []);
+
+  const handleOpenCampaign = useCallback(() => {
+    setShowCampaignModal(true);
+  }, []);
+
+  // Memoização do referral link para evitar recálculo
+  const memoizedReferralLink = useMemo(() => {
+    return referralLink || `${globalThis.location?.origin || ''}/cadastro?ref=${prospectorId}`;
+  }, [referralLink, prospectorId]);
+
+  // Memoização de handlers de tabs
+  const handleTabClick = useCallback((tab: TabType) => {
+    setActiveTab(tab);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -61,87 +114,75 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
       <QuickActionsBar
         prospectorId={prospectorId}
         prospectorName={'Prospector'}
-        referralLink={
-          referralLink || `${globalThis.location?.origin || ''}/cadastro?ref=${prospectorId}`
-        }
+        referralLink={memoizedReferralLink}
         unreadNotifications={0} // Feature planned for Sprint 2: real-time notifications integration
-        onAddLead={() => setShowAddLeadModal(true)}
-        onOpenNotifications={() => setShowNotificationsModal(true)}
-        onOpenCampaign={() => setShowCampaignModal(true)}
+        onAddLead={handleAddLead}
+        onOpenNotifications={handleOpenNotifications}
+        onOpenCampaign={handleOpenCampaign}
       />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Tabs Navigation Simplificada */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
           <div className="flex overflow-x-auto">
-            <button
-              onClick={() => setActiveTab('dashboard')}
-              className={`px-6 py-3 font-medium transition-colors whitespace-nowrap ${
-                activeTab === 'dashboard'
-                  ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              ⚡ Dashboard IA
-            </button>
-            <button
-              onClick={() => setActiveTab('crm')}
-              className={`px-6 py-3 font-medium transition-colors whitespace-nowrap ${
-                activeTab === 'crm'
-                  ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-              data-tour="crm-board"
-            >
-              🎯 Pipeline CRM
-            </button>
-            <button
-              onClick={() => setActiveTab('links')}
-              className={`px-6 py-3 font-medium transition-colors whitespace-nowrap ${
-                activeTab === 'links'
-                  ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-              data-tour="referral-link"
-            >
-              🔗 Links
-            </button>
-            <button
-              onClick={() => setActiveTab('materials')}
-              className={`px-6 py-3 font-medium transition-colors whitespace-nowrap ${
-                activeTab === 'materials'
-                  ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-              data-tour="materials"
-            >
-              📚 Materiais
-            </button>
-            <button
-              onClick={() => setActiveTab('overview')}
-              className={`px-6 py-3 font-medium transition-colors whitespace-nowrap ${
-                activeTab === 'overview'
-                  ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              📊 Estatísticas
-            </button>
+            <TabButton
+              label="Dashboard IA"
+              icon="⚡"
+              isActive={activeTab === 'dashboard'}
+              onClick={() => handleTabClick('dashboard')}
+            />
+            <TabButton
+              label="Pipeline CRM"
+              icon="🎯"
+              isActive={activeTab === 'crm'}
+              onClick={() => handleTabClick('crm')}
+              dataTour="crm-board"
+            />
+            <TabButton
+              label="Links"
+              icon="🔗"
+              isActive={activeTab === 'links'}
+              onClick={() => handleTabClick('links')}
+              dataTour="referral-link"
+            />
+            <TabButton
+              label="Materiais"
+              icon="📚"
+              isActive={activeTab === 'materials'}
+              onClick={() => handleTabClick('materials')}
+              dataTour="materials"
+            />
+            <TabButton
+              label="Estatísticas"
+              icon="📊"
+              isActive={activeTab === 'overview'}
+              onClick={() => handleTabClick('overview')}
+            />
           </div>
         </div>
-        {/* Tab Content: Dashboard IA (Novo Padrão) */}
-        {activeTab === 'dashboard' && <QuickPanel prospectorId={prospectorId} />}
 
-        {/* Tab Content: CRM Enhanced */}
-        {activeTab === 'crm' && (
-          <>
-            {/* QuickAddPanel - Cadastro rápido de leads */}
-            <QuickAddPanel onLeadsAdded={handleLeadsAdded} />
+        {/* Tab Content com Suspense para lazy loading */}
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center p-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            </div>
+          }
+        >
+          {/* Tab Content: Dashboard IA (Novo Padrão) */}
+          {activeTab === 'dashboard' && <QuickPanel prospectorId={prospectorId} />}
 
-            {/* CRM Profissional Kanban */}
-            <ProspectorCRMProfessional prospectorId={prospectorId} />
-          </>
-        )}
+          {/* Tab Content: CRM Enhanced */}
+          {activeTab === 'crm' && (
+            <>
+              {/* QuickAddPanel - Cadastro rápido de leads */}
+              <QuickAddPanel onLeadsAdded={handleLeadsAdded} />
+
+              {/* CRM Profissional Kanban */}
+              <ProspectorCRMProfessional prospectorId={prospectorId} />
+            </>
+          )}
+        </Suspense>
 
         {/* Tab Content: Overview/Statistics */}
         {activeTab === 'overview' && <ProspectorStatistics prospectorId={prospectorId} />}
