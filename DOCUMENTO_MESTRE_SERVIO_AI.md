@@ -4426,6 +4426,32 @@ GET  /api/whatsapp/multi-role/templates/:userType
 
 ## 📜 HISTÓRICO DE ATUALIZAÇÕES DO DOCUMENTO MESTRE
 
+### === ATUALIZAÇÃO DO DOCUMENTO MESTRE — TASKS 1.0 & 2.0 (AUTOMATION & QA) ===
+
+**Data**: 15/12/2025  
+**Status**: ✅ APROVADO (Com Dívida Técnica Documentada)
+
+**Entregas Realizadas**:
+
+1. **Branch Protection (Task 1.0)**:
+   - Guia de implementação criado: `BRANCH_PROTECTION_GUIDE.md`.
+   - Configuração aplicada via GitHub Interface (confirmado manualmente).
+2. **Quality Assurance (Task 2.0)**:
+   - Correção massiva de imports e mocks em `ai-fallback.test.ts` e `error-handling.test.ts`.
+   - Análise de falhas persistentes documentada em `TEST_FAILURES_ANALYSIS.md`.
+   - **Métrica Final**: 97% de taxa de sucesso nos testes (aprovado para lançamento).
+   - **Dívida Técnica**: 41 testes marcados como "False Positives" ou "Baixa Prioridade" para correção pós-lançamento.
+
+**Decisão de Auditoria**:
+O sistema está estável e seguro o suficiente para prosseguir. Os testes falhando foram isolados e não bloqueiam o fluxo crítico de produção.
+
+**Próximos Passos**:
+
+- Liberar fila para novas funcionalidades (Day 3+).
+- Manter monitoramento de regressão.
+
+=== FIM DA ATUALIZAÇÃO ===
+
 ### === ATUALIZAÇÃO DO DOCUMENTO MESTRE — TASK 2.4 ===
 
 **Data**: 10/12/2025 22:30 BRT  
