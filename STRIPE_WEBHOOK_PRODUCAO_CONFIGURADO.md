@@ -16,7 +16,7 @@ O webhook de produção foi **CRIADO VIA CLI e TOTALMENTE CONFIGURADO**.
 **URL**: `https://servio-backend-1000250760228.us-west1.run.app/api/stripe-webhook`  
 **Status**: ✅ Enabled  
 **Modo**: Live (Produção)  
-**Signing Secret**: `whsec_FIZOs8ismaBk0sgTUVyAUiPg2Cg28bpW` ✅ Configurado
+**Signing Secret**: `whsec_[REDACTED]` ✅ Configurado
 
 ### Eventos Configurados (10 eventos)
 
@@ -43,7 +43,7 @@ Os seguintes eventos estão configurados para produção:
 
 1. ✅ **Cloud Run** (servio-backend)
    - `STRIPE_SECRET_KEY`: Configurado
-   - `STRIPE_WEBHOOK_SECRET`: `whsec_FIZOs8ismaBk0sgTUVyAUiPg2Cg28bpW`
+   - `STRIPE_WEBHOOK_SECRET`: `whsec_[REDACTED]`
 
 2. ✅ **GitHub Secrets** (para CI/CD)
    - `STRIPE_SECRET_KEY`: Atualizado com chave live
