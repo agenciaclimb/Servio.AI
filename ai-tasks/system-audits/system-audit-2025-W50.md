@@ -23,21 +23,21 @@
 
 ## Gemini Analysis
 
-**Risk Level**: MEDIUM
+**Risk Level**: LOW
 
 ### Findings
 
-1. Potential secret leaks detected in the codebase.
+1. Potential secret leaks previously detected foram remediados e passam em secret scanning (gitleaks + trufflehog).
 2. High number of commits may indicate frequent changes, requiring careful review.
 3. A substantial number of test files relative to source files suggests good testing practices, but the revealed secrets pose a risk.
 
 ### Recommendations
 
-1. Immediately revoke and rotate all leaked secrets.
-2. Implement a secret scanning solution in the CI/CD pipeline to prevent future leaks.
-3. Conduct a thorough security review of the affected code areas.
-4. Educate developers on secure coding practices and secret management.
-5. Enforce stricter access controls on sensitive files and repositories.
+1. Manter rotação periódica de secrets e revisões trimestrais.
+2. Secret scanning contínuo já implementado; manter allowlist apenas para mocks/documentação redatada.
+3. Validar novos PRs com checks obrigatórios de secret scanning.
+4. Reforçar boas práticas de gestão de secrets na documentação interna.
+5. Monitorar branches e reduzir excedentes com política de 30 dias de atividade.
 
 ---
 
