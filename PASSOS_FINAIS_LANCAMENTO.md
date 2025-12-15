@@ -184,7 +184,7 @@ Após completar tudo:
 
 Quando tudo estiver OK:
 
-```powershell
+````powershell
 # 1. Build final
 npm run build
 
@@ -198,8 +198,43 @@ npm run e2e:smoke
 # Acesse: https://servio.ai
 # Teste login e navegação básica
 
+---
+
+## ✅ Encerramento e Próximos Passos (2025-12-13)
+
+### Governança Financeira — Disputes & Refunds (Stripe)
+- Módulo criado e registrado como 🟡 PLANEJADO.
+- Referências:
+  - Documento Mestre: `DOCUMENTO_MESTRE_SERVIO_AI.md` (tabela Módulos Principais)
+  - Plano: `REFUNDS_DISPUTES_STRIPE_CONNECT.md`
+  - Registros: `STATUS_FINAL_LANCAMENTO.md`, `PRODUCAO_STATUS.md`, `RESUMO_LANCAMENTO.txt`
+
+### Checklist Imediato (MVP Webhooks + Alertas)
+- [ ] Confirmar webhooks ativos no Stripe Dashboard (eventos: `checkout.session.completed`, `payment_intent.succeeded`, `charge.dispute.created`).
+- [ ] Validar processamento de eventos no backend (logs OK, status dos `escrows` atualizado).
+- [ ] Configurar alertas no Google Cloud Monitoring (erros 5xx, latência, fila de eventos pendentes).
+- [ ] Definir rota de suporte para disputas (email e playbook operacional).
+- [ ] Assinatura jurídica: revisar SLAs e matriz de responsabilidade.
+
+### Comandos Úteis
+```powershell
+# Webhook logs (últimos 20)
+gcloud logging read "resource.type=cloud_run_revision AND textPayload:stripe AND textPayload:webhook" --limit 20 --format="table(timestamp, textPayload)"
+
+# Status dos serviços
+gcloud run services list --platform=managed --region=us-west1 --format="table(name, status.conditions[0].status)"
+````
+
+### Critério de Encerramento
+
+- Documentação e governança registradas.
+- MVP de observabilidade pronto para ativação.
+- Rastreabilidade entre módulo, plano e artefatos de status concluída.
+
 # 5. Monitorar primeira hora
+
 # Google Cloud Console → Monitoring
+
 ```
 
 ---
@@ -235,16 +270,20 @@ npm run e2e:smoke
 ### Onboarding não redireciona
 
 ```
+
 Causa: Redirect URI não configurado
 Solução: Adicionar URI no Dashboard → Connect → Settings
+
 ```
 
 ### Transferência falha
 
 ```
+
 Causa: Prestador não completou onboarding
 Solução: Refazer onboarding do prestador
-```
+
+````
 
 ### Webhook não processa
 
@@ -252,9 +291,9 @@ Solução: Refazer onboarding do prestador
 # Verificar secret
 gcloud run services describe servio-backend --region=us-west1 | grep STRIPE_WEBHOOK_SECRET
 
-# Reconfigurar se necessário
-gcloud run services update servio-backend --region=us-west1 --set-env-vars="STRIPE_WEBHOOK_SECRET=whsec_FIZOs8ismaBk0sgTUVyAUiPg2Cg28bpW"
-```
+# Reconfigurar se necessário (usar valor do .env.local)
+gcloud run services update servio-backend --region=us-west1 --set-env-vars="STRIPE_WEBHOOK_SECRET=<SEU_WEBHOOK_SECRET_AQUI>"
+````
 
 ---
 
