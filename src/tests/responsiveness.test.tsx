@@ -17,7 +17,7 @@ describe('ClientDashboard - Responsiveness', () => {
         <button className="fixed top-4 left-4 z-50 sm:hidden" data-testid="mobile-menu-btn">
           Menu
         </button>
-        
+
         {/* Sidebar responsivo */}
         <aside className="w-48 sm:w-64 bg-white" data-testid="sidebar">
           <div className="p-3 sm:p-6">
@@ -35,10 +35,10 @@ describe('ClientDashboard - Responsiveness', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const menuButton = screen.getByTestId('mobile-menu-btn');
     const sidebar = screen.getByTestId('sidebar');
-    
+
     // Button deve estar visível em mobile (sm:hidden aplicado)
     expect(menuButton).toBeInTheDocument();
     // Sidebar deve usar width reduzido em mobile
@@ -56,7 +56,7 @@ describe('ClientDashboard - Responsiveness', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const content = screen.getByTestId('content');
     // Validar classes de padding responsivo
     expect(content).toHaveClass('p-2', 'sm:p-4', 'md:p-6', 'lg:p-8');
@@ -64,7 +64,10 @@ describe('ClientDashboard - Responsiveness', () => {
 
   it('deve usar grid responsivo para cards (grid-cols-1 sm:grid-cols-2 lg:grid-cols-3)', () => {
     const TestWrapper = () => (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4" data-testid="grid">
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4"
+        data-testid="grid"
+      >
         <div>Card 1</div>
         <div>Card 2</div>
         <div>Card 3</div>
@@ -72,7 +75,7 @@ describe('ClientDashboard - Responsiveness', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const grid = screen.getByTestId('grid');
     expect(grid).toHaveClass('grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3');
     expect(grid).toHaveClass('gap-2', 'sm:gap-4');
@@ -83,7 +86,10 @@ describe('ClientDashboard - Responsiveness', () => {
 describe('ProviderDashboard - Responsiveness', () => {
   it('deve aplicar grid com breakpoint tablet (md:grid-cols-2 lg:grid-cols-3)', () => {
     const TestWrapper = () => (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" data-testid="job-grid">
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+        data-testid="job-grid"
+      >
         <div>Job Card 1</div>
         <div>Job Card 2</div>
         <div>Job Card 3</div>
@@ -91,7 +97,7 @@ describe('ProviderDashboard - Responsiveness', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const grid = screen.getByTestId('job-grid');
     // Desktop: 3 colunas
     expect(grid).toHaveClass('lg:grid-cols-3');
@@ -103,7 +109,10 @@ describe('ProviderDashboard - Responsiveness', () => {
 
   it('deve aplicar filtros com layout responsivo (flex-col sm:flex-row)', () => {
     const TestWrapper = () => (
-      <div className="bg-white p-3 sm:p-4 flex flex-col sm:flex-row gap-2 sm:gap-4" data-testid="filters">
+      <div
+        className="bg-white p-3 sm:p-4 flex flex-col sm:flex-row gap-2 sm:gap-4"
+        data-testid="filters"
+      >
         <div className="flex-1 min-w-full sm:min-w-[200px]">
           <label className="text-xs sm:text-sm">Categoria</label>
           <select data-testid="category-select" />
@@ -116,12 +125,12 @@ describe('ProviderDashboard - Responsiveness', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const filters = screen.getByTestId('filters');
     expect(filters).toHaveClass('flex-col', 'sm:flex-row');
     expect(filters).toHaveClass('p-3', 'sm:p-4');
     expect(filters).toHaveClass('gap-2', 'sm:gap-4');
-    
+
     // Inputs devem ser full-width em mobile
     const selects = screen.getByTestId('category-select');
     const inputs = screen.getByTestId('location-input');
@@ -137,7 +146,7 @@ describe('ProviderDashboard - Responsiveness', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const label = screen.getByTestId('label');
     expect(label).toHaveClass('text-xs', 'sm:text-sm');
   });
@@ -156,7 +165,7 @@ describe('ProspectorDashboard - Responsiveness', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const button = screen.getByTestId('tab-button');
     expect(button).toHaveClass('px-3', 'sm:px-6');
     expect(button).toHaveClass('py-2', 'sm:py-3');
@@ -172,7 +181,7 @@ describe('ProspectorDashboard - Responsiveness', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const button = screen.getByTestId('tab-btn');
     const fullText = button.querySelector('span.hidden');
     expect(fullText).toHaveClass('hidden', 'sm:inline');
@@ -186,7 +195,7 @@ describe('ProspectorDashboard - Responsiveness', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const container = screen.getByTestId('container');
     expect(container).toHaveClass('px-2', 'sm:px-4', 'py-4', 'sm:py-6');
   });
@@ -203,7 +212,7 @@ describe('ProspectorDashboard - Responsiveness', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const tabBar = screen.getByTestId('tab-bar');
     expect(tabBar).toHaveClass('overflow-x-auto');
   });
@@ -232,7 +241,7 @@ describe('General Layout - Responsive Validation', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const container = screen.getByTestId('max-width');
     expect(container).toHaveClass('max-w-7xl', 'mx-auto');
   });
@@ -245,7 +254,7 @@ describe('General Layout - Responsive Validation', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const container = screen.getByTestId('full-screen');
     expect(container).toHaveClass('h-screen', 'flex');
   });
@@ -261,7 +270,7 @@ describe('Mobile-First Design Validation', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const element = screen.getByTestId('responsive-width');
     // Base deve ser mobile-first (w-full)
     expect(element).toHaveClass('w-full');
@@ -278,10 +287,10 @@ describe('Mobile-First Design Validation', () => {
     );
 
     render(<TestWrapper />);
-    
+
     const mobileOnly = screen.getByText('Mobile Only');
     const desktopOnly = screen.getByText('Desktop Only');
-    
+
     expect(mobileOnly).toHaveClass('sm:hidden');
     expect(desktopOnly).toHaveClass('hidden', 'sm:inline');
   });

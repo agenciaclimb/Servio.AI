@@ -430,7 +430,9 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-sm border p-3 sm:p-4 mb-4 sm:mb-6 flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4">
           <div className="flex-1 min-w-full sm:min-w-[200px]">
-            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Categoria</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+              Categoria
+            </label>
             <select
               value={categoryFilter}
               onChange={e => setCategoryFilter(e.target.value)}
@@ -444,7 +446,9 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
             </select>
           </div>
           <div className="flex-1 min-w-full sm:min-w-[200px]">
-            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Localização</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+              Localização
+            </label>
             <input
               type="text"
               value={locationFilter}

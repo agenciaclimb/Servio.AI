@@ -626,7 +626,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
           <div className="flex items-center gap-2 mb-6 sm:mb-8">
             <span className="text-xl sm:text-2xl">👋</span>
             <div>
-              <p className="text-xs sm:text-sm font-semibold text-gray-900">{user.name.split(' ')[0]}!</p>
+              <p className="text-xs sm:text-sm font-semibold text-gray-900">
+                {user.name.split(' ')[0]}!
+              </p>
               <button
                 onClick={() => setIsProfileModalOpen(true)}
                 className="text-xs text-blue-600 hover:underline"
@@ -718,7 +720,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                   <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6">
                     <span className="text-2xl sm:text-4xl">✨</span>
                     <div>
-                      <h2 className="text-lg sm:text-2xl font-bold mb-1 sm:mb-2">Complete seu perfil</h2>
+                      <h2 className="text-lg sm:text-2xl font-bold mb-1 sm:mb-2">
+                        Complete seu perfil
+                      </h2>
                       <p className="text-xs sm:text-base text-blue-100 mb-2 sm:mb-4">
                         {onboardingStepsDone} de {onboardingStepsTotal} passos concluídos
                       </p>
@@ -729,8 +733,12 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                       <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-white/25 flex items-center justify-center text-lg sm:text-xl font-bold mb-2 sm:mb-3">
                         1
                       </div>
-                      <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2">Complete seu perfil</h3>
-                      <p className="text-xs sm:text-sm text-blue-100 mb-2 sm:mb-4">Adicione telefone e localização</p>
+                      <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2">
+                        Complete seu perfil
+                      </h3>
+                      <p className="text-xs sm:text-sm text-blue-100 mb-2 sm:mb-4">
+                        Adicione telefone e localização
+                      </p>
                       <button
                         onClick={() => setIsProfileModalOpen(true)}
                         className="text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-2 rounded-lg bg-white/20 hover:bg-white/30 transition"
@@ -742,15 +750,23 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                       <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-white/25 flex items-center justify-center text-lg sm:text-xl font-bold mb-2 sm:mb-3">
                         2
                       </div>
-                      <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2">Solicite seu primeiro serviço</h3>
-                      <p className="text-xs sm:text-sm text-blue-100 mb-2 sm:mb-4">A IA vai te ajudar!</p>
+                      <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2">
+                        Solicite seu primeiro serviço
+                      </h3>
+                      <p className="text-xs sm:text-sm text-blue-100 mb-2 sm:mb-4">
+                        A IA vai te ajudar!
+                      </p>
                     </div>
                     <div className="bg-white/15 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-6">
                       <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-white/25 flex items-center justify-center text-lg sm:text-xl font-bold mb-2 sm:mb-3">
                         3
                       </div>
-                      <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2">Cadastre um item</h3>
-                      <p className="text-xs sm:text-sm text-blue-100 mb-2 sm:mb-4">Para manutenção preventiva</p>
+                      <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2">
+                        Cadastre um item
+                      </h3>
+                      <p className="text-xs sm:text-sm text-blue-100 mb-2 sm:mb-4">
+                        Para manutenção preventiva
+                      </p>
                     </div>
                   </div>
                 </div>
