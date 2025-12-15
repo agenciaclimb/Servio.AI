@@ -1,0 +1,19 @@
+{
+  "fallback_threshold_minutes": 240,
+  "state": "ready",
+  "pending_pr": null,
+  "request_created_at": null,
+  "ack_received_at": null,
+  "result_received_at": null,
+  "timeout_threshold_ack_minutes": 15,
+  "timeout_threshold_result_minutes": 60,
+  "fallback_ready": false,
+  "fallback_since": null,
+  "monitor_runs": [
+    {
+      "started_at": "2025-12-13T03:46:58.475Z",
+      "events_dir": "C:\\Users\\JE\\servio.ai\\events"
+    }
+  ],
+  "last_state_check": "2025-12-13T03:46:58.478Z"
+}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ToastProvider } from './contexts/ToastContext';
 import { registerUserFcmToken, onForegroundMessage } from './services/messagingService';
@@ -22,6 +23,8 @@ const ServiceLandingPage = lazy(() => import('./components/ServiceLandingPage'))
 const ProviderLandingPage = lazy(() => import('./components/ProviderLandingPage'));
 const PaymentSuccessPage = lazy(() => import('./components/PaymentSuccessPage'));
 const FindProvidersPage = lazy(() => import('./components/FindProvidersPage'));
+// SEO: Página pública de prestador (rota dinâmica /p/:cidade/:servico/:slug)
+const PublicProviderPage = lazy(() => import('./src/pages/PublicProviderPage'));
 const MetricsDashboard = lazy(() => import('./src/components/MetricsPageDashboard'));
 const ProductListing = lazy(() => import('./src/components/ProductListing'));
 const ShoppingCart = lazy(() => import('./src/components/ShoppingCart'));
@@ -550,87 +553,97 @@ const App: React.FC = () => {
 
   return (
     <ToastProvider>
-      <div className="bg-slate-50 min-h-screen">
-        <Header
-          user={currentUser}
-          notifications={userNotifications}
-          onLoginClick={type => setAuthModal({ mode: 'login', userType: type })}
-          onRegisterClick={type => setAuthModal({ mode: 'register', userType: type })}
-          onLogoutClick={handleLogout}
-          onSetView={handleSetView}
-          onMarkAsRead={id =>
-            setAllNotifications(
-              allNotifications.map(n => (n.id === id ? { ...n, isRead: true } : n))
-            )
-          }
-          onMarkAllAsRead={() =>
-            setAllNotifications(
-              allNotifications.map(n =>
-                n.userId === currentUser?.email ? { ...n, isRead: true } : n
+      <Router>
+        <div className="bg-slate-50 min-h-screen">
+          <Header
+            user={currentUser}
+            notifications={userNotifications}
+            onLoginClick={type => setAuthModal({ mode: 'login', userType: type })}
+            onRegisterClick={type => setAuthModal({ mode: 'register', userType: type })}
+            onLogoutClick={handleLogout}
+            onSetView={handleSetView}
+            onMarkAsRead={id =>
+              setAllNotifications(
+                allNotifications.map(n => (n.id === id ? { ...n, isRead: true } : n))
               )
-            )
-          }
-        />
-        <main>
-          <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            <ErrorBoundary>
-              <Suspense fallback={<LoadingFallback />}>{renderContent()}</Suspense>
-            </ErrorBoundary>
-          </div>
-        </main>
-
-        {authModal && (
-          <AuthModal
-            mode={authModal.mode}
-            userType={authModal.userType}
-            onClose={() => setAuthModal(null)}
-            onSwitchMode={newMode => setAuthModal({ ...authModal, mode: newMode })}
-            onSuccess={handleAuthSuccess}
+            }
+            onMarkAllAsRead={() =>
+              setAllNotifications(
+                allNotifications.map(n =>
+                  n.userId === currentUser?.email ? { ...n, isRead: true } : n
+                )
+              )
+            }
           />
-        )}
+          <main>
+            <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+              <ErrorBoundary>
+                <Suspense fallback={<LoadingFallback />}>
+                  <Routes>
+                    {/* SEO: Página pública de prestador (URL limpa, indexável) */}
+                    <Route path="/p/:cidade/:servico/:slug" element={<PublicProviderPage />} />
+                    
+                    {/* Views internas (dashboard, perfil, etc.) */}
+                    <Route path="/*" element={renderContent()} />
+                  </Routes>
+                </Suspense>
+              </ErrorBoundary>
+            </div>
+          </main>
 
-        {wizardData && (
-          <Suspense fallback={<LoadingFallback />}>
-            <AIJobRequestWizard
-              onClose={() => setWizardData(null)}
-              onSubmit={handleWizardSubmit}
-              initialPrompt={wizardData.prompt}
-              initialData={wizardData.data}
+          {authModal && (
+            <AuthModal
+              mode={authModal.mode}
+              userType={authModal.userType}
+              onClose={() => setAuthModal(null)}
+              onSwitchMode={newMode => setAuthModal({ ...authModal, mode: newMode })}
+              onSuccess={handleAuthSuccess}
             />
-          </Suspense>
-        )}
+          )}
 
-        {matchingResults && (
-          <Suspense fallback={<LoadingFallback />}>
-            <MatchingResultsModal
-              results={matchingResults}
-              onClose={() => {
-                setMatchingResults(null);
-                setView({ name: 'dashboard' });
-              }}
-              onInvite={handleInviteProvider}
-            />
-          </Suspense>
-        )}
+          {wizardData && (
+            <Suspense fallback={<LoadingFallback />}>
+              <AIJobRequestWizard
+                onClose={() => setWizardData(null)}
+                onSubmit={handleWizardSubmit}
+                initialPrompt={wizardData.prompt}
+                initialData={wizardData.data}
+              />
+            </Suspense>
+          )}
 
-        {prospects && (
-          <Suspense fallback={<LoadingFallback />}>
-            <ProspectingNotificationModal
-              prospects={prospects}
-              onClose={() => {
-                setProspects(null);
-                setView({ name: 'dashboard' });
-              }}
-            />
-          </Suspense>
-        )}
+          {matchingResults && (
+            <Suspense fallback={<LoadingFallback />}>
+              <MatchingResultsModal
+                results={matchingResults}
+                onClose={() => {
+                  setMatchingResults(null);
+                  setView({ name: 'dashboard' });
+                }}
+                onInvite={handleInviteProvider}
+              />
+            </Suspense>
+          )}
 
-        {currentUser && (currentUser.type === 'prospector' || currentUser.type === 'prestador') && (
-          <Suspense fallback={null}>
-            <AIChatFloatingTrigger currentUser={currentUser} />
-          </Suspense>
-        )}
-      </div>
+          {prospects && (
+            <Suspense fallback={<LoadingFallback />}>
+              <ProspectingNotificationModal
+                prospects={prospects}
+                onClose={() => {
+                  setProspects(null);
+                  setView({ name: 'dashboard' });
+                }}
+              />
+            </Suspense>
+          )}
+
+          {currentUser && (currentUser.type === 'prospector' || currentUser.type === 'prestador') && (
+            <Suspense fallback={null}>
+              <AIChatFloatingTrigger currentUser={currentUser} />
+            </Suspense>
+          )}
+        </div>
+      </Router>
     </ToastProvider>
   );
 };

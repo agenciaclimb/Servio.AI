@@ -1,14 +1,14 @@
-# Task 3.1 — Otimizar Performance do ProspectorDashboard
+# Task 1.0 — Validar Protocolo Supremo v4.0 - Branch Protection
 
 **Prioridade**: HIGH  
-**Estimativa**: 3-4h  
+**Estimativa**: 1h  
 **Data Criação**: 2025-12-15
 
 ---
 
 ## Descrição
 
-Implementar lazy loading e memoização para QuickPanel e componentes pesados. Reduzir re-renders desnecessários.
+Documentar configuração de Branch Protection para main e criar guia de verificação
 
 ---
 
@@ -30,7 +30,7 @@ Implementar lazy loading e memoização para QuickPanel e componentes pesados. R
 
 - ✅ TypeScript com tipos estritos
 - ✅ Componentes React com interfaces Props
-- ✅ Commits atômicos com mensagem [task-3.1]
+- ✅ Commits atômicos com mensagem [task-1.0]
 - ✅ Coverage de testes ≥ 80%
 - ✅ Sem console.log em produção
 
@@ -53,8 +53,4 @@ Seguir exatamente esta especificação. Não improvisar.
 
 ---
 
-_Gerada em 2025-12-15T21:35:12.204Z | Versão: 1.0_
-
----
-
-**GitHub Issue**: [#35](https://github.com/agenciaclimb/Servio.AI/issues/35)
+_Gerada em 2025-12-15T21:34:16.844Z | Versão: 1.0_
