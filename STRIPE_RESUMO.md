@@ -11,7 +11,7 @@
 
 - ✅ Chave Publicável (Frontend): `pk_live_51OmPLvJEyu4utIB8...`
 - ✅ Chave Secreta (Backend): `sk_live_51OmPLvJEyu4utIB8...`
-- ✅ Webhook Signing Secret: `whsec_FIZOs8ismaBk0sgTUVyAUiPg2Cg28bpW`
+- ✅ Webhook Signing Secret: `whsec_[REDACTED]`
 
 **Locais configurados**:
 
