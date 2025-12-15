@@ -1,13 +1,13 @@
 {
   "type": "SYSTEM_AUDIT",
   "week_id": "2025-W50",
-  "timestamp_utc": "2025-12-15T01:30:33.125Z",
+  "timestamp_utc": "2025-12-15T01:55:52.327Z",
   "metrics": {
-    "timestamp_utc": "2025-12-15T01:30:31.062Z",
+    "timestamp_utc": "2025-12-15T01:55:50.692Z",
     "week_id": "2025-W50",
     "repo": "agenciaclimb/Servio.AI",
-    "run_id": "20217607608",
-    "total_commits": 380,
+    "run_id": "20217983313",
+    "total_commits": 381,
     "contributors": "5",
     "branches": "38",
     "source_files": 57,
@@ -16,7 +16,7 @@
       {
         "type": "potential_secret_leak",
         "count": 10,
-        "sample": "+        \"type\": \"potential_secret_leak\","
+        "sample": "- Remediação de 5 secrets reais em docs (whsec_FIZOs8... → whsec_[REDACTED])"
       }
     ]
   },
@@ -25,21 +25,22 @@
     "analysis": {
       "risk_level": "MEDIUM",
       "findings": [
-        "Identified 10 potential secret leaks in the codebase.",
-        "The number of branches (38) compared to contributors (5) may indicate a complex branching strategy that could increase the risk of merge conflicts or integration issues.",
-        "While the number of test files (125) is significant, the effectiveness of these tests needs to be further evaluated to ensure adequate code coverage and quality."
+        "Potential secret leaks detected in the codebase.",
+        "High number of commits may indicate frequent changes, requiring careful review.",
+        "A substantial number of test files relative to source files suggests good testing practices, but the revealed secrets pose a risk."
       ],
       "recommendations": [
-        "Immediately investigate and remediate the 10 potential secret leaks. Implement secret scanning and management tools to prevent future occurrences.",
-        "Review the branching strategy to simplify and streamline the development process. Consider adopting a more standardized branching model like Gitflow or GitHub Flow.",
-        "Perform a code coverage analysis to assess the effectiveness of the existing tests. Write additional tests to cover areas with insufficient coverage.",
-        "Implement static analysis tools to automatically detect and prevent security vulnerabilities during the development process."
+        "Immediately revoke and rotate all leaked secrets.",
+        "Implement a secret scanning solution in the CI/CD pipeline to prevent future leaks.",
+        "Conduct a thorough security review of the affected code areas.",
+        "Educate developers on secure coding practices and secret management.",
+        "Enforce stricter access controls on sensitive files and repositories."
       ]
     }
   },
   "summary": {
     "risk_level": "MEDIUM",
     "total_findings": 3,
-    "total_recommendations": 4
+    "total_recommendations": 5
   }
 }
