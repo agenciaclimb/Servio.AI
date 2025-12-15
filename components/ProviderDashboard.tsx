@@ -386,11 +386,11 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
           <ProfileStrength user={user} onEditProfile={() => setIsProfileModalOpen(true)} />
         </div>
       )}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Meus Serviços em Andamento</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-8">
+        <div className="md:col-span-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Meus Serviços</h2>
         </div>
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-3 md:space-y-4">
           <ProviderEarningsCard
             completedJobs={completedJobs}
             currentRate={currentRate}
@@ -404,7 +404,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
       </div>
 
       {myJobs.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {myJobs.map(job => (
             <ProviderJobCard
               key={job.id}
@@ -428,13 +428,15 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm border p-4 mb-6 flex flex-wrap gap-4">
-          <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+        <div className="bg-white rounded-lg shadow-sm border p-3 sm:p-4 mb-4 sm:mb-6 flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4">
+          <div className="flex-1 min-w-full sm:min-w-[200px]">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+              Categoria
+            </label>
             <select
               value={categoryFilter}
               onChange={e => setCategoryFilter(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
             >
               {categories.map(cat => (
                 <option key={cat} value={cat}>
@@ -443,14 +445,16 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
               ))}
             </select>
           </div>
-          <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Localização</label>
+          <div className="flex-1 min-w-full sm:min-w-[200px]">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+              Localização
+            </label>
             <input
               type="text"
               value={locationFilter}
               onChange={e => setLocationFilter(e.target.value)}
-              placeholder="Buscar por cidade ou endereço..."
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              placeholder="Cidade ou endereço..."
+              className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
           {(categoryFilter !== 'Todos' || locationFilter) && (

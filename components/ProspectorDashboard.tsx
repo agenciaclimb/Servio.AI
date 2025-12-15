@@ -43,14 +43,15 @@ const TabButton = React.memo<TabButtonProps>(({ label, icon, isActive, onClick, 
   return (
     <button
       onClick={onClick}
-      className={`px-6 py-3 font-medium transition-colors whitespace-nowrap ${
+      className={`px-3 sm:px-6 py-2 sm:py-3 font-medium text-xs sm:text-sm transition-colors whitespace-nowrap ${
         isActive
           ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
           : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
       }`}
       data-tour={dataTour}
     >
-      {icon} {label}
+      {icon} <span className="hidden sm:inline">{label}</span>
+      <span className="sm:hidden">{label.split(' ')[0]}</span>
     </button>
   );
 });
@@ -121,18 +122,18 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
         onOpenCampaign={handleOpenCampaign}
       />
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
         {/* Tabs Navigation Simplificada */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6 overflow-x-auto">
           <div className="flex overflow-x-auto">
             <TabButton
-              label="Dashboard IA"
+              label="Dashboard"
               icon="⚡"
               isActive={activeTab === 'dashboard'}
               onClick={() => handleTabClick('dashboard')}
             />
             <TabButton
-              label="Pipeline CRM"
+              label="Pipeline"
               icon="🎯"
               isActive={activeTab === 'crm'}
               onClick={() => handleTabClick('crm')}
@@ -153,7 +154,7 @@ const ProspectorDashboard: React.FC<ProspectorDashboardProps> = ({ userId }) => 
               dataTour="materials"
             />
             <TabButton
-              label="Estatísticas"
+              label="Stats"
               icon="📊"
               isActive={activeTab === 'overview'}
               onClick={() => handleTabClick('overview')}

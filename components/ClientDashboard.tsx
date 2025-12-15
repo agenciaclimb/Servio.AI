@@ -230,9 +230,11 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     try {
       // Call the existing submitProposal API with invite intent
       // For now, we'll use a mock/placeholder approach until backend supports direct invites
+      // eslint-disable-next-line no-console
       console.log(`Inviting provider ${providerId} to job ${matchingJobId}`);
       addToast('Prestador convidado com sucesso!', 'success');
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Erro ao convidar prestador:', error);
       addToast('Erro ao enviar convite. Tente novamente.', 'error');
     }
@@ -579,7 +581,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="fixed top-4 left-4 z-50 md:hidden bg-white p-2 rounded-lg shadow-lg border border-gray-200"
+        className="fixed top-4 left-4 z-50 sm:hidden bg-white p-2 rounded-lg shadow-lg border border-gray-200"
         aria-label="Toggle menu"
       >
         <svg
@@ -609,27 +611,29 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/50 z-40 sm:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar - Responsive Width */}
       <aside
-        className={`w-64 bg-white border-r border-gray-200 flex flex-col fixed inset-y-0 left-0 z-40 transform transition-transform duration-200 md:relative md:translate-x-0 ${
+        className={`w-48 sm:w-64 bg-white border-r border-gray-200 flex flex-col fixed inset-y-0 left-0 z-40 transform transition-transform duration-200 sm:relative sm:translate-x-0 ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="p-6 flex-1">
-          <div className="flex items-center gap-2 mb-8">
-            <span className="text-2xl">👋</span>
+        <div className="p-3 sm:p-6 flex-1">
+          <div className="flex items-center gap-2 mb-6 sm:mb-8">
+            <span className="text-xl sm:text-2xl">👋</span>
             <div>
-              <p className="text-sm font-semibold text-gray-900">Olá, {user.name.split(' ')[0]}!</p>
+              <p className="text-xs sm:text-sm font-semibold text-gray-900">
+                {user.name.split(' ')[0]}!
+              </p>
               <button
                 onClick={() => setIsProfileModalOpen(true)}
                 className="text-xs text-blue-600 hover:underline"
               >
-                Conta Pessoal
+                Conta
               </button>
             </div>
           </div>
@@ -640,114 +644,129 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                 setCurrentView('inicio');
                 setIsMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`w-full flex items-center gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                 currentView === 'inicio'
                   ? 'bg-blue-50 text-blue-700'
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
-              <span className="text-lg">🏠</span>
-              Início
+              <span className="text-base sm:text-lg">🏠</span>
+              <span className="hidden sm:inline">Início</span>
+              <span className="sm:hidden">Início</span>
             </button>
             <button
               onClick={() => {
                 setCurrentView('servicos');
                 setIsMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`w-full flex items-center gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                 currentView === 'servicos'
                   ? 'bg-blue-50 text-blue-700'
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
-              <span className="text-lg">📋</span>
-              Meus Serviços
+              <span className="text-base sm:text-lg">📋</span>
+              <span className="truncate">Serviços</span>
             </button>
             <button
               onClick={() => {
                 setCurrentView('itens');
                 setIsMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`w-full flex items-center gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                 currentView === 'itens'
                   ? 'bg-blue-50 text-blue-700'
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
-              <span className="text-lg">📦</span>
-              Meus Itens
+              <span className="text-base sm:text-lg">📦</span>
+              <span className="truncate">Itens</span>
             </button>
             <button
               onClick={() => {
                 setCurrentView('ajuda');
                 setIsMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`w-full flex items-center gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                 currentView === 'ajuda'
                   ? 'bg-blue-50 text-blue-700'
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
-              <span className="text-lg">❓</span>
-              Ajuda
+              <span className="text-base sm:text-lg">❓</span>
+              <span className="truncate">Ajuda</span>
             </button>
           </nav>
         </div>
-        <div className="p-6 border-t border-gray-200">
-          <button className="text-sm text-gray-600 hover:text-blue-600">Sair</button>
+        <div className="p-3 sm:p-6 border-t border-gray-200">
+          <button className="text-xs sm:text-sm text-gray-600 hover:text-blue-600">Sair</button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto pt-16 md:pt-0">
-        <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+      <main className="flex-1 overflow-y-auto pt-16 sm:pt-0">
+        <div className="max-w-7xl mx-auto p-2 sm:p-4 md:p-6 lg:p-8 space-y-4 sm:space-y-6">
           {currentView === 'inicio' && (
             <>
               {/* Card de Onboarding */}
               {showOnboarding && !profileComplete && (
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-8 text-white shadow-xl">
+                <div className="relative overflow-hidden rounded-lg sm:rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-4 sm:p-8 text-white shadow-xl">
                   <button
-                    className="absolute top-4 right-4 text-white/70 hover:text-white text-xl"
+                    className="absolute top-3 right-3 sm:top-4 sm:right-4 text-white/70 hover:text-white text-lg sm:text-xl"
                     onClick={() => setShowOnboarding(false)}
                   >
                     ✕
                   </button>
-                  <div className="flex items-start gap-4 mb-6">
-                    <span className="text-4xl">✨</span>
+                  <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6">
+                    <span className="text-2xl sm:text-4xl">✨</span>
                     <div>
-                      <h2 className="text-2xl font-bold mb-2">Complete seu perfil</h2>
-                      <p className="text-blue-100 mb-4">
+                      <h2 className="text-lg sm:text-2xl font-bold mb-1 sm:mb-2">
+                        Complete seu perfil
+                      </h2>
+                      <p className="text-xs sm:text-base text-blue-100 mb-2 sm:mb-4">
                         {onboardingStepsDone} de {onboardingStepsTotal} passos concluídos
                       </p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="bg-white/15 backdrop-blur-sm rounded-xl p-6">
-                      <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-xl font-bold mb-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
+                    <div className="bg-white/15 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-6">
+                      <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-white/25 flex items-center justify-center text-lg sm:text-xl font-bold mb-2 sm:mb-3">
                         1
                       </div>
-                      <h3 className="font-semibold mb-2">Complete seu perfil</h3>
-                      <p className="text-sm text-blue-100 mb-4">Adicione telefone e localização</p>
+                      <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2">
+                        Complete seu perfil
+                      </h3>
+                      <p className="text-xs sm:text-sm text-blue-100 mb-2 sm:mb-4">
+                        Adicione telefone e localização
+                      </p>
                       <button
                         onClick={() => setIsProfileModalOpen(true)}
-                        className="text-sm px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 transition"
+                        className="text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-2 rounded-lg bg-white/20 hover:bg-white/30 transition"
                       >
                         Completar
                       </button>
                     </div>
-                    <div className="bg-white/15 backdrop-blur-sm rounded-xl p-6">
-                      <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-xl font-bold mb-3">
+                    <div className="bg-white/15 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-6">
+                      <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-white/25 flex items-center justify-center text-lg sm:text-xl font-bold mb-2 sm:mb-3">
                         2
                       </div>
-                      <h3 className="font-semibold mb-2">Solicite seu primeiro serviço</h3>
-                      <p className="text-sm text-blue-100 mb-4">A IA vai te ajudar!</p>
+                      <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2">
+                        Solicite seu primeiro serviço
+                      </h3>
+                      <p className="text-xs sm:text-sm text-blue-100 mb-2 sm:mb-4">
+                        A IA vai te ajudar!
+                      </p>
                     </div>
-                    <div className="bg-white/15 backdrop-blur-sm rounded-xl p-6">
-                      <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-xl font-bold mb-3">
+                    <div className="bg-white/15 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-6">
+                      <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-white/25 flex items-center justify-center text-lg sm:text-xl font-bold mb-2 sm:mb-3">
                         3
                       </div>
-                      <h3 className="font-semibold mb-2">Cadastre um item</h3>
-                      <p className="text-sm text-blue-100 mb-4">Para manutenção preventiva</p>
+                      <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2">
+                        Cadastre um item
+                      </h3>
+                      <p className="text-xs sm:text-sm text-blue-100 mb-2 sm:mb-4">
+                        Para manutenção preventiva
+                      </p>
                     </div>
                   </div>
                 </div>
