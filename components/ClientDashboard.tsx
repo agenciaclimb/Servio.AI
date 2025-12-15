@@ -230,11 +230,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     try {
       // Call the existing submitProposal API with invite intent
       // For now, we'll use a mock/placeholder approach until backend supports direct invites
-      // eslint-disable-next-line no-console
       console.log(`Inviting provider ${providerId} to job ${matchingJobId}`);
       addToast('Prestador convidado com sucesso!', 'success');
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Erro ao convidar prestador:', error);
       addToast('Erro ao enviar convite. Tente novamente.', 'error');
     }
