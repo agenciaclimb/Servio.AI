@@ -21,6 +21,8 @@ regexes = [
   '''whsec_\[REDACTED\]''',
   '''sk_test_placeholder''',
   '''whsec_test_placeholder''',
+  '''sk_test_.*''',
+  '''whsec_test.*''',
 ]
 paths = [
   '''doc/COMO_CONFIGURAR_CHAVES\.md''',
@@ -44,8 +46,8 @@ tags = ["stripe", "secret-key", "critical"]
 
 [[rules]]
 id = "stripe-webhook-secret-real"
-description = "Stripe Webhook Secret (non-test)"
-regex = '''whsec_(?!test|placeholder|SUA_CHAVE|\[REDACTED\])[0-9a-zA-Z]{32,99}'''
+description = "Stripe Webhook Secret (real, non-test)"
+regex = '''whsec_[A-Z0-9a-z]{20,}'''
 tags = ["stripe", "webhook", "critical"]
 
 [[rules]]
