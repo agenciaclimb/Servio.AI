@@ -4,7 +4,10 @@
   "verdict": "APPROVED",
   "reasons": [],
   "risk_level": "LOW",
-  "findings": [],
+  "findings": [
+    "Nenhum problema de segurança detectado.",
+    "Nenhuma violação de qualidade detectada."
+  ],
   "doc_mestre_violations": [],
-  "emitted_at_utc": "2025-12-14T01:58:35.768Z"
+  "emitted_at_utc": "2025-12-15T01:54:51.255Z"
 }
