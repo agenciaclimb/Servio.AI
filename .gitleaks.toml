@@ -4,13 +4,55 @@ title = "Servio.AI gitleaks configuration"
 # Rationale:
 # - Firebase Web API keys (AIza...) are NOT secrets and are safe to be public.
 # - Documentation may contain example strings that match leak signatures.
+# - Test files use mock secrets (sk_test_123abc, whsec_test123).
+
+[extend]
+useDefault = true
 
 [allowlist]
-description = "Allow Firebase web keys and specific docs"
+description = "Allow Firebase web keys, test mocks, and redacted docs"
 regexes = [
-  '''AIza[0-9A-Za-z\-_]{35}'''
+  '''AIza[0-9A-Za-z\-_]{35}''',
+  '''sk_test_123abc''',
+  '''whsec_test123''',
+  '''pk_test_SUA_CHAVE''',
+  '''sk_test_SUA_CHAVE''',
+  '''whsec_SUA_CHAVE''',
+  '''whsec_\[REDACTED\]''',
+  '''sk_test_placeholder''',
+  '''whsec_test_placeholder''',
+  '''sk_test_.*''',
+  '''whsec_test.*''',
 ]
 paths = [
   '''doc/COMO_CONFIGURAR_CHAVES\.md''',
-  '''firebaseConfig\.ts'''
+  '''firebaseConfig\.ts''',
+  '''\.env\.example$''',
+  '''\.env\.production\.example$''',
+  '''tests/.*\.(test|spec)\.(ts|tsx|js)$''',
+  '''scripts/secret-scanner\.js$''',
+  '''GUIA_REVOGACAO_CHAVES\.md$''',
+  '''STRIPE_WEBHOOK_PRODUCAO_CONFIGURADO\.md$''',
+  '''STRIPE_RESUMO\.md$''',
+  '''STRIPE_RELATORIO_FINAL\.txt$''',
 ]
+
+# Custom rules for Servio.AI specific secrets
+[[rules]]
+id = "stripe-live-secret-key"
+description = "Stripe Live Secret Key (CRITICAL)"
+regex = '''sk_live_[0-9a-zA-Z]{24,99}'''
+tags = ["stripe", "secret-key", "critical"]
+
+[[rules]]
+id = "stripe-webhook-secret-real"
+description = "Stripe Webhook Secret (real, non-test)"
+regex = '''whsec_[A-Z0-9a-z]{20,}'''
+tags = ["stripe", "webhook", "critical"]
+
+[[rules]]
+id = "github-pat"
+description = "GitHub Personal Access Token"
+regex = '''ghp_[0-9a-zA-Z]{36}'''
+tags = ["github", "token", "critical"]
+
