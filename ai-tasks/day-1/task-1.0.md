@@ -53,8 +53,4 @@ Seguir exatamente esta especificação. Não improvisar.
 
 ---
 
-_Gerada em 2025-12-15T20:32:10.601Z | Versão: 1.0_
-
----
-
-**GitHub Issue**: [#33](https://github.com/agenciaclimb/Servio.AI/issues/33)
+_Gerada em 2025-12-15T21:34:16.844Z | Versão: 1.0_

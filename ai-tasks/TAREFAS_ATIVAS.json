@@ -1,26 +1,54 @@
 {
   "status": "em-processamento",
-  "dia": 1,
+  "dia": 3,
   "tasks": [
+    {
+      "id": "3.1",
+      "titulo": "Otimizar Performance do ProspectorDashboard",
+      "descricao": "Implementar lazy loading e memoização para QuickPanel e componentes pesados. Reduzir re-renders desnecessários.",
+      "prioridade": "HIGH",
+      "estimativa": "3-4h",
+      "day": 3,
+      "tipo": "performance",
+      "objetivo": "Melhorar tempo de carregamento do dashboard de 2s para <1s"
+    },
+    {
+      "id": "3.2",
+      "titulo": "Implementar UI Responsiva para Mobile",
+      "descricao": "Adaptar dashboards (Cliente, Prestador, Prospector) para telas mobile. Breakpoints 320px, 768px, 1024px.",
+      "prioridade": "MEDIUM",
+      "estimativa": "4-5h",
+      "day": 3,
+      "tipo": "ui-ux",
+      "objetivo": "100% funcional em mobile com UX otimizada"
+    },
+    {
+      "id": "3.3",
+      "titulo": "Adicionar Analytics de Conversão",
+      "descricao": "Integrar eventos de analytics para rastrear: jobs criados, propostas enviadas, pagamentos concluídos, conversão de leads.",
+      "prioridade": "MEDIUM",
+      "estimativa": "2-3h",
+      "day": 3,
+      "tipo": "analytics",
+      "objetivo": "Dashboard de métricas em tempo real para decisões data-driven"
+    }
+  ],
+  "tasks_concluidas": [
     {
       "id": "1.0",
       "titulo": "Validar Protocolo Supremo v4.0 - Branch Protection",
-      "descricao": "Documentar configuração de Branch Protection para main e criar guia de verificação",
-      "prioridade": "HIGH",
-      "estimativa": "1h",
-      "day": 1,
-      "tipo": "documentacao",
-      "objetivo": "Garantir que Branch Protection está ativo e documentar o processo"
+      "status": "DONE",
+      "data_conclusao": "2025-12-15",
+      "commit": "956a081",
+      "issue": "#33"
     },
     {
       "id": "2.0",
-      "titulo": "Corrigir 41 testes falhando - Ajustar mocks/assertions",
-      "descricao": "Investigar e corrigir 41 testes falhando. Maioria são mock/fallback legítimos (network, AI failures) mas alguns precisam ajuste em assertions ou fixtures Firebase.",
-      "prioridade": "MEDIUM",
-      "estimativa": "2-3h",
-      "day": 1,
-      "tipo": "bugfix",
-      "objetivo": "Elevar taxa de sucesso para 100% ou documentar false positives"
+      "titulo": "Corrigir 41 testes falhando",
+      "status": "DONE",
+      "data_conclusao": "2025-12-15",
+      "commit": "bb86057",
+      "issue": "#34"
     }
   ],
   "instrucoes": {

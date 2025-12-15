@@ -1,37 +1,60 @@
-# Task 3.1 — Implementar sistema de tasks automático (ai-tasks/day-X/)
+# Task 3.1 — Otimizar Performance do ProspectorDashboard
 
-ID: 3.1
-Protocolo: v4.0
+**Prioridade**: HIGH  
+**Estimativa**: 3-4h  
+**Data Criação**: 2025-12-15
 
-Descrição:
-Criação de um sistema automático para leitura e execução de tasks definidas em arquivos JSON.
+---
 
-Critérios de Aceitação:
+## Descrição
 
-- Sistema lê e parseia arquivos JSON de tasks
-- Sistema valida o schema dos arquivos
-- Sistema executa as ações descritas
-- Sistema lida com erros apropriadamente
-- Logging básico das ações executadas
+Implementar lazy loading e memoização para QuickPanel e componentes pesados. Reduzir re-renders desnecessários.
 
-Arquivos:
+---
 
-- Criar: `ai-tasks/task_manager.ts`, `ai-tasks/task_interface.ts`, `tests/task_manager.test.ts`
-- Modificar: (nenhum)
+## Especificação Técnica
 
-Dependências: (nenhuma)
-Esforço Estimado: 8h
+### 1. Arquivos a Modificar/Criar
 
-Plano de Implementação:
+- (Será determinado na implementação)
 
-1. Definir `Task` interface e schemas básicos
-2. Implementar `TaskManager` com: carregar JSON, validar, executar handlers
-3. Adicionar logging simples usando console + hooks para integrar logger posterior (Task 3.3)
-4. Escrever testes unitários básicos com Vitest
-5. Preparar branch `feature/task-3.1` e PR para auditoria Gemini
+### 2. Alterações Exigidas
 
-Observações:
+- (Nenhuma alteração estrutural definida)
 
-- Integrar com futura camada de auditoria (Task 3.3)
-- Arquitetura simples, extensível para ações como criação de arquivos, abrir issues, etc.
-- Garantir que não dependa de serviços externos na primeira versão.
+### 3. Testes Necessários
+
+- Unit tests para nova funcionalidade
+
+### 4. Padrões a Respeitar
+
+- ✅ TypeScript com tipos estritos
+- ✅ Componentes React com interfaces Props
+- ✅ Commits atômicos com mensagem [task-3.1]
+- ✅ Coverage de testes ≥ 80%
+- ✅ Sem console.log em produção
+
+---
+
+## Critério de Sucesso
+
+- ✅ Implementação exata da spec
+- ✅ Testes passando
+- ✅ Sem warnings de lint
+- ✅ Pronto para produção
+
+---
+
+## Nota da Auditoria
+
+Esta task foi **gerada por Gemini** e está pronta para execução pelo Copilot.
+
+Seguir exatamente esta especificação. Não improvisar.
+
+---
+
+_Gerada em 2025-12-15T21:35:12.204Z | Versão: 1.0_
+
+---
+
+**GitHub Issue**: [#35](https://github.com/agenciaclimb/Servio.AI/issues/35)
