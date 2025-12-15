@@ -4974,9 +4974,43 @@ Após primeiro hardening (HIGH → MEDIUM), System Audit ainda detectou:
 ✅ Coverage report automático em CI  
 ✅ 38 branches (redução de 41% desde HIGH RISK)
 
-**Próximo**: Re-executar `gemini-system-audit.yml` para validar LOW RISK 🟢  
-✅ **Validado**: "Review commit history and remove accidentally committed secrets" — Nenhum secret encontrado no histórico  
-✅ **Reforçado**: `.gitignore` e `.env.example` corretos, documentação atualizada
+**Próximo**: Re-executar `gemini-system-audit.yml` para validar LOW RISK 🟢
+
+---
+
+## 🌐 CICLO B — ARQUITETURA SEO PÚBLICA (2025-12-15)
+
+**Executor**: COPILOT (Protocolo Supremo v4.0)  
+**Escopo**: SEO Público (prestadores)  
+**Status**: EM ANDAMENTO
+
+### Objetivo
+
+Implementar rota pública indexável para prestadores com SSR/SSG e SEO técnico/semântico, sem afetar prospector ou cliente.
+
+### Entregas Planejadas
+
+1. Rota pública `/p/{cidade}/{servico}/{slug}` com HTML renderizado no servidor
+2. SEO técnico: title, meta description, canonical, OpenGraph, robots.txt, sitemap dinâmico
+3. SEO semântico: Schema.org (LocalBusiness, Service), headings estruturados
+4. Arquitetura isolada: sem dependências de prospector/cliente/IA
+5. Atualização append-only neste documento e evidências em repositório
+
+### Restrições de Governança
+
+- Não implementar prospector, cliente ou IA neste ciclo
+- Não alterar arquitetura global
+- Não auditar prontidão; apenas executar escopo
+- Documento Mestre é lei (append-only)
+
+### Evidências Iniciais
+
+- Branch de trabalho: feat/seo-public-architecture
+- Servidor SSR SEO: `ssr-seo-server.js` (rota /p, robots.txt, sitemap.xml)
+- Dados base para sitemap: `seo/providers.sample.json`
+- Script de execução: `npm run start:seo`
+  ✅ **Validado**: "Review commit history and remove accidentally committed secrets" — Nenhum secret encontrado no histórico  
+  ✅ **Reforçado**: `.gitignore` e `.env.example` corretos, documentação atualizada
 
 ### Resultado Final
 
