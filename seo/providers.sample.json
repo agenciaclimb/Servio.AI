@@ -1,0 +1,53 @@
+[
+  {
+    "city": "São Paulo",
+    "citySlug": "sao-paulo",
+    "region": "SP",
+    "service": "Eletricista Residencial",
+    "serviceSlug": "eletricista",
+    "slug": "joao-silva-eletricista",
+    "name": "João Silva Serviços Elétricos",
+    "description": "Eletricista certificado para instalações, manutenção preventiva e emergências em São Paulo. Atendimento rápido e seguro.",
+    "serviceDetail": "Quadros elétricos, disjuntores, aterramento, DR e projetos de eficiência energética.",
+    "image": "https://via.placeholder.com/1200x630.png?text=Eletricista+Sao+Paulo",
+    "email": "contato@joaosilvaeletricista.com",
+    "phone": "+5511999999999",
+    "website": "https://joaosilvaeletricista.com",
+    "links": ["https://www.facebook.com/joaosilvaeletricista"],
+    "geo": { "lat": -23.55052, "lng": -46.633308 }
+  },
+  {
+    "city": "Rio de Janeiro",
+    "citySlug": "rio-de-janeiro",
+    "region": "RJ",
+    "service": "Encanador 24h",
+    "serviceSlug": "encanador",
+    "slug": "maria-oliveira-encanadora",
+    "name": "Maria Oliveira Encanadora",
+    "description": "Desentupimento, vazamentos e instalações hidráulicas com atendimento 24h no Rio de Janeiro.",
+    "serviceDetail": "Detecção de vazamentos, troca de tubulações, pressurizadores e aquecedores.",
+    "image": "https://via.placeholder.com/1200x630.png?text=Encanador+Rio+de+Janeiro",
+    "email": "contato@mariaencanadora.com",
+    "phone": "+5521999999999",
+    "website": "https://mariaencanadora.com",
+    "links": ["https://www.instagram.com/mariaencanadora"],
+    "geo": { "lat": -22.906847, "lng": -43.172897 }
+  },
+  {
+    "city": "Belo Horizonte",
+    "citySlug": "belo-horizonte",
+    "region": "MG",
+    "service": "Pintor Profissional",
+    "serviceSlug": "pintor",
+    "slug": "carlos-pereira-pintor",
+    "name": "Carlos Pereira Pinturas",
+    "description": "Pintura residencial e comercial com acabamento premium em Belo Horizonte. Consultoria de cores inclusa.",
+    "serviceDetail": "Texturização, massa corrida, grafiato e impermeabilização de fachadas.",
+    "image": "https://via.placeholder.com/1200x630.png?text=Pintor+Belo+Horizonte",
+    "email": "contato@carlospereirapinturas.com",
+    "phone": "+5531999999999",
+    "website": "https://carlospereirapinturas.com",
+    "links": ["https://www.linkedin.com/in/carlospereirapintor"],
+    "geo": { "lat": -19.9166813, "lng": -43.9344931 }
+  }
+]
