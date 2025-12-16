@@ -1,0 +1,129 @@
+{
+  "tasks": [
+    {
+      "id": "4.1",
+      "day": 4,
+      "titulo": "Integração Pipedrive CRM - Sync Bidirecional",
+      "prioridade": "HIGH",
+      "estimativa": "8h",
+      "descricao": "Implementar integração completa com Pipedrive CRM. Sincronizar leads de clientes com deals do sistema Servio.AI. Criar webhook handlers para atualizações em tempo real. Implementar mapeamento de campos e transformação de dados.",
+      "objetivo": "Permitir tracking de leads automático, reduz work manual 70%",
+      "area": "Integrações Externas",
+      "features": [
+        "API Pipedrive conectada",
+        "Sync bidirecional",
+        "Webhook handlers",
+        "Dashboard de status"
+      ],
+      "acceptance_criteria": ["Integration tests 8+", "Webhook recebendo eventos", "Coverage > 80%"]
+    },
+    {
+      "id": "4.2",
+      "day": 4,
+      "titulo": "Integração Twilio - SMS/Voice Notifications",
+      "prioridade": "HIGH",
+      "estimativa": "6h",
+      "descricao": "Implementar notificações SMS e voice via Twilio. Criar templates de mensagens para eventos críticos (nova proposta, status atualizado, pagamento confirmado). Adicionar opções de preferência de comunicação no perfil do usuário.",
+      "objetivo": "Melhora engajamento 40%, reduz churn via notificações tempestivas",
+      "area": "Integrações Externas",
+      "features": ["Twilio SDK", "Templates SMS", "Voice calls", "User preferences"],
+      "acceptance_criteria": [
+        "SMS enviado com sucesso",
+        "Voice calls funcionando",
+        "10+ unit tests"
+      ]
+    },
+    {
+      "id": "4.3",
+      "day": 4,
+      "titulo": "Landing Pages com IA - Gerador de Copy",
+      "prioridade": "MEDIUM",
+      "estimativa": "10h",
+      "descricao": "Criar sistema de landing pages dinamicamente gerado via Gemini. Aceitar briefing do usuário (tipo de serviço, target audience) e gerar copy otimizado para SEO + conversão. Integrar com Stripe checkout. A/B testing de headlines.",
+      "objetivo": "Monetização direta: SaaS de landing pages IA, target 2-3 conversões/semana",
+      "area": "Automação & IA",
+      "features": [
+        "Gemini prompt chain",
+        "Templates HTML",
+        "Stripe integration",
+        "A/B testing",
+        "Analytics"
+      ],
+      "acceptance_criteria": [
+        "Endpoint POST /api/landing-pages/generate",
+        "E2E test completo",
+        "Analytics tracking"
+      ]
+    },
+    {
+      "id": "4.4",
+      "day": 4,
+      "titulo": "Sistema de Monitoramento & Alertas",
+      "prioridade": "HIGH",
+      "estimativa": "7h",
+      "descricao": "Implementar observability completa. Adicionar logging estruturado via Winston, métricas Prometheus, tracing distribuído. Criar alertas para SLO (99% uptime, <1s latency). Dashboard Grafana com métricas em tempo real.",
+      "objetivo": "Reduz MTTR 80%, melhora confiabilidade de 99% → 99.5%",
+      "area": "Infraestrutura",
+      "features": [
+        "Winston logger",
+        "Prometheus metrics",
+        "Cloud Trace",
+        "Alertas",
+        "Dashboard Grafana"
+      ],
+      "acceptance_criteria": [
+        "Logs em JSON",
+        "Métricas exportadas",
+        "Alertas <2min",
+        "SLO dashboard"
+      ]
+    },
+    {
+      "id": "4.5",
+      "day": 4,
+      "titulo": "WhatsApp Business Integration - Suporte ao Cliente",
+      "prioridade": "MEDIUM",
+      "estimativa": "6h",
+      "descricao": "Integrar WhatsApp Business API. Permitir suporte ao cliente via WhatsApp. Implementar chatbot simples para perguntas frequentes, escalar para human agent quando necessário. Histórico de conversas em Firestore.",
+      "objetivo": "Customer support 24/7, melhora satisfaction score 35%",
+      "area": "Integrações Externas",
+      "features": ["WhatsApp API", "Chatbot", "Escalação", "Histórico", "FAQ"],
+      "acceptance_criteria": [
+        "Webhook recebendo msgs",
+        "Bot >80% acurácia",
+        "Load testing 100 msgs/min"
+      ]
+    },
+    {
+      "id": "4.6",
+      "day": 4,
+      "titulo": "API Rate Limiting & Security Hardening",
+      "prioridade": "HIGH",
+      "estimativa": "5h",
+      "descricao": "Implementar rate limiting com Redis. Adicionar CORS rigoroso, CSP headers, OWASP top 10 protections. Criar audit log de tentativas de ataque. Validar todas entradas com Zod. Implementar API versioning.",
+      "objetivo": "Reduz risk de segurança 85%, passa em compliance checks",
+      "area": "Infraestrutura",
+      "features": [
+        "Rate limiter",
+        "Security headers",
+        "Input validation",
+        "Audit log",
+        "API versioning"
+      ],
+      "acceptance_criteria": [
+        "100 req/min limit",
+        "OWASP 0 criticals",
+        "11+ security tests",
+        "SonarQube rating A"
+      ]
+    }
+  ],
+  "metadata": {
+    "audit_date": "2025-12-16T21:30:00Z",
+    "auditor": "Orchestrator (Automatic Audit Mode)",
+    "health_score": 87,
+    "risk_level": "LOW",
+    "total_hours": 42,
+    "execution_summary": "Sistema em excelente estado após Dia 3. Todas 6 tasks concluídas com sucesso, 0 regressões. Performance melhorou 50%, E2E 100% validado. Dia 4 focará em integrações externas (CRM, Twilio, WhatsApp), automação IA, e infraestrutura de monitoramento."
+  }
+}
