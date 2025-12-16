@@ -1,4 +1,4 @@
-import app from '../firebaseConfig';
+import app, { isFirebaseMock } from '../firebaseConfig';
 import { getMessaging, getToken, onMessage, isSupported, MessagePayload } from 'firebase/messaging';
 import * as API from './api';
 
@@ -13,6 +13,11 @@ async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null
 }
 
 export async function getFcmToken(): Promise<string | null> {
+  if (isFirebaseMock) {
+    console.warn('[FCM] Firebase mock ativo. Push notifications desativadas em CI/teste.');
+    return null;
+  }
+
   try {
     const supported = await isSupported();
     if (!supported) {
@@ -48,6 +53,7 @@ export async function registerUserFcmToken(userEmail: string): Promise<string | 
 }
 
 export async function onForegroundMessage(callback: (payload: MessagePayload) => void) {
+  if (isFirebaseMock) return;
   const supported = await isSupported();
   if (!supported) return;
   const messaging = getMessaging(app);

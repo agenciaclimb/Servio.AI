@@ -5284,6 +5284,44 @@ gh workflow run gemini-system-audit.yml --ref main
 - Builds recentes com status (success/failure), duration, branch, commit hash
 - Formatação de datas e durações em PT-BR
 
+## ✅ TASK 3.6 — Testes E2E do ciclo completo (Protocolo v4.0)
+
+**Data Conclusão**: 16 de dezembro de 2025  
+**Executor**: COPILOT (Protocolo Supremo v4.0 - Steps 1-7)  
+**Status**: ✅ CONCLUÍDO (20/20 testes passando)  
+**PR**: #43 — “[task-3.6] E2E protocolo v4.0 — 20/20 passos passando”  
+**Commit Hash**: 77bd0f1  
+**Esforço**: 16 horas (Planejado)
+
+### Escopo Entregue
+
+- Suite Playwright cobrindo 10 passos do ciclo (chromium e firefox)
+- Dados auxiliares para E2E
+- Script npm dedicado para o protocolo
+- Workflow GitHub Actions para execução automática em PRs
+
+### Arquivos Criados/Alterados
+
+1. tests/e2e/protocol.spec.ts — Suíte E2E principal do Protocolo v4.0 (10 passos)
+2. tests/e2e/test_data.json — Dados de teste padronizados
+3. package.json — Script `e2e:protocol`
+4. .github/workflows/e2e-protocol.yml — Pipeline E2E (Playwright) em PRs
+
+### Ajustes Técnicos
+
+- Resolvemos strict mode violation no botão “Cadastre-se” usando seletor contido no modal
+- Ignoramos ruído de erros externos (Stripe/CORS) no check de console do Firefox
+
+### Resultados
+
+- Playwright: 20/20 testes passando localmente
+- CI: Workflow criado para rodar `npm run e2e:protocol` com browsers provisionados
+
+### Próximos Passos
+
+- Auditoria e merge do PR #43
+- Manter o E2E no pipeline e expandir cobertura para fluxos de pagamento quando Stripe estiver habilitado
+
 ✅ **Insights Automáticos**
 
 - 5 insights gerados baseados em métricas
