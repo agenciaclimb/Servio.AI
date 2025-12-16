@@ -4,7 +4,11 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { DocumentoMestreParser, validateDocumentoMestre, ValidationResult } from '../../master_document/parser';
+import {
+  DocumentoMestreParser,
+  validateDocumentoMestre,
+  ValidationResult,
+} from '../../master_document/parser';
 import * as fs from 'fs';
 
 // Mock do fs para testes
@@ -184,7 +188,7 @@ describe('DocumentoMestreParser - Schema Validation', () => {
   describe('Custom Validations', () => {
     it('deve gerar warning se coverage < 80%', async () => {
       const parser2 = new DocumentoMestreParser();
-      
+
       const mockSchema = {
         type: 'object',
         properties: {},
@@ -211,7 +215,7 @@ describe('DocumentoMestreParser - Schema Validation', () => {
     it('deve gerar warning se componente não está 🟢 em PRODUCAO', async () => {
       // Teste conceitual: validar que warnings são gerados para componentes não-green
       const parser3 = new DocumentoMestreParser();
-      
+
       vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify({ type: 'object' }));
       await parser3.loadSchema();
 

@@ -142,7 +142,7 @@ export class DocumentoMestreParser {
    */
   parseMarkdownToJSON(markdownPath: string): Partial<DocumentoMestre> {
     const content = fs.readFileSync(markdownPath, 'utf-8');
-    
+
     // Parse básico de seções (para MVP)
     const data: Partial<DocumentoMestre> = {
       metadata: {
