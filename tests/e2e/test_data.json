@@ -1,0 +1,14 @@
+{
+  "adminEmail": "admin@servio.ai",
+  "clientEmail": "cliente.teste@servio.ai",
+  "providerEmail": "prestador.teste@servio.ai",
+  "providerCity": "sao-paulo",
+  "providerService": "eletricista",
+  "providerSlug": "joao-silva",
+  "jobPrompt": "Preciso instalar duas tomadas na sala",
+  "jobCategory": "eletricista",
+  "jobServiceType": "tabelado",
+  "jobUrgency": "normal",
+  "jobAddress": "Rua ABC, 123 - São Paulo",
+  "inviteCode": "SERVIO-TEST-INVITE-001"
+}
