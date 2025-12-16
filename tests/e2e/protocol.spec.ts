@@ -4,7 +4,21 @@ import { test, expect } from '@playwright/test';
 test.describe('🧪 Protocolo v4.0 — Ciclo completo (10 passos)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.waitForSelector('header', { timeout: 15000 });
+    
+    // Diagnóstico: verificar se body tem conteúdo
+    const bodyContent = await page.evaluate(() => document.body.innerHTML.substring(0, 100));
+    console.log('Body content (first 100 chars):', bodyContent);
+    
+    // Tentar encontrar header com timeout maior
+    try {
+      await page.waitForSelector('header', { timeout: 15000 });
+    } catch (err) {
+      // Se falhar, logar o HTML completo para debugging
+      const fullHtml = await page.content();
+      console.log('Full HTML length:', fullHtml.length);
+      console.log('First 500 chars:', fullHtml.substring(0, 500));
+      throw err;
+    }
   });
 
   test('Passo 1: Home acessível e header visível', async ({ page }) => {
