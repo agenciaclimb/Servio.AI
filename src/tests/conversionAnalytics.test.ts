@@ -92,7 +92,13 @@ describe('ConversionAnalyticsService', () => {
     it('trackJobCreated deve chamar trackEvent com eventType correto', async () => {
       const spyTrack = vi.spyOn(service, 'trackEvent');
 
-      await service.trackJobCreated('user-123', 'user@example.com', 'job-456', 'encanamento', 'São Paulo');
+      await service.trackJobCreated(
+        'user-123',
+        'user@example.com',
+        'job-456',
+        'encanamento',
+        'São Paulo'
+      );
 
       expect(spyTrack).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -331,19 +337,31 @@ describe('ConversionAnalyticsService', () => {
 
       // Etapa 1: Signup
       await service.trackSignupCompleted(userId, email, 'cliente', 'google');
-      expect(spyTrack).toHaveBeenNthCalledWith(1, expect.objectContaining({ eventType: 'signup_completed' }));
+      expect(spyTrack).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ eventType: 'signup_completed' })
+      );
 
       // Etapa 2: Profile Completed
       await service.trackProfileCompleted(userId, email, 'cliente');
-      expect(spyTrack).toHaveBeenNthCalledWith(2, expect.objectContaining({ eventType: 'profile_completed' }));
+      expect(spyTrack).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ eventType: 'profile_completed' })
+      );
 
       // Etapa 3: Job Created
       await service.trackJobCreated(userId, email, 'job-456', 'encanamento', 'SP');
-      expect(spyTrack).toHaveBeenNthCalledWith(3, expect.objectContaining({ eventType: 'job_created' }));
+      expect(spyTrack).toHaveBeenNthCalledWith(
+        3,
+        expect.objectContaining({ eventType: 'job_created' })
+      );
 
       // Etapa 4: Payment Completed
       await service.trackPaymentCompleted(userId, email, 'job-456', 2500, 'credit_card');
-      expect(spyTrack).toHaveBeenNthCalledWith(4, expect.objectContaining({ eventType: 'payment_completed' }));
+      expect(spyTrack).toHaveBeenNthCalledWith(
+        4,
+        expect.objectContaining({ eventType: 'payment_completed' })
+      );
 
       expect(spyTrack).toHaveBeenCalledTimes(4);
     });
@@ -355,15 +373,24 @@ describe('ConversionAnalyticsService', () => {
 
       // Etapa 1: Signup
       await service.trackSignupCompleted(userId, email, 'prestador', 'facebook');
-      expect(spyTrack).toHaveBeenNthCalledWith(1, expect.objectContaining({ eventType: 'signup_completed' }));
+      expect(spyTrack).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ eventType: 'signup_completed' })
+      );
 
       // Etapa 2: Profile Completed
       await service.trackProfileCompleted(userId, email, 'prestador');
-      expect(spyTrack).toHaveBeenNthCalledWith(2, expect.objectContaining({ eventType: 'profile_completed' }));
+      expect(spyTrack).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ eventType: 'profile_completed' })
+      );
 
       // Etapa 3: Proposal Sent
       await service.trackProposalSent(userId, email, 'prop-789', 'job-456', 1500);
-      expect(spyTrack).toHaveBeenNthCalledWith(3, expect.objectContaining({ eventType: 'proposal_sent' }));
+      expect(spyTrack).toHaveBeenNthCalledWith(
+        3,
+        expect.objectContaining({ eventType: 'proposal_sent' })
+      );
 
       expect(spyTrack).toHaveBeenCalledTimes(3);
     });

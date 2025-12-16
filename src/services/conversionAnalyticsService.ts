@@ -64,10 +64,10 @@ class ConversionAnalyticsService {
       };
 
       const docRef = await addDoc(collection(db, this.collectionName), eventDoc);
-      
+
       // Atualizar métricas agregadas em tempo real
       await this.updateMetrics(event.eventType, event.userRole, event.metadata?.amount || 0);
-      
+
       return docRef.id;
     } catch (error) {
       // eslint-disable-next-line no-console
