@@ -35,6 +35,9 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      - name: Build frontend
+        run: npm run build
+
       - name: Run protocol E2E
         env:
           NODE_ENV: test
