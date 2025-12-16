@@ -25,15 +25,6 @@ export default defineConfig({
       reuseExistingServer: true,
       timeout: 120_000,
     },
-    {
-      command: 'npm --prefix backend start',
-      url: 'http://localhost:8081',
-      reuseExistingServer: true,
-      timeout: 120_000,
-      env: {
-        NODE_ENV: 'test',
-      },
-    },
   ],
   projects: [
     {
