@@ -4,11 +4,11 @@ import { test, expect } from '@playwright/test';
 test.describe('🧪 Protocolo v4.0 — Ciclo completo (10 passos)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    
+
     // Diagnóstico: verificar se body tem conteúdo
     const bodyContent = await page.evaluate(() => document.body.innerHTML.substring(0, 100));
     console.log('Body content (first 100 chars):', bodyContent);
-    
+
     // Tentar encontrar header com timeout maior
     try {
       await page.waitForSelector('header', { timeout: 15000 });
