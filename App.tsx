@@ -33,6 +33,7 @@ const OrderTracking = lazy(() => import('./src/components/OrderTracking'));
 const AdvancedAnalyticsDashboard = lazy(
   () => import('./src/components/AdvancedAnalyticsDashboard')
 );
+const ProtocolDashboard = lazy(() => import('./src/components/ProtocolDashboard'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-[400px]">
@@ -59,7 +60,8 @@ type View =
   | { name: 'cart'; data: { userId: string } }
   | { name: 'checkout' }
   | { name: 'order-tracking' }
-  | { name: 'analytics' };
+  | { name: 'analytics' }
+  | { name: 'protocol' };
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -526,6 +528,19 @@ const App: React.FC = () => {
         return (
           <Suspense fallback={<LoadingFallback />}>
             <AdvancedAnalyticsDashboard />
+          </Suspense>
+        );
+      case 'protocol':
+        if (!currentUser || !['admin'].includes(currentUser.type)) {
+          return (
+            <div className="p-8 text-center text-red-600">
+              Acesso negado. Apenas admins podem visualizar o Dashboard do Protocolo.
+            </div>
+          );
+        }
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <ProtocolDashboard />
           </Suspense>
         );
       case 'home':
