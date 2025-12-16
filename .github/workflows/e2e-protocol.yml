@@ -32,6 +32,9 @@ jobs:
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm i; fi
 
+      - name: Install backend dependencies
+        run: npm --prefix backend ci
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
