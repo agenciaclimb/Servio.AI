@@ -71,7 +71,7 @@ let analyticsInstance: Analytics | null = null;
 
 export const getStorageInstance = async (): Promise<FirebaseStorage> => {
   if (isFirebaseMock) {
-    return ({} as FirebaseStorage);
+    return {} as FirebaseStorage;
   }
 
   if (!storageInstance) {
