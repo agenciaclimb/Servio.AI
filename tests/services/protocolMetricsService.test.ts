@@ -79,7 +79,7 @@ describe('ProtocolMetricsService', () => {
       const tasks = await service.getRecentTasks();
       const validStatuses = ['not-started', 'in-progress', 'completed', 'blocked'];
 
-      tasks.forEach((task) => {
+      tasks.forEach(task => {
         expect(validStatuses).toContain(task.status);
       });
     });
@@ -88,16 +88,16 @@ describe('ProtocolMetricsService', () => {
       const tasks = await service.getRecentTasks();
       const validAgents = ['GEMINI', 'ORCHESTRATOR', 'COPILOT', 'MERGE'];
 
-      tasks.forEach((task) => {
+      tasks.forEach(task => {
         expect(validAgents).toContain(task.assignedTo);
       });
     });
 
     it('tasks completas devem ter completedAt', async () => {
       const tasks = await service.getRecentTasks();
-      const completedTasks = tasks.filter((t) => t.status === 'completed');
+      const completedTasks = tasks.filter(t => t.status === 'completed');
 
-      completedTasks.forEach((task) => {
+      completedTasks.forEach(task => {
         expect(task.completedAt).toBeDefined();
       });
     });
@@ -127,16 +127,16 @@ describe('ProtocolMetricsService', () => {
       const prs = await service.getRecentPRs();
       const validStatuses = ['open', 'closed', 'merged'];
 
-      prs.forEach((pr) => {
+      prs.forEach(pr => {
         expect(validStatuses).toContain(pr.status);
       });
     });
 
     it('PRs com auditScore devem ter valor entre 0 e 100', async () => {
       const prs = await service.getRecentPRs();
-      const audited = prs.filter((pr) => pr.auditScore !== undefined);
+      const audited = prs.filter(pr => pr.auditScore !== undefined);
 
-      audited.forEach((pr) => {
+      audited.forEach(pr => {
         expect(pr.auditScore!).toBeGreaterThanOrEqual(0);
         expect(pr.auditScore!).toBeLessThanOrEqual(100);
       });
@@ -144,10 +144,10 @@ describe('ProtocolMetricsService', () => {
 
     it('PRs com riskLevel devem ter valor válido', async () => {
       const prs = await service.getRecentPRs();
-      const risked = prs.filter((pr) => pr.riskLevel !== undefined);
+      const risked = prs.filter(pr => pr.riskLevel !== undefined);
       const validLevels = ['LOW', 'MEDIUM', 'HIGH'];
 
-      risked.forEach((pr) => {
+      risked.forEach(pr => {
         expect(validLevels).toContain(pr.riskLevel!);
       });
     });
@@ -175,7 +175,7 @@ describe('ProtocolMetricsService', () => {
       const builds = await service.getRecentBuilds();
       const validStatuses = ['success', 'failure'];
 
-      builds.forEach((build) => {
+      builds.forEach(build => {
         expect(validStatuses).toContain(build.status);
       });
     });
@@ -183,7 +183,7 @@ describe('ProtocolMetricsService', () => {
     it('deve ter duration > 0 em todos os builds', async () => {
       const builds = await service.getRecentBuilds();
 
-      builds.forEach((build) => {
+      builds.forEach(build => {
         expect(build.duration).toBeGreaterThan(0);
       });
     });
@@ -245,7 +245,7 @@ describe('ProtocolMetricsService', () => {
     it('insights devem ser strings não-vazias', async () => {
       const insights = await service.generateInsights();
 
-      insights.forEach((insight) => {
+      insights.forEach(insight => {
         expect(typeof insight).toBe('string');
         expect(insight.length).toBeGreaterThan(0);
       });
@@ -253,13 +253,13 @@ describe('ProtocolMetricsService', () => {
 
     it('deve incluir insight sobre completion rate', async () => {
       const insights = await service.generateInsights();
-      const hasCompletionInsight = insights.some((i) => i.includes('completas'));
+      const hasCompletionInsight = insights.some(i => i.includes('completas'));
       expect(hasCompletionInsight).toBe(true);
     });
 
     it('deve incluir insight sobre audit score', async () => {
       const insights = await service.generateInsights();
-      const hasScoreInsight = insights.some((i) => i.includes('Audit score'));
+      const hasScoreInsight = insights.some(i => i.includes('Audit score'));
       expect(hasScoreInsight).toBe(true);
     });
   });

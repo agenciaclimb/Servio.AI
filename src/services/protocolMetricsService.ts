@@ -303,7 +303,7 @@ export class ProtocolMetricsService {
     }
 
     // Insight 5: PR merge rate
-    const mergedPRs = prs.filter((pr) => pr.status === 'merged').length;
+    const mergedPRs = prs.filter(pr => pr.status === 'merged').length;
     const prMergeRate = (mergedPRs / prs.length) * 100;
     if (prMergeRate === 100) {
       insights.push(`💯 Todos os PRs foram mergeados com sucesso!`);
