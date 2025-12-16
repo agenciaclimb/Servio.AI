@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-
 // Suite principal cobrindo 10 passos do ciclo (v4.0)
 test.describe('🧪 Protocolo v4.0 — Ciclo completo (10 passos)', () => {
   test.beforeEach(async ({ page }) => {
@@ -59,7 +58,13 @@ test.describe('🧪 Protocolo v4.0 — Ciclo completo (10 passos)', () => {
       if (msg.type() === 'error') errors.push(msg.text());
     });
     await page.waitForTimeout(1000);
-    const criticalErrors = errors.filter(e => !e.includes('favicon') && !e.includes('manifest') && !e.includes('Stripe') && !e.includes('CORS'));
+    const criticalErrors = errors.filter(
+      e =>
+        !e.includes('favicon') &&
+        !e.includes('manifest') &&
+        !e.includes('Stripe') &&
+        !e.includes('CORS')
+    );
     expect(criticalErrors).toHaveLength(0);
   });
 
