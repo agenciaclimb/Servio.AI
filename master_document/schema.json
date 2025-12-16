@@ -1,0 +1,230 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Documento Mestre Servio.AI v4.0 Schema",
+  "description": "JSON Schema para validar estrutura e conteúdo do Documento Mestre v4.0",
+  "type": "object",
+  "required": ["metadata", "system_status", "orchestrator", "ai_workflow", "tech_stack"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["version", "last_update", "status"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Versão semântica (ex: 4.0.0)"
+        },
+        "last_update": {
+          "type": "string",
+          "pattern": "^\\d{2}/\\d{2}/\\d{4}",
+          "description": "Data de última atualização (DD/MM/YYYY)"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PRODUCAO", "DESENVOLVIMENTO", "MANUTENCAO"],
+          "description": "Status atual do sistema"
+        }
+      }
+    },
+    "system_status": {
+      "type": "object",
+      "required": ["frontend", "backend", "database", "tests", "cicd"],
+      "properties": {
+        "frontend": {
+          "$ref": "#/definitions/component_status"
+        },
+        "backend": {
+          "$ref": "#/definitions/component_status"
+        },
+        "database": {
+          "$ref": "#/definitions/component_status"
+        },
+        "tests": {
+          "type": "object",
+          "required": ["status", "passing", "total", "coverage"],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["🟢", "🟡", "🔴"]
+            },
+            "passing": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "coverage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            }
+          }
+        },
+        "cicd": {
+          "$ref": "#/definitions/component_status"
+        }
+      }
+    },
+    "orchestrator": {
+      "type": "object",
+      "required": ["status", "version", "location", "github_integration"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["PRODUCAO", "BETA", "ALPHA", "INATIVO"]
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^v\\d+\\.\\d+$"
+        },
+        "location": {
+          "type": "string",
+          "minLength": 1
+        },
+        "github_integration": {
+          "type": "boolean"
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "files_created": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "code_lines": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tasks_processed": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "ai_workflow": {
+      "type": "object",
+      "required": ["steps"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["id", "agent", "action"],
+            "properties": {
+              "id": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "agent": {
+                "type": "string",
+                "enum": ["GEMINI", "ORCHESTRATOR", "COPILOT", "MERGE"]
+              },
+              "action": {
+                "type": "string",
+                "minLength": 5
+              }
+            }
+          }
+        }
+      }
+    },
+    "tech_stack": {
+      "type": "object",
+      "required": ["frontend", "backend", "database"],
+      "properties": {
+        "frontend": {
+          "type": "object",
+          "required": ["framework", "language", "version"],
+          "properties": {
+            "framework": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          }
+        },
+        "backend": {
+          "type": "object",
+          "required": ["runtime", "framework"],
+          "properties": {
+            "runtime": {
+              "type": "string"
+            },
+            "framework": {
+              "type": "string"
+            }
+          }
+        },
+        "database": {
+          "type": "object",
+          "required": ["type", "provider"],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "provider": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "updates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "pr_number", "task_id", "status"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "pattern": "^\\d{2}/\\d{2}/\\d{4}"
+          },
+          "pr_number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "task_id": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+$"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["MERGED", "PENDENTE", "REJEITADO"]
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "component_status": {
+      "type": "object",
+      "required": ["status", "version"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["🟢", "🟡", "🔴"]
+        },
+        "version": {
+          "type": "string"
+        },
+        "details": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
