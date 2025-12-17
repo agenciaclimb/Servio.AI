@@ -246,7 +246,9 @@ router.get('/conversation/:conversationId/suggestions', async (req: Request, res
       data: suggestions,
     });
   } catch (error: any) {
-    logger.error('Error in GET /conversation/:conversationId/suggestions', { error: error.message });
+    logger.error('Error in GET /conversation/:conversationId/suggestions', {
+      error: error.message,
+    });
     return res.status(500).json({
       success: false,
       error: 'Internal server error',
