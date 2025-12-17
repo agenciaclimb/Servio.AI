@@ -73,10 +73,13 @@ describe('PipedriveService', () => {
 
       // Assert
       expect(result).toBe(12345);
-      expect(mockClient.post).toHaveBeenCalledWith('/persons', expect.objectContaining({
-        name: lead.nome,
-        email: lead.email,
-      }));
+      expect(mockClient.post).toHaveBeenCalledWith(
+        '/persons',
+        expect.objectContaining({
+          name: lead.nome,
+          email: lead.email,
+        })
+      );
     });
 
     it('deve lançar erro se falhar ao criar lead', async () => {
@@ -128,10 +131,13 @@ describe('PipedriveService', () => {
 
       // Assert
       expect(result).toBe(67890);
-      expect(mockClient.post).toHaveBeenCalledWith('/deals', expect.objectContaining({
-        title: deal.title,
-        value: deal.value,
-      }));
+      expect(mockClient.post).toHaveBeenCalledWith(
+        '/deals',
+        expect.objectContaining({
+          title: deal.title,
+          value: deal.value,
+        })
+      );
     });
   });
 
@@ -279,15 +285,11 @@ describe('PipedriveService', () => {
         });
 
       // Act
-      const result = await service.syncProposalToDeal(
-        'prop-789',
-        'client@example.com',
-        {
-          title: 'Nova Proposta',
-          value: 8000,
-          currency: 'BRL',
-        }
-      );
+      const result = await service.syncProposalToDeal('prop-789', 'client@example.com', {
+        title: 'Nova Proposta',
+        value: 8000,
+        currency: 'BRL',
+      });
 
       // Assert
       expect(result).toBe(55555);
@@ -326,15 +328,11 @@ describe('PipedriveService', () => {
       });
 
       // Act
-      const result = await service.syncProposalToDeal(
-        'prop-789',
-        'client@example.com',
-        {
-          title: 'Proposta Atualizada',
-          value: 9000,
-          currency: 'BRL',
-        }
-      );
+      const result = await service.syncProposalToDeal('prop-789', 'client@example.com', {
+        title: 'Proposta Atualizada',
+        value: 9000,
+        currency: 'BRL',
+      });
 
       // Assert
       expect(result).toBe(55555);

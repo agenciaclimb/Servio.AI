@@ -49,14 +49,20 @@ class LandingPageService {
   /**
    * Generate landing page copy via Gemini
    */
-  async generateLandingPage(briefing: LandingPageBriefing, userId: string): Promise<GeneratedLandingPage> {
+  async generateLandingPage(
+    briefing: LandingPageBriefing,
+    userId: string
+  ): Promise<GeneratedLandingPage> {
     try {
       const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
       // Build prompt for Gemini
       const prompt = this.buildPrompt(briefing);
 
-      logger.info('Generating landing page with Gemini', { userId, serviceType: briefing.serviceType });
+      logger.info('Generating landing page with Gemini', {
+        userId,
+        serviceType: briefing.serviceType,
+      });
 
       const result = await model.generateContent(prompt);
       const response = result.response;
@@ -176,7 +182,10 @@ Ensure the copy is persuasive, clear, and optimized for conversions.
   /**
    * Generate headline variants for A/B testing
    */
-  private async generateVariants(briefing: LandingPageBriefing, model: any): Promise<Array<{ variant: string; headline: string }>> {
+  private async generateVariants(
+    briefing: LandingPageBriefing,
+    model: any
+  ): Promise<Array<{ variant: string; headline: string }>> {
     try {
       const variantPrompt = `Generate 2 alternative compelling headlines (max 10 words each) for a ${briefing.serviceType} targeting ${briefing.targetAudience}. 
       Return as JSON array: [{"variant": "A", "headline": "..."}, {"variant": "B", "headline": "..."}]`;
@@ -204,10 +213,13 @@ Ensure the copy is persuasive, clear, and optimized for conversions.
    */
   private async saveLandingPage(page: GeneratedLandingPage): Promise<void> {
     try {
-      await db.collection('landing_pages').doc(page.id).set({
-        ...page,
-        generatedAt: admin.firestore.Timestamp.now(),
-      });
+      await db
+        .collection('landing_pages')
+        .doc(page.id)
+        .set({
+          ...page,
+          generatedAt: admin.firestore.Timestamp.now(),
+        });
     } catch (error: any) {
       logger.error('Error saving landing page', { error: error.message });
       throw error;
@@ -268,11 +280,19 @@ Ensure the copy is persuasive, clear, and optimized for conversions.
         .where('pageId', '==', pageId)
         .get();
 
-      const variantAViews = analytics.docs.filter((d) => d.data().variant === 'A' && d.data().type === 'view').length;
-      const variantAConversions = analytics.docs.filter((d) => d.data().variant === 'A' && d.data().type === 'conversion').length;
+      const variantAViews = analytics.docs.filter(
+        d => d.data().variant === 'A' && d.data().type === 'view'
+      ).length;
+      const variantAConversions = analytics.docs.filter(
+        d => d.data().variant === 'A' && d.data().type === 'conversion'
+      ).length;
 
-      const variantBViews = analytics.docs.filter((d) => d.data().variant === 'B' && d.data().type === 'view').length;
-      const variantBConversions = analytics.docs.filter((d) => d.data().variant === 'B' && d.data().type === 'conversion').length;
+      const variantBViews = analytics.docs.filter(
+        d => d.data().variant === 'B' && d.data().type === 'view'
+      ).length;
+      const variantBConversions = analytics.docs.filter(
+        d => d.data().variant === 'B' && d.data().type === 'conversion'
+      ).length;
 
       const conversionRateA = variantAViews > 0 ? variantAConversions / variantAViews : 0;
       const conversionRateB = variantBViews > 0 ? variantBConversions / variantBViews : 0;
@@ -320,9 +340,13 @@ Ensure the copy is persuasive, clear, and optimized for conversions.
    */
   async getUserLandingPages(userId: string, limit: number = 10): Promise<GeneratedLandingPage[]> {
     try {
-      const snapshot = await db.collection('landing_pages').where('userId', '==', userId).limit(limit).get();
+      const snapshot = await db
+        .collection('landing_pages')
+        .where('userId', '==', userId)
+        .limit(limit)
+        .get();
 
-      return snapshot.docs.map((doc) => doc.data() as GeneratedLandingPage);
+      return snapshot.docs.map(doc => doc.data() as GeneratedLandingPage);
     } catch (error: any) {
       logger.error('Error fetching user landing pages', { error: error.message });
       return [];

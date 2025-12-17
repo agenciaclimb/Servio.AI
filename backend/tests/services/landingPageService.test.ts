@@ -13,20 +13,21 @@ vi.mock('@google/generative-ai', () => ({
     getGenerativeModel: vi.fn(() => ({
       generateContent: vi.fn().mockResolvedValue({
         response: {
-          text: () => JSON.stringify({
-            headline: 'Transforme seu Negócio em 30 Dias',
-            subheadline: 'Solução comprovada para crescimento exponencial',
-            bodyText: 'Nossa plataforma revolucionária...',
-            cta: 'Comece Grátis Agora',
-            ctaText: 'Iniciar',
-            faqs: [
-              { question: 'Como funciona?', answer: 'É simples!' },
-              { question: 'Preciso de cartão?', answer: 'Não, primeira semana é grátis' },
-            ],
-            metaTitle: 'Transforme seu Negócio com IA',
-            metaDescription: 'Plataforma de IA para crescimento de negócios',
-            keywords: ['IA', 'negócio', 'crescimento', 'transformação', 'SaaS'],
-          }),
+          text: () =>
+            JSON.stringify({
+              headline: 'Transforme seu Negócio em 30 Dias',
+              subheadline: 'Solução comprovada para crescimento exponencial',
+              bodyText: 'Nossa plataforma revolucionária...',
+              cta: 'Comece Grátis Agora',
+              ctaText: 'Iniciar',
+              faqs: [
+                { question: 'Como funciona?', answer: 'É simples!' },
+                { question: 'Preciso de cartão?', answer: 'Não, primeira semana é grátis' },
+              ],
+              metaTitle: 'Transforme seu Negócio com IA',
+              metaDescription: 'Plataforma de IA para crescimento de negócios',
+              keywords: ['IA', 'negócio', 'crescimento', 'transformação', 'SaaS'],
+            }),
         },
       }),
     })),
@@ -127,7 +128,7 @@ describe('LandingPageService', () => {
 
       expect(page.faqs).toBeDefined();
       expect(Array.isArray(page.faqs)).toBe(true);
-      page.faqs.forEach((faq) => {
+      page.faqs.forEach(faq => {
         expect(faq.question).toBeDefined();
         expect(faq.answer).toBeDefined();
       });
@@ -270,7 +271,9 @@ describe('LandingPageService', () => {
 
       const page = await LandingPageService.generateLandingPage(briefing, 'user_keywords');
 
-      const hasKeywords = briefing.keywords.some((kw) => page.keywords.includes(kw) || page.bodyText.includes(kw));
+      const hasKeywords = briefing.keywords.some(
+        kw => page.keywords.includes(kw) || page.bodyText.includes(kw)
+      );
       expect(hasKeywords || page.keywords.length > 0).toBe(true);
     });
   });
