@@ -3,17 +3,6 @@
   "dia": 4,
   "tasks": [
     {
-      "id": "4.2",
-      "titulo": "Integração Twilio SMS/Voice",
-      "descricao": "Implementar envio de SMS e chamadas de voz via Twilio para notificações de jobs e propostas.",
-      "prioridade": "HIGH",
-      "estimativa": "8h",
-      "day": 4,
-      "tipo": "feature",
-      "objetivo": "Sistema de notificações multi-canal (SMS + Voice)",
-      "issue": "#45"
-    },
-    {
       "id": "4.3",
       "titulo": "Landing Pages com IA",
       "descricao": "Criar landing pages dinâmicas geradas por IA para cada serviço/cidade. SEO otimizado.",
@@ -83,6 +72,17 @@
       "commit": "3387ef5",
       "issue": "#44",
       "pr": "#50",
+      "audit_verdict": "APPROVED",
+      "risk_level": "LOW"
+    },
+    {
+      "id": "4.2",
+      "titulo": "Integração Twilio SMS/Voice",
+      "status": "DONE",
+      "data_conclusao": "2025-12-16",
+      "commit": "096749c",
+      "issue": "#45",
+      "pr": "#51",
       "audit_verdict": "APPROVED",
       "risk_level": "LOW"
     }
