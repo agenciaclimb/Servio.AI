@@ -3,17 +3,6 @@
   "dia": 4,
   "tasks": [
     {
-      "id": "4.5",
-      "titulo": "Integração WhatsApp",
-      "descricao": "Integrar WhatsApp Business API para mensagens em tempo real com clientes/prestadores.",
-      "prioridade": "HIGH",
-      "estimativa": "8h",
-      "day": 4,
-      "tipo": "feature",
-      "objetivo": "Canal de comunicação mais popular entre usuários",
-      "issue": "#48"
-    },
-    {
       "id": "4.6",
       "titulo": "Security Hardening",
       "descricao": "Implementar rate limiting, API key rotation, audit logging avançado.",
@@ -83,6 +72,17 @@
       "commit": "5b88280",
       "issue": "#47",
       "pr": "#53",
+      "audit_verdict": "APPROVED",
+      "risk_level": "LOW"
+    },
+    {
+      "id": "4.5",
+      "titulo": "Integração WhatsApp",
+      "status": "DONE",
+      "data_conclusao": "2025-12-17",
+      "commit": "44c4533",
+      "issue": "#48",
+      "pr": "#54",
       "audit_verdict": "APPROVED",
       "risk_level": "LOW"
     }
