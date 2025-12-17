@@ -53,8 +53,10 @@ class TwilioService {
         'nova_proposta',
         {
           key: 'nova_proposta',
-          smsBody: 'Olá {{clientName}}, você recebeu uma nova proposta para {{jobTitle}}. Clique aqui para visualizar: {{jobUrl}}',
-          voiceMessage: 'Você recebeu uma nova proposta para {{jobTitle}}. Acesse a plataforma para visualizar detalhes.',
+          smsBody:
+            'Olá {{clientName}}, você recebeu uma nova proposta para {{jobTitle}}. Clique aqui para visualizar: {{jobUrl}}',
+          voiceMessage:
+            'Você recebeu uma nova proposta para {{jobTitle}}. Acesse a plataforma para visualizar detalhes.',
           title: 'Nova Proposta Recebida',
         },
       ],
@@ -62,7 +64,8 @@ class TwilioService {
         'job_aceito',
         {
           key: 'job_aceito',
-          smsBody: 'Parabéns {{providerName}}, seu trabalho em {{jobTitle}} foi aceito! Próximas instruções estão em: {{jobUrl}}',
+          smsBody:
+            'Parabéns {{providerName}}, seu trabalho em {{jobTitle}} foi aceito! Próximas instruções estão em: {{jobUrl}}',
           voiceMessage: 'Seu trabalho foi aceito. Verifique os detalhes na plataforma.',
           title: 'Trabalho Aceito',
         },
@@ -71,7 +74,8 @@ class TwilioService {
         'pagamento_confirmado',
         {
           key: 'pagamento_confirmado',
-          smsBody: 'Seu pagamento de R$ {{amount}} foi confirmado. Referência: {{reference}}. Comprovante em: {{receiptUrl}}',
+          smsBody:
+            'Seu pagamento de R$ {{amount}} foi confirmado. Referência: {{reference}}. Comprovante em: {{receiptUrl}}',
           voiceMessage: 'Seu pagamento foi processado com sucesso.',
           title: 'Pagamento Confirmado',
         },
@@ -80,7 +84,8 @@ class TwilioService {
         'job_concluido',
         {
           key: 'job_concluido',
-          smsBody: 'O trabalho {{jobTitle}} foi concluído! Avalie {{raterName}} aqui: {{reviewUrl}}',
+          smsBody:
+            'O trabalho {{jobTitle}} foi concluído! Avalie {{raterName}} aqui: {{reviewUrl}}',
           voiceMessage: 'O trabalho foi concluído. Por favor, deixe sua avaliação.',
           title: 'Trabalho Concluído',
         },
@@ -89,8 +94,10 @@ class TwilioService {
         'cancelamento',
         {
           key: 'cancelamento',
-          smsBody: 'O trabalho {{jobTitle}} foi cancelado. Motivo: {{reason}}. Suporte em: {{supportUrl}}',
-          voiceMessage: 'O trabalho foi cancelado. Entre em contato com nosso suporte se tiver dúvidas.',
+          smsBody:
+            'O trabalho {{jobTitle}} foi cancelado. Motivo: {{reason}}. Suporte em: {{supportUrl}}',
+          voiceMessage:
+            'O trabalho foi cancelado. Entre em contato com nosso suporte se tiver dúvidas.',
           title: 'Trabalho Cancelado',
         },
       ],
@@ -100,7 +107,9 @@ class TwilioService {
   /**
    * Send SMS notification
    */
-  async sendSMS(payload: NotificationPayload): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  async sendSMS(
+    payload: NotificationPayload
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
     try {
       if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
         logger.warn('Twilio credentials not configured');
@@ -154,7 +163,9 @@ class TwilioService {
   /**
    * Send Voice Call notification
    */
-  async sendVoiceCall(payload: NotificationPayload): Promise<{ success: boolean; callId?: string; error?: string }> {
+  async sendVoiceCall(
+    payload: NotificationPayload
+  ): Promise<{ success: boolean; callId?: string; error?: string }> {
     try {
       if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
         logger.warn('Twilio credentials not configured');
@@ -211,7 +222,9 @@ class TwilioService {
   /**
    * Send notification (SMS or Voice or both)
    */
-  async sendNotification(payload: NotificationPayload): Promise<{ success: boolean; results?: any; error?: string }> {
+  async sendNotification(
+    payload: NotificationPayload
+  ): Promise<{ success: boolean; results?: any; error?: string }> {
     try {
       const results: any = {};
 
@@ -245,7 +258,9 @@ class TwilioService {
   /**
    * Get user communication preferences
    */
-  async getUserCommunicationPreference(userId: string): Promise<UserCommunicationPreference | null> {
+  async getUserCommunicationPreference(
+    userId: string
+  ): Promise<UserCommunicationPreference | null> {
     try {
       const db = admin.firestore();
       const doc = await db.collection('user_communication_preferences').doc(userId).get();
@@ -259,10 +274,16 @@ class TwilioService {
   /**
    * Update user communication preferences
    */
-  async updateUserCommunicationPreference(userId: string, preferences: Partial<UserCommunicationPreference>): Promise<boolean> {
+  async updateUserCommunicationPreference(
+    userId: string,
+    preferences: Partial<UserCommunicationPreference>
+  ): Promise<boolean> {
     try {
       const db = admin.firestore();
-      await db.collection('user_communication_preferences').doc(userId).set(preferences, { merge: true });
+      await db
+        .collection('user_communication_preferences')
+        .doc(userId)
+        .set(preferences, { merge: true });
       logger.info('Communication preferences updated', { userId });
       return true;
     } catch (error: any) {
