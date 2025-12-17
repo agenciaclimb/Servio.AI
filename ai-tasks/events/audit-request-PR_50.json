@@ -1,0 +1,86 @@
+{
+  "request_type": "audit_pr",
+  "pr_number": 50,
+  "task_id": "4.1",
+  "title": "Integração Pipedrive CRM - Sync Bidirecional",
+  "requested_at": "2025-12-16T22:30:00Z",
+  "audit_scope": {
+    "code_quality": true,
+    "security": true,
+    "performance": true,
+    "tests": true,
+    "protocol_compliance": true
+  },
+  "protocol_version": "Supremo V4",
+  "step": 9,
+  "expected_verdict_options": ["APPROVED", "APPROVED_WITH_SUGGESTIONS", "REQUEST_CHANGES"],
+  "risk_assessment_required": true,
+  "minimum_acceptable_coverage": 0.8,
+  "github_pr_url": "https://github.com/agenciaclimb/Servio.AI/pull/50",
+  "context": {
+    "day": 4,
+    "task_number": 1,
+    "total_tasks_day": 6,
+    "total_hours_estimated": 8,
+    "implementation_files": [
+      "backend/src/services/pipedriveService.js (425 lines)",
+      "backend/src/routes/pipedriveWebhook.js (179 lines)",
+      "backend/tests/services/pipedriveService.test.js (15 test cases)"
+    ],
+    "implementation_metrics": {
+      "lines_of_code": 604,
+      "test_cases": 15,
+      "endpoints": 5,
+      "methods": 13,
+      "build_status": "PASSED",
+      "build_time_seconds": 28.59
+    },
+    "features_implemented": [
+      "Pipedrive API integration",
+      "Bidirectional sync (leads ↔ deals)",
+      "Webhook handlers (added/updated/deleted events)",
+      "Proposal sync endpoint",
+      "Health check endpoint",
+      "Comprehensive test suite"
+    ]
+  },
+  "checklist": {
+    "code_quality": {
+      "description": "Service e routes seguem padrões do projeto",
+      "status": "READY_FOR_REVIEW"
+    },
+    "security": {
+      "description": "Validação de webhook signature (HMAC-SHA256), sem secrets no código",
+      "status": "READY_FOR_REVIEW"
+    },
+    "performance": {
+      "description": "Async/await implementado, sem N+1 queries, caching ready",
+      "status": "READY_FOR_REVIEW"
+    },
+    "tests": {
+      "description": "15 test cases cobrindo happy path e error cases",
+      "status": "READY_FOR_REVIEW"
+    },
+    "protocol_compliance": {
+      "description": "Segue Protocolo Supremo V4 Steps 1-8 rigorosamente",
+      "status": "READY_FOR_REVIEW"
+    }
+  },
+  "gemini_audit_instructions": {
+    "1_code_review": "Analisar PipedriveService.js para: padrões de código, error handling, API usage, async patterns",
+    "2_security_review": "Validar: webhook signature validation, secret handling, input validation, no hardcoded credentials",
+    "3_performance_review": "Verificar: async operations, API call batching, no N+1, memory efficiency",
+    "4_test_review": "Validar: test coverage >= 80%, happy path + error cases, mock usage correto",
+    "5_protocol_check": "Confirmar: Task 4.1 segue Protocolo Supremo V4, nenhuma dívida técnica, pronto para merge"
+  },
+  "expected_output": {
+    "verdict": "APPROVED | APPROVED_WITH_SUGGESTIONS | REQUEST_CHANGES",
+    "risk_level": "LOW | MEDIUM | HIGH",
+    "risk_score": "0-100",
+    "findings": [],
+    "recommendations": [],
+    "merge_approval": "boolean",
+    "next_step": "MERGE | HOLD | REJECT"
+  },
+  "deadline": "2025-12-16T23:00:00Z"
+}
