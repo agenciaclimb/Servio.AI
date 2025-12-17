@@ -246,7 +246,7 @@ describe('TwilioService', () => {
     it('should have proper template structure', () => {
       const templates = TwilioService.getTemplates();
 
-      Object.values(templates).forEach((template) => {
+      Object.values(templates).forEach(template => {
         expect(template.key).toBeDefined();
         expect(template.smsBody).toBeDefined();
         expect(template.voiceMessage).toBeDefined();

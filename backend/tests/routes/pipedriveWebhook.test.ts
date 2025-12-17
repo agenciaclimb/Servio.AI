@@ -61,27 +61,23 @@ describe('Pipedrive Webhook Endpoint', () => {
 
   describe('POST /api/pipedrive/sync-proposal', () => {
     it('deve validar campos obrigatórios', async () => {
-      const response = await request(app)
-        .post('/api/pipedrive/sync-proposal')
-        .send({
-          proposalId: 'prop-123',
-          // Faltam clientEmail, title, value
-        });
+      const response = await request(app).post('/api/pipedrive/sync-proposal').send({
+        proposalId: 'prop-123',
+        // Faltam clientEmail, title, value
+      });
 
       expect(response.status).toBe(400);
       expect(response.body.error).toContain('Missing required fields');
     });
 
     it('deve sincronizar proposta com sucesso', async () => {
-      const response = await request(app)
-        .post('/api/pipedrive/sync-proposal')
-        .send({
-          proposalId: 'prop-123',
-          clientEmail: 'client@example.com',
-          title: 'Nova Proposta',
-          value: 5000,
-          currency: 'BRL',
-        });
+      const response = await request(app).post('/api/pipedrive/sync-proposal').send({
+        proposalId: 'prop-123',
+        clientEmail: 'client@example.com',
+        title: 'Nova Proposta',
+        value: 5000,
+        currency: 'BRL',
+      });
 
       expect(response.status).toBeOneOf([200, 500]); // Depende de mocks
     });
@@ -89,8 +85,7 @@ describe('Pipedrive Webhook Endpoint', () => {
 
   describe('GET /api/pipedrive/deal/:dealId', () => {
     it('deve retornar informações do deal', async () => {
-      const response = await request(app)
-        .get('/api/pipedrive/deal/123');
+      const response = await request(app).get('/api/pipedrive/deal/123');
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -100,15 +95,13 @@ describe('Pipedrive Webhook Endpoint', () => {
 
   describe('GET /api/pipedrive/sync-status/:proposalId', () => {
     it('deve retornar 404 se proposta não existir', async () => {
-      const response = await request(app)
-        .get('/api/pipedrive/sync-status/nonexistent');
+      const response = await request(app).get('/api/pipedrive/sync-status/nonexistent');
 
       expect(response.status).toBeOneOf([404, 500]);
     });
 
     it('deve retornar status de sincronização', async () => {
-      const response = await request(app)
-        .get('/api/pipedrive/sync-status/prop-123');
+      const response = await request(app).get('/api/pipedrive/sync-status/prop-123');
 
       expect(response.status).toBeOneOf([200, 404, 500]);
       if (response.status === 200) {
@@ -119,8 +112,7 @@ describe('Pipedrive Webhook Endpoint', () => {
 
   describe('GET /api/pipedrive/health', () => {
     it('deve retornar health check', async () => {
-      const response = await request(app)
-        .get('/api/pipedrive/health');
+      const response = await request(app).get('/api/pipedrive/health');
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);

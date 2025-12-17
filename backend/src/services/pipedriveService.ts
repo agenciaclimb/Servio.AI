@@ -137,11 +137,15 @@ export class PipedriveService {
   /**
    * Sincronizar proposta do Servio com deal do Pipedrive
    */
-  async syncProposalToDeal(proposalId: string, clientEmail: string, dealData: {
-    title: string;
-    value: number;
-    currency: string;
-  }): Promise<number> {
+  async syncProposalToDeal(
+    proposalId: string,
+    clientEmail: string,
+    dealData: {
+      title: string;
+      value: number;
+      currency: string;
+    }
+  ): Promise<number> {
     try {
       // Buscar pessoa existente ou criar nova
       const personId = await this.findOrCreatePerson(clientEmail);
@@ -156,15 +160,18 @@ export class PipedriveService {
       // Usar pipeline padrão (primeiro pipeline)
       const pipeline = await this.getDefaultPipeline();
 
-      return await this.createDeal({
-        ...dealData,
-        id: '',
-        pipelineId: pipeline.id,
-        leadId: personId.toString(),
-        status: 'open',
-        createdAt: new Date(),
-        servioProposalId: proposalId,
-      }, personId);
+      return await this.createDeal(
+        {
+          ...dealData,
+          id: '',
+          pipelineId: pipeline.id,
+          leadId: personId.toString(),
+          status: 'open',
+          createdAt: new Date(),
+          servioProposalId: proposalId,
+        },
+        personId
+      );
     } catch (error) {
       functions.logger.error('Erro ao sincronizar proposta:', error);
       throw error;
@@ -333,9 +340,12 @@ export class PipedriveService {
   /**
    * Handler: Pessoa adicionada no Pipedrive
    */
-  private async handlePersonAdded(data: Record<string, unknown>, db: FirebaseFirestore.Firestore): Promise<void> {
+  private async handlePersonAdded(
+    data: Record<string, unknown>,
+    db: FirebaseFirestore.Firestore
+  ): Promise<void> {
     try {
-      const personId = (data.id as number);
+      const personId = data.id as number;
       const email = data.email?.[0]?.value as string;
 
       if (!email) {
@@ -360,7 +370,10 @@ export class PipedriveService {
   /**
    * Handler: Deal adicionado no Pipedrive
    */
-  private async handleDealAdded(data: Record<string, unknown>, db: FirebaseFirestore.Firestore): Promise<void> {
+  private async handleDealAdded(
+    data: Record<string, unknown>,
+    db: FirebaseFirestore.Firestore
+  ): Promise<void> {
     try {
       const dealId = data.id as number;
       const title = data.title as string;
@@ -408,7 +421,10 @@ export class PipedriveService {
   /**
    * Handler: Pessoa deletada no Pipedrive
    */
-  private async handlePersonDeleted(data: Record<string, unknown>, db: FirebaseFirestore.Firestore): Promise<void> {
+  private async handlePersonDeleted(
+    data: Record<string, unknown>,
+    db: FirebaseFirestore.Firestore
+  ): Promise<void> {
     try {
       const personId = data.id as number;
 
