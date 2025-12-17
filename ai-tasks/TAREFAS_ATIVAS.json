@@ -3,17 +3,6 @@
   "dia": 4,
   "tasks": [
     {
-      "id": "4.4",
-      "titulo": "Monitoring & Alertas",
-      "descricao": "Implementar dashboard de monitoramento em tempo real com alertas para anomalias.",
-      "prioridade": "MEDIUM",
-      "estimativa": "6h",
-      "day": 4,
-      "tipo": "infrastructure",
-      "objetivo": "Visibilidade operacional 24/7 do sistema",
-      "issue": "#47"
-    },
-    {
       "id": "4.5",
       "titulo": "Integração WhatsApp",
       "descricao": "Integrar WhatsApp Business API para mensagens em tempo real com clientes/prestadores.",
@@ -83,6 +72,17 @@
       "commit": "d53eada",
       "issue": "#46",
       "pr": "#52",
+      "audit_verdict": "APPROVED",
+      "risk_level": "LOW"
+    },
+    {
+      "id": "4.4",
+      "titulo": "Monitoring & Alertas",
+      "status": "DONE",
+      "data_conclusao": "2025-12-16",
+      "commit": "5b88280",
+      "issue": "#47",
+      "pr": "#53",
       "audit_verdict": "APPROVED",
       "risk_level": "LOW"
     }
