@@ -3,17 +3,6 @@
   "dia": 4,
   "tasks": [
     {
-      "id": "4.3",
-      "titulo": "Landing Pages com IA",
-      "descricao": "Criar landing pages dinâmicas geradas por IA para cada serviço/cidade. SEO otimizado.",
-      "prioridade": "HIGH",
-      "estimativa": "10h",
-      "day": 4,
-      "tipo": "feature",
-      "objetivo": "Aumentar visibilidade de prestadores em buscas orgânicas",
-      "issue": "#46"
-    },
-    {
       "id": "4.4",
       "titulo": "Monitoring & Alertas",
       "descricao": "Implementar dashboard de monitoramento em tempo real com alertas para anomalias.",
@@ -83,6 +72,17 @@
       "commit": "096749c",
       "issue": "#45",
       "pr": "#51",
+      "audit_verdict": "APPROVED",
+      "risk_level": "LOW"
+    },
+    {
+      "id": "4.3",
+      "titulo": "Landing Pages com IA",
+      "status": "DONE",
+      "data_conclusao": "2025-12-16",
+      "commit": "d53eada",
+      "issue": "#46",
+      "pr": "#52",
       "audit_verdict": "APPROVED",
       "risk_level": "LOW"
     }
