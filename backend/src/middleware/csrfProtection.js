@@ -1,202 +1,179 @@
 /**
  * CSRF PROTECTION MIDDLEWARE
  * 
- * Proteção contra Cross-Site Request Forgery usando tokens
- * - Gera tokens CSRF para cada sessão
- * - Valida tokens em requests POST/PUT/DELETE
- * - Exceções para webhooks e APIs públicas
+ * Proteção contra Cross-Site Request Forgery usando csrf-csrf (moderna)
+ * - Double CSRF tokens (cookie + header)
+ * - Cookies HttpOnly com prefix __Host-
+ * - Exclusão automática de webhooks
+ * - Rotação de tokens
  * 
  * @module middleware/csrfProtection
  */
 
-const csrf = require('csurf');
+const { doubleCsrf } = require('csrf-csrf');
 const cookieParser = require('cookie-parser');
 
 /**
- * Middleware de proteção CSRF
- * Usa cookies para armazenar tokens
+ * Configuração do double CSRF
  */
-const csrfProtection = csrf({
-  cookie: {
+const {
+  generateToken,
+  doubleCsrfProtection,
+} = doubleCsrf({
+  getSecret: () => process.env.CSRF_SECRET || 'change-me-in-production-random-64-chars-minimum',
+  cookieName: '__Host-psifi.x-csrf-token',
+  cookieOptions: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // HTTPS apenas em produção
-    sameSite: 'strict',
-    maxAge: 3600000 // 1 hora
-  }
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 3600000, // 1 hora
+  },
+  size: 64,
+  ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
 });
 
 /**
- * Middleware para adicionar token CSRF no response
- * Envia token no header e no body (para forms)
+ * Middleware para adicionar token CSRF ao response
  */
 function addCsrfToken(req, res, next) {
-  if (req.csrfToken) {
-    // Adicionar token no header
-    res.setHeader('X-CSRF-Token', req.csrfToken());
-
-    // Disponibilizar token para o cliente
-    res.locals.csrfToken = req.csrfToken();
+  try {
+    const token = generateToken(req, res);
+    res.locals.csrfToken = token;
+    res.setHeader('X-CSRF-Token', token);
+    next();
+  } catch (error) {
+    console.error('[CSRF] Erro ao gerar token:', error);
+    return res.status(500).json({
+      error: 'Erro ao gerar token de segurança',
+      code: 'CSRF_GENERATION_ERROR'
+    });
   }
-
-  next();
 }
 
 /**
- * Middleware para exemp
-
-ções CSRF
- * Rotas que não precisam de proteção CSRF (ex: webhooks)
+ * Middleware para exemption de CSRF em rotas específicas
+ * @param {Array<string>} exemptPaths - Paths que não precisam de CSRF
  */
 function csrfExempt(exemptPaths = []) {
   return (req, res, next) => {
-    // Lista de paths que não precisam CSRF
-    const defaultExemptPaths = [
-      '/api/stripe-webhook',
-      '/api/sendgrid-webhook',
-      '/api/twilio-webhook',
-      '/api/health',
-      '/api/metrics'
-    ];
+    const path = req.path || req.url;
+    const isExempt = exemptPaths.some(exemptPath => {
+      if (exemptPath.endsWith('*')) {
+        const prefix = exemptPath.slice(0, -1);
+        return path.startsWith(prefix);
+      }
+      return path === exemptPath;
+    });
 
-    const allExemptPaths = [...defaultExemptPaths, ...exemptPaths];
-
-    // Se o path é exempto, pular CSRF
-    if (allExemptPaths.some(path => req.path.startsWith(path))) {
+    if (isExempt) {
+      console.log(`[CSRF] Exempting path: ${path}`);
       return next();
     }
 
-    // Aplicar CSRF protection
-    csrfProtection(req, res, next);
+    return doubleCsrfProtection(req, res, next);
   };
 }
 
 /**
- * Handler de erro CSRF customizado
+ * Error handler para erros de CSRF
  */
 function csrfErrorHandler(err, req, res, next) {
-  if (err.code !== 'EBADCSRFTOKEN') {
-    return next(err);
-  }
+  if (err.code === 'EBADCSRFTOKEN' || err.message.includes('csrf')) {
+    console.warn('[CSRF] Token inválido ou ausente:', {
+      ip: req.ip,
+      path: req.path,
+      method: req.method,
+      headers: req.headers
+    });
 
-  // Log do erro
-  console.warn(`[CSRF_ERROR] Token inválido ou ausente:`, {
-    method: req.method,
-    path: req.path,
-    ip: req.ip,
-    userAgent: req.get('user-agent')
-  });
-
-  // Resposta de erro
-  res.status(403).json({
-    error: 'Token CSRF inválido ou ausente',
-    code: 'CSRF_TOKEN_INVALID',
-    message: 'Por favor, recarregue a página e tente novamente'
-  });
-}
-
-/**
- * Middleware para validar token CSRF em custom headers
- * Útil para SPAs que enviam token via header em vez de form
- */
-function validateCsrfHeader(req, res, next) {
-  // Métodos que precisam CSRF
-  const methodsRequiringCsrf = ['POST', 'PUT', 'DELETE', 'PATCH'];
-
-  if (!methodsRequiringCsrf.includes(req.method)) {
-    return next();
-  }
-
-  // Token pode vir em header ou cookie
-  const tokenFromHeader = req.get('X-CSRF-Token');
-  const tokenFromCookie = req.cookies && req.cookies._csrf;
-
-  if (!tokenFromHeader && !tokenFromCookie) {
     return res.status(403).json({
-      error: 'Token CSRF ausente',
-      code: 'CSRF_TOKEN_MISSING'
+      error: 'Token CSRF inválido ou ausente',
+      code: 'CSRF_VALIDATION_FAILED',
+      message: 'Por favor, recarregue a página e tente novamente'
     });
   }
 
-  // Se token veio no header, validar
-  if (tokenFromHeader) {
-    // csurf já faz a validação automaticamente
-    // este middleware é apenas para logging adicional
-    console.log(`[CSRF_VALIDATION] Token presente no header`);
-  }
-
-  next();
+  next(err);
 }
 
 /**
- * Middleware para gerar novo token CSRF em cada request
- * Útil para APIs stateless
+ * Middleware para rotação de token CSRF
+ * Gera novo token após operações sensíveis (login, logout, etc.)
  */
 function rotateCsrfToken(req, res, next) {
-  if (req.csrfToken) {
-    const newToken = req.csrfToken();
-
-    // Enviar novo token no response
-    res.setHeader('X-CSRF-Token', newToken);
-    res.cookie('XSRF-TOKEN', newToken, {
-      httpOnly: false, // Precisa ser acessível pelo JS do frontend
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 3600000
-    });
+  try {
+    const newToken = generateToken(req, res, true); // Force new token
+    res.setHeader('X-New-CSRF-Token', newToken);
+    console.log('[CSRF] Token rotacionado para sessão:', req.sessionID || req.ip);
+    next();
+  } catch (error) {
+    console.error('[CSRF] Erro ao rotacionar token:', error);
+    // Não bloqueia requisição, apenas loga erro
+    next();
   }
-
-  next();
 }
 
 /**
- * Função helper para criar endpoint de token CSRF
+ * Setup completo de CSRF protection
+ * @param {Express.Application} app - Express app
+ * @param {Object} options - Opções de configuração
+ */
+function setupCsrfProtection(app, options = {}) {
+  const {
+    exempt = ['/api/stripe-webhook', '/api/webhooks/*'],
+    enableRotation = true,
+  } = options;
+
+  // 1. Cookie parser (necessário para csrf-csrf)
+  app.use(cookieParser());
+
+  // 2. Aplicar CSRF com exemptions
+  app.use(csrfExempt(exempt));
+
+  // 3. Adicionar token em todas as respostas
+  app.use(addCsrfToken);
+
+  // 4. Error handler para CSRF
+  app.use(csrfErrorHandler);
+
+  console.log('[CSRF] Protection configurada com exemptions:', exempt);
+
+  // 5. Rotação automática (opcional)
+  if (enableRotation) {
+    app.use('/api/login', rotateCsrfToken);
+    app.use('/api/logout', rotateCsrfToken);
+  }
+}
+
+/**
+ * Endpoint para obter token CSRF
  * GET /api/csrf-token
  */
 function createCsrfTokenEndpoint(app) {
-  app.get('/api/csrf-token', cookieParser(), csrfProtection, (req, res) => {
-    res.json({
-      csrfToken: req.csrfToken(),
-      expiresIn: 3600 // segundos
-    });
+  app.get('/api/csrf-token', (req, res) => {
+    try {
+      const token = generateToken(req, res);
+      res.json({
+        csrfToken: token,
+        expiresIn: 3600000 // 1 hora em ms
+      });
+    } catch (error) {
+      console.error('[CSRF] Erro ao gerar token no endpoint:', error);
+      res.status(500).json({
+        error: 'Erro ao gerar token',
+        code: 'CSRF_GENERATION_ERROR'
+      });
+    }
   });
 }
 
-/**
- * Configuração completa de CSRF para Express
- */
-function setupCsrfProtection(app, options = {}) {
-  const exemptPaths = options.exemptPaths || [];
-
-  // 1. Cookie parser (necessário para csurf)
-  app.use(cookieParser());
-
-  // 2. CSRF protection com exceções
-  app.use(csrfExempt(exemptPaths));
-
-  // 3. Adicionar token em responses
-  app.use(addCsrfToken);
-
-  // 4. Rotacionar token (opcional)
-  if (options.rotateTokens) {
-    app.use(rotateCsrfToken);
-  }
-
-  // 5. Endpoint para obter token
-  createCsrfTokenEndpoint(app);
-
-  // 6. Error handler
-  app.use(csrfErrorHandler);
-
-  console.log('[CSRF_PROTECTION] Configurado com sucesso');
-}
-
 module.exports = {
-  csrfProtection,
+  csrfProtection: doubleCsrfProtection,
   addCsrfToken,
   csrfExempt,
   csrfErrorHandler,
-  validateCsrfHeader,
   rotateCsrfToken,
+  setupCsrfProtection,
   createCsrfTokenEndpoint,
-  setupCsrfProtection
+  generateToken,
 };

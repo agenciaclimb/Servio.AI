@@ -18,6 +18,39 @@ const {
   requireDisputeParticipant,
   validateBody
 } = require('./authorizationMiddleware');
+// Task 4.6: Security Hardening middlewares
+const {
+  globalLimiter,
+  authLimiter,
+  apiLimiter,
+  paymentLimiter,
+  webhookLimiter
+} = require('./middleware/rateLimiter');
+const {
+  securityHeaders,
+  sanitizeInput,
+  sanitizeQuery,
+  preventPathTraversal,
+  customSecurityHeaders
+} = require('./middleware/securityHeaders');
+const {
+  setupCsrfProtection,
+  createCsrfTokenEndpoint
+} = require('./middleware/csrfProtection');
+const {
+  validateRequest,
+  validateQuery,
+  loginSchema,
+  registerSchema,
+  createJobSchema,
+  proposalSchema,
+  paymentSchema,
+  updateProfileSchema,
+  reviewSchema,
+  searchJobsSchema
+} = require('./validators/requestValidators');
+const ApiKeyManager = require('./services/apiKeyManager');
+const AuditLogger = require('./services/auditLogger');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 // Prospector follow-up automation scheduler helpers
 const { processPendingOutreach } = require('./outreachScheduler');
@@ -174,6 +207,32 @@ function createApp({
   rateLimitConfig,
 } = {}) {
   const app = express();
+  
+  // ===========================
+  // TASK 4.6: Security Hardening (Phase 1)
+  // ===========================
+  // Inicializar serviços de segurança
+  const apiKeyManager = new ApiKeyManager(db);
+  const auditLogger = new AuditLogger(db);
+  
+  // Anexar serviços ao app para uso em rotas
+  app.locals.apiKeyManager = apiKeyManager;
+  app.locals.auditLogger = auditLogger;
+  
+  // 1. Rate Limiting Global (primeira linha de defesa)
+  app.use(globalLimiter);
+  
+  // 2. Security Headers (helmet + custom headers)
+  app.use(securityHeaders);
+  app.use(customSecurityHeaders);
+  
+  // 3. Path Traversal Prevention
+  app.use(preventPathTraversal);
+  
+  // 4. XSS Sanitization (body e query)
+  app.use(sanitizeInput);
+  app.use(sanitizeQuery);
+  
   // Instance-specific rate limiting configuration
   const rateCfg = {
     limit: (leaderboardRateConfig && leaderboardRateConfig.limit) || LEADERBOARD_RATE_LIMIT,
@@ -200,32 +259,18 @@ function createApp({
   app.use('/proposals', proposalsRateLimiter);
 
   // ===========================
-  // Security Middleware (Helmet)
+  // CORS (antes do CSRF)
   // ===========================
-  app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "https:", "data:"],
-        connectSrc: ["'self'", "https://firebaseinstallations.googleapis.com", "https://*.googleapis.com"],
-        fontSrc: ["'self'", "https:", "data:"],
-        objectSrc: ["'none'"],
-        mediaSrc: ["'self'"],
-        frameSrc: ["'none'"],
-      }
-    },
-    frameguard: { action: 'deny' },                    // X-Frame-Options: DENY
-    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-    hsts: { maxAge: 31536000, includeSubDomains: true }, // 1 year
-    noSniff: true,                                      // X-Content-Type-Options: nosniff
-    xssFilter: true,                                    // X-XSS-Protection: 1; mode=block
-    permittedCrossDomainPolicies: false,               // X-Permitted-Cross-Domain-Policies: none
-    dnsPrefetchControl: { allow: false }               // X-DNS-Prefetch-Control: off
-  }));
-
   app.use(cors());
+  
+  // ===========================
+  // CSRF Protection (Task 4.6)
+  // ===========================
+  setupCsrfProtection(app, {
+    exempt: ['/api/stripe-webhook', '/api/webhooks/*'],
+    enableRotation: true
+  });
+  createCsrfTokenEndpoint(app);
   
   // ===========================
   // Firebase Auth Middleware (Task 1.2)
