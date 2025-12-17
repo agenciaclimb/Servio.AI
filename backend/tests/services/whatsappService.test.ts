@@ -317,7 +317,7 @@ describe('WhatsAppService', () => {
       ];
 
       mockFirestoreCollectionGet.mockResolvedValue({
-        docs: mockMessages.map((msg) => ({
+        docs: mockMessages.map(msg => ({
           id: msg.id,
           data: () => msg,
         })),
@@ -390,7 +390,7 @@ describe('WhatsAppService', () => {
       ];
 
       mockFirestoreCollectionGet.mockResolvedValue({
-        docs: mockConversations.map((conv) => ({
+        docs: mockConversations.map(conv => ({
           id: conv.id,
           data: () => conv,
         })),
@@ -421,7 +421,9 @@ describe('WhatsAppService', () => {
 
   describe('verifyWebhookToken', () => {
     it('should return true for valid token', () => {
-      const result = WhatsAppService.verifyWebhookToken(process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN || '');
+      const result = WhatsAppService.verifyWebhookToken(
+        process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN || ''
+      );
       expect(typeof result).toBe('boolean');
     });
 
