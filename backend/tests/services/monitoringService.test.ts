@@ -170,7 +170,7 @@ describe('MonitoringService', () => {
       ];
 
       mockFirestoreCollectionGet.mockResolvedValue({
-        docs: mockAlerts.map((alert) => ({
+        docs: mockAlerts.map(alert => ({
           id: alert.id,
           data: () => alert,
         })),
@@ -188,7 +188,7 @@ describe('MonitoringService', () => {
       ];
 
       mockFirestoreCollectionGet.mockResolvedValue({
-        docs: mockAlerts.map((alert) => ({
+        docs: mockAlerts.map(alert => ({
           id: alert.id,
           data: () => alert,
         })),
@@ -292,7 +292,7 @@ describe('MonitoringService', () => {
       ];
 
       mockFirestoreCollectionGet.mockResolvedValue({
-        docs: mockMetrics.map((metric) => ({
+        docs: mockMetrics.map(metric => ({
           data: () => metric,
         })),
       });
@@ -309,12 +309,7 @@ describe('MonitoringService', () => {
     it('should respect limit parameter', async () => {
       mockFirestoreCollectionGet.mockResolvedValue({ docs: [] });
 
-      await MonitoringService.getMetrics(
-        'test_metric',
-        new Date(),
-        new Date(),
-        10
-      );
+      await MonitoringService.getMetrics('test_metric', new Date(), new Date(), 10);
 
       expect(mockFirestoreCollectionGet).toHaveBeenCalled();
     });
@@ -329,7 +324,7 @@ describe('MonitoringService', () => {
       ];
 
       mockFirestoreCollectionGet.mockResolvedValue({
-        docs: mockMetrics.map((m) => ({ data: () => m })),
+        docs: mockMetrics.map(m => ({ data: () => m })),
       });
 
       const startDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -362,7 +357,7 @@ describe('MonitoringService', () => {
       ];
 
       mockFirestoreCollectionGet.mockResolvedValue({
-        docs: mockMetrics.map((m) => ({ data: () => m })),
+        docs: mockMetrics.map(m => ({ data: () => m })),
       });
       mockFirestoreCollectionAdd.mockResolvedValue({ id: 'alert-slo' });
 
@@ -384,7 +379,7 @@ describe('MonitoringService', () => {
       ];
 
       mockFirestoreCollectionGet.mockResolvedValue({
-        docs: mockMetrics.map((m) => ({ data: () => m })),
+        docs: mockMetrics.map(m => ({ data: () => m })),
       });
 
       await MonitoringService.checkSLOViolations();

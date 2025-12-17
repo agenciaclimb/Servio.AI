@@ -85,7 +85,9 @@ router.get('/metrics/:name', async (req: Request, res: Response) => {
     const { name } = req.params;
     const { startDate, endDate, limit } = req.query;
 
-    const start = startDate ? new Date(startDate as string) : new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const start = startDate
+      ? new Date(startDate as string)
+      : new Date(Date.now() - 24 * 60 * 60 * 1000);
     const end = endDate ? new Date(endDate as string) : new Date();
     const maxLimit = limit ? parseInt(limit as string) : 1000;
 
@@ -221,7 +223,9 @@ router.get('/slo', async (req: Request, res: Response) => {
   try {
     const { startDate, endDate } = req.query;
 
-    const start = startDate ? new Date(startDate as string) : new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const start = startDate
+      ? new Date(startDate as string)
+      : new Date(Date.now() - 24 * 60 * 60 * 1000);
     const end = endDate ? new Date(endDate as string) : new Date();
 
     const sloMetrics = await MonitoringService.getSLOMetrics(start, end);

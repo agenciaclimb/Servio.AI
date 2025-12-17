@@ -81,7 +81,7 @@ class MonitoringService {
   async recordMetrics(metrics: MetricData[]): Promise<void> {
     try {
       const batch = db.batch();
-      metrics.forEach((metric) => {
+      metrics.forEach(metric => {
         const ref = db.collection('metrics').doc();
         batch.set(ref, {
           ...metric,
@@ -126,11 +126,14 @@ class MonitoringService {
    */
   async resolveAlert(alertId: string, resolution?: string): Promise<boolean> {
     try {
-      await db.collection('alerts').doc(alertId).update({
-        resolved: true,
-        resolvedAt: admin.firestore.Timestamp.now(),
-        resolution: resolution || 'Manually resolved',
-      });
+      await db
+        .collection('alerts')
+        .doc(alertId)
+        .update({
+          resolved: true,
+          resolvedAt: admin.firestore.Timestamp.now(),
+          resolution: resolution || 'Manually resolved',
+        });
 
       logger.info('Alert resolved', { alertId, resolution });
       return true;
@@ -153,7 +156,7 @@ class MonitoringService {
 
       const snapshot = await query.orderBy('timestamp', 'desc').limit(100).get();
 
-      return snapshot.docs.map((doc) => doc.data() as Alert);
+      return snapshot.docs.map(doc => doc.data() as Alert);
     } catch (error: any) {
       logger.error('Error fetching active alerts', { error: error.message });
       return [];
@@ -176,9 +179,9 @@ class MonitoringService {
       let overallStatus: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
 
       const serviceStatuses = Object.values(services);
-      if (serviceStatuses.some((s) => s.status === 'down')) {
+      if (serviceStatuses.some(s => s.status === 'down')) {
         overallStatus = 'unhealthy';
-      } else if (serviceStatuses.some((s) => s.status === 'degraded')) {
+      } else if (serviceStatuses.some(s => s.status === 'degraded')) {
         overallStatus = 'degraded';
       }
 
@@ -256,7 +259,7 @@ class MonitoringService {
       let requestsSuccess = 0;
       let requestsFailed = 0;
 
-      metricsSnapshot.docs.forEach((doc) => {
+      metricsSnapshot.docs.forEach(doc => {
         const data = doc.data();
         if (data.name === 'request_latency') {
           latencies.push(data.value);
@@ -270,7 +273,8 @@ class MonitoringService {
       });
 
       const requestsTotal = requestsSuccess + requestsFailed;
-      const avgLatency = latencies.length > 0 ? latencies.reduce((a, b) => a + b, 0) / latencies.length : 0;
+      const avgLatency =
+        latencies.length > 0 ? latencies.reduce((a, b) => a + b, 0) / latencies.length : 0;
       const errorRate = requestsTotal > 0 ? requestsFailed / requestsTotal : 0;
 
       // Calculate uptime (simplified)
@@ -353,7 +357,12 @@ class MonitoringService {
   /**
    * Get metrics by name
    */
-  async getMetrics(name: string, startDate: Date, endDate: Date, limit: number = 1000): Promise<MetricData[]> {
+  async getMetrics(
+    name: string,
+    startDate: Date,
+    endDate: Date,
+    limit: number = 1000
+  ): Promise<MetricData[]> {
     try {
       const snapshot = await db
         .collection('metrics')
@@ -364,7 +373,7 @@ class MonitoringService {
         .limit(limit)
         .get();
 
-      return snapshot.docs.map((doc) => doc.data() as MetricData);
+      return snapshot.docs.map(doc => doc.data() as MetricData);
     } catch (error: any) {
       logger.error('Error fetching metrics', { error: error.message });
       return [];
@@ -381,7 +390,11 @@ class MonitoringService {
   /**
    * Log structured event
    */
-  logEvent(level: 'info' | 'warn' | 'error', message: string, metadata?: Record<string, any>): void {
+  logEvent(
+    level: 'info' | 'warn' | 'error',
+    message: string,
+    metadata?: Record<string, any>
+  ): void {
     const logEntry = {
       level,
       message,
