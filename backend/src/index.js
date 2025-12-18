@@ -8,6 +8,8 @@ const { Storage } = require("@google-cloud/storage");
 const { createStripe } = require('./stripeConfig');
 // Database wrapper com fallback em memória
 const { createDbWrapper, fieldValueHelpers } = require('./dbWrapper');
+// Gemini Cost Logger (Task 2.2)
+const { getUsageStats: getGeminiUsageStats } = require('./services/geminiCostLogger');
 // Authorization middleware for granular permission checking
 const { 
   requireAuth, 
@@ -1076,6 +1078,22 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
     } catch (err) {
       console.error('match-providers error', err);
       return res.status(500).json({ error: 'Failed to match providers' });
+    }
+  });
+
+  // GET /api/gemini-stats - Gemini AI usage statistics (admin only)
+  // Task 2.2: Cost logging and monitoring
+  app.get('/api/gemini-stats', requireAdmin, async (req, res) => {
+    try {
+      const stats = await getGeminiUsageStats();
+      return res.json({
+        success: true,
+        period: 'last 24 hours',
+        ...stats,
+      });
+    } catch (err) {
+      console.error('gemini-stats error', err);
+      return res.status(500).json({ error: 'Failed to fetch Gemini stats' });
     }
   });
 
