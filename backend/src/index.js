@@ -436,8 +436,15 @@ function createApp({
     message: 'Muitas requisições IA. Tente novamente em 1 minuto.',
     standardHeaders: true,
     legacyHeaders: false,
-    skip: (req) => req.user?.type === 'admin', // Não limitar admins
-    keyGenerator: (req) => req.user?.email || req.ip,
+    // Não limitar admins; se não houver req.user, não pula o limitador
+    skip: (req) => !!req.user && req.user.type === 'admin',
+    // Usa e-mail do usuário autenticado se disponível; caso contrário, fallback para IP
+    keyGenerator: (req) => {
+      if (req.user && req.user.email) {
+        return req.user.email;
+      }
+      return req.ip;
+    },
   });
 
   // POST /api/enhance-job - Enhance job request with AI

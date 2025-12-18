@@ -274,10 +274,12 @@ describe('analyzeProviderBehaviorForFraud', () => {
 **Prioridade**: 🔴 CRÍTICO  
 **Tempo**: 30 min
 
-**Instalação**:
+**Dependência / Verificação**:
+
+O pacote `express-rate-limit` já está listado em `backend/package.json` (versão ^7.5.1). Não é necessário instalá-lo novamente em um ambiente já configurado. Caso esteja montando o projeto do zero ou a dependência não tenha sido instalada:
 
 ```bash
-cd backend && npm install express-rate-limit
+cd backend && npm install
 ```
 
 **Implementação** (adicionar após imports):

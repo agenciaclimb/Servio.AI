@@ -16,11 +16,20 @@ const cookieParser = require('cookie-parser');
 /**
  * Configuração do double CSRF
  */
+const csrfSecret = process.env.CSRF_SECRET;
+
+if (!csrfSecret && process.env.NODE_ENV === 'production') {
+  throw new Error(
+    'CSRF_SECRET environment variable must be set in production. ' +
+    'Please configure a strong, random secret of at least 64 characters.'
+  );
+}
+
 const {
   generateToken,
   doubleCsrfProtection,
 } = doubleCsrf({
-  getSecret: () => process.env.CSRF_SECRET || 'change-me-in-production-random-64-chars-minimum',
+  getSecret: () => csrfSecret || 'change-me-in-production-random-64-chars-minimum',
   cookieName: '__Host-psifi.x-csrf-token',
   cookieOptions: {
     httpOnly: true,

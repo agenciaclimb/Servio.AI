@@ -110,11 +110,11 @@ class AuditLogger {
       return true;
     }
 
-    // Mudanças de permissões fora do horário comercial
+    // Mudanças de permissões fora do horário comercial (UTC)
     if (logEntry.action === 'CHANGE_PERMISSIONS') {
-      const hour = new Date().getHours();
+      const hour = new Date().getUTCHours();
       if (hour < 6 || hour > 22) {
-        return true; // Mudança de permissões à noite/madrugada
+        return true; // Mudança de permissões à noite/madrugada (UTC)
       }
     }
 
