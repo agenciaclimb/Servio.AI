@@ -2,7 +2,7 @@
  * Testes para Pipedrive Service
  */
 
-const { describe, it, expect, beforeEach, vi } = require('vitest');
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 const PipedriveService = require('../services/pipedriveService');
 
 describe('PipedriveService', () => {

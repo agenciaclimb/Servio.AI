@@ -54,7 +54,10 @@ interface InteractiveMessage {
   body: string;
   action: {
     buttons?: Array<{ type: string; reply: { id: string; title: string } }>;
-    sections?: Array<{ title: string; rows: Array<{ id: string; title: string; description: string }> }>;
+    sections?: Array<{
+      title: string;
+      rows: Array<{ id: string; title: string; description: string }>;
+    }>;
   };
 }
 
@@ -129,7 +132,10 @@ class WhatsAppService {
             language: {
               code: templateLanguage,
             },
-            components: parameters.length > 0 ? [{ type: 'body', parameters: parameters.map((p) => ({ type: 'text', text: p })) }] : undefined,
+            components:
+              parameters.length > 0
+                ? [{ type: 'body', parameters: parameters.map(p => ({ type: 'text', text: p })) }]
+                : undefined,
           },
         },
         {
@@ -259,13 +265,15 @@ class WhatsAppService {
 
     // Simple FAQ responses
     const faqResponses: Record<string, string> = {
-      'como funciona': 'Nosso serviço conecta clientes com prestadores de serviço qualificados. Você pode publicar um job, receber propostas e gerenciar pagamentos de forma segura.',
+      'como funciona':
+        'Nosso serviço conecta clientes com prestadores de serviço qualificados. Você pode publicar um job, receber propostas e gerenciar pagamentos de forma segura.',
       'quanto custa':
         'O valor depende do tipo de serviço. Você define o orçamento e recebe propostas de prestadores.',
       'como pagar':
         'Usamos Stripe para pagamentos seguros. Os fundos são retidos como escrow até a conclusão do serviço.',
-      'segurança': 'Todos os pagamentos são protegidos e auditados. Seus dados estão seguros em nossa plataforma.',
-      'suporte': 'Estamos aqui para ajudar! Qual é sua dúvida específica?',
+      segurança:
+        'Todos os pagamentos são protegidos e auditados. Seus dados estão seguros em nossa plataforma.',
+      suporte: 'Estamos aqui para ajudar! Qual é sua dúvida específica?',
     };
 
     // Check for FAQ matches
@@ -277,7 +285,8 @@ class WhatsAppService {
 
     // Default escalation for unknown questions
     return {
-      response: 'Sua pergunta foi registrada. Um agente humano entrará em contato em breve para ajudar.',
+      response:
+        'Sua pergunta foi registrada. Um agente humano entrará em contato em breve para ajudar.',
       action: 'escalate',
     };
   }
@@ -329,16 +338,14 @@ class WhatsAppService {
 
       // Create notifications for each agent
       for (const agent of agents.docs) {
-        await db
-          .collection('agent_notifications')
-          .add({
-            agentId: agent.id,
-            conversationId,
-            userId,
-            type: 'escalated_conversation',
-            createdAt: new Date(),
-            read: false,
-          });
+        await db.collection('agent_notifications').add({
+          agentId: agent.id,
+          conversationId,
+          userId,
+          type: 'escalated_conversation',
+          createdAt: new Date(),
+          read: false,
+        });
       }
     } catch (error: any) {
       logger.error('Error notifying agents', { error: error.message });
@@ -371,10 +378,13 @@ class WhatsAppService {
         .orderBy('timestamp', 'asc')
         .get();
 
-      return snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      } as ConversationMessage));
+      return snapshot.docs.map(
+        doc =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as ConversationMessage
+      );
     } catch (error: any) {
       logger.error('Error getting conversation history', { error: error.message });
       throw new Error('Failed to get conversation history');
@@ -409,10 +419,13 @@ class WhatsAppService {
         .limit(limit)
         .get();
 
-      return snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      } as Conversation));
+      return snapshot.docs.map(
+        doc =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as Conversation
+      );
     } catch (error: any) {
       logger.error('Error getting active conversations', { error: error.message });
       throw new Error('Failed to get active conversations');
