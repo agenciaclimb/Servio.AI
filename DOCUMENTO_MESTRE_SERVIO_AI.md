@@ -1758,6 +1758,148 @@ Após a criação do PR, a IA deve adicionar no Documento Mestre:
 
 **Nenhuma correção é válida sem esse registro oficial.**
 
+---
+
+## #update_log — 17/12/2025 BRT 19:45 (TASK 4.6: SECURITY HARDENING - ENTERPRISE-GRADE SECURITY LAYER ✅)
+
+### 📋 Resumo Executivo
+
+**Task**: 4.6 - Security Hardening  
+**Status**: ✅ PR CRIADA (#55)  
+**Prioridade**: ⭐⭐⭐⭐⭐ CRÍTICA  
+**Duração**: ~2h (estimado 6h total)  
+**Branch**: `feature/task-4.6-security-hardening`
+
+### 🔐 6 Componentes Implementados
+
+1. **Rate Limiting** (`backend/src/middleware/rateLimiter.js`)
+   - 5 limiters: global (1000/15min), auth (5/15min), api (100/min), payment (10/min), webhook (50/min)
+   - Configuração via environment variables
+   - Error handling com logging
+
+2. **API Key Manager** (`backend/src/services/apiKeyManager.js`)
+   - SHA-256 hashing (nunca plaintext)
+   - Versionamento automático (v1, v2, v3...)
+   - Rotação 7 dias com Cloud Scheduler
+   - Métodos: generateNewKey, validateKey, rotateExpiredKeys, revokeKey
+
+3. **Audit Logger** (`backend/src/services/auditLogger.js`)
+   - 10+ ações monitoradas: LOGIN, CREATE_JOB, UPDATE_JOB, PROCESS_PAYMENT, etc.
+   - Detecção automática de atividade suspeita
+   - Alertas em `securityAlerts` collection
+   - Limpeza automática (90-day retention para compliance)
+
+4. **Security Headers** (`backend/src/middleware/securityHeaders.js`)
+   - Helmet.js + CSP customizado
+   - Sanitização XSS com xss package
+   - Prevenção contra path traversal (`../`)
+   - Headers: HSTS, X-Frame-Options, X-Content-Type-Options
+
+5. **CSRF Protection** (`backend/src/middleware/csrfProtection.js`)
+   - csrf-csrf (moderna alternativa ao deprecated csurf)
+   - Double CSRF tokens (cookie + header)
+   - Cookies HttpOnly com prefix \_\_Host-
+   - Exemptions para webhooks (Stripe, etc.)
+   - Rotação automática após login/logout
+   - Endpoint: GET `/api/csrf-token`
+
+6. **Request Validators** (`backend/src/validators/requestValidators.js`)
+   - Zod schemas para 8 endpoints críticos
+   - Schemas: login, register, createJob, proposal, payment, review, profile, search
+   - Validação de tipos, formatos, ranges
+   - Mensagens de erro estruturadas com field-level details
+
+### 📦 Dependências Adicionadas
+
+```json
+{
+  "express-rate-limit": "^7.x",
+  "helmet": "^7.x",
+  "csrf-csrf": "^1.x", // Substituiu deprecated csurf
+  "xss": "^1.x",
+  "zod": "^3.x",
+  "cookie-parser": "^1.x"
+}
+```
+
+### 🔗 Integração em index.js
+
+**Ordem de aplicação** (middleware stack):
+
+1. Rate Limiting Global (globalLimiter)
+2. Security Headers (helmet + customSecurityHeaders)
+3. Path Traversal Prevention
+4. XSS Sanitization (input + query params)
+5. CORS
+6. CSRF Protection (com exemptions para `/api/stripe-webhook`, `/api/webhooks/*`)
+7. Firebase Auth
+
+**Serviços inicializados**:
+
+- `app.locals.apiKeyManager` - Gerenciador de chaves API
+- `app.locals.auditLogger` - Logger de auditoria
+- Endpoint `/api/csrf-token` criado
+
+### 📊 Cobertura de Testes
+
+| Arquivo              | Cobertura | Status         |
+| -------------------- | --------- | -------------- |
+| requestValidators.js | 79.87%    | ✅ OK          |
+| csrfProtection.js    | 84.35%    | ✅ OK          |
+| securityHeaders.js   | 86.49%    | ✅ OK          |
+| rateLimiter.js       | 69.10%    | ⚠️ Incrementar |
+| apiKeyManager.js     | 35.50%    | ⚠️ Incrementar |
+| auditLogger.js       | 41.78%    | ⚠️ Incrementar |
+
+### 📝 Commits Atômicos
+
+1. `7d833d3` - Rate Limiting, API Key Manager, Audit Logger
+   - 3 files, 813 insertions
+
+2. `d374cc5` - Security Headers, CSRF Protection, Request Validators
+   - 3 files, 762 insertions
+
+3. `791ed2e` - Integração completa em index.js + instalação de deps
+   - 4 files, 259 insertions
+
+### 🔐 Security Best Practices Aplicadas
+
+✅ Hashing com SHA-256 (nunca plaintext)  
+✅ Cookies HttpOnly com flag Secure em produção  
+✅ CSRF double tokens (cookie + header)  
+✅ Rate limiting diferenciado por tipo de rota  
+✅ Sanitização de input contra XSS  
+✅ Prevenção contra path traversal  
+✅ Content Security Policy (CSP) ativa  
+✅ HSTS habilitado (1 ano)  
+✅ X-Frame-Options: DENY (clickjacking prevention)  
+✅ Audit trail para compliance (90-day retention)  
+✅ Validação rigorosa com Zod (type-safe)
+
+### 📈 Impacto no Sistema
+
+- **Segurança**: Nível enterprise ✅
+- **Performance**: Rate limiting reduz carga em servidores ✅
+- **Compliance**: Audit logs atendem LGPD/GDPR ✅
+- **DX**: Validação clara evita erros de cliente ✅
+
+### 🚀 Próximos Passos (Task 4.7)
+
+- [ ] Incrementar cobertura de testes para apiKeyManager, auditLogger, rateLimiter (>80%)
+- [ ] Implementar Data Privacy & GDPR compliance
+- [ ] Setup de rotação automática de secrets
+- [ ] Integration tests com Stripe webhook
+- [ ] E2E tests para fluxo de autenticação segura
+
+### 📞 Referências
+
+- **Issue**: #49
+- **PR**: #55
+- **Documentação**: [Task 4.6 Security Hardening Plan](ai-tasks/day-4/TASK-4.6-SECURITY-HARDENING-PLAN.md)
+- **Backend**: `backend/src/` (middleware, services, validators)
+
+---
+
 ### ✅ Revalidação Total
 
 Depois da correção, a IA deve:

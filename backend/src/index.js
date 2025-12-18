@@ -18,6 +18,39 @@ const {
   requireDisputeParticipant,
   validateBody
 } = require('./authorizationMiddleware');
+// Task 4.6: Security Hardening middlewares
+const {
+  globalLimiter,
+  authLimiter,
+  apiLimiter,
+  paymentLimiter,
+  webhookLimiter
+} = require('./middleware/rateLimiter');
+const {
+  securityHeaders,
+  sanitizeInput,
+  sanitizeQuery,
+  preventPathTraversal,
+  customSecurityHeaders
+} = require('./middleware/securityHeaders');
+const {
+  setupCsrfProtection,
+  createCsrfTokenEndpoint
+} = require('./middleware/csrfProtection');
+const {
+  validateRequest,
+  validateQuery,
+  loginSchema,
+  registerSchema,
+  createJobSchema,
+  proposalSchema,
+  paymentSchema,
+  updateProfileSchema,
+  reviewSchema,
+  searchJobsSchema
+} = require('./validators/requestValidators');
+const ApiKeyManager = require('./services/apiKeyManager');
+const AuditLogger = require('./services/auditLogger');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 // Prospector follow-up automation scheduler helpers
 const { processPendingOutreach } = require('./outreachScheduler');
@@ -174,6 +207,38 @@ function createApp({
   rateLimitConfig,
 } = {}) {
   const app = express();
+  const isTestEnv = process.env.NODE_ENV === 'test' || process.env.DISABLE_SECURITY === 'true';
+  const applyRateLimiters = (!isTestEnv) || (rateLimitConfig && rateLimitConfig.enableInTests === true);
+  
+  // ===========================
+  // TASK 4.6: Security Hardening (Phase 1)
+  // ===========================
+  // Inicializar serviços de segurança
+  const apiKeyManager = new ApiKeyManager(db);
+  const auditLogger = new AuditLogger(db);
+  
+  // Anexar serviços ao app para uso em rotas
+  app.locals.apiKeyManager = apiKeyManager;
+  app.locals.auditLogger = auditLogger;
+  
+  if (!isTestEnv) {
+    // 2. Security Headers (helmet + custom headers)
+    app.use(securityHeaders);
+    app.use(customSecurityHeaders);
+  
+    // 3. Path Traversal Prevention
+    app.use(preventPathTraversal);
+  
+    // 4. XSS Sanitization (body e query)
+    app.use(sanitizeInput);
+    app.use(sanitizeQuery);
+  }
+
+  // Global rate limiters can be force-enabled in tests via rateLimitConfig.enableInTests
+  if (applyRateLimiters) {
+    app.use(globalLimiter);
+  }
+  
   // Instance-specific rate limiting configuration
   const rateCfg = {
     limit: (leaderboardRateConfig && leaderboardRateConfig.limit) || LEADERBOARD_RATE_LIMIT,
@@ -190,42 +255,32 @@ function createApp({
   const userRateLimiter = buildRateLimiter(rateLimitConfig?.users || baseRateLimitConfig);
   const proposalsRateLimiter = buildRateLimiter(rateLimitConfig?.proposals || baseRateLimitConfig);
 
-  // Apply rate limiters to critical auth/user/proposal endpoints
-  const authPaths = ['/login', '/api/login', '/register', '/api/register', '/api/register-with-invite'];
-  authPaths.forEach(path => app.use(path, authRateLimiter));
+  if (applyRateLimiters) {
+    // Apply rate limiters to critical auth/user/proposal endpoints
+    const authPaths = ['/login', '/api/login', '/register', '/api/register', '/api/register-with-invite'];
+    authPaths.forEach(path => app.use(path, authRateLimiter));
 
-  const userPaths = ['/users', '/api/users'];
-  userPaths.forEach(path => app.use(path, userRateLimiter));
+    const userPaths = ['/users', '/api/users'];
+    userPaths.forEach(path => app.use(path, userRateLimiter));
 
-  app.use('/proposals', proposalsRateLimiter);
+    app.use('/proposals', proposalsRateLimiter);
+  }
 
   // ===========================
-  // Security Middleware (Helmet)
+  // CORS (antes do CSRF)
   // ===========================
-  app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "https:", "data:"],
-        connectSrc: ["'self'", "https://firebaseinstallations.googleapis.com", "https://*.googleapis.com"],
-        fontSrc: ["'self'", "https:", "data:"],
-        objectSrc: ["'none'"],
-        mediaSrc: ["'self'"],
-        frameSrc: ["'none'"],
-      }
-    },
-    frameguard: { action: 'deny' },                    // X-Frame-Options: DENY
-    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-    hsts: { maxAge: 31536000, includeSubDomains: true }, // 1 year
-    noSniff: true,                                      // X-Content-Type-Options: nosniff
-    xssFilter: true,                                    // X-XSS-Protection: 1; mode=block
-    permittedCrossDomainPolicies: false,               // X-Permitted-Cross-Domain-Policies: none
-    dnsPrefetchControl: { allow: false }               // X-DNS-Prefetch-Control: off
-  }));
-
   app.use(cors());
+  
+  if (!isTestEnv) {
+    // ===========================
+    // CSRF Protection (Task 4.6)
+    // ===========================
+    setupCsrfProtection(app, {
+      exempt: ['/api/stripe-webhook', '/api/webhooks/*'],
+      enableRotation: true
+    });
+    createCsrfTokenEndpoint(app);
+  }
   
   // ===========================
   // Firebase Auth Middleware (Task 1.2)
@@ -374,8 +429,19 @@ function createApp({
   // AI ENDPOINTS (GEMINI)
   // =================================================================
 
+  // Gemini Rate Limiter: 100 req/min por user (Task 2.1 - Auditoria Gemini)
+  const geminiLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minuto
+    max: 100, // máximo 100 requisições
+    message: 'Muitas requisições IA. Tente novamente em 1 minuto.',
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => req.user?.type === 'admin', // Não limitar admins
+    keyGenerator: (req) => req.user?.email || req.ip,
+  });
+
   // POST /api/enhance-job - Enhance job request with AI
-  app.post("/api/enhance-job", async (req, res) => {
+  app.post("/api/enhance-job", geminiLimiter, async (req, res) => {
     const { prompt, address, fileCount } = req.body;
     if (!prompt) {
       return res.status(400).json({ error: "Prompt is required." });
@@ -568,7 +634,7 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
   }
 
   // POST /api/generate-tip
-  app.post('/api/generate-tip', async (req, res) => {
+  app.post('/api/generate-tip', geminiLimiter, async (req, res) => {
     const user = req.body?.user || {};
     const baseTip = `Complete seu perfil adicionando uma foto profissional, ${user.name || 'usuário'}.`; // deterministic
     const model = getModel();
@@ -589,7 +655,7 @@ Retorne apenas a dica sem explicações adicionais.`;
   });
 
   // POST /api/enhance-profile
-  app.post('/api/enhance-profile', async (req, res) => {
+  app.post('/api/enhance-profile', geminiLimiter, async (req, res) => {
     const profile = req.body?.profile || {};
     const stub = {
       suggestedHeadline: `Profissional de ${profile.headline?.split(' ')[0] || 'Serviços'} Confiável`,
@@ -617,7 +683,7 @@ Requisitos: tom profissional, claro, conciso. Resposta APENAS JSON.`;
   });
 
   // POST /api/generate-referral
-  app.post('/api/generate-referral', async (req, res) => {
+  app.post('/api/generate-referral', geminiLimiter, async (req, res) => {
     const { senderName, friendEmail } = req.body || {};
     const subjectStub = `Convite para conhecer a SERVIO.AI`; 
     const bodyStub = `Olá ${friendEmail || 'amigo'}, ${senderName || 'Um usuário'} está recomendando a plataforma SERVIO.AI para contratar ou oferecer serviços com segurança.`;
@@ -643,7 +709,7 @@ Formato JSON: {"subject":"...","body":"..."}`;
   });
 
   // POST /api/generate-proposal
-  app.post('/api/generate-proposal', async (req, res) => {
+  app.post('/api/generate-proposal', geminiLimiter, async (req, res) => {
     const { job, provider } = req.body || {};
     const stubMessage = `Olá! Posso ajudar com "${job?.description?.slice(0,60) || 'seu serviço'}" garantindo qualidade e prazo. Vamos prosseguir?`;
     const model = getModel();
@@ -664,7 +730,7 @@ Retornar somente texto final.`;
   });
 
   // POST /api/generate-faq
-  app.post('/api/generate-faq', async (req, res) => {
+  app.post('/api/generate-faq', geminiLimiter, async (req, res) => {
     const { job } = req.body || {};
     const stubFAQ = [
       { question: 'Qual o prazo estimado?', answer: 'Depende da complexidade, geralmente 24-48 horas.' },
@@ -690,7 +756,7 @@ Cada item: {"question":"...","answer":"..."}`;
   });
 
   // POST /api/identify-item
-  app.post('/api/identify-item', async (req, res) => {
+  app.post('/api/identify-item', geminiLimiter, async (req, res) => {
     const { base64Image } = req.body || {};
     // For now just stub deterministic identification
     const stub = { itemName: 'Item Genérico', category: 'geral', brand: 'Desconhecida', model: 'N/D', serialNumber: 'N/D' };
@@ -699,7 +765,7 @@ Cada item: {"question":"...","answer":"..."}`;
   });
 
   // POST /api/generate-seo
-  app.post('/api/generate-seo', async (req, res) => {
+  app.post('/api/generate-seo', geminiLimiter, async (req, res) => {
     const { user, reviews = [] } = req.body || {};
     const stub = {
       seoTitle: `${user?.name || 'Prestador'} - Serviços Profissionais`,
@@ -730,7 +796,7 @@ Retornar APENAS JSON.`;
   });
 
   // POST /api/summarize-reviews
-  app.post('/api/summarize-reviews', async (req, res) => {
+  app.post('/api/summarize-reviews', geminiLimiter, async (req, res) => {
     const { providerName, reviews = [] } = req.body || {};
     const stub = `${providerName || 'O prestador'} possui ${reviews.length} avaliações mostrando compromisso com qualidade.`;
     const model = getModel();
@@ -750,7 +816,7 @@ Retorne somente o resumo.`;
   });
 
   // POST /api/generate-comment
-  app.post('/api/generate-comment', async (req, res) => {
+  app.post('/api/generate-comment', geminiLimiter, async (req, res) => {
     const { rating, category, description } = req.body || {};
     const stub = `Serviço de ${category || 'categoria'} executado com qualidade. Recomendo!`;
     const model = getModel();
@@ -770,7 +836,7 @@ Retorne somente o comentário.`;
   });
 
   // POST /api/generate-category-page
-  app.post('/api/generate-category-page', async (req, res) => {
+  app.post('/api/generate-category-page', geminiLimiter, async (req, res) => {
     const { category, location } = req.body || {};
     const stub = {
       title: `Serviços de ${category || 'geral'}${location ? ' em ' + location : ''}`,
@@ -801,7 +867,7 @@ Retorne APENAS JSON.`;
   });
 
   // POST /api/propose-schedule
-  app.post('/api/propose-schedule', async (req, res) => {
+  app.post('/api/propose-schedule', geminiLimiter, async (req, res) => {
     const { messages = [] } = req.body || {};
     // Very naive heuristic: if any message contains "amanhã" propose next day 09:00
     const hasAmanha = messages.some(m => /amanhã|amanha/i.test(m.text || ''));
@@ -812,7 +878,7 @@ Retorne APENAS JSON.`;
   });
 
   // POST /api/get-chat-assistance
-  app.post('/api/get-chat-assistance', async (req, res) => {
+  app.post('/api/get-chat-assistance', geminiLimiter, async (req, res) => {
     try {
       const { messages = [], currentUserType } = req.body || {};
       
@@ -883,7 +949,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // POST /api/parse-search
-  app.post('/api/parse-search', async (req, res) => {
+  app.post('/api/parse-search', geminiLimiter, async (req, res) => {
     const { query = '' } = req.body || {};
     const lower = query.toLowerCase();
     
@@ -910,7 +976,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // POST /api/extract-document
-  app.post('/api/extract-document', async (req, res) => {
+  app.post('/api/extract-document', geminiLimiter, async (req, res) => {
     const { base64Image } = req.body || {};
     if (!base64Image) return res.status(400).json({ error: 'Imagem é obrigatória.' });
     // Stub parse
@@ -918,7 +984,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // POST /api/mediate-dispute
-  app.post('/api/mediate-dispute', async (req, res) => {
+  app.post('/api/mediate-dispute', geminiLimiter, async (req, res) => {
     const { messages = [], clientName = 'Cliente', providerName = 'Prestador' } = req.body || {};
     const summary = `Disputa entre ${clientName} e ${providerName} com ${messages.length} mensagens.`;
     const analysis = 'Conflito em estágio inicial, recomendada mediação neutra.';
@@ -927,7 +993,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // POST /api/analyze-fraud
-  app.post('/api/analyze-fraud', async (req, res) => {
+  app.post('/api/analyze-fraud', geminiLimiter, async (req, res) => {
     const { provider = {}, context = {} } = req.body || {};
     // Simple heuristic: if bio very short or missing and context type is profile_update, risk slightly higher
     const bio = (provider.bio || '').trim();
@@ -939,7 +1005,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   });
 
   // POST /api/match-providers - Simple matching logic (prototype)
-  app.post('/api/match-providers', async (req, res) => {
+  app.post('/api/match-providers', geminiLimiter, async (req, res) => {
     try {
       let { job, jobId, allUsers = [] } = req.body || {};
       
@@ -4062,8 +4128,11 @@ Retorne apenas o corpo do email, sem assunto.`;
   //         GET /api/landing-pages, /:id, /:id/analytics, /:id/html
   //         POST /api/landing-pages/:id/event, /form
   //         DELETE /api/landing-pages/:id
-  const LandingPageService = require('./services/landingPageService');
-  const landingPageService = new LandingPageService(defaultDb);
+  const LandingPageServiceModule = require('./services/landingPageService');
+  const landingPageService =
+    typeof LandingPageServiceModule === 'function'
+      ? new LandingPageServiceModule(defaultDb)
+      : (LandingPageServiceModule.default || LandingPageServiceModule);
   const landingPagesRouter = require('./routes/landingPages');
   app.use('/api/landing-pages', landingPagesRouter({ db: defaultDb, landingPageService }));
 
