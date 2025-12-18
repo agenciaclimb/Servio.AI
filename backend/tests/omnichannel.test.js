@@ -11,7 +11,7 @@
 
 const request = require('supertest');
 const admin = require('firebase-admin');
-const { describe, it, expect, beforeEach, afterEach, vi } = require('vitest');
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 // Mock Firebase Admin
 vi.mock('firebase-admin', () => ({

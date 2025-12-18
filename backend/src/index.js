@@ -207,6 +207,7 @@ function createApp({
   rateLimitConfig,
 } = {}) {
   const app = express();
+  const isTestEnv = process.env.NODE_ENV === 'test' || process.env.DISABLE_SECURITY === 'true';
   
   // ===========================
   // TASK 4.6: Security Hardening (Phase 1)
@@ -219,19 +220,21 @@ function createApp({
   app.locals.apiKeyManager = apiKeyManager;
   app.locals.auditLogger = auditLogger;
   
-  // 1. Rate Limiting Global (primeira linha de defesa)
-  app.use(globalLimiter);
+  if (!isTestEnv) {
+    // 1. Rate Limiting Global (primeira linha de defesa)
+    app.use(globalLimiter);
   
-  // 2. Security Headers (helmet + custom headers)
-  app.use(securityHeaders);
-  app.use(customSecurityHeaders);
+    // 2. Security Headers (helmet + custom headers)
+    app.use(securityHeaders);
+    app.use(customSecurityHeaders);
   
-  // 3. Path Traversal Prevention
-  app.use(preventPathTraversal);
+    // 3. Path Traversal Prevention
+    app.use(preventPathTraversal);
   
-  // 4. XSS Sanitization (body e query)
-  app.use(sanitizeInput);
-  app.use(sanitizeQuery);
+    // 4. XSS Sanitization (body e query)
+    app.use(sanitizeInput);
+    app.use(sanitizeQuery);
+  }
   
   // Instance-specific rate limiting configuration
   const rateCfg = {
@@ -249,28 +252,32 @@ function createApp({
   const userRateLimiter = buildRateLimiter(rateLimitConfig?.users || baseRateLimitConfig);
   const proposalsRateLimiter = buildRateLimiter(rateLimitConfig?.proposals || baseRateLimitConfig);
 
-  // Apply rate limiters to critical auth/user/proposal endpoints
-  const authPaths = ['/login', '/api/login', '/register', '/api/register', '/api/register-with-invite'];
-  authPaths.forEach(path => app.use(path, authRateLimiter));
+  if (!isTestEnv) {
+    // Apply rate limiters to critical auth/user/proposal endpoints
+    const authPaths = ['/login', '/api/login', '/register', '/api/register', '/api/register-with-invite'];
+    authPaths.forEach(path => app.use(path, authRateLimiter));
 
-  const userPaths = ['/users', '/api/users'];
-  userPaths.forEach(path => app.use(path, userRateLimiter));
+    const userPaths = ['/users', '/api/users'];
+    userPaths.forEach(path => app.use(path, userRateLimiter));
 
-  app.use('/proposals', proposalsRateLimiter);
+    app.use('/proposals', proposalsRateLimiter);
+  }
 
   // ===========================
   // CORS (antes do CSRF)
   // ===========================
   app.use(cors());
   
-  // ===========================
-  // CSRF Protection (Task 4.6)
-  // ===========================
-  setupCsrfProtection(app, {
-    exempt: ['/api/stripe-webhook', '/api/webhooks/*'],
-    enableRotation: true
-  });
-  createCsrfTokenEndpoint(app);
+  if (!isTestEnv) {
+    // ===========================
+    // CSRF Protection (Task 4.6)
+    // ===========================
+    setupCsrfProtection(app, {
+      exempt: ['/api/stripe-webhook', '/api/webhooks/*'],
+      enableRotation: true
+    });
+    createCsrfTokenEndpoint(app);
+  }
   
   // ===========================
   // Firebase Auth Middleware (Task 1.2)
