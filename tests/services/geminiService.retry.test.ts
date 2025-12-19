@@ -1,13 +1,13 @@
 /**
  * Gemini Service Retry Logic Tests - Task 3.2
- * 
+ *
  * Tests for exponential backoff retry strategy in geminiService.ts
- * 
+ *
  * Retry strategy:
  * - Attempt 1: immediate
  * - Attempt 2: 300ms delay
  * - Attempt 3: 600ms delay
- * 
+ *
  * @author Task 3.2 - Week 2
  * @date 18/12/2025
  */
@@ -62,7 +62,7 @@ describe('Gemini Service - Exponential Backoff Retry (Task 3.2)', () => {
 
       // First call: network error
       (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
-      
+
       // Second call: success (after 300ms delay)
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
@@ -90,14 +90,14 @@ describe('Gemini Service - Exponential Backoff Retry (Task 3.2)', () => {
 
       // First call: timeout
       (global.fetch as any).mockRejectedValueOnce(new Error('Timeout'));
-      
+
       // Second call: server error 500
       (global.fetch as any).mockResolvedValueOnce({
         ok: false,
         status: 500,
         json: async () => ({ error: 'Internal server error' }),
       });
-      
+
       // Third call: success (after cumulative 900ms delays)
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
@@ -190,18 +190,22 @@ describe('Gemini Service - Exponential Backoff Retry (Task 3.2)', () => {
   // =========================================================================
 
   describe('Edge Cases', () => {
-    it('should handle AbortController timeout', async () => {
-      // Mock fetch to simulate timeout after 12s
-      (global.fetch as any).mockImplementation(() => {
-        return new Promise((resolve, reject) => {
-          setTimeout(() => reject(new Error('The operation was aborted')), 13000);
+    it(
+      'should handle AbortController timeout',
+      async () => {
+        // Mock fetch to simulate timeout after 12s
+        (global.fetch as any).mockImplementation(() => {
+          return new Promise((resolve, reject) => {
+            setTimeout(() => reject(new Error('The operation was aborted')), 13000);
+          });
         });
-      });
 
-      // This test would take 36+ seconds (3 attempts × 12s timeout)
-      // Skip for practicality, but documents expected behavior
-      expect(true).toBe(true);
-    }, { timeout: 100 }); // Short timeout to skip actual execution
+        // This test would take 36+ seconds (3 attempts × 12s timeout)
+        // Skip for practicality, but documents expected behavior
+        expect(true).toBe(true);
+      },
+      { timeout: 100 }
+    ); // Short timeout to skip actual execution
 
     it('should handle response.json() failures', async () => {
       (global.fetch as any).mockResolvedValueOnce({
