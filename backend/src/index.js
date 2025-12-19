@@ -8,6 +8,10 @@ const { Storage } = require("@google-cloud/storage");
 const { createStripe } = require('./stripeConfig');
 // Database wrapper com fallback em memória
 const { createDbWrapper, fieldValueHelpers } = require('./dbWrapper');
+// Gemini Cost Logger (Task 2.2)
+const { getUsageStats: getGeminiUsageStats } = require('./services/geminiCostLogger');
+// Redis Cache Service (Task 3.1 - Week 2 Optimization)
+const redisCache = require('./services/redisCache');
 // Authorization middleware for granular permission checking
 const { 
   requireAuth, 
@@ -1044,10 +1048,44 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
         }
       }
 
-      // Basic heuristic: consider providers that match category or have headline/specialties containing it
+      // ================================================================
+      // TASK 3.1: CACHE LAYER - Check Redis cache first
+      // ================================================================
       const category = (job.category || '').toString().toLowerCase();
       const location = (job.location || '').toString().toLowerCase();
+      const cacheKey = `${job.id}:${category}:${location}:${allUsers.length}`;
+      
+      const cachedMatches = await redisCache.getCachedMatches(
+        job.id,
+        category,
+        location,
+        allUsers.length
+      );
+      
+      if (cachedMatches) {
+        // Cache hit - return immediately (saves ~$0.20 per call)
+        console.log(JSON.stringify({
+          severity: 'INFO',
+          message: '[match-providers] Returning cached results',
+          service: 'matchProviders',
+          cacheKey,
+          matchCount: cachedMatches.matches?.length || 0,
+          timestamp: new Date().toISOString(),
+        }));
+        return res.json(cachedMatches);
+      }
 
+      // Cache miss - compute matches (may use Gemini)
+      console.log(JSON.stringify({
+        severity: 'INFO',
+        message: '[match-providers] Cache miss - computing matches',
+        service: 'matchProviders',
+        jobId: job.id,
+        providerCount: allUsers.length,
+        timestamp: new Date().toISOString(),
+      }));
+
+      // Basic heuristic: consider providers that match category or have headline/specialties containing it
       const providers = allUsers.filter(u => (u && (u.type === 'prestador')));
 
       const scored = providers.map(p => {
@@ -1072,10 +1110,66 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       .sort((a, b) => b.score - a.score)
       .slice(0, 10);
 
-      return res.json({ matches: scored, total: scored.length });
+      const result = { matches: scored, total: scored.length };
+
+      // ================================================================
+      // Store in Redis cache for 5 minutes (TTL: 300s)
+      // Non-blocking: if cache fails, app continues normally
+      // ================================================================
+      redisCache.cacheMatches(
+        job.id,
+        category,
+        location,
+        allUsers.length,
+        result,
+        300 // 5 minutes TTL
+      ).catch(err => {
+        // Log but don't fail the request
+        console.warn(JSON.stringify({
+          severity: 'WARN',
+          message: '[match-providers] Cache storage error',
+          service: 'matchProviders',
+          error: err.message,
+          timestamp: new Date().toISOString(),
+        }));
+      });
+
+      return res.json(result);
     } catch (err) {
       console.error('match-providers error', err);
       return res.status(500).json({ error: 'Failed to match providers' });
+    }
+  });
+
+  // GET /api/gemini-stats - Gemini AI usage statistics (admin only)
+  // Task 2.2: Cost logging and monitoring
+  app.get('/api/gemini-stats', requireAdmin, async (req, res) => {
+    try {
+      const stats = await getGeminiUsageStats();
+      return res.json({
+        success: true,
+        period: 'last 24 hours',
+        ...stats,
+      });
+    } catch (err) {
+      console.error('gemini-stats error', err);
+      return res.status(500).json({ error: 'Failed to fetch Gemini stats' });
+    }
+  });
+
+  // GET /api/cache-stats - Cache statistics (admin only, Task 3.1)
+  // Shows Redis performance metrics for match-providers caching
+  app.get('/api/cache-stats', requireAdmin, async (req, res) => {
+    try {
+      const stats = await redisCache.getCacheStats();
+      return res.json({
+        success: true,
+        service: 'redis',
+        ...stats,
+      });
+    } catch (err) {
+      console.error('cache-stats error', err);
+      return res.status(500).json({ error: 'Failed to fetch cache stats' });
     }
   });
 
@@ -4326,6 +4420,18 @@ if (require.main === module) {
   console.log('[SERVER] Starting server on port', port);
   console.log('[SERVER] require.main:', require.main.filename);
   console.log('[SERVER] module:', module.filename);
+  
+  // Initialize Redis cache (Task 3.1 - Week 2 Optimization)
+  // Non-blocking: app continues if Redis unavailable
+  (async () => {
+    try {
+      await redisCache.initRedis();
+      const healthy = await redisCache.healthCheck();
+      console.log(`[SERVER] Redis cache: ${healthy ? '✅ Online' : '⚠️ Offline (graceful fallback)'}`);
+    } catch (err) {
+      console.warn('[SERVER] Redis initialization error (continuing without cache):', err.message);
+    }
+  })();
   
   // Enumerate and log all registered routes on startup
   const enumerateRoutes = () => {
