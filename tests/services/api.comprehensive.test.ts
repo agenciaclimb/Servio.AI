@@ -169,7 +169,10 @@ describe('API Service Comprehensive Tests', () => {
     it('matchProvidersForJob should fall back to basic local matching on API failure', async () => {
       const result = await api.matchProvidersForJob('job1');
       // It should have attempted the AI endpoint and the providers endpoint
-      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/api/match-providers'), expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/api/match-providers'),
+        expect.any(Object)
+      );
       expect(fetchSpy).toHaveBeenCalledWith(
         expect.stringContaining('/users?type=prestador&verificationStatus=verificado'),
         expect.any(Object)
@@ -188,7 +191,10 @@ describe('API Service Comprehensive Tests', () => {
 
       const result = await api.matchProvidersForJob('job1');
 
-      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/api/match-providers'), expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/api/match-providers'),
+        expect.any(Object)
+      );
       expect(fetchSpy).toHaveBeenCalledTimes(1); // Should not fall back
       expect(result).toEqual(aiResults);
       expect(result[0].reason).toBe('Perfect match by AI');
@@ -208,7 +214,10 @@ describe('API Service Comprehensive Tests', () => {
 
     it('resolveDispute should call the correct dispute endpoint', async () => {
       const resolution = { decision: 'Refund client', notes: 'Provider did not complete the job.' };
-      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => ({ id: 'disp1', ...resolution }) } as any);
+      fetchSpy.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: 'disp1', ...resolution }),
+      } as any);
 
       await api.resolveDispute('disp1', resolution);
 
@@ -222,7 +231,10 @@ describe('API Service Comprehensive Tests', () => {
 
   describe('Stripe and Payments', () => {
     it('createStripeConnectAccount should call the correct endpoint', async () => {
-      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => ({ accountId: 'acct_123' }) } as any);
+      fetchSpy.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ accountId: 'acct_123' }),
+      } as any);
       const result = await api.createStripeConnectAccount('user2@test.com');
       expect(fetchSpy).toHaveBeenCalledWith(
         expect.stringContaining('/api/stripe/create-connect-account'),
@@ -273,7 +285,10 @@ describe('API Service Comprehensive Tests', () => {
     it('fetchDisputes should fall back to an empty array', async () => {
       const result = await api.fetchDisputes();
       expect(result).toEqual([]);
-      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/disputes'), expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/disputes'),
+        expect.any(Object)
+      );
     });
 
     it('createDispute should call the correct endpoint with dispute data', async () => {
@@ -300,7 +315,10 @@ describe('API Service Comprehensive Tests', () => {
     it('fetchProspects should fall back to an empty array on failure', async () => {
       const result = await api.fetchProspects();
       expect(result).toEqual([]);
-      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/prospects'), expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/prospects'),
+        expect.any(Object)
+      );
     });
 
     it('updateProspect should call the correct endpoint', async () => {
@@ -315,7 +333,10 @@ describe('API Service Comprehensive Tests', () => {
     it('fetchCampaigns should fall back to an empty array on failure', async () => {
       const result = await api.fetchCampaigns();
       expect(result).toEqual([]);
-      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/campaigns'), expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/campaigns'),
+        expect.any(Object)
+      );
     });
 
     it('registerWithInvite should call the backend', async () => {
@@ -355,7 +376,10 @@ describe('API Service Comprehensive Tests', () => {
 
     it('createMaintainedItem should call the backend', async () => {
       const itemData = { clientId: 'user1@test.com', name: 'Aquecedor' };
-      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => ({ id: 'item2', ...itemData }) } as any);
+      fetchSpy.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: 'item2', ...itemData }),
+      } as any);
       const result = await api.createMaintainedItem(itemData);
       expect(fetchSpy).toHaveBeenCalledWith(
         expect.stringContaining('/maintained-items'),
@@ -372,9 +396,15 @@ describe('API Service Comprehensive Tests', () => {
 
     it('createMessage should call the backend', async () => {
       const msgData = { chatId: 'chat1', senderId: 'user1@test.com', text: 'tchau' };
-      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => ({ id: 'msg2', ...msgData }) } as any);
+      fetchSpy.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: 'msg2', ...msgData }),
+      } as any);
       const result = await api.createMessage(msgData);
-      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/messages'), expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/messages'),
+        expect.any(Object)
+      );
       expect(result.text).toBe('tchau');
     });
   });

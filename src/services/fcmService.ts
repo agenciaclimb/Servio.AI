@@ -46,7 +46,8 @@ function getMessagingInstance(): Messaging | null {
 export function isNotificationSupported(): boolean {
   const hasNotification = typeof Notification !== 'undefined' && !!Notification;
   const hasServiceWorker = typeof navigator !== 'undefined' && 'serviceWorker' in navigator;
-  const hasPushManager = typeof (globalThis as unknown as { PushManager?: unknown }).PushManager !== 'undefined';
+  const hasPushManager =
+    typeof (globalThis as unknown as { PushManager?: unknown }).PushManager !== 'undefined';
 
   return hasNotification && hasServiceWorker && hasPushManager;
 }
@@ -55,7 +56,8 @@ export function isNotificationSupported(): boolean {
  * Verifica status da permissão de notificações
  */
 export function getNotificationPermission(): NotificationPermission {
-  if (!isNotificationSupported() || typeof Notification === 'undefined' || !Notification) return 'denied';
+  if (!isNotificationSupported() || typeof Notification === 'undefined' || !Notification)
+    return 'denied';
   return Notification.permission;
 }
 

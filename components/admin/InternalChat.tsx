@@ -38,9 +38,12 @@ export default function InternalChat({ adminId }: InternalChatProps): React.Reac
 
   const loadMessages = useCallback(async () => {
     try {
-      const res = await apiCall<{ success: boolean; messages: InternalChatMessage[] }>('/api/admin/chat', {
-        method: 'GET',
-      });
+      const res = await apiCall<{ success: boolean; messages: InternalChatMessage[] }>(
+        '/api/admin/chat',
+        {
+          method: 'GET',
+        }
+      );
       if (res?.messages) setMessages(res.messages);
     } catch (err: unknown) {
       // Retry once on timeout-ish errors
