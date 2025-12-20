@@ -14,6 +14,7 @@ import {
 } from '../types';
 import { useToast } from '../contexts/ToastContext'; // 1. Importar o hook
 import * as API from '../services/api';
+import { logInfo } from '../utils/logger';
 import ClientJobCard from './ClientJobCard';
 import ProposalListModal from './ProposalListModal';
 import PaymentModal from './PaymentModal';
@@ -230,7 +231,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     try {
       // Call the existing submitProposal API with invite intent
       // For now, we'll use a mock/placeholder approach until backend supports direct invites
-      console.log(`Inviting provider ${providerId} to job ${matchingJobId}`);
+      logInfo('Inviting provider to job', { providerId, matchingJobId });
       addToast('Prestador convidado com sucesso!', 'success');
     } catch (error) {
       console.error('Erro ao convidar prestador:', error);

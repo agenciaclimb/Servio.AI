@@ -47,7 +47,7 @@ interface LeadScoreCardProps {
 export default function LeadScoreCard({
   leadId,
   score,
-  temperature = 'warm',
+  temperature,
   analysis,
   recommendation,
   onDetailClick,

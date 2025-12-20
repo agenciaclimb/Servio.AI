@@ -21,8 +21,17 @@ vi.mock('firebase/firestore', () => ({
   serverTimestamp: vi.fn(() => new Date()),
 }));
 
+function makeFirestoreDoc(id: string, data: Record<string, unknown>) {
+  return {
+    id,
+    data: () => data,
+  };
+}
+
 describe('ProspectorCRM', () => {
   beforeEach(() => {
+    // Evita interferência de outros suites que deixam fake timers ativos
+    vi.useRealTimers();
     vi.clearAllMocks();
 
     // Mock getDocs to return empty leads
@@ -55,8 +64,8 @@ describe('ProspectorCRM', () => {
     render(<ProspectorCRM prospectorId="prospector1" />);
 
     await waitFor(() => {
-      // Should display stage titles or columns
-      expect(document.body.textContent).toBeTruthy();
+      // Sem leads, o componente mostra o tutorial/empty state
+      expect(document.body.textContent).toContain('Bem-vindo ao seu Pipeline CRM');
     });
   });
 
@@ -65,48 +74,103 @@ describe('ProspectorCRM', () => {
   // ============================================
 
   it('displays New Leads stage (🆕 Novos Leads)', async () => {
+    const now = new Date();
+    vi.mocked(firebaseModule.getDocs).mockResolvedValue({
+      docs: [
+        makeFirestoreDoc('lead1', {
+          name: 'Lead 1',
+          phone: '11999999999',
+          stage: 'new',
+          createdAt: (firebaseModule as any).Timestamp.fromDate(now),
+          updatedAt: (firebaseModule as any).Timestamp.fromDate(now),
+          activities: [],
+        }),
+      ],
+    } as any);
+
     render(<ProspectorCRM prospectorId="prospector1" />);
 
-    await waitFor(() => {
-      const text = document.body.textContent;
-      expect(text).toContain(/novos/i);
-    });
+    expect(await screen.findByText(/Novos Leads/i)).toBeTruthy();
   });
 
   it('displays Contacted stage (📞 Contatados)', async () => {
+    const now = new Date();
+    vi.mocked(firebaseModule.getDocs).mockResolvedValue({
+      docs: [
+        makeFirestoreDoc('lead1', {
+          name: 'Lead 1',
+          phone: '11999999999',
+          stage: 'new',
+          createdAt: (firebaseModule as any).Timestamp.fromDate(now),
+          updatedAt: (firebaseModule as any).Timestamp.fromDate(now),
+          activities: [],
+        }),
+      ],
+    } as any);
+
     render(<ProspectorCRM prospectorId="prospector1" />);
 
-    await waitFor(() => {
-      const text = document.body.textContent;
-      expect(text).toContain(/contatad/i);
-    });
+    expect(await screen.findByText(/Contatados/i)).toBeTruthy();
   });
 
   it('displays Negotiating stage (🤝 Negociando)', async () => {
+    const now = new Date();
+    vi.mocked(firebaseModule.getDocs).mockResolvedValue({
+      docs: [
+        makeFirestoreDoc('lead1', {
+          name: 'Lead 1',
+          phone: '11999999999',
+          stage: 'new',
+          createdAt: (firebaseModule as any).Timestamp.fromDate(now),
+          updatedAt: (firebaseModule as any).Timestamp.fromDate(now),
+          activities: [],
+        }),
+      ],
+    } as any);
+
     render(<ProspectorCRM prospectorId="prospector1" />);
 
-    await waitFor(() => {
-      const text = document.body.textContent;
-      expect(text).toContain(/negociad/i);
-    });
+    expect(await screen.findByText(/Negociando/i)).toBeTruthy();
   });
 
   it('displays Won stage (✅ Convertidos)', async () => {
+    const now = new Date();
+    vi.mocked(firebaseModule.getDocs).mockResolvedValue({
+      docs: [
+        makeFirestoreDoc('lead1', {
+          name: 'Lead 1',
+          phone: '11999999999',
+          stage: 'new',
+          createdAt: (firebaseModule as any).Timestamp.fromDate(now),
+          updatedAt: (firebaseModule as any).Timestamp.fromDate(now),
+          activities: [],
+        }),
+      ],
+    } as any);
+
     render(<ProspectorCRM prospectorId="prospector1" />);
 
-    await waitFor(() => {
-      const text = document.body.textContent;
-      expect(text).toContain(/convertid/i);
-    });
+    expect(await screen.findByText(/✅\s*Convertidos/i)).toBeTruthy();
   });
 
   it('displays Lost stage (❌ Perdidos)', async () => {
+    const now = new Date();
+    vi.mocked(firebaseModule.getDocs).mockResolvedValue({
+      docs: [
+        makeFirestoreDoc('lead1', {
+          name: 'Lead 1',
+          phone: '11999999999',
+          stage: 'new',
+          createdAt: (firebaseModule as any).Timestamp.fromDate(now),
+          updatedAt: (firebaseModule as any).Timestamp.fromDate(now),
+          activities: [],
+        }),
+      ],
+    } as any);
+
     render(<ProspectorCRM prospectorId="prospector1" />);
 
-    await waitFor(() => {
-      const text = document.body.textContent;
-      expect(text).toContain(/perdid/i);
-    });
+    expect(await screen.findByText(/Perdidos/i)).toBeTruthy();
   });
 
   // ============================================
@@ -116,22 +180,14 @@ describe('ProspectorCRM', () => {
   it('displays button to add new lead', async () => {
     render(<ProspectorCRM prospectorId="prospector1" />);
 
-    await waitFor(() => {
-      const addButton = screen.queryByText(/adicionar|novo|add|criar/i);
-      expect(addButton || document.body.textContent).toBeTruthy();
-    });
+    expect(await screen.findByRole('button', { name: /\+ Novo Lead/i })).toBeTruthy();
   });
 
   it('shows form to add new lead when button clicked', async () => {
     render(<ProspectorCRM prospectorId="prospector1" />);
 
-    await waitFor(() => {
-      const addButton = screen.queryByText(/adicionar|novo/i);
-      if (addButton) {
-        fireEvent.click(addButton);
-        expect(document.body).toBeTruthy();
-      }
-    });
+    fireEvent.click(await screen.findByRole('button', { name: /\+ Novo Lead/i }));
+    expect(await screen.findByText(/^Novo Lead$/i)).toBeTruthy();
   });
 
   // ============================================
@@ -245,10 +301,7 @@ describe('ProspectorCRM', () => {
 
     render(<ProspectorCRM prospectorId="prospector1" />);
 
-    await waitFor(() => {
-      // Should display stages even with no leads
-      expect(document.body.textContent).toBeTruthy();
-    });
+    expect(await screen.findByText(/Bem-vindo ao seu Pipeline CRM/i)).toBeTruthy();
   });
 
   // ============================================
