@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import LeadScoreCard from '../LeadScoreCard';
+import LeadScoreCard from '../../src/components/prospector/LeadScoreCard';
 
 const mockAnalysis = {
   categoryMatch: 85,
@@ -27,18 +27,18 @@ describe('LeadScoreCard Component', () => {
 
   it('should determine temperature from score when not provided', () => {
     const { rerender } = render(<LeadScoreCard leadId="lead-1" score={85} />);
-    expect(screen.getByText(/Hot/i)).toBeInTheDocument();
+    expect(screen.getByText('🔥 Hot')).toBeInTheDocument();
 
     rerender(<LeadScoreCard leadId="lead-1" score={60} />);
-    expect(screen.getByText(/Warm/i)).toBeInTheDocument();
+    expect(screen.getByText('🌡️ Warm')).toBeInTheDocument();
 
     rerender(<LeadScoreCard leadId="lead-1" score={30} />);
-    expect(screen.getByText(/Cold/i)).toBeInTheDocument();
+    expect(screen.getByText('❄️ Cold')).toBeInTheDocument();
   });
 
   it('should use provided temperature over score calculation', () => {
     render(<LeadScoreCard leadId="lead-1" score={30} temperature="hot" />);
-    expect(screen.getByText(/Hot/i)).toBeInTheDocument();
+    expect(screen.getByText('🔥 Hot')).toBeInTheDocument();
   });
 
   it('should display analysis components when provided', () => {
@@ -132,7 +132,7 @@ describe('LeadScoreCard Component', () => {
     expect(screen.getByText('Score Components')).toBeInTheDocument();
     expect(screen.getByText('Category')).toBeInTheDocument();
     expect(screen.getByText('Location')).toBeInTheDocument();
-    expect(screen.getByText('Engagement')).toBeInTheDocument();
+    expect(screen.getAllByText('Engagement').length).toBeGreaterThan(0);
     expect(screen.getByText('Recency')).toBeInTheDocument();
   });
 

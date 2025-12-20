@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { PublicPageDataProvider, PublicPageData } from '../providers/PublicPageDataProvider';
 import { useSeoMeta } from '../hooks/useSeoMeta';
 import providersData from '../../seo/providers.sample.json';
+import { logInfo } from '../../utils/logger';
 
 /**
  * COMPONENTE: PublicProviderPage
@@ -67,7 +68,7 @@ function RequestServiceModal({ providerName, service, isOpen, onClose }: Request
     //   urgency: formData.urgency,
     //   targetProviderId: provider.email
     // }, currentUser.email);
-    console.log('[CTA_EVENT] request_service_submit', { service, ...formData });
+    logInfo('[CTA_EVENT] request_service_submit', { service, ...formData });
     setStep('success');
     setTimeout(() => {
       setStep('form');

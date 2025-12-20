@@ -30,7 +30,7 @@ vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(() => ({})),
 }));
 
-import HeroSection from '../../../components/HeroSection';
+import HeroSection from '../../components/HeroSection';
 
 describe('HeroSection - Comprehensive Quality Tests', () => {
   const user = userEvent.setup();
@@ -46,15 +46,13 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
   describe('Component Rendering', () => {
     it('should render without errors', () => {
       render(<HeroSection />);
-      expect(screen.getByRole('main', { hidden: true }) || document.body).toBeInTheDocument();
+      expect(screen.queryByRole('main', { hidden: true }) || document.body).toBeInTheDocument();
     });
 
     it('should render hero heading', () => {
       render(<HeroSection />);
-      const heading = screen.queryByRole('heading');
-      if (heading) {
-        expect(heading).toBeInTheDocument();
-      }
+      const heading = screen.getByRole('heading', { level: 1 });
+      expect(heading).toBeInTheDocument();
     });
 
     it('should render call-to-action buttons', () => {
@@ -92,7 +90,7 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
   describe('Visual Elements', () => {
     it('should render images if present', () => {
       const { container } = render(<HeroSection />);
-      const _images = container.querySelectorAll('img');
+      const images = container.querySelectorAll('img');
       // Should have images or be ready for them
       if (images.length > 0) {
         images.forEach(img => {

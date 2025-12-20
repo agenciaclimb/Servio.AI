@@ -19,7 +19,7 @@ export const initFirebase = async () => {
     return { auth: authInstance!, db: dbInstance! };
   }
 
-  const [{ initializeApp }, { getAuth }, { getFirestore }] = await Promise.all([
+  const [{ initializeApp, getApps, getApp }, { getAuth }, { getFirestore }] = await Promise.all([
     import('firebase/app'),
     import('firebase/auth'),
     import('firebase/firestore'),
@@ -35,7 +35,7 @@ export const initFirebase = async () => {
     measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
   };
 
-  const app = initializeApp(firebaseConfig);
+  const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
   appInstance = app;
   authInstance = getAuth(app);
   dbInstance = getFirestore(app);
@@ -71,7 +71,7 @@ export const getStorage = async (): Promise<FirebaseStorage> => {
     }
     const { getStorage: getStorageImpl } = await import('firebase/storage');
     if (!appInstance) {
-      const { initializeApp } = await import('firebase/app');
+      const { initializeApp, getApps, getApp } = await import('firebase/app');
       const firebaseConfig = {
         apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
         authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -81,7 +81,7 @@ export const getStorage = async (): Promise<FirebaseStorage> => {
         appId: import.meta.env.VITE_FIREBASE_APP_ID,
         measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
       };
-      appInstance = initializeApp(firebaseConfig);
+      appInstance = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     }
     storageInstance = getStorageImpl(appInstance);
   }

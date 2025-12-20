@@ -70,7 +70,6 @@ class ConversionAnalyticsService {
 
       return docRef.id;
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(`Erro ao rastrear evento ${event.eventType}:`, error);
       throw error;
     }
@@ -99,7 +98,6 @@ class ConversionAnalyticsService {
       });
     } catch (error) {
       // Métrica falha não deve interromper fluxo principal
-      // eslint-disable-next-line no-console
       console.warn('Erro ao atualizar métricas:', error);
     }
   }

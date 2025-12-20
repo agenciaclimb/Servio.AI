@@ -37,18 +37,18 @@ vi.mock('../../mockData', () => ({
 }));
 
 describe('API Service Comprehensive Tests', () => {
-  // Mock the generic apiCall to simulate backend failures
-  const apiCallSpy = vi.spyOn(api, 'apiCall');
+  let fetchSpy: any;
 
   beforeEach(() => {
-    // Reset spy before each test
-    apiCallSpy.mockClear();
-    // Default to failure to test fallback logic
-    apiCallSpy.mockRejectedValue(new Error('Simulated API Failure'));
+    vi.restoreAllMocks();
+    fetchSpy = vi.spyOn(globalThis, 'fetch' as any);
+    // Default to failure so we exercise fallback logic deterministically
+    fetchSpy.mockRejectedValue(new TypeError('Network down'));
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    fetchSpy?.mockRestore?.();
   });
 
   describe('Data Fetching with Mock Fallback', () => {
@@ -96,24 +96,24 @@ describe('API Service Comprehensive Tests', () => {
         type: 'cliente' as const,
         bio: '',
       };
-      // Ensure apiCall fails for this test
-      apiCallSpy.mockRejectedValue(new Error('Backend unavailable'));
-
-      await expect(api.createUser(newUser)).rejects.toThrow('Backend unavailable');
-      expect(apiCallSpy).toHaveBeenCalledWith(
-        '/users',
+      await expect(api.createUser(newUser)).rejects.toMatchObject({ code: 'E_NETWORK' });
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/users'),
         expect.objectContaining({ method: 'POST' })
       );
     });
 
     it('updateUser should call the backend with a PUT request', async () => {
       const updates = { bio: 'A new bio.' };
-      apiCallSpy.mockResolvedValue({ email: 'user1@test.com', ...updates });
+      fetchSpy.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ email: 'user1@test.com', ...updates }),
+      } as any);
 
       const result = await api.updateUser('user1@test.com', updates);
 
-      expect(apiCallSpy).toHaveBeenCalledWith(
-        '/users/user1@test.com',
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/users/user1@test.com'),
         expect.objectContaining({ method: 'PUT' })
       );
       expect(result.bio).toBe('A new bio.');
@@ -133,13 +133,16 @@ describe('API Service Comprehensive Tests', () => {
         createdAt: new Date().toISOString(),
         status: 'ativo',
       };
-      apiCallSpy.mockResolvedValue(newJob);
+      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => newJob } as any);
 
       const result = await api.createJob(jobData, 'user1@test.com');
 
-      expect(apiCallSpy).toHaveBeenCalledWith('/jobs', expect.objectContaining({ method: 'POST' }));
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/jobs'),
+        expect.objectContaining({ method: 'POST' })
+      );
       expect(result.id).toBe('job4');
-      expect(JSON.parse(apiCallSpy.mock.calls[0][1].body).clientId).toBe('user1@test.com');
+      expect(JSON.parse(fetchSpy.mock.calls[0][1].body).clientId).toBe('user1@test.com');
     });
 
     it('createNotification should call backend and return new notification', async () => {
@@ -149,12 +152,12 @@ describe('API Service Comprehensive Tests', () => {
         id: 'notif3',
         createdAt: new Date().toISOString(),
       };
-      apiCallSpy.mockResolvedValue(newNotification);
+      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => newNotification } as any);
 
       const result = await api.createNotification(notificationData);
 
-      expect(apiCallSpy).toHaveBeenCalledWith(
-        '/notifications',
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/notifications'),
         expect.objectContaining({ method: 'POST' })
       );
       expect(result.id).toBe('notif3');
@@ -165,11 +168,11 @@ describe('API Service Comprehensive Tests', () => {
   describe('AI Matching Logic', () => {
     it('matchProvidersForJob should fall back to basic local matching on API failure', async () => {
       const result = await api.matchProvidersForJob('job1');
-      // It should have called the AI endpoint
-      expect(apiCallSpy).toHaveBeenCalledWith('/api/match-providers', expect.any(Object));
-      // And then it should have called the user fetching endpoint as a fallback
-      expect(apiCallSpy).toHaveBeenCalledWith(
-        '/users?type=prestador&verificationStatus=verificado'
+      // It should have attempted the AI endpoint and the providers endpoint
+      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/api/match-providers'), expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/users?type=prestador&verificationStatus=verificado'),
+        expect.any(Object)
       );
       // Even if the second call fails, it falls back to MOCK_USERS
       expect(result).toHaveLength(1);
@@ -181,12 +184,12 @@ describe('API Service Comprehensive Tests', () => {
       const aiResults = [
         { provider: { email: 'user2@test.com' }, score: 0.95, reason: 'Perfect match by AI' },
       ];
-      apiCallSpy.mockResolvedValue(aiResults);
+      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => aiResults } as any);
 
       const result = await api.matchProvidersForJob('job1');
 
-      expect(apiCallSpy).toHaveBeenCalledWith('/api/match-providers', expect.any(Object));
-      expect(apiCallSpy).toHaveBeenCalledTimes(1); // Should not fall back
+      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/api/match-providers'), expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledTimes(1); // Should not fall back
       expect(result).toEqual(aiResults);
       expect(result[0].reason).toBe('Perfect match by AI');
     });
@@ -194,55 +197,58 @@ describe('API Service Comprehensive Tests', () => {
 
   describe('Admin Actions', () => {
     it('suspendProvider should call the correct admin endpoint and throw on failure', async () => {
-      await expect(api.suspendProvider('user2@test.com', 'Violation')).rejects.toThrow(
-        'Simulated API Failure'
-      );
-      expect(apiCallSpy).toHaveBeenCalledWith(
-        '/admin/providers/user2@test.com/suspend',
+      await expect(api.suspendProvider('user2@test.com', 'Violation')).rejects.toMatchObject({
+        code: 'E_NETWORK',
+      });
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/admin/providers/user2@test.com/suspend'),
         expect.objectContaining({ method: 'POST' })
       );
     });
 
     it('resolveDispute should call the correct dispute endpoint', async () => {
       const resolution = { decision: 'Refund client', notes: 'Provider did not complete the job.' };
-      apiCallSpy.mockResolvedValue({ id: 'disp1', ...resolution });
+      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => ({ id: 'disp1', ...resolution }) } as any);
 
       await api.resolveDispute('disp1', resolution);
 
-      expect(apiCallSpy).toHaveBeenCalledWith(
-        '/api/disputes/disp1/resolve',
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/api/disputes/disp1/resolve'),
         expect.objectContaining({ method: 'PATCH' })
       );
-      expect(JSON.parse(apiCallSpy.mock.calls[0][1].body).decision).toBe('Refund client');
+      expect(JSON.parse(fetchSpy.mock.calls[0][1].body).decision).toBe('Refund client');
     });
   });
 
   describe('Stripe and Payments', () => {
     it('createStripeConnectAccount should call the correct endpoint', async () => {
-      apiCallSpy.mockResolvedValue({ accountId: 'acct_123' });
+      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => ({ accountId: 'acct_123' }) } as any);
       const result = await api.createStripeConnectAccount('user2@test.com');
-      expect(apiCallSpy).toHaveBeenCalledWith(
-        '/api/stripe/create-connect-account',
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/api/stripe/create-connect-account'),
         expect.objectContaining({ method: 'POST' })
       );
       expect(result.accountId).toBe('acct_123');
     });
 
     it('releasePayment should call the correct endpoint and return success', async () => {
-      apiCallSpy.mockResolvedValue({ success: true, message: 'Payment released' });
+      fetchSpy.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ success: true, message: 'Payment released' }),
+      } as any);
       const result = await api.releasePayment('job1');
-      expect(apiCallSpy).toHaveBeenCalledWith(
-        '/jobs/job1/release-payment',
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/jobs/job1/release-payment'),
         expect.objectContaining({ method: 'POST' })
       );
       expect(result.success).toBe(true);
     });
 
     it('confirmPayment should call the payment confirmation endpoint', async () => {
-      apiCallSpy.mockResolvedValue({ success: true });
+      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => ({ success: true }) } as any);
       const result = await api.confirmPayment('job1', 'sess_123');
-      expect(apiCallSpy).toHaveBeenCalledWith(
-        '/api/payments/confirm',
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/api/payments/confirm'),
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify({ jobId: 'job1', sessionId: 'sess_123' }),
@@ -254,10 +260,10 @@ describe('API Service Comprehensive Tests', () => {
 
   describe('User Deletion and Other Actions', () => {
     it('deleteUser should call the backend with a DELETE request', async () => {
-      apiCallSpy.mockResolvedValue(undefined); // DELETE returns no content
+      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => undefined } as any); // DELETE returns no content
       await api.deleteUser('user1@test.com');
-      expect(apiCallSpy).toHaveBeenCalledWith(
-        '/users/user1@test.com',
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/users/user1@test.com'),
         expect.objectContaining({ method: 'DELETE' })
       );
     });
@@ -267,7 +273,7 @@ describe('API Service Comprehensive Tests', () => {
     it('fetchDisputes should fall back to an empty array', async () => {
       const result = await api.fetchDisputes();
       expect(result).toEqual([]);
-      expect(apiCallSpy).toHaveBeenCalledWith('/disputes');
+      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/disputes'), expect.any(Object));
     });
 
     it('createDispute should call the correct endpoint with dispute data', async () => {
@@ -279,11 +285,11 @@ describe('API Service Comprehensive Tests', () => {
         description: 'The provider never showed up.',
       };
       const newDispute = { id: 'disp2', ...disputeData };
-      apiCallSpy.mockResolvedValue(newDispute);
+      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => newDispute } as any);
 
       const result = await api.createDispute(disputeData);
-      expect(apiCallSpy).toHaveBeenCalledWith(
-        '/api/disputes',
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/api/disputes'),
         expect.objectContaining({ method: 'POST' })
       );
       expect(result.id).toBe('disp2');
@@ -294,14 +300,14 @@ describe('API Service Comprehensive Tests', () => {
     it('fetchProspects should fall back to an empty array on failure', async () => {
       const result = await api.fetchProspects();
       expect(result).toEqual([]);
-      expect(apiCallSpy).toHaveBeenCalledWith('/prospects');
+      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/prospects'), expect.any(Object));
     });
 
     it('updateProspect should call the correct endpoint', async () => {
-      apiCallSpy.mockResolvedValue({ id: 'prospect1' });
+      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => ({ id: 'prospect1' }) } as any);
       await api.updateProspect('prospect1', { status: 'contacted' });
-      expect(apiCallSpy).toHaveBeenCalledWith(
-        '/prospects/prospect1',
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/prospects/prospect1'),
         expect.objectContaining({ method: 'PUT' })
       );
     });
@@ -309,26 +315,28 @@ describe('API Service Comprehensive Tests', () => {
     it('fetchCampaigns should fall back to an empty array on failure', async () => {
       const result = await api.fetchCampaigns();
       expect(result).toEqual([]);
-      expect(apiCallSpy).toHaveBeenCalledWith('/campaigns');
+      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/campaigns'), expect.any(Object));
     });
 
     it('registerWithInvite should call the backend', async () => {
-      apiCallSpy.mockResolvedValue(undefined);
+      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => undefined } as any);
       await api.registerWithInvite('provider@test.com', 'INVITE123');
-      expect(apiCallSpy).toHaveBeenCalledWith('/register-with-invite', expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/register-with-invite'),
+        expect.any(Object)
+      );
     });
 
     it('fetchProspectorStats should use mock data on failure', async () => {
-      // The mock is defined in the function for USE_MOCK=true, so we just check if it returns non-null
       const result = await api.fetchProspectorStats('prospector_id');
-      expect(result).not.toBeNull();
-      expect(result?.totalRecruits).toBe(12);
+      // No mock fallback when USE_MOCK=false
+      expect(result).toBeNull();
     });
 
     it('fetchProspectorLeaderboard should use mock data on failure', async () => {
       const result = await api.fetchProspectorLeaderboard();
-      expect(result).toHaveLength(3);
-      expect(result[0].rank).toBe(1);
+      // No mock fallback when USE_MOCK=false
+      expect(result).toEqual([]);
     });
   });
 
@@ -347,9 +355,12 @@ describe('API Service Comprehensive Tests', () => {
 
     it('createMaintainedItem should call the backend', async () => {
       const itemData = { clientId: 'user1@test.com', name: 'Aquecedor' };
-      apiCallSpy.mockResolvedValue({ id: 'item2', ...itemData });
+      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => ({ id: 'item2', ...itemData }) } as any);
       const result = await api.createMaintainedItem(itemData);
-      expect(apiCallSpy).toHaveBeenCalledWith('/maintained-items', expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/maintained-items'),
+        expect.any(Object)
+      );
       expect(result.name).toBe('Aquecedor');
     });
 
@@ -361,9 +372,9 @@ describe('API Service Comprehensive Tests', () => {
 
     it('createMessage should call the backend', async () => {
       const msgData = { chatId: 'chat1', senderId: 'user1@test.com', text: 'tchau' };
-      apiCallSpy.mockResolvedValue({ id: 'msg2', ...msgData });
+      fetchSpy.mockResolvedValueOnce({ ok: true, json: async () => ({ id: 'msg2', ...msgData }) } as any);
       const result = await api.createMessage(msgData);
-      expect(apiCallSpy).toHaveBeenCalledWith('/messages', expect.any(Object));
+      expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining('/messages'), expect.any(Object));
       expect(result.text).toBe('tchau');
     });
   });

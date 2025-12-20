@@ -44,16 +44,18 @@ function getMessagingInstance(): Messaging | null {
  * Verifica se notificações são suportadas no browser
  */
 export function isNotificationSupported(): boolean {
-  return (
-    'Notification' in globalThis && 'serviceWorker' in navigator && 'PushManager' in globalThis
-  );
+  const hasNotification = typeof Notification !== 'undefined' && !!Notification;
+  const hasServiceWorker = typeof navigator !== 'undefined' && 'serviceWorker' in navigator;
+  const hasPushManager = typeof (globalThis as unknown as { PushManager?: unknown }).PushManager !== 'undefined';
+
+  return hasNotification && hasServiceWorker && hasPushManager;
 }
 
 /**
  * Verifica status da permissão de notificações
  */
 export function getNotificationPermission(): NotificationPermission {
-  if (!isNotificationSupported()) return 'denied';
+  if (!isNotificationSupported() || typeof Notification === 'undefined' || !Notification) return 'denied';
   return Notification.permission;
 }
 
