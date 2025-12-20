@@ -17,7 +17,7 @@ vi.mock('firebase/auth', () => ({
 const renderModal = (props?: Partial<React.ComponentProps<typeof AuthModal>>) => {
   const onClose = vi.fn();
   const onSwitchMode = vi.fn();
-  const onSuccess = vi.fn();
+  const _onSuccess = vi.fn();
 
   render(
     <AuthModal
@@ -25,11 +25,11 @@ const renderModal = (props?: Partial<React.ComponentProps<typeof AuthModal>>) =>
       userType={props?.userType ?? ('cliente' as User['type'])}
       onClose={props?.onClose ?? onClose}
       onSwitchMode={props?.onSwitchMode ?? onSwitchMode}
-      onSuccess={props?.onSuccess ?? onSuccess}
+      onSuccess={props?.onSuccess ?? _onSuccess}
     />
   );
 
-  return { onClose, onSwitchMode, onSuccess };
+  return { onClose, onSwitchMode, onSuccess: _onSuccess };
 };
 
 describe('AuthModal', () => {
