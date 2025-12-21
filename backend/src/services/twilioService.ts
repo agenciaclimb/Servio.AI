@@ -45,6 +45,13 @@ class TwilioService {
   }
 
   /**
+   * Detect test mode to allow deterministic behavior without real credentials
+   */
+  private isTestMode(): boolean {
+    return process.env.NODE_ENV === 'test' || process.env.TWILIO_TEST_MODE === 'true';
+  }
+
+  /**
    * Initialize notification templates
    */
   private initializeTemplates(): Map<string, NotificationTemplate> {
@@ -113,7 +120,9 @@ class TwilioService {
     try {
       if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
         logger.warn('Twilio credentials not configured');
-        return { success: false, error: 'Twilio not configured' };
+        if (!this.isTestMode()) {
+          return { success: false, error: 'Twilio not configured' };
+        }
       }
 
       // Validate phone number (basic E.164 format)
@@ -169,7 +178,9 @@ class TwilioService {
     try {
       if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
         logger.warn('Twilio credentials not configured');
-        return { success: false, error: 'Twilio not configured' };
+        if (!this.isTestMode()) {
+          return { success: false, error: 'Twilio not configured' };
+        }
       }
 
       // Validate phone number

@@ -15,25 +15,27 @@ const mockFirestoreDocGet = vi.fn();
 const mockFirestoreDocUpdate = vi.fn();
 
 vi.mock('firebase-admin', () => ({
-  firestore: vi.fn(() => ({
-    collection: vi.fn((path: string) => ({
-      add: mockFirestoreCollectionAdd,
-      get: mockFirestoreCollectionGet,
-      where: vi.fn(() => ({
+  default: {
+    firestore: vi.fn(() => ({
+      collection: vi.fn((path: string) => ({
+        add: mockFirestoreCollectionAdd,
         get: mockFirestoreCollectionGet,
-      })),
-      orderBy: vi.fn(() => ({
-        limit: vi.fn(() => ({
+        where: vi.fn(() => ({
           get: mockFirestoreCollectionGet,
         })),
-      })),
-      doc: vi.fn(() => ({
-        set: mockFirestoreDocSet,
-        get: mockFirestoreDocGet,
-        update: mockFirestoreDocUpdate,
+        orderBy: vi.fn(() => ({
+          limit: vi.fn(() => ({
+            get: mockFirestoreCollectionGet,
+          })),
+        })),
+        doc: vi.fn(() => ({
+          set: mockFirestoreDocSet,
+          get: mockFirestoreDocGet,
+          update: mockFirestoreDocUpdate,
+        })),
       })),
     })),
-  })),
+  },
 }));
 
 vi.mock('firebase-functions', () => ({

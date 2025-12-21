@@ -4,7 +4,29 @@
  */
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { PipedriveService, Lead, Deal } from '../services/pipedriveService';
+import { PipedriveService } from '../../src/services/pipedriveService';
+
+type Lead = {
+  id: string;
+  email: string;
+  nome: string;
+  empresa: string;
+  telefone?: string;
+  createdAt: Date;
+  servioJobId?: string;
+};
+
+type Deal = {
+  id: string;
+  title: string;
+  value: number;
+  currency: string;
+  status: 'open' | 'won' | 'lost' | 'deleted';
+  pipelineId: string;
+  leadId: string;
+  createdAt: Date;
+  servioProposalId?: string;
+};
 
 // Mock do Firestore
 const mockDb = {
@@ -16,24 +38,18 @@ const mockDb = {
   })),
 };
 
-// Mock do axios
-vi.mock('axios', () => ({
-  default: {
-    create: vi.fn(() => ({
-      post: vi.fn(),
-      put: vi.fn(),
-      get: vi.fn(),
-    })),
-  },
-}));
+const buildMockClient = () => ({
+  post: vi.fn(),
+  put: vi.fn(),
+  get: vi.fn(),
+});
 
 describe('PipedriveService', () => {
   let service: PipedriveService;
   let mockClient: any;
 
   beforeEach(() => {
-    const axios = require('axios');
-    mockClient = axios.default.create();
+    mockClient = buildMockClient();
 
     service = new PipedriveService({
       apiKey: 'test-api-key',
@@ -60,6 +76,21 @@ describe('PipedriveService', () => {
         createdAt: new Date(),
         servioJobId: 'job-123',
       };
+
+      // Busca org retorna vazio; cria org
+      mockClient.get.mockResolvedValueOnce({
+        data: {
+          success: true,
+          data: { items: [] },
+        },
+      });
+
+      mockClient.post.mockResolvedValueOnce({
+        data: {
+          success: true,
+          data: { id: 777 },
+        },
+      });
 
       mockClient.post.mockResolvedValueOnce({
         data: {
@@ -91,6 +122,20 @@ describe('PipedriveService', () => {
         empresa: 'Tech Corp',
         createdAt: new Date(),
       };
+
+      mockClient.get.mockResolvedValueOnce({
+        data: {
+          success: true,
+          data: { items: [] },
+        },
+      });
+
+      mockClient.post.mockResolvedValueOnce({
+        data: {
+          success: true,
+          data: { id: 777 },
+        },
+      });
 
       mockClient.post.mockResolvedValueOnce({
         data: {

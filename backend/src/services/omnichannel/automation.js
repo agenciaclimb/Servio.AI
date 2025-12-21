@@ -10,7 +10,10 @@
  */
 
 const admin = require('firebase-admin');
-const db = admin.firestore();
+
+function getDb() {
+  return admin.firestore();
+}
 
 // ========================================
 // SCHEDULER - Chamado via Cloud Scheduler
@@ -42,7 +45,7 @@ async function checkFollowup48h() {
   const cutoff = new Date();
   cutoff.setHours(cutoff.getHours() - 48);
 
-  const snapshot = await db.collection('conversations')
+  const snapshot = await getDb().collection('conversations')
     .where('userType', '==', 'cliente')
     .where('lastMessageAt', '<=', admin.firestore.Timestamp.fromDate(cutoff))
     .where('lastMessageSender', '==', 'omni_ia')
@@ -62,7 +65,7 @@ async function checkFollowup48h() {
     
     await sendToChannel(conv.channel, conv.participants[0], message);
     
-    await db.collection('omni_logs').add({
+    await getDb().collection('omni_logs').add({
       type: 'automation_followup_48h',
       conversationId: doc.id,
       channel: conv.channel,
@@ -83,7 +86,7 @@ async function checkFollowupProposta() {
   cutoff.setHours(cutoff.getHours() - 24);
 
   // Buscar propostas enviadas sem resposta há 24h
-  const snapshot = await db.collection('proposals')
+  const snapshot = await getDb().collection('proposals')
     .where('status', '==', 'enviada')
     .where('createdAt', '<=', admin.firestore.Timestamp.fromDate(cutoff))
     .limit(50)
@@ -95,7 +98,7 @@ async function checkFollowupProposta() {
     const proposal = doc.data();
     
     // Buscar job e cliente
-    const jobDoc = await db.collection('jobs').doc(proposal.jobId).get();
+    const jobDoc = await getDb().collection('jobs').doc(proposal.jobId).get();
     if (!jobDoc.exists) continue;
     
     const job = jobDoc.data();
@@ -104,7 +107,7 @@ async function checkFollowupProposta() {
     if (await checkOptOut(clientId)) continue;
 
     // Buscar canal preferido do cliente
-    const userDoc = await db.collection('users').doc(clientId).get();
+    const userDoc = await getDb().collection('users').doc(clientId).get();
     if (!userDoc.exists) continue;
 
     const preferredChannel = userDoc.data().preferredChannel || 'webchat';
@@ -113,7 +116,7 @@ async function checkFollowupProposta() {
     
     await sendToChannel(preferredChannel, clientId, message);
     
-    await db.collection('omni_logs').add({
+    await getDb().collection('omni_logs').add({
       type: 'automation_followup_proposta',
       proposalId: doc.id,
       jobId: proposal.jobId,
@@ -134,7 +137,7 @@ async function checkFollowupPagamento() {
   const cutoff = new Date();
   cutoff.setHours(cutoff.getHours() - 12);
 
-  const snapshot = await db.collection('escrow')
+  const snapshot = await getDb().collection('escrow')
     .where('status', '==', 'pending')
     .where('createdAt', '<=', admin.firestore.Timestamp.fromDate(cutoff))
     .limit(30)
@@ -147,7 +150,7 @@ async function checkFollowupPagamento() {
     
     if (await checkOptOut(escrow.clientId)) continue;
 
-    const userDoc = await db.collection('users').doc(escrow.clientId).get();
+    const userDoc = await getDb().collection('users').doc(escrow.clientId).get();
     if (!userDoc.exists) continue;
 
     const preferredChannel = userDoc.data().preferredChannel || 'webchat';
@@ -156,7 +159,7 @@ async function checkFollowupPagamento() {
     
     await sendToChannel(preferredChannel, escrow.clientId, message);
     
-    await db.collection('omni_logs').add({
+    await getDb().collection('omni_logs').add({
       type: 'automation_followup_pagamento',
       escrowId: doc.id,
       channel: preferredChannel,
@@ -179,7 +182,7 @@ async function checkFollowupOnboarding() {
   const cutoffMax = new Date();
   cutoffMax.setHours(cutoffMax.getHours() - 25);
 
-  const snapshot = await db.collection('users')
+  const snapshot = await getDb().collection('users')
     .where('createdAt', '<=', admin.firestore.Timestamp.fromDate(cutoffMin))
     .where('createdAt', '>=', admin.firestore.Timestamp.fromDate(cutoffMax))
     .where('onboardingCompleted', '==', false)
@@ -205,7 +208,7 @@ async function checkFollowupOnboarding() {
     
     await sendToChannel(preferredChannel, doc.id, message);
     
-    await db.collection('omni_logs').add({
+    await getDb().collection('omni_logs').add({
       type: 'automation_followup_onboarding',
       userId: doc.id,
       userType: user.type,
@@ -226,7 +229,7 @@ async function checkFollowupProspectorRecrutamento() {
   const cutoff = new Date();
   cutoff.setHours(cutoff.getHours() - 72);
 
-  const snapshot = await db.collection('prospector_prospects')
+  const snapshot = await getDb().collection('prospector_prospects')
     .where('status', '==', 'contatado')
     .where('lastContactAt', '<=', admin.firestore.Timestamp.fromDate(cutoff))
     .limit(30)
@@ -244,7 +247,7 @@ async function checkFollowupProspectorRecrutamento() {
     
     await sendToChannel('email', prospect.email, message, prospect.name);
     
-    await db.collection('omni_logs').add({
+    await getDb().collection('omni_logs').add({
       type: 'automation_followup_prospector_recrutamento',
       prospectId: doc.id,
       channel: 'email',
@@ -262,7 +265,7 @@ async function checkFollowupProspectorRecrutamento() {
 // ========================================
 
 async function checkOptOut(userId) {
-  const doc = await db.collection('users').doc(userId).get();
+  const doc = await getDb().collection('users').doc(userId).get();
   if (!doc.exists) return false;
   
   const userData = doc.data();
@@ -374,7 +377,7 @@ async function sendEmail(email, text, name) {
 async function saveWebChatMessage(userId, text) {
   const conversationId = `web_${userId}_auto`;
   
-  await db.collection('messages').add({
+  await getDb().collection('messages').add({
     conversationId,
     channel: 'webchat',
     sender: 'omni_ia',
@@ -384,7 +387,7 @@ async function saveWebChatMessage(userId, text) {
     isAutomation: true
   });
 
-  await db.collection('conversations').doc(conversationId).set({
+  await getDb().collection('conversations').doc(conversationId).set({
     channel: 'webchat',
     participants: [userId, 'omni_ia'],
     lastMessage: text,

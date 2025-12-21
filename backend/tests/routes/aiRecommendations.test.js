@@ -1,24 +1,20 @@
 /**
  * Testes para AI Recommendations Routes
- * @jest
  */
 
 const request = require('supertest');
 
-// Mock do middleware de auth
-jest.mock('../middleware/auth', () => ({
-  requireAuth: (req, res, next) => {
-    req.user = {
-      email: 'prospector@test.com',
-      isAdmin: false,
-    };
-    next();
-  },
-}));
+// Stubs injetáveis (evita depender de vi.mock hoistado)
+const requireAuth = (req, res, next) => {
+  req.user = {
+    email: 'prospector@test.com',
+    isAdmin: false,
+  };
+  next();
+};
 
-// Mock do serviço de IA
-jest.mock('../services/aiRecommendationService', () => ({
-  generateNextActions: jest.fn(async (lead, history) => ({
+const aiService = {
+  generateNextActions: vi.fn(async () => ({
     action: 'email',
     template: 'introduction',
     timeToSend: '09:00',
@@ -26,7 +22,7 @@ jest.mock('../services/aiRecommendationService', () => ({
     reasoning: 'Lead recently created',
   })),
 
-  predictConversion: jest.fn(async (lead, score, history) => ({
+  predictConversion: vi.fn(async (_lead, score) => ({
     probability: 0.75,
     factors: {
       leadScore: score / 100,
@@ -40,7 +36,7 @@ jest.mock('../services/aiRecommendationService', () => ({
     recommendation: 'Continue with current strategy',
   })),
 
-  suggestFollowUpSequence: jest.fn(async (lead, history) => ({
+  suggestFollowUpSequence: vi.fn(async () => ({
     sequence: [
       {
         step: 1,
@@ -60,7 +56,7 @@ jest.mock('../services/aiRecommendationService', () => ({
     reasoning: 'Multi-touch approach recommended',
   })),
 
-  generateComprehensiveRecommendation: jest.fn(async (lead, score, history) => ({
+  generateComprehensiveRecommendation: vi.fn(async (lead, score) => ({
     lead: { id: lead.id, name: lead.name, category: lead.category },
     leadScore: score,
     recommendations: {
@@ -84,7 +80,7 @@ jest.mock('../services/aiRecommendationService', () => ({
     priority: 'high',
     generatedAt: new Date().toISOString(),
   })),
-}));
+};
 
 let app;
 
@@ -93,8 +89,8 @@ beforeAll(() => {
   app = express();
   app.use(express.json());
 
-  const router = require('../routes/aiRecommendations');
-  app.use('/api/prospector', router);
+  const { createAiRecommendationsRouter } = require('../../src/routes/aiRecommendations');
+  app.use('/api/prospector', createAiRecommendationsRouter({ requireAuth, aiService }));
 });
 
 describe('AI Recommendations Routes', () => {
@@ -366,15 +362,24 @@ describe('AI Recommendations Routes', () => {
 
   describe('Authorization checks', () => {
     it('should allow admin to access other prospectors recommendations', async () => {
-      jest.spyOn(require('../middleware/auth'), 'requireAuth').mockImplementation((req, res, next) => {
+      const requireAuthAdmin = (req, res, next) => {
         req.user = {
           email: 'admin@test.com',
           isAdmin: true,
         };
         next();
-      });
+      };
 
-      const response = await request(app)
+      const express = require('express');
+      const tempApp = express();
+      tempApp.use(express.json());
+      const { createAiRecommendationsRouter } = require('../../src/routes/aiRecommendations');
+      tempApp.use(
+        '/api/prospector',
+        createAiRecommendationsRouter({ requireAuth: requireAuthAdmin, aiService })
+      );
+
+      const response = await request(tempApp)
         .post('/api/prospector/ai-recommendations')
         .send({
           prospectorId: 'other-prospector@test.com',

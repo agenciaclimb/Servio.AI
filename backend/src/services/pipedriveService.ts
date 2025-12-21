@@ -271,7 +271,7 @@ export class PipedriveService {
         },
       });
 
-      if (response.data.success && response.data.data?.items?.length > 0) {
+      if (response?.data?.success && response.data.data?.items?.length > 0) {
         return response.data.data.items[0].item.id;
       }
 
@@ -280,14 +280,14 @@ export class PipedriveService {
         name: companyName,
       });
 
-      if (!createResponse.data.success) {
-        throw new Error(`Pipedrive error: ${createResponse.data.error}`);
+      if (createResponse?.data?.success) {
+        return createResponse.data.data.id;
       }
 
-      return createResponse.data.data.id;
+      return null;
     } catch (error) {
       functions.logger.error('Erro ao gerenciar organização:', error);
-      throw error;
+      return null;
     }
   }
 

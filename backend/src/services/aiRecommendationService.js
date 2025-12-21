@@ -8,12 +8,31 @@
  * - suggestFollowUpSequence: Qual a sequência recomendada de follow-ups?
  */
 
-const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { getPlacesApiKey } = require('../utils/secretHelper');
 
-// Inicializar Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+let cachedGeminiModel = null;
+
+function shouldUseGemini() {
+  const apiKey = process.env.GEMINI_API_KEY;
+  const isTestEnv = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
+  const isExplicitlyDisabled = process.env.DISABLE_EXTERNAL_AI === 'true';
+  return !!apiKey && !isTestEnv && !isExplicitlyDisabled;
+}
+
+function getGeminiModel() {
+  if (!shouldUseGemini()) return null;
+  if (cachedGeminiModel) return cachedGeminiModel;
+
+  try {
+    const { GoogleGenerativeAI } = require('@google/generative-ai');
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    cachedGeminiModel = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+    return cachedGeminiModel;
+  } catch (error) {
+    console.warn('[aiRecommendationService] Gemini unavailable – running in deterministic mode');
+    return null;
+  }
+}
 
 async function hasPlacesKey() {
   try {
@@ -32,6 +51,8 @@ async function hasPlacesKey() {
  */
 async function generateNextActions(lead, prospectorHistory = []) {
   try {
+    const model = getGeminiModel();
+
     if (!lead) {
       return {
         action: 'email',
@@ -39,6 +60,16 @@ async function generateNextActions(lead, prospectorHistory = []) {
         timeToSend: '09:00',
         confidence: 0.5,
         reason: 'Lead data missing',
+      };
+    }
+
+    if (!model) {
+      return {
+        action: 'email',
+        template: prospectorHistory.length > 0 ? 'follow-up' : 'introduction',
+        timeToSend: '09:00',
+        confidence: 0.6,
+        reasoning: 'Gemini desabilitado (modo determinístico)',
       };
     }
 
@@ -114,6 +145,8 @@ Responda em JSON:
  */
 async function predictConversion(lead, leadScore = 50, prospectorHistory = []) {
   try {
+    const model = getGeminiModel();
+
     if (!lead) {
       return {
         probability: 0.2,
@@ -126,6 +159,19 @@ async function predictConversion(lead, leadScore = 50, prospectorHistory = []) {
     // Calcular indicadores simples
     const recencyScore = calculateRecencyFactor(prospectorHistory);
     const engagementCount = prospectorHistory.length;
+
+    if (!model) {
+      const normalizedScore = Math.min(1, Math.max(0, leadScore / 100));
+      const engagement = Math.min(1, engagementCount / 5);
+      const probability = Math.min(1, Math.max(0, normalizedScore * 0.7 + engagement * 0.2 + recencyScore * 0.1));
+
+      return {
+        probability,
+        factors: { leadScore, engagement, recency: recencyScore },
+        risk: probability < 0.3 ? 'high' : probability < 0.6 ? 'medium' : 'low',
+        recommendation: 'Modo determinístico: priorize follow-up e qualificação',
+      };
+    }
 
     const prompt = `Analise a probabilidade de conversão deste lead:
 
@@ -194,6 +240,8 @@ Responda em JSON:
  */
 async function suggestFollowUpSequence(lead, pastActions = []) {
   try {
+    const model = getGeminiModel();
+
     if (!lead) {
       return {
         sequence: [
@@ -202,6 +250,28 @@ async function suggestFollowUpSequence(lead, pastActions = []) {
           { action: 'phone', delay: '5 dias', step: 3, message: 'Contato direto' },
         ],
         reasoning: 'Default sequence - lead data missing',
+      };
+    }
+
+    if (!model) {
+      return {
+        sequence: [
+          {
+            step: 1,
+            action: 'email',
+            delay: '2 horas',
+            message: 'Follow-up',
+            scheduledFor: calculateScheduledDate('2 horas'),
+          },
+          {
+            step: 2,
+            action: 'email',
+            delay: '2 dias',
+            message: 'Case study',
+            scheduledFor: calculateScheduledDate('2 dias'),
+          },
+        ],
+        reasoning: 'Gemini desabilitado (modo determinístico)',
       };
     }
 
@@ -303,7 +373,8 @@ function calculateScheduledDate(delayStr) {
     return new Date(now.getTime() + weeks * 7 * 24 * 60 * 60 * 1000);
   }
 
-  return now;
+  // Default: 2 horas
+  return new Date(now.getTime() + 2 * 60 * 60 * 1000);
 }
 
 /**
@@ -313,7 +384,26 @@ function calculateScheduledDate(delayStr) {
  * @returns {Date}
  */
 function addDays(date, days) {
-  return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
+  const isMidnightUTC =
+    date.getUTCHours() === 0 &&
+    date.getUTCMinutes() === 0 &&
+    date.getUTCSeconds() === 0 &&
+    date.getUTCMilliseconds() === 0;
+
+  // Dates criadas via new Date('YYYY-MM-DD') são interpretadas como UTC.
+  // Em timezones negativos isso vira "dia anterior" no horário local, quebrando testes.
+  const looksLikeDateOnlyUTC =
+    isMidnightUTC && (date.getHours() !== 0 || date.getMinutes() !== 0 || date.getSeconds() !== 0);
+
+  if (looksLikeDateOnlyUTC) {
+    const baseUtc = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+    baseUtc.setUTCDate(baseUtc.getUTCDate() + days);
+    return new Date(baseUtc.getUTCFullYear(), baseUtc.getUTCMonth(), baseUtc.getUTCDate());
+  }
+
+  const copy = new Date(date.getTime());
+  copy.setDate(copy.getDate() + days);
+  return copy;
 }
 
 /**

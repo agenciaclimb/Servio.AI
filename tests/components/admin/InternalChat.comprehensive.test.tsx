@@ -119,13 +119,12 @@ describe('InternalChat Component - Comprehensive Quality Tests', () => {
     });
 
     it('should handle very long messages (>1000 chars)', async () => {
-      const user = userEvent.setup();
       render(<InternalChat adminId="admin1" />);
       const input = screen.getByPlaceholderText(/message|Digite/i);
       const sendButton = screen.getByRole('button', { name: /send|enviar/i });
 
       const longMessage = 'a'.repeat(2000);
-      await user.type(input, longMessage);
+      fireEvent.change(input, { target: { value: longMessage } });
       fireEvent.click(sendButton);
 
       await waitFor(() => {

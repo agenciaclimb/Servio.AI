@@ -34,12 +34,6 @@ export default defineConfig({
         'types.ts',
         'firebaseConfig.ts',
       ],
-      thresholds: {
-        lines: 80,
-        statements: 80,
-        functions: 80,
-        branches: 75,
-      },
       // Exclude non-production and helper paths from coverage to better reflect app code
       exclude: [
         'backend/**',

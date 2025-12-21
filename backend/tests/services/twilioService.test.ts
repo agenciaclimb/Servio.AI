@@ -8,39 +8,41 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import TwilioService from '../../src/services/twilioService';
 
 // Mock Twilio and Firebase
-vi.mock('twilio', () => ({
-  default: vi.fn(() => ({
+vi.mock('twilio', () => {
+  const twilioFactory = vi.fn(() => ({
     messages: {
       create: vi.fn().mockResolvedValue({ sid: 'SM_test_123' }),
     },
     calls: {
       create: vi.fn().mockResolvedValue({ sid: 'CA_test_456' }),
     },
-  })),
-}));
+  }));
 
-vi.mock('firebase-admin', () => ({
-  default: {
-    firestore: vi.fn(() => ({
-      collection: vi.fn((collectionName: string) => ({
-        doc: vi.fn((docId: string) => ({
-          get: vi.fn().mockResolvedValue({
-            exists: true,
-            data: () => ({
-              userId: docId,
-              smsEnabled: true,
-              voiceEnabled: true,
-              emailEnabled: true,
-              preferredLanguage: 'pt-BR',
-            }),
+  return { __esModule: true, default: twilioFactory, twilioFactory };
+});
+
+vi.mock('firebase-admin', () => {
+  const firestore = vi.fn(() => ({
+    collection: vi.fn((collectionName: string) => ({
+      doc: vi.fn((docId: string) => ({
+        get: vi.fn().mockResolvedValue({
+          exists: true,
+          data: () => ({
+            userId: docId,
+            smsEnabled: true,
+            voiceEnabled: true,
+            emailEnabled: true,
+            preferredLanguage: 'pt-BR',
           }),
-          set: vi.fn().mockResolvedValue(undefined),
-        })),
-        add: vi.fn().mockResolvedValue({ id: 'log_test_789' }),
+        }),
+        set: vi.fn().mockResolvedValue(undefined),
       })),
+      add: vi.fn().mockResolvedValue({ id: 'log_test_789' }),
     })),
-  },
-}));
+  }));
+
+  return { __esModule: true, default: { firestore }, firestore };
+});
 
 describe('TwilioService', () => {
   beforeEach(() => {

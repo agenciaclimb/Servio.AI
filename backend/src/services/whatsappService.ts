@@ -233,6 +233,21 @@ class WhatsAppService {
           updatedAt: new Date(),
         });
 
+        // Send an acknowledgement to the user even when escalating
+        await this.sendTextMessage(senderId, botResponse.response);
+
+        // Log bot response
+        await db
+          .collection('conversations')
+          .doc(conversation.id)
+          .collection('messages')
+          .add({
+            sender: 'bot',
+            message: botResponse.response,
+            timestamp: new Date(),
+            type: 'text',
+          } as ConversationMessage);
+
         // Notify human agents
         await this.notifyAgents(conversation.id, senderId);
       } else {
