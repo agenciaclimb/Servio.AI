@@ -92,7 +92,10 @@ async function isRateLimited({ db, prospectorId }) {
     .where('prospectorId','==', prospectorId)
     .where('sentAt','>', oneHourAgo)
     .get();
-  return snap.size >= 10;
+  const count = typeof snap.size === 'number'
+    ? snap.size
+    : Array.isArray(snap.docs) ? snap.docs.length : 0;
+  return count >= 10;
 }
 
 /** Determine due steps */
@@ -171,5 +174,6 @@ module.exports = {
   pauseSchedule,
   resumeSchedule,
   optOutSchedule,
-  processDueEmails
+  processDueEmails,
+  isRateLimited
 };

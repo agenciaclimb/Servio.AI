@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 /**
  * TaskManager - Sistema de gerenciamento de tasks do Protocolo Supremo v4.0
  */

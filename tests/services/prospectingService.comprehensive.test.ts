@@ -18,8 +18,8 @@ vi.mock('../../utils/logger', () => ({
   logError: vi.fn(),
 }));
 
-// Use the correct backend URL that the service will import
-const BACKEND_URL = 'https://servio-backend-738160936841.us-central1.run.app';
+// Keep expectations aligned with the service's runtime URL resolution
+const BACKEND_URL = import.meta.env.VITE_BACKEND_API_URL || 'https://api.servio-ai.com';
 
 // Mock fetch
 global.fetch = vi.fn();

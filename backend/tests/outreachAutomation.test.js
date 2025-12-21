@@ -2,7 +2,7 @@ const request = require('supertest');
 const { createApp } = require('../src/index.js');
 const { processPendingOutreach } = require('../src/outreachScheduler.js');
 
-// Extended Firestore mock with update & get for new collection
+// Extended Firestore mock with where chaining, batch, update & get for new collection
 function createMockDb(initialData = {}) {
   const collections = {};
   Object.entries(initialData).forEach(([coll, docs]) => {
@@ -11,20 +11,63 @@ function createMockDb(initialData = {}) {
       collections[coll].set(id, { id, _data: { ...data } });
     });
   });
+
   function ensureCollection(name) {
     if (!collections[name]) collections[name] = new Map();
     return collections[name];
   }
+
+  const buildQuery = (coll, filters = []) => ({
+    where(field, op, value) {
+      return buildQuery(coll, [...filters, { field, op, value }]);
+    },
+    async get() {
+      let docs = Array.from(coll.values());
+      for (const f of filters) {
+        docs = docs.filter((d) => {
+          const val = d._data[f.field];
+          if (f.op === '==') return val === f.value;
+          if (f.op === '<=') return val <= f.value;
+          return false;
+        });
+      }
+      return {
+        docs: docs.map((d) => ({
+          id: d.id,
+          data: () => d._data,
+          ref: {
+            update: async (patch) => {
+              const existing = coll.get(d.id);
+              if (!existing) throw new Error('Doc does not exist');
+              existing._data = { ...existing._data, ...patch };
+            },
+          },
+        })),
+        empty: docs.length === 0,
+      };
+    },
+  });
+
   return {
+    batch() {
+      const ops = [];
+      return {
+        update(ref, patch) { ops.push(() => ref.update(patch)); },
+        async commit() { for (const op of ops) { await op(); } },
+      };
+    },
     collection(name) {
       const coll = ensureCollection(name);
       return {
         doc(id) {
           return {
-            async get() { const entry = coll.get(id); return { exists: !!entry, id, data: () => entry? entry._data : undefined }; },
+            async get() { const entry = coll.get(id); return { exists: !!entry, id, data: () => entry ? entry._data : undefined }; },
             async set(data) { coll.set(id, { id, _data: { ...data } }); },
             async update(patch) { if (!coll.get(id)) throw new Error('Doc does not exist'); coll.get(id)._data = { ...coll.get(id)._data, ...patch }; }
           };
+        },
+        where(field, op, value) {
+          return buildQuery(coll, [{ field, op, value }]);
         },
         async get() { const docs = Array.from(coll.values()).map(d => ({ id: d.id, data: () => d._data })); return { docs }; }
       };

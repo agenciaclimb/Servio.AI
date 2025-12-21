@@ -96,18 +96,36 @@ describe('Omnichannel Service - Webhooks', () => {
                 mockConversations.set(id, { ...existing, ...data });
               })
             })),
-            where: vi.fn(() => ({
-              orderBy: vi.fn(() => ({
-                limit: vi.fn(() => ({
-                  get: vi.fn(async () => ({
-                    docs: Array.from(mockConversations.entries()).map(([id, data]) => ({
-                      id,
-                      data: () => data
-                    }))
-                  }))
+            where: vi.fn(() => {
+              const docsPayload = async () => ({
+                docs: Array.from(mockConversations.entries()).map(([id, data]) => ({
+                  id,
+                  data: () => data
                 }))
-              }))
-            }))
+              });
+
+              const query = {};
+              query.where = vi.fn(() => query);
+              query.orderBy = vi.fn(() => query);
+              query.limit = vi.fn(() => query);
+              query.get = vi.fn(docsPayload);
+              return query;
+            }),
+            orderBy: vi.fn(() => {
+              const docsPayload = async () => ({
+                docs: Array.from(mockConversations.entries()).map(([id, data]) => ({
+                  id,
+                  data: () => data
+                }))
+              });
+
+              const query = {};
+              query.where = vi.fn(() => query);
+              query.orderBy = vi.fn(() => query);
+              query.limit = vi.fn(() => query);
+              query.get = vi.fn(docsPayload);
+              return query;
+            })
           },
           omni_logs: {
             add: vi.fn(async (data) => {
@@ -315,7 +333,7 @@ describe('Omnichannel Service - Automações', () => {
         userType: 'cliente',
         channel: 'whatsapp',
         participants: ['5511999999999', 'omni_ia'],
-        lastMessageAt: admin.Timestamp.fromDate(new Date(Date.now() - 50 * 60 * 60 * 1000)),
+        lastMessageAt: admin.firestore.Timestamp.fromDate(new Date(Date.now() - 50 * 60 * 60 * 1000)),
         lastMessageSender: 'omni_ia',
         status: 'active'
       }
@@ -326,7 +344,7 @@ describe('Omnichannel Service - Automações', () => {
         id: 'prop_1',
         jobId: 'job_1',
         status: 'enviada',
-        createdAt: admin.Timestamp.fromDate(new Date(Date.now() - 25 * 60 * 60 * 1000))
+        createdAt: admin.firestore.Timestamp.fromDate(new Date(Date.now() - 25 * 60 * 60 * 1000))
       }
     ];
 
@@ -341,29 +359,25 @@ describe('Omnichannel Service - Automações', () => {
           omni_logs: []
         };
 
+        const docsPayload = async () => ({
+          docs: (data[name] || []).map((item) => ({
+            id: item.id,
+            data: () => item,
+            exists: true
+          }))
+        });
+
+        const query = {};
+        query.where = vi.fn(() => query);
+        query.orderBy = vi.fn(() => query);
+        query.limit = vi.fn(() => query);
+        query.get = vi.fn(docsPayload);
+
         return {
-          where: vi.fn(() => ({
-            where: vi.fn(() => ({
-              limit: vi.fn(() => ({
-                get: vi.fn(async () => ({
-                  docs: (data[name] || []).map((item) => ({
-                    id: item.id,
-                    data: () => item,
-                    exists: true
-                  }))
-                }))
-              }))
-            })),
-            limit: vi.fn(() => ({
-              get: vi.fn(async () => ({
-                docs: (data[name] || []).map((item) => ({
-                  id: item.id,
-                  data: () => item,
-                  exists: true
-                }))
-              }))
-            }))
-          })),
+          where: query.where,
+          orderBy: query.orderBy,
+          limit: query.limit,
+          get: query.get,
           doc: vi.fn((id) => ({
             get: vi.fn(async () => ({
               exists: data[name]?.some(item => item.id === id),
@@ -409,12 +423,13 @@ describe('Omnichannel Service - Automações', () => {
 
 describe('Omnichannel Service - IA Contextual', () => {
   it('deve gerar resposta personalizada para cliente', async () => {
-    const { GoogleGenerativeAI } = require('@google/generative-ai');
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
-
-    const result = await model.generateContent('Teste de contexto para cliente');
-    const response = result.response.text();
+    const omniRouter = require('../src/services/omnichannel');
+    const response = await omniRouter.__test__.processWithOmniIA({
+      conversationId: 'test_conv',
+      channel: 'webchat',
+      userType: 'cliente',
+      message: 'Teste de contexto para cliente'
+    });
 
     expect(response).toBeTruthy();
     expect(typeof response).toBe('string');

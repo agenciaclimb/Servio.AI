@@ -14,6 +14,7 @@ import {
 } from '../types';
 import { useToast } from '../contexts/ToastContext'; // 1. Importar o hook
 import * as API from '../services/api';
+import { logError, logInfo } from '../utils/logger';
 import ClientJobCard from './ClientJobCard';
 import ProposalListModal from './ProposalListModal';
 import PaymentModal from './PaymentModal';
@@ -110,7 +111,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
         }));
         setUserJobs(validJobs);
       } catch (error) {
-        console.error('Erro ao carregar jobs do cliente:', error);
+        logError('Erro ao carregar jobs do cliente:', error);
         addToast('Erro ao carregar seus serviços. Tente novamente.', 'error');
         setUserJobs([]); // Define array vazio em caso de erro
       } finally {
@@ -218,7 +219,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       setMatchingResults(results);
       addToast('Profissionais recomendados carregados com sucesso!', 'success');
     } catch (error) {
-      console.error('Erro ao buscar profissionais recomendados:', error);
+      logError('Erro ao buscar profissionais recomendados:', error);
       addToast('Erro ao carregar profissionais recomendados. Tente novamente.', 'error');
       setIsMatchingModalOpen(false);
     }
@@ -230,10 +231,10 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
     try {
       // Call the existing submitProposal API with invite intent
       // For now, we'll use a mock/placeholder approach until backend supports direct invites
-      console.log(`Inviting provider ${providerId} to job ${matchingJobId}`);
+      logInfo('Inviting provider to job', { providerId, matchingJobId });
       addToast('Prestador convidado com sucesso!', 'success');
     } catch (error) {
-      console.error('Erro ao convidar prestador:', error);
+      logError('Erro ao convidar prestador:', error);
       addToast('Erro ao enviar convite. Tente novamente.', 'error');
     }
   };

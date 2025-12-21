@@ -12,17 +12,21 @@
  */
 
 const axios = require('axios');
+const admin = require('firebase-admin');
 
 class TwilioService {
   /**
    * @param {Object} firestore - Instância do Firestore
    */
   constructor(firestore) {
-    this.db = firestore;
+    const hasDefaultApp = admin.apps && admin.apps.length > 0;
+    const allowAdHocDb = this.isTestMode();
+    this.db = firestore || ((hasDefaultApp || allowAdHocDb) && admin.firestore ? admin.firestore() : null);
     this.accountSid = process.env.TWILIO_ACCOUNT_SID;
     this.authToken = process.env.TWILIO_AUTH_TOKEN;
     this.phoneNumber = process.env.TWILIO_PHONE_NUMBER;
     this.whatsappNumber = process.env.TWILIO_WHATSAPP_NUMBER;
+    this.templates = this.initializeTemplates();
     
     // Inicializa cliente Twilio apenas se credenciais estiverem presentes
     if (this.accountSid && this.authToken) {
@@ -51,6 +55,79 @@ class TwilioService {
   }
 
   /**
+   * Detecta modo de teste para evitar chamadas reais ao Twilio
+   */
+  isTestMode() {
+    return process.env.NODE_ENV === 'test' || process.env.TWILIO_TEST_MODE === 'true';
+  }
+
+  /**
+   * Inicializa templates de notificação usados pelas rotas e testes
+   */
+  initializeTemplates() {
+    return new Map([
+      [
+        'nova_proposta',
+        {
+          key: 'nova_proposta',
+          smsBody:
+            'Olá {{clientName}}, você recebeu uma nova proposta para {{jobTitle}}. Clique aqui para visualizar: {{jobUrl}}',
+          voiceMessage:
+            'Você recebeu uma nova proposta para {{jobTitle}}. Acesse a plataforma para visualizar detalhes.',
+          title: 'Nova Proposta Recebida',
+        },
+      ],
+      [
+        'job_aceito',
+        {
+          key: 'job_aceito',
+          smsBody:
+            'Parabéns {{providerName}}, seu trabalho em {{jobTitle}} foi aceito! Próximas instruções estão em: {{jobUrl}}',
+          voiceMessage: 'Seu trabalho foi aceito. Verifique os detalhes na plataforma.',
+          title: 'Trabalho Aceito',
+        },
+      ],
+      [
+        'pagamento_confirmado',
+        {
+          key: 'pagamento_confirmado',
+          smsBody:
+            'Seu pagamento de R$ {{amount}} foi confirmado. Referência: {{reference}}. Comprovante em: {{receiptUrl}}',
+          voiceMessage: 'Seu pagamento foi processado com sucesso.',
+          title: 'Pagamento Confirmado',
+        },
+      ],
+      [
+        'job_concluido',
+        {
+          key: 'job_concluido',
+          smsBody: 'O trabalho {{jobTitle}} foi concluído! Avalie {{raterName}} aqui: {{reviewUrl}}',
+          voiceMessage: 'O trabalho foi concluído. Por favor, deixe sua avaliação.',
+          title: 'Trabalho Concluído',
+        },
+      ],
+      [
+        'cancelamento',
+        {
+          key: 'cancelamento',
+          smsBody:
+            'O trabalho {{jobTitle}} foi cancelado. Motivo: {{reason}}. Suporte em: {{supportUrl}}',
+          voiceMessage:
+            'O trabalho foi cancelado. Entre em contato com nosso suporte se tiver dúvidas.',
+          title: 'Trabalho Cancelado',
+        },
+      ],
+    ]);
+  }
+
+  interpolateTemplate(templateString, variables = {}) {
+    return Object.entries(variables || {}).reduce(
+      (acc, [key, value]) => acc.replace(new RegExp(`{{${key}}}`, 'g'), value),
+      templateString
+    );
+  }
+
+  /**
    * Envia SMS para um número de telefone
    * 
    * @param {Object} params - Parâmetros do SMS
@@ -59,63 +136,114 @@ class TwilioService {
    * @param {string} params.prospectId - ID do prospect relacionado
    * @returns {Promise<Object>} Resultado do envio
    */
-  async sendSMS({ to, body, prospectId }) {
+  async sendSMS(params = {}) {
+    const {
+      to,
+      phoneNumber,
+      body,
+      prospectId,
+      templateKey,
+      variables = {},
+      userId,
+    } = params;
+
+    const targetNumber = to || phoneNumber;
+    if (!targetNumber) {
+      return { success: false, error: 'Phone number is required' };
+    }
+
+    const formattedNumber = targetNumber.startsWith('+')
+      ? targetNumber
+      : `+${targetNumber.replace(/\D/g, '')}`;
+
+    if (!formattedNumber.match(/^\+\d{10,15}$/)) {
+      return { success: false, error: 'Invalid phone number format' };
+    }
+
+    let messageBody = body;
+    if (!messageBody && templateKey) {
+      const template = this.templates.get(templateKey);
+      if (!template) {
+        return { success: false, error: `Template not found: ${templateKey}` };
+      }
+
+      messageBody = this.interpolateTemplate(template.smsBody, variables);
+    }
+
+    if (!messageBody) {
+      return { success: false, error: 'Message body is required' };
+    }
+
     try {
+      if (!this.twilioClient && this.isTestMode()) {
+        const fakeSid = `test_sms_${Date.now()}`;
+        await this.logNotification({
+          type: 'sms',
+          userId: userId || prospectId || 'unknown',
+          templateKey: templateKey || 'custom',
+          phoneNumber: formattedNumber,
+          status: 'sent',
+          messageId: fakeSid,
+          timestamp: new Date(),
+        });
+
+        return { success: true, messageId: fakeSid, status: 'queued' };
+      }
+
       if (!this.twilioClient) {
-        throw new Error('Twilio client not initialized. Check credentials.');
+        return { success: false, error: 'Twilio client not initialized. Check credentials.' };
       }
 
-      // Valida número de telefone (formato E.164)
-      if (!to.match(/^\+[1-9]\d{1,14}$/)) {
-        throw new Error(`Invalid phone number format: ${to}. Use E.164 format (+5511999999999)`);
-      }
-
-      // Envia SMS via Twilio API
       const response = await this.twilioClient.post('/Messages.json', new URLSearchParams({
         From: this.phoneNumber,
-        To: to,
-        Body: body,
+        To: formattedNumber,
+        Body: messageBody,
       }));
 
       const messageData = response.data;
 
-      // Registra envio no Firestore
       await this.logCommunication({
         prospectId,
         type: 'sms',
         direction: 'outbound',
-        to,
+        to: formattedNumber,
         from: this.phoneNumber,
-        body,
+        body: messageBody,
         twilioSid: messageData.sid,
         status: messageData.status,
         timestamp: new Date(),
       });
 
-      console.log(`✅ SMS sent to ${to} (SID: ${messageData.sid})`);
+      await this.logNotification({
+        type: 'sms',
+        userId: userId || prospectId || 'unknown',
+        templateKey: templateKey || 'custom',
+        phoneNumber: formattedNumber,
+        status: messageData.status,
+        messageId: messageData.sid,
+        timestamp: new Date(),
+      });
 
       return {
         success: true,
         messageSid: messageData.sid,
+        messageId: messageData.sid,
         status: messageData.status,
-        to,
+        to: formattedNumber,
       };
     } catch (error) {
-      console.error('❌ Error sending SMS:', error.message);
-      
-      // Registra erro no Firestore
       await this.logCommunication({
         prospectId,
         type: 'sms',
         direction: 'outbound',
-        to,
-        body,
+        to: formattedNumber,
+        body: messageBody,
         status: 'failed',
         error: error.message,
         timestamp: new Date(),
       });
 
-      throw error;
+      return { success: false, error: error.message };
     }
   }
 
@@ -195,6 +323,164 @@ class TwilioService {
 
       throw error;
     }
+  }
+
+  /**
+   * Envia chamada de voz usando Twilio
+   */
+  async sendVoiceCall(params = {}) {
+    const { to, phoneNumber, templateKey, variables = {}, userId, prospectId } = params;
+    const targetNumber = to || phoneNumber;
+
+    if (!targetNumber) {
+      return { success: false, error: 'Phone number is required' };
+    }
+
+    const formattedNumber = targetNumber.startsWith('+')
+      ? targetNumber
+      : `+${targetNumber.replace(/\D/g, '')}`;
+
+    if (!formattedNumber.match(/^\+\d{10,15}$/)) {
+      return { success: false, error: 'Invalid phone number format' };
+    }
+
+    const template = templateKey ? this.templates.get(templateKey) : null;
+    const voiceMessage = template
+      ? this.interpolateTemplate(template.voiceMessage, variables)
+      : params.voiceMessage || 'Notification';
+
+    try {
+      if (!this.twilioClient && this.isTestMode()) {
+        const fakeCallId = `test_call_${Date.now()}`;
+        await this.logNotification({
+          type: 'voice',
+          userId: userId || prospectId || 'unknown',
+          templateKey: templateKey || 'custom',
+          phoneNumber: formattedNumber,
+          status: 'initiated',
+          callId: fakeCallId,
+          timestamp: new Date(),
+        });
+
+        return { success: true, callId: fakeCallId };
+      }
+
+      if (!this.twilioClient) {
+        return { success: false, error: 'Twilio client not initialized. Check credentials.' };
+      }
+
+      const twiml = `<Response><Say voice="alice" language="pt-BR">${voiceMessage}</Say></Response>`;
+
+      const response = await this.twilioClient.post('/Calls.json', new URLSearchParams({
+        From: this.phoneNumber,
+        To: formattedNumber,
+        Twiml: twiml,
+      }));
+
+      const callData = response.data;
+
+      await this.logCommunication({
+        prospectId,
+        type: 'call',
+        direction: 'outbound',
+        to: formattedNumber,
+        from: this.phoneNumber,
+        twilioSid: callData.sid,
+        status: callData.status,
+        timestamp: new Date(),
+      });
+
+      await this.logNotification({
+        type: 'voice',
+        userId: userId || prospectId || 'unknown',
+        templateKey: templateKey || 'custom',
+        phoneNumber: formattedNumber,
+        status: callData.status,
+        callId: callData.sid,
+        timestamp: new Date(),
+      });
+
+      return {
+        success: true,
+        callId: callData.sid,
+        status: callData.status,
+        to: formattedNumber,
+      };
+    } catch (error) {
+      await this.logCommunication({
+        prospectId,
+        type: 'call',
+        direction: 'outbound',
+        to: formattedNumber,
+        status: 'failed',
+        error: error.message,
+        timestamp: new Date(),
+      });
+
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Envia notificação de acordo com preferências do usuário
+   */
+  async sendNotification(payload = {}) {
+    const channel = payload.channel || 'sms';
+    const prefs = payload.userId ? await this.getUserCommunicationPreference(payload.userId) : null;
+
+    const results = {};
+
+    if (channel === 'sms' || channel === 'both') {
+      if (!prefs || prefs.smsEnabled) {
+        results.sms = await this.sendSMS(payload);
+      }
+    }
+
+    if (channel === 'voice' || channel === 'both') {
+      if (!prefs || prefs.voiceEnabled) {
+        results.voice = await this.sendVoiceCall(payload);
+      }
+    }
+
+    return { success: true, results };
+  }
+
+  async getUserCommunicationPreference(userId) {
+    try {
+      if (!this.db) return null;
+      const doc = await this.db.collection('user_communication_preferences').doc(userId).get();
+      return doc.exists ? doc.data() : null;
+    } catch (error) {
+      console.error('❌ Error fetching communication preferences:', error.message);
+      return null;
+    }
+  }
+
+  async updateUserCommunicationPreference(userId, preferences = {}) {
+    try {
+      if (!this.db) return false;
+      await this.db
+        .collection('user_communication_preferences')
+        .doc(userId)
+        .set(preferences, { merge: true });
+      return true;
+    } catch (error) {
+      console.error('❌ Error updating communication preferences:', error.message);
+      return false;
+    }
+  }
+
+  getTemplates() {
+    const result = {};
+    this.templates.forEach((value, key) => {
+      result[key] = value;
+    });
+    return result;
+  }
+
+  addTemplate(template) {
+    if (!template || !template.key) return;
+    this.templates.set(template.key, template);
   }
 
   /**
@@ -415,6 +701,23 @@ class TwilioService {
   }
 
   /**
+   * Registra notificações (SMS/voz) em coleção dedicada
+   */
+  async logNotification(entry) {
+    try {
+      if (!this.db) return null;
+      const ref = await this.db.collection('notification_logs').add({
+        ...entry,
+        createdAt: new Date(),
+      });
+      return ref.id;
+    } catch (error) {
+      console.warn('⚠️ Error logging notification:', error.message);
+      return null;
+    }
+  }
+
+  /**
    * Registra comunicação no Firestore
    * 
    * @param {Object} data - Dados da comunicação
@@ -502,3 +805,4 @@ class TwilioService {
 }
 
 module.exports = TwilioService;
+module.exports.default = new TwilioService();

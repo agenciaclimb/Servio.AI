@@ -34,12 +34,17 @@ describe('Jobs API Pagination (Task 2.1)', () => {
       role: 'cliente'
     });
 
+    // Shared spies ensure calls are counted regardless de o encadeamento começar no collection ou no query
+    const whereSpy = vi.fn(() => mockQuery);
+    const orderBySpy = vi.fn(() => mockQuery);
+    const limitSpy = vi.fn(() => mockQuery);
+
     // Mock Firestore query chain
     mockQuery = {
-      where: vi.fn().mockReturnThis(),
-      orderBy: vi.fn().mockReturnThis(),
+      where: whereSpy,
+      orderBy: orderBySpy,
       startAfter: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
+      limit: limitSpy,
       get: vi.fn(),
     };
 
@@ -70,9 +75,9 @@ describe('Jobs API Pagination (Task 2.1)', () => {
           })
         };
       }),
-      where: vi.fn(() => mockQuery),
-      orderBy: vi.fn(() => mockQuery),
-      limit: vi.fn(() => mockQuery),
+      where: whereSpy,
+      orderBy: orderBySpy,
+      limit: limitSpy,
       get: vi.fn(),
     };
 

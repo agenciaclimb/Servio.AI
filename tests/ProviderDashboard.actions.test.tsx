@@ -214,7 +214,7 @@ describe('ProviderDashboard – ações e fluxos principais', () => {
     render(<ProviderDashboard user={baseUser} disableOnboarding disableSkeleton />);
     const categoriaSelect = screen.getAllByRole('combobox')[0];
     fireEvent.change(categoriaSelect, { target: { value: 'limpeza' } });
-    const locInput = screen.getByPlaceholderText(/Buscar por cidade/i);
+    const locInput = screen.getByPlaceholderText(/Cidade ou endereço/i);
     fireEvent.change(locInput, { target: { value: 'são' } });
     // Botão limpar aparece
     const limparBtn = screen.getByText('Limpar filtros');

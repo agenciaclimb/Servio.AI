@@ -5,7 +5,7 @@ import {
   useNextAction,
   useConversionPrediction,
   useFollowUpSequence,
-} from '../useAIRecommendations';
+} from '../../src/hooks/useAIRecommendations';
 
 const mockRecommendations = {
   nextAction: {
