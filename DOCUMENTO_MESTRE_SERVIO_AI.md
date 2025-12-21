@@ -1,3 +1,53 @@
+## Task 4.6 — Security Hardening (v2) — Estado Pré-Launch
+
+**Data**: 21/12/2025 14:30 BRT  
+**Status**: 🟡 **PRONTO PARA VALIDAÇÃO (aguardando credenciais)**  
+**Branch**: `feature/task-4.6-security-hardening-v2` (pronta, não mergeada)
+
+### Escopo Técnico
+
+- ✅ Rate Limiting global + por rotas críticas (express-rate-limit)
+- ✅ Security Headers (helmet.js + CSP + custom headers)
+- ✅ XSS sanitization (body, query, response)
+- ✅ Path Traversal prevention
+- ✅ CSRF Protection (csrf-csrf, endpoint `/api/csrf-token`)
+- ✅ Audit Logger (ações sensíveis: LOGIN, CREATE_JOB, PROCESS_PAYMENT, etc)
+- ✅ Validadores com Zod (login, register, job creation, proposals, payments)
+
+### Checklist Protocolo Supremo v4.0.1
+
+- ✅ Branch name: `feature/task-4.6-security-hardening-v2` (padrão convencional)
+- ✅ Commits atômicos: padrão `feat: [task-4.6] ...` respeitado
+- ✅ Sem `.env` ou secrets commitados
+- ✅ Typecheck passar localmente (código-fonte, testes com excludes)
+- ✅ Testes estruturados: `backend/tests/securityHardening.middleware.test.js` criado
+- ✅ Documentação: DOCUMENTO_MESTRE atualizado + novo GUIA_SETUP_CREDENCIAIS.md
+
+### Estado de Testes (Status Atual)
+
+| Serviço     | Dependência | Pronto? | Nota                                      |
+| ----------- | ----------- | ------- | ----------------------------------------- |
+| Gmail/Email | SMTP creds  | ⚠️      | GMAIL_USER + GMAIL_PASS necessários       |
+| Gemini      | API Key     | ✅      | GEMINI_API_KEY em .env.local (confirmado) |
+| WhatsApp    | Meta API    | ⚠️      | Configurado, chaves precisam validação    |
+| Firestore   | Emulator/DB | ⚠️      | Decidir: emulator vs produção             |
+| Twilio      | (SMS/Voice) | ❌      | DESATIVADO (`TWILIO_ENABLED=false`)       |
+
+**Testes Backend**: 68 falhas / 120 passagens (integrações externas sem credenciais; após setup, espera-se 100% verde)
+
+### PRs Relacionados (Status)
+
+- ❌ PR #60: Fechado (conteúdo já no main, checks não rodavam)
+- ❌ PR #55: Fechado (conflitos após rebase, sem diffs relevantes)
+- ❌ PR #11: Fechado (branch obsoleta, 32 dias desatualizada)
+- 🟡 **PR v2 (em preparação)**: Será aberta amanhã após credenciais e validação de testes 100% verde
+
+### Próximos Passos (21/12 em diante)
+
+1. **Hoje (21/12)**: Registrar estado, criar guia setup
+2. **Amanhã (22/12)**: Provisionar credenciais (Gmail, Firestore decisão), rodar testes até verde
+3. **Amanhã tarde**: Abrir PR v2 com checklist, rodar auditoria Gemini, merge + deploy
+
 # 📘 DOCUMENTO MESTRE - SERVIO.AI
 
 **Última Atualização**: 10/12/2025 10:30 BRT (ORCHESTRATOR v1.0 IMPLEMENTADO ✅)  
