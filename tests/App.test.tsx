@@ -113,14 +113,61 @@ vi.mock('../services/prospectingService', () => ({
 }));
 
 describe('App Component', () => {
+  const originalLocation = window.location;
+
+  const setMockLocation = (overrides: Partial<Location> & { reload?: () => void } = {}) => {
+    const href = originalLocation.href || 'http://localhost/';
+    const origin = (originalLocation as any).origin || 'http://localhost';
+
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      writable: true,
+      value: {
+        ...originalLocation,
+        href,
+        origin,
+        ...overrides,
+      },
+    });
+  };
+
+  const restoreLocation = () => {
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      writable: true,
+      value: originalLocation,
+    });
+  };
+
   beforeEach(() => {
     sessionStorage.clear();
     vi.clearAllMocks();
+
+    // Evita erros do react-router em jsdom quando `origin/href` não existem
+    // (eles não são enumeráveis e se perdem quando alguém mocka via spread).
+    setMockLocation();
+
+    // Garantir URL base consistente no jsdom.
+    try {
+      window.history.replaceState({}, '', '/');
+    } catch {
+      // noop
+    }
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    restoreLocation();
   });
+
+  const dispatchUnhandledRejection = (reason: Error) => {
+    const event = new Event('unhandledrejection') as any;
+    event.reason = reason;
+    const p = Promise.reject(reason);
+    p.catch(() => {});
+    event.promise = p;
+    globalThis.dispatchEvent(event);
+  };
 
   it('should render the App component', () => {
     render(<App />);
@@ -189,53 +236,43 @@ describe('App Component', () => {
   });
 
   it('should parse URL parameters for profile view', async () => {
-    const { location } = window;
-    delete (window as any).location;
-    window.location = { ...location, search: '?profile=user@example.com' };
+    window.history.replaceState({}, '', '/?profile=user@example.com');
 
     render(<App />);
 
     // Profile view would be rendered if implemented
     expect(screen.getByTestId('header')).toBeInTheDocument();
 
-    window.location = location;
+    restoreLocation();
   });
 
   it('should parse URL parameters for service landing', async () => {
-    const { location } = window;
-    delete (window as any).location;
-    window.location = { ...location, search: '?servico=eletrica&local=sao-paulo' };
+    window.history.replaceState({}, '', '/?servico=eletrica&local=sao-paulo');
 
     render(<App />);
 
     expect(screen.getByTestId('header')).toBeInTheDocument();
 
-    window.location = location;
+    restoreLocation();
   });
 
   it('should handle chunk loading errors gracefully', async () => {
     const reloadSpy = vi.fn();
-    delete (window as any).location;
-    window.location = { ...window.location, reload: reloadSpy };
+    setMockLocation({ reload: reloadSpy });
 
     render(<App />);
 
-    // Simulate an unhandled rejection from chunk loading
-    const event = new PromiseRejectionEvent('unhandledrejection', {
-      reason: new Error('Failed to fetch dynamically imported module'),
-      promise: Promise.reject(new Error('test')),
-    });
-
-    globalThis.dispatchEvent(event);
+    dispatchUnhandledRejection(new Error('Failed to fetch dynamically imported module'));
 
     // Should have set the reload flag
     expect(sessionStorage.getItem('hasReloadedForChunkError')).toBe('true');
+
+    restoreLocation();
   });
 
   it('should handle error events from chunk loading', async () => {
     const reloadSpy = vi.fn();
-    delete (window as any).location;
-    window.location = { ...window.location, reload: reloadSpy };
+    setMockLocation({ reload: reloadSpy });
 
     render(<App />);
 
@@ -251,22 +288,18 @@ describe('App Component', () => {
 
   it('should prevent multiple reloads for chunk errors', async () => {
     const reloadSpy = vi.fn();
-    delete (window as any).location;
-    window.location = { ...window.location, reload: reloadSpy };
+    setMockLocation({ reload: reloadSpy });
 
     sessionStorage.setItem('hasReloadedForChunkError', 'true');
 
     render(<App />);
 
-    const event = new PromiseRejectionEvent('unhandledrejection', {
-      reason: new Error('Failed to fetch dynamically imported module'),
-      promise: Promise.reject(new Error('test')),
-    });
-
-    globalThis.dispatchEvent(event);
+    dispatchUnhandledRejection(new Error('Failed to fetch dynamically imported module'));
 
     // Should not reload again
     expect(reloadSpy).not.toHaveBeenCalled();
+
+    restoreLocation();
   });
 
   it('should clean up error listeners on unmount', async () => {

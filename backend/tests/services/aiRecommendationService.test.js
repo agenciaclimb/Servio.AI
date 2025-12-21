@@ -1,26 +1,33 @@
 /**
  * Testes para AI Recommendation Service
- * @jest
  */
 
 // Mock do Google Generative AI
-jest.mock('@google/generative-ai', () => ({
-  GoogleGenerativeAI: jest.fn(() => ({
-    getGenerativeModel: jest.fn(() => ({
-      generateContent: jest.fn(async (prompt) => ({
-        response: {
-          text: () =>
-            `{
+vi.mock('@google/generative-ai', () => ({
+  GoogleGenerativeAI: class GoogleGenerativeAI {
+    getGenerativeModel() {
+      return {
+        generateContent: vi.fn(async () => ({
+          response: {
+            text: () =>
+              `{
             "action": "email",
             "template": "introduction",
             "timeToSend": "09:00",
             "confidence": 0.85,
             "reasoning": "Lead recently created and high budget"
           }`,
-        },
-      })),
-    })),
-  })),
+          },
+        })),
+      };
+    }
+  },
+}));
+
+// O serviço importa `../utils/secretHelper` (arquivo ESM). Em testes do backend (CommonJS),
+// mockamos para evitar erro "Cannot use import statement outside a module".
+vi.mock('../../src/utils/secretHelper', () => ({
+  getPlacesApiKey: vi.fn(async () => ''),
 }));
 
 const {
@@ -31,7 +38,8 @@ const {
   calculateRecencyFactor,
   calculateScheduledDate,
   addDays,
-} = require('../services/aiRecommendationService');
+} = require('../../src/services/aiRecommendationService');
+
 
 describe('AI Recommendation Service', () => {
   const mockLead = {

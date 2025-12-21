@@ -77,7 +77,7 @@ function makeApiError(
 /**
  * Generic API call helper
  */
-async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
+export async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000); // 15s safeguard
   try {

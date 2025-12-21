@@ -6,6 +6,7 @@
 
 import { db } from '../../firebaseConfig';
 import { collection, addDoc, doc, updateDoc, increment, Timestamp } from 'firebase/firestore';
+import { logError, logWarn } from '../../utils/logger';
 
 /**
  * Tipos de eventos de conversão rastreados
@@ -70,8 +71,7 @@ class ConversionAnalyticsService {
 
       return docRef.id;
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(`Erro ao rastrear evento ${event.eventType}:`, error);
+      logError(`Erro ao rastrear evento ${event.eventType}:`, error);
       throw error;
     }
   }
@@ -99,8 +99,7 @@ class ConversionAnalyticsService {
       });
     } catch (error) {
       // Métrica falha não deve interromper fluxo principal
-      // eslint-disable-next-line no-console
-      console.warn('Erro ao atualizar métricas:', error);
+      logWarn('Erro ao atualizar métricas:', error);
     }
   }
 

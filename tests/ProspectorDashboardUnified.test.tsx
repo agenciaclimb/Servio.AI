@@ -4,6 +4,16 @@ import userEvent from '@testing-library/user-event';
 import ProspectorDashboard from '../components/ProspectorDashboard';
 import * as api from '../services/api';
 
+// Evita dependência de Firebase Auth no QuickAddPanel real
+vi.mock('../src/components/prospector/QuickAddPanel', () => ({
+  default: () => <div data-testid="quick-add-panel" />,
+}));
+
+// Evita carregar o CRM pesado neste suite
+vi.mock('../src/components/prospector/ProspectorCRMProfessional', () => ({
+  default: () => <div data-testid="prospector-crm-professional" />,
+}));
+
 // Mock Firebase Firestore
 vi.mock('firebase/firestore', () => {
   const unsub = vi.fn();
@@ -176,18 +186,20 @@ describe('ProspectorDashboard - Unified Layout', () => {
     const user = userEvent.setup();
     render(<ProspectorDashboard userId="test-prospector" />);
 
-    const statsTab = screen.getByRole('button', { name: /estatísticas/i });
+    const statsTab = screen.getByRole('button', { name: /stats/i });
     await user.click(statsTab);
 
-    expect(screen.getByTestId('loading-active')).toBeInTheDocument();
-    expect(screen.getByTestId('loading-total')).toBeInTheDocument();
-    expect(screen.getByTestId('loading-commissions')).toBeInTheDocument();
-    expect(screen.getByTestId('loading-average')).toBeInTheDocument();
+    // Skeleton é composto por vários blocos
+    expect(screen.getAllByTestId('skeleton-block').length).toBeGreaterThan(0);
   });
 
   it('should display error message when API fails', async () => {
     (api.fetchProspectorStats as any).mockRejectedValue(new Error('API Error'));
+    const user = userEvent.setup();
     render(<ProspectorDashboard userId="test-prospector" />);
+
+    const statsTab = screen.getByRole('button', { name: /stats/i });
+    await user.click(statsTab);
 
     await waitFor(() => {
       expect(screen.getByText('API Error')).toBeInTheDocument();

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, beforeEach, expect } from 'vitest';
 
@@ -120,7 +120,8 @@ describe('ClientDashboard – chat & agendamento (integração leve)', () => {
     const { props } = renderDash({ allMessages: [scheduleMsg] });
 
     // Ir para "Meus Serviços" e abrir chat do job ativo
-    await userEvent.click(screen.getByRole('button', { name: /Meus Serviços/i }));
+    const sidebarNav = screen.getByRole('navigation');
+    await userEvent.click(within(sidebarNav).getByRole('button', { name: /Serviços/i }));
     const chatButtons = screen.getAllByRole('button', { name: /^Chat$/i });
     await userEvent.click(chatButtons[0]);
 
@@ -156,7 +157,7 @@ describe('ClientDashboard – chat & agendamento (integração leve)', () => {
     renderDash({});
 
     // Abrir modal de conta
-    await userEvent.click(screen.getByRole('button', { name: /Conta Pessoal/i }));
+    await userEvent.click(screen.getByRole('button', { name: /^Conta$/i }));
 
     // Limpa campos obrigatórios e tenta salvar
     const nameInput = screen.getByDisplayValue('Ana Cliente');
@@ -178,7 +179,8 @@ describe('ClientDashboard – chat & agendamento (integração leve)', () => {
     vi.spyOn(API, 'createMessage').mockRejectedValueOnce(new Error('fail'));
 
     renderDash({});
-    await userEvent.click(screen.getByRole('button', { name: /Meus Serviços/i }));
+    const sidebarNav = screen.getByRole('navigation');
+    await userEvent.click(within(sidebarNav).getByRole('button', { name: /Serviços/i }));
     const chatButtons = screen.getAllByRole('button', { name: /^Chat$/i });
     await userEvent.click(chatButtons[0]);
 

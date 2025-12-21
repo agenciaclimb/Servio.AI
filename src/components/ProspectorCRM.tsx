@@ -437,6 +437,8 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
             </div>
           </div>
         </div>
+
+        {showAddLead && <AddLeadModal onClose={() => setShowAddLead(false)} onAdd={addLead} />}
       </div>
     );
   }

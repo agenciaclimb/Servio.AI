@@ -85,7 +85,7 @@ describe('ClientDashboard', () => {
     vi.clearAllMocks();
   });
 
-  test('renderiza tabs e saudação após o loading', async () => {
+  it('renderiza tabs e saudação após o loading', async () => {
     renderDashboard();
 
     // Conteúdo da tela inicial deve estar disponível imediatamente (skeleton desativado)
@@ -93,34 +93,37 @@ describe('ClientDashboard', () => {
     expect(quickActionsTitle).toBeInTheDocument();
 
     // Tabs na sidebar
-    expect(screen.getByRole('button', { name: /Início/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Meus Serviços/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Meus Itens/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '❓Ajuda' })).toBeInTheDocument();
+    const sidebarNav = screen.getByRole('navigation');
+    expect(within(sidebarNav).getByRole('button', { name: /Início/i })).toBeInTheDocument();
+    expect(within(sidebarNav).getByRole('button', { name: /Serviços/i })).toBeInTheDocument();
+    expect(within(sidebarNav).getByRole('button', { name: /Itens/i })).toBeInTheDocument();
+    expect(within(sidebarNav).getByRole('button', { name: /Ajuda/i })).toBeInTheDocument();
 
     // Saudação
-    expect(screen.getByText(/Olá, Ana!/)).toBeInTheDocument();
+    expect(screen.getByText(/Ana!/)).toBeInTheDocument();
   }, 15000);
 
-  test('alternância de tabs e estados vazios (serviços/itens/ajuda)', async () => {
+  it('alternância de tabs e estados vazios (serviços/itens/ajuda)', async () => {
     renderDashboard();
 
+    const sidebarNav = screen.getByRole('navigation');
+
     // Vai para Meus Serviços
-    await userEvent.click(screen.getByRole('button', { name: /Meus Serviços/i }));
+    await userEvent.click(within(sidebarNav).getByRole('button', { name: /Serviços/i }));
     expect(screen.getAllByText('Meus Serviços').length).toBeGreaterThanOrEqual(2); // sidebar + content
     expect(screen.getByText('Nenhum serviço ainda')).toBeInTheDocument();
 
     // Vai para Meus Itens
-    await userEvent.click(screen.getByRole('button', { name: /Meus Itens/i }));
+    await userEvent.click(within(sidebarNav).getByRole('button', { name: /Itens/i }));
     expect(screen.getAllByText('Meus Itens').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Nenhum item cadastrado')).toBeInTheDocument();
 
     // Vai para Ajuda
-    await userEvent.click(screen.getByRole('button', { name: '❓Ajuda' }));
+    await userEvent.click(within(sidebarNav).getByRole('button', { name: /Ajuda/i }));
     expect(screen.getByText('Central de Ajuda')).toBeInTheDocument();
   }, 15000);
 
-  test('ação rápida "Solicitar Serviço" dispara callback', async () => {
+  it('ação rápida "Solicitar Serviço" dispara callback', async () => {
     const onNewJobFromItem = vi.fn();
     renderDashboard({ onNewJobFromItem });
 
@@ -136,12 +139,12 @@ describe('ClientDashboard', () => {
     expect(onNewJobFromItem).toHaveBeenCalledWith('');
   }, 15000);
 
-  test('botão "+ Novo Serviço" em "Meus Serviços" dispara callback', async () => {
+  it('botão "+ Novo Serviço" em "Meus Serviços" dispara callback', async () => {
     const onNewJobFromItem = vi.fn();
     renderDashboard({ onNewJobFromItem });
 
     // Navega para a aba "Meus Serviços"
-    await userEvent.click(screen.getByRole('button', { name: /Meus Serviços/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Serviços/i }));
 
     // Há dois botões "+ Novo Serviço" nessa view; clicar no primeiro já deve disparar o callback
     const novoServicoButtons = screen.getAllByRole('button', { name: /\+ Novo Serviço/i });
@@ -186,7 +189,7 @@ describe('ClientDashboard', () => {
       // Mock da API e do redirecionamento
       const createCheckoutSessionMock = vi
         .spyOn(API, 'createCheckoutSession')
-        .mockResolvedValue({ url: 'https://stripe.com/mock-checkout' });
+        .mockResolvedValue({ url: 'https://stripe.com/mock-checkout' } as any);
       Object.defineProperty(window, 'location', {
         writable: true,
         value: { href: '' },
