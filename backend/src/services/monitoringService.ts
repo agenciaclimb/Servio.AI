@@ -154,7 +154,8 @@ class MonitoringService {
       const snapshot = await db.collection('alerts').get();
       const allAlerts = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
       const filtered = allAlerts.filter(a => {
-        const isActive = (a.status && a.status === 'active') || !('resolved' in a) || a.resolved === false;
+        const isActive =
+          (a.status && a.status === 'active') || !('resolved' in a) || a.resolved === false;
         const matchesSeverity = !severity || a.severity === severity;
         return isActive && matchesSeverity;
       });
@@ -272,7 +273,11 @@ class MonitoringService {
 
       // Calculate uptime (simplified)
       let uptimePercentage =
-        uptimeMetric !== null ? uptimeMetric * 100 : requestsTotal > 0 ? (requestsSuccess / requestsTotal) * 100 : 100;
+        uptimeMetric !== null
+          ? uptimeMetric * 100
+          : requestsTotal > 0
+            ? (requestsSuccess / requestsTotal) * 100
+            : 100;
       if (metricsSnapshot.docs.length === 0) {
         uptimePercentage = 0;
       }

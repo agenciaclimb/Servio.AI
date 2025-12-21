@@ -47,58 +47,58 @@
 ### ✅ Progresso acumulado (20-21/12/2025)
 
 - **Correção ESM/CJS (bloqueador hard)**
-   - [backend/src/utils/secretHelper.js](backend/src/utils/secretHelper.js)
-      - Convertido de ESM (`import/export`) para CommonJS (`require/module.exports`).
-      - `@google-cloud/secret-manager` passou a ser **opcional** (fallback retorna string vazia), evitando crash quando a dependência não está instalada no ambiente de testes.
+  - [backend/src/utils/secretHelper.js](backend/src/utils/secretHelper.js)
+    - Convertido de ESM (`import/export`) para CommonJS (`require/module.exports`).
+    - `@google-cloud/secret-manager` passou a ser **opcional** (fallback retorna string vazia), evitando crash quando a dependência não está instalada no ambiente de testes.
 
 - **Rota AI Recommendations estabilizada para testes determinísticos**
-   - [backend/src/routes/aiRecommendations.js](backend/src/routes/aiRecommendations.js)
-      - Introduzida factory `createAiRecommendationsRouter({ requireAuth, aiService })` para permitir injeção em testes.
-      - Export padrão preservado (router “pronto” para uso em runtime), com export adicional `createAiRecommendationsRouter`.
-   - [backend/tests/routes/aiRecommendations.test.js](backend/tests/routes/aiRecommendations.test.js)
-      - Refeito para usar a factory (injeção de `requireAuth` e `aiService`) e evitar mocks hoistados frágeis.
-      - Resultado: suíte de rotas **100% verde** localmente.
+  - [backend/src/routes/aiRecommendations.js](backend/src/routes/aiRecommendations.js)
+    - Introduzida factory `createAiRecommendationsRouter({ requireAuth, aiService })` para permitir injeção em testes.
+    - Export padrão preservado (router “pronto” para uso em runtime), com export adicional `createAiRecommendationsRouter`.
+  - [backend/tests/routes/aiRecommendations.test.js](backend/tests/routes/aiRecommendations.test.js)
+    - Refeito para usar a factory (injeção de `requireAuth` e `aiService`) e evitar mocks hoistados frágeis.
+    - Resultado: suíte de rotas **100% verde** localmente.
 
 - **AI Recommendation Service: Gemini “lazy” + fallback determinístico (Windows-safe)**
-   - [backend/src/services/aiRecommendationService.js](backend/src/services/aiRecommendationService.js)
-      - `shouldUseGemini()` e `getGeminiModel()` para impedir chamadas externas em ambiente de teste/sem chave.
-      - Fallbacks determinísticos em `generateNextActions()`, `predictConversion()` e `suggestFollowUpSequence()`.
-      - Ajustes de data/horário para consistência no Windows (timezone/parsing e default de scheduling).
-   - [backend/tests/services/aiRecommendationService.test.js](backend/tests/services/aiRecommendationService.test.js)
-      - Resultado validado: **33/33 passando**.
+  - [backend/src/services/aiRecommendationService.js](backend/src/services/aiRecommendationService.js)
+    - `shouldUseGemini()` e `getGeminiModel()` para impedir chamadas externas em ambiente de teste/sem chave.
+    - Fallbacks determinísticos em `generateNextActions()`, `predictConversion()` e `suggestFollowUpSequence()`.
+    - Ajustes de data/horário para consistência no Windows (timezone/parsing e default de scheduling).
+  - [backend/tests/services/aiRecommendationService.test.js](backend/tests/services/aiRecommendationService.test.js)
+    - Resultado validado: **33/33 passando**.
 
 - **Omnichannel: Firestore getter + IA determinística + verificação WhatsApp (GET)**
-   - [backend/src/services/omnichannel/index.js](backend/src/services/omnichannel/index.js)
-      - `getDb()` (evita capturar Firestore no load do módulo) e `processWithOmniIA()` com fallback determinístico sem Gemini em testes.
-      - Implementado `GET /webhook/whatsapp` para verificação do hub challenge (compatível com testes).
-   - [backend/src/services/omnichannel/automation.js](backend/src/services/omnichannel/automation.js)
-      - Troca de `db` em module-scope por `getDb()` para compatibilidade com mocks por teste.
-   - [backend/tests/omnichannel.test.js](backend/tests/omnichannel.test.js)
-      - Resultado validado: **14/14 passando**.
+  - [backend/src/services/omnichannel/index.js](backend/src/services/omnichannel/index.js)
+    - `getDb()` (evita capturar Firestore no load do módulo) e `processWithOmniIA()` com fallback determinístico sem Gemini em testes.
+    - Implementado `GET /webhook/whatsapp` para verificação do hub challenge (compatível com testes).
+  - [backend/src/services/omnichannel/automation.js](backend/src/services/omnichannel/automation.js)
+    - Troca de `db` em module-scope por `getDb()` para compatibilidade com mocks por teste.
+  - [backend/tests/omnichannel.test.js](backend/tests/omnichannel.test.js)
+    - Resultado validado: **14/14 passando**.
 
 - **TwilioService: modo de teste determinístico habilitado (Windows-safe)**
-   - [backend/src/services/twilioService.ts](backend/src/services/twilioService.ts)
-      - Introduzido `isTestMode()` (NODE_ENV==='test' ou `TWILIO_TEST_MODE==='true'`) para **bypassar checagem de credenciais** em ambiente de teste.
-      - Mantida integração com mocks do `twilio` e `firebase-admin` fornecidos nos testes.
-   - [backend/tests/services/twilioService.test.ts](backend/tests/services/twilioService.test.ts)
-      - Resultado validado: **22/22 passando**.
+  - [backend/src/services/twilioService.ts](backend/src/services/twilioService.ts)
+    - Introduzido `isTestMode()` (NODE_ENV==='test' ou `TWILIO_TEST_MODE==='true'`) para **bypassar checagem de credenciais** em ambiente de teste.
+    - Mantida integração com mocks do `twilio` e `firebase-admin` fornecidos nos testes.
+  - [backend/tests/services/twilioService.test.ts](backend/tests/services/twilioService.test.ts)
+    - Resultado validado: **22/22 passando**.
 
 - **LandingPageService: constraints e variantes garantidas (Windows-safe)**
-   - [backend/src/services/landingPageService.ts](backend/src/services/landingPageService.ts)
-      - Enforce de limites por caracteres: `headline` ≤ 10, `subheadline` ≤ 20; `metaTitle` ≤ 60; `metaDescription` ≤ 160.
-      - `variants` sempre não vazias (fallback A/B); compatível com mocks de Gemini e Firestore em teste.
-   - [backend/tests/services/landingPageService.test.ts](backend/tests/services/landingPageService.test.ts)
-      - Resultado validado: **22/22 passando**.
+  - [backend/src/services/landingPageService.ts](backend/src/services/landingPageService.ts)
+    - Enforce de limites por caracteres: `headline` ≤ 10, `subheadline` ≤ 20; `metaTitle` ≤ 60; `metaDescription` ≤ 160.
+    - `variants` sempre não vazias (fallback A/B); compatível com mocks de Gemini e Firestore em teste.
+  - [backend/tests/services/landingPageService.test.ts](backend/tests/services/landingPageService.test.ts)
+    - Resultado validado: **22/22 passando**.
 
 - **MonitoringService: compatível com mocks, erros explícitos e health simplificado**
-   - [backend/src/services/monitoringService.ts](backend/src/services/monitoringService.ts)
-      - `recordMetric()` lança `Failed to record metric` em erro; `recordMetrics()` usa `collection.add` por item.
-      - `triggerAlert()` via `collection.add` retornando `id` do mock; `resolveAlert()` verifica existência e lança `Failed to resolve alert` em erro.
-      - `getActiveAlerts()` sem chain de `where/orderBy`; filtra por `status==='active'` ou `resolved===false`.
-      - `healthCheck()` retorna `services` como strings (`healthy|degraded|unhealthy`) e usa `set()+get()` de heartbeat.
-      - `getSLOMetrics()` e `getMetrics()` filtram em memória, evitando chain `where`; suportam `api_latency`, `uptime` e `error_rate`.
-   - [backend/tests/services/monitoringService.test.ts](backend/tests/services/monitoringService.test.ts)
-      - Resultado validado: **25/25 passando**.
+  - [backend/src/services/monitoringService.ts](backend/src/services/monitoringService.ts)
+    - `recordMetric()` lança `Failed to record metric` em erro; `recordMetrics()` usa `collection.add` por item.
+    - `triggerAlert()` via `collection.add` retornando `id` do mock; `resolveAlert()` verifica existência e lança `Failed to resolve alert` em erro.
+    - `getActiveAlerts()` sem chain de `where/orderBy`; filtra por `status==='active'` ou `resolved===false`.
+    - `healthCheck()` retorna `services` como strings (`healthy|degraded|unhealthy`) e usa `set()+get()` de heartbeat.
+    - `getSLOMetrics()` e `getMetrics()` filtram em memória, evitando chain `where`; suportam `api_latency`, `uptime` e `error_rate`.
+  - [backend/tests/services/monitoringService.test.ts](backend/tests/services/monitoringService.test.ts)
+    - Resultado validado: **25/25 passando**.
 
 ### 🧪 Gate “Test (backend)” — Status GREEN
 
@@ -116,16 +116,16 @@
 
 ### 🎯 **Sistema em Produção**
 
-| Componente       | Status         | Versão/Métricas             | Detalhes                             |
-| ---------------- | -------------- | --------------------------- | ------------------------------------ |
-| **Frontend**     | 🟢 Live        | React 18.3 + TypeScript 5.6 | Firebase Hosting CDN global          |
-| **Backend**      | 🟢 Live        | Node.js 20 + Express        | Google Cloud Run (servio-backend-v2) |
-| **Database**     | 🟢 Operacional | Firestore                   | 128 routes, health check ✅          |
-| **Testes**       | 🟢 Green (local) | Backend: 298/298 passando | coverage v8: 27.57%                 |
-| **CI/CD**        | 🟡 Não validado neste snapshot | GitHub Actions | Atualizar após gate ficar green       |
-| **Segurança**    | 🟢 Auditado    | 0 vulnerabilidades          | npm audit clean ✅                   |
-| **Performance**  | 🟡 Monitorado  | Lighthouse ~85              | Otimização contínua                  |
-| **Orchestrator** | 🟢 Produção    | v1.0 - 100% funcional       | Issue #16 criada com sucesso ✅      |
+| Componente       | Status                         | Versão/Métricas             | Detalhes                             |
+| ---------------- | ------------------------------ | --------------------------- | ------------------------------------ |
+| **Frontend**     | 🟢 Live                        | React 18.3 + TypeScript 5.6 | Firebase Hosting CDN global          |
+| **Backend**      | 🟢 Live                        | Node.js 20 + Express        | Google Cloud Run (servio-backend-v2) |
+| **Database**     | 🟢 Operacional                 | Firestore                   | 128 routes, health check ✅          |
+| **Testes**       | 🟢 Green (local)               | Backend: 298/298 passando   | coverage v8: 27.57%                  |
+| **CI/CD**        | 🟡 Não validado neste snapshot | GitHub Actions              | Atualizar após gate ficar green      |
+| **Segurança**    | 🟢 Auditado                    | 0 vulnerabilidades          | npm audit clean ✅                   |
+| **Performance**  | 🟡 Monitorado                  | Lighthouse ~85              | Otimização contínua                  |
+| **Orchestrator** | 🟢 Produção                    | v1.0 - 100% funcional       | Issue #16 criada com sucesso ✅      |
 
 ### 🤖 **Orchestrator - Sistema AI-Driven**
 

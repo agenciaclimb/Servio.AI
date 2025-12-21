@@ -154,9 +154,14 @@ Ensure the copy is persuasive, clear, and optimized for conversions.
       const parsed = JSON.parse(jsonMatch[0]);
       // Enforce character-length constraints expected by tests
       const headline = (parsed.headline || 'Transforme seu Negócio com IA').slice(0, 10);
-      const subheadline = (parsed.subheadline || 'Solução inteligente para seu crescimento').slice(0, 20);
+      const subheadline = (parsed.subheadline || 'Solução inteligente para seu crescimento').slice(
+        0,
+        20
+      );
       const metaTitle = (parsed.metaTitle || 'Transforme seu Negócio').slice(0, 60);
-      const metaDescription = (parsed.metaDescription || 'Solução inteligente para crescimento').slice(0, 160);
+      const metaDescription = (
+        parsed.metaDescription || 'Solução inteligente para crescimento'
+      ).slice(0, 160);
 
       return {
         headline,
