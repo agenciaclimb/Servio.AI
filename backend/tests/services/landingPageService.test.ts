@@ -9,35 +9,37 @@ import LandingPageService from '../../src/services/landingPageService';
 
 // Mock Gemini
 vi.mock('@google/generative-ai', () => ({
-  GoogleGenerativeAI: vi.fn(() => ({
-    getGenerativeModel: vi.fn(() => ({
-      generateContent: vi.fn().mockResolvedValue({
-        response: {
-          text: () =>
-            JSON.stringify({
-              headline: 'Transforme seu Negócio em 30 Dias',
-              subheadline: 'Solução comprovada para crescimento exponencial',
-              bodyText: 'Nossa plataforma revolucionária...',
-              cta: 'Comece Grátis Agora',
-              ctaText: 'Iniciar',
-              faqs: [
-                { question: 'Como funciona?', answer: 'É simples!' },
-                { question: 'Preciso de cartão?', answer: 'Não, primeira semana é grátis' },
-              ],
-              metaTitle: 'Transforme seu Negócio com IA',
-              metaDescription: 'Plataforma de IA para crescimento de negócios',
-              keywords: ['IA', 'negócio', 'crescimento', 'transformação', 'SaaS'],
-            }),
-        },
-      }),
-    })),
-  })),
+  GoogleGenerativeAI: class GoogleGenerativeAI {
+    getGenerativeModel() {
+      return {
+        generateContent: vi.fn().mockResolvedValue({
+          response: {
+            text: () =>
+              JSON.stringify({
+                headline: 'Transforme seu Negócio em 30 Dias',
+                subheadline: 'Solução comprovada para crescimento exponencial',
+                bodyText: 'Nossa plataforma revolucionária...',
+                cta: 'Comece Grátis Agora',
+                ctaText: 'Iniciar',
+                faqs: [
+                  { question: 'Como funciona?', answer: 'É simples!' },
+                  { question: 'Preciso de cartão?', answer: 'Não, primeira semana é grátis' },
+                ],
+                metaTitle: 'Transforme seu Negócio com IA',
+                metaDescription: 'Plataforma de IA para crescimento de negócios',
+                keywords: ['IA', 'negócio', 'crescimento', 'transformação', 'SaaS'],
+              }),
+          },
+        }),
+      };
+    }
+  },
 }));
 
 // Mock Firebase
 vi.mock('firebase-admin', () => ({
-  default: {
-    firestore: vi.fn(() => ({
+  default: (() => {
+    const firestoreFn = vi.fn(() => ({
       collection: vi.fn((collectionName: string) => ({
         doc: vi.fn((docId: string) => ({
           get: vi.fn().mockResolvedValue({
@@ -69,13 +71,16 @@ vi.mock('firebase-admin', () => ({
         }),
         add: vi.fn().mockResolvedValue({ id: 'analytics_123' }),
       })),
-    })),
-    firestore: {
-      Timestamp: {
-        now: () => new Date(),
-      },
-    },
-  },
+    }));
+
+    firestoreFn.Timestamp = {
+      now: () => new Date(),
+    };
+
+    return {
+      firestore: firestoreFn,
+    };
+  })(),
 }));
 
 describe('LandingPageService', () => {

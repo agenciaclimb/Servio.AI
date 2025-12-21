@@ -16,7 +16,16 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const crypto = require('crypto');
 
-const db = admin.firestore();
+function getDb() {
+  return admin.firestore();
+}
+
+function shouldUseGemini() {
+  const apiKey = process.env.GEMINI_API_KEY;
+  const isTestEnv = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
+  const isExplicitlyDisabled = process.env.DISABLE_EXTERNAL_AI === 'true';
+  return !!apiKey && !isTestEnv && !isExplicitlyDisabled;
+}
 
 // ========================================
 // WEBHOOKS - Recepção de Mensagens
@@ -26,6 +35,20 @@ const db = admin.firestore();
  * POST /omni/webhook/whatsapp
  * Recebe mensagens do WhatsApp Cloud API
  */
+router.get('/webhook/whatsapp', async (req, res) => {
+  try {
+    if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === process.env.OMNI_WEBHOOK_SECRET) {
+      console.log('[Omni WA] Webhook verificado');
+      return res.status(200).send(req.query['hub.challenge']);
+    }
+
+    return res.sendStatus(404);
+  } catch (error) {
+    console.error('[Omni WA] Erro:', error);
+    res.sendStatus(500);
+  }
+});
+
 router.post('/webhook/whatsapp', async (req, res) => {
   try {
     // Validação de webhook (Meta)
@@ -172,7 +195,7 @@ router.get('/conversations', async (req, res) => {
   try {
     const { userId, userType, channel, limit = 50 } = req.query;
 
-    let query = db.collection('conversations');
+    let query = getDb().collection('conversations');
 
     if (userId) query = query.where('participants', 'array-contains', userId);
     if (userType) query = query.where('userType', '==', userType);
@@ -202,7 +225,7 @@ router.get('/messages', async (req, res) => {
       return res.status(400).json({ error: 'conversationId obrigatório' });
     }
 
-    const snapshot = await db.collection('messages')
+    const snapshot = await getDb().collection('messages')
       .where('conversationId', '==', conversationId)
       .orderBy('timestamp', 'asc')
       .limit(parseInt(limit))
@@ -336,7 +359,7 @@ async function processFacebookMessage(event) {
 
 async function identifyUserType(identifier, channel) {
   // Buscar em users por telefone/email/social
-  const usersRef = db.collection('users');
+  const usersRef = getDb().collection('users');
   
   let query;
   if (channel === 'whatsapp') {
@@ -359,14 +382,14 @@ async function identifyUserType(identifier, channel) {
 }
 
 async function saveMessage(messageData) {
-  const messageRef = db.collection('messages').doc();
+  const messageRef = getDb().collection('messages').doc();
   await messageRef.set({
     ...messageData,
     createdAt: admin.firestore.Timestamp.now()
   });
 
   // Atualizar conversa
-  const convRef = db.collection('conversations').doc(messageData.conversationId);
+  const convRef = getDb().collection('conversations').doc(messageData.conversationId);
   await convRef.set({
     channel: messageData.channel,
     participants: [messageData.sender, 'omni_ia'],
@@ -378,7 +401,7 @@ async function saveMessage(messageData) {
 }
 
 async function logOmniEvent(eventData) {
-  await db.collection('omni_logs').add({
+  await getDb().collection('omni_logs').add({
     ...eventData,
     timestamp: admin.firestore.Timestamp.now()
   });
@@ -464,12 +487,16 @@ async function sendFacebookMessage(recipientId, text) {
 // ========================================
 
 async function processWithOmniIA(context) {
-  const { GoogleGenerativeAI } = require('@google/generative-ai');
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  
   try {
+    if (!shouldUseGemini()) {
+      return 'Olá! Como posso ajudar você hoje?';
+    }
+
+    const { GoogleGenerativeAI } = require('@google/generative-ai');
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
     // Buscar histórico da conversa
-    const messagesSnapshot = await db.collection('messages')
+    const messagesSnapshot = await getDb().collection('messages')
       .where('conversationId', '==', context.conversationId)
       .orderBy('timestamp', 'desc')
       .limit(10)
@@ -487,7 +514,7 @@ async function processWithOmniIA(context) {
     const response = result.response.text();
 
     // Log IA
-    await db.collection('ia_logs').add({
+    await getDb().collection('ia_logs').add({
       conversationId: context.conversationId,
       channel: context.channel,
       userType: context.userType,
@@ -548,3 +575,8 @@ Você está conversando com um ADMINISTRADOR.
 }
 
 module.exports = router;
+module.exports.__test__ = {
+  processWithOmniIA,
+  buildPromptForPersona,
+  shouldUseGemini,
+};

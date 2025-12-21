@@ -5,7 +5,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import request from 'supertest';
 import express from 'express';
-import pipedriveWebhookRouter from '../routes/pipedriveWebhook';
+import pipedriveWebhookRouter from '../../src/routes/pipedriveWebhook';
 
 describe('Pipedrive Webhook Endpoint', () => {
   let app: express.Application;

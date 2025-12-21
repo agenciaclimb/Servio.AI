@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-const PipedriveService = require('../services/pipedriveService');
+const PipedriveService = require('../../src/services/pipedriveService.js');
 
 describe('PipedriveService', () => {
   let service;
@@ -26,6 +26,13 @@ describe('PipedriveService', () => {
 
   describe('createLead', () => {
     it('deve criar um lead com sucesso', async () => {
+      // Busca org retorna vazio → cria org → cria pessoa
+      mockClient.get.mockResolvedValueOnce({
+        data: { success: true, data: { items: [] } },
+      });
+      mockClient.post.mockResolvedValueOnce({
+        data: { success: true, data: { id: 777 } },
+      });
       mockClient.post.mockResolvedValueOnce({
         data: {
           success: true,
@@ -53,6 +60,12 @@ describe('PipedriveService', () => {
     });
 
     it('deve lançar erro se resposta for inválida', async () => {
+      mockClient.get.mockResolvedValueOnce({
+        data: { success: true, data: { items: [] } },
+      });
+      mockClient.post.mockResolvedValueOnce({
+        data: { success: true, data: { id: 777 } },
+      });
       mockClient.post.mockResolvedValueOnce({
         data: {
           success: false,

@@ -59,11 +59,14 @@ vi.mock('firebase-functions', () => ({
   },
 }));
 
-vi.mock('axios', () => ({
-  default: {
-    post: vi.fn(),
-  },
-}));
+vi.mock('axios', () => {
+  const post = vi.fn();
+  return {
+    __esModule: true,
+    default: { post },
+    post,
+  };
+});
 
 import axios from 'axios';
 

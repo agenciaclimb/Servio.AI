@@ -31,7 +31,7 @@ export interface Alert {
 export interface HealthCheckResult {
   status: 'healthy' | 'degraded' | 'unhealthy';
   uptime: number;
-  services: Record<string, ServiceHealth>;
+  services: Record<string, 'healthy' | 'degraded' | 'unhealthy'>;
   timestamp: Date;
 }
 
@@ -68,10 +68,11 @@ class MonitoringService {
     try {
       await db.collection('metrics').add({
         ...metric,
-        timestamp: admin.firestore.Timestamp.now(),
+        timestamp: new Date(),
       });
     } catch (error: any) {
       logger.warn('Error recording metric', { error: error.message, metric });
+      throw new Error('Failed to record metric');
     }
   }
 
@@ -80,15 +81,15 @@ class MonitoringService {
    */
   async recordMetrics(metrics: MetricData[]): Promise<void> {
     try {
-      const batch = db.batch();
-      metrics.forEach(metric => {
-        const ref = db.collection('metrics').doc();
-        batch.set(ref, {
+      if (!metrics || metrics.length === 0) {
+        return;
+      }
+      for (const metric of metrics) {
+        await db.collection('metrics').add({
           ...metric,
-          timestamp: admin.firestore.Timestamp.now(),
+          timestamp: new Date(),
         });
-      });
-      await batch.commit();
+      }
     } catch (error: any) {
       logger.warn('Error recording metrics batch', { error: error.message });
     }
@@ -99,25 +100,24 @@ class MonitoringService {
    */
   async triggerAlert(alert: Omit<Alert, 'id' | 'timestamp' | 'resolved'>): Promise<string> {
     try {
-      const alertDoc: Alert = {
-        id: this.generateId(),
+      const payload = {
         ...alert,
         timestamp: new Date(),
         resolved: false,
+        status: 'active',
       };
-
-      await db.collection('alerts').doc(alertDoc.id).set(alertDoc);
+      const ref = await db.collection('alerts').add(payload);
 
       logger.warn('Alert triggered', {
-        alertId: alertDoc.id,
+        alertId: ref.id,
         severity: alert.severity,
         message: alert.message,
       });
 
-      return alertDoc.id;
+      return ref.id;
     } catch (error: any) {
       logger.error('Error triggering alert', { error: error.message });
-      throw error;
+      throw new Error('Failed to trigger alert');
     }
   }
 
@@ -126,20 +126,23 @@ class MonitoringService {
    */
   async resolveAlert(alertId: string, resolution?: string): Promise<boolean> {
     try {
-      await db
-        .collection('alerts')
-        .doc(alertId)
-        .update({
-          resolved: true,
-          resolvedAt: admin.firestore.Timestamp.now(),
-          resolution: resolution || 'Manually resolved',
-        });
+      const docRef = db.collection('alerts').doc(alertId);
+      const doc = await docRef.get();
+      if (!doc.exists) {
+        return false;
+      }
+      await docRef.update({
+        resolved: true,
+        resolvedAt: new Date(),
+        resolution: resolution || 'Manually resolved',
+        status: 'resolved',
+      });
 
       logger.info('Alert resolved', { alertId, resolution });
       return true;
     } catch (error: any) {
       logger.error('Error resolving alert', { error: error.message, alertId });
-      return false;
+      throw new Error('Failed to resolve alert');
     }
   }
 
@@ -148,15 +151,14 @@ class MonitoringService {
    */
   async getActiveAlerts(severity?: Alert['severity']): Promise<Alert[]> {
     try {
-      let query = db.collection('alerts').where('resolved', '==', false);
-
-      if (severity) {
-        query = query.where('severity', '==', severity);
-      }
-
-      const snapshot = await query.orderBy('timestamp', 'desc').limit(100).get();
-
-      return snapshot.docs.map(doc => doc.data() as Alert);
+      const snapshot = await db.collection('alerts').get();
+      const allAlerts = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+      const filtered = allAlerts.filter(a => {
+        const isActive = (a.status && a.status === 'active') || !('resolved' in a) || a.resolved === false;
+        const matchesSeverity = !severity || a.severity === severity;
+        return isActive && matchesSeverity;
+      });
+      return filtered;
     } catch (error: any) {
       logger.error('Error fetching active alerts', { error: error.message });
       return [];
@@ -169,26 +171,23 @@ class MonitoringService {
   async healthCheck(): Promise<HealthCheckResult> {
     try {
       const uptime = Date.now() - this.startTime.getTime();
-
-      const services: Record<string, ServiceHealth> = {
-        firestore: await this.checkFirestore(),
-        functions: await this.checkFunctions(),
-        storage: await this.checkStorage(),
-      };
+      const firestoreStatus = await this.checkFirestoreStatus();
+      const functionsStatus = await this.checkFunctionsStatus();
+      const storageStatus = await this.checkStorageStatus();
 
       let overallStatus: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
-
-      const serviceStatuses = Object.values(services);
-      if (serviceStatuses.some(s => s.status === 'down')) {
-        overallStatus = 'unhealthy';
-      } else if (serviceStatuses.some(s => s.status === 'degraded')) {
-        overallStatus = 'degraded';
-      }
+      const statuses = [firestoreStatus, functionsStatus, storageStatus];
+      if (statuses.includes('unhealthy')) overallStatus = 'unhealthy';
+      else if (statuses.includes('degraded')) overallStatus = 'degraded';
 
       return {
         status: overallStatus,
-        uptime: uptime,
-        services,
+        uptime,
+        services: {
+          firestore: firestoreStatus,
+          functions: functionsStatus,
+          storage: storageStatus,
+        },
         timestamp: new Date(),
       };
     } catch (error: any) {
@@ -205,43 +204,30 @@ class MonitoringService {
   /**
    * Check Firestore health
    */
-  private async checkFirestore(): Promise<ServiceHealth> {
+  private async checkFirestoreStatus(): Promise<'healthy' | 'degraded' | 'unhealthy'> {
     const start = Date.now();
     try {
+      await db.collection('_health_check').doc('test').set({ ts: new Date() });
       await db.collection('_health_check').doc('test').get();
       const latency = Date.now() - start;
-
-      return {
-        status: latency < 1000 ? 'up' : 'degraded',
-        latency,
-        lastCheck: new Date(),
-      };
+      return latency < 1000 ? 'healthy' : 'degraded';
     } catch (error) {
-      return {
-        status: 'down',
-        lastCheck: new Date(),
-      };
+      return 'unhealthy';
     }
   }
 
   /**
    * Check Functions health
    */
-  private async checkFunctions(): Promise<ServiceHealth> {
-    return {
-      status: 'up',
-      lastCheck: new Date(),
-    };
+  private async checkFunctionsStatus(): Promise<'healthy' | 'degraded' | 'unhealthy'> {
+    return 'healthy';
   }
 
   /**
    * Check Storage health
    */
-  private async checkStorage(): Promise<ServiceHealth> {
-    return {
-      status: 'up',
-      lastCheck: new Date(),
-    };
+  private async checkStorageStatus(): Promise<'healthy' | 'degraded' | 'unhealthy'> {
+    return 'healthy';
   }
 
   /**
@@ -249,20 +235,20 @@ class MonitoringService {
    */
   async getSLOMetrics(startDate: Date, endDate: Date): Promise<SLOMetrics> {
     try {
-      const metricsSnapshot = await db
-        .collection('metrics')
-        .where('timestamp', '>=', admin.firestore.Timestamp.fromDate(startDate))
-        .where('timestamp', '<=', admin.firestore.Timestamp.fromDate(endDate))
-        .get();
+      const metricsSnapshot = await db.collection('metrics').get();
 
       const latencies: number[] = [];
       let requestsSuccess = 0;
       let requestsFailed = 0;
+      let uptimeMetric: number | null = null;
+      let errorRateMetric: number | null = null;
 
       metricsSnapshot.docs.forEach(doc => {
         const data = doc.data();
-        if (data.name === 'request_latency') {
-          latencies.push(data.value);
+        const ts: Date = data.timestamp instanceof Date ? data.timestamp : new Date();
+        if (ts < startDate || ts > endDate) return;
+        if (data.name === 'request_latency' || data.name === 'api_latency') {
+          latencies.push(Number(data.value) || 0);
         }
         if (data.name === 'request_success') {
           requestsSuccess += 1;
@@ -270,22 +256,33 @@ class MonitoringService {
         if (data.name === 'request_error') {
           requestsFailed += 1;
         }
+        if (data.name === 'uptime') {
+          uptimeMetric = Number(data.value);
+        }
+        if (data.name === 'error_rate') {
+          errorRateMetric = Number(data.value);
+        }
       });
 
       const requestsTotal = requestsSuccess + requestsFailed;
       const avgLatency =
         latencies.length > 0 ? latencies.reduce((a, b) => a + b, 0) / latencies.length : 0;
-      const errorRate = requestsTotal > 0 ? requestsFailed / requestsTotal : 0;
+      const computedErrorRate = requestsTotal > 0 ? requestsFailed / requestsTotal : 0;
+      const errorRate = errorRateMetric !== null ? errorRateMetric * 100 : computedErrorRate * 100;
 
       // Calculate uptime (simplified)
-      const uptimePercentage = requestsTotal > 0 ? (requestsSuccess / requestsTotal) * 100 : 100;
+      let uptimePercentage =
+        uptimeMetric !== null ? uptimeMetric * 100 : requestsTotal > 0 ? (requestsSuccess / requestsTotal) * 100 : 100;
+      if (metricsSnapshot.docs.length === 0) {
+        uptimePercentage = 0;
+      }
 
       return {
         uptime: uptimePercentage,
         targetUptime: 99.5,
         avgLatency,
         targetLatency: 1000,
-        errorRate: errorRate * 100,
+        errorRate,
         targetErrorRate: 1,
         requestsTotal,
         requestsSuccess,
@@ -364,16 +361,15 @@ class MonitoringService {
     limit: number = 1000
   ): Promise<MetricData[]> {
     try {
-      const snapshot = await db
-        .collection('metrics')
-        .where('name', '==', name)
-        .where('timestamp', '>=', admin.firestore.Timestamp.fromDate(startDate))
-        .where('timestamp', '<=', admin.firestore.Timestamp.fromDate(endDate))
-        .orderBy('timestamp', 'desc')
-        .limit(limit)
-        .get();
-
-      return snapshot.docs.map(doc => doc.data() as MetricData);
+      const snapshot = await db.collection('metrics').get();
+      const metrics = snapshot.docs
+        .map(doc => doc.data() as MetricData & { timestamp: any })
+        .filter(m => {
+          const ts: Date = m.timestamp instanceof Date ? m.timestamp : new Date();
+          return m.name === name && ts >= startDate && ts <= endDate;
+        })
+        .slice(0, limit);
+      return metrics as MetricData[];
     } catch (error: any) {
       logger.error('Error fetching metrics', { error: error.message });
       return [];

@@ -6,7 +6,6 @@
  */
 
 const express = require('express');
-const { requireAuth } = require('../middleware/auth');
 const {
   generateNextActions,
   predictConversion,
@@ -14,7 +13,16 @@ const {
   generateComprehensiveRecommendation,
 } = require('../services/aiRecommendationService');
 
-const router = express.Router();
+function createAiRecommendationsRouter({
+  requireAuth = require('../authorizationMiddleware').requireAuth,
+  aiService = {
+    generateNextActions,
+    predictConversion,
+    suggestFollowUpSequence,
+    generateComprehensiveRecommendation,
+  },
+} = {}) {
+  const router = express.Router();
 
 /**
  * POST /api/prospector/ai-recommendations
@@ -30,7 +38,7 @@ const router = express.Router();
  * 
  * Response: Comprehensive recommendation object
  */
-router.post('/ai-recommendations', requireAuth, async (req, res) => {
+  router.post('/ai-recommendations', requireAuth, async (req, res) => {
   try {
     const { prospectorId, lead, leadScore = 50, history = [] } = req.body;
 
@@ -44,7 +52,7 @@ router.post('/ai-recommendations', requireAuth, async (req, res) => {
     }
 
     // Gerar recomendação completa
-    const recommendation = await generateComprehensiveRecommendation(lead, leadScore, history);
+    const recommendation = await aiService.generateComprehensiveRecommendation(lead, leadScore, history);
 
     res.json({
       ...recommendation,
@@ -63,7 +71,7 @@ router.post('/ai-recommendations', requireAuth, async (req, res) => {
  * Body: { lead, history }
  * Response: { action, template, timeToSend, confidence, reasoning }
  */
-router.post('/next-action', requireAuth, async (req, res) => {
+  router.post('/next-action', requireAuth, async (req, res) => {
   try {
     const { lead, history = [] } = req.body;
 
@@ -71,7 +79,7 @@ router.post('/next-action', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Lead is required' });
     }
 
-    const nextAction = await generateNextActions(lead, history);
+    const nextAction = await aiService.generateNextActions(lead, history);
 
     res.json({
       ...nextAction,
@@ -90,7 +98,7 @@ router.post('/next-action', requireAuth, async (req, res) => {
  * Body: { lead, leadScore, history }
  * Response: { probability, factors, risk, recommendation }
  */
-router.post('/conversion-prediction', requireAuth, async (req, res) => {
+  router.post('/conversion-prediction', requireAuth, async (req, res) => {
   try {
     const { lead, leadScore = 50, history = [] } = req.body;
 
@@ -98,7 +106,7 @@ router.post('/conversion-prediction', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Lead is required' });
     }
 
-    const prediction = await predictConversion(lead, leadScore, history);
+    const prediction = await aiService.predictConversion(lead, leadScore, history);
 
     res.json({
       ...prediction,
@@ -117,7 +125,7 @@ router.post('/conversion-prediction', requireAuth, async (req, res) => {
  * Body: { lead, history }
  * Response: { sequence: [{step, action, delay, message, scheduledFor}] }
  */
-router.post('/followup-sequence', requireAuth, async (req, res) => {
+  router.post('/followup-sequence', requireAuth, async (req, res) => {
   try {
     const { lead, history = [] } = req.body;
 
@@ -125,7 +133,7 @@ router.post('/followup-sequence', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Lead is required' });
     }
 
-    const followUpSequence = await suggestFollowUpSequence(lead, history);
+    const followUpSequence = await aiService.suggestFollowUpSequence(lead, history);
 
     res.json({
       ...followUpSequence,
@@ -141,7 +149,7 @@ router.post('/followup-sequence', requireAuth, async (req, res) => {
  * GET /api/prospector/ai-status
  * Verifica se o serviço de IA está disponível
  */
-router.get('/ai-status', requireAuth, async (req, res) => {
+  router.get('/ai-status', requireAuth, async (req, res) => {
   try {
     // Verificar se GEMINI_API_KEY está configurada
     const hasApiKey = !!process.env.GEMINI_API_KEY;
@@ -156,4 +164,8 @@ router.get('/ai-status', requireAuth, async (req, res) => {
   }
 });
 
-module.exports = router;
+  return router;
+}
+
+module.exports = createAiRecommendationsRouter();
+module.exports.createAiRecommendationsRouter = createAiRecommendationsRouter;
