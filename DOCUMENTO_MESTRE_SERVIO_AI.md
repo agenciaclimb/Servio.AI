@@ -32,11 +32,22 @@
 | ----------- | ------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------- |
 | Gmail/Email | SMTP creds                            | ⚠️      | GMAIL_USER + GMAIL_PASS ainda não provisionados (22/12)                                                           |
 | Gemini      | API Key                               | ✅      | GEMINI_API_KEY em .env.local (confirmado)                                                                         |
-| WhatsApp    | Meta API                              | ⚠️      | Credenciais pendentes (WHATSAPP_TOKEN, WHATSAPP_BUSINESS_ID, WHATSAPP_API_URL)                                    |
+| WhatsApp    | Meta API                              | ✅      | ✅ CONFIGURADO (22/12 12:10 BRT) - Token ativo, Business ID 881870645007978, API URL v18.0                        |
 | Firestore   | Produção (gen-lang-client-0737507616) | ✅      | ✅ CONFIGURADO (22/12 12:07 BRT) - service account admin criada e chave JSON ativa em C:\secrets\servio-prod.json |
 | Twilio      | (SMS/Voice)                           | ❌      | DESATIVADO (`TWILIO_ENABLED=false`)                                                                               |
 
-**Testes Backend**: ✅ RODADOS 22/12 12:07 COM CREDENCIAIS REAIS - Firestore auth OK, falhas em mocks de Gmail/WhatsApp/Gemini (esperado, credenciais ainda não provisionadas para essas integrações). Firestore authentication working ✅
+**Testes Backend**: 🟢 PRONTO PARA VALIDAÇÃO COMPLETA (22/12 12:10 BRT) - Firestore ✅ + WhatsApp ✅ agora configurados, esperado ~150+/188 testes passando (vs 120/188 anterior). Gmail ⏳ aguardando GMAIL_USER+GMAIL_PASS do usuário.
+
+### 🔐 Armazenamento Seguro de Credenciais (Session)
+
+As credenciais configuradas nesta sessão (22/12) estão:
+
+- **Firestore**: `C:\secrets\servio-prod.json` (2412 bytes, NÃO commitado) ✅ ATIVO
+- **WhatsApp**: Variáveis de ambiente PowerShell (Token, Business ID 881870645007978, API URL v18.0) ✅ ATIVO
+- **Gmail**: (Pendente - GMAIL_USER + GMAIL_PASS)
+- **Gemini**: `GEMINI_API_KEY` em `.env.local` (previamente configurado) ✅ ATIVO
+
+**Segurança**: Arquivos JSON e tokens NÃO incluídos em git. Apenas referência de status neste documento.
 
 ### PRs Relacionados (Status)
 
