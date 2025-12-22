@@ -13,6 +13,11 @@ const request = require('supertest');
 const admin = require('firebase-admin');
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
+// Ensure Gemini API Key is set (deve estar em .env.local ou PowerShell session)
+if (!process.env.GEMINI_API_KEY) {
+  console.warn('⚠️  GEMINI_API_KEY não encontrada. Carregue via: Get-Content .env.local | Where-Object { $_ -match "^GEMINI_API_KEY=" } | ForEach-Object { $env:GEMINI_API_KEY = $_.Split("=")[1] }');
+}
+
 // Mock Firebase Admin
 vi.mock('firebase-admin', () => ({
   initializeApp: vi.fn(),
