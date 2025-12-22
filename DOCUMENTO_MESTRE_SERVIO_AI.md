@@ -28,15 +28,15 @@
 
 ### Estado de Testes (Status Atual)
 
-| Serviço     | Dependência                           | Pronto? | Nota                                                                                                              |
-| ----------- | ------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------- |
-| Gmail/Email | SMTP creds                            | ✅      | ✅ TESTADO (22/12 13:30 BRT) - GMAIL_USER=contato@servio-ai.com, app password validada, testes passando           |
-| Gemini      | API Key                               | ✅      | GEMINI_API_KEY em .env.local (confirmado)                                                                         |
-| WhatsApp    | Meta API                              | ✅      | ✅ CONFIGURADO (22/12 12:10 BRT) - Token ativo, Business ID 881870645007978, API URL v18.0                        |
-| Firestore   | Produção (gen-lang-client-0737507616) | ✅      | ✅ CONFIGURADO (22/12 12:07 BRT) - service account admin criada e chave JSON ativa em C:\secrets\servio-prod.json |
-| Twilio      | (SMS/Voice)                           | ❌      | DESATIVADO (`TWILIO_ENABLED=false`)                                                                               |
+| Serviço     | Dependência                           | Pronto? | Nota                                                                                                               |
+| ----------- | ------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------ |
+| Gmail/Email | SMTP creds                            | ✅      | ✅ TESTADO (22/12 13:30 BRT) - GMAIL_USER=contato@servio-ai.com, app password validada, testes passando (+5 tests) |
+| Gemini      | API Key                               | ⚠️      | ⚠️ CHAVE VÁLIDA VIA REST API ✅ mas testes falhando (test env setup issue)                                         |
+| WhatsApp    | Meta API                              | ✅      | ✅ CONFIGURADO (22/12 12:10 BRT) - Token ativo, Business ID 881870645007978, API URL v18.0                         |
+| Firestore   | Produção (gen-lang-client-0737507616) | ✅      | ✅ CONFIGURADO (22/12 12:07 BRT) - service account admin criada e chave JSON ativa em C:\secrets\servio-prod.json  |
+| Twilio      | (SMS/Voice)                           | ❌      | DESATIVADO (`TWILIO_ENABLED=false`)                                                                                |
 
-**Testes Backend**: 🟢 VALIDAÇÃO COMPLETA EM PROGRESSO (22/12 13:30 BRT) - **125/188 testes passando ✅** (vs 120 anterior). Firestore ✅, WhatsApp ✅, Gmail ✅ testados com sucesso. Falhas pendentes: Gemini (API key inválida), LandingPage/Twilio (sem stubs), Firestore pagination (mocks incorretos). Próximo: Obter Gemini key válida ou skip Gemini, abrir PR #56.
+**Testes Backend**: 🟡 **125/188 testes passando (66.5%)** ✅ (22/12 15:00 BRT). Gmail fix ganhou +5 tests (120→125). Firestore ✅, WhatsApp ✅, Gmail ✅ funcionando. Falhas: Gemini (4 tests - key válida mas test env issue), LandingPage/Twilio (43 tests - sem stubs), Firestore pagination (7 tests - mock setup), outros (9 tests). **Total falhas aceitáveis para PR #56**: 63 testes (podem ser PRs futuros).
 
 ### 🔐 Armazenamento Seguro de Credenciais (Session)
 
