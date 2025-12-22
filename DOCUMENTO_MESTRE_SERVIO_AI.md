@@ -30,13 +30,13 @@
 
 | Serviço     | Dependência                           | Pronto? | Nota                                                                                                              |
 | ----------- | ------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------- |
-| Gmail/Email | SMTP creds                            | ⚠️      | GMAIL_USER + GMAIL_PASS ainda não provisionados (22/12)                                                           |
+| Gmail/Email | SMTP creds                            | ✅      | ✅ TESTADO (22/12 13:30 BRT) - GMAIL_USER=contato@servio-ai.com, app password validada, testes passando           |
 | Gemini      | API Key                               | ✅      | GEMINI_API_KEY em .env.local (confirmado)                                                                         |
 | WhatsApp    | Meta API                              | ✅      | ✅ CONFIGURADO (22/12 12:10 BRT) - Token ativo, Business ID 881870645007978, API URL v18.0                        |
 | Firestore   | Produção (gen-lang-client-0737507616) | ✅      | ✅ CONFIGURADO (22/12 12:07 BRT) - service account admin criada e chave JSON ativa em C:\secrets\servio-prod.json |
 | Twilio      | (SMS/Voice)                           | ❌      | DESATIVADO (`TWILIO_ENABLED=false`)                                                                               |
 
-**Testes Backend**: 🟢 PRONTO PARA VALIDAÇÃO COMPLETA (22/12 12:10 BRT) - Firestore ✅ + WhatsApp ✅ agora configurados, esperado ~150+/188 testes passando (vs 120/188 anterior). Gmail ⏳ aguardando GMAIL_USER+GMAIL_PASS do usuário.
+**Testes Backend**: 🟢 VALIDAÇÃO COMPLETA EM PROGRESSO (22/12 13:30 BRT) - **125/188 testes passando ✅** (vs 120 anterior). Firestore ✅, WhatsApp ✅, Gmail ✅ testados com sucesso. Falhas pendentes: Gemini (API key inválida), LandingPage/Twilio (sem stubs), Firestore pagination (mocks incorretos). Próximo: Obter Gemini key válida ou skip Gemini, abrir PR #56.
 
 ### 🔐 Armazenamento Seguro de Credenciais (Session)
 
@@ -44,7 +44,7 @@ As credenciais configuradas nesta sessão (22/12) estão:
 
 - **Firestore**: `C:\secrets\servio-prod.json` (2412 bytes, NÃO commitado) ✅ ATIVO
 - **WhatsApp**: Variáveis de ambiente PowerShell (Token, Business ID 881870645007978, API URL v18.0) ✅ ATIVO
-- **Gmail**: (Pendente - GMAIL_USER + GMAIL_PASS)
+- **Gmail**: Variáveis de ambiente PowerShell (GMAIL_USER=contato@servio-ai.com, app password) ✅ ATIVO
 - **Gemini**: `GEMINI_API_KEY` em `.env.local` (previamente configurado) ✅ ATIVO
 
 **Segurança**: Arquivos JSON e tokens NÃO incluídos em git. Apenas referência de status neste documento.
