@@ -11,15 +11,18 @@ vi.mock('@google/generative-ai', () => ({
   GoogleGenerativeAI: vi.fn(() => ({
     getGenerativeModel: vi.fn(() => ({
       generateContent: vi.fn((prompt: any) => {
-        const p = (typeof prompt === 'string' ? prompt : (prompt.contents?.[0]?.parts?.[0]?.text || '')).toString();
+        const p = (
+          typeof prompt === 'string' ? prompt : prompt.contents?.[0]?.parts?.[0]?.text || ''
+        ).toString();
         if (p.includes('Generate 2 alternative') || p.includes('variant')) {
           return Promise.resolve({
             response: {
-              text: () => JSON.stringify([
-                { variant: 'A', headline: 'Variant A: Transforme Hoje' },
-                { variant: 'B', headline: 'Variant B: Cresça Agora' }
-              ])
-            }
+              text: () =>
+                JSON.stringify([
+                  { variant: 'A', headline: 'Variant A: Transforme Hoje' },
+                  { variant: 'B', headline: 'Variant B: Cresça Agora' },
+                ]),
+            },
           });
         }
         return Promise.resolve({
@@ -98,7 +101,7 @@ describe('LandingPageService', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     vi.resetModules();
-    
+
     // Set Gemini Key
     vi.stubEnv('GEMINI_API_KEY', 'test_gemini_key');
 
@@ -300,7 +303,7 @@ describe('LandingPageService', () => {
       const page = await LandingPageService.generateLandingPage(briefing, 'user_keywords');
 
       const hasKeywords = briefing.keywords.some(
-        (kw) => page.keywords.includes(kw) || page.bodyText.includes(kw)
+        kw => page.keywords.includes(kw) || page.bodyText.includes(kw)
       );
       expect(hasKeywords || page.keywords.length > 0).toBe(true);
     });

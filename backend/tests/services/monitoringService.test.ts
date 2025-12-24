@@ -20,12 +20,12 @@ vi.mock('firebase-admin', () => {
     initializeApp: vi.fn(),
     firestore: mockFirestore,
     apps: [],
-    firestore: mockFirestore // Add this property to the admin object itself if needed by some requires
+    firestore: mockFirestore, // Add this property to the admin object itself if needed by some requires
   };
 
   return {
     default: mockAdmin,
-    ...mockAdmin
+    ...mockAdmin,
   };
 });
 
@@ -55,7 +55,7 @@ describe('Monitoring Service', () => {
       name: 'test_metric',
       value: 100,
       timestamp: new Date(),
-      tags: { tag: 'test' }
+      tags: { tag: 'test' },
     });
     // If it doesn't throw, pass. Verification of mock calls would be better but this proves module load.
     expect(true).toBe(true);
