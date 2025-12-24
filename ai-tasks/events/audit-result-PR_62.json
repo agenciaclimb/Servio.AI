@@ -4,7 +4,9 @@
   "verdict": "APPROVED",
   "reasons": [],
   "risk_level": "LOW",
-  "findings": ["Nenhuma vulnerabilidade crítica ou problema de qualidade detectado."],
+  "findings": [
+    "No critical security or quality issues detected based on the provided information."
+  ],
   "doc_mestre_violations": [],
-  "emitted_at_utc": "2025-12-24T23:01:28.329Z"
+  "emitted_at_utc": "2025-12-24T23:23:43.497Z"
 }
