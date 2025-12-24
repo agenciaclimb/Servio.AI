@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import LeadScoreCard from '../LeadScoreCard';
+import LeadScoreCard from '../../src/components/prospector/LeadScoreCard';
 
 const mockAnalysis = {
   categoryMatch: 85,
