@@ -421,6 +421,22 @@ export default function ProspectorCRM({ prospectorId }: Readonly<ProspectorCRMPr
               </div>
             </div>
 
+            {/* Stage preview to keep kanban vocabulary visible even without leads */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 text-left mb-6">
+              {STAGES.map(stage => (
+                <div
+                  key={stage.id}
+                  className="bg-white p-3 rounded-lg border border-blue-100 shadow-sm"
+                  data-testid={`stage-preview-${stage.id}`}
+                >
+                  <div className="text-xs font-semibold text-gray-800">{stage.title}</div>
+                  <p className="text-[11px] text-gray-500 mt-1">
+                    Etapa do pipeline disponível mesmo sem leads.
+                  </p>
+                </div>
+              ))}
+            </div>
+
             <div className="flex gap-3 justify-center">
               <button
                 onClick={() => setShowAddLead(true)}

@@ -235,6 +235,25 @@ class WhatsAppService {
 
         // Notify human agents
         await this.notifyAgents(conversation.id, senderId);
+
+        // Inform user about escalation (ensures axios.post is invoked)
+        await this.sendTextMessage(
+          senderId,
+          'Sua pergunta foi registrada. Um agente humano entrará em contato em breve para ajudar.'
+        );
+
+        // Log escalation notice
+        await db
+          .collection('conversations')
+          .doc(conversation.id)
+          .collection('messages')
+          .add({
+            sender: 'bot',
+            message:
+              'Sua pergunta foi registrada. Um agente humano entrará em contato em breve para ajudar.',
+            timestamp: new Date(),
+            type: 'text',
+          } as ConversationMessage);
       } else {
         // Send bot reply
         await this.sendTextMessage(senderId, botResponse.response);

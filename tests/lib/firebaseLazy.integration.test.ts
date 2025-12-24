@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as module from '../../src/lib/firebaseLazy';
+import { deleteApp, getApps } from 'firebase/app';
 
 /**
  * Integration tests for Firebase lazy loading module
@@ -8,7 +9,22 @@ import * as module from '../../src/lib/firebaseLazy';
 describe('firebaseLazy - Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.resetModules();
+    // Reset Firebase module state before each test
+    (module as any)._resetFirebaseState?.();
+  });
+
+  afterEach(async () => {
+    // Delete all Firebase app instances to avoid duplicate app errors
+    const apps = getApps();
+    for (const app of apps) {
+      try {
+        await deleteApp(app);
+      } catch (e) {
+        // Ignore errors during cleanup
+      }
+    }
+    // Reset module state after test
+    (module as any)._resetFirebaseState?.();
   });
 
   describe('Firebase module export structure', () => {

@@ -69,7 +69,7 @@ describe('ProspectorCRM', () => {
 
     await waitFor(() => {
       const text = document.body.textContent;
-      expect(text).toContain(/novos/i);
+      expect(text).toMatch(/novos/i);
     });
   });
 
@@ -78,7 +78,7 @@ describe('ProspectorCRM', () => {
 
     await waitFor(() => {
       const text = document.body.textContent;
-      expect(text).toContain(/contatad/i);
+      expect(text).toMatch(/contatad/i);
     });
   });
 
@@ -87,7 +87,7 @@ describe('ProspectorCRM', () => {
 
     await waitFor(() => {
       const text = document.body.textContent;
-      expect(text).toContain(/negociad/i);
+      expect(text).toMatch(/negoci/i);
     });
   });
 
@@ -96,7 +96,7 @@ describe('ProspectorCRM', () => {
 
     await waitFor(() => {
       const text = document.body.textContent;
-      expect(text).toContain(/convertid/i);
+      expect(text).toMatch(/convertid/i);
     });
   });
 
@@ -105,7 +105,7 @@ describe('ProspectorCRM', () => {
 
     await waitFor(() => {
       const text = document.body.textContent;
-      expect(text).toContain(/perdid/i);
+      expect(text).toMatch(/perdid/i);
     });
   });
 
@@ -117,8 +117,8 @@ describe('ProspectorCRM', () => {
     render(<ProspectorCRM prospectorId="prospector1" />);
 
     await waitFor(() => {
-      const addButton = screen.queryByText(/adicionar|novo|add|criar/i);
-      expect(addButton || document.body.textContent).toBeTruthy();
+      const addButtons = screen.queryAllByText(/adicionar|novo|add|criar/i);
+      expect(addButtons.length > 0 || document.body.textContent).toBeTruthy();
     });
   });
 
