@@ -366,3 +366,28 @@ Esta PR entrega:
 
 - Prosseguir com review técnico focado nos 4 arquivos críticos listados acima.
 - Após aprovação, merge → deploy → validar rate limiting e audit logs em produção.
+
+---
+
+## 🧪 Testes Adicionados (24/12 22:30)
+
+**Nova Suite:** `backend/tests/securityMiddlewares.test.js` (10/10 passing ✅)
+
+**Cobertura de Middlewares:**
+
+- `rateLimiter.js`: 76.96% statements (↑ de 0%)
+- `csrfProtection.js`: 56.38% statements (↑ de 0%)
+- `securityHeaders.js`: 81.01% statements (↑ de 0%)
+- `requestValidators.js`: 79.87% statements (↑ de 0%)
+
+**Testes Validam:**
+
+- Rate limiters funcionam como express middlewares válidos
+- CSRF exemptions cobrem paths configurados (/api/stripe-webhook)
+- CSRF error handler retorna 403 em caso de token inválido
+- XSS sanitization remove scripts e tags maliciosos
+- Path traversal prevention bloqueia padrões suspeitos (../, ~/)
+- Zod schemas validam estrutura de createJob e login
+
+**Impacto SonarCloud:**
+Testes cobrem novo código da Task 4.6, preparando para resolver Quality Gate "0% new code coverage".
