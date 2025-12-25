@@ -21,6 +21,15 @@ coverage/
 backend/coverage/
 *.lcov
 
+# Test logs and artifacts (prevent recurrence)
+backend/test*.txt
+backend/test_output*.txt
+backend/test-results*.txt
+backend/test_output_*.txt
+backend/test_output*.log
+test-resultado*.txt
+test-resultado-*.txt
+
 # Playwright
 test-results/
 playwright-report/

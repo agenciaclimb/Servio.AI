@@ -1,0 +1,729 @@
+
+> servio-ai-backend@1.0.0 test
+> vitest run --coverage
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/JE/servio.ai/backend[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32mÔ£ô[39m tests/services/pipedriveService.test.js [2m([22m[2m13 tests[22m[2m)[22m[90m 76[2mms[22m[39m
+ [32mÔ£ô[39m tests/authorizationMiddleware.test.js [2m([22m[2m9 tests[22m[2m)[22m[90m 53[2mms[22m[39m
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mModo Mem├│ria[2m > [22m[2mdeve detectar modo mem├│ria quando sem Project ID
+[22m[39m[DB] Mem├│ria limpa
+
+ [32mÔ£ô[39m tests/followUpService.test.js [2m([22m[2m4 tests[22m[2m)[22m[90m 30[2mms[22m[39m
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Modo Mem├│ria > deve detectar modo mem├│ria quando sem Project ID
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mModo Mem├│ria[2m > [22m[2mdeve ter m├®todos principais dispon├¡veis
+[22m[39m[DB] Mem├│ria limpa
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Modo Mem├│ria > deve ter m├®todos principais dispon├¡veis
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mOpera├º├Áes CRUD[2m > [22m[2mdeve criar documento com set()
+[22m[39m[DB] Mem├│ria limpa
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Opera├º├Áes CRUD > deve criar documento com set()
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mOpera├º├Áes CRUD[2m > [22m[2mdeve gerar ID autom├ítico quando doc() chamado sem argumento
+[22m[39m[DB] Mem├│ria limpa
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Opera├º├Áes CRUD > deve gerar ID autom├ítico quando doc() chamado sem argumento
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mOpera├º├Áes CRUD[2m > [22m[2mdeve atualizar documento com update()
+[22m[39m[DB] Mem├│ria limpa
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Opera├º├Áes CRUD > deve atualizar documento com update()
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mOpera├º├Áes CRUD[2m > [22m[2mdeve fazer merge com set({ merge: true })
+[22m[39m[DB] Mem├│ria limpa
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Opera├º├Áes CRUD > deve fazer merge com set({ merge: true })
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mOpera├º├Áes CRUD[2m > [22m[2mdeve deletar documento
+[22m[39m[DB] Mem├│ria limpa
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Opera├º├Áes CRUD > deve deletar documento
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mOpera├º├Áes CRUD[2m > [22m[2mdeve adicionar documento com add()
+[22m[39m[DB] Mem├│ria limpa
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Opera├º├Áes CRUD > deve adicionar documento com add()
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mQueries[2m > [22m[2mdeve filtrar com where()
+[22m[39m[DB] Mem├│ria limpa
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Queries > deve filtrar com where()
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mQueries[2m > [22m[2mdeve limitar resultados com limit()
+[22m[39m[DB] Mem├│ria limpa
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Queries > deve limitar resultados com limit()
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mQueries[2m > [22m[2mdeve ordenar com orderBy()
+[22m[39m[DB] Mem├│ria limpa
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Queries > deve ordenar com orderBy()
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mQueries[2m > [22m[2mdeve combinar where + orderBy + limit
+[22m[39m[DB] Mem├│ria limpa
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Queries > deve combinar where + orderBy + limit
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+ [32mÔ£ô[39m tests/user-uid-field.test.js [2m([22m[2m13 tests[22m[2m)[22m[90m 46[2mms[22m[39m
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > fieldValueHelpers > deve processar increment()
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > fieldValueHelpers > deve processar serverTimestamp()
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > fieldValueHelpers > deve processar arrayUnion()
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > fieldValueHelpers > deve processar arrayRemove()
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Export e Debug > deve exportar dados com _exportMemory()
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Export e Debug > deve limpar dados com _clearMemory()
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Comportamento do snapshot > snapshot deve ter propriedade exists
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mfieldValueHelpers[2m > [22m[2mdeve processar increment()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mfieldValueHelpers[2m > [22m[2mdeve processar serverTimestamp()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mfieldValueHelpers[2m > [22m[2mdeve processar arrayUnion()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mfieldValueHelpers[2m > [22m[2mdeve processar arrayRemove()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mExport e Debug[2m > [22m[2mdeve exportar dados com _exportMemory()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mExport e Debug[2m > [22m[2mdeve limpar dados com _clearMemory()
+[22m[39m[DB] Mem├│ria limpa
+[DB] Mem├│ria limpa
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mComportamento do snapshot[2m > [22m[2msnapshot deve ter propriedade exists
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mComportamento do snapshot[2m > [22m[2msnapshot deve ter propriedade id
+[22m[39m[DB] Mem├│ria limpa
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Comportamento do snapshot > snapshot deve ter propriedade id
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mComportamento do snapshot[2m > [22m[2msnapshot.docs deve ter map
+[22m[39m[DB] Mem├│ria limpa
+
+stderr | tests/dbWrapper.test.js > dbWrapper - Memory Fallback System > Comportamento do snapshot > snapshot.docs deve ter map
+[DB] ÔÜá´©Å  Modo mem├│ria for├ºado para testes
+
+ [32mÔ£ô[39m tests/dbWrapper.test.js [2m([22m[2m21 tests[22m[2m)[22m[90m 78[2mms[22m[39m
+ [31mÔØ»[39m tests/services/whatsappService.test.ts [2m([22m[2m21 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[90m 111[2mms[22m[39m
+[31m   [31m├ù[31m WhatsAppService[2m > [22mprocessIncomingMessage[2m > [22mshould escalate unknown queries[90m 32[2mms[22m[31m[39m
+[31m     ÔåÆ expected "spy" to be called at least once[39m
+ [31mÔØ»[39m tests/services/aiRecommendationService.test.js [2m([22m[2m15 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 307[2mms[22m[39m
+[31m   [31m├ù[31m AI Recommendation Service[2m > [22maddDays[2m > [22mshould add days to date[90m 38[2mms[22m[31m[39m
+[31m     ÔåÆ expected 5 to be 6 // Object.is equality[39m
+[31m   [31m├ù[31m AI Recommendation Service[2m > [22maddDays[2m > [22mshould handle month boundaries[90m 2[2mms[22m[31m[39m
+[31m     ÔåÆ expected 31 to be 1 // Object.is equality[39m
+[31m   [31m├ù[31m AI Recommendation Service[2m > [22mgenerateComprehensiveRecommendation[2m > [22mshould return comprehensive recommendation[90m 9[2mms[22m[31m[39m
+[31m     ÔåÆ expected { nextAction: { ÔÇª(5) }, ÔÇª(2) } to have property "conversionProbability"[39m
+ [32mÔ£ô[39m tests/services/landingPageService.test.ts [2m([22m[2m22 tests[22m[2m)[22m[33m 668[2mms[22m[39m
+ [32mÔ£ô[39m tests/services/twilioService.test.ts [2m([22m[2m22 tests[22m[2m)[22m[33m 670[2mms[22m[39m
+stderr | tests/services/ecommerceService.test.js > E-commerce Service > Product Management > should reject product creation with invalid price
+Error creating product: Error: Invalid product data: name, sku, and valid price required
+    at Module.createProduct (C:\Users\JE\servio.ai\backend\src\services\ecommerceService.js:68:13)
+    at C:\Users\JE\servio.ai\backend\tests\services\ecommerceService.test.js:103:37
+    at file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at runSuite (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1205:15)
+
+stderr | tests/services/ecommerceService.test.js > E-commerce Service > Cart Management > should reject adding item with insufficient stock
+Error adding to cart: Error: Insufficient stock. Available: 1
+    at Module.addToCart (C:\Users\JE\servio.ai\backend\src\services\ecommerceService.js:138:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at C:\Users\JE\servio.ai\backend\tests\services\ecommerceService.test.js:158:7
+    at file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1271:3)
+
+stderr | tests/services/ecommerceService.test.js > E-commerce Service > Checkout & Payment > should reject checkout with empty cart
+Error creating checkout session: Error: Cart is empty
+    at Module.createCheckoutSession (C:\Users\JE\servio.ai\backend\src\services\ecommerceService.js:283:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at C:\Users\JE\servio.ai\backend\tests\services\ecommerceService.test.js:226:7
+    at file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/backend/node_modules/@vitest/runner/dist/index.js:1271:3)
+
+ [32mÔ£ô[39m tests/services/ecommerceService.test.js [2m([22m[2m15 tests[22m[2m)[22m[90m 230[2mms[22m[39m
+[90mstdout[2m | tests/omnichannel.test.js
+[22m[39mDEBUG: Custom firebase-admin mock loaded
+
+[90mstdout[2m | tests/omnichannel.test.js[2m > [22m[2mOmnichannel Service - Webhooks[2m > [22m[2mPOST /api/omni/webhook/whatsapp[2m > [22m[2mdeve verificar webhook com challenge correto
+[22m[39m[Omni WA] Webhook verificado
+
+ [32mÔ£ô[39m tests/routes/aiRecommendations.test.js [2m([22m[2m7 tests[22m[2m)[22m[33m 453[2mms[22m[39m
+[90mstdout[2m | tests/omnichannel.test.js[2m > [22m[2mOmnichannel Service - Webhooks[2m > [22m[2mPOST /api/omni/webhook/whatsapp[2m > [22m[2mdeve processar mensagem do WhatsApp e salvar no Firestore
+[22m[39m[Omni WA] Mensagem de 5511999999999: Ol├í, preciso de ajuda
+
+ [31mÔØ»[39m tests/routes/pipedriveWebhook.test.ts [2m([22m[2m0 test[22m[2m)[22m
+19:37:04 [vite] warning: Duplicate key "firestore" in object literal
+21 |      firestore: mockFirestore,
+22 |      apps: [],
+23 |      firestore: mockFirestore // Add this property to the admin object itself if needed by some requires
+   |      ^
+24 |    };
+25 |  
+
+  Plugin: vite:esbuild
+  File: C:/Users/JE/servio.ai/backend/tests/services/monitoringService.test.ts
+stderr | tests/omnichannel.test.js > Omnichannel Service - Webhooks > POST /api/omni/webhook/whatsapp > deve processar mensagem do WhatsApp e salvar no Firestore
+[Omni IA] Erro: GoogleGenerativeAIFetchError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent: [400 Bad Request] API key not valid. Please pass a valid API key. [{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"API key not valid. Please pass a valid API key."}]
+    at handleResponseNotOk (C:\Users\JE\servio.ai\backend\node_modules\@google\generative-ai\dist\index.js:434:11)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at makeRequest (C:\Users\JE\servio.ai\backend\node_modules\@google\generative-ai\dist\index.js:403:9)
+    at generateContent (C:\Users\JE\servio.ai\backend\node_modules\@google\generative-ai\dist\index.js:867:22)
+    at processWithOmniIA (C:\Users\JE\servio.ai\backend\src\services\omnichannel\index.js:486:20)
+    at processWhatsAppMessage (C:\Users\JE\servio.ai\backend\src\services\omnichannel\index.js:245:22)
+    at C:\Users\JE\servio.ai\backend\src\services\omnichannel\index.js:47:9 {
+  status: 400,
+  statusText: 'Bad Request',
+  errorDetails: [
+    {
+      '@type': 'type.googleapis.com/google.rpc.ErrorInfo',
+      reason: 'API_KEY_INVALID',
+      domain: 'googleapis.com',
+      metadata: [Object]
+    },
+    {
+      '@type': 'type.googleapis.com/google.rpc.LocalizedMessage',
+      locale: 'en-US',
+      message: 'API key not valid. Please pass a valid API key.'
+    }
+  ]
+}
+
+[90mstdout[2m | tests/gmailService.test.js[2m > [22m[2mgmailService[2m > [22m[2mverifies SMTP connection
+[22m[39m[Gmail] SMTP server is ready to send emails
+
+[90mstdout[2m | tests/gmailService.test.js[2m > [22m[2mgmailService[2m > [22m[2msends a basic email with default from
+[22m[39m[Gmail] Email sent: <mock-1766529424053@servio-ai.com> to: to@example.com
+
+[90mstdout[2m | tests/gmailService.test.js[2m > [22m[2mgmailService[2m > [22m[2msendProspectorInvite composes expected subject and link
+[22m[39m[Gmail] Email sent: <mock-1766529424062@servio-ai.com> to: joao@example.com
+
+[90mstdout[2m | tests/gmailService.test.js[2m > [22m[2mgmailService[2m > [22m[2msendFollowUpReminder composes expected subject
+[22m[39m[Gmail] Email sent: <mock-1766529424071@servio-ai.com> to: maria@example.com
+
+[90mstdout[2m | tests/gmailService.test.js[2m > [22m[2mgmailService[2m > [22m[2msendConversionNotification formats commission value
+[22m[39m[Gmail] Email sent: <mock-1766529424078@servio-ai.com> to: ana@example.com
+
+ [32mÔ£ô[39m tests/gmailService.test.js [2m([22m[2m5 tests[22m[2m)[22m[33m 606[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m gmailService[2m > [22mverifies SMTP connection [33m475[2mms[22m[39m
+ [32mÔ£ô[39m tests/services/monitoringService.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 27[2mms[22m[39m
+stderr | tests/omnichannel.test.js > Omnichannel Service - Webhooks > POST /api/omni/webhook/whatsapp > deve processar mensagem do WhatsApp e salvar no Firestore
+[Omni WA] Erro ao enviar: {
+  error: {
+    message: 'Invalid OAuth access token - Cannot parse access token',
+    type: 'OAuthException',
+    code: 190,
+    fbtrace_id: 'A-7MX4rrj1p8YpJ5RsPQDDl'
+  }
+}
+
+ [32mÔ£ô[39m tests/omnichannel.test.js [2m([22m[2m2 tests[22m[2m)[22m[33m 2059[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m Omnichannel Service - Webhooks[2m > [22mPOST /api/omni/webhook/whatsapp[2m > [22mdeve processar mensagem do WhatsApp e salvar no Firestore [33m1799[2mms[22m[39m
+ [32mÔ£ô[39m tests/securityHardening.middleware.test.js [2m([22m[2m3 tests[22m[2m)[22m[90m 254[2mms[22m[39m
+[90mstdout[2m | tests/jobs-pagination.test.js
+[22m[39m[2025-12-23T22:37:04.524Z] [WARN] ÔÜá´©Å  WhatsApp credentials not configured - service disabled
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+[SERVER] Module loaded as dependency, not starting server
+
+stderr | tests/jobs-pagination.test.js
+[DB] ÔÜá´©Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ÔÇô Stripe features disabled
+ÔÜá´©Å  SENDGRID_API_KEY n├úo configurada - emails n├úo ser├úo enviados
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/outreachAutomation.test.js
+[22m[39m[2025-12-23T22:37:04.527Z] [WARN] ÔÜá´©Å  WhatsApp credentials not configured - service disabled
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+[SERVER] Module loaded as dependency, not starting server
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/outreachAutomation.test.js
+[DB] ÔÜá´©Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ÔÇô Stripe features disabled
+ÔÜá´©Å  SENDGRID_API_KEY n├úo configurada - emails n├úo ser├úo enviados
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/jobs-pagination.test.js[2m > [22m[2mJobs API Pagination (Task 2.1)[2m > [22m[2mGET /api/jobs - Pagination[2m > [22m[2mshould return first page with default limit of 20
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs-pagination.test.js > Jobs API Pagination (Task 2.1) > GET /api/jobs - Pagination > should return first page with default limit of 20
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/jobs-pagination.test.js[2m > [22m[2mJobs API Pagination (Task 2.1)[2m > [22m[2mGET /api/jobs - Pagination[2m > [22m[2mshould return custom limit when specified
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs-pagination.test.js > Jobs API Pagination (Task 2.1) > GET /api/jobs - Pagination > should return custom limit when specified
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/jobs-pagination.test.js[2m > [22m[2mJobs API Pagination (Task 2.1)[2m > [22m[2mGET /api/jobs - Pagination[2m > [22m[2mshould return null cursor when results are less than limit
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs-pagination.test.js > Jobs API Pagination (Task 2.1) > GET /api/jobs - Pagination > should return null cursor when results are less than limit
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/jobs-pagination.test.js[2m > [22m[2mJobs API Pagination (Task 2.1)[2m > [22m[2mGET /api/jobs - Pagination[2m > [22m[2mshould use cursor for next page pagination
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs-pagination.test.js > Jobs API Pagination (Task 2.1) > GET /api/jobs - Pagination > should use cursor for next page pagination
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/jobs-pagination.test.js[2m > [22m[2mJobs API Pagination (Task 2.1)[2m > [22m[2mGET /api/jobs - Filtering[2m > [22m[2mshould filter by status
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs-pagination.test.js > Jobs API Pagination (Task 2.1) > GET /api/jobs - Filtering > should filter by status
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/jobs-pagination.test.js[2m > [22m[2mJobs API Pagination (Task 2.1)[2m > [22m[2mGET /api/jobs - Filtering[2m > [22m[2mshould filter by category
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs-pagination.test.js > Jobs API Pagination (Task 2.1) > GET /api/jobs - Filtering > should filter by category
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/jobs-pagination.test.js[2m > [22m[2mJobs API Pagination (Task 2.1)[2m > [22m[2mGET /api/jobs - Filtering[2m > [22m[2mshould filter by location
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs-pagination.test.js > Jobs API Pagination (Task 2.1) > GET /api/jobs - Filtering > should filter by location
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+ [31mÔØ»[39m tests/outreachAutomation.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[90m 139[2mms[22m[39m
+[31m   [31m├ù[31m Prospector outreach automation[2m > [22mprocessPendingOutreach sends WhatsApp for eligible records only[90m 5[2mms[22m[31m[39m
+[31m     ÔåÆ db.collection(...).where is not a function[39m
+[31m   [31m├ù[31m Prospector outreach automation[2m > [22mopt-out prevents follow-up[90m 25[2mms[22m[31m[39m
+[31m     ÔåÆ db.collection(...).where is not a function[39m
+[90mstdout[2m | tests/jobs-pagination.test.js[2m > [22m[2mJobs API Pagination (Task 2.1)[2m > [22m[2mGET /api/jobs - Filtering[2m > [22m[2mshould apply multiple filters
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs-pagination.test.js > Jobs API Pagination (Task 2.1) > GET /api/jobs - Filtering > should apply multiple filters
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/jobs-pagination.test.js[2m > [22m[2mJobs API Pagination (Task 2.1)[2m > [22m[2mGET /api/jobs - Sorting[2m > [22m[2mshould sort by createdAt desc by default
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs-pagination.test.js > Jobs API Pagination (Task 2.1) > GET /api/jobs - Sorting > should sort by createdAt desc by default
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/jobs-pagination.test.js[2m > [22m[2mJobs API Pagination (Task 2.1)[2m > [22m[2mGET /api/jobs - Sorting[2m > [22m[2mshould sort by custom field and order
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs-pagination.test.js > Jobs API Pagination (Task 2.1) > GET /api/jobs - Sorting > should sort by custom field and order
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/jobs-pagination.test.js[2m > [22m[2mJobs API Pagination (Task 2.1)[2m > [22m[2mGET /jobs (legacy) - Pagination[2m > [22m[2mshould have same pagination behavior as /api/jobs
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs-pagination.test.js > Jobs API Pagination (Task 2.1) > GET /jobs (legacy) - Pagination > should have same pagination behavior as /api/jobs
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | src/earnings.test.js
+[22m[39m[2025-12-23T22:37:05.243Z] [WARN] ÔÜá´©Å  WhatsApp credentials not configured - service disabled
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+[SERVER] Module loaded as dependency, not starting server
+
+stderr | src/earnings.test.js
+[DB] ÔÜá´©Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ÔÇô Stripe features disabled
+ÔÜá´©Å  SENDGRID_API_KEY n├úo configurada - emails n├úo ser├úo enviados
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/jobs-pagination.test.js[2m > [22m[2mJobs API Pagination (Task 2.1)[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle empty results
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs-pagination.test.js > Jobs API Pagination (Task 2.1) > Edge Cases > should handle empty results
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/jobs-pagination.test.js[2m > [22m[2mJobs API Pagination (Task 2.1)[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle invalid startAfter cursor gracefully
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs-pagination.test.js > Jobs API Pagination (Task 2.1) > Edge Cases > should handle invalid startAfter cursor gracefully
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+ [32mÔ£ô[39m src/earnings.test.js [2m([22m[2m8 tests[22m[2m)[22m[90m 20[2mms[22m[39m
+ [32mÔ£ô[39m tests/jobs-pagination.test.js [2m([22m[2m13 tests[22m[2m)[22m[33m 583[2mms[22m[39m
+[90mstdout[2m | tests/prospectorPhase1.test.js
+[22m[39m[2025-12-23T22:37:06.084Z] [WARN] ÔÜá´©Å  WhatsApp credentials not configured - service disabled
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+[SERVER] Module loaded as dependency, not starting server
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/prospectorPhase1.test.js
+[DB] ÔÜá´©Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ÔÇô Stripe features disabled
+ÔÜá´©Å  SENDGRID_API_KEY n├úo configurada - emails n├úo ser├úo enviados
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/stripeWebhook.test.js
+[22m[39m[2025-12-23T22:37:06.469Z] [WARN] ÔÜá´©Å  WhatsApp credentials not configured - service disabled
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+[SERVER] Module loaded as dependency, not starting server
+
+stderr | tests/stripeWebhook.test.js
+[DB] ÔÜá´©Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ÔÇô Stripe features disabled
+ÔÜá´©Å  SENDGRID_API_KEY n├úo configurada - emails n├úo ser├úo enviados
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/stripeWebhook.test.js[2m > [22m[2mStripe Webhook (checkout.session.completed)[2m > [22m[2mupdates escrow to pago and sets paymentIntentId
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+ [32mÔ£ô[39m tests/prospectorPhase1.test.js [2m([22m[2m5 tests[22m[2m)[22m[90m 135[2mms[22m[39m
+stderr | tests/stripeWebhook.test.js > Stripe Webhook (checkout.session.completed) > updates escrow to pago and sets paymentIntentId
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/leaderboardCacheRate.test.js
+[22m[39m[2025-12-23T22:37:06.596Z] [WARN] ÔÜá´©Å  WhatsApp credentials not configured - service disabled
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+[SERVER] Module loaded as dependency, not starting server
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/leaderboardCacheRate.test.js
+[DB] ÔÜá´©Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ÔÇô Stripe features disabled
+ÔÜá´©Å  SENDGRID_API_KEY n├úo configurada - emails n├úo ser├úo enviados
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/stripeWebhook.test.js[2m > [22m[2mStripe Webhook (checkout.session.completed)[2m > [22m[2mupdates escrow to pago and sets paymentIntentId
+[22m[39m[Stripe Webhook] Event received {
+  eventId: [32m'evt_test_1'[39m,
+  type: [32m'checkout.session.completed'[39m,
+  escrowId: [32m'escrow_123'[39m,
+  paymentIntentId: [32m'pi_abc123'[39m
+}
+[Stripe Webhook] Escrow updated to pago { escrowId: [32m'escrow_123'[39m, paymentIntentId: [32m'pi_abc123'[39m }
+
+[90mstdout[2m | tests/stripeWebhook.test.js[2m > [22m[2mStripe Webhook (checkout.session.completed)[2m > [22m[2mis idempotent (second identical event does not alter data)
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/stripeWebhook.test.js > Stripe Webhook (checkout.session.completed) > is idempotent (second identical event does not alter data)
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/stripeWebhook.test.js[2m > [22m[2mStripe Webhook (checkout.session.completed)[2m > [22m[2mis idempotent (second identical event does not alter data)
+[22m[39m[Stripe Webhook] Event received {
+  eventId: [32m'evt_test_1'[39m,
+  type: [32m'checkout.session.completed'[39m,
+  escrowId: [32m'escrow_123'[39m,
+  paymentIntentId: [32m'pi_abc123'[39m
+}
+[Stripe Webhook] Escrow updated to pago { escrowId: [32m'escrow_123'[39m, paymentIntentId: [32m'pi_abc123'[39m }
+
+[90mstdout[2m | tests/stripeWebhook.test.js[2m > [22m[2mStripe Webhook (checkout.session.completed)[2m > [22m[2mis idempotent (second identical event does not alter data)
+[22m[39m[Stripe Webhook] Event received {
+  eventId: [32m'evt_test_1'[39m,
+  type: [32m'checkout.session.completed'[39m,
+  escrowId: [32m'escrow_123'[39m,
+  paymentIntentId: [32m'pi_abc123'[39m
+}
+[Stripe Webhook] Skipping update (already processed) { escrowId: [32m'escrow_123'[39m, paymentIntentId: [32m'pi_abc123'[39m }
+
+[90mstdout[2m | tests/leaderboardCacheRate.test.js[2m > [22m[2mLeaderboard cache & rate limiting[2m > [22m[2mrate limiting triggers 429 after threshold exceeded
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/leaderboardCacheRate.test.js > Leaderboard cache & rate limiting > rate limiting triggers 429 after threshold exceeded
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+ [32mÔ£ô[39m tests/stripeWebhook.test.js [2m([22m[2m2 tests[22m[2m)[22m[90m 110[2mms[22m[39m
+[90mstdout[2m | tests/jobs.test.js
+[22m[39m[2025-12-23T22:37:06.796Z] [WARN] ÔÜá´©Å  WhatsApp credentials not configured - service disabled
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+[SERVER] Module loaded as dependency, not starting server
+
+stderr | tests/jobs.test.js
+[DB] ÔÜá´©Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ÔÇô Stripe features disabled
+ÔÜá´©Å  SENDGRID_API_KEY n├úo configurada - emails n├úo ser├úo enviados
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/rateLimit.test.js
+[22m[39m[2025-12-23T22:37:06.811Z] [WARN] ÔÜá´©Å  WhatsApp credentials not configured - service disabled
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+[SERVER] Module loaded as dependency, not starting server
+
+stderr | tests/rateLimit.test.js
+[DB] ÔÜá´©Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ÔÇô Stripe features disabled
+ÔÜá´©Å  SENDGRID_API_KEY n├úo configurada - emails n├úo ser├úo enviados
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+ [32mÔ£ô[39m tests/leaderboardCacheRate.test.js [2m([22m[2m3 tests[22m[2m)[22m[90m 141[2mms[22m[39m
+[90mstdout[2m | tests/jobs.test.js[2m > [22m[2mJobs API Endpoints[2m > [22m[2mPOST /jobs[2m > [22m[2mshould create a new job successfully
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs.test.js > Jobs API Endpoints > POST /jobs > should create a new job successfully
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+ [2m[90mÔåô[39m[22m tests/rateLimit.test.js [2m([22m[2m2 tests[22m[2m | [22m[33m2 skipped[39m[2m)[22m
+[90mstdout[2m | tests/jobs.test.js[2m > [22m[2mJobs API Endpoints[2m > [22m[2mGET /jobs[2m > [22m[2mshould filter jobs by status
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs.test.js > Jobs API Endpoints > GET /jobs > should filter jobs by status
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+[90mstdout[2m | tests/jobs.test.js[2m > [22m[2mJobs API Endpoints[2m > [22m[2mPOST /jobs/:jobId/set-on-the-way[2m > [22m[2mshould update job status to "a_caminho"
+[22m[39m[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+stderr | tests/jobs.test.js > Jobs API Endpoints > POST /jobs/:jobId/set-on-the-way > should update job status to "a_caminho"
+ÔÜá´©Å Twilio credentials not configured. Service will run in mock mode.
+
+ [31mÔØ»[39m tests/jobs.test.js [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[90m 207[2mms[22m[39m
+[31m   [31m├ù[31m Jobs API Endpoints[2m > [22mGET /jobs[2m > [22mshould filter jobs by status[90m 39[2mms[22m[31m[39m
+[31m     ÔåÆ expected 401 to be 200 // Object.is equality[39m
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Suites 1 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+ FAIL  tests/routes/pipedriveWebhook.test.ts [ tests/routes/pipedriveWebhook.test.ts ]
+Error: Failed to load url ../routes/pipedriveWebhook.ts (resolved id: ../routes/pipedriveWebhook.ts) in C:/Users/JE/servio.ai/backend/tests/routes/pipedriveWebhook.test.ts. Does the file exist?
+ ÔØ» loadAndTransform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51969:17
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1/8]ÔÄ»
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Tests 7 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+ FAIL  tests/jobs.test.js > Jobs API Endpoints > GET /jobs > should filter jobs by status
+AssertionError: expected 401 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 401
+
+ ÔØ» tests/jobs.test.js:58:31
+     56|       const response = await request(app).get('/jobs?status=aberto');
+     57| 
+     58|       expect(response.status).toBe(200);
+       |                               ^
+     59|       expect(response.body).toEqual(mockJobs);
+     60|       expect(mockDb.where).toHaveBeenCalledWith('status', '==', 'abertÔÇª
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[2/8]ÔÄ»
+
+ FAIL  tests/outreachAutomation.test.js > Prospector outreach automation > processPendingOutreach sends WhatsApp for eligible records only
+TypeError: db.collection(...).where is not a function
+ ÔØ» processPendingOutreach src/outreachScheduler.js:26:6
+     24|   const now = Date.now();
+     25|   const outreachQuery = db.collection('prospector_outreach')
+     26|     .where('status', '==', 'email_sent')
+       |      ^
+     27|     .where('optOut', '==', false)
+     28|     .where('whatsappSentAt', '==', null)
+ ÔØ» tests/outreachAutomation.test.js:102:29
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[3/8]ÔÄ»
+
+ FAIL  tests/outreachAutomation.test.js > Prospector outreach automation > opt-out prevents follow-up
+TypeError: db.collection(...).where is not a function
+ ÔØ» processPendingOutreach src/outreachScheduler.js:26:6
+     24|   const now = Date.now();
+     25|   const outreachQuery = db.collection('prospector_outreach')
+     26|     .where('status', '==', 'email_sent')
+       |      ^
+     27|     .where('optOut', '==', false)
+     28|     .where('whatsappSentAt', '==', null)
+ ÔØ» tests/outreachAutomation.test.js:124:29
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[4/8]ÔÄ»
+
+ FAIL  tests/services/aiRecommendationService.test.js > AI Recommendation Service > addDays > should add days to date
+AssertionError: expected 5 to be 6 // Object.is equality
+
+- Expected
++ Received
+
+- 6
++ 5
+
+ ÔØ» tests/services/aiRecommendationService.test.js:148:32
+    146|       const date = new Date('2024-01-01');
+    147|       const result = service.addDays(date, 5);
+    148|       expect(result.getDate()).toBe(6);
+       |                                ^
+    149|     });
+    150| 
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[5/8]ÔÄ»
+
+ FAIL  tests/services/aiRecommendationService.test.js > AI Recommendation Service > addDays > should handle month boundaries
+AssertionError: expected 31 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 31
+
+ ÔØ» tests/services/aiRecommendationService.test.js:154:32
+    152|       const date = new Date('2024-01-29');
+    153|       const result = service.addDays(date, 3);
+    154|       expect(result.getDate()).toBe(1);
+       |                                ^
+    155|       expect(result.getMonth()).toBe(1); // February
+    156|     });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[6/8]ÔÄ»
+
+ FAIL  tests/services/aiRecommendationService.test.js > AI Recommendation Service > generateComprehensiveRecommendation > should return comprehensive recommendation
+AssertionError: expected { nextAction: { ÔÇª(5) }, ÔÇª(2) } to have property "conversionProbability"
+ ÔØ» tests/services/aiRecommendationService.test.js:207:38
+    205|       expect(result).toHaveProperty('recommendations');
+    206|       expect(result.recommendations).toHaveProperty('nextAction');
+    207|       expect(result.recommendations).toHaveProperty('conversionProbabiÔÇª
+       |                                      ^
+    208|       expect(result.recommendations).toHaveProperty('followUpSequence'ÔÇª
+    209|     });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[7/8]ÔÄ»
+
+ FAIL  tests/services/whatsappService.test.ts > WhatsAppService > processIncomingMessage > should escalate unknown queries
+AssertionError: expected "spy" to be called at least once
+ ÔØ» tests/services/whatsappService.test.ts:303:30
+    301|       await WhatsAppService.processIncomingMessage(body);
+    302| 
+    303|       expect(mockAxios.post).toHaveBeenCalled();
+       |                              ^
+    304|       expect(mockFirestoreDocUpdate).toHaveBeenCalledWith(
+    305|         expect.objectContaining({
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[8/8]ÔÄ»
+
+[2m Test Files [22m [1m[31m5 failed[39m[22m[2m | [22m[1m[32m18 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (24)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m205 passed[39m[22m[2m | [22m[33m2 skipped[39m[90m (214)[39m
+[2m   Start at [22m 19:36:58
+[2m   Duration [22m 11.22s[2m (transform 4.75s, setup 4.17s, collect 41.37s, tests 7.00s, environment 37ms, prepare 23.60s)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   28.48 |    53.06 |    35.2 |   28.48 |                   
+ backend           |       0 |        0 |       0 |       0 |                   
+  ...ss.config.cjs |       0 |        0 |       0 |       0 | 1-4               
+ backend/functions |       0 |        0 |       0 |       0 |                   
+  index.js         |       0 |        0 |       0 |       0 | 1-83              
+  ...nelWebhook.js |       0 |        0 |       0 |       0 | 1-379             
+ backend/scripts   |       0 |        0 |       0 |       0 |                   
+  ...om-claims.mjs |       0 |        0 |       0 |       0 | 1-233             
+  ...-user-uid.mjs |       0 |        0 |       0 |       0 | 1-278             
+  ...-docs-rest.js |       0 |        0 |       0 |       0 | 1-120             
+  ...store-docs.js |       0 |        0 |       0 |       0 | 1-80              
+  ...ogin-setup.js |       0 |        0 |       0 |       0 | 1-54              
+  ...e-complete.js |       0 |        0 |       0 |       0 | 1-171             
+  ...users-rest.js |       0 |        0 |       0 |       0 | 1-188             
+  ...-e2e-users.js |       0 |        0 |       0 |       0 | 1-130             
+  ...readiness.mjs |       0 |        0 |       0 |       0 | 1-97              
+  test_gmail.js    |       0 |        0 |       0 |       0 | 1-120             
+ backend/src       |    26.8 |       56 |   40.37 |    26.8 |                   
+  ...ofileCard.tsx |       0 |        0 |       0 |       0 | 1-112             
+  ...tailsPage.tsx |       0 |        0 |       0 |       0 | 1-141             
+  ...Middleware.js |   34.29 |     91.3 |   22.72 |   34.29 | ...13-281,284-298 
+  dbWrapper.js     |   88.57 |    57.14 |   86.66 |   88.57 | ...04-316,326,351 
+  ...pScheduler.js |       0 |        0 |       0 |       0 | 1-33              
+  ...wUpService.js |   59.09 |     82.6 |   45.45 |   59.09 | ...29-136,146-154 
+  gmailService.js  |   83.44 |    68.75 |   55.55 |   83.44 | ...18-231,324-337 
+  index.js         |    16.1 |    48.33 |    25.8 |    16.1 | ...4233,4238-4396 
+  logger.js        |   95.45 |    66.66 |      40 |   95.45 | 11                
+  ...eTemplates.js |       0 |        0 |       0 |       0 | 1-360             
+  ...ionService.js |       0 |        0 |       0 |       0 | 1-157             
+  ...hScheduler.js |   42.85 |    33.33 |      50 |   42.85 | 21-22,32-64,67-75 
+  ...icsService.js |       0 |        0 |       0 |       0 | 1-256             
+  stripeConfig.js  |      50 |    33.33 |      50 |      50 | 3-8,16,18-22      
+  ...oleService.js |   63.14 |      100 |    8.33 |   63.14 | ...90-392,399-423 
+  ...appService.js |    24.5 |      100 |    9.09 |    24.5 | ...78-344,351-352 
+ ...src/middleware |   39.36 |       50 |       0 |   39.36 |                   
+  auth.js          |       0 |        0 |       0 |       0 | 1-27              
+  ...Protection.js |   19.68 |    33.33 |       0 |   19.68 | ...0,22-26,38-177 
+  rateLimiter.js   |   51.12 |      100 |       0 |   51.12 | ...26-138,147-169 
+  ...ityHeaders.js |   50.63 |      100 |       0 |   50.63 | 113-229           
+ ...end/src/routes |    25.2 |    44.82 |   35.29 |    25.2 |                   
+  ...mendations.js |    82.3 |    44.44 |     100 |    82.3 | ...98-100,105-109 
+  analytics.js     |   48.75 |      100 |     100 |   48.75 | ...42,50-59,67-77 
+  crm.js           |   23.15 |      100 |   33.33 |   23.15 | ...90-294,300-311 
+  ecommerce.js     |   44.16 |      100 |     100 |   44.16 | ...35-247,255-268 
+  ...eAnalytics.js |   46.83 |      100 |     100 |   46.83 | ...32-139,147-154 
+  ...PageRoutes.ts |       0 |        0 |       0 |       0 | 1-239             
+  landingPages.js  |   29.26 |      100 |      50 |   29.26 | ...95-338,347-387 
+  ...ringRoutes.ts |       0 |        0 |       0 |       0 | 1-267             
+  ...iveWebhook.js |       0 |        0 |       0 |       0 | 1-179             
+  ...iveWebhook.ts |       0 |        0 |       0 |       0 | 1-200             
+  scheduler.js     |   40.35 |      100 |       0 |   40.35 | ...38-156,164-168 
+  twilio.js        |   26.99 |      100 |      50 |   26.99 | ...33-362,370-383 
+  twilioRoutes.ts  |       0 |        0 |       0 |       0 | 1-200             
+  whatsapp.js      |    28.3 |      100 |     100 |    28.3 | ...68-174,182-209 
+  ...pMultiRole.js |   32.17 |      100 |     100 |   32.17 | ...55-461,469-488 
+  ...sappRoutes.ts |       0 |        0 |       0 |       0 | 1-259             
+ ...d/src/services |   39.12 |    52.78 |   40.68 |   39.12 |                   
+  ...ionService.js |   78.02 |       40 |      80 |   78.02 | ...69-277,317-334 
+  ...icsService.js |   15.93 |      100 |       0 |   15.93 | ...78-218,225-248 
+  apiKeyManager.js |    35.5 |       50 |      10 |    35.5 | ...35-252,265-273 
+  auditLogger.js   |   41.78 |       50 |    6.66 |   41.78 | ...36-341,351-356 
+  crmService.js    |   25.51 |       50 |    9.52 |   25.51 | ...16-541,548-577 
+  ...icsService.js |   13.71 |      100 |       0 |   13.71 | ...28-366,371-389 
+  ...rceService.js |   43.58 |    49.05 |   43.33 |   43.58 | ...40-441,447-449 
+  emailService.js  |   19.66 |        0 |       0 |   19.66 | ...00-302,309-354 
+  ...cesService.js |    23.2 |      100 |       0 |    23.2 | ...79-205,214-242 
+  ...ageService.js |   23.06 |       50 |    9.09 |   23.06 | ...91-513,522-552 
+  ...ageService.ts |   79.23 |    41.07 |     100 |   79.23 | ...51-353,372-374 
+  ...ingService.ts |   26.69 |    58.33 |      40 |   26.69 | ...87-388,394-416 
+  ...iveService.js |   74.11 |    53.19 |   86.66 |   74.11 | ...35-349,352-364 
+  ...iveService.ts |       0 |        0 |       0 |       0 | 1-441             
+  twilioService.js |    24.4 |    33.33 |    9.09 |    24.4 | ...45-471,480-501 
+  twilioService.ts |   88.15 |    66.66 |     100 |   88.15 | ...90-292,303-304 
+  ...appService.ts |   92.58 |    80.43 |     100 |   92.58 | ...65-366,430-432 
+ ...es/omnichannel |   19.79 |    51.85 |      36 |   19.79 |                   
+  automation.js    |       0 |        0 |       0 |       0 | 1-404             
+  index.js         |    34.3 |    53.84 |    37.5 |    34.3 | ...79-480,487-505 
+ backend/src/utils |   27.77 |      100 |       0 |   27.77 |                   
+  secretHelper.js  |   27.77 |      100 |       0 |   27.77 | 4-10,12-22,24-31  
+ ...src/validators |   79.87 |      100 |       0 |   79.87 |                   
+  ...Validators.js |   79.87 |      100 |       0 |   79.87 | 216-251,258-286   
+-------------------|---------|----------|---------|---------|-------------------
