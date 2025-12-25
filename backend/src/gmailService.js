@@ -18,15 +18,36 @@ const nodemailer = require('nodemailer');
 
 class GmailService {
   constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-      },
-    });
+    // Support both GMAIL_PASS and GMAIL_APP_PASSWORD env vars
+    const password = process.env.GMAIL_APP_PASSWORD || process.env.GMAIL_PASS;
+    const isMocked = process.env.MOCK_EMAIL === 'true';
+
+    if (isMocked) {
+      // Mock mode for testing
+      this.transporter = {
+        verify: async () => true,
+        sendMail: async (options) => ({
+          messageId: `<mock-${Date.now()}@servio-ai.com>`,
+          response: '250 Message sent',
+        }),
+      };
+      this._mockHistory = [];
+      this._origSendMail = this.transporter.sendMail;
+      this.transporter.sendMail = async (options) => {
+        this._mockHistory.push(options);
+        return this._origSendMail(options);
+      };
+    } else {
+      this.transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: process.env.GMAIL_USER,
+          pass: password,
+        },
+      });
+    }
 
     this.defaultFrom = `Servio.AI <${process.env.GMAIL_USER}>`;
   }

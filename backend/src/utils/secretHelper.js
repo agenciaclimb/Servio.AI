@@ -1,12 +1,15 @@
-import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
+// const { SecretManagerServiceClient } = require('@google-cloud/secret-manager'); // Lazy loaded
 
 let client;
 function getClient() {
-  if (!client) client = new SecretManagerServiceClient();
+  if (!client) {
+    const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
+    client = new SecretManagerServiceClient();
+  }
   return client;
 }
 
-export async function getSecret(projectId, secretName) {
+async function getSecret(projectId, secretName) {
   try {
     const sm = getClient();
     const [version] = await sm.accessSecretVersion({
@@ -18,7 +21,7 @@ export async function getSecret(projectId, secretName) {
   }
 }
 
-export async function getPlacesApiKey() {
+async function getPlacesApiKey() {
   // Prefer env var provided by Cloud Run secret mount
   if (process.env.PLACES_API_KEY) return process.env.PLACES_API_KEY;
   // Fallback to Secret Manager (project id must be set via env)
@@ -26,3 +29,8 @@ export async function getPlacesApiKey() {
   if (!projectId) return '';
   return await getSecret(projectId, 'GOOGLE_PLACES_API_KEY');
 }
+
+module.exports = {
+  getSecret,
+  getPlacesApiKey
+};

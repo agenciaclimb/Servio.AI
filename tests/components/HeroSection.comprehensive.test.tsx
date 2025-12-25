@@ -30,7 +30,7 @@ vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(() => ({})),
 }));
 
-import HeroSection from '../../../components/HeroSection';
+import HeroSection from '../../components/HeroSection';
 
 describe('HeroSection - Comprehensive Quality Tests', () => {
   const user = userEvent.setup();

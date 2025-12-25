@@ -56,7 +56,9 @@ describe('Jobs API Endpoints', () => {
       const response = await request(app).get('/jobs?status=aberto');
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockJobs);
+      // Legacy route retorna estrutura paginada: { jobs, nextPageCursor, page }
+      expect(response.body).toHaveProperty('jobs');
+      expect(response.body.jobs).toEqual(mockJobs);
       expect(mockDb.where).toHaveBeenCalledWith('status', '==', 'aberto');
     });
   });

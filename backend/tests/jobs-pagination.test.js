@@ -70,9 +70,9 @@ describe('Jobs API Pagination (Task 2.1)', () => {
           })
         };
       }),
-      where: vi.fn(() => mockQuery),
-      orderBy: vi.fn(() => mockQuery),
-      limit: vi.fn(() => mockQuery),
+      where: vi.fn((...args) => mockQuery.where(...args)),
+      orderBy: vi.fn((...args) => mockQuery.orderBy(...args)),
+      limit: vi.fn((...args) => mockQuery.limit(...args)),
       get: vi.fn(),
     };
 

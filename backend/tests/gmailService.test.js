@@ -2,9 +2,10 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 async function loadService() {
   // Ensure env is set before service instantiation
-  process.env.GMAIL_USER = 'tester@example.com';
-  process.env.GMAIL_APP_PASSWORD = 'app-password-123456';
-  process.env.MOCK_EMAIL = 'true';
+  process.env.GMAIL_USER = 'contato@servio-ai.com';
+  process.env.GMAIL_PASS = 'ccuqydkjrhpudddx'; // Use actual app password for real test
+  process.env.GMAIL_APP_PASSWORD = process.env.GMAIL_PASS; // Support both names
+  process.env.MOCK_EMAIL = 'true'; // Use mock for unit tests
   const mod = await import('../src/gmailService.js');
   // CommonJS default export
   return mod.default || mod;

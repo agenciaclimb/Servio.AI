@@ -1,0 +1,29 @@
+
+> servio-ai-frontend@0.0.0 lint:ci
+> eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings=1000
+
+
+C:\Users\JE\servio.ai\ai-tasks\event-monitor.ts
+   67:5   warning  Unexpected console statement  no-console
+   68:5   warning  Unexpected console statement  no-console
+   69:5   warning  Unexpected console statement  no-console
+   70:5   warning  Unexpected console statement  no-console
+  150:11  warning  Unexpected console statement  no-console
+  175:13  warning  Unexpected console statement  no-console
+
+C:\Users\JE\servio.ai\ai-tasks\task_manager.ts
+  247:7  warning  Unexpected console statement  no-console
+
+C:\Users\JE\servio.ai\components\ClientDashboard.tsx
+  233:7  warning  Unexpected console statement  no-console
+
+C:\Users\JE\servio.ai\src\pages\PublicProviderPage.tsx
+  70:5  warning  Unexpected console statement  no-console
+
+C:\Users\JE\servio.ai\src\services\conversionAnalyticsService.ts
+   73:7  error  Unused eslint-disable directive (no problems were reported from 'no-console')
+  102:7  error  Unused eslint-disable directive (no problems were reported from 'no-console')
+
+Ô£û 11 problems (2 errors, 9 warnings)
+  2 errors and 0 warnings potentially fixable with the `--fix` option.
+

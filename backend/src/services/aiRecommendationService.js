@@ -303,7 +303,8 @@ function calculateScheduledDate(delayStr) {
     return new Date(now.getTime() + weeks * 7 * 24 * 60 * 60 * 1000);
   }
 
-  return now;
+  // Default: 2 horas quando formato não reconhecido
+  return new Date(now.getTime() + 2 * 60 * 60 * 1000);
 }
 
 /**
@@ -313,7 +314,11 @@ function calculateScheduledDate(delayStr) {
  * @returns {Date}
  */
 function addDays(date, days) {
-  return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
+  // Usar setDate para lidar corretamente com transições de mês/horário de verão
+  const d = new Date(date.getTime());
+  d.setHours(12, 0, 0, 0); // Ancorar ao meio-dia para evitar efeitos de timezone/DST
+  d.setDate(d.getDate() + days);
+  return d;
 }
 
 /**
@@ -358,3 +363,24 @@ module.exports = {
   calculateScheduledDate,
   addDays,
 };
+
+/**
+ * Factory export for tests expecting a default-exported factory.
+ * Returns the same API using current module-level implementations.
+ * @param {*} _genAI Ignored (module uses env-configured instance)
+ */
+function aiRecommendationServiceFactory(_genAI) {
+  return {
+    generateNextActions,
+    predictConversion,
+    suggestFollowUpSequence,
+    generateComprehensiveRecommendation,
+    // Helpers
+    calculateRecencyFactor,
+    calculateScheduledDate,
+    addDays,
+  };
+}
+
+module.exports.aiRecommendationServiceFactory = aiRecommendationServiceFactory;
+module.exports.default = aiRecommendationServiceFactory;

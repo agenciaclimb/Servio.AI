@@ -12,21 +12,21 @@
  */
 
 const express = require('express');
-const router = express.Router();
-const admin = require('firebase-admin');
 const crypto = require('crypto');
 
-const db = admin.firestore();
+module.exports = (injectedAdmin) => {
+  const router = express.Router();
+  const admin = injectedAdmin || require('firebase-admin');
+  const db = admin.firestore();
 
 // ========================================
 // WEBHOOKS - Recepção de Mensagens
 // ========================================
 
 /**
- * POST /omni/webhook/whatsapp
  * Recebe mensagens do WhatsApp Cloud API
  */
-router.post('/webhook/whatsapp', async (req, res) => {
+router.all('/webhook/whatsapp', async (req, res) => {
   try {
     // Validação de webhook (Meta)
     if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === process.env.OMNI_WEBHOOK_SECRET) {
@@ -547,4 +547,5 @@ Você está conversando com um ADMINISTRADOR.
   return personas[userType] || personas.cliente;
 }
 
-module.exports = router;
+  return router;
+};
