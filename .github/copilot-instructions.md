@@ -1,345 +1,97 @@
-# Servio.AI - AI Agent Instructions
-
-## Project Overview
-
-Servio.AI is a production-ready marketplace connecting clients with service providers, enhanced with AI-powered matching and prospecting. The system uses Firebase/Firestore as the backend, Stripe for payments, and Google Gemini AI for intelligent features.
-
-**Tech Stack**: React 18 + TypeScript + Vite (frontend), Node.js + Express (backend), Firestore (database), Cloud Run (deployment)
-
-**Production Status**: 🟢 LIVE | 634/634 tests passing (100%) | 48.36% coverage | CI/CD via GitHub Actions | Last validated: 2025-12-23
-
-**Recent Updates (Dec 2025)**:
-
-- Task 4.6: Security Hardening v2 (rate limiting, CSRF, XSS protection, Zod validators) ✅
-- Gmail SMTP + WhatsApp Business API integrated ✅
-- Firestore production service account configured (`C:\secrets\servio-prod.json`) ✅
-- Backend tests: 125/188 passing (66.5%) - Gmail/WhatsApp/Firestore working, Gemini test env issues pending
-
-## Architecture & Key Patterns
-
-### Data Model Convention - Email as ID
-
-**CRITICAL**: Throughout the codebase, user documents use **email addresses as document IDs**, not Firebase Auth UIDs.
-
-- Firestore collections: `users/{email}`, `jobs.clientId = email`, `jobs.providerId = email`
-- Security rules: Use `authEmail()` helper, not `request.auth.uid`
-- Example: `db.collection('users').doc('user@example.com')`
-- See [firestore.rules](firestore.rules) for reference implementations
-
-**Why**: Legacy design from MVP phase. Migration to UID-based IDs is planned but requires careful data migration across all collections.
-
-### Backend Dependency Injection
-
-The Express backend uses a factory pattern for testability:
-
-```javascript
-// backend/src/index.js line 200
-function createApp({ db, storage, stripe, genAI, rateLimitConfig }) {
-  const app = express();
-  // ... configures routes with injected dependencies
-  return app;
-}
-```
-
-**When testing**: Always use `createApp()` with mock instances, never import the default `app` export. Backend tests currently at 125/188 passing (66.5%) - focus areas: Gemini test env setup, LandingPage/Twilio stubs, Firestore pagination mocks.
-
-See [backend/tests/jobs.test.js](backend/tests/jobs.test.js) for the mock structure pattern:
-
-```javascript
-const mockDb = {
-  collection: vi.fn(() => ({
-    doc: vi.fn(() => ({
-      get: vi.fn().mockResolvedValue({ exists: true, data: () => ({...}) }),
-      set: vi.fn().mockResolvedValue({}),
-      update: vi.fn().mockResolvedValue({}),
-    })),
-    where: vi.fn().mockReturnThis(),
-  })),
-};
-app = createApp({ db: mockDb, storage: null, stripe: null });
-```
-
-### Firebase Lazy Loading Pattern
-
-Firebase modules are split for performance optimization:
-
-- **Critical path** (loaded immediately): `auth`, `db` (Firestore)
-- **Lazy-loaded**: `storage`, `analytics` via `getStorageInstance()`, `getAnalyticsIfSupported()`
-- Implementation: Proxy pattern in [firebaseConfig.ts](firebaseConfig.ts) lines 90-109
-
-**Why**: Reduces initial bundle size by ~200KB. Analytics/Storage aren't needed for auth or initial render.
-
-### Component Patterns
-
-- Props interfaces follow the convention: `interface ComponentNameProps { ... }`
-- User types: `'cliente' | 'prestador' | 'admin' | 'prospector'` (defined in [types.ts](types.ts))
-- Status enums use **Portuguese**: `'ativo' | 'suspenso'`, `'aberto' | 'em_progresso' | 'concluido'`
-- All dashboards are lazy-loaded via React `lazy()` and `<Suspense>` (see [App.tsx](App.tsx) lines 11-37)
-
-## Development Workflows
-
-### Running Tests
-
-```powershell
-# Frontend unit tests (Vitest + React Testing Library)
-npm test                    # With coverage (48.36% current ✅)
-npm run test:watch         # Watch mode for TDD
-npm run test:ui            # Visual test UI
-
-# Backend tests (from root)
-npm run test:backend       # Runs backend/tests/*.test.js
-npm run test:all           # Frontend + Backend
-
-# E2E tests (Playwright)
-npm run e2e:smoke          # Critical smoke tests (10 tests, <2min)
-npm run e2e:critical       # Full critical flow validation
-npm run e2e:ui             # Interactive Playwright UI
-```
-
-**Test Philosophy**: All tests mock external services (Firebase, Stripe, Gemini). No real API calls in tests. Real integration tests run in CI post-deployment against production endpoints.
-
-### Local Development
-
-```powershell
-# Frontend dev server (port 3000 via Vite)
-npm run dev
-
-# Backend dev server (port 8081) - from backend/
-cd backend && npm start
-
-# Required env vars (see .env.example):
-# - VITE_FIREBASE_* (Firebase config - 7 vars)
-# - VITE_STRIPE_PUBLISHABLE_KEY
-# - GEMINI_API_KEY (backend only)
-```
-
-**API Proxy**: Vite dev server proxies `/api/*` to backend. Configure `VITE_BACKEND_URL` or `VITE_BACKEND_API_URL` in `.env.local` to override (default: `http://localhost:8081`). See [vite.config.ts](vite.config.ts) lines 10-22.
-
-### Build & Deploy
-
-```powershell
-# Production build
-npm run build              # TypeScript compile + Vite build
-
-# Pre-deploy validation (CRITICAL - run before any deploy)
-npm run validate:prod      # TypeCheck + Tests + Build + Security Audit
-
-# Deploy (automated via GitHub Actions on push to main)
-# - Frontend → Firebase Hosting (CDN global)
-# - Backend → Google Cloud Run (us-west1, auto-scaling)
-```
-
-**CI/CD**: See [.github/workflows/ci.yml](.github/workflows/ci.yml). Pipeline: Lint → TypeCheck → Tests (Frontend + Backend) → E2E Smoke → Build → Deploy. **Note**: CI currently disabled (line 13: `if: false`) - tests run locally via "Memory Mode" backend validation before merges.
-
-## AI-Driven Development System
-
-**Unique to this project**: Servio.AI uses an AI orchestrator for task management and code generation.
-
-### AI Orchestrator Workflow
-
-```powershell
-# Generate tasks from backlog using Gemini
-npm run generate-tasks     # Reads ai-tasks/TAREFAS_ATIVAS.json
-
-# Orchestrate task execution (Gemini → GitHub → Copilot loop)
-npm run orchestrate-tasks  # Creates issues, assigns Copilot, monitors PRs
-
-# Full AI cycle
-npm run servio:full-cycle  # Generate → Orchestrate → Test
-
-# Available VS Code tasks
-npm run task:audit-pr       # 🔍 Auditar PR (requires PR number)
-npm run task:update-doc     # 📝 Atualizar Documento Mestre
-npm run task:generate       # 🎯 Gerar Tasks do Dia
-npm run task:fix-issue      # 🔧 Gerar Fix para Issue
-npm run task:create-pr      # 🚀 Criar PR
-npm run task:merge-pr       # ✅ Merge PR
-```
-
-**Key Files**:
-
-- `ai-orchestrator/src/orchestrator.cjs` - Main orchestration logic
-- `ai-tasks/TAREFAS_ATIVAS.json` - Active task backlog
-- `DOCUMENTO_MESTRE_SERVIO_AI.md` - Source of truth for architecture (5629 lines, updated continuously)
-
-### Protocolo Supremo (Supreme Protocol)
-
-Internal workflow automation for quality gates:
-
-```powershell
-npm run supremo:init      # Initialize branch with standards check
-npm run supremo:audit     # Run full quality audit
-npm run supremo:fix       # Auto-fix lint/format issues
-npm run supremo:test-backend  # Backend test validation
-npm run supremo:pr-status # Check PR status + GitHub API integration
-```
-
-Located in `scripts/protocolo-supremo.cjs`. Enforces: branch naming (`feature/**`), commit message format (`feat: [task-X.Y] ...`), no secrets in commits, test coverage >45%.
-
-## Critical Integration Points
-
-### Stripe Payment Flow
-
-1. Client accepts proposal → backend creates Checkout Session (`POST /api/create-checkout-session`)
-2. User completes payment on Stripe-hosted page
-3. Webhook (`POST /api/stripe-webhook`) receives `checkout.session.completed` event
-4. Backend creates escrow document in Firestore (`escrows/{jobId}`)
-5. Job status → `'em_progresso'`, payment held until job completion
-6. **Connect accounts**: Providers onboard via Stripe Connect to receive payouts
-
-**Stripe Mode Detection**: [backend/src/stripeConfig.js](backend/src/stripeConfig.js) - Automatically detects `sk_test_` vs `sk_live_` keys. Warns if test key is used in production. Returns `null` if `STRIPE_SECRET_KEY` is missing (disables Stripe features gracefully).
-
-**Test with**: Card `4242 4242 4242 4242`, any future expiry/CVV
-
-### Gemini AI Integration
-
-Used for:
-
-- Job description enhancement (`services/geminiService.ts` → `enhanceJobDescription`)
-- Provider bio generation (`generateProviderBio`)
-- Prospecting message templates (backend endpoints)
-- **AI orchestration** (task generation, code reviews, PR audits)
-
-**Configuration**: Model `gemini-2.0-flash-exp`, requires `GEMINI_API_KEY` env var. Calls from backend use `GoogleGenerativeAI` SDK.
-
-### Multi-Channel Communication (WhatsApp, Gmail, SMS)
-
-Backend integrates with:
-
-- **WhatsApp Business API** (`backend/src/whatsappService.js` + `/routes/whatsapp.js`)
-- **Gmail SMTP** (`backend/src/gmailService.js`) - Follow-up emails
-- **Twilio** (optional, disabled by default: `TWILIO_ENABLED=false`)
-
-**Outreach Scheduler**: `backend/src/outreachScheduler.js` - `processPendingOutreach()` function handles automated prospector follow-ups. Called from scheduled jobs.
-
-### Firestore Security Rules
-
-**Role-based access** enforced at database level via custom claims:
-
-- `isAdmin()`, `isClient()`, `isProvider()` check `request.auth.token.role` (no Firestore reads)
-- `authEmail()` helper returns `request.auth.token.email` for email-based ownership checks
-- `isJobParticipant()` validates `clientId` or `providerId` match `authEmail()`
-- Rules file: [firestore.rules](firestore.rules) (309 lines) - deploy with `npm run firebase:deploy:rules`
-
-**Critical**: Rules use `request.auth.token.role` (custom claims set by Cloud Function on user creation), NOT `resource.data.type` (avoids Firestore reads for auth checks).
-
-## Common Gotchas
-
-### 1. Email vs UID in User Lookups
-
-❌ **Wrong**: `db.collection('users').doc(auth.currentUser.uid)`  
-✅ **Right**: `db.collection('users').doc(auth.currentUser.email)`
-
-**Exception**: In security rules, `request.auth.uid` is compared against the `uid` field stored in user documents (migration in progress). Document IDs are still emails.
-
-### 2. Mock Structure for Tests
-
-When mocking Firestore in tests, implement the **full collection chain** with `vi.fn().mockReturnThis()`:
-
-```javascript
-const mockDb = {
-  collection: vi.fn(() => ({
-    doc: vi.fn(() => ({
-      get: vi.fn().mockResolvedValue({ exists: true, data: () => ({ email: 'test@example.com' }) }),
-      set: vi.fn().mockResolvedValue({}),
-      update: vi.fn().mockResolvedValue({}),
-    })),
+# Servio.AI — Copilot Instructions
+
+## Idioma / Language
+
+- **Comunicação**: Sempre responda em **português brasileiro** ao interagir com a equipe. Use português em comentários de código, mensagens de commit, documentação e PRs.
+- **Código**: Mantenha nomes de variáveis, funções e componentes em **inglês** (padrão da indústria), mas enums de domínio e strings de interface devem estar em **português** (ver seção Core Conventions).
+- **Documentação técnica**: Markdown files (README, CHANGELOG, etc.) devem estar em português, exceto quando forem referências de API para audiência internacional.
+
+## Big Picture
+
+- **Marketplace app**: React 18 + TypeScript + Vite frontend, Express + Firestore backend, Stripe payments, Gemini AI features. Production/live; email is the Firestore document ID everywhere (legacy, migration to uid in progress).
+- **Frontend structure**: [App.tsx](App.tsx) uses React Router + lazy loading + Suspense for 4 main dashboards (admin, client, provider, prospector). Components in [components/](components/), business logic in [services/](services/), hooks in [hooks/](hooks/), contexts in [contexts/](contexts/).
+- **Backend architecture**: Constructed via `createApp({ db, storage, stripe, genAI, rateLimitConfig })` in [backend/src/index.js](backend/src/index.js) (~4400 linhas). Routes segregated by entity in [backend/src/routes/](backend/src/routes/) (jobs.js, users.js, payments.js, etc.). Always inject mocks in tests instead of importing a singleton app.
+- **Auth pattern**: Ownership checks use `request.auth.token.email` (see [firestore.rules](firestore.rules) lines 26-40); document IDs remain emails even though `uid` exists as a field. Custom claims (`role`) set by Cloud Function avoid Firestore reads—authorization is immutable via JWT token.
+
+## Core Conventions
+
+- **Portuguese enums**: Part of the API contract—never translate: job status `'aberto'|'em_progresso'|'concluido'|'cancelado'`; user status `'ativo'|'suspenso'`; user types `'cliente'|'prestador'|'admin'|'prospector'` (see [types.ts](types.ts) lines 1-6).
+- **Firestore mock pattern**: Chain `collection → doc → get/set/update`, plus `where/orderBy/limit/get` returning `this` for fluent API. Mock structure (see [backend/tests/jobs.test.js](backend/tests/jobs.test.js)):
+  ```javascript
+  mockDb = {
+    collection: vi.fn().mockReturnThis(),
+    doc: vi.fn().mockReturnThis(),
+    set: vi.fn().mockResolvedValue({}),
+    update: vi.fn().mockResolvedValue({}),
+    get: vi.fn().mockResolvedValue({ exists: true, data: () => ({ id: 'doc' }) }),
     where: vi.fn().mockReturnThis(),
     orderBy: vi.fn().mockReturnThis(),
     limit: vi.fn().mockReturnThis(),
-    get: vi.fn().mockResolvedValue({ docs: [] }),
-  })),
-};
-```
+  };
+  const app = createApp({ db: mockDb, stripe: null, genAI: null });
+  ```
+- **Firebase lazy load**: Only `auth` + `db` eager-loaded; `storage`/`analytics` fetched via async getters in [firebaseConfig.ts](firebaseConfig.ts) to reduce bundle size (~0.69MB gzipped).
+- **Code splitting**: Dashboards use React `lazy()` + Suspense in [App.tsx](App.tsx); manual chunks in [vite.config.ts](vite.config.ts) split `'react-vendor'`, `'firebase-vendor'` (critical path: auth + firestore only). Dashboard chunks lazy-loaded per role.
 
-See [backend/tests/jobs.test.js](backend/tests/jobs.test.js) lines 5-20 for reference.
+## Security Stack (Task 4.6)
 
-### 3. Portuguese String Literals
+- **Middleware layers** (in [backend/src/index.js](backend/src/index.js)): Helmet + CSP headers, XSS filters (`sanitizeInput`/`sanitizeQuery`), express-rate-limit with 5 tiers (`globalLimiter`, `authLimiter`, `apiLimiter`, `paymentLimiter`, `webhookLimiter`), CSRF protection via `/api/csrf-token`, path traversal prevention. Zod validators in [backend/src/validators/requestValidators.js](backend/src/validators/requestValidators.js).
+- **Audit logging**: `AuditLogger` service in [backend/src/services/auditLogger.js](backend/src/services/auditLogger.js) tracks sensitive actions (LOGIN, CREATE_JOB, PROCESS_PAYMENT, ADMIN_ACTION, ROLE_CHANGE, DELETE_USER, etc.) to Firestore `audit_logs` collection.
+- **Stripe safety**: [backend/src/stripeConfig.js](backend/src/stripeConfig.js) detects mode (test/live/disabled) via key prefix (`sk_test_` vs `sk_live_`) and returns `null` if missing—features degrade gracefully. Checkout flow creates Firestore escrow document and transitions job to `'em_progresso'`. Webhook validation via Stripe signature.
+- **Authorization middleware**: `requireAuth`, `requireRole`, `requireAdmin`, `requireOwnership`, `requireJobParticipant`, `requireDisputeParticipant` in [backend/src/authorizationMiddleware.js](backend/src/authorizationMiddleware.js). **Do not bypass in tests**; always use `createApp()` with injected mocks to respect middleware chain.
 
-UI strings and database enums use **Portuguese** (Brazilian market):
+## Development Workflows
 
-- Job statuses: `'aberto'`, `'em_progresso'`, `'concluido'`, `'cancelado'`
-- User types: `'cliente'`, `'prestador'`, `'admin'`, `'prospector'`
-- User status: `'ativo'`, `'suspenso'`
+- **Frontend**: `npm run dev` (port 3000, proxies `/api` to `localhost:8081` via [vite.config.ts](vite.config.ts)). Tests: `npm test` (Vitest), `npm run test:watch`, `npm run test:ui`.
+- **Backend**: `cd backend && npm start` (port 8081 for local). Tests from root: `npm run test:backend` (runs Vitest in `backend/` with no coverage by default). Coverage: `npm run test` (frontend) + `npm run test:backend` = combined `npm run test:all`.
+- **E2E Playwright**: `npm run e2e:smoke` (10-test suite ~1min), `npm run e2e:critical` (full journeys), `npm run e2e:headed` (visible browser), `npm run e2e:report` (view results).
+- **Pre-deploy gate**: `npm run validate:prod` runs lint + typecheck + test + build + `guardrails:audit` (detects secrets via custom script in [scripts/guardrails/](scripts/guardrails/)). CI disabled (`if: false` in [.github/workflows/ci.yml](.github/workflows/ci.yml)).
+- **VS Code tasks**: `.vscode/tasks.json` provides automated workflows (audit PR, update master doc, generate tasks, create/merge PRs).
 
-**Never translate these to English** in database operations or type definitions. They are part of the data model contract.
+## AI Orchestration
 
-### 4. Async Component Loading
+- **Automation commands**: `npm run generate-tasks` (Gemini task generation via [ai-engine/gemini/](ai-engine/gemini/)), `npm run orchestrate-tasks` (GitHub issue + execution via [ai-orchestrator/src/orchestrator.cjs](ai-orchestrator/src/orchestrator.cjs)), `npm run servio:full-cycle` (end-to-end pipeline).
+- **Task backlog**: [ai-tasks/TAREFAS_ATIVAS.json](ai-tasks/TAREFAS_ATIVAS.json) is the active queue. Task interface in [ai-tasks/task_interface.ts](ai-tasks/task_interface.ts). Use `npm run generate-tasks` to batch-generate from Gemini.
+- **Master document**: [DOCUMENTO_MESTRE_SERVIO_AI.md](DOCUMENTO_MESTRE_SERVIO_AI.md) is the **authoritative source of truth** (~5700 lines)—tracks task progress, test results, deployment state, known issues, and PR/branch status.
 
-All dashboards are code-split for performance:
+## Data Model + Rules
 
-```typescript
-const ClientDashboard = lazy(() => import('./components/ClientDashboard'));
-// Must wrap in <Suspense fallback={<LoadingFallback />}> in App.tsx
-```
+- **Jobs**: Store participant emails as `clientId`/`providerId`. Firestore rules rely on `authEmail()` helper function (lines 26-40 in [firestore.rules](firestore.rules)). Job statuses enum: `'aberto'|'em_progresso'|'concluido'|'cancelado'`.
+- **Users**: Document ID = email (legacy). `uid` field added; full migration to uid-based IDs pending. Roles via custom claims, not stored in DB. Services/proposals/reviews use `clientId`/`providerId` (email references) for participant lookups.
+- **Lead lifecycle** (Prospector CRM): Stages `'new'|'contacted'|'negotiating'|'won'|'lost'`, temperatures `'hot'|'warm'|'cold'`, priorities `'high'|'medium'|'low'`. See [types.ts](types.ts) lines 1-9 for all enums.
 
-**Why**: Initial bundle without lazy loading was 800KB+. With lazy loading + code splitting, main bundle is <300KB. See [vite.config.ts](vite.config.ts) `manualChunks` config.
+## Integrations
 
-### 5. Security Middleware Stack (Task 4.6)
+- **WhatsApp Business API**: [backend/src/whatsappService.js](backend/src/whatsappService.js) + multi-role support in [backend/src/whatsappMultiRoleService.js](backend/src/whatsappMultiRoleService.js). Routes at [backend/src/routes/whatsapp\*.js](backend/src/routes/). Requires `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`.
+- **Gmail SMTP**: [backend/src/gmailService.js](backend/src/gmailService.js) for follow-up emails. Batch scheduler in [backend/src/outreachScheduler.js](backend/src/outreachScheduler.js) processes pending outreach jobs. Requires `GMAIL_USER`, `GMAIL_PASS`.
+- **Gemini AI**: Model `gemini-2.0-flash-exp` via `@google/generative-ai`. Frontend calls go to backend (`/api/prospecting/enhance-bio`, `/api/prospecting/analyze-job`). See [services/geminiService.ts](services/geminiService.ts) for client implementation. Requires `GEMINI_API_KEY`.
+- **Stripe**: Checkout sessions, webhook handlers, Connect onboarding. Config detects test vs live key. Webhook validation via signature in [backend/src/routes/payments.js](backend/src/routes/payments.js).
+- **Twilio**: Optional SMS/voice (disabled by default via `TWILIO_ENABLED=false`). For testing, mock via Vitest.
 
-Backend has layered security (added Dec 2025, PR pending):
+## Environment Variables (see [.env.example](.env.example))
 
-- **Rate limiting**: `globalLimiter`, `authLimiter`, `apiLimiter`, `paymentLimiter` (express-rate-limit)
-- **Security headers**: Helmet.js + custom CSP + XSS protection
-- **CSRF protection**: `csrf-csrf` library, endpoint `/api/csrf-token`
-- **Input sanitization**: `sanitizeInput`, `sanitizeQuery`, `preventPathTraversal`
-- **Request validation**: Zod schemas in `backend/src/validators/requestValidators.js`
-- **Audit Logger**: Records sensitive actions (LOGIN, CREATE_JOB, PROCESS_PAYMENT, etc.)
+- **Frontend**: `VITE_FIREBASE_*` (7 vars: API_KEY, AUTH_DOMAIN, PROJECT_ID, STORAGE_BUCKET, MESSAGING_SENDER_ID, APP_ID, MEASUREMENT_ID), `VITE_STRIPE_PUBLISHABLE_KEY`, `VITE_BACKEND_API_URL` (defaults to `localhost:8081` in dev).
+- **Backend**: `STRIPE_SECRET_KEY`, `GEMINI_API_KEY`, `GOOGLE_APPLICATION_CREDENTIALS` (GCP service account JSON path), `GCP_STORAGE_BUCKET`, `GMAIL_USER`, `GMAIL_PASS`, `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, optional `TWILIO_*`. Production secrets in `C:\secrets\` (gitignored).
+- **Mode detection**: Stripe key prefix (`sk_test_` vs `sk_live_`) auto-detected; warning logged if test key in production.
 
-**Critical**: Never bypass these middlewares in tests. Use `createApp()` with full middleware stack, then mock external dependencies.
+## Documentation Map
 
-**Credentials**: Production Firestore uses service account JSON in `C:\secrets\servio-prod.json` (gitignored). See `GUIA_SETUP_CREDENCIAIS.md` for setup instructions.
+- **API reference**: [API_ENDPOINTS.md](API_ENDPOINTS.md) (~1341 lines, comprehensive endpoint docs with request/response examples).
+- **Commands cheat sheet**: [COMANDOS_UTEIS.md](COMANDOS_UTEIS.md) (test, build, e2e, validation commands).
+- **Deployment checklist**: [DEPLOY_CHECKLIST.md](DEPLOY_CHECKLIST.md) (pre-deploy steps, quality gates, env config).
+- **Architecture source**: [DOCUMENTO_MESTRE_SERVIO_AI.md](DOCUMENTO_MESTRE_SERVIO_AI.md) (task progress, test state, audit logs, PR/branch status).
 
-## Key Files & Documentation
+## Quality Bars
 
-**Entry points**:
+- **Coverage**: Maintain ≥45% (current ~48%). Thresholds in [vitest.config.ts](vitest.config.ts) lines 46-51: lines 45%, statements 45%, functions 45%, branches 40%.
+- **Lint budget**: ≤1000 warnings via `npm run lint:ci` (uses `--max-warnings=1000`).
+- **Commit format**: `feat|fix|chore|docs: [task-X.Y] description` (conventional commits, no periods).
+- **Branch names**: `feature/**`, `fix/**`, `hotfix/**` (kebab-case).
+- **Pre-commit**: `lint-staged` via Husky runs format check + lint on staged files.
 
-- [App.tsx](App.tsx) - Frontend routing, auth context, lazy loading setup
-- [backend/src/index.js](backend/src/index.js) - Express app with 128+ API endpoints (4405 lines)
+## Testing Patterns
 
-**Critical docs** (read before major changes):
-
-- [DOCUMENTO_MESTRE_SERVIO_AI.md](DOCUMENTO_MESTRE_SERVIO_AI.md) - **Authoritative** architecture reference (5629 lines, updated 2025-12-22)
-- [COMANDOS_UTEIS.md](COMANDOS_UTEIS.md) - Complete command reference (237 lines)
-- [API_ENDPOINTS.md](API_ENDPOINTS.md) - Backend API documentation (1341 lines, includes error codes)
-- `GUIA_SETUP_CREDENCIAIS.md` - Secure credential setup guide (Gmail, Firestore, WhatsApp)
-
-**Type definitions**: [types.ts](types.ts) - Central source of truth for all interfaces (`User`, `Job`, `Proposal`, `Prospect`, etc. - 385 lines)
-
-**Configuration**:
-
-- [vite.config.ts](vite.config.ts) - Vite config (proxy, build optimization, code splitting)
-- [firestore.rules](firestore.rules) - Database security rules (custom claims-based, 309 lines)
-- [.env.example](.env.example) - Required environment variables template
-
-## Quality Standards
-
-- **Test coverage**: Maintain >45% (current: 48.36% ✅)
-- **Lint**: Max 1000 warnings in CI (`npm run lint:ci`)
-- **TypeScript**: Strict mode enabled, all public APIs must be typed
-- **Security**: Zero npm vulnerabilities (`npm run security:audit` before PR)
-- **Branch naming**: `feature/**`, `fix/**`, `hotfix/**`
-- **Commit format**: `feat: [task-X.Y] description` or `fix: [task-X.Y] description`
-
-## Environment Variables
-
-**Frontend** (prefix `VITE_`):
-
-- `VITE_FIREBASE_*` (7 vars) - Firebase config
-- `VITE_STRIPE_PUBLISHABLE_KEY` - Stripe public key
-- `VITE_BACKEND_URL` or `VITE_BACKEND_API_URL` - Backend API URL (defaults to localhost:8081)
-
-**Backend**:
-
-- `GEMINI_API_KEY` - Google Gemini AI API key
-- `STRIPE_SECRET_KEY` - Stripe secret key (sk*test*_ or sk*live*_)
-- `GOOGLE_APPLICATION_CREDENTIALS` - Path to GCP service account JSON (for production Firestore)
-- `GMAIL_USER`, `GMAIL_PASS` - SMTP credentials for automated emails
-- `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID` - WhatsApp Business API
-- `TWILIO_*` - Twilio credentials (optional, disabled by default)
-
-**Storage**: Credentials stored in `C:\secrets\` (gitignored). See `GUIA_SETUP_CREDENCIAIS.md` for setup instructions.
-
----
-
-_Last updated: 2025-12-23 | Production: LIVE | Coverage: 634/634 tests passing | AI Orchestrator: Active_
+- **Vitest config**: [vitest.config.ts](vitest.config.ts) uses jsdom, `singleThread: true`, `maxWorkers: 1` for stability; coverage via v8 provider. Excludes: `backend/**`, `doc/**`, `node_modules/**`.
+- **Backend tests**: Use `createApp()` with injected mocks **never import singleton**. Example: `const app = createApp({ db: mockDb, stripe: null, genAI: null });`. Run: `npm run test:backend` (Vitest in `backend/` dir).
+- **Frontend tests**: 261+ passing tests across [tests/](tests/) and [tests/e2e/](tests/e2e/). Smoke tests (10 critical flows) in [tests/e2e/smoke/](tests/e2e/smoke/); run `npm run e2e:smoke` for <2min validation.
+- **Setup files**: [tests/setup.ts](tests/setup.ts) for frontend (MSW, mocks), [backend/vitest.config.mjs](backend/vitest.config.mjs) for backend (no Firestore reads in tests).

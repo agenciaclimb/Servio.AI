@@ -46,20 +46,38 @@
 2. **FIX**: Corrigir 7 falhas no backend tests
 3. **SECURITY**: Resolver 7 vulnerabilidades (vite/esbuild)
 4. **CLEANUP**: Limpar 68 arquivos temporários não commitados
-5. **CI/CD**: Reabilitar pipeline (atualmente disabled `if: false`)
-6. **Frontend**: Iniciar integração com novos endpoints seguros
-
-# 📘 DOCUMENTO MESTRE - SERVIO.AI
-
-**Última Atualização**: 10/12/2025 10:30 BRT (ORCHESTRATOR v1.0 IMPLEMENTADO ✅)  
-**Status**: 🟢 **PRODUÇÃO 100% FUNCIONAL | Orchestrator Live ✅ | AI-Driven Development Ativo | GitHub API Integrado | CI/CD Passing**  
-**Versão**: 4.0.0 (AI Orchestrator: Gemini → Orchestrator → Copilot → Gemini Workflow)
 
 ---
 
 ## 📊 **ESTADO ATUAL DO SISTEMA (10/12/2025)**
 
 ### 🎯 **Sistema em Produção**
+
+      - **Escopo inicial**: Data privacy + GDPR compliance, elevar cobertura de testes, correções App.test.tsx (jsdom)
+      - **Entregáveis**:
+          - Política de retenção e anonimização de dados
+          - Revisão de consentimento e transparência (UI)
+          - Auditoria de acesso (RBAC) expandida
+          - Suite de testes com +5% cobertura
+      - **Riscos**: Interações com serviços externos (Gmail/WhatsApp) para privacidade; janelas modais de consentimento
+      -
+
+### Continuidade Protocolo Supremo (25/12 09:00)
+
+1. **PR #62 (Security Hardening v2)**
+   - Responder review mantendo middleware completo: Helmet+CSP, rate limiters, CSRF, sanitização, audit logger e Zod validators.
+   - Não afrouxar mocks: usar createApp({ db, storage, stripe, genAI, rateLimitConfig }) em testes com chain completo de Firestore.
+2. **Pós-merge rápido**
+   - Smoke: validar /api/csrf-token, uma rota com limiter e audit log em ação sensível (LOGIN/CREATE_JOB) com credenciais da sessão.
+   - Monitorar Cloud Run logs para 429 e headers de segurança.
+3. **Task 4.7 kick-off (privacidade/GDPR + qualidade)**
+   - Corrigir App.test.tsx (jsdom/window.location e chunks) para zerar 29 falhas remanescentes.
+   - Reativar CI: remover if: false em .github/workflows/ci.yml; garantir upload de coverage para SonarCloud.
+   - Cobertura +5%: priorizar suites de UI com menor coverage (HeroSection, ProviderDashboard filtros) e cenários de erro.
+   - Consentimento/retention: modal/banner de consentimento, política de retenção/anônimos, revisão de storage de dados pessoais.
+   - RBAC/audit: expandir checks baseados em custom claims e registrar acessos sensíveis; alinhar com irestore.rules.
+   - Rodar
+     pm run validate:prod e anexar saída; atualizar DOCUMENTO_MESTRE com métricas e decisões.
 
 | Componente       | Status         | Versão/Métricas             | Detalhes                           |
 | ---------------- | -------------- | --------------------------- | ---------------------------------- |
