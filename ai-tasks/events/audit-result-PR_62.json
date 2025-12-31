@@ -5,9 +5,9 @@
   "reasons": [],
   "risk_level": "LOW",
   "findings": [
-    "Nenhuma vulnerabilidade de segurança detectada.",
-    "Qualidade do código aparenta estar dentro dos padrões."
+    "Nenhuma vulnerabilidade de segurança crítica detectada.",
+    "Qualidade do código dentro dos padrões aceitáveis."
   ],
   "doc_mestre_violations": [],
-  "emitted_at_utc": "2025-12-31T17:59:51.761Z"
+  "emitted_at_utc": "2025-12-31T18:08:15.634Z"
 }
