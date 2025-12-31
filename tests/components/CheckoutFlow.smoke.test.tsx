@@ -35,7 +35,7 @@ describe('CheckoutFlow smoke', () => {
     // Deve exibir labels de passos (usando getAllByText para múltiplos)
     expect(screen.getAllByText(/Carrinho/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Endereço/i).length).toBeGreaterThan(0);
-    
+
     // Deve exibir métodos de entrega configurados
     const deliveryOptions = screen.queryAllByText(/Entrega Padrão|Entrega Expressa/i);
     expect(deliveryOptions.length).toBeGreaterThanOrEqual(0); // Pode não aparecer no step 1

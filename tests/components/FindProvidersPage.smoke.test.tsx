@@ -10,8 +10,22 @@ const users = [
 ];
 
 const jobs = [
-  { id: 'j1', clientId: 'c1@example.com', providerId: 'p1@example.com', status: 'concluido', review: { rating: 4, comment: 'Bom' }, description: 'Elétrica' },
-  { id: 'j2', clientId: 'c1@example.com', providerId: 'p2@example.com', status: 'concluido', review: { rating: 5, comment: 'Ótimo' }, description: 'Hidráulica' },
+  {
+    id: 'j1',
+    clientId: 'c1@example.com',
+    providerId: 'p1@example.com',
+    status: 'concluido',
+    review: { rating: 4, comment: 'Bom' },
+    description: 'Elétrica',
+  },
+  {
+    id: 'j2',
+    clientId: 'c1@example.com',
+    providerId: 'p2@example.com',
+    status: 'concluido',
+    review: { rating: 5, comment: 'Ótimo' },
+    description: 'Hidráulica',
+  },
 ];
 
 describe('FindProvidersPage smoke', () => {

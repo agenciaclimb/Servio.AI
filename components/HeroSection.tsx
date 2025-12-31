@@ -16,9 +16,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch, onLoginClick }
   };
 
   return (
-    <section 
-      role="region" 
-      aria-label="Buscar serviços" 
+    <section
+      role="region"
+      aria-label="Buscar serviços"
       className="text-center py-16 px-4 sm:px-6 lg:px-8"
     >
       <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tighter">
@@ -28,18 +28,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch, onLoginClick }
       <p className="mt-4 max-w-md mx-auto text-lg text-gray-600 sm:text-xl md:mt-5 md:max-w-3xl">
         Descreva o que você precisa e encontraremos os melhores profissionais para você.
       </p>
-      
-            {/* Botão de Login/Cadastro */}
-            {onLoginClick && (
-              <div className="mt-4">
-                <button
-                  onClick={onLoginClick}
-                  className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
-                >
-                  Entrar / Cadastre-se
-                </button>
-              </div>
-            )}
+
+      {/* Botão de Login/Cadastro */}
+      {onLoginClick && (
+        <div className="mt-4">
+          <button
+            onClick={onLoginClick}
+            className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+          >
+            Entrar / Cadastre-se
+          </button>
+        </div>
+      )}
 
       <div className="mt-8 max-w-xl mx-auto">
         <form onSubmit={handleSubmit} className="sm:flex sm:gap-3">
@@ -76,7 +76,16 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch, onLoginClick }
           Serviços Mais Procurados
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {['Elétrica', 'Hidráulica', 'Reparos', 'Limpeza', 'Pintura', 'Jardinagem', 'TI', 'Chaveiro'].map(service => (
+          {[
+            'Elétrica',
+            'Hidráulica',
+            'Reparos',
+            'Limpeza',
+            'Pintura',
+            'Jardinagem',
+            'TI',
+            'Chaveiro',
+          ].map(service => (
             <button
               key={service}
               onClick={() => {

@@ -30,17 +30,25 @@ vi.mock('../../services/api', () => ({
     location: 'São Paulo',
     status: 'ativo',
   })),
-  fetchJobs: vi.fn(async () => ([{
-    id: 'j1',
-    clientId: 'cliente@example.com',
-    providerId: 'maria@example.com',
-    status: 'concluido',
-    review: { rating: 5, comment: 'Excelente' },
-    description: 'Instalação elétrica',
-  }])),
-  fetchAllUsers: vi.fn(async () => ([{
-    uid: 'u1', email: 'maria@example.com', name: 'Maria Prestadora', type: 'prestador', status: 'ativo'
-  }])),
+  fetchJobs: vi.fn(async () => [
+    {
+      id: 'j1',
+      clientId: 'cliente@example.com',
+      providerId: 'maria@example.com',
+      status: 'concluido',
+      review: { rating: 5, comment: 'Excelente' },
+      description: 'Instalação elétrica',
+    },
+  ]),
+  fetchAllUsers: vi.fn(async () => [
+    {
+      uid: 'u1',
+      email: 'maria@example.com',
+      name: 'Maria Prestadora',
+      type: 'prestador',
+      status: 'ativo',
+    },
+  ]),
 }));
 
 vi.mock('../../services/geminiService', () => ({

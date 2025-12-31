@@ -204,9 +204,7 @@ describe('CheckoutFlow', () => {
       fireEvent.change(cepInput, { target: { value: '01310100' } });
 
       await waitFor(() => {
-        expect(mockFetch).toHaveBeenCalledWith(
-          'https://viacep.com.br/ws/01310100/json/'
-        );
+        expect(mockFetch).toHaveBeenCalledWith('https://viacep.com.br/ws/01310100/json/');
       });
     });
 
@@ -321,7 +319,10 @@ describe('CheckoutFlow', () => {
     });
 
     it('deve selecionar método de entrega e avançar', async () => {
-      const standardShipping = screen.getByText('Entrega Padrão').closest('label')?.querySelector('input');
+      const standardShipping = screen
+        .getByText('Entrega Padrão')
+        .closest('label')
+        ?.querySelector('input');
       if (standardShipping) {
         fireEvent.click(standardShipping);
       }
@@ -344,20 +345,35 @@ describe('CheckoutFlow', () => {
       await waitFor(() => screen.getByText('Endereço de Entrega'));
 
       // Fill address
-      fireEvent.change(screen.getByPlaceholderText(/João da Silva/i), { target: { value: 'João Silva' } });
-      fireEvent.change(screen.getByPlaceholderText(/joao@example.com/i), { target: { value: 'joao@example.com' } });
-      fireEvent.change(screen.getByPlaceholderText(/\(11\) 99999-9999/i), { target: { value: '11999999999' } });
-      fireEvent.change(screen.getByPlaceholderText(/12345-678/i), { target: { value: '01310100' } });
-      fireEvent.change(screen.getByPlaceholderText(/Rua das Flores/i), { target: { value: 'Av Paulista' } });
+      fireEvent.change(screen.getByPlaceholderText(/João da Silva/i), {
+        target: { value: 'João Silva' },
+      });
+      fireEvent.change(screen.getByPlaceholderText(/joao@example.com/i), {
+        target: { value: 'joao@example.com' },
+      });
+      fireEvent.change(screen.getByPlaceholderText(/\(11\) 99999-9999/i), {
+        target: { value: '11999999999' },
+      });
+      fireEvent.change(screen.getByPlaceholderText(/12345-678/i), {
+        target: { value: '01310100' },
+      });
+      fireEvent.change(screen.getByPlaceholderText(/Rua das Flores/i), {
+        target: { value: 'Av Paulista' },
+      });
       fireEvent.change(screen.getByPlaceholderText('123'), { target: { value: '1000' } });
       fireEvent.change(screen.getByPlaceholderText(/Centro/i), { target: { value: 'Bela Vista' } });
-      fireEvent.change(screen.getByPlaceholderText(/São Paulo/i), { target: { value: 'São Paulo' } });
+      fireEvent.change(screen.getByPlaceholderText(/São Paulo/i), {
+        target: { value: 'São Paulo' },
+      });
       fireEvent.change(screen.getByPlaceholderText('SP'), { target: { value: 'SP' } });
 
       fireEvent.click(screen.getByText('Continuar →'));
       await waitFor(() => screen.getByText('Método de Entrega'));
 
-      const standardShipping = screen.getByText('Entrega Padrão').closest('label')?.querySelector('input');
+      const standardShipping = screen
+        .getByText('Entrega Padrão')
+        .closest('label')
+        ?.querySelector('input');
       if (standardShipping) {
         fireEvent.click(standardShipping);
       }
@@ -419,10 +435,7 @@ describe('CheckoutFlow', () => {
       mockFetch.mockImplementationOnce(
         () =>
           new Promise(resolve =>
-            setTimeout(
-              () => resolve({ ok: true, json: async () => ({ url: 'test' }) }),
-              100
-            )
+            setTimeout(() => resolve({ ok: true, json: async () => ({ url: 'test' }) }), 100)
           )
       );
 
@@ -474,10 +487,7 @@ describe('CheckoutFlow', () => {
       renderCheckoutFlow();
 
       await waitFor(() => {
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Error fetching cart:',
-          expect.any(Error)
-        );
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching cart:', expect.any(Error));
       });
 
       consoleErrorSpy.mockRestore();
