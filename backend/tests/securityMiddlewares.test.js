@@ -7,19 +7,13 @@ import {
   webhookLimiter,
   createCustomLimiter,
 } from '../src/middleware/rateLimiter.js';
-import {
-  csrfExempt,
-  csrfErrorHandler,
-} from '../src/middleware/csrfProtection.js';
+import { csrfExempt, csrfErrorHandler } from '../src/middleware/csrfProtection.js';
 import {
   sanitizeInput,
   sanitizeQuery,
   preventPathTraversal,
 } from '../src/middleware/securityHeaders.js';
-import {
-  createJobSchema,
-  loginSchema,
-} from '../src/validators/requestValidators.js';
+import { createJobSchema, loginSchema } from '../src/validators/requestValidators.js';
 
 function mockRes() {
   const res = {};

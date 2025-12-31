@@ -43,7 +43,7 @@ describe('E-commerce Service', () => {
 
     mockDb = {
       collection: vi.fn(() => ({
-        doc: vi.fn((id) => ({
+        doc: vi.fn(id => ({
           id: id || 'generated-id-123',
           get: mockGet,
           set: mockSet,
@@ -105,9 +105,15 @@ describe('E-commerce Service', () => {
 
     it('should get products with filters', async () => {
       const mockSnapshot = {
-        forEach: vi.fn((callback) => {
-          callback({ id: 'prod1', data: () => ({ name: 'Product 1', price: 50, status: 'active' }) });
-          callback({ id: 'prod2', data: () => ({ name: 'Product 2', price: 100, status: 'active' }) });
+        forEach: vi.fn(callback => {
+          callback({
+            id: 'prod1',
+            data: () => ({ name: 'Product 1', price: 50, status: 'active' }),
+          });
+          callback({
+            id: 'prod2',
+            data: () => ({ name: 'Product 2', price: 100, status: 'active' }),
+          });
         }),
       };
 
@@ -131,13 +137,18 @@ describe('E-commerce Service', () => {
         exists: false,
       };
 
-      mockDb.collection().doc().get
-        .mockResolvedValueOnce(productDoc) // Product lookup
+      mockDb
+        .collection()
+        .doc()
+        .get.mockResolvedValueOnce(productDoc) // Product lookup
         .mockResolvedValueOnce(cartDoc); // Cart lookup
 
       mockDb.collection().doc().set.mockResolvedValue({});
 
-      const result = await ecommerceService.addToCart(mockDb, 'user123', { productId: 'prod1', quantity: 2 });
+      const result = await ecommerceService.addToCart(mockDb, 'user123', {
+        productId: 'prod1',
+        quantity: 2,
+      });
 
       expect(result.items).toHaveLength(1);
       expect(result.items[0]).toMatchObject({
@@ -168,7 +179,7 @@ describe('E-commerce Service', () => {
         ],
       };
 
-      const totals = ecommerceService.calculateTotals(cart, 0.10);
+      const totals = ecommerceService.calculateTotals(cart, 0.1);
 
       expect(totals.subtotal).toBe(130);
       expect(totals.tax).toBe(13); // 10%
@@ -192,9 +203,7 @@ describe('E-commerce Service', () => {
       const cartDoc = {
         exists: true,
         data: () => ({
-          items: [
-            { productId: 'prod1', name: 'Product 1', price: 50, quantity: 2 },
-          ],
+          items: [{ productId: 'prod1', name: 'Product 1', price: 50, quantity: 2 }],
         }),
       };
 
@@ -258,7 +267,7 @@ describe('E-commerce Service', () => {
 
     it('should list user orders', async () => {
       const mockSnapshot = {
-        forEach: vi.fn((callback) => {
+        forEach: vi.fn(callback => {
           callback({ id: 'order1', data: () => ({ userId: 'user123', total: 100 }) });
           callback({ id: 'order2', data: () => ({ userId: 'user123', total: 200 }) });
         }),
@@ -331,13 +340,18 @@ describe('E-commerce Service', () => {
         data: () => ({ stock: 10 }),
       };
 
-      mockDb.collection().doc().get
-        .mockResolvedValueOnce(cartDoc) // Cart lookup
+      mockDb
+        .collection()
+        .doc()
+        .get.mockResolvedValueOnce(cartDoc) // Cart lookup
         .mockResolvedValueOnce(productDoc); // Product stock check
 
       mockDb.collection().doc().set.mockResolvedValue({});
 
-      const result = await ecommerceService.updateCartItem(mockDb, 'user123', { productId: 'prod1', quantity: 5 });
+      const result = await ecommerceService.updateCartItem(mockDb, 'user123', {
+        productId: 'prod1',
+        quantity: 5,
+      });
 
       expect(result.items[0].quantity).toBe(5);
     });

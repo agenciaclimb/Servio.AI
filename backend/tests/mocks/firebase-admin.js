@@ -18,9 +18,9 @@ const mockAdmin = {
   initializeApp: () => {},
   firestore: () => mockFirestore,
   messaging: () => ({ send: () => Promise.resolve() }),
-  auth: () => ({ 
+  auth: () => ({
     verifyIdToken: () => Promise.resolve({ uid: 'test_user' }),
-    getUser: () => Promise.resolve({ uid: 'test_user', email: 'test@example.com' })
+    getUser: () => Promise.resolve({ uid: 'test_user', email: 'test@example.com' }),
   }),
   storage: () => ({ bucket: () => ({ file: () => ({ save: () => Promise.resolve() }) }) }),
   credential: {
@@ -31,8 +31,8 @@ const mockAdmin = {
 // Mock Timestamp separately to attach to firestore
 mockFirestore.Timestamp = {
   now: () => ({ toDate: () => new Date() }),
-  fromDate: (date) => ({ toDate: () => date }),
-  fromMillis: (ms) => ({ toDate: () => new Date(ms) }),
+  fromDate: date => ({ toDate: () => date }),
+  fromMillis: ms => ({ toDate: () => new Date(ms) }),
 };
 mockAdmin.firestore.Timestamp = mockFirestore.Timestamp;
 

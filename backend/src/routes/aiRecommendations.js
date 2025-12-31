@@ -1,7 +1,7 @@
 /**
  * Routes para AI Recommendations API
  * Endpoints para gerar recomendações de ações e conversão usando IA
- * 
+ *
  * Base path: /api/prospector
  */
 
@@ -9,7 +9,8 @@ const express = require('express');
 
 module.exports = (dependencies = {}) => {
   const { requireAuth } = dependencies.auth || require('../middleware/auth');
-  const aiServiceFactory = dependencies.aiServiceFactory || require('../services/aiRecommendationService');
+  const aiServiceFactory =
+    dependencies.aiServiceFactory || require('../services/aiRecommendationService');
 
   const {
     generateNextActions,
@@ -23,7 +24,7 @@ module.exports = (dependencies = {}) => {
   /**
    * POST /api/prospector/ai-recommendations
    * Gera recomendações completas para um lead
-   * 
+   *
    * Body:
    * {
    *   "prospectorId": "string",
@@ -31,7 +32,7 @@ module.exports = (dependencies = {}) => {
    *   "leadScore": number (0-100),
    *   "history": [{type, date}]
    * }
-   * 
+   *
    * Response: Comprehensive recommendation object
    */
   router.post('/ai-recommendations', requireAuth, async (req, res) => {
@@ -40,7 +41,7 @@ module.exports = (dependencies = {}) => {
 
       // Validar que o prospector só pode ver suas recomendações
       if (prospectorId && req.user.email && prospectorId !== req.user.email && !req.user.isAdmin) {
-         // Note: Added safety check for req.user.email existence
+        // Note: Added safety check for req.user.email existence
         return res.status(403).json({ error: 'Unauthorized' });
       }
 
@@ -67,8 +68,8 @@ module.exports = (dependencies = {}) => {
       const result = await generateNextActions(lead, history);
       res.json(result);
     } catch (error) {
-       console.error('Error:', error);
-       res.status(500).json({ error: 'Internal error' });
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal error' });
     }
   });
 
@@ -81,8 +82,8 @@ module.exports = (dependencies = {}) => {
       const result = await predictConversion(lead, leadScore, history);
       res.json(result);
     } catch (error) {
-       console.error('Error:', error);
-       res.status(500).json({ error: 'Internal error' });
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal error' });
     }
   });
 
@@ -95,18 +96,18 @@ module.exports = (dependencies = {}) => {
       const result = await suggestFollowUpSequence(lead, history);
       res.json(result);
     } catch (error) {
-       console.error('Error:', error);
-       res.status(500).json({ error: 'Internal error' });
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal error' });
     }
   });
-  
+
   // GET /api/prospector/ai-status
   router.get('/ai-status', requireAuth, async (req, res) => {
-      res.json({
-          status: 'available',
-          service: 'measured (gemini)',
-          timestamp: new Date().toISOString()
-      });
+    res.json({
+      status: 'available',
+      service: 'measured (gemini)',
+      timestamp: new Date().toISOString(),
+    });
   });
 
   return router;

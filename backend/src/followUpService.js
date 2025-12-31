@@ -25,13 +25,21 @@ const STEP_DEFS = [
   { key: 'day0', offsetDays: 0, template: 'invite' },
   { key: 'day2', offsetDays: 2, template: 'followup' },
   { key: 'day5', offsetDays: 5, template: 'followup2' },
-  { key: 'day10', offsetDays: 10, template: 'final' }
+  { key: 'day10', offsetDays: 10, template: 'final' },
 ];
 
-function ms(days) { return days * 24 * 60 * 60 * 1000; }
+function ms(days) {
+  return days * 24 * 60 * 60 * 1000;
+}
 
 /** Create schedule */
-async function createFollowUpSchedule({ db, prospectorId, prospectName, prospectEmail, referralLink }) {
+async function createFollowUpSchedule({
+  db,
+  prospectorId,
+  prospectName,
+  prospectEmail,
+  referralLink,
+}) {
   const coll = db.collection('prospector_followups');
   const now = Date.now();
   const ref = coll.doc();
@@ -40,7 +48,7 @@ async function createFollowUpSchedule({ db, prospectorId, prospectName, prospect
     scheduledAt: now + ms(def.offsetDays),
     sentAt: null,
     status: 'pending',
-    template: def.template
+    template: def.template,
   }));
   const doc = {
     id: ref.id,
@@ -51,7 +59,7 @@ async function createFollowUpSchedule({ db, prospectorId, prospectName, prospect
     createdAt: now,
     paused: false,
     optOut: false,
-    steps
+    steps,
   };
   await ref.set(doc);
   return doc;
@@ -59,8 +67,10 @@ async function createFollowUpSchedule({ db, prospectorId, prospectName, prospect
 
 /** List schedules */
 async function listSchedules({ db, prospectorId }) {
-  const snap = await db.collection('prospector_followups')
-    .where('prospectorId','==', prospectorId).get();
+  const snap = await db
+    .collection('prospector_followups')
+    .where('prospectorId', '==', prospectorId)
+    .get();
   return snap.docs.map(d => d.data());
 }
 
@@ -87,10 +97,11 @@ async function optOutSchedule({ db, scheduleId }) {
 
 /** Internal: rate limit (max 10 emails/hour per prospector) */
 async function isRateLimited({ db, prospectorId }) {
-  const oneHourAgo = Date.now() - 60*60*1000;
-  const snap = await db.collection('prospector_email_logs')
-    .where('prospectorId','==', prospectorId)
-    .where('sentAt','>', oneHourAgo)
+  const oneHourAgo = Date.now() - 60 * 60 * 1000;
+  const snap = await db
+    .collection('prospector_email_logs')
+    .where('prospectorId', '==', prospectorId)
+    .where('sentAt', '>', oneHourAgo)
     .get();
   return snap.size >= 10;
 }
@@ -120,23 +131,37 @@ async function sendEmailForStep({ gmailService, schedule, step }) {
       // Treat as invite to prospect (use generic sendEmail)
       const subject = `Convite Servio.AI - ${prospectName}`;
       const html = `<p>Olá ${prospectName},</p><p>Você foi convidado a conhecer a Servio.AI - plataforma inteligente de serviços.</p><p>Cadastre-se: <a href="${referralLink || 'https://servio-ai.com'}">${referralLink || 'https://servio-ai.com'}</a></p>`;
-      result = await gmailService.sendEmail({ to: prospectEmail, subject, html, text: html.replaceAll(/<[^>]+>/g,'') });
+      result = await gmailService.sendEmail({
+        to: prospectEmail,
+        subject,
+        html,
+        text: html.replaceAll(/<[^>]+>/g, ''),
+      });
     } else {
       // Follow-up reminder to prospector (internal) optional extension
       const subject = `Follow-up pendente: ${prospectName}`;
       const html = `<p>Lembrete de follow-up (Etapa ${step.key}). Prospect: <strong>${prospectName}</strong>.</p>`;
-      result = await gmailService.sendEmail({ to: prospectEmail, subject, html, text: html.replaceAll(/<[^>]+>/g,'') });
+      result = await gmailService.sendEmail({
+        to: prospectEmail,
+        subject,
+        html,
+        text: html.replaceAll(/<[^>]+>/g, ''),
+      });
     }
   } catch (err) {
-    return { success:false, error: err.message };
+    return { success: false, error: err.message };
   }
-  return { success:true, messageId: result.messageId };
+  return { success: true, messageId: result.messageId };
 }
 
 /** Mark step as sent + log */
 async function markStepSent({ db, schedule, step, sendRes }) {
   const ref = db.collection('prospector_followups').doc(schedule.id);
-  const newSteps = schedule.steps.map(s => s.key === step.key ? { ...s, sentAt: Date.now(), status: sendRes.success ? 'sent' : 'skipped' } : s);
+  const newSteps = schedule.steps.map(s =>
+    s.key === step.key
+      ? { ...s, sentAt: Date.now(), status: sendRes.success ? 'sent' : 'skipped' }
+      : s
+  );
   await ref.update({ steps: newSteps });
   // log
   const logRef = db.collection('prospector_email_logs').doc();
@@ -147,14 +172,15 @@ async function markStepSent({ db, schedule, step, sendRes }) {
     stepKey: step.key,
     sentAt: Date.now(),
     email: schedule.prospectEmail,
-    success: sendRes.success
+    success: sendRes.success,
   });
 }
 
 /** Process due emails */
 async function processDueEmails({ db, gmailService }) {
   const due = await getDueSteps({ db });
-  let processed = 0, sent = 0;
+  let processed = 0,
+    sent = 0;
   for (const item of due) {
     processed++;
     if (await isRateLimited({ db, prospectorId: item.schedule.prospectorId })) continue;
@@ -172,5 +198,5 @@ module.exports = {
   resumeSchedule,
   optOutSchedule,
   processDueEmails,
-  isRateLimited
+  isRateLimited,
 };

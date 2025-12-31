@@ -1,6 +1,6 @@
 /**
  * WhatsApp Business API Service
- * 
+ *
  * Gerencia integração com WhatsApp Business API para envio de mensagens
  * via Cloud Run / Express backend
  */
@@ -278,13 +278,13 @@ class WhatsAppService {
     const {
       delayMs = 15, // 15ms = ~66 msg/seg (limite Meta: 80/seg)
       maxRetries = 2,
-      batchSize = 100
+      batchSize = 100,
     } = options;
 
     const results = {
       sent: 0,
       failed: 0,
-      details: []
+      details: [],
     };
 
     for (let i = 0; i < recipients.length; i++) {
@@ -308,7 +308,7 @@ class WhatsAppService {
           results.sent++;
         } else {
           lastError = result.error;
-          
+
           // Se erro for rate limit, aguarda mais tempo
           if (lastError && lastError.includes('rate limit')) {
             await this._sleep(1000); // 1 segundo de pausa
@@ -321,7 +321,7 @@ class WhatsAppService {
         phone: recipient.phone,
         success,
         attempts,
-        error: success ? null : lastError
+        error: success ? null : lastError,
       });
 
       if (!success) {
@@ -335,11 +335,15 @@ class WhatsAppService {
 
       // Log de progresso a cada 10 mensagens
       if ((i + 1) % 10 === 0) {
-        logger.info(`📊 Progresso WhatsApp bulk: ${i + 1}/${recipients.length} (${results.sent} enviados, ${results.failed} falhados)`);
+        logger.info(
+          `📊 Progresso WhatsApp bulk: ${i + 1}/${recipients.length} (${results.sent} enviados, ${results.failed} falhados)`
+        );
       }
     }
 
-    logger.info(`✅ WhatsApp bulk finalizado: ${results.sent} enviados, ${results.failed} falhados de ${recipients.length} total`);
+    logger.info(
+      `✅ WhatsApp bulk finalizado: ${results.sent} enviados, ${results.failed} falhados de ${recipients.length} total`
+    );
     return results;
   }
 

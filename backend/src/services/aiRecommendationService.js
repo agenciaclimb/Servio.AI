@@ -1,7 +1,7 @@
 /**
  * AI Recommendation Service
  * Gera recomendações de ações para leads usando Google Gemini API
- * 
+ *
  * Funções:
  * - generateNextActions: Qual a melhor ação de contato para este lead?
  * - predictConversion: Qual a probabilidade de conversão?
@@ -53,7 +53,7 @@ Histórico de Contatos: ${prospectorHistory.length} interações
 Últimas interações:
 ${prospectorHistory
   .slice(-3)
-  .map((h) => `- ${h.type} em ${new Date(h.date).toLocaleDateString('pt-BR')}`)
+  .map(h => `- ${h.type} em ${new Date(h.date).toLocaleDateString('pt-BR')}`)
   .join('\n')}
     `;
 
@@ -171,7 +171,11 @@ Responda em JSON:
 
     return {
       probability: leadScore / 100,
-      factors: { score: leadScore / 100, engagement: Math.min(1, engagementCount / 5), recency: recencyScore },
+      factors: {
+        score: leadScore / 100,
+        engagement: Math.min(1, engagementCount / 5),
+        recency: recencyScore,
+      },
       risk: leadScore > 70 ? 'low' : 'medium',
       recommendation: 'Based on lead score',
     };
@@ -206,7 +210,7 @@ async function suggestFollowUpSequence(lead, pastActions = []) {
     }
 
     const actionsLog = pastActions
-      .map((a) => `${a.type} em ${new Date(a.date).toLocaleDateString('pt-BR')}`)
+      .map(a => `${a.type} em ${new Date(a.date).toLocaleDateString('pt-BR')}`)
       .slice(-3)
       .join(', ');
 
@@ -246,8 +250,20 @@ Responda em JSON:
 
     return {
       sequence: [
-        { step: 1, action: 'email', delay: '2 horas', message: 'Initial follow-up', scheduledFor: new Date() },
-        { step: 2, action: 'email', delay: '2 dias', message: 'Case study', scheduledFor: addDays(new Date(), 2) },
+        {
+          step: 1,
+          action: 'email',
+          delay: '2 horas',
+          message: 'Initial follow-up',
+          scheduledFor: new Date(),
+        },
+        {
+          step: 2,
+          action: 'email',
+          delay: '2 dias',
+          message: 'Case study',
+          scheduledFor: addDays(new Date(), 2),
+        },
       ],
       reasoning: 'Default sequence',
     };
@@ -255,7 +271,13 @@ Responda em JSON:
     console.error('Error suggesting follow-up sequence:', error);
     return {
       sequence: [
-        { step: 1, action: 'email', delay: '2 horas', message: 'Follow-up', scheduledFor: new Date() },
+        {
+          step: 1,
+          action: 'email',
+          delay: '2 horas',
+          message: 'Follow-up',
+          scheduledFor: new Date(),
+        },
       ],
       error: error.message,
       reasoning: 'Error occurred',
@@ -348,7 +370,8 @@ async function generateComprehensiveRecommendation(lead, leadScore = 50, history
       conversionRisk: conversion.risk,
       followUpSequence: followUpSequence.sequence,
     },
-    priority: conversion.probability > 0.7 ? 'high' : conversion.probability > 0.4 ? 'medium' : 'low',
+    priority:
+      conversion.probability > 0.7 ? 'high' : conversion.probability > 0.4 ? 'medium' : 'low',
     generatedAt: new Date().toISOString(),
   };
 }

@@ -1,6 +1,6 @@
 /**
  * Prospector Analytics Service
- * 
+ *
  * Provides real-time analytics and metrics for prospector performance.
  * Includes conversion tracking, ROI calculation, and badge progression.
  */
@@ -9,17 +9,19 @@
  * Calculate prospector performance metrics
  */
 async function calculateProspectorMetrics({ db, prospectorId, timePeriod = 90 }) {
-  const cutoffDate = Date.now() - (timePeriod * 24 * 60 * 60 * 1000);
+  const cutoffDate = Date.now() - timePeriod * 24 * 60 * 60 * 1000;
 
   // Get all providers recruited by this prospector
-  const providersSnap = await db.collection('users')
+  const providersSnap = await db
+    .collection('users')
     .where('prospectorId', '==', prospectorId)
     .get();
 
   const providers = providersSnap.docs.map(d => d.data());
-  
+
   // Get all commissions earned
-  const commissionsSnap = await db.collection('commissions')
+  const commissionsSnap = await db
+    .collection('commissions')
     .where('prospectorId', '==', prospectorId)
     .where('createdAt', '>=', cutoffDate)
     .get();
@@ -30,9 +32,11 @@ async function calculateProspectorMetrics({ db, prospectorId, timePeriod = 90 })
   const totalRecruits = providers.length;
   const activeRecruits = providers.filter(p => p.status === 'ativo').length;
   const totalCommissions = commissions.reduce((sum, c) => sum + (c.amount || 0), 0);
-  const paidCommissions = commissions.filter(c => c.status === 'paid')
+  const paidCommissions = commissions
+    .filter(c => c.status === 'paid')
     .reduce((sum, c) => sum + (c.amount || 0), 0);
-  const pendingCommissions = commissions.filter(c => c.status === 'pending')
+  const pendingCommissions = commissions
+    .filter(c => c.status === 'pending')
     .reduce((sum, c) => sum + (c.amount || 0), 0);
 
   // Get referral link analytics
@@ -49,14 +53,18 @@ async function calculateProspectorMetrics({ db, prospectorId, timePeriod = 90 })
     if (providerCommissions.length > 0) {
       const firstCommission = providerCommissions.sort((a, b) => a.createdAt - b.createdAt)[0];
       const recruitDate = provider.memberSince || provider.createdAt;
-      const daysDiff = Math.floor((firstCommission.createdAt - recruitDate) / (24 * 60 * 60 * 1000));
+      const daysDiff = Math.floor(
+        (firstCommission.createdAt - recruitDate) / (24 * 60 * 60 * 1000)
+      );
       firstCommissions.set(provider.email, daysDiff);
     }
   }
 
-  const avgDaysToFirstCommission = firstCommissions.size > 0
-    ? Array.from(firstCommissions.values()).reduce((sum, days) => sum + days, 0) / firstCommissions.size
-    : 0;
+  const avgDaysToFirstCommission =
+    firstCommissions.size > 0
+      ? Array.from(firstCommissions.values()).reduce((sum, days) => sum + days, 0) /
+        firstCommissions.size
+      : 0;
 
   // Top performing providers
   const providerCommissions = {};
@@ -73,19 +81,18 @@ async function calculateProspectorMetrics({ db, prospectorId, timePeriod = 90 })
     .map(([providerId, amount]) => ({
       providerId,
       totalCommissions: amount,
-      providerName: providers.find(p => p.email === providerId)?.name || providerId
+      providerName: providers.find(p => p.email === providerId)?.name || providerId,
     }));
 
   // Recent activity (last 7 days)
-  const last7Days = Date.now() - (7 * 24 * 60 * 60 * 1000);
-  const recentRecruits = providers.filter(p => 
-    (p.memberSince || p.createdAt) >= last7Days
-  ).length;
+  const last7Days = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const recentRecruits = providers.filter(p => (p.memberSince || p.createdAt) >= last7Days).length;
   const recentCommissions = commissions.filter(c => c.createdAt >= last7Days);
   const recentEarnings = recentCommissions.reduce((sum, c) => sum + (c.amount || 0), 0);
 
   // Referral link clicks by source
-  const clicksSnap = await db.collection('referral_clicks')
+  const clicksSnap = await db
+    .collection('referral_clicks')
     .where('prospectorId', '==', prospectorId)
     .where('timestamp', '>=', cutoffDate)
     .get();
@@ -125,55 +132,139 @@ function calculateBadges(metrics) {
 
   // Recruiter badges
   if (metrics.totalRecruits >= 100) {
-    badges.push({ name: 'Elite Recruiter', tier: 'platinum', icon: '👑', description: '100+ prestadores recrutados' });
+    badges.push({
+      name: 'Elite Recruiter',
+      tier: 'platinum',
+      icon: '👑',
+      description: '100+ prestadores recrutados',
+    });
   } else if (metrics.totalRecruits >= 50) {
-    badges.push({ name: 'Master Recruiter', tier: 'gold', icon: '🥇', description: '50+ prestadores recrutados' });
+    badges.push({
+      name: 'Master Recruiter',
+      tier: 'gold',
+      icon: '🥇',
+      description: '50+ prestadores recrutados',
+    });
   } else if (metrics.totalRecruits >= 25) {
-    badges.push({ name: 'Pro Recruiter', tier: 'silver', icon: '🥈', description: '25+ prestadores recrutados' });
+    badges.push({
+      name: 'Pro Recruiter',
+      tier: 'silver',
+      icon: '🥈',
+      description: '25+ prestadores recrutados',
+    });
   } else if (metrics.totalRecruits >= 10) {
-    badges.push({ name: 'Recruiter', tier: 'bronze', icon: '🥉', description: '10+ prestadores recrutados' });
+    badges.push({
+      name: 'Recruiter',
+      tier: 'bronze',
+      icon: '🥉',
+      description: '10+ prestadores recrutados',
+    });
   } else if (metrics.totalRecruits >= 5) {
-    badges.push({ name: 'Rising Star', tier: 'bronze', icon: '⭐', description: '5+ prestadores recrutados' });
+    badges.push({
+      name: 'Rising Star',
+      tier: 'bronze',
+      icon: '⭐',
+      description: '5+ prestadores recrutados',
+    });
   }
 
   // Earnings badges
   if (metrics.totalCommissions >= 10000) {
-    badges.push({ name: 'Money Maker', tier: 'platinum', icon: '💰', description: 'R$ 10.000+ em comissões' });
+    badges.push({
+      name: 'Money Maker',
+      tier: 'platinum',
+      icon: '💰',
+      description: 'R$ 10.000+ em comissões',
+    });
   } else if (metrics.totalCommissions >= 5000) {
-    badges.push({ name: 'Big Earner', tier: 'gold', icon: '💵', description: 'R$ 5.000+ em comissões' });
+    badges.push({
+      name: 'Big Earner',
+      tier: 'gold',
+      icon: '💵',
+      description: 'R$ 5.000+ em comissões',
+    });
   } else if (metrics.totalCommissions >= 1000) {
-    badges.push({ name: 'Earner', tier: 'silver', icon: '💸', description: 'R$ 1.000+ em comissões' });
+    badges.push({
+      name: 'Earner',
+      tier: 'silver',
+      icon: '💸',
+      description: 'R$ 1.000+ em comissões',
+    });
   } else if (metrics.totalCommissions >= 500) {
-    badges.push({ name: 'First Earnings', tier: 'bronze', icon: '💳', description: 'R$ 500+ em comissões' });
+    badges.push({
+      name: 'First Earnings',
+      tier: 'bronze',
+      icon: '💳',
+      description: 'R$ 500+ em comissões',
+    });
   }
 
   // Conversion rate badges
   const rate = Number.parseFloat(metrics.conversionRate);
   if (rate >= 50) {
-    badges.push({ name: 'Conversion Master', tier: 'platinum', icon: '🎯', description: '50%+ taxa de conversão' });
+    badges.push({
+      name: 'Conversion Master',
+      tier: 'platinum',
+      icon: '🎯',
+      description: '50%+ taxa de conversão',
+    });
   } else if (rate >= 30) {
-    badges.push({ name: 'Conversion Pro', tier: 'gold', icon: '🎲', description: '30%+ taxa de conversão' });
+    badges.push({
+      name: 'Conversion Pro',
+      tier: 'gold',
+      icon: '🎲',
+      description: '30%+ taxa de conversão',
+    });
   } else if (rate >= 15) {
-    badges.push({ name: 'Good Converter', tier: 'silver', icon: '📈', description: '15%+ taxa de conversão' });
+    badges.push({
+      name: 'Good Converter',
+      tier: 'silver',
+      icon: '📈',
+      description: '15%+ taxa de conversão',
+    });
   } else if (rate >= 5) {
-    badges.push({ name: 'Converter', tier: 'bronze', icon: '📊', description: '5%+ taxa de conversão' });
+    badges.push({
+      name: 'Converter',
+      tier: 'bronze',
+      icon: '📊',
+      description: '5%+ taxa de conversão',
+    });
   }
 
   // Streak badges (active providers still completing jobs)
-  const activeRate = metrics.totalRecruits > 0 
-    ? (metrics.activeRecruits / metrics.totalRecruits) * 100 
-    : 0;
+  const activeRate =
+    metrics.totalRecruits > 0 ? (metrics.activeRecruits / metrics.totalRecruits) * 100 : 0;
   if (activeRate >= 80 && metrics.totalRecruits >= 10) {
-    badges.push({ name: 'Quality Recruiter', tier: 'gold', icon: '✨', description: '80%+ dos recrutas ativos' });
+    badges.push({
+      name: 'Quality Recruiter',
+      tier: 'gold',
+      icon: '✨',
+      description: '80%+ dos recrutas ativos',
+    });
   } else if (activeRate >= 60 && metrics.totalRecruits >= 5) {
-    badges.push({ name: 'Good Recruiter', tier: 'silver', icon: '👍', description: '60%+ dos recrutas ativos' });
+    badges.push({
+      name: 'Good Recruiter',
+      tier: 'silver',
+      icon: '👍',
+      description: '60%+ dos recrutas ativos',
+    });
   }
 
   // Speed badges (fast to first commission)
   if (metrics.avgDaysToFirstCommission <= 3 && metrics.totalRecruits >= 5) {
-    badges.push({ name: 'Speed Demon', tier: 'gold', icon: '⚡', description: 'Primeira comissão em ≤3 dias (média)' });
+    badges.push({
+      name: 'Speed Demon',
+      tier: 'gold',
+      icon: '⚡',
+      description: 'Primeira comissão em ≤3 dias (média)',
+    });
   } else if (metrics.avgDaysToFirstCommission <= 7 && metrics.totalRecruits >= 3) {
-    badges.push({ name: 'Fast Starter', tier: 'silver', icon: '🚀', description: 'Primeira comissão em ≤7 dias (média)' });
+    badges.push({
+      name: 'Fast Starter',
+      tier: 'silver',
+      icon: '🚀',
+      description: 'Primeira comissão em ≤7 dias (média)',
+    });
   }
 
   return badges;
@@ -186,7 +277,7 @@ async function getLeaderboard({ db, sortBy = 'totalCommissions', limit = 10 }) {
   const snap = await db.collection('prospectors').get();
   const prospectors = snap.docs.map(doc => ({
     id: doc.id,
-    ...doc.data()
+    ...doc.data(),
   }));
 
   // Sort by specified field

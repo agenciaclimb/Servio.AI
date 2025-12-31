@@ -10,22 +10,24 @@
 class PipedriveService {
   constructor(config, deps = {}) {
     this.config = config;
-    
+
     // Dependency Injection with lazy require fallback
     this.axios = deps.axios || require('axios');
-    this.functions = deps.functions || (() => {
-      try {
-        return require('firebase-functions');
-      } catch {
-        return {
-          logger: {
-            info: (...args) => console.log('[PipedriveService]', ...args),
-            warn: (...args) => console.warn('[PipedriveService]', ...args),
-            error: (...args) => console.error('[PipedriveService]', ...args),
-          },
-        };
-      }
-    })();
+    this.functions =
+      deps.functions ||
+      (() => {
+        try {
+          return require('firebase-functions');
+        } catch {
+          return {
+            logger: {
+              info: (...args) => console.log('[PipedriveService]', ...args),
+              warn: (...args) => console.warn('[PipedriveService]', ...args),
+              error: (...args) => console.error('[PipedriveService]', ...args),
+            },
+          };
+        }
+      })();
 
     this.client = this.axios.create({
       baseURL: `https://${config.companyDomain}.pipedrive.com/v1`,
@@ -130,15 +132,18 @@ class PipedriveService {
 
       const pipeline = await this.getDefaultPipeline();
 
-      return await this.createDeal({
-        ...dealData,
-        id: '',
-        pipelineId: pipeline.id,
-        leadId: personId.toString(),
-        status: 'open',
-        createdAt: new Date(),
-        servioProposalId: proposalId,
-      }, personId);
+      return await this.createDeal(
+        {
+          ...dealData,
+          id: '',
+          pipelineId: pipeline.id,
+          leadId: personId.toString(),
+          status: 'open',
+          createdAt: new Date(),
+          servioProposalId: proposalId,
+        },
+        personId
+      );
     } catch (error) {
       this.functions.logger.error('Erro ao sincronizar proposta:', error);
       throw error;

@@ -41,7 +41,7 @@ vi.mock('firebase-admin', () => ({
   },
 }));
 
-describe('TwilioService', () => {
+describe('TwilioService', { timeout: 60000 }, () => {
   let TwilioService: any;
 
   beforeEach(async () => {

@@ -1,7 +1,7 @@
 /**
  * 🔐 Generate Firebase Auth Test Tokens
  * Para uso em smoke tests E2E autenticados
- * 
+ *
  * Uso:
  *   node scripts/generate-test-token.js cliente
  *   node scripts/generate-test-token.js prestador
@@ -37,26 +37,26 @@ const testUsers = {
     uid: 'test-cliente-uid-001',
     email: 'test-cliente@servio.ai',
     role: 'cliente',
-    displayName: 'Test Cliente'
+    displayName: 'Test Cliente',
   },
   prestador: {
     uid: 'test-provider-uid-002',
     email: 'test-provider@servio.ai',
     role: 'prestador',
-    displayName: 'Test Prestador'
+    displayName: 'Test Prestador',
   },
   prospector: {
     uid: 'test-prospector-uid-003',
     email: 'test-prospector@servio.ai',
     role: 'prospector',
-    displayName: 'Test Prospector'
+    displayName: 'Test Prospector',
   },
   admin: {
     uid: 'test-admin-uid-999',
     email: 'test-admin@servio.ai',
     role: 'admin',
-    displayName: 'Test Admin'
-  }
+    displayName: 'Test Admin',
+  },
 };
 
 const userData = testUsers[role];
@@ -71,7 +71,7 @@ async function generateToken() {
     // Create custom token with claims
     const customToken = await admin.auth().createCustomToken(userData.uid, {
       role: userData.role,
-      email: userData.email
+      email: userData.email,
     });
 
     console.log('✅ Custom Token (expires in 1h):');
@@ -80,10 +80,14 @@ async function generateToken() {
     console.log(`   curl -H "Authorization: Bearer ${customToken}" http://localhost:8081/api/jobs`);
     console.log('\n📋 Para usar em PowerShell:');
     console.log(`   $token = "${customToken}"`);
-    console.log(`   Invoke-WebRequest -Uri "http://localhost:8081/api/jobs" -Headers @{Authorization="Bearer $token"}`);
+    console.log(
+      `   Invoke-WebRequest -Uri "http://localhost:8081/api/jobs" -Headers @{Authorization="Bearer $token"}`
+    );
     console.log('\n⚠️  IMPORTANTE: Este é um CUSTOM token. Para ID token, use:');
     console.log('   1. Login no frontend com este custom token');
-    console.log('   2. Ou use Firebase REST API: https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken');
+    console.log(
+      '   2. Ou use Firebase REST API: https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken'
+    );
 
     // Try to get/create user
     try {
@@ -98,13 +102,13 @@ async function generateToken() {
             email: userData.email,
             emailVerified: true,
             displayName: userData.displayName,
-            disabled: false
+            disabled: false,
           });
           console.log(`✅ User created: ${newUser.uid}`);
-          
+
           // Set custom claims
           await admin.auth().setCustomUserClaims(userData.uid, {
-            role: userData.role
+            role: userData.role,
           });
           console.log(`✅ Custom claims set: role=${userData.role}`);
         } catch (createError) {
@@ -114,7 +118,6 @@ async function generateToken() {
         console.error(`❌ Error checking user:`, getUserError.message);
       }
     }
-
   } catch (error) {
     console.error('❌ Error generating token:', error);
     process.exit(1);

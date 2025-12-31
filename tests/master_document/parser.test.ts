@@ -3,16 +3,20 @@
  * Valida parser e schema do Documento Mestre v4.0
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import {
   DocumentoMestreParser,
   validateDocumentoMestre,
   ValidationResult,
 } from '../../master_document/parser';
-import * as fs from 'fs';
 
-// Mock do fs para testes
-vi.mock('fs');
+// Mock do módulo fs
+vi.mock('fs', () => ({
+  readFileSync: vi.fn(),
+}));
+
+// Importar fs depois do mock
+import * as fs from 'fs';
 
 describe('DocumentoMestreParser - Schema Validation', () => {
   let parser: DocumentoMestreParser;
@@ -20,6 +24,10 @@ describe('DocumentoMestreParser - Schema Validation', () => {
   beforeEach(() => {
     parser = new DocumentoMestreParser();
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   describe('loadSchema', () => {

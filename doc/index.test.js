@@ -4,8 +4,8 @@ import admin from 'firebase-admin';
 // Mock Firebase Admin SDK
 vi.mock('firebase-admin', () => {
   const firestore = () => ({
-    collection: (path) => ({
-      doc: (docPath) => ({
+    collection: path => ({
+      doc: docPath => ({
         get: vi.fn(),
         set: vi.fn(),
       }),

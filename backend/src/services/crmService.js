@@ -1,7 +1,7 @@
 /**
  * CRM Integration Service
  * Suporta sincronização bidirecional com Pipedrive e HubSpot
- * 
+ *
  * Features:
  * - Sincronização de leads Servio.AI → CRM
  * - Sincronização de updates CRM → Servio.AI via webhooks
@@ -107,17 +107,14 @@ class CRMService {
 
       if (existingPerson) {
         // Atualiza pessoa existente
-        pipedriveResponse = await this.pipedriveAxios.put(
-          `/persons/${existingPerson.id}`,
-          {
-            name: `${prospect.firstName} ${prospect.lastName}`,
-            email: [{ value: prospect.email, primary: true }],
-            phone: prospect.phone ? [{ value: prospect.phone, primary: true }] : [],
-            org_id: prospect.company,
-            [`custom_servio_score`]: prospect.score,
-            note: prospect.notes,
-          }
-        );
+        pipedriveResponse = await this.pipedriveAxios.put(`/persons/${existingPerson.id}`, {
+          name: `${prospect.firstName} ${prospect.lastName}`,
+          email: [{ value: prospect.email, primary: true }],
+          phone: prospect.phone ? [{ value: prospect.phone, primary: true }] : [],
+          org_id: prospect.company,
+          [`custom_servio_score`]: prospect.score,
+          note: prospect.notes,
+        });
 
         return {
           success: true,
@@ -192,21 +189,18 @@ class CRMService {
         };
       } else {
         // Cria novo contato
-        hubspotResponse = await this.hubspotAxios.post(
-          '/crm/v3/objects/contacts',
-          {
-            properties: {
-              firstname: prospect.firstName,
-              lastname: prospect.lastName,
-              email: prospect.email,
-              phone: prospect.phone,
-              company: prospect.company,
-              jobtitle: prospect.position,
-              servio_score: prospect.score.toString(),
-              notes: prospect.notes,
-            },
-          }
-        );
+        hubspotResponse = await this.hubspotAxios.post('/crm/v3/objects/contacts', {
+          properties: {
+            firstname: prospect.firstName,
+            lastname: prospect.lastName,
+            email: prospect.email,
+            phone: prospect.phone,
+            company: prospect.company,
+            jobtitle: prospect.position,
+            servio_score: prospect.score.toString(),
+            notes: prospect.notes,
+          },
+        });
 
         return {
           success: true,
@@ -243,29 +237,24 @@ class CRMService {
    */
   async findHubspotContact(email) {
     try {
-      const response = await this.hubspotAxios.get(
-        `/crm/v3/objects/contacts/search`,
-        {
-          data: {
-            filterGroups: [
-              {
-                filters: [
-                  {
-                    propertyName: 'email',
-                    operator: 'EQ',
-                    value: email,
-                  },
-                ],
-              },
-            ],
-            limit: 1,
-          },
-        }
-      );
+      const response = await this.hubspotAxios.get(`/crm/v3/objects/contacts/search`, {
+        data: {
+          filterGroups: [
+            {
+              filters: [
+                {
+                  propertyName: 'email',
+                  operator: 'EQ',
+                  value: email,
+                },
+              ],
+            },
+          ],
+          limit: 1,
+        },
+      });
 
-      return response.data.results?.length > 0
-        ? response.data.results[0]
-        : null;
+      return response.data.results?.length > 0 ? response.data.results[0] : null;
     } catch (error) {
       return null;
     }
@@ -457,17 +446,15 @@ class CRMService {
    */
   async logSyncEvent(prospectId, crmType, result) {
     try {
-      await this.db
-        .collection('sync_logs')
-        .add({
-          prospectId,
-          crmType,
-          action: result.action,
-          crmId: result.crmId,
-          success: result.success,
-          timestamp: new Date(),
-          source: 'crmService',
-        });
+      await this.db.collection('sync_logs').add({
+        prospectId,
+        crmType,
+        action: result.action,
+        crmId: result.crmId,
+        success: result.success,
+        timestamp: new Date(),
+        source: 'crmService',
+      });
     } catch (error) {
       console.error('[CRMService] Erro ao registrar sync log:', error);
     }
@@ -485,7 +472,7 @@ class CRMService {
         .limit(10)
         .get();
 
-      return logs.docs.map((doc) => doc.data());
+      return logs.docs.map(doc => doc.data());
     } catch (error) {
       console.error('[CRMService] Erro ao obter sync status:', error);
       return [];
@@ -525,7 +512,7 @@ class CRMService {
       const deals = response.data.data || [];
       return {
         synced: deals.length,
-        deals: deals.map((deal) => ({
+        deals: deals.map(deal => ({
           crmId: deal.id,
           crmType: 'pipedrive',
           title: deal.title,
@@ -550,20 +537,17 @@ class CRMService {
     }
 
     try {
-      const response = await this.hubspotAxios.get(
-        '/crm/v3/objects/deals',
-        {
-          params: {
-            limit: 100,
-            properties: ['dealname', 'dealstage', 'amount', 'closedate'],
-          },
-        }
-      );
+      const response = await this.hubspotAxios.get('/crm/v3/objects/deals', {
+        params: {
+          limit: 100,
+          properties: ['dealname', 'dealstage', 'amount', 'closedate'],
+        },
+      });
 
       const deals = response.data.results || [];
       return {
         synced: deals.length,
-        deals: deals.map((deal) => ({
+        deals: deals.map(deal => ({
           crmId: deal.id,
           crmType: 'hubspot',
           title: deal.properties.dealname,

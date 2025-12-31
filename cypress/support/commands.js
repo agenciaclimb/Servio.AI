@@ -6,7 +6,7 @@
  * cy.mockLogin() - Simula login injetando user no AppContext
  * @param {string} userType - 'client' | 'provider' | 'admin'
  * @param {object} overrides - Propriedades customizadas do usuário
- * 
+ *
  * Estratégia:
  * 1. Mocka Firebase auth com usuário fake
  * 2. Intercept GET /api/users/* para retornar perfil
@@ -23,7 +23,7 @@ Cypress.Commands.add('mockLogin', (userType = 'client', overrides = {}) => {
       phone: '11987654321',
       verificationStatus: 'verificado',
       createdAt: '2025-01-01',
-      ...overrides
+      ...overrides,
     },
     provider: {
       uid: 'test-provider-def',
@@ -35,7 +35,7 @@ Cypress.Commands.add('mockLogin', (userType = 'client', overrides = {}) => {
       serviceCatalog: ['encanador', 'eletricista'],
       rating: 4.8,
       createdAt: '2025-01-01',
-      ...overrides
+      ...overrides,
     },
     admin: {
       uid: 'test-admin-master',
@@ -45,22 +45,22 @@ Cypress.Commands.add('mockLogin', (userType = 'client', overrides = {}) => {
       phone: '11999999999',
       verificationStatus: 'verificado',
       createdAt: '2025-01-01',
-      ...overrides
-    }
+      ...overrides,
+    },
   };
 
   const user = userProfiles[userType];
-  
+
   // Mock Firebase Auth state
-  cy.window().then((win) => {
+  cy.window().then(win => {
     // Injeta mock do Firebase auth no window
     win.mockFirebaseUser = {
       uid: user.uid,
       email: user.email,
       displayName: user.displayName,
-      getIdToken: cy.stub().resolves('fake-jwt-token-' + user.uid)
+      getIdToken: cy.stub().resolves('fake-jwt-token-' + user.uid),
     };
-    
+
     // Injeta user no localStorage para AppContext
     win.localStorage.setItem('servio_current_user', JSON.stringify(user));
     win.localStorage.setItem('servio_auth_token', 'fake-jwt-token-' + user.uid);
@@ -69,14 +69,14 @@ Cypress.Commands.add('mockLogin', (userType = 'client', overrides = {}) => {
   // Intercept user profile fetch
   cy.intercept('GET', `**/api/users/${user.email}`, {
     statusCode: 200,
-    body: user
+    body: user,
   }).as('getUserProfile');
 
   // Intercept user profile fetch by UID (alternativa)
-  cy.intercept('GET', `**/api/users/*`, (req) => {
+  cy.intercept('GET', `**/api/users/*`, req => {
     req.reply({
       statusCode: 200,
-      body: user
+      body: user,
     });
   }).as('getUserById');
 
@@ -91,9 +91,9 @@ Cypress.Commands.add('mockLogin', (userType = 'client', overrides = {}) => {
 Cypress.Commands.add('mockFirestore', (collection, data) => {
   cy.intercept('GET', `**/firestore/${collection}*`, {
     statusCode: 200,
-    body: data
+    body: data,
   }).as(`mockFirestore_${collection}`);
-  
+
   cy.log(`✅ Mock Firestore: ${collection}`);
 });
 
@@ -105,10 +105,10 @@ Cypress.Commands.add('mockStripeSession', (sessionId = 'cs_test_123') => {
     statusCode: 200,
     body: {
       sessionId: sessionId,
-      url: 'https://checkout.stripe.com/pay/' + sessionId
-    }
+      url: 'https://checkout.stripe.com/pay/' + sessionId,
+    },
   }).as('createStripeSession');
-  
+
   cy.log(`✅ Mock Stripe session: ${sessionId}`);
 });
 
@@ -124,20 +124,20 @@ Cypress.Commands.add('mockJobData', (jobs = []) => {
     category: 'encanador',
     status: 'aberto',
     urgency: 'normal',
-    createdAt: '2025-11-10T10:00:00Z'
+    createdAt: '2025-11-10T10:00:00Z',
   };
 
   const mockJobs = jobs.length > 0 ? jobs : [defaultJob];
 
   cy.intercept('GET', '**/api/jobs*', {
     statusCode: 200,
-    body: mockJobs
+    body: mockJobs,
   }).as('getJobs');
 
-  cy.intercept('POST', '**/api/jobs', (req) => {
+  cy.intercept('POST', '**/api/jobs', req => {
     req.reply({
       statusCode: 201,
-      body: { ...defaultJob, ...req.body, id: 'job-test-' + Date.now() }
+      body: { ...defaultJob, ...req.body, id: 'job-test-' + Date.now() },
     });
   }).as('createJob');
 
@@ -150,13 +150,13 @@ Cypress.Commands.add('mockJobData', (jobs = []) => {
 Cypress.Commands.add('mockProposalData', (proposals = []) => {
   cy.intercept('GET', '**/api/proposals*', {
     statusCode: 200,
-    body: proposals
+    body: proposals,
   }).as('getProposals');
 
-  cy.intercept('POST', '**/api/proposals', (req) => {
+  cy.intercept('POST', '**/api/proposals', req => {
     req.reply({
       statusCode: 201,
-      body: { ...req.body, id: 'prop-test-' + Date.now() }
+      body: { ...req.body, id: 'prop-test-' + Date.now() },
     });
   }).as('createProposal');
 
@@ -169,18 +169,18 @@ Cypress.Commands.add('mockProposalData', (proposals = []) => {
 Cypress.Commands.add('mockDisputeData', (disputes = []) => {
   cy.intercept('GET', '**/api/disputes*', {
     statusCode: 200,
-    body: disputes
+    body: disputes,
   }).as('getDisputes');
 
-  cy.intercept('POST', '**/api/disputes', (req) => {
+  cy.intercept('POST', '**/api/disputes', req => {
     req.reply({
       statusCode: 201,
-      body: { 
-        ...req.body, 
+      body: {
+        ...req.body,
         id: 'disp-test-' + Date.now(),
         status: 'aberta',
-        createdAt: new Date().toISOString()
-      }
+        createdAt: new Date().toISOString(),
+      },
     });
   }).as('createDispute');
 

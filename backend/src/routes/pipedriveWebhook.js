@@ -51,10 +51,7 @@ function validateWebhookSignature(req) {
   }
 
   const payload = JSON.stringify(req.body);
-  const hash = crypto
-    .createHmac('sha256', PIPEDRIVE_WEBHOOK_TOKEN)
-    .update(payload)
-    .digest('hex');
+  const hash = crypto.createHmac('sha256', PIPEDRIVE_WEBHOOK_TOKEN).update(payload).digest('hex');
 
   return hash === signature;
 }
@@ -120,13 +117,16 @@ router.post('/pipedrive/sync-proposal', async (req, res) => {
       currency: currency || 'BRL',
     });
 
-    await db.collection('proposals').doc(proposalId).update({
-      pipedriveSync: {
-        dealId,
-        syncedAt: new Date(),
-        status: 'synced',
-      },
-    });
+    await db
+      .collection('proposals')
+      .doc(proposalId)
+      .update({
+        pipedriveSync: {
+          dealId,
+          syncedAt: new Date(),
+          status: 'synced',
+        },
+      });
 
     functions.logger.info(`Proposta sincronizada: ${proposalId} → Deal ${dealId}`);
 

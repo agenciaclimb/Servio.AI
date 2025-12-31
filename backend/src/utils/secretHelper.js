@@ -32,5 +32,5 @@ async function getPlacesApiKey() {
 
 module.exports = {
   getSecret,
-  getPlacesApiKey
+  getPlacesApiKey,
 };

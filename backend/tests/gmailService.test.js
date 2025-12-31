@@ -53,7 +53,13 @@ describe('gmailService', () => {
 
   it('sendConversionNotification formats commission value', async () => {
     const gmailService = await loadService();
-    await gmailService.sendConversionNotification('Ana', 'ana@example.com', 'Pedro', 'Eletricista', 450);
+    await gmailService.sendConversionNotification(
+      'Ana',
+      'ana@example.com',
+      'Pedro',
+      'Eletricista',
+      450
+    );
     const { to, subject, html, text } = gmailService._mockHistory[0];
     expect(to).toBe('ana@example.com');
     expect(subject).toContain('Conversão');

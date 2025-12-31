@@ -1,14 +1,14 @@
 /**
  * Email Service using Gmail SMTP
- * 
+ *
  * Uses Nodemailer + Gmail SMTP for sending transactional and marketing emails.
- * 
+ *
  * Setup:
  * 1. Enable 2-Step Verification in your Google Account
  * 2. Generate App Password: https://myaccount.google.com/apppasswords
  * 3. Add to .env: GMAIL_USER=your-email@gmail.com
  * 4. Add to .env: GMAIL_APP_PASSWORD=your-16-char-password
- * 
+ *
  * Limits:
  * - Gmail Free: 500 emails/day
  * - Google Workspace: 2,000 emails/day
@@ -26,14 +26,14 @@ class GmailService {
       // Mock mode for testing
       this.transporter = {
         verify: async () => true,
-        sendMail: async (options) => ({
+        sendMail: async options => ({
           messageId: `<mock-${Date.now()}@servio-ai.com>`,
           response: '250 Message sent',
         }),
       };
       this._mockHistory = [];
       this._origSendMail = this.transporter.sendMail;
-      this.transporter.sendMail = async (options) => {
+      this.transporter.sendMail = async options => {
         this._mockHistory.push(options);
         return this._origSendMail(options);
       };
@@ -84,7 +84,7 @@ class GmailService {
 
       const info = await this.transporter.sendMail(mailOptions);
       console.log('[Gmail] Email sent:', info.messageId, 'to:', to);
-      
+
       return {
         success: true,
         messageId: info.messageId,
@@ -101,7 +101,7 @@ class GmailService {
    */
   async sendProspectorInvite(prospectorName, prospectorEmail, referralLink) {
     const subject = '🚀 Você foi convidado para ser Prospector da Servio.AI!';
-    
+
     const html = `
       <!DOCTYPE html>
       <html>
@@ -230,7 +230,7 @@ servio-ai.com | contato@servio-ai.com
    */
   async sendFollowUpReminder(prospectorName, prospectorEmail, prospectName, daysAgo) {
     const subject = `📞 Lembrete: Follow-up com ${prospectName}`;
-    
+
     const html = `
       <!DOCTYPE html>
       <html>
@@ -334,9 +334,15 @@ Equipe Servio.AI
   /**
    * Send conversion notification email
    */
-  async sendConversionNotification(prospectorName, prospectorEmail, providerName, category, estimatedCommission) {
+  async sendConversionNotification(
+    prospectorName,
+    prospectorEmail,
+    providerName,
+    category,
+    estimatedCommission
+  ) {
     const subject = `🎉 Conversão confirmada: ${providerName} se cadastrou!`;
-    
+
     const html = `
       <!DOCTYPE html>
       <html>

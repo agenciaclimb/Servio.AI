@@ -18,16 +18,16 @@ function createEcommerceRoutes(db) {
   router.get('/products', async (req, res) => {
     try {
       const { category, minPrice, maxPrice, status, limit } = req.query;
-      
+
       const filters = {};
       if (category) filters.category = category;
       if (minPrice) filters.minPrice = parseFloat(minPrice);
       if (maxPrice) filters.maxPrice = parseFloat(maxPrice);
       if (status) filters.status = status;
       if (limit) filters.limit = parseInt(limit, 10);
-      
+
       const products = await ecommerceService.getProducts(db, filters);
-      
+
       res.json({ success: true, products });
     } catch (error) {
       console.error('Error in GET /products:', error);
@@ -103,11 +103,11 @@ function createEcommerceRoutes(db) {
   router.post('/cart/add', async (req, res) => {
     try {
       const { userId, productId, quantity } = req.body;
-      
+
       if (!userId || !productId) {
         return res.status(400).json({ success: false, error: 'userId and productId required' });
       }
-      
+
       const cart = await ecommerceService.addToCart(db, userId, { productId, quantity });
       res.json({ success: true, cart });
     } catch (error) {
@@ -123,11 +123,13 @@ function createEcommerceRoutes(db) {
   router.put('/cart/update', async (req, res) => {
     try {
       const { userId, productId, quantity } = req.body;
-      
+
       if (!userId || !productId || quantity === undefined) {
-        return res.status(400).json({ success: false, error: 'userId, productId, and quantity required' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'userId, productId, and quantity required' });
       }
-      
+
       const cart = await ecommerceService.updateCartItem(db, userId, { productId, quantity });
       res.json({ success: true, cart });
     } catch (error) {
@@ -143,7 +145,7 @@ function createEcommerceRoutes(db) {
   router.delete('/cart/:userId/:productId', async (req, res) => {
     try {
       const { userId, productId } = req.params;
-      
+
       const cart = await ecommerceService.removeFromCart(db, userId, productId);
       res.json({ success: true, cart });
     } catch (error) {
@@ -160,7 +162,7 @@ function createEcommerceRoutes(db) {
     try {
       const cart = await ecommerceService.getCart(db, req.params.userId);
       const totals = ecommerceService.calculateTotals(cart);
-      
+
       res.json({ success: true, cart, totals });
     } catch (error) {
       console.error('Error in GET /cart:', error);
@@ -177,12 +179,17 @@ function createEcommerceRoutes(db) {
   router.post('/checkout', async (req, res) => {
     try {
       const { userId, successUrl, cancelUrl } = req.body;
-      
+
       if (!userId || !successUrl || !cancelUrl) {
-        return res.status(400).json({ success: false, error: 'userId, successUrl, and cancelUrl required' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'userId, successUrl, and cancelUrl required' });
       }
-      
-      const session = await ecommerceService.createCheckoutSession(db, userId, { successUrl, cancelUrl });
+
+      const session = await ecommerceService.createCheckoutSession(db, userId, {
+        successUrl,
+        cancelUrl,
+      });
       res.json({ success: true, ...session });
     } catch (error) {
       console.error('Error in POST /checkout:', error);
@@ -197,13 +204,13 @@ function createEcommerceRoutes(db) {
   router.post('/webhooks/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
     try {
       const event = req.body;
-      
+
       // Handle checkout.session.completed event
       if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
         await ecommerceService.handlePaymentSuccess(db, session.id);
       }
-      
+
       res.json({ received: true });
     } catch (error) {
       console.error('Error in Stripe webhook:', error);
@@ -234,12 +241,14 @@ function createEcommerceRoutes(db) {
   router.get('/orders', async (req, res) => {
     try {
       const { userId, limit } = req.query;
-      
+
       if (!userId) {
         return res.status(400).json({ success: false, error: 'userId required' });
       }
-      
-      const orders = await ecommerceService.listOrders(db, userId, { limit: limit ? parseInt(limit, 10) : 20 });
+
+      const orders = await ecommerceService.listOrders(db, userId, {
+        limit: limit ? parseInt(limit, 10) : 20,
+      });
       res.json({ success: true, orders });
     } catch (error) {
       console.error('Error in GET /orders:', error);
@@ -255,12 +264,15 @@ function createEcommerceRoutes(db) {
     try {
       // TODO: Add admin authentication middleware
       const { status, trackingNumber, trackingUrl } = req.body;
-      
+
       if (!status) {
         return res.status(400).json({ success: false, error: 'status required' });
       }
-      
-      const order = await ecommerceService.updateOrderStatus(db, req.params.id, status, { trackingNumber, trackingUrl });
+
+      const order = await ecommerceService.updateOrderStatus(db, req.params.id, status, {
+        trackingNumber,
+        trackingUrl,
+      });
       res.json({ success: true, order });
     } catch (error) {
       console.error('Error in PUT /orders/:id/status:', error);

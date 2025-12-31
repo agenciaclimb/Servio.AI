@@ -9,7 +9,11 @@ const { processDueEmails } = require('./followUpService');
 
 async function initAdmin() {
   if (!admin.apps || admin.apps.length === 0) {
-    try { admin.initializeApp(); } catch (e) { console.warn('[followUpScheduler] Firebase init skipped:', e.message); }
+    try {
+      admin.initializeApp();
+    } catch (e) {
+      console.warn('[followUpScheduler] Firebase init skipped:', e.message);
+    }
   }
   return admin.firestore();
 }

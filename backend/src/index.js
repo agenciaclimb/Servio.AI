@@ -1,22 +1,22 @@
-const express = require("express");
-const admin = require("firebase-admin");
-const cors = require("cors");
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
-const { Storage } = require("@google-cloud/storage");
+const express = require('express');
+const admin = require('firebase-admin');
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const { Storage } = require('@google-cloud/storage');
 // Stripe config helper (mode detection + safe init)
 const { createStripe } = require('./stripeConfig');
 // Database wrapper com fallback em memória
 const { createDbWrapper, fieldValueHelpers } = require('./dbWrapper');
 // Authorization middleware for granular permission checking
-const { 
-  requireAuth, 
-  requireRole, 
+const {
+  requireAuth,
+  requireRole,
   requireAdmin,
   requireOwnership,
   requireJobParticipant,
   requireDisputeParticipant,
-  validateBody
+  validateBody,
 } = require('./authorizationMiddleware');
 // Task 4.6: Security Hardening middlewares
 const {
@@ -24,19 +24,16 @@ const {
   authLimiter,
   apiLimiter,
   paymentLimiter,
-  webhookLimiter
+  webhookLimiter,
 } = require('./middleware/rateLimiter');
 const {
   securityHeaders,
   sanitizeInput,
   sanitizeQuery,
   preventPathTraversal,
-  customSecurityHeaders
+  customSecurityHeaders,
 } = require('./middleware/securityHeaders');
-const {
-  setupCsrfProtection,
-  createCsrfTokenEndpoint
-} = require('./middleware/csrfProtection');
+const { setupCsrfProtection, createCsrfTokenEndpoint } = require('./middleware/csrfProtection');
 const {
   validateRequest,
   validateQuery,
@@ -47,11 +44,11 @@ const {
   paymentSchema,
   updateProfileSchema,
   reviewSchema,
-  searchJobsSchema
+  searchJobsSchema,
 } = require('./validators/requestValidators');
 const ApiKeyManager = require('./services/apiKeyManager');
 const AuditLogger = require('./services/auditLogger');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 // Prospector follow-up automation scheduler helpers
 const { processPendingOutreach } = require('./outreachScheduler');
 // Follow-up email processing service & Gmail integration
@@ -73,10 +70,16 @@ const whatsappMultiRoleRouter = require('./routes/whatsappMultiRole');
 
 const LEADERBOARD_CACHE_MS = Number.parseInt(process.env.LEADERBOARD_CACHE_MS || '300000', 10);
 const LEADERBOARD_RATE_LIMIT = Number.parseInt(process.env.LEADERBOARD_RATE_LIMIT || '60', 10);
-const LEADERBOARD_RATE_WINDOW_MS = Number.parseInt(process.env.LEADERBOARD_RATE_WINDOW_MS || '300000', 10);
+const LEADERBOARD_RATE_WINDOW_MS = Number.parseInt(
+  process.env.LEADERBOARD_RATE_WINDOW_MS || '300000',
+  10
+);
 
 // API rate limiting (critical endpoints)
-const DEFAULT_RATE_LIMIT_WINDOW_MS = Number.parseInt(process.env.API_RATE_LIMIT_WINDOW_MS || '60000', 10);
+const DEFAULT_RATE_LIMIT_WINDOW_MS = Number.parseInt(
+  process.env.API_RATE_LIMIT_WINDOW_MS || '60000',
+  10
+);
 const DEFAULT_RATE_LIMIT_MAX = Number.parseInt(process.env.API_RATE_LIMIT_MAX || '20', 10);
 
 function buildRateLimiter(options = {}) {
@@ -95,7 +98,7 @@ function buildRateLimiter(options = {}) {
 
 const leaderboardCache = {
   totalCommissionsEarned: { expiresAt: 0, payload: null },
-  totalRecruits: { expiresAt: 0, payload: null }
+  totalRecruits: { expiresAt: 0, payload: null },
 };
 
 function isRateLimited(ip, storeMap, cfg) {
@@ -115,7 +118,10 @@ function isRateLimited(ip, storeMap, cfg) {
 }
 
 function getClientIp(req) {
-  return (req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip || '').toString().split(',')[0].trim();
+  return (req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip || '')
+    .toString()
+    .split(',')[0]
+    .trim();
 }
 
 // Initialize Firebase Admin SDK
@@ -163,16 +169,16 @@ function calculateProviderRate(provider = {}, stats = {}) {
   // Bonuses according to tests' expectations
   const profileComplete = headline && verificationStatus === 'verificado' ? 0.02 : 0;
   const highRating = averageRating >= 4.8 ? 0.02 : 0;
-  
+
   // Calculate volume tier bonus based on revenue
-  const getVolumeTier = (revenue) => {
+  const getVolumeTier = revenue => {
     if (revenue >= 11000) return 0.03;
     if (revenue >= 6000) return 0.02;
     if (revenue >= 1500) return 0.01;
     return 0;
   };
   const volumeTier = getVolumeTier(totalRevenue);
-  
+
   const lowDisputeRate = totalJobs > 0 && totalDisputes / totalJobs < 0.05 ? 0.01 : 0;
 
   let rate = baseRate + profileComplete + highRating + volumeTier + lowDisputeRate;
@@ -180,7 +186,8 @@ function calculateProviderRate(provider = {}, stats = {}) {
   rate = Math.min(0.85, rate);
 
   // Tier heuristic (kept simple to satisfy tests)
-  const tier = highRating && profileComplete && volumeTier >= 0.02 && lowDisputeRate > 0 ? 'Ouro' : 'Bronze';
+  const tier =
+    highRating && profileComplete && volumeTier >= 0.02 && lowDisputeRate > 0 ? 'Ouro' : 'Bronze';
 
   return {
     currentRate: Number(rate.toFixed(2)),
@@ -208,27 +215,28 @@ function createApp({
 } = {}) {
   const app = express();
   const isTestEnv = process.env.NODE_ENV === 'test' || process.env.DISABLE_SECURITY === 'true';
-  const applyRateLimiters = (!isTestEnv) || (rateLimitConfig && rateLimitConfig.enableInTests === true);
-  
+  const applyRateLimiters =
+    !isTestEnv || (rateLimitConfig && rateLimitConfig.enableInTests === true);
+
   // ===========================
   // TASK 4.6: Security Hardening (Phase 1)
   // ===========================
   // Inicializar serviços de segurança
   const apiKeyManager = new ApiKeyManager(db);
   const auditLogger = new AuditLogger(db);
-  
+
   // Anexar serviços ao app para uso em rotas
   app.locals.apiKeyManager = apiKeyManager;
   app.locals.auditLogger = auditLogger;
-  
+
   if (!isTestEnv) {
     // 2. Security Headers (helmet + custom headers)
     app.use(securityHeaders);
     app.use(customSecurityHeaders);
-  
+
     // 3. Path Traversal Prevention
     app.use(preventPathTraversal);
-  
+
     // 4. XSS Sanitization (body e query)
     app.use(sanitizeInput);
     app.use(sanitizeQuery);
@@ -238,11 +246,12 @@ function createApp({
   if (applyRateLimiters) {
     app.use(globalLimiter);
   }
-  
+
   // Instance-specific rate limiting configuration
   const rateCfg = {
     limit: (leaderboardRateConfig && leaderboardRateConfig.limit) || LEADERBOARD_RATE_LIMIT,
-    windowMs: (leaderboardRateConfig && leaderboardRateConfig.windowMs) || LEADERBOARD_RATE_WINDOW_MS
+    windowMs:
+      (leaderboardRateConfig && leaderboardRateConfig.windowMs) || LEADERBOARD_RATE_WINDOW_MS,
   };
   // Instance-specific rate map
   const leaderboardRateDataLocal = new Map();
@@ -257,7 +266,13 @@ function createApp({
 
   if (applyRateLimiters) {
     // Apply rate limiters to critical auth/user/proposal endpoints
-    const authPaths = ['/login', '/api/login', '/register', '/api/register', '/api/register-with-invite'];
+    const authPaths = [
+      '/login',
+      '/api/login',
+      '/register',
+      '/api/register',
+      '/api/register-with-invite',
+    ];
     authPaths.forEach(path => app.use(path, authRateLimiter));
 
     const userPaths = ['/users', '/api/users'];
@@ -270,7 +285,7 @@ function createApp({
   // CORS (antes do CSRF)
   // ===========================
   app.use(cors());
-  
+
   // ===========================
   // CSRF Protection (Task 4.6) - DISABLED IN DEV MODE
   // ===========================
@@ -278,13 +293,13 @@ function createApp({
   if (!isTestEnv && !isDevMode) {
     setupCsrfProtection(app, {
       exempt: ['/api/stripe-webhook', '/api/webhooks/*'],
-      enableRotation: true
+      enableRotation: true,
     });
     createCsrfTokenEndpoint(app);
   } else if (isDevMode) {
     console.log('[CSRF] DISABLED in development mode for local testing');
   }
-  
+
   // ===========================
   // Firebase Auth Middleware (Task 1.2)
   // Decodifica token e anexa custom claims em req.user
@@ -292,28 +307,28 @@ function createApp({
   app.use(async (req, res, next) => {
     // Verificar se há token Authorization
     const authHeader = req.headers.authorization;
-    
+
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split('Bearer ')[1];
-      
+
       try {
         // Decodificar token e extrair custom claims
         const decodedToken = await admin.auth().verifyIdToken(token);
-        
+
         // Anexar user com custom claims ao request
         req.user = {
           uid: decodedToken.uid,
           email: decodedToken.email,
-          role: decodedToken.role || 'cliente' // Custom claim definido na Task 1.1
+          role: decodedToken.role || 'cliente', // Custom claim definido na Task 1.1
         };
-        
+
         return next();
       } catch (error) {
         console.error('[Auth] Token verification failed:', error.message);
         // Token inválido, mas não bloqueamos - deixa endpoints protegidos rejeitarem
       }
     }
-    
+
     // Lightweight test/dev auth: allow injecting user via header in non-authenticated environments
     // IMPORTANTE: Isso busca role do Firestore em modo dev (ver getCurrentUser)
     if (!req.user) {
@@ -323,10 +338,10 @@ function createApp({
         // Role será buscado do Firestore por getCurrentUser() em authorizationMiddleware
       }
     }
-    
+
     next();
   });
-  
+
   // Use express.json() for all routes except the webhook
   app.use((req, res, next) => {
     if (req.path === '/api/stripe-webhook') return next();
@@ -335,10 +350,10 @@ function createApp({
 
   // Debug log to verify code deployment
   console.log('[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"');
-  
+
   // Basic "Hello World" endpoint for the backend service
-  app.get("/", (req, res) => {
-    res.send("SERVIO.AI Backend v3.0 with Health check");
+  app.get('/', (req, res) => {
+    res.send('SERVIO.AI Backend v3.0 with Health check');
   });
 
   // Enhanced health check with version and routes count for production diagnostics
@@ -347,43 +362,49 @@ function createApp({
     try {
       const fs = require('fs');
       buildVersion = fs.readFileSync('/tmp/.build-version', 'utf8').trim();
-    } catch (_) { /* ignore */ }
-    
+    } catch (_) {
+      /* ignore */
+    }
+
     let routeCount = 0;
     try {
       const stack = app._router && app._router.stack ? app._router.stack : [];
-      stack.forEach((layer) => {
+      stack.forEach(layer => {
         if (layer.route) routeCount++;
         else if (layer.name === 'router' && layer.handle && layer.handle.stack) {
-          layer.handle.stack.forEach((rl) => { if (rl.route) routeCount++; });
+          layer.handle.stack.forEach(rl => {
+            if (rl.route) routeCount++;
+          });
         }
       });
-    } catch (_) { /* ignore */ }
-    
+    } catch (_) {
+      /* ignore */
+    }
+
     return { buildVersion, routeCount };
   };
 
   // Health check endpoint for load balancers and monitoring
-  app.get("/health", (req, res) => {
+  app.get('/health', (req, res) => {
     const { buildVersion, routeCount } = computeHealthData();
-    res.status(200).json({ 
-      status: "healthy", 
+    res.status(200).json({
+      status: 'healthy',
       timestamp: new Date().toISOString(),
-      service: "servio-backend",
+      service: 'servio-backend',
       version: buildVersion,
-      routes: routeCount
+      routes: routeCount,
     });
   });
 
   // Health check alias for API prefix compatibility
-  app.get("/api/health", (req, res) => {
+  app.get('/api/health', (req, res) => {
     const { buildVersion, routeCount } = computeHealthData();
-    res.status(200).json({ 
-      status: "healthy", 
+    res.status(200).json({
+      status: 'healthy',
       timestamp: new Date().toISOString(),
-      service: "servio-backend",
+      service: 'servio-backend',
       version: buildVersion,
-      routes: routeCount
+      routes: routeCount,
     });
   });
 
@@ -405,16 +426,16 @@ function createApp({
     try {
       const routes = [];
       const stack = app._router && app._router.stack ? app._router.stack : [];
-      stack.forEach((layer) => {
+      stack.forEach(layer => {
         if (layer.route && layer.route.path) {
           const methods = Object.keys(layer.route.methods || {}).filter(Boolean);
           routes.push({ path: layer.route.path, methods });
         } else if (layer.name === 'router' && layer.handle && layer.handle.stack) {
-          layer.handle.stack.forEach((rl) => {
+          layer.handle.stack.forEach(rl => {
             if (rl.route && rl.route.path) {
               const methods = Object.keys(rl.route.methods || {}).filter(Boolean);
               // Attempt to reconstruct nested mount path
-              const mount = (layer.regexp && layer.regexp.source) ? layer.regexp.source : '';
+              const mount = layer.regexp && layer.regexp.source ? layer.regexp.source : '';
               routes.push({ path: rl.route.path, methods, mount });
             }
           });
@@ -440,9 +461,9 @@ function createApp({
     standardHeaders: true,
     legacyHeaders: false,
     // Não limitar admins; se não houver req.user, não pula o limitador
-    skip: (req) => !!req.user && req.user.type === 'admin',
+    skip: req => !!req.user && req.user.type === 'admin',
     // Usa e-mail do usuário autenticado se disponível; caso contrário, fallback para IP
-    keyGenerator: (req) => {
+    keyGenerator: req => {
       if (req.user && req.user.email) {
         return req.user.email;
       }
@@ -451,18 +472,18 @@ function createApp({
   });
 
   // POST /api/enhance-job - Enhance job request with AI
-  app.post("/api/enhance-job", geminiLimiter, async (req, res) => {
+  app.post('/api/enhance-job', geminiLimiter, async (req, res) => {
     const { prompt, address, fileCount } = req.body;
     if (!prompt) {
-      return res.status(400).json({ error: "Prompt is required." });
+      return res.status(400).json({ error: 'Prompt is required.' });
     }
 
     // Deterministic stub used when Gemini isn't configured or fails
     const buildStub = () => {
       const p = String(prompt || '').toLowerCase();
-      
+
       // Determine category from keywords
-      const getCategoryFromText = (text) => {
+      const getCategoryFromText = text => {
         if (/eletric|luz|tomada|fio/.test(text)) return 'reparos';
         if (/pintur|parede|tinta/.test(text)) return 'reparos';
         if (/encan|vazam|torneira|cano/.test(text)) return 'reparos';
@@ -474,7 +495,7 @@ function createApp({
       const cat = getCategoryFromText(p);
 
       // Determine service type
-      const getServiceType = (text) => {
+      const getServiceType = text => {
         if (/instal|trocar|montar|pintar|formatar|limpar/.test(text)) return 'tabelado';
         if (/diagnost|avaliar|inspecionar/.test(text)) return 'diagnostico';
         return 'personalizado';
@@ -482,7 +503,7 @@ function createApp({
       const serviceType = getServiceType(p);
 
       // Determine urgency level
-      const getUrgency = (text) => {
+      const getUrgency = text => {
         if (/hoje|urgente/.test(text)) return 'hoje';
         if (/amanh[ãa]/.test(text)) return 'amanha';
         if (/semana/.test(text)) return 'semana';
@@ -491,7 +512,7 @@ function createApp({
       const urgency = getUrgency(p);
 
       // very rough budget heuristic just to avoid blocking the flow
-      const getEstimatedBudget = (text) => {
+      const getEstimatedBudget = text => {
         if (/pintur|parede/.test(text)) return 350;
         if (/eletric|tomada/.test(text)) return 200;
         if (/encan|vazam/.test(text)) return 250;
@@ -519,8 +540,8 @@ function createApp({
     }
 
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
-      
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+
       const systemPrompt = `Você é um assistente especializado em transformar solicitações de serviços em descrições estruturadas e profissionais.
 
 Analise a solicitação do usuário e retorne um JSON com os seguintes campos:
@@ -538,38 +559,40 @@ Responda APENAS com o JSON, sem markdown ou texto adicional.`;
 
       const result = await model.generateContent(systemPrompt);
       const text = result.response.text();
-      
+
       // Parse JSON from response, removing markdown code blocks if present
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
-        throw new Error("AI response was not valid JSON");
+        throw new Error('AI response was not valid JSON');
       }
-      
+
       const enhancedJob = JSON.parse(jsonMatch[0]);
       res.json(enhancedJob);
     } catch (error) {
-      console.error("Error enhancing job (falling back to stub):", error);
+      console.error('Error enhancing job (falling back to stub):', error);
       res.json(buildStub());
     }
   });
 
   // POST /api/suggest-maintenance - Suggest maintenance for an item
-  app.post("/api/suggest-maintenance", async (req, res) => {
+  app.post('/api/suggest-maintenance', async (req, res) => {
     const { item } = req.body;
     if (!item || !item.name) {
-      return res.status(400).json({ error: "Item data is required." });
+      return res.status(400).json({ error: 'Item data is required.' });
     }
 
     // Deterministic fallback: suggest maintenance based on heuristics
-    const buildMaintenanceStub = (item) => {
+    const buildMaintenanceStub = item => {
       const name = (item.name || '').toLowerCase();
       const category = (item.category || '').toLowerCase();
-      
+
       // Heuristic: check if item suggests needing maintenance
-      const needsMaintenance = /eletro|geladeira|ar.condicionado|máquina|motor|carro|veículo/i.test(name + ' ' + category);
-      
+      const needsMaintenance = /eletro|geladeira|ar.condicionado|máquina|motor|carro|veículo/i.test(
+        name + ' ' + category
+      );
+
       if (!needsMaintenance) return null;
-      
+
       // Check urgency based on last maintenance
       let urgency = 'media';
       if (item.lastMaintenance) {
@@ -579,12 +602,12 @@ Responda APENAS com o JSON, sem markdown ou texto adicional.`;
         // daysSince > 180 already covered by default 'media'
         else if (daysSince <= 180) return null; // Too recent
       }
-      
+
       return {
         title: `Manutenção preventiva recomendada para ${item.name}`,
         description: `Verificar componentes, realizar limpeza e ajustes necessários para garantir o bom funcionamento do equipamento.`,
         urgency,
-        estimatedCost: urgency === 'alta' ? 300 : 200
+        estimatedCost: urgency === 'alta' ? 300 : 200,
       };
     };
 
@@ -610,20 +633,20 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
 
       const result = await model.generateContent(systemPrompt);
       const text = result.response.text().trim();
-      
+
       if (text === 'null' || text.toLowerCase() === 'null') {
         return res.json(null);
       }
-      
+
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
         return res.json(null);
       }
-      
+
       const suggestion = JSON.parse(jsonMatch[0]);
       res.json(suggestion);
     } catch (error) {
-      console.warn("AI error /api/suggest-maintenance fallback:", error);
+      console.warn('AI error /api/suggest-maintenance fallback:', error);
       return res.json(buildMaintenanceStub(item));
     }
   });
@@ -633,7 +656,7 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
   // =================================================================
 
   // Helper: safely get a model if configured
-  function getModel(modelName = "gemini-2.0-flash-exp") {
+  function getModel(modelName = 'gemini-2.0-flash-exp') {
     try {
       if (!genAI) return null;
       return genAI.getGenerativeModel({ model: modelName });
@@ -669,7 +692,11 @@ Retorne apenas a dica sem explicações adicionais.`;
     const profile = req.body?.profile || {};
     const stub = {
       suggestedHeadline: `Profissional de ${profile.headline?.split(' ')[0] || 'Serviços'} Confiável`,
-      suggestedBio: (profile.bio ? profile.bio : 'Profissional dedicado a oferecer um serviço de alta qualidade.') + ' Experiência comprovada e foco no cliente.'
+      suggestedBio:
+        (profile.bio
+          ? profile.bio
+          : 'Profissional dedicado a oferecer um serviço de alta qualidade.') +
+        ' Experiência comprovada e foco no cliente.',
     };
     const model = getModel();
     if (!model) return res.json(stub);
@@ -683,7 +710,11 @@ Requisitos: tom profissional, claro, conciso. Resposta APENAS JSON.`;
       const text = result.response.text();
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        try { return res.json(JSON.parse(jsonMatch[0])); } catch { /* ignore */ }
+        try {
+          return res.json(JSON.parse(jsonMatch[0]));
+        } catch {
+          /* ignore */
+        }
       }
       return res.json(stub);
     } catch (e) {
@@ -695,7 +726,7 @@ Requisitos: tom profissional, claro, conciso. Resposta APENAS JSON.`;
   // POST /api/generate-referral
   app.post('/api/generate-referral', geminiLimiter, async (req, res) => {
     const { senderName, friendEmail } = req.body || {};
-    const subjectStub = `Convite para conhecer a SERVIO.AI`; 
+    const subjectStub = `Convite para conhecer a SERVIO.AI`;
     const bodyStub = `Olá ${friendEmail || 'amigo'}, ${senderName || 'Um usuário'} está recomendando a plataforma SERVIO.AI para contratar ou oferecer serviços com segurança.`;
     const model = getModel();
     if (!model) return res.json({ subject: subjectStub, body: bodyStub });
@@ -709,7 +740,11 @@ Formato JSON: {"subject":"...","body":"..."}`;
       const text = result.response.text();
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        try { return res.json(JSON.parse(jsonMatch[0])); } catch { /* ignore */ }
+        try {
+          return res.json(JSON.parse(jsonMatch[0]));
+        } catch {
+          /* ignore */
+        }
       }
       return res.json({ subject: subjectStub, body: bodyStub });
     } catch (e) {
@@ -721,7 +756,7 @@ Formato JSON: {"subject":"...","body":"..."}`;
   // POST /api/generate-proposal
   app.post('/api/generate-proposal', geminiLimiter, async (req, res) => {
     const { job, provider } = req.body || {};
-    const stubMessage = `Olá! Posso ajudar com "${job?.description?.slice(0,60) || 'seu serviço'}" garantindo qualidade e prazo. Vamos prosseguir?`;
+    const stubMessage = `Olá! Posso ajudar com "${job?.description?.slice(0, 60) || 'seu serviço'}" garantindo qualidade e prazo. Vamos prosseguir?`;
     const model = getModel();
     if (!model) return res.json({ message: stubMessage });
     try {
@@ -743,8 +778,14 @@ Retornar somente texto final.`;
   app.post('/api/generate-faq', geminiLimiter, async (req, res) => {
     const { job } = req.body || {};
     const stubFAQ = [
-      { question: 'Qual o prazo estimado?', answer: 'Depende da complexidade, geralmente 24-48 horas.' },
-      { question: 'Materiais estão incluídos?', answer: 'Se necessário, podem ser cotados separadamente.' }
+      {
+        question: 'Qual o prazo estimado?',
+        answer: 'Depende da complexidade, geralmente 24-48 horas.',
+      },
+      {
+        question: 'Materiais estão incluídos?',
+        answer: 'Se necessário, podem ser cotados separadamente.',
+      },
     ];
     const model = getModel();
     if (!model) return res.json(stubFAQ);
@@ -756,7 +797,11 @@ Cada item: {"question":"...","answer":"..."}`;
       const text = result.response.text();
       const arrMatch = text.match(/\[[\s\S]*\]/);
       if (arrMatch) {
-        try { return res.json(JSON.parse(arrMatch[0])); } catch { /* ignore */ }
+        try {
+          return res.json(JSON.parse(arrMatch[0]));
+        } catch {
+          /* ignore */
+        }
       }
       return res.json(stubFAQ);
     } catch (e) {
@@ -769,7 +814,13 @@ Cada item: {"question":"...","answer":"..."}`;
   app.post('/api/identify-item', geminiLimiter, async (req, res) => {
     const { base64Image } = req.body || {};
     // For now just stub deterministic identification
-    const stub = { itemName: 'Item Genérico', category: 'geral', brand: 'Desconhecida', model: 'N/D', serialNumber: 'N/D' };
+    const stub = {
+      itemName: 'Item Genérico',
+      category: 'geral',
+      brand: 'Desconhecida',
+      model: 'N/D',
+      serialNumber: 'N/D',
+    };
     if (!base64Image) return res.status(400).json({ error: 'Imagem é obrigatória.' });
     return res.json(stub);
   });
@@ -781,7 +832,8 @@ Cada item: {"question":"...","answer":"..."}`;
       seoTitle: `${user?.name || 'Prestador'} - Serviços Profissionais`,
       metaDescription: `Perfil de ${user?.name || 'prestador'} com serviços de qualidade e boa reputação.`,
       publicHeadline: user?.headline || 'Profissional Confiável',
-      publicBio: (user?.bio || 'Profissional dedicado.') + ' Atende com foco em excelência e segurança.'
+      publicBio:
+        (user?.bio || 'Profissional dedicado.') + ' Atende com foco em excelência e segurança.',
     };
     const model = getModel();
     if (!model) return res.json(stub);
@@ -796,7 +848,11 @@ Retornar APENAS JSON.`;
       const text = result.response.text();
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        try { return res.json(JSON.parse(jsonMatch[0])); } catch { /* ignore */ }
+        try {
+          return res.json(JSON.parse(jsonMatch[0]));
+        } catch {
+          /* ignore */
+        }
       }
       return res.json(stub);
     } catch (e) {
@@ -834,7 +890,7 @@ Retorne somente o resumo.`;
     try {
       const prompt = `Gerar comentário de avaliação (${rating} estrelas) curto.
 Categoria: ${category}
-Descrição: ${description?.slice(0,140) || 'N/A'}
+Descrição: ${description?.slice(0, 140) || 'N/A'}
 Retorne somente o comentário.`;
       const result = await model.generateContent(prompt);
       const text = (result.response.text() || '').trim();
@@ -853,8 +909,8 @@ Retorne somente o comentário.`;
       introduction: `Encontre profissionais de ${category || 'várias áreas'}${location ? ' em ' + location : ''} com avaliação verificada.`,
       faq: [
         { question: 'Como funciona?', answer: 'Você descreve o serviço e recebe propostas.' },
-        { question: 'É seguro?', answer: 'Prestadores verificados e pagamento protegido.' }
-      ]
+        { question: 'É seguro?', answer: 'Prestadores verificados e pagamento protegido.' },
+      ],
     };
     const model = getModel();
     if (!model) return res.json(stub);
@@ -867,7 +923,11 @@ Retorne APENAS JSON.`;
       const text = result.response.text();
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        try { return res.json(JSON.parse(jsonMatch[0])); } catch { /* ignore */ }
+        try {
+          return res.json(JSON.parse(jsonMatch[0]));
+        } catch {
+          /* ignore */
+        }
       }
       return res.json(stub);
     } catch (e) {
@@ -891,7 +951,7 @@ Retorne APENAS JSON.`;
   app.post('/api/get-chat-assistance', geminiLimiter, async (req, res) => {
     try {
       const { messages = [], currentUserType } = req.body || {};
-      
+
       if (!genAI) {
         console.error('[get-chat-assistance] Gemini API key not configured');
         return res.status(500).json({ error: 'IA não configurada' });
@@ -900,15 +960,16 @@ Retorne APENAS JSON.`;
       // Build conversation history for context
       const conversationHistory = messages.map(msg => ({
         role: msg.senderId === 'ai' ? 'model' : 'user',
-        parts: [{ text: msg.text }]
+        parts: [{ text: msg.text }],
       }));
 
       // Get user's last message
       // Last message available at messages[messages.length - 1]?.text if needed
 
       // Build context-aware system prompt based on user type
-      const systemPrompt = currentUserType === 'prospector' 
-        ? `Você é um assistente especializado em prospecção B2B para a plataforma Servio.AI.
+      const systemPrompt =
+        currentUserType === 'prospector'
+          ? `Você é um assistente especializado em prospecção B2B para a plataforma Servio.AI.
 Ajude o prospector com:
 - Estratégias de abordagem de prestadores de serviço
 - Templates de mensagens para WhatsApp, Email e redes sociais
@@ -917,7 +978,7 @@ Ajude o prospector com:
 - Como usar o sistema de comissões
 
 Seja direto, prático e forneça exemplos concretos. Responda em português brasileiro.`
-        : `Você é um assistente para prestadores de serviço da Servio.AI.
+          : `Você é um assistente para prestadores de serviço da Servio.AI.
 Ajude com:
 - Melhorar perfil e portfolio
 - Estratégias de precificação
@@ -927,33 +988,30 @@ Ajude com:
 
 Seja direto, prático e motivador. Responda em português brasileiro.`;
 
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
       const result = await model.generateContent({
-        contents: [
-          { role: 'user', parts: [{ text: systemPrompt }] },
-          ...conversationHistory
-        ],
+        contents: [{ role: 'user', parts: [{ text: systemPrompt }] }, ...conversationHistory],
         generationConfig: {
           temperature: 0.7,
           maxOutputTokens: 500,
-        }
+        },
       });
 
       const response = result.response;
       const text = response.text();
 
-      return res.json({ 
-        name: 'chat_response', 
-        args: {}, 
-        displayText: text || 'Desculpe, não consegui gerar uma resposta. Tente reformular sua pergunta.'
+      return res.json({
+        name: 'chat_response',
+        args: {},
+        displayText:
+          text || 'Desculpe, não consegui gerar uma resposta. Tente reformular sua pergunta.',
       });
-
     } catch (error) {
       console.error('[get-chat-assistance] Error:', error);
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: 'Erro ao processar assistência',
-        displayText: 'Desculpe, ocorreu um erro. Por favor, tente novamente.' 
+        displayText: 'Desculpe, ocorreu um erro. Por favor, tente novamente.',
       });
     }
   });
@@ -962,25 +1020,25 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   app.post('/api/parse-search', geminiLimiter, async (req, res) => {
     const { query = '' } = req.body || {};
     const lower = query.toLowerCase();
-    
+
     // Parse service type from query
-    const getService = (text) => {
+    const getService = text => {
       if (/eletric|luz|tomada/.test(text)) return 'eletricista';
       if (/pintur|parede/.test(text)) return 'pintura';
       return undefined;
     };
-    
+
     // Parse location from query
-    const getLocation = (text) => {
+    const getLocation = text => {
       if (/são paulo|sp/.test(text)) return 'São Paulo';
       if (/rio de janeiro|rj/.test(text)) return 'Rio de Janeiro';
       return undefined;
     };
-    
+
     const parsed = {
       service: getService(lower),
       location: getLocation(lower),
-      attributes: ['verificado'].filter(a => lower.includes(a))
+      attributes: ['verificado'].filter(a => lower.includes(a)),
     };
     return res.json(parsed);
   });
@@ -1011,14 +1069,18 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
     if (!bio || bio.length < 10) riskScore += 25;
     if (context.type === 'profile_update' && riskScore > 20) riskScore += 10;
     const isSuspicious = riskScore >= 30;
-    return res.json({ isSuspicious, riskScore, reason: isSuspicious ? 'Perfil incompleto e recente.' : 'Sem sinais claros.' });
+    return res.json({
+      isSuspicious,
+      riskScore,
+      reason: isSuspicious ? 'Perfil incompleto e recente.' : 'Sem sinais claros.',
+    });
   });
 
   // POST /api/match-providers - Simple matching logic (prototype)
   app.post('/api/match-providers', geminiLimiter, async (req, res) => {
     try {
       let { job, jobId, allUsers = [] } = req.body || {};
-      
+
       // Resilience: If only jobId provided, fetch the job from Firestore
       if (!job && jobId) {
         try {
@@ -1030,13 +1092,14 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
           console.error('Failed to fetch job by ID:', err);
         }
       }
-      
+
       if (!job) return res.status(400).json({ error: 'Job data is required.' });
 
       // If no users provided, fetch active providers from Firestore
       if (allUsers.length === 0) {
         try {
-          const usersSnapshot = await db.collection('users')
+          const usersSnapshot = await db
+            .collection('users')
             .where('type', '==', 'prestador')
             .where('verificationStatus', '==', 'verificado')
             .limit(50)
@@ -1051,29 +1114,33 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       const category = (job.category || '').toString().toLowerCase();
       const location = (job.location || '').toString().toLowerCase();
 
-      const providers = allUsers.filter(u => (u && (u.type === 'prestador')));
+      const providers = allUsers.filter(u => u && u.type === 'prestador');
 
-      const scored = providers.map(p => {
+      const scored = providers
+        .map(p => {
+          const headline = (p.headline || '').toLowerCase();
+          const specialties = Array.isArray(p.specialties)
+            ? p.specialties.join(' ').toLowerCase()
+            : '';
+          const pLocation = (p.location || '').toLowerCase();
 
-        const headline = (p.headline || '').toLowerCase();
-        const specialties = Array.isArray(p.specialties) ? p.specialties.join(' ').toLowerCase() : '';
-        const pLocation = (p.location || '').toLowerCase();
+          let score = 0;
+          if (category && (headline.includes(category) || specialties.includes(category)))
+            score += 0.6;
+          if (location && pLocation.includes(location)) score += 0.2;
+          if (p.averageRating) score += Math.min(0.2, (Number(p.averageRating) || 0) / 25); // up to +0.2 at 5.0
 
-        let score = 0;
-        if (category && (headline.includes(category) || specialties.includes(category))) score += 0.6;
-        if (location && pLocation.includes(location)) score += 0.2;
-        if (p.averageRating) score += Math.min(0.2, (Number(p.averageRating) || 0) / 25); // up to +0.2 at 5.0
-
-        return {
-          providerId: p.email || p.id,
-          name: p.name,
-          score: Number(score.toFixed(2)),
-          reason: `Match por categoria${location ? ' e localização' : ''}${p.averageRating ? ' + reputação' : ''}`.trim(),
-        };
-      })
-      .filter(r => r.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 10);
+          return {
+            providerId: p.email || p.id,
+            name: p.name,
+            score: Number(score.toFixed(2)),
+            reason:
+              `Match por categoria${location ? ' e localização' : ''}${p.averageRating ? ' + reputação' : ''}`.trim(),
+          };
+        })
+        .filter(r => r.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 10);
 
       return res.json({ matches: scored, total: scored.length });
     } catch (err) {
@@ -1086,18 +1153,18 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   // STRIPE CONNECT ONBOARDING
   // =================================================================
 
-  app.post("/api/stripe/create-connect-account", async (req, res) => {
+  app.post('/api/stripe/create-connect-account', async (req, res) => {
     const { userId } = req.body;
     if (!userId) {
-      return res.status(400).json({ error: "User ID is required." });
+      return res.status(400).json({ error: 'User ID is required.' });
     }
 
     try {
-      const userRef = db.collection("users").doc(userId);
+      const userRef = db.collection('users').doc(userId);
       const userDoc = await userRef.get();
 
       if (!userDoc.exists) {
-        return res.status(404).json({ error: "User not found." });
+        return res.status(404).json({ error: 'User not found.' });
       }
 
       // Stripe not configured? Provide deterministic stub so frontend flows don't break.
@@ -1121,21 +1188,21 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
 
       res.status(200).json({ accountId: account.id });
     } catch (error) {
-      console.error("Error creating Stripe Connect account:", error);
-      res.status(500).json({ error: "Failed to create Stripe Connect account." });
+      console.error('Error creating Stripe Connect account:', error);
+      res.status(500).json({ error: 'Failed to create Stripe Connect account.' });
     }
   });
 
-  app.post("/api/stripe/create-account-link", async (req, res) => {
+  app.post('/api/stripe/create-account-link', async (req, res) => {
     const { userId } = req.body;
     if (!userId) {
-      return res.status(400).json({ error: "User ID is required." });
+      return res.status(400).json({ error: 'User ID is required.' });
     }
 
     try {
-      const userDoc = await db.collection("users").doc(userId).get();
+      const userDoc = await db.collection('users').doc(userId).get();
       if (!userDoc.exists || !userDoc.data().stripeAccountId) {
-        return res.status(404).json({ error: "Stripe account not found for this user." });
+        return res.status(404).json({ error: 'Stripe account not found for this user.' });
       }
 
       const accountLink = await stripe.accountLinks.create({
@@ -1147,8 +1214,8 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
 
       res.status(200).json({ url: accountLink.url });
     } catch (error) {
-      console.error("Error creating Stripe account link:", error);
-      res.status(500).json({ error: "Failed to create account link." });
+      console.error('Error creating Stripe account link:', error);
+      res.status(500).json({ error: 'Failed to create account link.' });
     }
   });
 
@@ -1156,12 +1223,14 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   // STRIPE PAYMENT ENDPOINTS
   // =================================================================
 
-  app.post("/create-checkout-session", requireAuth, async (req, res) => {
+  app.post('/create-checkout-session', requireAuth, async (req, res) => {
     const { job, amount } = req.body;
-    const YOUR_DOMAIN = process.env.FRONTEND_URL || "http://localhost:5173"; // Your frontend domain
+    const YOUR_DOMAIN = process.env.FRONTEND_URL || 'http://localhost:5173'; // Your frontend domain
 
     if (!job.providerId) {
-      return res.status(400).json({ error: "Job must have a provider assigned to create a payment session." });
+      return res
+        .status(400)
+        .json({ error: 'Job must have a provider assigned to create a payment session.' });
     }
 
     try {
@@ -1174,7 +1243,9 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       const providerStripeId = providerData.stripeAccountId;
 
       if (!providerStripeId) {
-        return res.status(400).json({ error: "The provider has not set up their payment account." });
+        return res
+          .status(400)
+          .json({ error: 'The provider has not set up their payment account.' });
       }
 
       // Calculate platform fee and provider share
@@ -1183,24 +1254,24 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       const providerShareInCents = Math.round(amount * earningsProfile.currentRate * 100);
 
       // Create an escrow record in Firestore first
-      const escrowRef = db.collection("escrows").doc();
+      const escrowRef = db.collection('escrows').doc();
       const escrowData = {
         id: escrowRef.id,
         jobId: job.id,
         clientId: job.clientId,
         providerId: job.providerId,
         amount: amount,
-        status: "pendente", // 'pendente', 'pago', 'liberado', 'disputa'
+        status: 'pendente', // 'pendente', 'pago', 'liberado', 'disputa'
         createdAt: new Date().toISOString(),
       };
       await escrowRef.set(escrowData);
 
       const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card", "boleto"],
+        payment_method_types: ['card', 'boleto'],
         line_items: [
           {
             price_data: {
-              currency: "brl",
+              currency: 'brl',
               product_data: {
                 name: `Serviço: ${job.category}`,
                 description: `Pagamento seguro para o serviço: ${job.description.substring(0, 100)}...`,
@@ -1211,13 +1282,13 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
           },
         ],
         payment_intent_data: {
-          application_fee_amount: (amount * 100) - providerShareInCents,
+          application_fee_amount: amount * 100 - providerShareInCents,
           transfer_data: {
             destination: providerStripeId,
             // The amount that will be transferred to the destination account.
           },
         },
-        mode: "payment",
+        mode: 'payment',
         success_url: `${YOUR_DOMAIN}/job/${job.id}?payment_success=true`,
         cancel_url: `${YOUR_DOMAIN}/job/${job.id}?payment_canceled=true`,
         metadata: {
@@ -1228,8 +1299,8 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
 
       res.json({ id: session.id });
     } catch (error) {
-      console.error("Error creating Stripe checkout session:", error);
-      res.status(500).json({ error: "Failed to create checkout session." });
+      console.error('Error creating Stripe checkout session:', error);
+      res.status(500).json({ error: 'Failed to create checkout session.' });
     }
   });
 
@@ -1237,7 +1308,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   // STRIPE WEBHOOK
   // =================================================================
 
-  app.post('/api/stripe-webhook', express.raw({type: 'application/json'}), async (req, res) => {
+  app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
     const sig = req.headers['stripe-signature'];
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -1273,29 +1344,42 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
             const snap = await escrowRef.get();
             const existing = snap.exists ? snap.data() : {};
             if (existing.status === 'pago' && existing.paymentIntentId === paymentIntentId) {
-              console.log('[Stripe Webhook] Skipping update (already processed)', { escrowId, paymentIntentId });
+              console.log('[Stripe Webhook] Skipping update (already processed)', {
+                escrowId,
+                paymentIntentId,
+              });
             } else {
               await escrowRef.update({ status: 'pago', paymentIntentId });
               console.log('[Stripe Webhook] Escrow updated to pago', { escrowId, paymentIntentId });
             }
           } catch (error_) {
-            console.error('[Stripe Webhook] Error updating escrow', { escrowId, paymentIntentId, error: error_.message });
+            console.error('[Stripe Webhook] Error updating escrow', {
+              escrowId,
+              paymentIntentId,
+              error: error_.message,
+            });
             return res.status(500).json({ error: 'Failed to update escrow status' });
           }
         }
-        break; }
+        break;
+      }
       default:
-        console.log('[Stripe Webhook] Unhandled event type', { type: event.type, eventId: event.id });
+        console.log('[Stripe Webhook] Unhandled event type', {
+          type: event.type,
+          eventId: event.id,
+        });
     }
 
     // Return a 200 response to acknowledge receipt of the event
-    res.json({received: true});
+    res.json({ received: true });
   });
 
   // Lightweight diagnostics (safe: does NOT leak secrets)
   // Returns whether STRIPE_WEBHOOK_SECRET is configured in the environment
   app.get('/diag/stripe-webhook-secret', (req, res) => {
-    const configured = Boolean(process.env.STRIPE_WEBHOOK_SECRET && process.env.STRIPE_WEBHOOK_SECRET.startsWith('whsec_'));
+    const configured = Boolean(
+      process.env.STRIPE_WEBHOOK_SECRET && process.env.STRIPE_WEBHOOK_SECRET.startsWith('whsec_')
+    );
     return res.status(200).json({ configured });
   });
 
@@ -1305,35 +1389,30 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
     return res.status(200).json({ mode });
   });
 
-
-  app.post("/jobs/:jobId/release-payment", requireJobParticipant, async (req, res) => {
+  app.post('/jobs/:jobId/release-payment', requireJobParticipant, async (req, res) => {
     const { jobId } = req.params;
 
     try {
-      const escrowQuery = await db
-        .collection("escrows")
-        .where("jobId", "==", jobId)
-        .limit(1)
-        .get();
+      const escrowQuery = await db.collection('escrows').where('jobId', '==', jobId).limit(1).get();
 
       if (escrowQuery.empty) {
         return res.status(404).json({
-          error: "Registro de pagamento não encontrado para este job.",
+          error: 'Registro de pagamento não encontrado para este job.',
         });
       }
 
       const escrowDoc = escrowQuery.docs[0];
       const escrowData = escrowDoc.data();
-      const jobDoc = await db.collection("jobs").doc(jobId).get();
+      const jobDoc = await db.collection('jobs').doc(jobId).get();
       const jobData = jobDoc.data();
 
       if (jobData.clientId !== req.user.email) {
         return res.status(403).json({
-          error: "Forbidden: Only the client can release the payment.",
+          error: 'Forbidden: Only the client can release the payment.',
         });
       }
 
-      if (escrowData.status !== "pago") {
+      if (escrowData.status !== 'pago') {
         return res.status(400).json({
           error: `Pagamento não pode ser liberado. Status atual: ${escrowData.status}`,
         });
@@ -1347,24 +1426,40 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       const providerStripeId = providerData.stripeAccountId;
 
       if (!providerStripeId) {
-        return res.status(400).json({ error: 'O prestador não possui uma conta de pagamento configurada.' });
+        return res
+          .status(400)
+          .json({ error: 'O prestador não possui uma conta de pagamento configurada.' });
       }
 
       if (!escrowData.paymentIntentId) {
-        return res.status(400).json({ error: 'ID de intenção de pagamento não encontrado. Não é possível liberar os fundos.' });
+        return res
+          .status(400)
+          .json({
+            error: 'ID de intenção de pagamento não encontrado. Não é possível liberar os fundos.',
+          });
       }
-      
+
       // Reutiliza a lógica de cálculo de estatísticas
-      const jobsSnapshot = await db.collection('jobs').where('providerId', '==', escrowData.providerId).where('status', '==', 'concluido').get();
+      const jobsSnapshot = await db
+        .collection('jobs')
+        .where('providerId', '==', escrowData.providerId)
+        .where('status', '==', 'concluido')
+        .get();
       const completedJobs = jobsSnapshot.docs.map(doc => doc.data());
       const totalRevenue = completedJobs.reduce((sum, job) => sum + (job.price || 0), 0);
       const ratings = completedJobs.map(job => job.review?.rating).filter(Boolean);
-      const averageRating = ratings.length > 0 ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length : 0;
-      const stats = { totalJobs: completedJobs.length, totalRevenue, averageRating, totalDisputes: 0 }; // Simplificado
+      const averageRating =
+        ratings.length > 0 ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length : 0;
+      const stats = {
+        totalJobs: completedJobs.length,
+        totalRevenue,
+        averageRating,
+        totalDisputes: 0,
+      }; // Simplificado
 
       const earningsProfile = calculateProviderRate(providerDoc.data(), stats);
       const providerShare = Math.round(escrowData.amount * earningsProfile.currentRate * 100); // Em centavos
-      const platformShare = (escrowData.amount * 100) - providerShare; // Em centavos
+      const platformShare = escrowData.amount * 100 - providerShare; // Em centavos
 
       // Retrieve the charge ID from the Payment Intent
       const paymentIntent = await stripe.paymentIntents.retrieve(escrowData.paymentIntentId);
@@ -1379,7 +1474,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
         metadata: {
           jobId: jobId,
           escrowId: escrowDoc.id,
-        }
+        },
       });
 
       console.log(
@@ -1387,29 +1482,32 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       );
 
       // Update provider's commission rate in their profile
-      await db.collection("users").doc(escrowData.providerId).update({
-        providerRate: earningsProfile.currentRate
+      await db.collection('users').doc(escrowData.providerId).update({
+        providerRate: earningsProfile.currentRate,
       });
 
       // Update job and escrow status
-      await db.collection("jobs").doc(jobId).update({ 
-        status: "concluido",
-        earnings: { 
-          totalAmount: escrowData.amount / 100, // Convert cents to BRL
-          providerShare: providerShare / 100, // Convert cents to BRL
-          platformFee: platformShare / 100, // Convert cents to BRL
-          paidAt: new Date().toISOString()
-        } 
-      });
-      await escrowDoc.ref.update({ status: "liberado", stripeTransferId: transfer.id });
+      await db
+        .collection('jobs')
+        .doc(jobId)
+        .update({
+          status: 'concluido',
+          earnings: {
+            totalAmount: escrowData.amount / 100, // Convert cents to BRL
+            providerShare: providerShare / 100, // Convert cents to BRL
+            platformFee: platformShare / 100, // Convert cents to BRL
+            paidAt: new Date().toISOString(),
+          },
+        });
+      await escrowDoc.ref.update({ status: 'liberado', stripeTransferId: transfer.id });
 
       res.status(200).json({
         success: true,
-        message: "Pagamento liberado e serviço concluído com sucesso.",
+        message: 'Pagamento liberado e serviço concluído com sucesso.',
       });
     } catch (error) {
-      console.error("Error releasing payment:", error);
-      res.status(500).json({ error: "Falha ao liberar o pagamento." });
+      console.error('Error releasing payment:', error);
+      res.status(500).json({ error: 'Falha ao liberar o pagamento.' });
     }
   });
 
@@ -1437,18 +1535,16 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
     }
   });
 
-  app.post("/jobs/:jobId/set-on-the-way", async (req, res) => {
+  app.post('/jobs/:jobId/set-on-the-way', async (req, res) => {
     const { jobId } = req.params;
     try {
-      const jobRef = db.collection("jobs").doc(jobId);
+      const jobRef = db.collection('jobs').doc(jobId);
       // We could add a check here to ensure the user making the request is the provider
-      await jobRef.update({ status: "a_caminho" });
-      res
-        .status(200)
-        .json({ message: 'Status updated to "a_caminho" successfully.' });
+      await jobRef.update({ status: 'a_caminho' });
+      res.status(200).json({ message: 'Status updated to "a_caminho" successfully.' });
     } catch (error) {
-      console.error("Error setting job status to on the way:", error);
-      res.status(500).json({ error: "Failed to update job status." });
+      console.error('Error setting job status to on the way:', error);
+      res.status(500).json({ error: 'Failed to update job status.' });
     }
   });
 
@@ -1458,15 +1554,15 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
 
   /**
    * POST /api/v2/jobs/{jobId}/trigger-matching
-   * 
+   *
    * Initiates the marketplace matching process for a job.
    * - Validates if the job exists
    * - Sets matching_status to 'in_progress'
    * - Returns success response
-   * 
+   *
    * Note: Actual matching logic will be implemented in subsequent tasks
    */
-  app.post("/api/v2/jobs/:jobId/trigger-matching", async (req, res) => {
+  app.post('/api/v2/jobs/:jobId/trigger-matching', async (req, res) => {
     const { jobId } = req.params;
 
     // Validate jobId is provided
@@ -1475,7 +1571,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
     }
 
     try {
-      const jobRef = db.collection("jobs").doc(jobId);
+      const jobRef = db.collection('jobs').doc(jobId);
       const jobDoc = await jobRef.get();
 
       // Validate if job exists
@@ -1507,8 +1603,8 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
         message: 'Marketplace matching has been initiated.',
       });
     } catch (error) {
-      console.error("Error triggering marketplace matching:", error);
-      res.status(500).json({ error: "Failed to trigger marketplace matching." });
+      console.error('Error triggering marketplace matching:', error);
+      res.status(500).json({ error: 'Failed to trigger marketplace matching.' });
     }
   });
 
@@ -1516,12 +1612,10 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   // FILE UPLOAD ENDPOINTS
   // =================================================================
 
-  app.post("/generate-upload-url", async (req, res) => {
+  app.post('/generate-upload-url', async (req, res) => {
     const { fileName, contentType, jobId } = req.body;
     if (!fileName || !contentType || !jobId) {
-      return res
-        .status(400)
-        .json({ error: "fileName, contentType, and jobId are required." });
+      return res.status(400).json({ error: 'fileName, contentType, and jobId are required.' });
     }
 
     // Any authenticated user can get an upload URL, we can restrict later if needed
@@ -1534,11 +1628,15 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
         const gProject = process.env.GCLOUD_PROJECT || process.env.GOOGLE_CLOUD_PROJECT;
         if (gProject) {
           bucketName = `${gProject}.appspot.com`;
-          console.warn(`[uploads] GCP_STORAGE_BUCKET not set. Falling back to default bucket: ${bucketName}`);
+          console.warn(
+            `[uploads] GCP_STORAGE_BUCKET not set. Falling back to default bucket: ${bucketName}`
+          );
         }
       }
       if (!bucketName) {
-        throw new Error("GCP_STORAGE_BUCKET environment variable not set and no project fallback available.");
+        throw new Error(
+          'GCP_STORAGE_BUCKET environment variable not set and no project fallback available.'
+        );
       }
       // Use injected storage instance (for tests) instead of global singleton
       const bucket = storageInstance.bucket(bucketName);
@@ -1546,8 +1644,8 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       const file = bucket.file(filePath);
 
       const options = {
-        version: "v4",
-        action: "write",
+        version: 'v4',
+        action: 'write',
         expires: Date.now() + 15 * 60 * 1000, // 15 minutes
         contentType: contentType,
       };
@@ -1564,8 +1662,8 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
           fake: true,
         });
       }
-      console.error("Error generating signed URL:", error);
-      res.status(500).json({ error: "Failed to generate upload URL." });
+      console.error('Error generating signed URL:', error);
+      res.status(500).json({ error: 'Failed to generate upload URL.' });
     }
   });
 
@@ -1574,91 +1672,81 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   // =================================================================
 
   // Get all disputes
-  app.get("/disputes", requireAuth, async (req, res) => {
+  app.get('/disputes', requireAuth, async (req, res) => {
     try {
-      const snapshot = await db.collection("disputes").orderBy('createdAt', 'desc').get();
-      const disputes = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const snapshot = await db.collection('disputes').orderBy('createdAt', 'desc').get();
+      const disputes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       res.status(200).json(disputes);
     } catch (error) {
-      console.error("Error getting disputes:", error);
-      res.status(500).json({ error: "Failed to retrieve disputes." });
+      console.error('Error getting disputes:', error);
+      res.status(500).json({ error: 'Failed to retrieve disputes.' });
     }
   });
 
   // Create a new dispute
-  app.post("/disputes", async (req, res) => {
+  app.post('/disputes', async (req, res) => {
     try {
       const disputeData = {
         ...req.body,
         createdAt: new Date().toISOString(),
-        status: "aberta", // 'aberta', 'resolvida'
+        status: 'aberta', // 'aberta', 'resolvida'
       };
-      const disputeRef = db.collection("disputes").doc();
+      const disputeRef = db.collection('disputes').doc();
       await disputeRef.set(disputeData);
       res.status(201).json({ id: disputeRef.id, ...disputeData });
     } catch (error) {
-      console.error("Error creating dispute:", error);
-      res.status(500).json({ error: "Failed to create dispute." });
+      console.error('Error creating dispute:', error);
+      res.status(500).json({ error: 'Failed to create dispute.' });
     }
   });
 
   // Resolve a dispute (admin only)
-  app.post("/disputes/:disputeId/resolve", requireDisputeParticipant, async (req, res) => {
+  app.post('/disputes/:disputeId/resolve', requireDisputeParticipant, async (req, res) => {
     const { disputeId } = req.params;
     const { resolution, comment } = req.body; // resolution: 'release_to_provider' or 'refund_client'
 
     if (!resolution || !comment) {
-      return res
-        .status(400)
-        .json({ error: "Resolution decision and comment are required." });
+      return res.status(400).json({ error: 'Resolution decision and comment are required.' });
     }
 
-    const disputeRef = db.collection("disputes").doc(disputeId);
+    const disputeRef = db.collection('disputes').doc(disputeId);
 
     try {
       const disputeDoc = await disputeRef.get();
       if (!disputeDoc.exists) {
-        return res.status(404).json({ error: "Dispute not found." });
+        return res.status(404).json({ error: 'Dispute not found.' });
       }
       const disputeData = disputeDoc.data();
       const jobId = disputeData.jobId;
 
-      const escrowQuery = await db
-        .collection("escrows")
-        .where("jobId", "==", jobId)
-        .limit(1)
-        .get();
+      const escrowQuery = await db.collection('escrows').where('jobId', '==', jobId).limit(1).get();
       if (escrowQuery.empty) {
-        return res
-          .status(404)
-          .json({ error: "Escrow record not found for this job." });
+        return res.status(404).json({ error: 'Escrow record not found for this job.' });
       }
       const escrowRef = escrowQuery.docs[0].ref;
 
       // Update documents in a transaction for atomicity
-      await db.runTransaction(async (transaction) => {
+      await db.runTransaction(async transaction => {
         transaction.update(disputeRef, {
-          status: "resolvida",
+          status: 'resolvida',
           resolution: {
             decision: resolution,
             comment: comment,
             resolvedAt: new Date().toISOString(),
           },
         });
-        transaction.update(db.collection("jobs").doc(jobId), {
-          status:
-            resolution === "release_to_provider" ? "concluido" : "cancelado",
+        transaction.update(db.collection('jobs').doc(jobId), {
+          status: resolution === 'release_to_provider' ? 'concluido' : 'cancelado',
         });
         transaction.update(escrowRef, {
-          status:
-            resolution === "release_to_provider" ? "liberado" : "reembolsado",
+          status: resolution === 'release_to_provider' ? 'liberado' : 'reembolsado',
         });
       });
 
-      res.status(200).json({ message: "Dispute resolved successfully." });
+      res.status(200).json({ message: 'Dispute resolved successfully.' });
     } catch (error) {
-      console.error("Error resolving dispute:", error);
-      res.status(500).json({ error: "Failed to resolve dispute." });
+      console.error('Error resolving dispute:', error);
+      res.status(500).json({ error: 'Failed to resolve dispute.' });
     }
   });
 
@@ -1678,10 +1766,14 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
         if (!jobId || !clientId || !providerId) {
           return res.status(400).json({ error: 'jobId, clientId and providerId are required.' });
         }
-        const escrowQuery = await db.collection('escrows').where('jobId', '==', jobId).limit(1).get();
+        const escrowQuery = await db
+          .collection('escrows')
+          .where('jobId', '==', jobId)
+          .limit(1)
+          .get();
         if (!escrowQuery.empty) {
           const existing = escrowQuery.docs[0];
-            return res.status(200).json({ reused: true, id: existing.id, ...existing.data() });
+          return res.status(200).json({ reused: true, id: existing.id, ...existing.data() });
         }
         const escrowRef = db.collection('escrows').doc();
         const escrowData = {
@@ -1725,70 +1817,70 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   // =================================================================
 
   // Get all users (with /api prefix for frontend compatibility)
-  app.get("/api/users", async (req, res) => {
+  app.get('/api/users', async (req, res) => {
     try {
-      const snapshot = await db.collection("users").get();
-      const users = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const snapshot = await db.collection('users').get();
+      const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       res.status(200).json(users);
     } catch (error) {
-      console.error("Error getting users:", error);
-      res.status(500).json({ error: "Failed to retrieve users." });
+      console.error('Error getting users:', error);
+      res.status(500).json({ error: 'Failed to retrieve users.' });
     }
   });
 
   // Get all users (legacy route without /api)
-  app.get("/users", async (req, res) => {
+  app.get('/users', async (req, res) => {
     try {
-      const snapshot = await db.collection("users").get();
-      const users = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const snapshot = await db.collection('users').get();
+      const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       res.status(200).json(users);
     } catch (error) {
-      console.error("Error getting users:", error);
-      res.status(500).json({ error: "Failed to retrieve users." });
+      console.error('Error getting users:', error);
+      res.status(500).json({ error: 'Failed to retrieve users.' });
     }
   });
 
   // Get a single user by ID (with /api prefix)
-  app.get("/api/users/:id", requireOwnership('id'), async (req, res) => {
+  app.get('/api/users/:id', requireOwnership('id'), async (req, res) => {
     try {
       const userId = req.params.id;
-      const userRef = db.collection("users").doc(userId);
+      const userRef = db.collection('users').doc(userId);
       const doc = await userRef.get();
 
       if (!doc.exists) {
-        return res.status(404).json({ error: "User not found." });
+        return res.status(404).json({ error: 'User not found.' });
       }
       res.status(200).json({ id: doc.id, ...doc.data() });
     } catch (error) {
-      console.error("Error getting user:", error);
-      res.status(500).json({ error: "Failed to retrieve user." });
+      console.error('Error getting user:', error);
+      res.status(500).json({ error: 'Failed to retrieve user.' });
     }
   });
 
   // Get a single user by ID (legacy route)
-  app.get("/users/:id", requireOwnership('id'), async (req, res) => {
+  app.get('/users/:id', requireOwnership('id'), async (req, res) => {
     try {
       const userId = req.params.id;
-      const userRef = db.collection("users").doc(userId);
+      const userRef = db.collection('users').doc(userId);
       const doc = await userRef.get();
 
       if (!doc.exists) {
-        return res.status(404).json({ error: "User not found." });
+        return res.status(404).json({ error: 'User not found.' });
       }
       res.status(200).json({ id: doc.id, ...doc.data() });
     } catch (error) {
-      console.error("Error getting user:", error);
-      res.status(500).json({ error: "Failed to retrieve user." });
+      console.error('Error getting user:', error);
+      res.status(500).json({ error: 'Failed to retrieve user.' });
     }
   });
 
   // Create a new user (with /api prefix)
   // Task 1.3: Protected by requireAuth, includes uid from token
-  app.post("/api/users", requireAuth, async (req, res) => {
+  app.post('/api/users', requireAuth, async (req, res) => {
     try {
       const userData = req.body;
       if (!userData.email) {
-        return res.status(400).json({ error: "User email is required." });
+        return res.status(400).json({ error: 'User email is required.' });
       }
 
       // Task 1.3: Add uid from authenticated user token
@@ -1799,7 +1891,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       }
 
       // Use merge:true to avoid overwriting existing docs
-      await db.collection("users").doc(userData.email).set(userData, { merge: true });
+      await db.collection('users').doc(userData.email).set(userData, { merge: true });
 
       // Se é prestador cadastrado via link de referência, notificar prospector
       if (userData.type === 'prestador' && userData.referredBy) {
@@ -1812,34 +1904,35 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
             providerName: userData.name || 'Novo prestador',
             providerEmail: userData.email,
             category: userData.categories?.[0] || 'Não especificada',
-          }
+          },
         }).catch(err => console.error('[Prospector Notification] Error:', err));
 
         // Atualizar stats do prospector
         const prospectorRef = db.collection('prospector_stats').doc(userData.referredBy);
-        await prospectorRef.set({
-          totalRecruits: fieldValueHelpers.increment(1),
-          activeRecruits: fieldValueHelpers.increment(1),
-          lastRecruitAt: fieldValueHelpers.serverTimestamp(),
-        }, { merge: true });
+        await prospectorRef.set(
+          {
+            totalRecruits: fieldValueHelpers.increment(1),
+            activeRecruits: fieldValueHelpers.increment(1),
+            lastRecruitAt: fieldValueHelpers.serverTimestamp(),
+          },
+          { merge: true }
+        );
       }
 
-      res
-        .status(201)
-        .json({ message: "User created successfully", id: userData.email });
+      res.status(201).json({ message: 'User created successfully', id: userData.email });
     } catch (error) {
-      console.error("Error creating user:", error);
-      res.status(500).json({ error: "Failed to create user." });
+      console.error('Error creating user:', error);
+      res.status(500).json({ error: 'Failed to create user.' });
     }
   });
 
   // Create a new user (legacy route)
   // Task 1.3: Protected by requireAuth, includes uid from token
-  app.post("/users", requireAuth, async (req, res) => {
+  app.post('/users', requireAuth, async (req, res) => {
     try {
       const userData = req.body;
       if (!userData.email) {
-        return res.status(400).json({ error: "User email is required." });
+        return res.status(400).json({ error: 'User email is required.' });
       }
 
       // Task 1.3: Add uid from authenticated user token
@@ -1850,43 +1943,37 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       }
 
       // Use merge:true to avoid overwriting existing docs
-      await db.collection("users").doc(userData.email).set(userData, { merge: true });
-      res
-        .status(201)
-        .json({ message: "User created successfully", id: userData.email });
+      await db.collection('users').doc(userData.email).set(userData, { merge: true });
+      res.status(201).json({ message: 'User created successfully', id: userData.email });
     } catch (error) {
-      console.error("Error creating user:", error);
-      res.status(500).json({ error: "Failed to create user." });
+      console.error('Error creating user:', error);
+      res.status(500).json({ error: 'Failed to create user.' });
     }
   });
 
   // Update an existing user
-  app.put("/users/:id", async (req, res) => {
+  app.put('/users/:id', async (req, res) => {
     try {
       const userId = req.params.id;
       const userData = req.body;
-      const userRef = db.collection("users").doc(userId);
+      const userRef = db.collection('users').doc(userId);
       await userRef.update(userData);
-      res
-        .status(200)
-        .json({ message: "User updated successfully", id: userId });
+      res.status(200).json({ message: 'User updated successfully', id: userId });
     } catch (error) {
-      console.error("Error updating user:", error);
-      res.status(500).json({ error: "Failed to update user." });
+      console.error('Error updating user:', error);
+      res.status(500).json({ error: 'Failed to update user.' });
     }
   });
 
   // Delete a user
-  app.delete("/users/:id", requireOwnership('id'), async (req, res) => {
+  app.delete('/users/:id', requireOwnership('id'), async (req, res) => {
     try {
       const userId = req.params.id;
-      await db.collection("users").doc(userId).delete();
-      res
-        .status(200)
-        .json({ message: "User deleted successfully", id: userId });
+      await db.collection('users').doc(userId).delete();
+      res.status(200).json({ message: 'User deleted successfully', id: userId });
     } catch (error) {
-      console.error("Error deleting user:", error);
-      res.status(500).json({ error: "Failed to delete user." });
+      console.error('Error deleting user:', error);
+      res.status(500).json({ error: 'Failed to delete user.' });
     }
   });
 
@@ -1895,26 +1982,28 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   // =================================================================
 
   // Set provider verification status (approve/reject identity verification)
-  app.post("/admin/providers/:userId/verification", requireAdmin, async (req, res) => {
+  app.post('/admin/providers/:userId/verification', requireAdmin, async (req, res) => {
     try {
       const { userId } = req.params;
       const { status, note } = req.body;
 
       if (!['pendente', 'verificado', 'recusado'].includes(status)) {
-        return res.status(400).json({ error: "Invalid status. Must be 'pendente', 'verificado', or 'recusado'." });
+        return res
+          .status(400)
+          .json({ error: "Invalid status. Must be 'pendente', 'verificado', or 'recusado'." });
       }
 
-      const userRef = db.collection("users").doc(userId);
+      const userRef = db.collection('users').doc(userId);
       const userDoc = await userRef.get();
 
       if (!userDoc.exists) {
-        return res.status(404).json({ error: "User not found." });
+        return res.status(404).json({ error: 'User not found.' });
       }
 
       const updateData = {
         verificationStatus: status,
         verificationNote: note || null,
-        verificationUpdatedAt: fieldValueHelpers.serverTimestamp()
+        verificationUpdatedAt: fieldValueHelpers.serverTimestamp(),
       };
 
       await userRef.update(updateData);
@@ -1923,70 +2012,70 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
         success: true,
         message: `Provider verification status updated to ${status}`,
         userId,
-        status
+        status,
       });
     } catch (error) {
-      console.error("Error updating verification status:", error);
-      res.status(500).json({ error: "Failed to update verification status." });
+      console.error('Error updating verification status:', error);
+      res.status(500).json({ error: 'Failed to update verification status.' });
     }
   });
 
   // Suspend a provider
-  app.post("/admin/providers/:userId/suspend", requireAdmin, async (req, res) => {
+  app.post('/admin/providers/:userId/suspend', requireAdmin, async (req, res) => {
     try {
       const { userId } = req.params;
       const { reason } = req.body;
 
-      const userRef = db.collection("users").doc(userId);
+      const userRef = db.collection('users').doc(userId);
       const userDoc = await userRef.get();
 
       if (!userDoc.exists) {
-        return res.status(404).json({ error: "User not found." });
+        return res.status(404).json({ error: 'User not found.' });
       }
 
       await userRef.update({
         status: 'suspenso',
         suspensionReason: reason || 'Suspended by admin',
-        suspendedAt: fieldValueHelpers.serverTimestamp()
+        suspendedAt: fieldValueHelpers.serverTimestamp(),
       });
 
       res.status(200).json({
         success: true,
-        message: "Provider suspended successfully",
-        userId
+        message: 'Provider suspended successfully',
+        userId,
       });
     } catch (error) {
-      console.error("Error suspending provider:", error);
-      res.status(500).json({ error: "Failed to suspend provider." });
+      console.error('Error suspending provider:', error);
+      res.status(500).json({ error: 'Failed to suspend provider.' });
     }
   });
 
   // Reactivate a provider
-  app.post("/admin/providers/:userId/reactivate", requireAdmin, async (req, res) => {
+  app.post('/admin/providers/:userId/reactivate', requireAdmin, async (req, res) => {
     try {
       const { userId } = req.params;
 
-      const userRef = db.collection("users").doc(userId);
+      const userRef = db.collection('users').doc(userId);
       const userDoc = await userRef.get();
 
       if (!userDoc.exists) {
-        return res.status(404).json({ error: "User not found." });
+        return res.status(404).json({ error: 'User not found.' });
       }
 
       await userRef.update({
         status: 'ativo',
         suspensionReason: null,
-        reactivatedAt: fieldValueHelpers.serverTimestamp()
+        reactivatedAt: fieldValueHelpers.serverTimestamp(),
       });
 
       res.status(200).json({
         success: true,
-        message: "Provider reactivated successfully",
-        userId
+        message: 'Provider reactivated successfully',
+        userId,
       });
     } catch (error) {
-      console.error("Error reactivating provider:", error);
-      res.status(500).json({ error: "Failed to reactivate provider." });
+      console.error('Error reactivating provider:', error);
+      res.status(500).json({ error: 'Failed to reactivate provider.' });
     }
   });
 
@@ -1995,7 +2084,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   // =================================================================
 
   // Auto-prospecting endpoint - triggers when no providers available
-  app.post("/api/auto-prospect", async (req, res) => {
+  app.post('/api/auto-prospect', async (req, res) => {
     try {
       const { category, location, urgency } = req.body;
 
@@ -2011,8 +2100,8 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
           name: `${category} Pro Services`,
           email: `contato@${category.toLowerCase().replaceAll(/\s/g, '')}pro.com`,
           phone: '+55 11 98765-4321',
-          source: 'google_auto'
-        }
+          source: 'google_auto',
+        },
       ];
 
       // 2. Save prospects to database
@@ -2031,13 +2120,15 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
           relatedJob: {
             category,
             location,
-            clientEmail
+            clientEmail,
           },
-          notes: [{
-            text: `Auto-prospectado via IA para ${category} em ${location}`,
-            createdAt: new Date().toISOString(),
-            createdBy: 'system'
-          }]
+          notes: [
+            {
+              text: `Auto-prospectado via IA para ${category} em ${location}`,
+              createdAt: new Date().toISOString(),
+              createdBy: 'system',
+            },
+          ],
         });
         savedProspects.push(prospect);
       }
@@ -2064,8 +2155,8 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
             category,
             location,
             clientEmail,
-            prospectsFound: savedProspects.length
-          }
+            prospectsFound: savedProspects.length,
+          },
         });
       }
 
@@ -2074,9 +2165,8 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
         prospectsFound: savedProspects.length,
         emailsSent,
         adminNotified: true,
-        message: `Encontramos ${savedProspects.length} profissionais e enviamos convites. Equipe notificada!`
+        message: `Encontramos ${savedProspects.length} profissionais e enviamos convites. Equipe notificada!`,
       });
-
     } catch (error) {
       console.error('[Auto-Prospect] Error:', error);
       res.status(500).json({
@@ -2084,88 +2174,95 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
         prospectsFound: 0,
         emailsSent: 0,
         adminNotified: false,
-        message: 'Erro na prospecção automática'
+        message: 'Erro na prospecção automática',
       });
     }
   });
 
   // Get all prospects
-  app.get("/api/prospects", requireRole('admin', 'prospector'), async (req, res) => {
+  app.get('/api/prospects', requireRole('admin', 'prospector'), async (req, res) => {
     try {
-      const snapshot = await db.collection("prospects").orderBy('createdAt', 'desc').get();
+      const snapshot = await db.collection('prospects').orderBy('createdAt', 'desc').get();
       const prospects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       res.status(200).json(prospects);
     } catch (error) {
-      console.error("Error getting prospects:", error);
-      res.status(500).json({ error: "Failed to retrieve prospects." });
+      console.error('Error getting prospects:', error);
+      res.status(500).json({ error: 'Failed to retrieve prospects.' });
     }
   });
 
   // Create prospect manually
-  app.post("/api/prospects", requireRole('admin', 'prospector'), async (req, res) => {
+  app.post('/api/prospects', requireRole('admin', 'prospector'), async (req, res) => {
     try {
       const prospectData = req.body;
-      const prospectRef = db.collection("prospects").doc();
+      const prospectRef = db.collection('prospects').doc();
       await prospectRef.set({
         id: prospectRef.id,
         ...prospectData,
-        createdAt: fieldValueHelpers.serverTimestamp()
+        createdAt: fieldValueHelpers.serverTimestamp(),
       });
       res.status(201).json({ success: true, id: prospectRef.id });
     } catch (error) {
-      console.error("Error creating prospect:", error);
-      res.status(500).json({ error: "Failed to create prospect." });
+      console.error('Error creating prospect:', error);
+      res.status(500).json({ error: 'Failed to create prospect.' });
     }
   });
 
   // Update prospect
-  app.put("/api/prospects/:id", async (req, res) => {
+  app.put('/api/prospects/:id', async (req, res) => {
     try {
       const { id } = req.params;
       const updates = req.body;
-      await db.collection("prospects").doc(id).update({
-        ...updates,
-        updatedAt: fieldValueHelpers.serverTimestamp()
-      });
-      res.status(200).json({ success: true, message: "Prospect updated" });
+      await db
+        .collection('prospects')
+        .doc(id)
+        .update({
+          ...updates,
+          updatedAt: fieldValueHelpers.serverTimestamp(),
+        });
+      res.status(200).json({ success: true, message: 'Prospect updated' });
     } catch (error) {
-      console.error("Error updating prospect:", error);
-      res.status(500).json({ error: "Failed to update prospect." });
+      console.error('Error updating prospect:', error);
+      res.status(500).json({ error: 'Failed to update prospect.' });
     }
   });
 
   // Send prospect invitation email
-  app.post("/api/send-prospect-invitation", requireRole('admin', 'prospector'), async (req, res) => {
-    try {
-      const { prospectEmail, prospectName, jobCategory, jobLocation } = req.body;
-      
-      console.log(`[Send Invitation] To: ${prospectEmail} for ${jobCategory} in ${jobLocation}`);
-      
-      // TODO: Integrate with SendGrid, Resend, or similar email service
-      // For now, just log it
-      const emailContent = {
-        to: prospectEmail,
-        subject: `Convite: Novo Cliente Procurando ${jobCategory} em ${jobLocation}`,
-        body: `Olá ${prospectName},\n\nTemos um cliente procurando por ${jobCategory} em ${jobLocation}.\n\nCadastre-se gratuitamente em Servio.AI e participe deste orçamento!\n\nAcesse: https://servio-ai.com/register?type=provider`
-      };
-      
-      console.log('[Send Invitation] Email content:', emailContent);
-      
-      res.status(200).json({ success: true, message: "Invitation sent" });
-    } catch (error) {
-      console.error("Error sending invitation:", error);
-      res.status(500).json({ error: "Failed to send invitation." });
+  app.post(
+    '/api/send-prospect-invitation',
+    requireRole('admin', 'prospector'),
+    async (req, res) => {
+      try {
+        const { prospectEmail, prospectName, jobCategory, jobLocation } = req.body;
+
+        console.log(`[Send Invitation] To: ${prospectEmail} for ${jobCategory} in ${jobLocation}`);
+
+        // TODO: Integrate with SendGrid, Resend, or similar email service
+        // For now, just log it
+        const emailContent = {
+          to: prospectEmail,
+          subject: `Convite: Novo Cliente Procurando ${jobCategory} em ${jobLocation}`,
+          body: `Olá ${prospectName},\n\nTemos um cliente procurando por ${jobCategory} em ${jobLocation}.\n\nCadastre-se gratuitamente em Servio.AI e participe deste orçamento!\n\nAcesse: https://servio-ai.com/register?type=provider`,
+        };
+
+        console.log('[Send Invitation] Email content:', emailContent);
+
+        res.status(200).json({ success: true, message: 'Invitation sent' });
+      } catch (error) {
+        console.error('Error sending invitation:', error);
+        res.status(500).json({ error: 'Failed to send invitation.' });
+      }
     }
-  });
+  );
 
   // Notify prospecting team
-  app.post("/api/notify-prospecting-team", requireAdmin, async (req, res) => {
+  app.post('/api/notify-prospecting-team', requireAdmin, async (req, res) => {
     try {
       const { category, location, clientEmail, prospectsFound, urgency, message } = req.body;
-      
+
       // Get all admin users
       const adminsSnapshot = await db.collection('users').where('type', '==', 'admin').get();
-      
+
       for (const adminDoc of adminsSnapshot.docs) {
         await db.collection('notifications').add({
           userId: adminDoc.id,
@@ -2174,14 +2271,14 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
           createdAt: fieldValueHelpers.serverTimestamp(),
           type: 'prospecting_alert',
           urgency: urgency || 'normal',
-          metadata: { category, location, clientEmail, prospectsFound }
+          metadata: { category, location, clientEmail, prospectsFound },
         });
       }
-      
-      res.status(200).json({ success: true, message: "Team notified" });
+
+      res.status(200).json({ success: true, message: 'Team notified' });
     } catch (error) {
-      console.error("Error notifying team:", error);
-      res.status(500).json({ error: "Failed to notify team." });
+      console.error('Error notifying team:', error);
+      res.status(500).json({ error: 'Failed to notify team.' });
     }
   });
 
@@ -2190,7 +2287,7 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
   // =================================================================
 
   // AI-powered prospect analysis and scoring
-  app.post("/api/analyze-prospect", async (req, res) => {
+  app.post('/api/analyze-prospect', async (req, res) => {
     try {
       const { prospect, jobCategory, jobDescription } = req.body;
 
@@ -2207,8 +2304,8 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
         });
       }
 
-      const model = defaultGenAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      
+      const model = defaultGenAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
       const prompt = `Analise este perfil profissional e determine:
 1. Pontuação de qualidade (0-100): credibilidade, experiência, reputação
 2. Pontuação de adequação (0-100): quão bem o profissional se encaixa no job
@@ -2238,7 +2335,7 @@ Responda em JSON:
       const result = await model.generateContent(prompt);
       const text = result.response.text();
       const jsonMatch = text.match(/\{[\s\S]*\}/);
-      
+
       if (jsonMatch) {
         const analysis = JSON.parse(jsonMatch[0]);
         res.status(200).json({
@@ -2246,14 +2343,13 @@ Responda em JSON:
           email: prospect.email,
           phone: prospect.phone,
           location: prospect.address,
-          ...analysis
+          ...analysis,
         });
       } else {
         throw new Error('Failed to parse AI response');
       }
-
     } catch (error) {
-      console.error("Error analyzing prospect:", error);
+      console.error('Error analyzing prospect:', error);
       // Fallback response
       res.status(200).json({
         name: req.body.prospect.name,
@@ -2267,19 +2363,19 @@ Responda em JSON:
   });
 
   // Generate personalized email using AI
-  app.post("/api/generate-prospect-email", async (req, res) => {
+  app.post('/api/generate-prospect-email', async (req, res) => {
     try {
       const { prospectName, specialties, jobCategory, jobLocation, qualityScore } = req.body;
 
       if (!defaultGenAI) {
         // Fallback template
         return res.status(200).json({
-          emailBody: `Olá ${prospectName},\n\nTemos um cliente procurando por ${jobCategory} em ${jobLocation}.\n\nGostaríamos de convidá-lo(a) para participar!\n\nCadastre-se: https://servio-ai.com/register?type=provider\n\nEquipe Servio.AI`
+          emailBody: `Olá ${prospectName},\n\nTemos um cliente procurando por ${jobCategory} em ${jobLocation}.\n\nGostaríamos de convidá-lo(a) para participar!\n\nCadastre-se: https://servio-ai.com/register?type=provider\n\nEquipe Servio.AI`,
         });
       }
 
-      const model = defaultGenAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      
+      const model = defaultGenAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
       const prompt = `Crie um email personalizado e profissional para convidar ${prospectName} a se cadastrar na plataforma Servio.AI.
 
 Contexto:
@@ -2303,43 +2399,44 @@ Retorne apenas o corpo do email, sem assunto.`;
       const emailBody = result.response.text().trim();
 
       res.status(200).json({ emailBody });
-
     } catch (error) {
-      console.error("Error generating email:", error);
+      console.error('Error generating email:', error);
       const { prospectName, jobCategory, jobLocation } = req.body;
       res.status(200).json({
-        emailBody: `Olá ${prospectName},\n\nTemos um cliente procurando por ${jobCategory} em ${jobLocation}.\n\nGostaríamos de convidá-lo(a) para participar deste projeto!\n\nCadastre-se gratuitamente: https://servio-ai.com/register?type=provider\n\nEquipe Servio.AI`
+        emailBody: `Olá ${prospectName},\n\nTemos um cliente procurando por ${jobCategory} em ${jobLocation}.\n\nGostaríamos de convidá-lo(a) para participar deste projeto!\n\nCadastre-se gratuitamente: https://servio-ai.com/register?type=provider\n\nEquipe Servio.AI`,
       });
     }
   });
 
   // Send SMS invite
-  app.post("/api/send-sms-invite", async (req, res) => {
+  app.post('/api/send-sms-invite', async (req, res) => {
     try {
       const { phone, name, category, location } = req.body;
 
       // TODO: Integrate with SMS service (Twilio, AWS SNS, etc.)
       // For now, just log and return success
-      console.log(`📱 SMS to ${phone}: ${name}, temos um cliente procurando ${category} em ${location}. Cadastre-se: servio-ai.com/register?type=provider`);
+      console.log(
+        `📱 SMS to ${phone}: ${name}, temos um cliente procurando ${category} em ${location}. Cadastre-se: servio-ai.com/register?type=provider`
+      );
 
-      res.status(200).json({ success: true, message: "SMS sent (simulated)" });
+      res.status(200).json({ success: true, message: 'SMS sent (simulated)' });
     } catch (error) {
-      console.error("Error sending SMS:", error);
-      res.status(500).json({ error: "Failed to send SMS" });
+      console.error('Error sending SMS:', error);
+      res.status(500).json({ error: 'Failed to send SMS' });
     }
   });
 
   // Send WhatsApp invite
-  app.post("/api/send-whatsapp-invite", async (req, res) => {
+  app.post('/api/send-whatsapp-invite', async (req, res) => {
     try {
       const { phone, name, category, location, prospectorId } = req.body;
 
       // Use WhatsApp Business API to send invite message
       const whatsappService = new WhatsAppService();
       if (!whatsappService.isConfigured()) {
-        return res.status(503).json({ 
-          success: false, 
-          message: "WhatsApp service not configured. Using simulated mode." 
+        return res.status(503).json({
+          success: false,
+          message: 'WhatsApp service not configured. Using simulated mode.',
         });
       }
 
@@ -2351,27 +2448,45 @@ Retorne apenas o corpo do email, sem assunto.`;
         return res.status(400).json({ success: false, error: result.error });
       }
 
-      res.status(200).json({ 
-        success: true, 
-        message: "WhatsApp invite sent",
-        messageId: result.messageId 
+      res.status(200).json({
+        success: true,
+        message: 'WhatsApp invite sent',
+        messageId: result.messageId,
       });
     } catch (error) {
-      console.error("Error sending WhatsApp:", error);
-      res.status(500).json({ error: "Failed to send WhatsApp" });
+      console.error('Error sending WhatsApp:', error);
+      res.status(500).json({ error: 'Failed to send WhatsApp' });
     }
   });
 
   // Enhanced prospecting with AI analysis and filtering
-  app.post("/api/enhanced-prospect", async (req, res) => {
+  app.post('/api/enhanced-prospect', async (req, res) => {
     try {
       const { category, location, minQualityScore, maxProspects, channels } = req.body;
 
       // Step 1: Search for prospects (simulated)
       const mockProspects = [
-        { name: 'João Silva', email: 'joao@email.com', phone: '11999999999', rating: 4.8, reviewCount: 120 },
-        { name: 'Maria Santos', email: 'maria@email.com', phone: '11988888888', rating: 4.5, reviewCount: 85 },
-        { name: 'Pedro Costa', email: 'pedro@email.com', phone: '11977777777', rating: 4.2, reviewCount: 45 },
+        {
+          name: 'João Silva',
+          email: 'joao@email.com',
+          phone: '11999999999',
+          rating: 4.8,
+          reviewCount: 120,
+        },
+        {
+          name: 'Maria Santos',
+          email: 'maria@email.com',
+          phone: '11988888888',
+          rating: 4.5,
+          reviewCount: 85,
+        },
+        {
+          name: 'Pedro Costa',
+          email: 'pedro@email.com',
+          phone: '11977777777',
+          rating: 4.2,
+          reviewCount: 45,
+        },
       ];
 
       // Step 2: Analyze each prospect with AI
@@ -2386,9 +2501,11 @@ Retorne apenas o corpo do email, sem assunto.`;
           continue;
         }
 
-        const model = defaultGenAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = defaultGenAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
         try {
-          const result = await model.generateContent(`Analise e pontue (0-100): ${prospect.name}, rating ${prospect.rating}, para ${category}. JSON: {"qualityScore": number, "matchScore": number}`);
+          const result = await model.generateContent(
+            `Analise e pontue (0-100): ${prospect.name}, rating ${prospect.rating}, para ${category}. JSON: {"qualityScore": number, "matchScore": number}`
+          );
           const text = result.response.text();
           const jsonMatch = text.match(/\{[\s\S]*?\}/);
           if (jsonMatch) {
@@ -2415,14 +2532,19 @@ Retorne apenas o corpo do email, sem assunto.`;
           // Generate personalized email with AI
           let emailBody = `Olá ${prospect.name}, temos um cliente procurando ${category} em ${location}.`;
           if (defaultGenAI) {
-            const model = defaultGenAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-            const emailResult = await model.generateContent(`Email curto e personalizado para ${prospect.name} sobre job: ${category} em ${location}`);
+            const model = defaultGenAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+            const emailResult = await model.generateContent(
+              `Email curto e personalizado para ${prospect.name} sobre job: ${category} em ${location}`
+            );
             emailBody = emailResult.response.text().trim();
           }
-          console.log(`[Enhanced-Prospect] Email generated for ${prospect.email}:`, emailBody.substring(0, 100) + '...');
+          console.log(
+            `[Enhanced-Prospect] Email generated for ${prospect.email}:`,
+            emailBody.substring(0, 100) + '...'
+          );
           emailsSent++;
         }
-        
+
         if (channels?.includes('sms') && prospect.phone) smsSent++;
         if (channels?.includes('whatsapp') && prospect.phone) whatsappSent++;
 
@@ -2459,14 +2581,19 @@ Retorne apenas o corpo do email, sem assunto.`;
         smsSent,
         whatsappSent,
         adminNotified: true,
-        qualityScore: Math.round(topProspects.reduce((sum, p) => sum + p.qualityScore, 0) / topProspects.length),
-        topProspects: topProspects.map(p => ({ name: p.name, qualityScore: p.qualityScore, matchScore: p.matchScore })),
-        message: `IA encontrou ${topProspects.length} prospects qualificados!`
+        qualityScore: Math.round(
+          topProspects.reduce((sum, p) => sum + p.qualityScore, 0) / topProspects.length
+        ),
+        topProspects: topProspects.map(p => ({
+          name: p.name,
+          qualityScore: p.qualityScore,
+          matchScore: p.matchScore,
+        })),
+        message: `IA encontrou ${topProspects.length} prospects qualificados!`,
       });
-
     } catch (error) {
-      console.error("Enhanced prospecting error:", error);
-      res.status(500).json({ error: "Enhanced prospecting failed" });
+      console.error('Enhanced prospecting error:', error);
+      res.status(500).json({ error: 'Enhanced prospecting failed' });
     }
   });
 
@@ -2475,32 +2602,32 @@ Retorne apenas o corpo do email, sem assunto.`;
   // =================================================================
 
   // Get all prospectors
-  app.get("/api/prospectors", async (req, res) => {
+  app.get('/api/prospectors', async (req, res) => {
     try {
-      const snapshot = await db.collection("prospectors").get();
+      const snapshot = await db.collection('prospectors').get();
       const prospectors = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       res.status(200).json(prospectors);
     } catch (error) {
-      console.error("Error getting prospectors:", error);
-      res.status(500).json({ error: "Failed to retrieve prospectors." });
+      console.error('Error getting prospectors:', error);
+      res.status(500).json({ error: 'Failed to retrieve prospectors.' });
     }
   });
 
   // Create prospector
-  app.post("/api/prospectors", async (req, res) => {
+  app.post('/api/prospectors', async (req, res) => {
     try {
       const prospectorData = req.body;
-      const prospectorRef = db.collection("prospectors").doc(prospectorData.email);
-      
+      const prospectorRef = db.collection('prospectors').doc(prospectorData.email);
+
       await prospectorRef.set({
         ...prospectorData,
-        createdAt: fieldValueHelpers.serverTimestamp()
+        createdAt: fieldValueHelpers.serverTimestamp(),
       });
 
       // Also create user account for prospector if doesn't exist
-      const userRef = db.collection("users").doc(prospectorData.email);
+      const userRef = db.collection('users').doc(prospectorData.email);
       const userDoc = await userRef.get();
-      
+
       if (!userDoc.exists) {
         await userRef.set({
           email: prospectorData.email,
@@ -2510,14 +2637,14 @@ Retorne apenas o corpo do email, sem assunto.`;
           bio: 'Prospector na equipe Servio.AI',
           location: '',
           memberSince: fieldValueHelpers.serverTimestamp(),
-          inviteCode: prospectorData.inviteCode
+          inviteCode: prospectorData.inviteCode,
         });
       }
 
       res.status(201).json({ success: true, id: prospectorData.email });
     } catch (error) {
-      console.error("Error creating prospector:", error);
-      res.status(500).json({ error: "Failed to create prospector." });
+      console.error('Error creating prospector:', error);
+      res.status(500).json({ error: 'Failed to create prospector.' });
     }
   });
 
@@ -2534,7 +2661,7 @@ Retorne apenas o corpo do email, sem assunto.`;
    * para geração via IA. Neste primeiro passo, usamos apenas regras
    * determinísticas, espelhando o fallback do frontend para evitar 404.
    */
-  app.post("/api/prospector/smart-actions", async (req, res) => {
+  app.post('/api/prospector/smart-actions', async (req, res) => {
     try {
       const { stats = {}, leads = [], recentActivity = [] } = req.body || {};
 
@@ -2544,7 +2671,7 @@ Retorne apenas o corpo do email, sem assunto.`;
         totalCommissionsEarned: Number(stats.totalCommissionsEarned || 0),
         currentBadge: stats.currentBadge || null,
         nextBadge: stats.nextBadge || null,
-        progressToNextBadge: Number(stats.progressToNextBadge || 0)
+        progressToNextBadge: Number(stats.progressToNextBadge || 0),
       };
 
       const normalizedLeads = Array.isArray(leads) ? leads : [];
@@ -2556,7 +2683,8 @@ Retorne apenas o corpo do email, sem assunto.`;
       const now = Date.now();
       const inactiveLeads = normalizedLeads.filter(l => {
         if (!l || l.stage === 'won' || l.stage === 'lost' || !l.lastActivity) return false;
-        const ts = typeof l.lastActivity === 'string' ? Date.parse(l.lastActivity) : Number(l.lastActivity);
+        const ts =
+          typeof l.lastActivity === 'string' ? Date.parse(l.lastActivity) : Number(l.lastActivity);
         if (!Number.isFinite(ts)) return false;
         return now - ts > 7 * 24 * 60 * 60 * 1000;
       });
@@ -2569,7 +2697,7 @@ Retorne apenas o corpo do email, sem assunto.`;
           description: `${inactiveLeads.length} ${inactiveLeads.length === 1 ? 'lead inativo' : 'leads inativos'} há 7+ dias`,
           priority: 'high',
           actionType: 'follow_up',
-          metadata: { leads: inactiveLeads.map(l => l.id).filter(Boolean) }
+          metadata: { leads: inactiveLeads.map(l => l.id).filter(Boolean) },
         });
       }
 
@@ -2577,9 +2705,10 @@ Retorne apenas o corpo do email, sem assunto.`;
       const lastShare = normalizedActivity.find(a => a && a.type === 'referral_share');
       let daysSinceShare = 999;
       if (lastShare && lastShare.timestamp) {
-        const ts = lastShare.timestamp instanceof Date
-          ? lastShare.timestamp.getTime()
-          : Date.parse(lastShare.timestamp);
+        const ts =
+          lastShare.timestamp instanceof Date
+            ? lastShare.timestamp.getTime()
+            : Date.parse(lastShare.timestamp);
         if (Number.isFinite(ts)) {
           daysSinceShare = Math.floor((now - ts) / (24 * 60 * 60 * 1000));
         }
@@ -2592,7 +2721,7 @@ Retorne apenas o corpo do email, sem assunto.`;
           title: 'Compartilhar no WhatsApp',
           description: `Seu último compartilhamento foi há ${daysSinceShare} dias`,
           priority: daysSinceShare >= 7 ? 'high' : 'medium',
-          actionType: 'share'
+          actionType: 'share',
         });
       }
 
@@ -2605,7 +2734,7 @@ Retorne apenas o corpo do email, sem assunto.`;
           title: `Próximo ao badge ${safeStats.nextBadge || ''}`.trim(),
           description: `Apenas ${remaining}% restantes para desbloquear`,
           priority: remaining < 20 ? 'high' : 'medium',
-          actionType: 'badge'
+          actionType: 'badge',
         });
       }
 
@@ -2619,7 +2748,7 @@ Retorne apenas o corpo do email, sem assunto.`;
           description: `${hotLeads.length} ${hotLeads.length === 1 ? 'lead' : 'leads'} em negociação`,
           priority: 'high',
           actionType: 'follow_up',
-          metadata: { leads: hotLeads.map(l => l.id).filter(Boolean) }
+          metadata: { leads: hotLeads.map(l => l.id).filter(Boolean) },
         });
       }
 
@@ -2633,7 +2762,7 @@ Retorne apenas o corpo do email, sem assunto.`;
           title: 'Meta semanal em risco',
           description: `Faltam ${weeklyGoal - weeklyRecruits} recrutas para bater a meta`,
           priority: 'medium',
-          actionType: 'goal'
+          actionType: 'goal',
         });
       }
 
@@ -2651,35 +2780,35 @@ Retorne apenas o corpo do email, sem assunto.`;
   });
 
   // Get all commissions
-  app.get("/api/commissions", async (req, res) => {
+  app.get('/api/commissions', async (req, res) => {
     try {
       const { prospectorId, status } = req.query;
-      let query = db.collection("commissions");
-      
+      let query = db.collection('commissions');
+
       if (prospectorId) {
-        query = query.where("prospectorId", "==", prospectorId);
+        query = query.where('prospectorId', '==', prospectorId);
       }
       if (status) {
-        query = query.where("status", "==", status);
+        query = query.where('status', '==', status);
       }
-      
+
       const snapshot = await query.orderBy('createdAt', 'desc').get();
       const commissions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       res.status(200).json(commissions);
     } catch (error) {
-      console.error("Error getting commissions:", error);
-      res.status(500).json({ error: "Failed to retrieve commissions." });
+      console.error('Error getting commissions:', error);
+      res.status(500).json({ error: 'Failed to retrieve commissions.' });
     }
   });
 
   // Create commission (called when provider completes a job)
-  app.post("/api/commissions", async (req, res) => {
+  app.post('/api/commissions', async (req, res) => {
     try {
       const { prospectorId, providerId, jobId, providerEarnings, rate } = req.body;
-      
+
       const commissionAmount = providerEarnings * rate;
-      
-      const commissionRef = db.collection("commissions").doc();
+
+      const commissionRef = db.collection('commissions').doc();
       await commissionRef.set({
         id: commissionRef.id,
         prospectorId,
@@ -2689,59 +2818,63 @@ Retorne apenas o corpo do email, sem assunto.`;
         rate,
         providerEarnings,
         status: 'pending',
-        createdAt: fieldValueHelpers.serverTimestamp()
+        createdAt: fieldValueHelpers.serverTimestamp(),
       });
 
       // Update prospector's total commissions
-      const prospectorRef = db.collection("prospectors").doc(prospectorId);
+      const prospectorRef = db.collection('prospectors').doc(prospectorId);
       const prospectorDoc = await prospectorRef.get();
-      
+
       if (prospectorDoc.exists) {
         const currentTotal = prospectorDoc.data().totalCommissionsEarned || 0;
         await prospectorRef.update({
-          totalCommissionsEarned: currentTotal + commissionAmount
+          totalCommissionsEarned: currentTotal + commissionAmount,
         });
       }
 
       res.status(201).json({ success: true, id: commissionRef.id, amount: commissionAmount });
     } catch (error) {
-      console.error("Error creating commission:", error);
-      res.status(500).json({ error: "Failed to create commission." });
+      console.error('Error creating commission:', error);
+      res.status(500).json({ error: 'Failed to create commission.' });
     }
   });
 
   // Update commission status (mark as paid)
-  app.put("/api/commissions/:id", async (req, res) => {
+  app.put('/api/commissions/:id', async (req, res) => {
     try {
       const { id } = req.params;
       const { status } = req.body;
-      
-      await db.collection("commissions").doc(id).update({
-        status,
-        paidAt: status === 'paid' ? fieldValueHelpers.serverTimestamp() : null,
-        updatedAt: fieldValueHelpers.serverTimestamp()
-      });
 
-      res.status(200).json({ success: true, message: "Commission updated" });
+      await db
+        .collection('commissions')
+        .doc(id)
+        .update({
+          status,
+          paidAt: status === 'paid' ? fieldValueHelpers.serverTimestamp() : null,
+          updatedAt: fieldValueHelpers.serverTimestamp(),
+        });
+
+      res.status(200).json({ success: true, message: 'Commission updated' });
     } catch (error) {
-      console.error("Error updating commission:", error);
-      res.status(500).json({ error: "Failed to update commission." });
+      console.error('Error updating commission:', error);
+      res.status(500).json({ error: 'Failed to update commission.' });
     }
   });
 
   // Register provider with invite code (called during registration)
-  app.post("/api/register-with-invite", async (req, res) => {
+  app.post('/api/register-with-invite', async (req, res) => {
     try {
       const { providerEmail, inviteCode } = req.body;
-      
+
       // Find prospector by invite code
-      const prospectorSnapshot = await db.collection("prospectors")
-        .where("inviteCode", "==", inviteCode)
+      const prospectorSnapshot = await db
+        .collection('prospectors')
+        .where('inviteCode', '==', inviteCode)
         .limit(1)
         .get();
 
       if (prospectorSnapshot.empty) {
-        return res.status(404).json({ error: "Invalid invite code" });
+        return res.status(404).json({ error: 'Invalid invite code' });
       }
 
       const prospectorDoc = prospectorSnapshot.docs[0];
@@ -2753,12 +2886,12 @@ Retorne apenas o corpo do email, sem assunto.`;
       const commissionRate = source === 'ai_auto' ? 0.0025 : 0.01; // 0.25% or 1%
 
       // Update provider with prospector info
-      const providerRef = db.collection("users").doc(providerEmail);
+      const providerRef = db.collection('users').doc(providerEmail);
       await providerRef.update({
         prospectorId,
         prospectorCommissionRate: commissionRate,
         recruitedAt: fieldValueHelpers.serverTimestamp(),
-        recruitmentSource: source
+        recruitmentSource: source,
       });
 
       // Update prospector stats
@@ -2769,12 +2902,13 @@ Retorne apenas o corpo do email, sem assunto.`;
       await prospectorDoc.ref.update({
         totalRecruits: currentRecruits + 1,
         activeRecruits: currentActive + 1,
-        providersSupported: [...supportedProviders, providerEmail]
+        providersSupported: [...supportedProviders, providerEmail],
       });
 
       // Update prospect status if exists
-      const prospectSnapshot = await db.collection("prospects")
-        .where("email", "==", providerEmail)
+      const prospectSnapshot = await db
+        .collection('prospects')
+        .where('email', '==', providerEmail)
         .limit(1)
         .get();
 
@@ -2783,19 +2917,19 @@ Retorne apenas o corpo do email, sem assunto.`;
           status: 'convertido',
           prospectorId,
           inviteCode,
-          convertedAt: fieldValueHelpers.serverTimestamp()
+          convertedAt: fieldValueHelpers.serverTimestamp(),
         });
       }
 
       res.status(200).json({
         success: true,
-        message: "Provider registered with prospector",
+        message: 'Provider registered with prospector',
         prospectorId,
-        commissionRate
+        commissionRate,
       });
     } catch (error) {
-      console.error("Error registering with invite:", error);
-      res.status(500).json({ error: "Failed to register with invite." });
+      console.error('Error registering with invite:', error);
+      res.status(500).json({ error: 'Failed to register with invite.' });
     }
   });
 
@@ -2825,7 +2959,7 @@ Retorne apenas o corpo do email, sem assunto.`;
         { name: 'Prata', min: 5 },
         { name: 'Ouro', min: 10 },
         { name: 'Platina', min: 25 },
-        { name: 'Diamante', min: 50 }
+        { name: 'Diamante', min: 50 },
       ];
       let currentBadge = badgeTiers[0].name;
       let nextBadge = null;
@@ -2843,8 +2977,15 @@ Retorne apenas o corpo do email, sem assunto.`;
       })();
       const currentTierObj = badgeTiers.find(t => t.name === currentBadge);
       const currentBase = currentTierObj ? currentTierObj.min : 0;
-      const progressToNextBadge = nextThreshold === null ? 100 : Math.min(100, Math.round(((totalRecruits - currentBase) / (nextThreshold - currentBase)) * 100));
-      const averageCommissionPerRecruit = totalRecruits > 0 ? Number((totalCommissionsEarned / totalRecruits).toFixed(2)) : 0;
+      const progressToNextBadge =
+        nextThreshold === null
+          ? 100
+          : Math.min(
+              100,
+              Math.round(((totalRecruits - currentBase) / (nextThreshold - currentBase)) * 100)
+            );
+      const averageCommissionPerRecruit =
+        totalRecruits > 0 ? Number((totalCommissionsEarned / totalRecruits).toFixed(2)) : 0;
 
       res.status(200).json({
         prospectorId,
@@ -2856,7 +2997,7 @@ Retorne apenas o corpo do email, sem assunto.`;
         currentBadge,
         nextBadge,
         progressToNextBadge,
-        badgeTiers
+        badgeTiers,
       });
     } catch (err) {
       console.error('Error fetching prospector stats:', err);
@@ -2875,7 +3016,9 @@ Retorne apenas o corpo do email, sem assunto.`;
       // Rate limiting
       const ip = getClientIp(req);
       if (isRateLimited(ip, leaderboardRateDataLocal, rateCfg)) {
-        return res.status(429).json({ error: 'Rate limit exceeded', retryAfterMs: rateCfg.windowMs });
+        return res
+          .status(429)
+          .json({ error: 'Rate limit exceeded', retryAfterMs: rateCfg.windowMs });
       }
 
       // Cache check (bypass if forceRefresh present)
@@ -2883,19 +3026,30 @@ Retorne apenas o corpo do email, sem assunto.`;
       const cacheEntry = leaderboardCache[cacheKey];
       const now = Date.now();
       if (!forceRefresh && cacheEntry && cacheEntry.expiresAt > now && cacheEntry.payload) {
-        return res.status(200).json({ sort: sortField, cached: true, ttlMs: cacheEntry.expiresAt - now, ...cacheEntry.payload });
+        return res
+          .status(200)
+          .json({
+            sort: sortField,
+            cached: true,
+            ttlMs: cacheEntry.expiresAt - now,
+            ...cacheEntry.payload,
+          });
       }
 
       // Fetch fresh data
       const snap = await db.collection('prospectors').get();
       const all = snap.docs.map(d => ({ id: d.id, ...(d.data() || {}) }));
-      all.sort((a, b) => (Number(b[sortField] || 0) - Number(a[sortField] || 0)));
+      all.sort((a, b) => Number(b[sortField] || 0) - Number(a[sortField] || 0));
       const results = all.slice(0, lim).map((p, idx) => ({
         prospectorId: p.id,
         name: p.name || p.id,
         totalRecruits: Number(p.totalRecruits || 0),
-        totalCommissionsEarned: Number((p.totalCommissionsEarned || 0).toFixed ? (p.totalCommissionsEarned || 0).toFixed(2) : (p.totalCommissionsEarned || 0)),
-        rank: idx + 1
+        totalCommissionsEarned: Number(
+          (p.totalCommissionsEarned || 0).toFixed
+            ? (p.totalCommissionsEarned || 0).toFixed(2)
+            : p.totalCommissionsEarned || 0
+        ),
+        rank: idx + 1,
       }));
       const payload = { total: all.length, results };
       leaderboardCache[cacheKey] = { expiresAt: now + cacheTtlMs, payload };
@@ -2934,7 +3088,7 @@ Retorne apenas o corpo do email, sem assunto.`;
         status: 'email_sent',
         optOut: false,
         errorHistory: [],
-        followUpEligibleAt: now + FOLLOW_UP_MS
+        followUpEligibleAt: now + FOLLOW_UP_MS,
       });
       // Simulação de envio de email (stub)
       res.status(201).json({ success: true, id, status: 'email_sent' });
@@ -3024,7 +3178,7 @@ Retorne apenas o corpo do email, sem assunto.`;
       const results = {
         imported: 0,
         failed: 0,
-        details: []
+        details: [],
       };
 
       for (const lead of leads) {
@@ -3035,7 +3189,7 @@ Retorne apenas o corpo do email, sem assunto.`;
             results.details.push({
               lead,
               success: false,
-              error: 'Nome e telefone obrigatórios'
+              error: 'Nome e telefone obrigatórios',
             });
             continue;
           }
@@ -3053,7 +3207,7 @@ Retorne apenas o corpo do email, sem assunto.`;
             results.details.push({
               lead,
               success: false,
-              error: 'Lead já existe'
+              error: 'Lead já existe',
             });
             continue;
           }
@@ -3071,32 +3225,35 @@ Retorne apenas o corpo do email, sem assunto.`;
           }
 
           // Salva no Firestore
-          await db.collection('prospector_prospects').doc(leadId).set({
-            id: leadId,
-            prospectorId: userId,
-            name: lead.name,
-            phone: cleanPhone,
-            email: lead.email || null,
-            category: lead.category || 'Geral',
-            stage: 'new',
-            source: 'bulk_import',
-            ...enrichedData,
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            updatedAt: admin.firestore.FieldValue.serverTimestamp()
-          });
+          await db
+            .collection('prospector_prospects')
+            .doc(leadId)
+            .set({
+              id: leadId,
+              prospectorId: userId,
+              name: lead.name,
+              phone: cleanPhone,
+              email: lead.email || null,
+              category: lead.category || 'Geral',
+              stage: 'new',
+              source: 'bulk_import',
+              ...enrichedData,
+              createdAt: admin.firestore.FieldValue.serverTimestamp(),
+              updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
 
           results.imported++;
           results.details.push({
             leadId,
             name: lead.name,
-            success: true
+            success: true,
           });
         } catch (error) {
           results.failed++;
           results.details.push({
             lead,
             success: false,
-            error: error.message
+            error: error.message,
           });
         }
       }
@@ -3144,13 +3301,14 @@ Retorne apenas o corpo do email, sem assunto.`;
         try {
           const location = 'São Paulo, SP'; // Pode ser parametrizável
           const places = await googlePlacesService.searchQualityProfessionals(category, location, {
-            maxResults: 5
+            maxResults: 5,
           });
 
           // Tenta match por nome similar
-          const match = places.find(p => 
-            p.name.toLowerCase().includes(name.toLowerCase()) ||
-            name.toLowerCase().includes(p.name.toLowerCase())
+          const match = places.find(
+            p =>
+              p.name.toLowerCase().includes(name.toLowerCase()) ||
+              name.toLowerCase().includes(p.name.toLowerCase())
           );
 
           if (match) {
@@ -3178,17 +3336,20 @@ Retorne apenas o corpo do email, sem assunto.`;
 
       // Atualiza lead no Firestore
       if (Object.keys(enrichedData).length > 0) {
-        await db.collection('prospector_prospects').doc(leadId).update({
-          ...enrichedData,
-          enrichedAt: admin.firestore.FieldValue.serverTimestamp(),
-          updatedAt: admin.firestore.FieldValue.serverTimestamp()
-        });
+        await db
+          .collection('prospector_prospects')
+          .doc(leadId)
+          .update({
+            ...enrichedData,
+            enrichedAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
       }
 
       res.status(200).json({
         success: true,
         leadId,
-        enrichedData
+        enrichedData,
       });
     } catch (error) {
       console.error('Error enriching lead:', error);
@@ -3234,25 +3395,25 @@ Retorne apenas o corpo do email, sem assunto.`;
 
       const results = {
         whatsapp: { sent: 0, failed: 0, details: [] },
-        email: { sent: 0, failed: 0, details: [] }
+        email: { sent: 0, failed: 0, details: [] },
       };
 
       // Envia por Email
       if (channels.includes('email')) {
         const emailLeads = leads.filter(l => l.email);
-        
+
         if (emailLeads.length > 0) {
           try {
             const emailData = {
               subject: template.subject || 'Apresentação Servio.AI',
               message: template.message,
               fromEmail: 'prospeccao@servio.ai',
-              fromName: userDoc.data().name || 'Servio.AI'
+              fromName: userDoc.data().name || 'Servio.AI',
             };
 
             const emailResults = await emailService.sendBulkEmails(emailLeads, emailData);
             results.email = emailResults;
-            
+
             // Log campanha no Firestore
             await db.collection('prospector_campaigns').add({
               prospectorId: authEmail,
@@ -3260,7 +3421,7 @@ Retorne apenas o corpo do email, sem assunto.`;
               recipientCount: emailLeads.length,
               template: template.subject,
               sentAt: admin.firestore.FieldValue.serverTimestamp(),
-              results: emailResults
+              results: emailResults,
             });
           } catch (emailError) {
             console.error('Email campaign error:', emailError);
@@ -3273,17 +3434,17 @@ Retorne apenas o corpo do email, sem assunto.`;
       // Envia por WhatsApp
       if (channels.includes('whatsapp')) {
         const whatsappLeads = leads.filter(l => l.phone);
-        
+
         if (whatsappLeads.length > 0) {
           try {
             const recipients = whatsappLeads.map(l => ({
               phone: l.phone.replace(/\D/g, ''),
-              message: personalizeMessage(template.message, l)
+              message: personalizeMessage(template.message, l),
             }));
 
             const whatsappResults = await whatsappService.sendBulkMessages(recipients);
             results.whatsapp = whatsappResults;
-            
+
             // Log campanha no Firestore
             await db.collection('prospector_campaigns').add({
               prospectorId: authEmail,
@@ -3291,7 +3452,7 @@ Retorne apenas o corpo do email, sem assunto.`;
               recipientCount: whatsappLeads.length,
               template: 'custom',
               sentAt: admin.firestore.FieldValue.serverTimestamp(),
-              results: whatsappResults
+              results: whatsappResults,
             });
           } catch (whatsappError) {
             console.error('WhatsApp campaign error:', whatsappError);
@@ -3304,7 +3465,7 @@ Retorne apenas o corpo do email, sem assunto.`;
       res.status(200).json({
         success: true,
         results,
-        campaignId: `campaign_${Date.now()}`
+        campaignId: `campaign_${Date.now()}`,
       });
     } catch (error) {
       console.error('Error sending campaign:', error);
@@ -3320,7 +3481,7 @@ Retorne apenas o corpo do email, sem assunto.`;
       if (!genAI) return {};
 
       const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
-      
+
       const prompt = `Você é um assistente de prospecção. Gere dados profissionais para:
       Nome: ${lead.name}
       Categoria: ${lead.category}
@@ -3332,13 +3493,13 @@ Retorne apenas o corpo do email, sem assunto.`;
 
       const result = await model.generateContent(prompt);
       const text = result.response.text();
-      
+
       // Extrai JSON da resposta
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         return JSON.parse(jsonMatch[0]);
       }
-      
+
       return {};
     } catch (error) {
       console.warn('AI enrichment error:', error.message);
@@ -3352,7 +3513,7 @@ Retorne apenas o corpo do email, sem assunto.`;
   async function getMessageTemplate(templateName) {
     try {
       const templateDoc = await db.collection('message_templates').doc(templateName).get();
-      
+
       if (templateDoc.exists) {
         return templateDoc.data();
       }
@@ -3360,9 +3521,10 @@ Retorne apenas o corpo do email, sem assunto.`;
       // Templates padrão
       const defaultTemplates = {
         onboarding: {
-          whatsapp: '👋 Olá {nome}! Sou da Servio.AI. Você é {categoria}? Temos clientes buscando seus serviços. Cadastro gratuito: https://servio-ai.com/cadastro',
-          email: emailService.getDefaultTemplate({})
-        }
+          whatsapp:
+            '👋 Olá {nome}! Sou da Servio.AI. Você é {categoria}? Temos clientes buscando seus serviços. Cadastro gratuito: https://servio-ai.com/cadastro',
+          email: emailService.getDefaultTemplate({}),
+        },
       };
 
       return defaultTemplates[templateName] || defaultTemplates.onboarding;
@@ -3370,7 +3532,7 @@ Retorne apenas o corpo do email, sem assunto.`;
       console.warn('Error loading template:', error);
       return {
         whatsapp: 'Olá! Cadastre-se na Servio.AI: https://servio-ai.com/cadastro',
-        email: emailService.getDefaultTemplate({})
+        email: emailService.getDefaultTemplate({}),
       };
     }
   }
@@ -3390,35 +3552,35 @@ Retorne apenas o corpo do email, sem assunto.`;
   // =================================================================
 
   // Get all jobs (with /api prefix for frontend compatibility)
-  app.get("/api/jobs", requireAuth, async (req, res) => {
+  app.get('/api/jobs', requireAuth, async (req, res) => {
     try {
       // Task 2.1: Server-side pagination and filtering
-      const { 
-        providerId, 
-        status, 
-        category, 
+      const {
+        providerId,
+        status,
+        category,
         location,
-        limit = '20', 
+        limit = '20',
         startAfter,
         sortBy = 'createdAt',
-        sortOrder = 'desc'
+        sortOrder = 'desc',
       } = req.query;
 
       // Build dynamic Firestore query
-      let query = db.collection("jobs");
+      let query = db.collection('jobs');
 
       // Apply filters conditionally
       if (providerId) {
-        query = query.where("providerId", "==", providerId);
+        query = query.where('providerId', '==', providerId);
       }
       if (status) {
-        query = query.where("status", "==", status);
+        query = query.where('status', '==', status);
       }
       if (category) {
-        query = query.where("category", "==", category);
+        query = query.where('category', '==', category);
       }
       if (location) {
-        query = query.where("location", "==", location);
+        query = query.where('location', '==', location);
       }
 
       // Add ordering (guard for mocks without orderBy)
@@ -3428,7 +3590,7 @@ Retorne apenas o corpo do email, sem assunto.`;
 
       // Cursor-based pagination: start after previous page (guard for mocks)
       if (startAfter) {
-        const startAfterDoc = await db.collection("jobs").doc(startAfter).get();
+        const startAfterDoc = await db.collection('jobs').doc(startAfter).get();
         if (startAfterDoc.exists && typeof query.startAfter === 'function') {
           query = query.startAfter(startAfterDoc);
         }
@@ -3442,12 +3604,11 @@ Retorne apenas o corpo do email, sem assunto.`;
 
       // Execute query
       const snapshot = await query.get();
-      const jobs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const jobs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
       // Pagination metadata
-      const nextPageCursor = jobs.length === limitNum && jobs.length > 0 
-        ? jobs[jobs.length - 1].id 
-        : null;
+      const nextPageCursor =
+        jobs.length === limitNum && jobs.length > 0 ? jobs[jobs.length - 1].id : null;
 
       // Return paginated response (align with tests)
       res.status(200).json({
@@ -3455,46 +3616,46 @@ Retorne apenas o corpo do email, sem assunto.`;
         nextPageCursor,
         page: {
           limit: limitNum,
-          hasMore: nextPageCursor !== null
-        }
+          hasMore: nextPageCursor !== null,
+        },
       });
     } catch (error) {
-      console.error("Error getting jobs:", error);
-      res.status(500).json({ error: "Failed to retrieve jobs." });
+      console.error('Error getting jobs:', error);
+      res.status(500).json({ error: 'Failed to retrieve jobs.' });
     }
   });
 
   // Get all jobs (legacy route without /api)
   // Task 2.1: Updated with same pagination logic as /api/jobs
-  app.get("/jobs", async (req, res) => {
+  app.get('/jobs', async (req, res) => {
     try {
       // Server-side pagination and filtering
-      const { 
-        providerId, 
-        status, 
-        category, 
+      const {
+        providerId,
+        status,
+        category,
         location,
-        limit = '20', 
+        limit = '20',
         startAfter,
         sortBy = 'createdAt',
-        sortOrder = 'desc'
+        sortOrder = 'desc',
       } = req.query;
 
       // Build dynamic Firestore query
-      let query = db.collection("jobs");
+      let query = db.collection('jobs');
 
       // Apply filters conditionally
       if (providerId) {
-        query = query.where("providerId", "==", providerId);
+        query = query.where('providerId', '==', providerId);
       }
       if (status) {
-        query = query.where("status", "==", status);
+        query = query.where('status', '==', status);
       }
       if (category) {
-        query = query.where("category", "==", category);
+        query = query.where('category', '==', category);
       }
       if (location) {
-        query = query.where("location", "==", location);
+        query = query.where('location', '==', location);
       }
 
       // Add ordering (guard for mocks without orderBy)
@@ -3504,7 +3665,7 @@ Retorne apenas o corpo do email, sem assunto.`;
 
       // Cursor-based pagination: start after previous page
       if (startAfter) {
-        const startAfterDoc = await db.collection("jobs").doc(startAfter).get();
+        const startAfterDoc = await db.collection('jobs').doc(startAfter).get();
         if (startAfterDoc.exists && typeof query.startAfter === 'function') {
           query = query.startAfter(startAfterDoc);
         }
@@ -3518,12 +3679,11 @@ Retorne apenas o corpo do email, sem assunto.`;
 
       // Execute query
       const snapshot = await query.get();
-      const jobs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const jobs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
       // Pagination metadata
-      const nextPageCursor = jobs.length === limitNum && jobs.length > 0 
-        ? jobs[jobs.length - 1].id 
-        : null;
+      const nextPageCursor =
+        jobs.length === limitNum && jobs.length > 0 ? jobs[jobs.length - 1].id : null;
 
       // Return paginated response
       res.status(200).json({
@@ -3531,17 +3691,17 @@ Retorne apenas o corpo do email, sem assunto.`;
         nextPageCursor,
         page: {
           limit: limitNum,
-          hasMore: nextPageCursor !== null
-        }
+          hasMore: nextPageCursor !== null,
+        },
       });
     } catch (error) {
-      console.error("Error getting jobs:", error);
-      res.status(500).json({ error: "Failed to retrieve jobs." });
+      console.error('Error getting jobs:', error);
+      res.status(500).json({ error: 'Failed to retrieve jobs.' });
     }
   });
 
   // Create a new job (with /api prefix)
-  app.post("/api/jobs", async (req, res) => {
+  app.post('/api/jobs', async (req, res) => {
     try {
       const allowedMatchingStatus = ['pending', 'in_progress', 'completed', 'failed'];
       const requestedMatchingStatus = req.body.matching_status;
@@ -3552,20 +3712,20 @@ Retorne apenas o corpo do email, sem assunto.`;
       const jobData = {
         ...req.body,
         createdAt: new Date().toISOString(),
-        status: req.body.status || "aberto",
+        status: req.body.status || 'aberto',
         matching_status: matchingStatus,
       };
-      const jobRef = db.collection("jobs").doc();
+      const jobRef = db.collection('jobs').doc();
       await jobRef.set(jobData);
       res.status(201).json({ id: jobRef.id, ...jobData });
     } catch (error) {
-      console.error("Error creating job:", error);
-      res.status(500).json({ error: "Failed to create job." });
+      console.error('Error creating job:', error);
+      res.status(500).json({ error: 'Failed to create job.' });
     }
   });
 
   // Create a new job (legacy route)
-  app.post("/jobs", async (req, res) => {
+  app.post('/jobs', async (req, res) => {
     try {
       const allowedMatchingStatus = ['pending', 'in_progress', 'completed', 'failed'];
       const requestedMatchingStatus = req.body.matching_status;
@@ -3576,15 +3736,15 @@ Retorne apenas o corpo do email, sem assunto.`;
       const jobData = {
         ...req.body,
         createdAt: new Date().toISOString(),
-        status: req.body.status || "aberto",
+        status: req.body.status || 'aberto',
         matching_status: matchingStatus,
       };
-      const jobRef = db.collection("jobs").doc();
+      const jobRef = db.collection('jobs').doc();
       await jobRef.set(jobData);
       res.status(201).json({ id: jobRef.id, ...jobData });
     } catch (error) {
-      console.error("Error creating job:", error);
-      res.status(500).json({ error: "Failed to create job." });
+      console.error('Error creating job:', error);
+      res.status(500).json({ error: 'Failed to create job.' });
     }
   });
 
@@ -3593,50 +3753,50 @@ Retorne apenas o corpo do email, sem assunto.`;
   // =================================================================
 
   // Get all sentiment alerts
-  app.get("/sentiment-alerts", async (req, res) => {
+  app.get('/sentiment-alerts', async (req, res) => {
     try {
-      const snapshot = await db.collection("sentiment_alerts").orderBy('createdAt', 'desc').get();
-      const alerts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const snapshot = await db.collection('sentiment_alerts').orderBy('createdAt', 'desc').get();
+      const alerts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       res.status(200).json(alerts);
     } catch (error) {
-      console.error("Error getting sentiment alerts:", error);
-      res.status(500).json({ error: "Failed to retrieve sentiment alerts." });
+      console.error('Error getting sentiment alerts:', error);
+      res.status(500).json({ error: 'Failed to retrieve sentiment alerts.' });
     }
   });
 
   // Create a new sentiment alert
-  app.post("/sentiment-alerts", async (req, res) => {
+  app.post('/sentiment-alerts', async (req, res) => {
     try {
       const alertData = {
         ...req.body,
         createdAt: new Date().toISOString(),
-        status: "novo", // 'novo', 'revisado'
+        status: 'novo', // 'novo', 'revisado'
       };
-      const alertRef = db.collection("sentiment_alerts").doc();
+      const alertRef = db.collection('sentiment_alerts').doc();
       await alertRef.set(alertData);
       res.status(201).json({ id: alertRef.id, ...alertData });
     } catch (error) {
-      console.error("Error creating sentiment alert:", error);
-      res.status(500).json({ error: "Failed to create sentiment alert." });
+      console.error('Error creating sentiment alert:', error);
+      res.status(500).json({ error: 'Failed to create sentiment alert.' });
     }
   });
 
   // Get maintenance history for a specific item
-  app.get("/maintained-items/:itemId/history", async (req, res) => {
+  app.get('/maintained-items/:itemId/history', async (req, res) => {
     try {
       const { itemId } = req.params;
       const snapshot = await db
-        .collection("jobs")
-        .where("itemId", "==", itemId)
-        .where("status", "==", "concluido")
-        .orderBy("completedAt", "desc")
+        .collection('jobs')
+        .where('itemId', '==', itemId)
+        .where('status', '==', 'concluido')
+        .orderBy('completedAt', 'desc')
         .get();
 
-      const history = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const history = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       res.status(200).json(history);
     } catch (error) {
-      console.error("Error getting maintenance history:", error);
-      res.status(500).json({ error: "Failed to retrieve maintenance history." });
+      console.error('Error getting maintenance history:', error);
+      res.status(500).json({ error: 'Failed to retrieve maintenance history.' });
     }
   });
 
@@ -3645,55 +3805,55 @@ Retorne apenas o corpo do email, sem assunto.`;
   // =================================================================
 
   // GET /proposals - List all proposals (with optional filters)
-  app.get("/proposals", async (req, res) => {
+  app.get('/proposals', async (req, res) => {
     try {
       const { jobId, providerId, status } = req.query;
-      let query = db.collection("proposals");
+      let query = db.collection('proposals');
 
-      if (jobId) query = query.where("jobId", "==", jobId);
-      if (providerId) query = query.where("providerId", "==", providerId);
-      if (status) query = query.where("status", "==", status);
+      if (jobId) query = query.where('jobId', '==', jobId);
+      if (providerId) query = query.where('providerId', '==', providerId);
+      if (status) query = query.where('status', '==', status);
 
       const snapshot = await query.get();
-      const proposals = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      
+      const proposals = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
       res.status(200).json(proposals);
     } catch (error) {
-      console.error("Error listing proposals:", error);
-      res.status(500).json({ error: "Failed to retrieve proposals." });
+      console.error('Error listing proposals:', error);
+      res.status(500).json({ error: 'Failed to retrieve proposals.' });
     }
   });
 
   // POST /proposals - Create new proposal
-  app.post("/proposals", async (req, res) => {
+  app.post('/proposals', async (req, res) => {
     try {
       const { jobId, providerId, price, message } = req.body;
 
       if (!jobId || !providerId || price === undefined) {
-        return res.status(400).json({ error: "jobId, providerId, and price are required." });
+        return res.status(400).json({ error: 'jobId, providerId, and price are required.' });
       }
 
       const proposalData = {
         jobId,
         providerId,
         price: Number(price),
-        message: message || "",
-        status: "pendente",
+        message: message || '',
+        status: 'pendente',
         createdAt: new Date().toISOString(),
       };
 
-      const docRef = await db.collection("proposals").add(proposalData);
+      const docRef = await db.collection('proposals').add(proposalData);
       const newProposal = { id: docRef.id, ...proposalData };
 
       res.status(201).json(newProposal);
     } catch (error) {
-      console.error("Error creating proposal:", error);
-      res.status(500).json({ error: "Failed to create proposal." });
+      console.error('Error creating proposal:', error);
+      res.status(500).json({ error: 'Failed to create proposal.' });
     }
   });
 
   // PUT /proposals/:id - Update proposal
-  app.put("/proposals/:id", async (req, res) => {
+  app.put('/proposals/:id', async (req, res) => {
     try {
       const { id } = req.params;
       const updates = req.body;
@@ -3703,11 +3863,11 @@ Retorne apenas o corpo do email, sem assunto.`;
       delete updates.createdAt;
       updates.updatedAt = new Date().toISOString();
 
-      const docRef = db.collection("proposals").doc(id);
+      const docRef = db.collection('proposals').doc(id);
       const doc = await docRef.get();
 
       if (!doc.exists) {
-        return res.status(404).json({ error: "Proposal not found." });
+        return res.status(404).json({ error: 'Proposal not found.' });
       }
 
       await docRef.update(updates);
@@ -3715,8 +3875,8 @@ Retorne apenas o corpo do email, sem assunto.`;
 
       res.status(200).json({ id: updatedDoc.id, ...updatedDoc.data() });
     } catch (error) {
-      console.error("Error updating proposal:", error);
-      res.status(500).json({ error: "Failed to update proposal." });
+      console.error('Error updating proposal:', error);
+      res.status(500).json({ error: 'Failed to update proposal.' });
     }
   });
 
@@ -3725,64 +3885,64 @@ Retorne apenas o corpo do email, sem assunto.`;
   // =================================================================
 
   // GET /notifications - List all notifications (with optional filters)
-  app.get("/notifications", async (req, res) => {
+  app.get('/notifications', async (req, res) => {
     try {
       const { userId, isRead } = req.query;
-      let query = db.collection("notifications");
+      let query = db.collection('notifications');
 
-      if (userId) query = query.where("userId", "==", userId);
+      if (userId) query = query.where('userId', '==', userId);
       if (isRead !== undefined) {
-        query = query.where("isRead", "==", isRead === "true");
+        query = query.where('isRead', '==', isRead === 'true');
       }
 
-      const snapshot = await query.orderBy("createdAt", "desc").get();
-      const notifications = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      
+      const snapshot = await query.orderBy('createdAt', 'desc').get();
+      const notifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
       res.status(200).json(notifications);
     } catch (error) {
-      console.error("Error listing notifications:", error);
-      res.status(500).json({ error: "Failed to retrieve notifications." });
+      console.error('Error listing notifications:', error);
+      res.status(500).json({ error: 'Failed to retrieve notifications.' });
     }
   });
 
   // POST /notifications - Create new notification
-  app.post("/notifications", async (req, res) => {
+  app.post('/notifications', async (req, res) => {
     try {
       const { userId, text, type } = req.body;
 
       if (!userId || !text) {
-        return res.status(400).json({ error: "userId and text are required." });
+        return res.status(400).json({ error: 'userId and text are required.' });
       }
 
       const notificationData = {
         userId,
         text,
-        type: type || "info",
+        type: type || 'info',
         isRead: false,
         createdAt: new Date().toISOString(),
       };
 
-      const docRef = await db.collection("notifications").add(notificationData);
+      const docRef = await db.collection('notifications').add(notificationData);
       const newNotification = { id: docRef.id, ...notificationData };
 
       res.status(201).json(newNotification);
     } catch (error) {
-      console.error("Error creating notification:", error);
-      res.status(500).json({ error: "Failed to create notification." });
+      console.error('Error creating notification:', error);
+      res.status(500).json({ error: 'Failed to create notification.' });
     }
   });
 
   // PUT /notifications/:id - Update notification (mark as read)
-  app.put("/notifications/:id", async (req, res) => {
+  app.put('/notifications/:id', async (req, res) => {
     try {
       const { id } = req.params;
       const updates = req.body;
 
-      const docRef = db.collection("notifications").doc(id);
+      const docRef = db.collection('notifications').doc(id);
       const doc = await docRef.get();
 
       if (!doc.exists) {
-        return res.status(404).json({ error: "Notification not found." });
+        return res.status(404).json({ error: 'Notification not found.' });
       }
 
       await docRef.update(updates);
@@ -3790,8 +3950,8 @@ Retorne apenas o corpo do email, sem assunto.`;
 
       res.status(200).json({ id: updatedDoc.id, ...updatedDoc.data() });
     } catch (error) {
-      console.error("Error updating notification:", error);
-      res.status(500).json({ error: "Failed to update notification." });
+      console.error('Error updating notification:', error);
+      res.status(500).json({ error: 'Failed to update notification.' });
     }
   });
 
@@ -3800,50 +3960,50 @@ Retorne apenas o corpo do email, sem assunto.`;
   // =================================================================
 
   // GET /messages - List messages for a chat
-  app.get("/messages", async (req, res) => {
+  app.get('/messages', async (req, res) => {
     try {
       const { chatId, limit = 100 } = req.query;
 
       if (!chatId) {
-        return res.status(400).json({ error: "chatId query parameter is required." });
+        return res.status(400).json({ error: 'chatId query parameter is required.' });
       }
 
       const snapshot = await db
-        .collection("messages")
-        .where("chatId", "==", chatId)
+        .collection('messages')
+        .where('chatId', '==', chatId)
         .limit(Number.parseInt(limit))
         .get();
 
       const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      
+
       // Sort by createdAt on server side (since Firestore composite index not created yet)
       messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-      
+
       res.status(200).json(messages);
     } catch (error) {
-      console.error("Error listing messages:", error);
-      res.status(500).json({ error: "Failed to retrieve messages." });
+      console.error('Error listing messages:', error);
+      res.status(500).json({ error: 'Failed to retrieve messages.' });
     }
   });
 
   // POST /messages - Create new message
-  app.post("/messages", async (req, res) => {
+  app.post('/messages', async (req, res) => {
     try {
       const { chatId, senderId, text, type } = req.body;
 
       if (!chatId || !senderId || !text) {
-        return res.status(400).json({ error: "chatId, senderId, and text are required." });
+        return res.status(400).json({ error: 'chatId, senderId, and text are required.' });
       }
 
       const messageData = {
         chatId,
         senderId,
         text,
-        type: type || "text",
+        type: type || 'text',
         createdAt: new Date().toISOString(),
       };
 
-      const docRef = await db.collection("messages").add(messageData);
+      const docRef = await db.collection('messages').add(messageData);
       const newMessage = { id: docRef.id, ...messageData };
 
       // Trigger notification for recipient (simplified - in production use Cloud Function)
@@ -3851,8 +4011,8 @@ Retorne apenas o corpo do email, sem assunto.`;
 
       res.status(201).json(newMessage);
     } catch (error) {
-      console.error("Error creating message:", error);
-      res.status(500).json({ error: "Failed to create message." });
+      console.error('Error creating message:', error);
+      res.status(500).json({ error: 'Failed to create message.' });
     }
   });
 
@@ -3861,34 +4021,34 @@ Retorne apenas o corpo do email, sem assunto.`;
   // =================================================================
 
   // GET /jobs/:id - Get single job by ID
-  app.get("/jobs/:id", requireJobParticipant, async (req, res) => {
+  app.get('/jobs/:id', requireJobParticipant, async (req, res) => {
     try {
       const { id } = req.params;
-      const docRef = db.collection("jobs").doc(id);
+      const docRef = db.collection('jobs').doc(id);
       const doc = await docRef.get();
 
       if (!doc.exists) {
-        return res.status(404).json({ error: "Job not found." });
+        return res.status(404).json({ error: 'Job not found.' });
       }
 
       res.status(200).json({ id: doc.id, ...doc.data() });
     } catch (error) {
-      console.error("Error fetching job:", error);
-      res.status(500).json({ error: "Failed to fetch job." });
+      console.error('Error fetching job:', error);
+      res.status(500).json({ error: 'Failed to fetch job.' });
     }
   });
 
   // PUT /jobs/:id - Update job
-  app.put("/jobs/:id", async (req, res) => {
+  app.put('/jobs/:id', async (req, res) => {
     try {
       const { id } = req.params;
       const updates = req.body;
 
-      const docRef = db.collection("jobs").doc(id);
+      const docRef = db.collection('jobs').doc(id);
       const doc = await docRef.get();
 
       if (!doc.exists) {
-        return res.status(404).json({ error: "Job not found." });
+        return res.status(404).json({ error: 'Job not found.' });
       }
 
       await docRef.update(updates);
@@ -3896,8 +4056,8 @@ Retorne apenas o corpo do email, sem assunto.`;
 
       res.status(200).json({ id: updatedDoc.id, ...updatedDoc.data() });
     } catch (error) {
-      console.error("Error updating notification:", error);
-      res.status(500).json({ error: "Failed to update notification." });
+      console.error('Error updating notification:', error);
+      res.status(500).json({ error: 'Failed to update notification.' });
     }
   });
 
@@ -3906,30 +4066,30 @@ Retorne apenas o corpo do email, sem assunto.`;
   // =================================================================
 
   // GET /jobs/:id - Get single job
-  app.get("/jobs/:id", async (req, res) => {
+  app.get('/jobs/:id', async (req, res) => {
     try {
-      const doc = await db.collection("jobs").doc(req.params.id).get();
+      const doc = await db.collection('jobs').doc(req.params.id).get();
       if (!doc.exists) {
-        return res.status(404).json({ error: "Job not found." });
+        return res.status(404).json({ error: 'Job not found.' });
       }
       res.status(200).json({ id: doc.id, ...doc.data() });
     } catch (error) {
-      console.error("Error getting job:", error);
-      res.status(500).json({ error: "Failed to retrieve job." });
+      console.error('Error getting job:', error);
+      res.status(500).json({ error: 'Failed to retrieve job.' });
     }
   });
 
   // PUT /jobs/:id - Update job
-  app.put("/jobs/:id", async (req, res) => {
+  app.put('/jobs/:id', async (req, res) => {
     try {
       const { id } = req.params;
       const updates = req.body;
-      
-      const docRef = db.collection("jobs").doc(id);
+
+      const docRef = db.collection('jobs').doc(id);
       const doc = await docRef.get();
 
       if (!doc.exists) {
-        return res.status(404).json({ error: "Job not found." });
+        return res.status(404).json({ error: 'Job not found.' });
       }
 
       const oldData = doc.data();
@@ -3947,24 +4107,25 @@ Retorne apenas o corpo do email, sem assunto.`;
       // Check if job was just completed - trigger commission calculation
       if (oldStatus !== 'concluido' && newStatus === 'concluido' && updatedData.providerId) {
         try {
-          const providerRef = db.collection("users").doc(updatedData.providerId);
+          const providerRef = db.collection('users').doc(updatedData.providerId);
           const providerDoc = await providerRef.get();
-          
+
           if (providerDoc.exists) {
             const providerData = providerDoc.data();
-            
+
             // Check if provider was recruited by a prospector
             if (providerData.prospectorId && providerData.prospectorCommissionRate) {
               const jobPrice = Number.parseFloat(updatedData.price) || 0;
               const providerRate = Number.parseFloat(providerData.providerRate) || 0.75;
-              const prospectorCommissionRate = Number.parseFloat(providerData.prospectorCommissionRate) || 0.01;
-              
+              const prospectorCommissionRate =
+                Number.parseFloat(providerData.prospectorCommissionRate) || 0.01;
+
               // Calculate earnings
               const providerEarnings = jobPrice * providerRate;
               const commissionAmount = providerEarnings * prospectorCommissionRate;
-              
+
               // Create commission record
-              const commissionRef = db.collection("commissions").doc();
+              const commissionRef = db.collection('commissions').doc();
               await commissionRef.set({
                 id: commissionRef.id,
                 prospectorId: providerData.prospectorId,
@@ -3976,21 +4137,23 @@ Retorne apenas o corpo do email, sem assunto.`;
                 jobPrice: jobPrice,
                 providerRate: providerRate,
                 status: 'pending',
-                createdAt: fieldValueHelpers.serverTimestamp()
+                createdAt: fieldValueHelpers.serverTimestamp(),
               });
 
               // Update prospector's total commissions
-              const prospectorRef = db.collection("prospectors").doc(providerData.prospectorId);
+              const prospectorRef = db.collection('prospectors').doc(providerData.prospectorId);
               const prospectorDoc = await prospectorRef.get();
-              
+
               if (prospectorDoc.exists) {
                 const currentTotal = prospectorDoc.data().totalCommissionsEarned || 0;
                 await prospectorRef.update({
-                  totalCommissionsEarned: currentTotal + commissionAmount
+                  totalCommissionsEarned: currentTotal + commissionAmount,
                 });
               }
 
-              console.log(`✅ Commission created: R$ ${commissionAmount.toFixed(2)} for prospector ${providerData.prospectorId}`);
+              console.log(
+                `✅ Commission created: R$ ${commissionAmount.toFixed(2)} for prospector ${providerData.prospectorId}`
+              );
 
               // Notify prospector about commission
               const { notifyProspector } = require('./notificationService');
@@ -4003,20 +4166,20 @@ Retorne apenas o corpo do email, sem assunto.`;
                   amount: commissionAmount,
                   jobId: id,
                   jobTitle: updatedData.description?.substring(0, 50) || 'Job concluído',
-                }
+                },
               }).catch(err => console.error('[Commission Notification] Error:', err));
             }
           }
         } catch (commissionError) {
-          console.error("Error creating commission:", commissionError);
+          console.error('Error creating commission:', commissionError);
           // Don't fail the job update if commission creation fails
         }
       }
 
       res.status(200).json({ id: updatedDoc.id, ...updatedDoc.data() });
     } catch (error) {
-      console.error("Error updating job:", error);
-      res.status(500).json({ error: "Failed to update job." });
+      console.error('Error updating job:', error);
+      res.status(500).json({ error: 'Failed to update job.' });
     }
   });
 
@@ -4029,14 +4192,16 @@ Retorne apenas o corpo do email, sem assunto.`;
     try {
       const { prospectorId, prospectName, prospectEmail, referralLink } = req.body || {};
       if (!prospectorId || !prospectName || !prospectEmail) {
-        return res.status(400).json({ error: 'prospectorId, prospectName e prospectEmail são obrigatórios' });
+        return res
+          .status(400)
+          .json({ error: 'prospectorId, prospectName e prospectEmail são obrigatórios' });
       }
       const schedule = await followUpService.createFollowUpSchedule({
         db,
         prospectorId,
         prospectName,
         prospectEmail,
-        referralLink: referralLink || null
+        referralLink: referralLink || null,
       });
       res.status(201).json(schedule);
     } catch (err) {
@@ -4062,12 +4227,13 @@ Retorne apenas o corpo do email, sem assunto.`;
     try {
       const { id } = req.params;
       const { action } = req.body || {};
-      if (!action || !['pause','resume','optout'].includes(action)) {
+      if (!action || !['pause', 'resume', 'optout'].includes(action)) {
         return res.status(400).json({ error: 'Invalid action. Use pause | resume | optout' });
       }
       let updated;
       if (action === 'pause') updated = await followUpService.pauseSchedule({ db, scheduleId: id });
-      else if (action === 'resume') updated = await followUpService.resumeSchedule({ db, scheduleId: id });
+      else if (action === 'resume')
+        updated = await followUpService.resumeSchedule({ db, scheduleId: id });
       else updated = await followUpService.optOutSchedule({ db, scheduleId: id });
       res.json(updated);
     } catch (err) {
@@ -4150,7 +4316,7 @@ Retorne apenas o corpo do email, sem assunto.`;
   const landingPageService =
     typeof LandingPageServiceModule === 'function'
       ? new LandingPageServiceModule(defaultDb)
-      : (LandingPageServiceModule.default || LandingPageServiceModule);
+      : LandingPageServiceModule.default || LandingPageServiceModule;
   const landingPagesRouter = require('./routes/landingPages');
   app.use('/api/landing-pages', landingPagesRouter({ db: defaultDb, landingPageService }));
 
@@ -4209,7 +4375,10 @@ async function processScheduledJobs({ db, now = new Date(), thresholdHours = 12 
   // 1) Expire proposals past expiresAt when status === 'pendente'
   try {
     const proposalsSnap = await db.collection('proposals').get();
-    const proposals = (proposalsSnap.docs || []).map(d => ({ id: d.id, ...(typeof d.data === 'function' ? d.data() : d.data) }));
+    const proposals = (proposalsSnap.docs || []).map(d => ({
+      id: d.id,
+      ...(typeof d.data === 'function' ? d.data() : d.data),
+    }));
     for (const p of proposals) {
       const expiresAt = p.expiresAt ? new Date(p.expiresAt).getTime() : undefined;
       if (p.status === 'pendente' && expiresAt && expiresAt < nowTs) {
@@ -4225,13 +4394,19 @@ async function processScheduledJobs({ db, now = new Date(), thresholdHours = 12 
   // 2) Escalate open jobs with zero proposals older than threshold
   try {
     const jobsSnap = await db.collection('jobs').get();
-    const jobs = (jobsSnap.docs || []).map(d => ({ id: d.id, ...(typeof d.data === 'function' ? d.data() : d.data) }));
+    const jobs = (jobsSnap.docs || []).map(d => ({
+      id: d.id,
+      ...(typeof d.data === 'function' ? d.data() : d.data),
+    }));
     for (const j of jobs) {
-      if ((j.status === 'aberto' || j.status === 'open') && (Number(j.proposalsCount || 0) === 0)) {
+      if ((j.status === 'aberto' || j.status === 'open') && Number(j.proposalsCount || 0) === 0) {
         const createdAtMs = j.createdAt ? new Date(j.createdAt).getTime() : undefined;
-        if (createdAtMs && (nowTs - createdAtMs) >= thresholdMs) {
+        if (createdAtMs && nowTs - createdAtMs >= thresholdMs) {
           const ref = db.collection('jobs').doc(j.id);
-          await ref.update({ escalation: 'no_proposals', notifiedAt: new Date(nowTs).toISOString() });
+          await ref.update({
+            escalation: 'no_proposals',
+            notifiedAt: new Date(nowTs).toISOString(),
+          });
           escalatedJobs++;
         }
       }
@@ -4296,9 +4471,9 @@ if (process.env.NODE_ENV !== 'production') {
             activeRecruits: 0,
             totalCommissions: 0,
             level: 1,
-            badges: []
-          }
-        }
+            badges: [],
+          },
+        },
       ];
 
       const results = [];
@@ -4308,26 +4483,26 @@ if (process.env.NODE_ENV !== 'production') {
       }
 
       console.log('[DEV] E2E users seeded:', results);
-      res.status(200).json({ 
+      res.status(200).json({
         message: 'E2E users seeded successfully',
         users: results,
-        mode: db.isMemoryMode ? db.isMemoryMode() : 'firestore'
+        mode: db.isMemoryMode ? db.isMemoryMode() : 'firestore',
       });
     } catch (error) {
       console.error('Error seeding E2E users:', error);
-      res.status(500).json({ 
-        error: 'Failed to seed E2E users', 
+      res.status(500).json({
+        error: 'Failed to seed E2E users',
         details: error.message,
-        stack: error.stack 
+        stack: error.stack,
       });
     }
-  });  // GET /dev/db-status - Verificar modo de armazenamento
+  }); // GET /dev/db-status - Verificar modo de armazenamento
   app.get('/dev/db-status', (req, res) => {
     const db = defaultDb; // Usar defaultDb ao invés de db local
     res.json({
       mode: db.isMemoryMode ? (db.isMemoryMode() ? 'memory' : 'firestore') : 'unknown',
       environment: process.env.NODE_ENV || 'development',
-      data: db._exportMemory ? db._exportMemory() : null
+      data: db._exportMemory ? db._exportMemory() : null,
     });
   });
 }
@@ -4337,19 +4512,23 @@ if (require.main === module) {
   console.log('[SERVER] Starting server on port', port);
   console.log('[SERVER] require.main:', require.main.filename);
   console.log('[SERVER] module:', module.filename);
-  
+
   // Enumerate and log all registered routes on startup
   const enumerateRoutes = () => {
     const routes = [];
     const stack = app._router && app._router.stack ? app._router.stack : [];
-    stack.forEach((layer) => {
+    stack.forEach(layer => {
       if (layer.route && layer.route.path) {
-        const methods = Object.keys(layer.route.methods || {}).filter(Boolean).map(m => m.toUpperCase());
+        const methods = Object.keys(layer.route.methods || {})
+          .filter(Boolean)
+          .map(m => m.toUpperCase());
         routes.push({ path: layer.route.path, methods });
       } else if (layer.name === 'router' && layer.handle && layer.handle.stack) {
-        layer.handle.stack.forEach((rl) => {
+        layer.handle.stack.forEach(rl => {
           if (rl.route && rl.route.path) {
-            const methods = Object.keys(rl.route.methods || {}).filter(Boolean).map(m => m.toUpperCase());
+            const methods = Object.keys(rl.route.methods || {})
+              .filter(Boolean)
+              .map(m => m.toUpperCase());
             routes.push({ path: rl.route.path, methods });
           }
         });
@@ -4362,15 +4541,17 @@ if (require.main === module) {
   console.log('[SERVER] Registered routes:', allRoutes.length);
   allRoutes.slice(0, 30).forEach(r => console.log(`  ${r.methods.join(',')} ${r.path}`));
   if (allRoutes.length > 30) console.log(`  ... and ${allRoutes.length - 30} more`);
-  
+
   // Explicitly log presence of smart-actions route
   const smartActionsRoute = allRoutes.find(r => r.path === '/api/prospector/smart-actions');
   if (smartActionsRoute) {
     console.log('[SERVER] ✅ CONFIRMED: POST /api/prospector/smart-actions is registered');
   } else {
-    console.error('[SERVER] ❌ WARNING: POST /api/prospector/smart-actions NOT FOUND in route list');
+    console.error(
+      '[SERVER] ❌ WARNING: POST /api/prospector/smart-actions NOT FOUND in route list'
+    );
   }
-  
+
   try {
     const host = '0.0.0.0'; // Listen on all interfaces (IPv4)
     console.log('[SERVER] 🚀 Attempting to start server on', host, port);
@@ -4380,16 +4561,16 @@ if (require.main === module) {
       console.log(`[SERVER] ✅ Firestore Backend Service listening on ${host}:${port}`);
       console.log('[SERVER] Server address:', server.address());
     });
-    
-    server.on('error', (err) => {
+
+    server.on('error', err => {
       console.error('[SERVER] ❌ Error:', err);
       process.exit(1);
     });
-    
+
     server.on('close', () => {
       console.log('[SERVER] Server closed');
     });
-    
+
     // Keep process alive
     process.on('SIGTERM', () => {
       console.log('[SERVER] SIGTERM signal received: closing HTTP server');
@@ -4397,14 +4578,14 @@ if (require.main === module) {
         console.log('[SERVER] HTTP server closed');
       });
     });
-    
+
     console.log('[SERVER] Setup complete, server should be running...');
-    
+
     // CRITICAL: Force process to stay alive by keeping stdin open
     process.stdin.resume();
     process.stdin.setEncoding('utf8');
     console.log('[SERVER] Process stdin activated to prevent premature exit');
-    
+
     // Heartbeat to keep terminal alive
     setInterval(() => {
       console.log('[SERVER] Heartbeat - Server running on port', port);
@@ -4420,4 +4601,3 @@ if (require.main === module) {
 module.exports = { createApp, app, calculateProviderRate, processScheduledJobs };
 // Provide a default export compatible with ESM import default used in tests
 module.exports.default = app;
-
