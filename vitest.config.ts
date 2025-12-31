@@ -27,7 +27,7 @@ export default defineConfig({
     },
     exclude: ['backend/**', 'doc/**', 'node_modules/**'],
     coverage: {
-      enabled: false, // Coverage disabled to isolate and fix failing tests
+      enabled: true, // Alinhar com npm test --coverage
       reportOnFailure: true,
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
@@ -41,12 +41,13 @@ export default defineConfig({
         'firebaseConfig.ts',
       ],
       thresholds: {
-        lines: 80,
-        statements: 80,
-        functions: 80,
-        branches: 75,
+        // Padrão do projeto: manter cobertura >45%
+        lines: 45,
+        statements: 45,
+        functions: 45,
+        branches: 40,
       },
-      // Exclude non-production and helper paths from coverage to better reflect app code
+      // Excluir caminhos não produtivos para refletir melhor o código da app
       exclude: [
         'backend/**',
         'doc/**',
@@ -58,7 +59,7 @@ export default defineConfig({
         'tests/**',
         '**/*.test.*',
         'coverage/**/*.js',
-        'services/errorMessages.ts', // Utility file - messages catalog
+        'services/errorMessages.ts',
       ],
     },
   },

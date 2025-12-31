@@ -271,15 +271,18 @@ function createApp({
   // ===========================
   app.use(cors());
   
-  if (!isTestEnv) {
-    // ===========================
-    // CSRF Protection (Task 4.6)
-    // ===========================
+  // ===========================
+  // CSRF Protection (Task 4.6) - DISABLED IN DEV MODE
+  // ===========================
+  const isDevMode = process.env.NODE_ENV === 'development' || !process.env.NODE_ENV;
+  if (!isTestEnv && !isDevMode) {
     setupCsrfProtection(app, {
       exempt: ['/api/stripe-webhook', '/api/webhooks/*'],
       enableRotation: true
     });
     createCsrfTokenEndpoint(app);
+  } else if (isDevMode) {
+    console.log('[CSRF] DISABLED in development mode for local testing');
   }
   
   // ===========================
@@ -4370,6 +4373,9 @@ if (require.main === module) {
   
   try {
     const host = '0.0.0.0'; // Listen on all interfaces (IPv4)
+    console.log('[SERVER] 🚀 Attempting to start server on', host, port);
+    console.log('[SERVER] app instance type:', typeof app);
+    console.log('[SERVER] app.listen type:', typeof app.listen);
     const server = app.listen(port, host, () => {
       console.log(`[SERVER] ✅ Firestore Backend Service listening on ${host}:${port}`);
       console.log('[SERVER] Server address:', server.address());
@@ -4393,6 +4399,11 @@ if (require.main === module) {
     });
     
     console.log('[SERVER] Setup complete, server should be running...');
+    
+    // CRITICAL: Force process to stay alive by keeping stdin open
+    process.stdin.resume();
+    process.stdin.setEncoding('utf8');
+    console.log('[SERVER] Process stdin activated to prevent premature exit');
     
     // Heartbeat to keep terminal alive
     setInterval(() => {

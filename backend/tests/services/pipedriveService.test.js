@@ -2,52 +2,30 @@
  * Testes para Pipedrive Service
  */
 
-const PipedriveService = require('../../src/services/pipedriveService.js');
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+const PipedriveService = require('../../src/services/pipedriveService');
 
 describe('PipedriveService', () => {
   let service;
   let mockClient;
-  let mockFunctions;
 
   beforeEach(() => {
     mockClient = {
       post: vi.fn(),
       put: vi.fn(),
       get: vi.fn(),
-      create: vi.fn().mockReturnThis(), // Mock axios.create
     };
 
-    mockFunctions = {
-      logger: {
-        info: vi.fn(),
-        error: vi.fn(),
-        warn: vi.fn(),
-      }
-    };
-
-    // Inject mocks via constructor (DI)
     service = new PipedriveService({
       apiKey: 'test-api-key',
       companyDomain: 'test-domain',
-    }, {
-      axios: { create: () => mockClient }, // mock axios lib
-      functions: mockFunctions
     });
-    
-    // Ensure service.client uses our mockClient (already done by constructor if axios mock works, but keeping manual override just in case)
+
     service.client = mockClient;
   });
 
   describe('createLead', () => {
     it('deve criar um lead com sucesso', async () => {
-      // Mock para getOrCreateOrganization (client.get)
-      mockClient.get.mockResolvedValueOnce({
-        data: {
-          success: true,
-          data: { items: [{ item: { id: 999 } }] } // Organization found
-        }
-      });
-
       mockClient.post.mockResolvedValueOnce({
         data: {
           success: true,

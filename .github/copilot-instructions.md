@@ -44,9 +44,10 @@
 
 - **Frontend**: `npm run dev` (port 3000, proxies `/api` to `localhost:8081` via [vite.config.ts](vite.config.ts)). Tests: `npm test` (Vitest), `npm run test:watch`, `npm run test:ui`.
 - **Backend**: `cd backend && npm start` (port 8081 for local). Tests from root: `npm run test:backend` (runs Vitest in `backend/` with no coverage by default). Coverage: `npm run test` (frontend) + `npm run test:backend` = combined `npm run test:all`.
-- **E2E Playwright**: `npm run e2e:smoke` (10-test suite ~1min), `npm run e2e:critical` (full journeys), `npm run e2e:headed` (visible browser), `npm run e2e:report` (view results).
+- **E2E Playwright**: `npm run e2e:smoke` (10-test suite ~1min: [tests/e2e/smoke/basic-smoke.spec.ts](tests/e2e/smoke/basic-smoke.spec.ts)), `npm run e2e:critical` (full journeys), `npm run e2e:headed` (visible browser), `npm run e2e:report` (view results). Config: [playwright.config.ts](playwright.config.ts) uses port 4173 (preview server), single worker, no parallel execution.
 - **Pre-deploy gate**: `npm run validate:prod` runs lint + typecheck + test + build + `guardrails:audit` (detects secrets via custom script in [scripts/guardrails/](scripts/guardrails/)). CI disabled (`if: false` in [.github/workflows/ci.yml](.github/workflows/ci.yml)).
-- **VS Code tasks**: `.vscode/tasks.json` provides automated workflows (audit PR, update master doc, generate tasks, create/merge PRs).
+- **VS Code tasks**: [.vscode/tasks.json](.vscode/tasks.json) provides automated workflows (audit PR, update master doc, generate tasks, create/merge PRs).
+- **Windows environment**: Primary dev OS; PowerShell scripts in [scripts/](scripts/) for GCP ops, secret validation, log tailing.
 
 ## AI Orchestration
 
@@ -92,6 +93,7 @@
 ## Testing Patterns
 
 - **Vitest config**: [vitest.config.ts](vitest.config.ts) uses jsdom, `singleThread: true`, `maxWorkers: 1` for stability; coverage via v8 provider. Excludes: `backend/**`, `doc/**`, `node_modules/**`.
-- **Backend tests**: Use `createApp()` with injected mocks **never import singleton**. Example: `const app = createApp({ db: mockDb, stripe: null, genAI: null });`. Run: `npm run test:backend` (Vitest in `backend/` dir).
-- **Frontend tests**: 261+ passing tests across [tests/](tests/) and [tests/e2e/](tests/e2e/). Smoke tests (10 critical flows) in [tests/e2e/smoke/](tests/e2e/smoke/); run `npm run e2e:smoke` for <2min validation.
+- **Backend tests**: Use `createApp()` with injected mocks **never import singleton**. Example: `const app = createApp({ db: mockDb, stripe: null, genAI: null });`. Run: `npm run test:backend` (Vitest in `backend/` dir). Respect middleware chain—don't bypass auth checks.
+- **Frontend tests**: 261+ passing tests across [tests/](tests/) and [tests/e2e/](tests/e2e/). Smoke tests (10 critical flows) in [tests/e2e/smoke/basic-smoke.spec.ts](tests/e2e/smoke/basic-smoke.spec.ts); run `npm run e2e:smoke` for <2min validation.
 - **Setup files**: [tests/setup.ts](tests/setup.ts) for frontend (MSW, mocks), [backend/vitest.config.mjs](backend/vitest.config.mjs) for backend (no Firestore reads in tests).
+- **E2E stability**: Single worker (`workers: 1`), no parallel execution (`fullyParallel: false`), retries disabled in local (2 in CI). Preview server auto-starts on port 4173.
