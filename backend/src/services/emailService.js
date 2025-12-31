@@ -35,12 +35,12 @@ async function sendProspectEmail(lead, template, options = {}) {
       subject = `${lead.name}, uma oportunidade exclusiva aguarda você!`,
       trackOpens = true,
       trackClicks = true,
-      customArgs = {}
+      customArgs = {},
     } = options;
 
     // Personaliza o conteúdo do email
     let htmlContent = template;
-    
+
     // Se for um template name, carrega o conteúdo
     if (typeof template === 'string' && !template.includes('<html>')) {
       htmlContent = await loadEmailTemplate(template, lead);
@@ -56,43 +56,43 @@ async function sendProspectEmail(lead, template, options = {}) {
       to: lead.email,
       from: {
         email: SENDGRID_FROM_EMAIL,
-        name: SENDGRID_FROM_NAME
+        name: SENDGRID_FROM_NAME,
       },
       subject,
       html: htmlContent,
       trackingSettings: {
         clickTracking: { enable: trackClicks, enableText: false },
         openTracking: { enable: trackOpens },
-        subscriptionTracking: { enable: false }
+        subscriptionTracking: { enable: false },
       },
       customArgs: {
         leadId: lead.id || '',
         category: lead.category || '',
         source: 'prospecting',
-        ...customArgs
-      }
+        ...customArgs,
+      },
     };
 
     const response = await sgMail.send(msg);
-    
+
     // Salva log de envio no Firestore
     await logEmailSent(lead, msg, response[0].statusCode);
 
     return {
       success: true,
       messageId: response[0].headers['x-message-id'],
-      statusCode: response[0].statusCode
+      statusCode: response[0].statusCode,
     };
   } catch (error) {
     console.error('❌ Erro ao enviar email:', error.response?.body || error.message);
-    
+
     // Salva log de erro
     await logEmailError(lead, error);
-    
+
     return {
       success: false,
       error: error.message,
-      code: error.code
+      code: error.code,
     };
   }
 }
@@ -108,7 +108,7 @@ async function sendBulkEmails(leads, template, options = {}) {
   const results = {
     sent: 0,
     failed: 0,
-    details: []
+    details: [],
   };
 
   const batchSize = 100; // SendGrid recomenda max 100 por request
@@ -116,7 +116,7 @@ async function sendBulkEmails(leads, template, options = {}) {
 
   for (let i = 0; i < leads.length; i += batchSize) {
     const batch = leads.slice(i, i + batchSize);
-    
+
     // Processa batch em paralelo
     const batchResults = await Promise.all(
       batch.map(lead => sendProspectEmail(lead, template, options))
@@ -129,13 +129,13 @@ async function sendBulkEmails(leads, template, options = {}) {
       } else {
         results.failed++;
       }
-      
+
       results.details.push({
         leadId: batch[idx].id,
         email: batch[idx].email,
         success: result.success,
         messageId: result.messageId,
-        error: result.error
+        error: result.error,
       });
     });
 
@@ -158,11 +158,11 @@ async function loadEmailTemplate(templateName, lead) {
   try {
     const db = admin.firestore();
     const templateDoc = await db.collection('email_templates').doc(templateName).get();
-    
+
     if (templateDoc.exists) {
       return templateDoc.data().html;
     }
-    
+
     // Template padrão se não encontrar
     return getDefaultTemplate(lead);
   } catch (error) {
@@ -268,7 +268,7 @@ async function logEmailSent(lead, msg, statusCode) {
       subject: msg.subject,
       statusCode,
       sentAt: admin.firestore.FieldValue.serverTimestamp(),
-      customArgs: msg.customArgs
+      customArgs: msg.customArgs,
     });
   } catch (error) {
     console.error('Erro ao salvar log de email:', error);
@@ -287,7 +287,7 @@ async function logEmailError(lead, error) {
       email: lead.email,
       error: error.message,
       code: error.code,
-      erroredAt: admin.firestore.FieldValue.serverTimestamp()
+      erroredAt: admin.firestore.FieldValue.serverTimestamp(),
     });
   } catch (err) {
     console.error('Erro ao salvar log de erro:', err);
@@ -321,7 +321,7 @@ async function handleWebhookEvents(events) {
         messageId: sg_message_id,
         timestamp: new Date(timestamp * 1000),
         rawEvent: event,
-        processedAt: admin.firestore.FieldValue.serverTimestamp()
+        processedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
 
       // Atualiza atividade do lead
@@ -357,5 +357,5 @@ module.exports = {
   sendProspectEmail,
   sendBulkEmails,
   handleWebhookEvents,
-  getDefaultTemplate
+  getDefaultTemplate,
 };

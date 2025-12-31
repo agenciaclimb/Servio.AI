@@ -141,13 +141,13 @@ Sitemap: ${baseUrl}/sitemap.xml
 }
 
 function renderSitemap(baseUrl) {
-  const urls = providers.map((p) => `${baseUrl}/p/${p.citySlug}/${p.serviceSlug}/${p.slug}`);
+  const urls = providers.map(p => `${baseUrl}/p/${p.citySlug}/${p.serviceSlug}/${p.slug}`);
   const today = new Date().toISOString().split('T')[0];
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls
   .map(
-    (u) => `<url>
+    u => `<url>
   <loc>${esc(u)}</loc>
   <lastmod>${today}</lastmod>
   <changefreq>weekly</changefreq>
@@ -180,7 +180,7 @@ const server = http.createServer((req, res) => {
   if (match) {
     const [, citySlug, serviceSlug, slug] = match;
     const provider = providers.find(
-      (p) => p.citySlug === citySlug && p.serviceSlug === serviceSlug && p.slug === slug
+      p => p.citySlug === citySlug && p.serviceSlug === serviceSlug && p.slug === slug
     );
     if (!provider) {
       const body = notFound(baseUrl);

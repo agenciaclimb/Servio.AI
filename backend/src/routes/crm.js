@@ -30,10 +30,7 @@ module.exports = function createCRMRoutes(dependencies) {
       }
 
       // Buscar prospect do banco de dados
-      const prospect = await db
-        .collection('prospects')
-        .doc(prospectId)
-        .get();
+      const prospect = await db.collection('prospects').doc(prospectId).get();
 
       if (!prospect.exists) {
         return res.status(404).json({
@@ -85,10 +82,7 @@ module.exports = function createCRMRoutes(dependencies) {
       // Buscar todos os prospects
       const prospects = [];
       for (const prospectId of prospectIds) {
-        const prospect = await db
-          .collection('prospects')
-          .doc(prospectId)
-          .get();
+        const prospect = await db.collection('prospects').doc(prospectId).get();
 
         if (prospect.exists) {
           prospects.push({

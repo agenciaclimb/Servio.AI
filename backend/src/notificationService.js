@@ -1,8 +1,8 @@
 /**
  * Notification Service - Backend FCM Integration
- * 
+ *
  * Envia notificações push para prospectores via Firebase Cloud Messaging
- * 
+ *
  * Tipos de notificações:
  * - click: Alguém clicou no link de indicação
  * - conversion: Novo prestador cadastrado via link
@@ -19,7 +19,7 @@ async function notifyProspector({ db, prospectorId, type, data }) {
   try {
     // Buscar FCM token do prospector
     const prospectorDoc = await db.collection('prospectors').doc(prospectorId).get();
-    
+
     if (!prospectorDoc.exists) {
       console.warn(`Prospector ${prospectorId} not found`);
       return { success: false, error: 'Prospector not found' };
@@ -104,10 +104,12 @@ async function notifyProspector({ db, prospectorId, type, data }) {
     return { success: true, messageId: result };
   } catch (error) {
     console.error('Error sending notification:', error);
-    
+
     // Se token inválido, remover do prospector
-    if (error.code === 'messaging/invalid-registration-token' || 
-        error.code === 'messaging/registration-token-not-registered') {
+    if (
+      error.code === 'messaging/invalid-registration-token' ||
+      error.code === 'messaging/registration-token-not-registered'
+    ) {
       await db.collection('prospectors').doc(prospectorId).update({
         fcmToken: null,
       });

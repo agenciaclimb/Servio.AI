@@ -1,7 +1,7 @@
 /**
  * Cloud Scheduler Routes
  * Handles automated tasks triggered by Google Cloud Scheduler
- * 
+ *
  * Requirements:
  * - Requests must come from Cloud Scheduler (Authorization header validation)
  * - Each route handles specific automated workflow
@@ -31,21 +31,21 @@ const verifyCloudSchedulerToken = async (req, res, next) => {
 router.post('/follow-ups', verifyCloudSchedulerToken, async (req, res) => {
   try {
     console.log('[Scheduler] Processing follow-ups...');
-    
+
     const result = await processPendingOutreach();
-    
+
     res.json({
       success: true,
       message: 'Follow-up processing completed',
       processed: result.processed,
       failed: result.failed,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error('[Scheduler] Follow-up error:', error);
     res.status(500).json({
       error: 'Failed to process follow-ups',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -58,20 +58,20 @@ router.post('/follow-ups', verifyCloudSchedulerToken, async (req, res) => {
 router.post('/email-reminders', verifyCloudSchedulerToken, async (req, res) => {
   try {
     console.log('[Scheduler] Processing email reminders...');
-    
+
     const result = await followUpService.sendInactiveProviderReminders();
-    
+
     res.json({
       success: true,
       message: 'Email reminders sent',
       recipients: result.count,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error('[Scheduler] Email reminder error:', error);
     res.status(500).json({
       error: 'Failed to send email reminders',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -84,20 +84,20 @@ router.post('/email-reminders', verifyCloudSchedulerToken, async (req, res) => {
 router.post('/analytics-rollup', verifyCloudSchedulerToken, async (req, res) => {
   try {
     console.log('[Scheduler] Running analytics rollup...');
-    
+
     const result = await prospectorAnalyticsService.runDailyRollup();
-    
+
     res.json({
       success: true,
       message: 'Analytics rollup completed',
       metrics: result.metrics,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error('[Scheduler] Analytics rollup error:', error);
     res.status(500).json({
       error: 'Failed to run analytics rollup',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -110,21 +110,21 @@ router.post('/analytics-rollup', verifyCloudSchedulerToken, async (req, res) => 
 router.post('/campaign-performance', verifyCloudSchedulerToken, async (req, res) => {
   try {
     console.log('[Scheduler] Calculating campaign performance...');
-    
+
     const result = await prospectorAnalyticsService.calculateCampaignMetrics();
-    
+
     res.json({
       success: true,
       message: 'Campaign metrics calculated',
       campaigns: result.campaigns,
       totalMetrics: result.totals,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error('[Scheduler] Campaign performance error:', error);
     res.status(500).json({
       error: 'Failed to calculate campaign metrics',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -137,21 +137,21 @@ router.post('/campaign-performance', verifyCloudSchedulerToken, async (req, res)
 router.post('/cleanup', verifyCloudSchedulerToken, async (req, res) => {
   try {
     console.log('[Scheduler] Running cleanup...');
-    
+
     // Delete old logs (older than 30 days)
     // Clean up expired caches
     // Archive old campaigns
-    
+
     res.json({
       success: true,
       message: 'Cleanup completed',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error('[Scheduler] Cleanup error:', error);
     res.status(500).json({
       error: 'Failed to run cleanup',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -164,7 +164,7 @@ router.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    service: 'cloud-scheduler'
+    service: 'cloud-scheduler',
   });
 });
 

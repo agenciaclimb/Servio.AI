@@ -21,14 +21,25 @@ function createMockDb(initialData = {}) {
       return {
         doc(id) {
           return {
-            async get() { const entry = coll.get(id); return { exists: !!entry, id, data: () => entry? entry._data : undefined }; },
-            async set(data) { coll.set(id, { id, _data: { ...data } }); },
-            async update(patch) { if (!coll.get(id)) throw new Error('Doc does not exist'); coll.get(id)._data = { ...coll.get(id)._data, ...patch }; }
+            async get() {
+              const entry = coll.get(id);
+              return { exists: !!entry, id, data: () => (entry ? entry._data : undefined) };
+            },
+            async set(data) {
+              coll.set(id, { id, _data: { ...data } });
+            },
+            async update(patch) {
+              if (!coll.get(id)) throw new Error('Doc does not exist');
+              coll.get(id)._data = { ...coll.get(id)._data, ...patch };
+            },
           };
         },
-        async get() { const docs = Array.from(coll.values()).map(d => ({ id: d.id, data: () => d._data })); return { docs }; }
+        async get() {
+          const docs = Array.from(coll.values()).map(d => ({ id: d.id, data: () => d._data }));
+          return { docs };
+        },
       };
-    }
+    },
   };
 }
 
@@ -36,7 +47,7 @@ describe('Prospector outreach automation', () => {
   const FOLLOW_UP_MS = 48 * 60 * 60 * 1000;
   const mockDb = createMockDb({
     prospectors: {
-      'p@example.com': { name: 'Prospector', totalRecruits: 0 }
+      'p@example.com': { name: 'Prospector', totalRecruits: 0 },
     },
     prospector_outreach: {
       // Eligible record (older than threshold)
@@ -51,7 +62,7 @@ describe('Prospector outreach automation', () => {
         whatsappSentAt: null,
         status: 'email_sent',
         optOut: false,
-        errorHistory: []
+        errorHistory: [],
       },
       // Not yet eligible
       'provider2@example.com': {
@@ -65,7 +76,7 @@ describe('Prospector outreach automation', () => {
         whatsappSentAt: null,
         status: 'email_sent',
         optOut: false,
-        errorHistory: []
+        errorHistory: [],
       },
       // Opted out
       'provider3@example.com': {
@@ -79,9 +90,9 @@ describe('Prospector outreach automation', () => {
         whatsappSentAt: null,
         status: 'email_sent',
         optOut: true,
-        errorHistory: []
-      }
-    }
+        errorHistory: [],
+      },
+    },
   });
 
   const app = createApp({ db: mockDb, stripe: null, genAI: null });
@@ -89,7 +100,11 @@ describe('Prospector outreach automation', () => {
   test('POST /api/prospector/outreach creates new outreach record', async () => {
     const res = await request(app)
       .post('/api/prospector/outreach')
-      .send({ prospectorId: 'p@example.com', providerEmail: 'new@example.com', providerName: 'New Provider' });
+      .send({
+        prospectorId: 'p@example.com',
+        providerEmail: 'new@example.com',
+        providerName: 'New Provider',
+      });
     expect(res.status).toBe(201);
     expect(res.body.status).toBe('email_sent');
     // Verify stored
@@ -99,29 +114,47 @@ describe('Prospector outreach automation', () => {
   });
 
   test('processPendingOutreach sends WhatsApp for eligible records only', async () => {
-    const processed = await processPendingOutreach({ db: mockDb, sendWhatsApp: async () => ({ success: true }) });
+    const processed = await processPendingOutreach({
+      db: mockDb,
+      sendWhatsApp: async () => ({ success: true }),
+    });
     // provider1 should be processed, provider2 not yet, provider3 opted out
     const ids = processed.map(p => p.id);
     expect(ids).toContain('provider1@example.com');
     expect(ids).not.toContain('provider2@example.com');
     expect(ids).not.toContain('provider3@example.com');
-    const updated = await mockDb.collection('prospector_outreach').doc('provider1@example.com').get();
+    const updated = await mockDb
+      .collection('prospector_outreach')
+      .doc('provider1@example.com')
+      .get();
     expect(updated.data().status).toBe('whatsapp_sent');
     expect(updated.data().whatsappSentAt).toBeTruthy();
   });
 
   test('opt-out prevents follow-up', async () => {
     // Create fresh eligible record then opt-out
-    await mockDb.collection('prospector_outreach').doc('x@example.com').set({
-      id: 'x@example.com', prospectorId: 'p@example.com', providerName: 'X', providerEmail: 'x@example.com', providerPhone: null,
-      emailSentAt: Date.now() - FOLLOW_UP_MS - 2000,
-      followUpEligibleAt: Date.now() - 1000,
-      whatsappSentAt: null,
-      status: 'email_sent', optOut: false, errorHistory: []
-    });
+    await mockDb
+      .collection('prospector_outreach')
+      .doc('x@example.com')
+      .set({
+        id: 'x@example.com',
+        prospectorId: 'p@example.com',
+        providerName: 'X',
+        providerEmail: 'x@example.com',
+        providerPhone: null,
+        emailSentAt: Date.now() - FOLLOW_UP_MS - 2000,
+        followUpEligibleAt: Date.now() - 1000,
+        whatsappSentAt: null,
+        status: 'email_sent',
+        optOut: false,
+        errorHistory: [],
+      });
     const optRes = await request(app).post('/api/prospector/outreach/x@example.com/optout');
     expect(optRes.status).toBe(200);
-    const processed = await processPendingOutreach({ db: mockDb, sendWhatsApp: async () => ({ success: true }) });
+    const processed = await processPendingOutreach({
+      db: mockDb,
+      sendWhatsApp: async () => ({ success: true }),
+    });
     const ids = processed.map(p => p.id);
     expect(ids).not.toContain('x@example.com');
     const snap = await mockDb.collection('prospector_outreach').doc('x@example.com').get();

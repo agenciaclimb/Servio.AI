@@ -22,12 +22,12 @@ function createMockDb(initialData = {}) {
           if (name === 'prospectors') prospectorsGetCount += 1;
           const docs = Array.from(coll.values()).map(d => ({ id: d.id, data: () => d._data }));
           return { docs };
-        }
+        },
       };
     },
     _metrics: {
-      getProspectorsCalls: () => prospectorsGetCount
-    }
+      getProspectorsCalls: () => prospectorsGetCount,
+    },
   };
   return db;
 }
@@ -37,8 +37,8 @@ describe('Leaderboard cache & rate limiting', () => {
     prospectors: {
       'a@example.com': { name: 'Alice', totalRecruits: 12, totalCommissionsEarned: 120 },
       'b@example.com': { name: 'Bob', totalRecruits: 4, totalCommissionsEarned: 40 },
-      'c@example.com': { name: 'Carol', totalRecruits: 30, totalCommissionsEarned: 450 }
-    }
+      'c@example.com': { name: 'Carol', totalRecruits: 30, totalCommissionsEarned: 450 },
+    },
   });
   const app = createApp({ db: mockDb, stripe: null, genAI: null });
 
@@ -65,8 +65,15 @@ describe('Leaderboard cache & rate limiting', () => {
   });
 
   test('rate limiting triggers 429 after threshold exceeded', async () => {
-    const limitedDb = createMockDb({ prospectors: { 'x@example.com': { totalCommissionsEarned: 10 } } });
-    const limitedApp = createApp({ db: limitedDb, stripe: null, genAI: null, leaderboardRateConfig: { limit: 3, windowMs: 1000 } });
+    const limitedDb = createMockDb({
+      prospectors: { 'x@example.com': { totalCommissionsEarned: 10 } },
+    });
+    const limitedApp = createApp({
+      db: limitedDb,
+      stripe: null,
+      genAI: null,
+      leaderboardRateConfig: { limit: 3, windowMs: 1000 },
+    });
     const r1 = await request(limitedApp).get('/api/prospectors/leaderboard');
     const r2 = await request(limitedApp).get('/api/prospectors/leaderboard');
     const r3 = await request(limitedApp).get('/api/prospectors/leaderboard');

@@ -1,6 +1,6 @@
 /**
  * SECURITY HEADERS MIDDLEWARE
- * 
+ *
  * Implementa headers de segurança usando helmet.js
  * - Content Security Policy (CSP)
  * - HSTS (HTTP Strict Transport Security)
@@ -8,7 +8,7 @@
  * - X-Content-Type-Options
  * - X-XSS-Protection
  * - Referrer-Policy
- * 
+ *
  * @module middleware/securityHeaders
  */
 
@@ -24,36 +24,24 @@ const cspDirectives = {
     "'unsafe-inline'", // TODO: Remover quando possível (usar nonces)
     'https://www.googletagmanager.com',
     'https://www.google-analytics.com',
-    'https://js.stripe.com'
+    'https://js.stripe.com',
   ],
   styleSrc: [
     "'self'",
     "'unsafe-inline'", // TODO: Remover quando possível
-    'https://fonts.googleapis.com'
+    'https://fonts.googleapis.com',
   ],
-  imgSrc: [
-    "'self'",
-    'data:',
-    'https:',
-    'blob:'
-  ],
-  fontSrc: [
-    "'self'",
-    'https://fonts.gstatic.com'
-  ],
+  imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
+  fontSrc: ["'self'", 'https://fonts.gstatic.com'],
   connectSrc: [
     "'self'",
     'https://api.servio.ai',
     'https://servio-backend-v2-1000250760228.us-west1.run.app',
     'https://firestore.googleapis.com',
     'https://www.google-analytics.com',
-    'https://api.stripe.com'
+    'https://api.stripe.com',
   ],
-  frameSrc: [
-    "'self'",
-    'https://js.stripe.com',
-    'https://hooks.stripe.com'
-  ],
+  frameSrc: ["'self'", 'https://js.stripe.com', 'https://hooks.stripe.com'],
   objectSrc: ["'none'"],
   mediaSrc: ["'self'"],
   manifestSrc: ["'self'"],
@@ -61,7 +49,7 @@ const cspDirectives = {
   formAction: ["'self'"],
   frameAncestors: ["'self'"],
   baseUri: ["'self'"],
-  upgradeInsecureRequests: []
+  upgradeInsecureRequests: [],
 };
 
 /**
@@ -71,19 +59,19 @@ const securityHeaders = helmet({
   // Content Security Policy
   contentSecurityPolicy: {
     directives: cspDirectives,
-    reportOnly: false // Mudar para true em desenvolvimento se necessário
+    reportOnly: false, // Mudar para true em desenvolvimento se necessário
   },
 
   // HTTP Strict Transport Security
   hsts: {
     maxAge: 31536000, // 1 ano
     includeSubDomains: true,
-    preload: true
+    preload: true,
   },
 
   // X-Frame-Options (previne clickjacking)
   frameguard: {
-    action: 'deny' // Ou 'sameorigin' se precisar de iframes
+    action: 'deny', // Ou 'sameorigin' se precisar de iframes
   },
 
   // X-Content-Type-Options (previne MIME sniffing)
@@ -94,7 +82,7 @@ const securityHeaders = helmet({
 
   // Referrer-Policy
   referrerPolicy: {
-    policy: 'strict-origin-when-cross-origin'
+    policy: 'strict-origin-when-cross-origin',
   },
 
   // Remove X-Powered-By header (esconde tech stack)
@@ -102,7 +90,7 @@ const securityHeaders = helmet({
 
   // DNS Prefetch Control
   dnsPrefetchControl: {
-    allow: false
+    allow: false,
   },
 
   // IE No Open (previne download automático)
@@ -110,8 +98,8 @@ const securityHeaders = helmet({
 
   // Don't Download IE from Other Sites
   permittedCrossDomainPolicies: {
-    permittedPolicies: 'none'
-  }
+    permittedPolicies: 'none',
+  },
 });
 
 /**
@@ -128,7 +116,7 @@ function sanitizeInput(req, res, next) {
         req.body[key] = xss(req.body[key], {
           whiteList: {}, // Não permitir nenhuma tag HTML
           stripIgnoreTag: true,
-          stripIgnoreTagBody: ['script', 'style']
+          stripIgnoreTagBody: ['script', 'style'],
         });
       } else if (Array.isArray(req.body[key])) {
         // Sanitizar arrays de strings
@@ -136,7 +124,7 @@ function sanitizeInput(req, res, next) {
           if (typeof item === 'string') {
             return xss(item, {
               whiteList: {},
-              stripIgnoreTag: true
+              stripIgnoreTag: true,
             });
           }
           return item;
@@ -157,7 +145,7 @@ function sanitizeQuery(req, res, next) {
       if (typeof req.query[key] === 'string') {
         req.query[key] = xss(req.query[key], {
           whiteList: {},
-          stripIgnoreTag: true
+          stripIgnoreTag: true,
         });
       }
     });
@@ -171,14 +159,14 @@ function sanitizeQuery(req, res, next) {
  */
 function preventPathTraversal(req, res, next) {
   const suspiciousPatterns = [
-    /\.\./g,  // Parent directory references
-    /\\/g,    // Backslashes
-    /~\//g,   // Home directory references
+    /\.\./g, // Parent directory references
+    /\\/g, // Backslashes
+    /~\//g, // Home directory references
     /%2e%2e/gi, // Encoded parent directory
-    /%5c/gi   // Encoded backslash
+    /%5c/gi, // Encoded backslash
   ];
 
-  const checkString = (str) => {
+  const checkString = str => {
     return suspiciousPatterns.some(pattern => pattern.test(str));
   };
 
@@ -186,7 +174,7 @@ function preventPathTraversal(req, res, next) {
   if (checkString(req.path)) {
     return res.status(400).json({
       error: 'Invalid path detected',
-      code: 'PATH_TRAVERSAL_ATTEMPT'
+      code: 'PATH_TRAVERSAL_ATTEMPT',
     });
   }
 
@@ -196,7 +184,7 @@ function preventPathTraversal(req, res, next) {
     if (checkString(queryValues)) {
       return res.status(400).json({
         error: 'Invalid query parameters',
-        code: 'PATH_TRAVERSAL_ATTEMPT'
+        code: 'PATH_TRAVERSAL_ATTEMPT',
       });
     }
   }
@@ -233,5 +221,5 @@ module.exports = {
   sanitizeInput,
   sanitizeQuery,
   preventPathTraversal,
-  customSecurityHeaders
+  customSecurityHeaders,
 };

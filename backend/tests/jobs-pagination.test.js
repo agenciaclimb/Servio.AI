@@ -6,17 +6,17 @@ import { createApp } from '../src/index.js';
 const mockVerifyIdToken = vi.fn().mockResolvedValue({
   uid: 'test-uid',
   email: 'test@example.com',
-  role: 'cliente' // Custom claim from Task 1.1
+  role: 'cliente', // Custom claim from Task 1.1
 });
 
 vi.mock('firebase-admin', () => ({
   default: {
     auth: vi.fn(() => ({
-      verifyIdToken: mockVerifyIdToken
+      verifyIdToken: mockVerifyIdToken,
     })),
     initializeApp: vi.fn(),
-    firestore: vi.fn()
-  }
+    firestore: vi.fn(),
+  },
 }));
 
 describe('Jobs API Pagination (Task 2.1)', () => {
@@ -31,7 +31,7 @@ describe('Jobs API Pagination (Task 2.1)', () => {
     mockVerifyIdToken.mockResolvedValue({
       uid: 'test-uid',
       email: 'test@example.com',
-      role: 'cliente'
+      role: 'cliente',
     });
 
     // Mock Firestore query chain
@@ -49,16 +49,16 @@ describe('Jobs API Pagination (Task 2.1)', () => {
       data: () => ({
         email: 'test@example.com',
         type: 'cliente',
-        uid: 'test-uid'
-      })
+        uid: 'test-uid',
+      }),
     };
 
     mockCollection = {
-      doc: vi.fn((docId) => {
+      doc: vi.fn(docId => {
         // Return user doc when looking up users/test@example.com
         if (docId === 'test@example.com') {
           return {
-            get: vi.fn().mockResolvedValue(mockUserDoc)
+            get: vi.fn().mockResolvedValue(mockUserDoc),
           };
         }
         // For jobs pagination cursor lookups
@@ -66,18 +66,18 @@ describe('Jobs API Pagination (Task 2.1)', () => {
           get: vi.fn().mockResolvedValue({
             exists: true,
             id: docId,
-            data: () => ({ title: 'Job' })
-          })
+            data: () => ({ title: 'Job' }),
+          }),
         };
       }),
-      where: vi.fn(() => mockQuery),
-      orderBy: vi.fn(() => mockQuery),
-      limit: vi.fn(() => mockQuery),
+      where: vi.fn((...args) => mockQuery.where(...args)),
+      orderBy: vi.fn((...args) => mockQuery.orderBy(...args)),
+      limit: vi.fn((...args) => mockQuery.limit(...args)),
       get: vi.fn(),
     };
 
     mockDb = {
-      collection: vi.fn((collectionName) => {
+      collection: vi.fn(collectionName => {
         // Return appropriate mock based on collection
         return mockCollection;
       }),
@@ -102,9 +102,7 @@ describe('Jobs API Pagination (Task 2.1)', () => {
         })),
       });
 
-      const response = await request(app)
-        .get('/api/jobs')
-        .set('x-user-email', 'test@example.com'); // Dev mode header
+      const response = await request(app).get('/api/jobs').set('x-user-email', 'test@example.com'); // Dev mode header
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('jobs');
@@ -218,9 +216,7 @@ describe('Jobs API Pagination (Task 2.1)', () => {
     });
 
     it('should filter by category', async () => {
-      const mockJobs = [
-        { id: 'job-1', category: 'Eletricista', title: 'Job 1' },
-      ];
+      const mockJobs = [{ id: 'job-1', category: 'Eletricista', title: 'Job 1' }];
 
       mockQuery.get.mockResolvedValue({
         docs: mockJobs.map(job => ({
@@ -238,9 +234,7 @@ describe('Jobs API Pagination (Task 2.1)', () => {
     });
 
     it('should filter by location', async () => {
-      const mockJobs = [
-        { id: 'job-1', location: 'São Paulo', title: 'Job 1' },
-      ];
+      const mockJobs = [{ id: 'job-1', location: 'São Paulo', title: 'Job 1' }];
 
       mockQuery.get.mockResolvedValue({
         docs: mockJobs.map(job => ({
@@ -259,12 +253,12 @@ describe('Jobs API Pagination (Task 2.1)', () => {
 
     it('should apply multiple filters', async () => {
       const mockJobs = [
-        { 
-          id: 'job-1', 
-          status: 'aberto', 
+        {
+          id: 'job-1',
+          status: 'aberto',
           category: 'Eletricista',
           location: 'São Paulo',
-          title: 'Job 1' 
+          title: 'Job 1',
         },
       ];
 

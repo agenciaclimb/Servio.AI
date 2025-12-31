@@ -20,7 +20,7 @@ beforeEach(() => {
       enhancedDescription: 'Conserto de vazamento na pia da cozinha com troca de vedação',
       suggestedCategory: 'encanador',
       suggestedServiceType: 'personalizado',
-      estimatedCost: { min: 100, max: 300 }
+      estimatedCost: { min: 100, max: 300 },
     },
     headers: { 'content-type': 'application/json' },
   }).as('mockEnhanceJob');
@@ -30,7 +30,7 @@ beforeEach(() => {
     statusCode: 200,
     body: {
       matches: [],
-      message: 'Nenhum prestador encontrado no momento'
-    }
+      message: 'Nenhum prestador encontrado no momento',
+    },
   }).as('mockMatchProviders');
 });

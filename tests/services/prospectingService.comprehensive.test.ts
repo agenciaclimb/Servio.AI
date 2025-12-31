@@ -19,7 +19,7 @@ vi.mock('../../utils/logger', () => ({
 }));
 
 // Use the correct backend URL that the service will import
-const BACKEND_URL = 'https://servio-backend-738160936841.us-central1.run.app';
+const BACKEND_URL = 'https://servio-ai-1000250760228.us-west1.run.app';
 
 // Mock fetch
 global.fetch = vi.fn();

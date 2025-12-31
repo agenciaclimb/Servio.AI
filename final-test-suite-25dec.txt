@@ -1,0 +1,101 @@
+
+> servio-ai-frontend@0.0.0 test
+> vitest run --coverage --run
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/JE/servio.ai[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+stderr | tests/week3/ProspectorDashboard.expansion.test.tsx
+[firebase] Usando mocks porque a configura├º├úo est├í ausente ou desativada.
+
+ [2m[90mÔåô[39m[22m tests/week3/ProspectorDashboard.expansion.test.tsx [2m([22m[2m56 tests[22m[2m | [22m[33m56 skipped[39m[2m)[22m
+ [32mÔ£ô[39m tests/week3/ServiceIntegration.gemini.test.tsx [2m([22m[2m25 tests[22m[2m)[22m[90m 18[2mms[22m[39m
+ [32mÔ£ô[39m tests/week3/ProviderDashboard.expansion.test.tsx [2m([22m[2m68 tests[22m[2m)[22m[33m 604[2mms[22m[39m
+ [32mÔ£ô[39m tests/services/geminiService.test.ts [2m([22m[2m26 tests[22m[2m)[22m[90m 15[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/ResultsModal_AccessPage.comprehensive.test.tsx [2m([22m[2m40 tests[22m[2m)[22m[33m 946[2mms[22m[39m
+ [32mÔ£ô[39m tests/services/stripeService.test.ts [2m([22m[2m34 tests[22m[2m)[22m[90m 29[2mms[22m[39m
+ [32mÔ£ô[39m tests/week3/ServiceIntegration.fcm.test.tsx [2m([22m[2m26 tests[22m[2m)[22m[90m 133[2mms[22m[39m
+ [32mÔ£ô[39m tests/week3/ServiceIntegration.stripe.test.tsx [2m([22m[2m27 tests[22m[2m)[22m[90m 15[2mms[22m[39m
+ [32mÔ£ô[39m tests/services/landingPageService.test.js [2m([22m[2m11 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/ProviderCard.comprehensive.test.tsx [2m([22m[2m35 tests[22m[2m)[22m[33m 480[2mms[22m[39m
+ [32mÔ£ô[39m tests/services/prospectingService.comprehensive.test.ts [2m([22m[2m19 tests[22m[2m)[22m[90m 14[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/Chart_AnalyticsCard.comprehensive.test.tsx [2m([22m[2m53 tests[22m[2m)[22m[33m 402[2mms[22m[39m
+ [32mÔ£ô[39m tests/critical-components-coverage.test.ts [2m([22m[2m28 tests[22m[2m)[22m[90m 82[2mms[22m[39m
+ [32mÔ£ô[39m tests/components/SearchLandingPage.comprehensive.test.tsx [2m([22m[2m38 tests[22m[2m)[22m[33m 9394[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m SearchLandingPage - Comprehensive Quality Tests[2m > [22mSearch Functionality[2m > [22mshould handle long search queries [33m7452[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m SearchLandingPage - Comprehensive Quality Tests[2m > [22mSearch Functionality[2m > [22mshould handle special characters in search [33m431[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m SearchLandingPage - Comprehensive Quality Tests[2m > [22mEdge Cases[2m > [22mshould handle rapid search interactions [33m587[2mms[22m[39m
+ [31mÔØ»[39m tests/services/api.comprehensive.test.ts [2m([22m[2m0 test[22m[2m)[22m
+ [32mÔ£ô[39m tests/MatchingResults.test.tsx [2m([22m[2m22 tests[22m[2m)[22m[33m 6766[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m MatchingResults Component[2m > [22mError State[2m > [22mshould display error message on fetch failure [33m3052[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m MatchingResults Component[2m > [22mError State[2m > [22mshould handle network errors gracefully [33m3060[2mms[22m[39m
+ [32mÔ£ô[39m tests/prospectorHelpers.test.ts [2m([22m[2m40 tests[22m[2m)[22m[90m 74[2mms[22m[39m
+ [32mÔ£ô[39m tests/week2/AdminDashboard.suite.test.tsx [2m([22m[2m32 tests[22m[2m)[22m[33m 481[2mms[22m[39m
+stderr | tests/api.test.ts > API Service > Error Handling > deve lan├ºar erro em opera├º├Áes cr├¡ticas sem fallback
+Failed to create job: Error: Falha de rede. Verifique sua conex├úo.
+    at makeApiError (C:\Users\JE\servio.ai\services\api.ts:70:15)
+    at apiCall (C:\Users\JE\servio.ai\services\api.ts:113:11)
+    at Module.createJob (C:\Users\JE\servio.ai\services\api.ts:652:12) {
+  code: 'E_NETWORK'
+}
+
+ [32mÔ£ô[39m tests/api.test.ts [2m([22m[2m19 tests[22m[2m)[22m[90m 45[2mms[22m[39m
+ [32mÔ£ô[39m src/hooks/__tests__/useAdvancedFilters.test.ts [2m([22m[2m25 tests[22m[2m)[22m[90m 41[2mms[22m[39m
+ [31mÔØ»[39m tests/components/admin/InternalChat.comprehensive.test.tsx [2m([22m[2m0 test[22m[2m)[22m
+ [32mÔ£ô[39m tests/master_document/parser.test.ts [2m([22m[2m23 tests[22m[2m)[22m[90m 101[2mms[22m[39m
+stderr | tests/prospecting.enhanced.test.ts > Enhanced Prospecting Service > analyzeProspectWithAI > should fallback to basic scoring if AI fails
+[ProspectingService] AI analysis failed: Error: AI service down
+    at C:\Users\JE\servio.ai\tests\prospecting.enhanced.test.ts:64:51
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+
+stderr | tests/prospecting.enhanced.test.ts > Enhanced Prospecting Service > analyzeProspectWithAI > should handle prospect without rating
+[ProspectingService] AI analysis failed: Error: No rating
+    at C:\Users\JE\servio.ai\tests\prospecting.enhanced.test.ts:79:51
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+
+stderr | tests/prospecting.enhanced.test.ts > Enhanced Prospecting Service > generatePersonalizedEmail > should fallback to basic template if AI fails
+[ProspectingService] Email generation failed: Error: AI unavailable
+    at C:\Users\JE\servio.ai\tests\prospecting.enhanced.test.ts:129:51
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+
+stderr | tests/prospecting.enhanced.test.ts > Enhanced Prospecting Service > sendMultiChannelInvite > should handle channel failures gracefully
+[ProspectingService] SMS failed: Error: SMS service down
+    at C:\Users\JE\servio.ai\tests\prospecting.enhanced.test.ts:282:32
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:146:14
+    at file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:533:11
+    at runWithTimeout (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:39:7)
+    at runTest (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1056:17)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///C:/Users/JE/servio.ai/node_modules/@vitest/runner/dist/index.js:1271:3)
+
+ [32mÔ£ô[39m tests/prospecting.enhanced.test.ts [2m([22m[2m13 tests[22m[2m)[22m[90m 17[2mms[22m[39m
+ [32mÔ£ô[39m tests/errorTranslator.test.ts [2m([22m[2m31 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32mÔ£ô[39m tests/messageTemplates.test.ts [2m([22m[2m29 tests[22m[2m)[22m[90m 9[2mms[22m[39m

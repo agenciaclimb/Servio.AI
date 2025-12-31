@@ -1,6 +1,6 @@
 /**
  * Testes para Task 1.3 - User UID Field
- * 
+ *
  * Valida que:
  * 1. Endpoint POST /api/users está protegido por requireAuth
  * 2. Novos usuários criados têm o campo uid no Firestore
