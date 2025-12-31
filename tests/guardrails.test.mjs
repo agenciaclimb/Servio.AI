@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * TESTES: Guardrails de Segregação
  *
@@ -7,13 +5,21 @@
  * arquivos ACK/RESULT sem proof-of-origin.txt
  */
 
-const { describe, it, expect, beforeEach, afterEach } = require('vitest');
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+import crypto from 'crypto';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const TEST_DIR = path.join(__dirname, '../test-temp-events');
-const GUARDRAIL_SCRIPT = path.join(__dirname, '../scripts/guardrails/deny-local-audit-results.js');
+const GUARDRAIL_SCRIPT = path.join(
+  __dirname,
+  '../scripts/guardrails/deny-local-audit-results.js'
+);
 
 describe('Guardrail Anti-Simulação', () => {
   beforeEach(() => {
@@ -110,7 +116,6 @@ Hash: wronghash123
     fs.writeFileSync(resultPath, content);
 
     // Calcular hash correto
-    const crypto = require('crypto');
     const hash = crypto.createHash('sha256').update(content).digest('hex');
 
     // Criar proof-of-origin completo
@@ -145,9 +150,6 @@ Autor: Test User
  * Helper: Executar guardrail e retornar exit code
  */
 function runGuardrail() {
-  // Temporariamente alterar EVENTS_DIR para TEST_DIR
-  const originalEventsDir = path.join(__dirname, '../ai-tasks/events');
-
   try {
     // Simular ai-tasks/events/ apontando para TEST_DIR
     const testEventsDir = path.join(__dirname, '../ai-tasks');
@@ -163,7 +165,7 @@ function runGuardrail() {
     // Copiar arquivos de teste para ai-tasks/events/
     fs.mkdirSync(eventsSymlink, { recursive: true });
     const testFiles = fs.readdirSync(TEST_DIR);
-    testFiles.forEach(file => {
+    testFiles.forEach((file) => {
       fs.copyFileSync(path.join(TEST_DIR, file), path.join(eventsSymlink, file));
     });
 
