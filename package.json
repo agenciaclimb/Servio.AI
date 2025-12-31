@@ -117,9 +117,9 @@
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "@vitest/coverage-v8": "^2.0.5",
+    "@vitest/coverage-v8": "^4.0.16",
     "autoprefixer": "^10.4.19",
-    "cypress": "^13.17.0",
+    "cypress": "^4.2.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
@@ -134,8 +134,8 @@
     "tailwindcss": "^3.4.3",
     "terser": "^5.44.1",
     "typescript": "^5.2.2",
-    "vite": "^5.2.0",
-    "vitest": "^2.0.5"
+    "vite": "^7.3.0",
+    "vitest": "^4.0.16"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
