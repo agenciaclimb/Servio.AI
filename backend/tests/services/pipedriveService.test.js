@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-const PipedriveService = require('../services/pipedriveService');
+const PipedriveService = require('../../src/services/pipedriveService');
 
 describe('PipedriveService', () => {
   let service;

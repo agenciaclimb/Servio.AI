@@ -1,0 +1,3735 @@
+
+> servio-ai-frontend@0.0.0 test
+> vitest run --coverage tests/components/ProfilePage.quick.test.tsx tests/components/FindProvidersPage.quick.test.tsx tests/components/CheckoutFlow.quick.test.tsx --run
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/JE/servio.ai[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32mÔ£ô[39m tests/components/CheckoutFlow.quick.test.tsx [2m([22m[2m27 tests[22m[2m)[22m[33m 1040[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m CheckoutFlow - Quick Coverage Tests[2m > [22mComponent Rendering[2m > [22mdeve renderizar o componente CheckoutFlow [33m432[2mms[22m[39m
+ [31mÔØ»[39m tests/components/FindProvidersPage.quick.test.tsx [2m([22m[2m21 tests[22m[2m | [22m[31m9 failed[39m[2m)[22m[33m 3200[2mms[22m[39m
+   [33m[2mÔ£ô[22m[39m FindProvidersPage - Quick Coverage Tests[2m > [22mRendering[2m > [22mdeve renderizar componente FindProvidersPage [33m321[2mms[22m[39m
+[31m   [31m├ù[31m FindProvidersPage - Quick Coverage Tests[2m > [22mRendering[2m > [22mdeve exibir barra de busca[33m 341[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the placeholder text of: /buscar|pesquisar/i
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"space-y-8"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"bg-white p-8 rounded-2xl shadow-lg border border-gray-100"[31m
+      [36m>[31m
+        [36m<h1[31m
+          [33mclass[31m=[32m"text-3xl font-extrabold text-gray-900 tracking-tight"[31m
+        [36m>[31m
+          [0mEncontre o Profissional Perfeito[0m
+        [36m</h1>[31m
+        [36m<p[31m
+          [33mclass[31m=[32m"mt-2 text-lg text-gray-600"[31m
+        [36m>[31m
+          [0mUse nossa busca inteligente ou os filtros para achar exatamente o que voc├¬ precisa.[0m
+        [36m</p>[31m
+        [36m<form[31m
+          [33mclass[31m=[32m"mt-6"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex flex-col sm:flex-row gap-3"[31m
+          [36m>[31m
+            [36m<input[31m
+              [33mclass[31m=[32m"flex-grow block w-full rounded-lg border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500"[31m
+              [33mplaceholder[31m=[32m"Descreva o que precisa, ex: 'eletricista urgente em S├úo Paulo'"[31m
+              [33mtype[31m=[32m"text"[31m
+              [33mvalue[31m=[32m""[31m
+            [36m/>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 disabled:bg-gray-400"[31m
+              [33mtype[31m=[32m"submit"[31m
+            [36m>[31m
+              [0mBuscar com IA Ô£¿[0m
+            [36m</button>[31m
+          [36m</div>[31m
+        [36m</form>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"grid grid-cols-1 lg:grid-cols-4 gap-6"[31m
+      [36m>[31m
+        [36m<aside[31m
+          [33mclass[31m=[32m"lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 self-start"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex justify-between items-center"[31m
+          [36m>[31m
+            [36m<h3[31m
+              [33mclass[31m=[32m"text-lg font-bold text-gray-800"[31m
+            [36m>[31m
+              [0mFiltros[0m
+            [36m</h3>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"text-xs font-semibold text-blue-600 hover:underline"[31m
+            [36m>[31m
+              [0mLimpar[0m
+            [36m</button>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"space-y-6 mt-4"[31m
+          [36m>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"service"[31m
+              [36m>[31m
+                [0mServi├ºo / Nome[0m
+              [36m</label>[31m
+              [36m<input[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"service"[31m
+                [33mname[31m=[32m"service"[31m
+                [33mtype[31m=[32m"text"[31m
+                [33mvalue[31m=[32m""[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"location"[31m
+              [36m>[31m
+                [0mLocaliza├º├úo[0m
+              [36m</label>[31m
+              [36m<input[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"location"[31m
+                [33mname[31m=[32m"location"[31m
+                [33mtype[31m=[32m"text"[31m
+                [33mvalue[31m=[32m""[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"availability"[31m
+              [36m>[31m
+                [0mDisponibilidade[0m
+              [36m</label>[31m
+              [36m<select[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"availability"[31m
+                [33mname[31m=[32m"availability"[31m
+              [36m>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"any"[31m
+                [36m>[31m
+                  [0mQualquer[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"imediata"[31m
+                [36m>[31m
+                  [0mImediata[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"24h"[31m
+                [36m>[31m
+                  [0mEm 24h[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"3dias"[31m
+                [36m>[31m
+                  [0mEm 3 dias[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"1semana"[31m
+                [36m>[31m
+                  [0mEm 1 semana[0m
+                [36m</option>[31m
+              [36m</select>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"space-y-3"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative flex items-start"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex h-6 items-center"[31m
+                [36m>[31m
+                  [36m<input[31m
+                    [33mclass[31m=[32m"h-4 w-4 rounded border-gray-300"[31m
+                    [33mid[31m=[32m"isVerified"[31m
+                    [33mname[31m=[32m"isVerified"[31m
+                    [33mtype[31m=[32m"checkbox"[31m
+                  [36m/>[31m
+                [36m</div>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"ml-3 text-sm"[31m
+                [36m>[31m
+                  [36m<label[31m
+                    [33mclass[31m=[32m"font-medium text-gray-800"[31m
+                    [33mfor[31m=[32m"isVerified"[31m
+                  [36m>[31m
+                    [0mIdentidade Verificada[0m
+                  [36m</label>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative flex items-start"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex h-6 items-center"[31m
+                [36m>[31m
+         ...[39m
+   [33m[2mÔ£ô[22m[39m FindProvidersPage - Quick Coverage Tests[2m > [22mRendering[2m > [22mdeve exibir se├º├úo de filtros [33m340[2mms[22m[39m
+[31m   [31m├ù[31m FindProvidersPage - Quick Coverage Tests[2m > [22mProvider Listing[2m > [22mdeve exibir lista de prestadores inicialmente[90m 266[2mms[22m[31m[39m
+[31m     ÔåÆ expected 0 to be greater than 0[39m
+[31m   [31m├ù[31m FindProvidersPage - Quick Coverage Tests[2m > [22mProvider Listing[2m > [22mdeve exibir rating dos prestadores[90m 236[2mms[22m[31m[39m
+[31m     ÔåÆ expected 0 to be greater than 0[39m
+[31m   [31m├ù[31m FindProvidersPage - Quick Coverage Tests[2m > [22mCategory Filtering[2m > [22mdeve filtrar prestadores por categoria[90m 108[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the display value: /selecione|todas/i.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"space-y-8"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"bg-white p-8 rounded-2xl shadow-lg border border-gray-100"[31m
+      [36m>[31m
+        [36m<h1[31m
+          [33mclass[31m=[32m"text-3xl font-extrabold text-gray-900 tracking-tight"[31m
+        [36m>[31m
+          [0mEncontre o Profissional Perfeito[0m
+        [36m</h1>[31m
+        [36m<p[31m
+          [33mclass[31m=[32m"mt-2 text-lg text-gray-600"[31m
+        [36m>[31m
+          [0mUse nossa busca inteligente ou os filtros para achar exatamente o que voc├¬ precisa.[0m
+        [36m</p>[31m
+        [36m<form[31m
+          [33mclass[31m=[32m"mt-6"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex flex-col sm:flex-row gap-3"[31m
+          [36m>[31m
+            [36m<input[31m
+              [33mclass[31m=[32m"flex-grow block w-full rounded-lg border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500"[31m
+              [33mplaceholder[31m=[32m"Descreva o que precisa, ex: 'eletricista urgente em S├úo Paulo'"[31m
+              [33mtype[31m=[32m"text"[31m
+              [33mvalue[31m=[32m""[31m
+            [36m/>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 disabled:bg-gray-400"[31m
+              [33mtype[31m=[32m"submit"[31m
+            [36m>[31m
+              [0mBuscar com IA Ô£¿[0m
+            [36m</button>[31m
+          [36m</div>[31m
+        [36m</form>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"grid grid-cols-1 lg:grid-cols-4 gap-6"[31m
+      [36m>[31m
+        [36m<aside[31m
+          [33mclass[31m=[32m"lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 self-start"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex justify-between items-center"[31m
+          [36m>[31m
+            [36m<h3[31m
+              [33mclass[31m=[32m"text-lg font-bold text-gray-800"[31m
+            [36m>[31m
+              [0mFiltros[0m
+            [36m</h3>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"text-xs font-semibold text-blue-600 hover:underline"[31m
+            [36m>[31m
+              [0mLimpar[0m
+            [36m</button>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"space-y-6 mt-4"[31m
+          [36m>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"service"[31m
+              [36m>[31m
+                [0mServi├ºo / Nome[0m
+              [36m</label>[31m
+              [36m<input[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"service"[31m
+                [33mname[31m=[32m"service"[31m
+                [33mtype[31m=[32m"text"[31m
+                [33mvalue[31m=[32m""[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"location"[31m
+              [36m>[31m
+                [0mLocaliza├º├úo[0m
+              [36m</label>[31m
+              [36m<input[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"location"[31m
+                [33mname[31m=[32m"location"[31m
+                [33mtype[31m=[32m"text"[31m
+                [33mvalue[31m=[32m""[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"availability"[31m
+              [36m>[31m
+                [0mDisponibilidade[0m
+              [36m</label>[31m
+              [36m<select[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"availability"[31m
+                [33mname[31m=[32m"availability"[31m
+              [36m>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"any"[31m
+                [36m>[31m
+                  [0mQualquer[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"imediata"[31m
+                [36m>[31m
+                  [0mImediata[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"24h"[31m
+                [36m>[31m
+                  [0mEm 24h[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"3dias"[31m
+                [36m>[31m
+                  [0mEm 3 dias[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"1semana"[31m
+                [36m>[31m
+                  [0mEm 1 semana[0m
+                [36m</option>[31m
+              [36m</select>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"space-y-3"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative flex items-start"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex h-6 items-center"[31m
+                [36m>[31m
+                  [36m<input[31m
+                    [33mclass[31m=[32m"h-4 w-4 rounded border-gray-300"[31m
+                    [33mid[31m=[32m"isVerified"[31m
+                    [33mname[31m=[32m"isVerified"[31m
+                    [33mtype[31m=[32m"checkbox"[31m
+                  [36m/>[31m
+                [36m</div>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"ml-3 text-sm"[31m
+                [36m>[31m
+                  [36m<label[31m
+                    [33mclass[31m=[32m"font-medium text-gray-800"[31m
+                    [33mfor[31m=[32m"isVerified"[31m
+                  [36m>[31m
+                    [0mIdentidade Verificada[0m
+                  [36m</label>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative flex items-start"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex h-6 items-center"[31m
+                [36m>[31m
+         ...[39m
+[31m   [31m├ù[31m FindProvidersPage - Quick Coverage Tests[2m > [22mCategory Filtering[2m > [22mdeve permitir selecionar categoria de servi├ºo[90m 102[2mms[22m[31m[39m
+[31m     ÔåÆ expected 0 to be greater than 0[39m
+[31m   [31m├ù[31m FindProvidersPage - Quick Coverage Tests[2m > [22mSearch Functionality[2m > [22mdeve aceitar entrada de busca[90m 85[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the placeholder text of: /buscar|pesquisar/i
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"space-y-8"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"bg-white p-8 rounded-2xl shadow-lg border border-gray-100"[31m
+      [36m>[31m
+        [36m<h1[31m
+          [33mclass[31m=[32m"text-3xl font-extrabold text-gray-900 tracking-tight"[31m
+        [36m>[31m
+          [0mEncontre o Profissional Perfeito[0m
+        [36m</h1>[31m
+        [36m<p[31m
+          [33mclass[31m=[32m"mt-2 text-lg text-gray-600"[31m
+        [36m>[31m
+          [0mUse nossa busca inteligente ou os filtros para achar exatamente o que voc├¬ precisa.[0m
+        [36m</p>[31m
+        [36m<form[31m
+          [33mclass[31m=[32m"mt-6"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex flex-col sm:flex-row gap-3"[31m
+          [36m>[31m
+            [36m<input[31m
+              [33mclass[31m=[32m"flex-grow block w-full rounded-lg border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500"[31m
+              [33mplaceholder[31m=[32m"Descreva o que precisa, ex: 'eletricista urgente em S├úo Paulo'"[31m
+              [33mtype[31m=[32m"text"[31m
+              [33mvalue[31m=[32m""[31m
+            [36m/>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 disabled:bg-gray-400"[31m
+              [33mtype[31m=[32m"submit"[31m
+            [36m>[31m
+              [0mBuscar com IA Ô£¿[0m
+            [36m</button>[31m
+          [36m</div>[31m
+        [36m</form>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"grid grid-cols-1 lg:grid-cols-4 gap-6"[31m
+      [36m>[31m
+        [36m<aside[31m
+          [33mclass[31m=[32m"lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 self-start"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex justify-between items-center"[31m
+          [36m>[31m
+            [36m<h3[31m
+              [33mclass[31m=[32m"text-lg font-bold text-gray-800"[31m
+            [36m>[31m
+              [0mFiltros[0m
+            [36m</h3>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"text-xs font-semibold text-blue-600 hover:underline"[31m
+            [36m>[31m
+              [0mLimpar[0m
+            [36m</button>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"space-y-6 mt-4"[31m
+          [36m>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"service"[31m
+              [36m>[31m
+                [0mServi├ºo / Nome[0m
+              [36m</label>[31m
+              [36m<input[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"service"[31m
+                [33mname[31m=[32m"service"[31m
+                [33mtype[31m=[32m"text"[31m
+                [33mvalue[31m=[32m""[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"location"[31m
+              [36m>[31m
+                [0mLocaliza├º├úo[0m
+              [36m</label>[31m
+              [36m<input[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"location"[31m
+                [33mname[31m=[32m"location"[31m
+                [33mtype[31m=[32m"text"[31m
+                [33mvalue[31m=[32m""[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"availability"[31m
+              [36m>[31m
+                [0mDisponibilidade[0m
+              [36m</label>[31m
+              [36m<select[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"availability"[31m
+                [33mname[31m=[32m"availability"[31m
+              [36m>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"any"[31m
+                [36m>[31m
+                  [0mQualquer[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"imediata"[31m
+                [36m>[31m
+                  [0mImediata[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"24h"[31m
+                [36m>[31m
+                  [0mEm 24h[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"3dias"[31m
+                [36m>[31m
+                  [0mEm 3 dias[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"1semana"[31m
+                [36m>[31m
+                  [0mEm 1 semana[0m
+                [36m</option>[31m
+              [36m</select>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"space-y-3"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative flex items-start"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex h-6 items-center"[31m
+                [36m>[31m
+                  [36m<input[31m
+                    [33mclass[31m=[32m"h-4 w-4 rounded border-gray-300"[31m
+                    [33mid[31m=[32m"isVerified"[31m
+                    [33mname[31m=[32m"isVerified"[31m
+                    [33mtype[31m=[32m"checkbox"[31m
+                  [36m/>[31m
+                [36m</div>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"ml-3 text-sm"[31m
+                [36m>[31m
+                  [36m<label[31m
+                    [33mclass[31m=[32m"font-medium text-gray-800"[31m
+                    [33mfor[31m=[32m"isVerified"[31m
+                  [36m>[31m
+                    [0mIdentidade Verificada[0m
+                  [36m</label>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative flex items-start"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex h-6 items-center"[31m
+                [36m>[31m
+         ...[39m
+[31m   [31m├ù[31m FindProvidersPage - Quick Coverage Tests[2m > [22mSearch Functionality[2m > [22mdeve filtrar prestadores ao buscar[90m 84[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the placeholder text of: /buscar|pesquisar/i
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"space-y-8"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"bg-white p-8 rounded-2xl shadow-lg border border-gray-100"[31m
+      [36m>[31m
+        [36m<h1[31m
+          [33mclass[31m=[32m"text-3xl font-extrabold text-gray-900 tracking-tight"[31m
+        [36m>[31m
+          [0mEncontre o Profissional Perfeito[0m
+        [36m</h1>[31m
+        [36m<p[31m
+          [33mclass[31m=[32m"mt-2 text-lg text-gray-600"[31m
+        [36m>[31m
+          [0mUse nossa busca inteligente ou os filtros para achar exatamente o que voc├¬ precisa.[0m
+        [36m</p>[31m
+        [36m<form[31m
+          [33mclass[31m=[32m"mt-6"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex flex-col sm:flex-row gap-3"[31m
+          [36m>[31m
+            [36m<input[31m
+              [33mclass[31m=[32m"flex-grow block w-full rounded-lg border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500"[31m
+              [33mplaceholder[31m=[32m"Descreva o que precisa, ex: 'eletricista urgente em S├úo Paulo'"[31m
+              [33mtype[31m=[32m"text"[31m
+              [33mvalue[31m=[32m""[31m
+            [36m/>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 disabled:bg-gray-400"[31m
+              [33mtype[31m=[32m"submit"[31m
+            [36m>[31m
+              [0mBuscar com IA Ô£¿[0m
+            [36m</button>[31m
+          [36m</div>[31m
+        [36m</form>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"grid grid-cols-1 lg:grid-cols-4 gap-6"[31m
+      [36m>[31m
+        [36m<aside[31m
+          [33mclass[31m=[32m"lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 self-start"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex justify-between items-center"[31m
+          [36m>[31m
+            [36m<h3[31m
+              [33mclass[31m=[32m"text-lg font-bold text-gray-800"[31m
+            [36m>[31m
+              [0mFiltros[0m
+            [36m</h3>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"text-xs font-semibold text-blue-600 hover:underline"[31m
+            [36m>[31m
+              [0mLimpar[0m
+            [36m</button>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"space-y-6 mt-4"[31m
+          [36m>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"service"[31m
+              [36m>[31m
+                [0mServi├ºo / Nome[0m
+              [36m</label>[31m
+              [36m<input[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"service"[31m
+                [33mname[31m=[32m"service"[31m
+                [33mtype[31m=[32m"text"[31m
+                [33mvalue[31m=[32m""[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"location"[31m
+              [36m>[31m
+                [0mLocaliza├º├úo[0m
+              [36m</label>[31m
+              [36m<input[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"location"[31m
+                [33mname[31m=[32m"location"[31m
+                [33mtype[31m=[32m"text"[31m
+                [33mvalue[31m=[32m""[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"availability"[31m
+              [36m>[31m
+                [0mDisponibilidade[0m
+              [36m</label>[31m
+              [36m<select[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"availability"[31m
+                [33mname[31m=[32m"availability"[31m
+              [36m>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"any"[31m
+                [36m>[31m
+                  [0mQualquer[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"imediata"[31m
+                [36m>[31m
+                  [0mImediata[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"24h"[31m
+                [36m>[31m
+                  [0mEm 24h[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"3dias"[31m
+                [36m>[31m
+                  [0mEm 3 dias[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"1semana"[31m
+                [36m>[31m
+                  [0mEm 1 semana[0m
+                [36m</option>[31m
+              [36m</select>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"space-y-3"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative flex items-start"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex h-6 items-center"[31m
+                [36m>[31m
+                  [36m<input[31m
+                    [33mclass[31m=[32m"h-4 w-4 rounded border-gray-300"[31m
+                    [33mid[31m=[32m"isVerified"[31m
+                    [33mname[31m=[32m"isVerified"[31m
+                    [33mtype[31m=[32m"checkbox"[31m
+                  [36m/>[31m
+                [36m</div>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"ml-3 text-sm"[31m
+                [36m>[31m
+                  [36m<label[31m
+                    [33mclass[31m=[32m"font-medium text-gray-800"[31m
+                    [33mfor[31m=[32m"isVerified"[31m
+                  [36m>[31m
+                    [0mIdentidade Verificada[0m
+                  [36m</label>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative flex items-start"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex h-6 items-center"[31m
+                [36m>[31m
+         ...[39m
+[31m   [31m├ù[31m FindProvidersPage - Quick Coverage Tests[2m > [22mEmpty States[2m > [22mdeve exibir mensagem quando n├úo houver resultados[90m 66[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the placeholder text of: /buscar|pesquisar/i
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"space-y-8"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"bg-white p-8 rounded-2xl shadow-lg border border-gray-100"[31m
+      [36m>[31m
+        [36m<h1[31m
+          [33mclass[31m=[32m"text-3xl font-extrabold text-gray-900 tracking-tight"[31m
+        [36m>[31m
+          [0mEncontre o Profissional Perfeito[0m
+        [36m</h1>[31m
+        [36m<p[31m
+          [33mclass[31m=[32m"mt-2 text-lg text-gray-600"[31m
+        [36m>[31m
+          [0mUse nossa busca inteligente ou os filtros para achar exatamente o que voc├¬ precisa.[0m
+        [36m</p>[31m
+        [36m<form[31m
+          [33mclass[31m=[32m"mt-6"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex flex-col sm:flex-row gap-3"[31m
+          [36m>[31m
+            [36m<input[31m
+              [33mclass[31m=[32m"flex-grow block w-full rounded-lg border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500"[31m
+              [33mplaceholder[31m=[32m"Descreva o que precisa, ex: 'eletricista urgente em S├úo Paulo'"[31m
+              [33mtype[31m=[32m"text"[31m
+              [33mvalue[31m=[32m""[31m
+            [36m/>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 disabled:bg-gray-400"[31m
+              [33mtype[31m=[32m"submit"[31m
+            [36m>[31m
+              [0mBuscar com IA Ô£¿[0m
+            [36m</button>[31m
+          [36m</div>[31m
+        [36m</form>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"grid grid-cols-1 lg:grid-cols-4 gap-6"[31m
+      [36m>[31m
+        [36m<aside[31m
+          [33mclass[31m=[32m"lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 self-start"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex justify-between items-center"[31m
+          [36m>[31m
+            [36m<h3[31m
+              [33mclass[31m=[32m"text-lg font-bold text-gray-800"[31m
+            [36m>[31m
+              [0mFiltros[0m
+            [36m</h3>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"text-xs font-semibold text-blue-600 hover:underline"[31m
+            [36m>[31m
+              [0mLimpar[0m
+            [36m</button>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"space-y-6 mt-4"[31m
+          [36m>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"service"[31m
+              [36m>[31m
+                [0mServi├ºo / Nome[0m
+              [36m</label>[31m
+              [36m<input[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"service"[31m
+                [33mname[31m=[32m"service"[31m
+                [33mtype[31m=[32m"text"[31m
+                [33mvalue[31m=[32m""[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"location"[31m
+              [36m>[31m
+                [0mLocaliza├º├úo[0m
+              [36m</label>[31m
+              [36m<input[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"location"[31m
+                [33mname[31m=[32m"location"[31m
+                [33mtype[31m=[32m"text"[31m
+                [33mvalue[31m=[32m""[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"availability"[31m
+              [36m>[31m
+                [0mDisponibilidade[0m
+              [36m</label>[31m
+              [36m<select[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"availability"[31m
+                [33mname[31m=[32m"availability"[31m
+              [36m>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"any"[31m
+                [36m>[31m
+                  [0mQualquer[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"imediata"[31m
+                [36m>[31m
+                  [0mImediata[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"24h"[31m
+                [36m>[31m
+                  [0mEm 24h[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"3dias"[31m
+                [36m>[31m
+                  [0mEm 3 dias[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"1semana"[31m
+                [36m>[31m
+                  [0mEm 1 semana[0m
+                [36m</option>[31m
+              [36m</select>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"space-y-3"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative flex items-start"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex h-6 items-center"[31m
+                [36m>[31m
+                  [36m<input[31m
+                    [33mclass[31m=[32m"h-4 w-4 rounded border-gray-300"[31m
+                    [33mid[31m=[32m"isVerified"[31m
+                    [33mname[31m=[32m"isVerified"[31m
+                    [33mtype[31m=[32m"checkbox"[31m
+                  [36m/>[31m
+                [36m</div>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"ml-3 text-sm"[31m
+                [36m>[31m
+                  [36m<label[31m
+                    [33mclass[31m=[32m"font-medium text-gray-800"[31m
+                    [33mfor[31m=[32m"isVerified"[31m
+                  [36m>[31m
+                    [0mIdentidade Verificada[0m
+                  [36m</label>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative flex items-start"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex h-6 items-center"[31m
+                [36m>[31m
+         ...[39m
+[31m   [31m├ù[31m FindProvidersPage - Quick Coverage Tests[2m > [22mAccessibility[2m > [22mdeve ter labels acess├¡veis para inputs[90m 42[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the placeholder text of: /buscar|pesquisar/i
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"space-y-8"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"bg-white p-8 rounded-2xl shadow-lg border border-gray-100"[31m
+      [36m>[31m
+        [36m<h1[31m
+          [33mclass[31m=[32m"text-3xl font-extrabold text-gray-900 tracking-tight"[31m
+        [36m>[31m
+          [0mEncontre o Profissional Perfeito[0m
+        [36m</h1>[31m
+        [36m<p[31m
+          [33mclass[31m=[32m"mt-2 text-lg text-gray-600"[31m
+        [36m>[31m
+          [0mUse nossa busca inteligente ou os filtros para achar exatamente o que voc├¬ precisa.[0m
+        [36m</p>[31m
+        [36m<form[31m
+          [33mclass[31m=[32m"mt-6"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex flex-col sm:flex-row gap-3"[31m
+          [36m>[31m
+            [36m<input[31m
+              [33mclass[31m=[32m"flex-grow block w-full rounded-lg border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500"[31m
+              [33mplaceholder[31m=[32m"Descreva o que precisa, ex: 'eletricista urgente em S├úo Paulo'"[31m
+              [33mtype[31m=[32m"text"[31m
+              [33mvalue[31m=[32m""[31m
+            [36m/>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 disabled:bg-gray-400"[31m
+              [33mtype[31m=[32m"submit"[31m
+            [36m>[31m
+              [0mBuscar com IA Ô£¿[0m
+            [36m</button>[31m
+          [36m</div>[31m
+        [36m</form>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"grid grid-cols-1 lg:grid-cols-4 gap-6"[31m
+      [36m>[31m
+        [36m<aside[31m
+          [33mclass[31m=[32m"lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 self-start"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex justify-between items-center"[31m
+          [36m>[31m
+            [36m<h3[31m
+              [33mclass[31m=[32m"text-lg font-bold text-gray-800"[31m
+            [36m>[31m
+              [0mFiltros[0m
+            [36m</h3>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"text-xs font-semibold text-blue-600 hover:underline"[31m
+            [36m>[31m
+              [0mLimpar[0m
+            [36m</button>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"space-y-6 mt-4"[31m
+          [36m>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"service"[31m
+              [36m>[31m
+                [0mServi├ºo / Nome[0m
+              [36m</label>[31m
+              [36m<input[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"service"[31m
+                [33mname[31m=[32m"service"[31m
+                [33mtype[31m=[32m"text"[31m
+                [33mvalue[31m=[32m""[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"location"[31m
+              [36m>[31m
+                [0mLocaliza├º├úo[0m
+              [36m</label>[31m
+              [36m<input[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"location"[31m
+                [33mname[31m=[32m"location"[31m
+                [33mtype[31m=[32m"text"[31m
+                [33mvalue[31m=[32m""[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div>[31m
+              [36m<label[31m
+                [33mclass[31m=[32m"block text-sm font-medium text-gray-700"[31m
+                [33mfor[31m=[32m"availability"[31m
+              [36m>[31m
+                [0mDisponibilidade[0m
+              [36m</label>[31m
+              [36m<select[31m
+                [33mclass[31m=[32m"mt-1 block w-full rounded-md border-gray-300 shadow-sm"[31m
+                [33mid[31m=[32m"availability"[31m
+                [33mname[31m=[32m"availability"[31m
+              [36m>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"any"[31m
+                [36m>[31m
+                  [0mQualquer[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"imediata"[31m
+                [36m>[31m
+                  [0mImediata[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"24h"[31m
+                [36m>[31m
+                  [0mEm 24h[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"3dias"[31m
+                [36m>[31m
+                  [0mEm 3 dias[0m
+                [36m</option>[31m
+                [36m<option[31m
+                  [33mvalue[31m=[32m"1semana"[31m
+                [36m>[31m
+                  [0mEm 1 semana[0m
+                [36m</option>[31m
+              [36m</select>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"space-y-3"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative flex items-start"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex h-6 items-center"[31m
+                [36m>[31m
+                  [36m<input[31m
+                    [33mclass[31m=[32m"h-4 w-4 rounded border-gray-300"[31m
+                    [33mid[31m=[32m"isVerified"[31m
+                    [33mname[31m=[32m"isVerified"[31m
+                    [33mtype[31m=[32m"checkbox"[31m
+                  [36m/>[31m
+                [36m</div>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"ml-3 text-sm"[31m
+                [36m>[31m
+                  [36m<label[31m
+                    [33mclass[31m=[32m"font-medium text-gray-800"[31m
+                    [33mfor[31m=[32m"isVerified"[31m
+                  [36m>[31m
+                    [0mIdentidade Verificada[0m
+                  [36m</label>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative flex items-start"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex h-6 items-center"[31m
+                [36m>[31m
+         ...[39m
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Rendering and Basic Functionality > deve renderizar o componente ProfilePage
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Rendering and Basic Functionality > deve exibir informa├º├Áes do perfil do prestador
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Rendering and Basic Functionality > deve mostrar loading state inicialmente
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Profile Strength Calculation > deve calcular for├ºa do perfil corretamente
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Profile Strength Calculation > deve determinar que perfil com informa├º├Áes completas ├® forte
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Required Fields Validation > deve validar campos obrigat├│rios
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Required Fields Validation > deve exibir rating e n├║mero de avalia├º├Áes
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > User Interaction > deve permitir voltar ao dashboard
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > User Interaction > deve chamar onLoginToContact quando usu├írio clica para contatar sem autenticar
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Content Display > deve exibir bio do prestador
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Content Display > deve exibir skills/especialidades
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Content Display > deve exibir n├║mero de trabalhos conclu├¡dos
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Accessibility > deve ter estrutura sem├óntica correta
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Accessibility > deve ter t├¡tulo acess├¡vel
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+stderr | tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Error Handling > deve exibir mensagem de erro quando falhar ao carregar perfil
+Error fetching profile data: Error: [vitest] No "fetchUserById" export is defined on the "../../services/api" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+    at Object.get (file:///C:/Users/JE/servio.ai/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+    at fetchData (C:\Users\JE\servio.ai\components\ProfilePage.tsx:52:15)
+    at C:\Users\JE\servio.ai\components\ProfilePage.tsx:65:5
+    at commitHookEffectListMount (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (C:\Users\JE\servio.ai\node_modules\react-dom\cjs\react-dom.development.js:27078:3) {
+  codeFrame: 'vi\x1B[33m.\x1B[39m\x1B[34mmock\x1B[39m(\x1B[35mimport\x1B[39m(\x1B[32m"../../services/api"\x1B[39m)\x1B[33m,\x1B[39m \x1B[35masync\x1B[39m (importOriginal) \x1B[33m=>\x1B[39m {\n' +
+    '  \x1B[35mconst\x1B[39m actual \x1B[33m=\x1B[39m \x1B[35mawait\x1B[39m \x1B[34mimportOriginal\x1B[39m()\n' +
+    '  \x1B[35mreturn\x1B[39m {\n' +
+    '    \x1B[33m...\x1B[39mactual\x1B[33m,\x1B[39m\n' +
+    '    \x1B[90m// your mocked methods\x1B[39m\n' +
+    '  }\n' +
+    '})'
+}
+
+ [31mÔØ»[39m tests/components/ProfilePage.quick.test.tsx [2m([22m[2m15 tests[22m[2m | [22m[31m12 failed[39m[2m)[22m[33m 12500[2mms[22m[39m
+[31m   [31m├ù[31m ProfilePage - Quick Coverage Tests[2m > [22mRendering and Basic Functionality[2m > [22mdeve renderizar o componente ProfilePage[33m 1155[2mms[22m[31m[39m
+[31m     ÔåÆ [2mexpect([22m[31melement[31m[2m).not.toBeInTheDocument()[22m
+
+[31mexpected document not to contain element, found <div
+  class="text-xl"
+>
+  Carregando perfil...
+</div> instead[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"text-xl"[31m
+        [36m>[31m
+          [0mCarregando perfil...[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m ProfilePage - Quick Coverage Tests[2m > [22mRendering and Basic Functionality[2m > [22mdeve exibir informa├º├Áes do perfil do prestador[33m 1025[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the text: Jo├úo Silva. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"text-xl"[31m
+      [36m>[31m
+        [0mCarregando perfil...[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head>[31m
+    [36m<title>[31m
+      [0mSERVIO.AI - Find the Perfect Professional[0m
+    [36m</title>[31m
+  [36m</head>[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"text-xl"[31m
+        [36m>[31m
+          [0mCarregando perfil...[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m ProfilePage - Quick Coverage Tests[2m > [22mProfile Strength Calculation[2m > [22mdeve calcular for├ºa do perfil corretamente[33m 1021[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the text: Jo├úo Silva. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"text-xl"[31m
+      [36m>[31m
+        [0mCarregando perfil...[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head>[31m
+    [36m<title>[31m
+      [0mSERVIO.AI - Find the Perfect Professional[0m
+    [36m</title>[31m
+  [36m</head>[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"text-xl"[31m
+        [36m>[31m
+          [0mCarregando perfil...[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m ProfilePage - Quick Coverage Tests[2m > [22mProfile Strength Calculation[2m > [22mdeve determinar que perfil com informa├º├Áes completas ├® forte[33m 1027[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the text: Jo├úo Silva. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"text-xl"[31m
+      [36m>[31m
+        [0mCarregando perfil...[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head>[31m
+    [36m<title>[31m
+      [0mSERVIO.AI - Find the Perfect Professional[0m
+    [36m</title>[31m
+  [36m</head>[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"text-xl"[31m
+        [36m>[31m
+          [0mCarregando perfil...[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m ProfilePage - Quick Coverage Tests[2m > [22mRequired Fields Validation[2m > [22mdeve validar campos obrigat├│rios[33m 1032[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the text: Jo├úo Silva. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"text-xl"[31m
+      [36m>[31m
+        [0mCarregando perfil...[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head>[31m
+    [36m<title>[31m
+      [0mSERVIO.AI - Find the Perfect Professional[0m
+    [36m</title>[31m
+  [36m</head>[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"text-xl"[31m
+        [36m>[31m
+          [0mCarregando perfil...[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m ProfilePage - Quick Coverage Tests[2m > [22mRequired Fields Validation[2m > [22mdeve exibir rating e n├║mero de avalia├º├Áes[33m 1021[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the text: /4\.8/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"text-xl"[31m
+      [36m>[31m
+        [0mCarregando perfil...[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head>[31m
+    [36m<title>[31m
+      [0mSERVIO.AI - Find the Perfect Professional[0m
+    [36m</title>[31m
+  [36m</head>[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"text-xl"[31m
+        [36m>[31m
+          [0mCarregando perfil...[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m ProfilePage - Quick Coverage Tests[2m > [22mUser Interaction[2m > [22mdeve permitir voltar ao dashboard[33m 1025[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the text: Jo├úo Silva. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"text-xl"[31m
+      [36m>[31m
+        [0mCarregando perfil...[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head>[31m
+    [36m<title>[31m
+      [0mSERVIO.AI - Find the Perfect Professional[0m
+    [36m</title>[31m
+  [36m</head>[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"text-xl"[31m
+        [36m>[31m
+          [0mCarregando perfil...[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m ProfilePage - Quick Coverage Tests[2m > [22mUser Interaction[2m > [22mdeve chamar onLoginToContact quando usu├írio clica para contatar sem autenticar[33m 1035[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the text: Jo├úo Silva. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"text-xl"[31m
+      [36m>[31m
+        [0mCarregando perfil...[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head>[31m
+    [36m<title>[31m
+      [0mSERVIO.AI - Find the Perfect Professional[0m
+    [36m</title>[31m
+  [36m</head>[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"text-xl"[31m
+        [36m>[31m
+          [0mCarregando perfil...[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m ProfilePage - Quick Coverage Tests[2m > [22mContent Display[2m > [22mdeve exibir bio do prestador[33m 1031[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find an element with the text: /experi├¬ncia/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"text-xl"[31m
+      [36m>[31m
+        [0mCarregando perfil...[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head>[31m
+    [36m<title>[31m
+      [0mSERVIO.AI - Find the Perfect Professional[0m
+    [36m</title>[31m
+  [36m</head>[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"text-xl"[31m
+        [36m>[31m
+          [0mCarregando perfil...[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m ProfilePage - Quick Coverage Tests[2m > [22mContent Display[2m > [22mdeve exibir skills/especialidades[33m 1033[2mms[22m[31m[39m
+[31m     ÔåÆ expected 0 to be greater than 0
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head>[31m
+    [36m<title>[31m
+      [0mSERVIO.AI - Find the Perfect Professional[0m
+    [36m</title>[31m
+  [36m</head>[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"text-xl"[31m
+        [36m>[31m
+          [0mCarregando perfil...[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m ProfilePage - Quick Coverage Tests[2m > [22mAccessibility[2m > [22mdeve ter estrutura sem├óntica correta[33m 1027[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find role="main"
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"text-xl"[31m
+      [36m>[31m
+        [0mCarregando perfil...[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head>[31m
+    [36m<title>[31m
+      [0mSERVIO.AI - Find the Perfect Professional[0m
+    [36m</title>[31m
+  [36m</head>[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"text-xl"[31m
+        [36m>[31m
+          [0mCarregando perfil...[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[31m   [31m├ù[31m ProfilePage - Quick Coverage Tests[2m > [22mAccessibility[2m > [22mdeve ter t├¡tulo acess├¡vel[33m 1012[2mms[22m[31m[39m
+[31m     ÔåÆ Unable to find role="heading"
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"text-xl"[31m
+      [36m>[31m
+        [0mCarregando perfil...[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head>[31m
+    [36m<title>[31m
+      [0mSERVIO.AI - Find the Perfect Professional[0m
+    [36m</title>[31m
+  [36m</head>[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex items-center justify-center min-h-screen"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"text-xl"[31m
+        [36m>[31m
+          [0mCarregando perfil...[0m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Tests 21 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+ FAIL  tests/components/FindProvidersPage.quick.test.tsx > FindProvidersPage - Quick Coverage Tests > Rendering > deve exibir barra de busca
+TestingLibraryElementError: Unable to find an element with the placeholder text of: /buscar|pesquisar/i
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="space-y-8"
+    >
+      <div
+        class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100"
+      >
+        <h1
+          class="text-3xl font-extrabold text-gray-900 tracking-tight"
+        >
+          Encontre o Profissional Perfeito
+        </h1>
+        <p
+          class="mt-2 text-lg text-gray-600"
+        >
+          Use nossa busca inteligente ou os filtros para achar exatamente o que voc├¬ precisa.
+        </p>
+        <form
+          class="mt-6"
+        >
+          <div
+            class="flex flex-col sm:flex-row gap-3"
+          >
+            <input
+              class="flex-grow block w-full rounded-lg border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              placeholder="Descreva o que precisa, ex: 'eletricista urgente em S├úo Paulo'"
+              type="text"
+              value=""
+            />
+            <button
+              class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 disabled:bg-gray-400"
+              type="submit"
+            >
+              Buscar com IA Ô£¿
+            </button>
+          </div>
+        </form>
+      </div>
+      <div
+        class="grid grid-cols-1 lg:grid-cols-4 gap-6"
+      >
+        <aside
+          class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 self-start"
+        >
+          <div
+            class="flex justify-between items-center"
+          >
+            <h3
+              class="text-lg font-bold text-gray-800"
+            >
+              Filtros
+            </h3>
+            <button
+              class="text-xs font-semibold text-blue-600 hover:underline"
+            >
+              Limpar
+            </button>
+          </div>
+          <div
+            class="space-y-6 mt-4"
+          >
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="service"
+              >
+                Servi├ºo / Nome
+              </label>
+              <input
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="service"
+                name="service"
+                type="text"
+                value=""
+              />
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="location"
+              >
+                Localiza├º├úo
+              </label>
+              <input
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="location"
+                name="location"
+                type="text"
+                value=""
+              />
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="availability"
+              >
+                Disponibilidade
+              </label>
+              <select
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="availability"
+                name="availability"
+              >
+                <option
+                  value="any"
+                >
+                  Qualquer
+                </option>
+                <option
+                  value="imediata"
+                >
+                  Imediata
+                </option>
+                <option
+                  value="24h"
+                >
+                  Em 24h
+                </option>
+                <option
+                  value="3dias"
+                >
+                  Em 3 dias
+                </option>
+                <option
+                  value="1semana"
+                >
+                  Em 1 semana
+                </option>
+              </select>
+            </div>
+            <div
+              class="space-y-3"
+            >
+              <div
+                class="relative flex items-start"
+              >
+                <div
+                  class="flex h-6 items-center"
+                >
+                  <input
+                    class="h-4 w-4 rounded border-gray-300"
+                    id="isVerified"
+                    name="isVerified"
+                    type="checkbox"
+                  />
+                </div>
+                <div
+                  class="ml-3 text-sm"
+                >
+                  <label
+                    class="font-medium text-gray-800"
+                    for="isVerified"
+                  >
+                    Identidade Verificada
+                  </label>
+                </div>
+              </div>
+              <div
+                class="relative flex items-start"
+              >
+                <div
+                  class="flex h-6 items-center"
+                >
+         ...
+ ÔØ» Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ÔØ» tests/components/FindProvidersPage.quick.test.tsx:74:34
+     72|       render(<FindProvidersPage {...mockProps} />);
+     73| 
+     74|       const searchInput = screen.getByPlaceholderText(/buscar|pesquisaÔÇª
+       |                                  ^
+     75|       expect(searchInput).toBeInTheDocument();
+     76|     });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1/21]ÔÄ»
+
+ FAIL  tests/components/FindProvidersPage.quick.test.tsx > FindProvidersPage - Quick Coverage Tests > Provider Listing > deve exibir lista de prestadores inicialmente
+AssertionError: expected 0 to be greater than 0
+ ÔØ» tests/components/FindProvidersPage.quick.test.tsx:93:36
+     91|       // Deve exibir pelo menos um prestador
+     92|       const providerCards = screen.queryAllByRole('button', { name: /jÔÇª
+     93|       expect(providerCards.length).toBeGreaterThan(0);
+       |                                    ^
+     94|     });
+     95| 
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[2/21]ÔÄ»
+
+ FAIL  tests/components/FindProvidersPage.quick.test.tsx > FindProvidersPage - Quick Coverage Tests > Provider Listing > deve exibir rating dos prestadores
+AssertionError: expected 0 to be greater than 0
+ ÔØ» tests/components/FindProvidersPage.quick.test.tsx:107:30
+    105| 
+    106|       const ratings = screen.queryAllByText(/4\.\d/);
+    107|       expect(ratings.length).toBeGreaterThan(0);
+       |                              ^
+    108|     });
+    109|   });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[3/21]ÔÄ»
+
+ FAIL  tests/components/FindProvidersPage.quick.test.tsx > FindProvidersPage - Quick Coverage Tests > Category Filtering > deve filtrar prestadores por categoria
+TestingLibraryElementError: Unable to find an element with the display value: /selecione|todas/i.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="space-y-8"
+    >
+      <div
+        class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100"
+      >
+        <h1
+          class="text-3xl font-extrabold text-gray-900 tracking-tight"
+        >
+          Encontre o Profissional Perfeito
+        </h1>
+        <p
+          class="mt-2 text-lg text-gray-600"
+        >
+          Use nossa busca inteligente ou os filtros para achar exatamente o que voc├¬ precisa.
+        </p>
+        <form
+          class="mt-6"
+        >
+          <div
+            class="flex flex-col sm:flex-row gap-3"
+          >
+            <input
+              class="flex-grow block w-full rounded-lg border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              placeholder="Descreva o que precisa, ex: 'eletricista urgente em S├úo Paulo'"
+              type="text"
+              value=""
+            />
+            <button
+              class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 disabled:bg-gray-400"
+              type="submit"
+            >
+              Buscar com IA Ô£¿
+            </button>
+          </div>
+        </form>
+      </div>
+      <div
+        class="grid grid-cols-1 lg:grid-cols-4 gap-6"
+      >
+        <aside
+          class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 self-start"
+        >
+          <div
+            class="flex justify-between items-center"
+          >
+            <h3
+              class="text-lg font-bold text-gray-800"
+            >
+              Filtros
+            </h3>
+            <button
+              class="text-xs font-semibold text-blue-600 hover:underline"
+            >
+              Limpar
+            </button>
+          </div>
+          <div
+            class="space-y-6 mt-4"
+          >
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="service"
+              >
+                Servi├ºo / Nome
+              </label>
+              <input
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="service"
+                name="service"
+                type="text"
+                value=""
+              />
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="location"
+              >
+                Localiza├º├úo
+              </label>
+              <input
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="location"
+                name="location"
+                type="text"
+                value=""
+              />
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="availability"
+              >
+                Disponibilidade
+              </label>
+              <select
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="availability"
+                name="availability"
+              >
+                <option
+                  value="any"
+                >
+                  Qualquer
+                </option>
+                <option
+                  value="imediata"
+                >
+                  Imediata
+                </option>
+                <option
+                  value="24h"
+                >
+                  Em 24h
+                </option>
+                <option
+                  value="3dias"
+                >
+                  Em 3 dias
+                </option>
+                <option
+                  value="1semana"
+                >
+                  Em 1 semana
+                </option>
+              </select>
+            </div>
+            <div
+              class="space-y-3"
+            >
+              <div
+                class="relative flex items-start"
+              >
+                <div
+                  class="flex h-6 items-center"
+                >
+                  <input
+                    class="h-4 w-4 rounded border-gray-300"
+                    id="isVerified"
+                    name="isVerified"
+                    type="checkbox"
+                  />
+                </div>
+                <div
+                  class="ml-3 text-sm"
+                >
+                  <label
+                    class="font-medium text-gray-800"
+                    for="isVerified"
+                  >
+                    Identidade Verificada
+                  </label>
+                </div>
+              </div>
+              <div
+                class="relative flex items-start"
+              >
+                <div
+                  class="flex h-6 items-center"
+                >
+         ...
+ ÔØ» Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ÔØ» tests/components/FindProvidersPage.quick.test.tsx:115:36
+    113|       render(<FindProvidersPage {...mockProps} />);
+    114| 
+    115|       const serviceSelect = screen.getByDisplayValue(/selecione|todas/ÔÇª
+       |                                    ^
+    116|       fireEvent.change(serviceSelect, { target: { value: 'El├®trica' } ÔÇª
+    117| 
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[4/21]ÔÄ»
+
+ FAIL  tests/components/FindProvidersPage.quick.test.tsx > FindProvidersPage - Quick Coverage Tests > Category Filtering > deve permitir selecionar categoria de servi├ºo
+AssertionError: expected 0 to be greater than 0
+ ÔØ» tests/components/FindProvidersPage.quick.test.tsx:129:38
+    127| 
+    128|       const categoryOptions = screen.queryAllByText(/el├®trica|hidr├íuliÔÇª
+    129|       expect(categoryOptions.length).toBeGreaterThan(0);
+       |                                      ^
+    130|     });
+    131|   });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[5/21]ÔÄ»
+
+ FAIL  tests/components/FindProvidersPage.quick.test.tsx > FindProvidersPage - Quick Coverage Tests > Search Functionality > deve aceitar entrada de busca
+TestingLibraryElementError: Unable to find an element with the placeholder text of: /buscar|pesquisar/i
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="space-y-8"
+    >
+      <div
+        class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100"
+      >
+        <h1
+          class="text-3xl font-extrabold text-gray-900 tracking-tight"
+        >
+          Encontre o Profissional Perfeito
+        </h1>
+        <p
+          class="mt-2 text-lg text-gray-600"
+        >
+          Use nossa busca inteligente ou os filtros para achar exatamente o que voc├¬ precisa.
+        </p>
+        <form
+          class="mt-6"
+        >
+          <div
+            class="flex flex-col sm:flex-row gap-3"
+          >
+            <input
+              class="flex-grow block w-full rounded-lg border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              placeholder="Descreva o que precisa, ex: 'eletricista urgente em S├úo Paulo'"
+              type="text"
+              value=""
+            />
+            <button
+              class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 disabled:bg-gray-400"
+              type="submit"
+            >
+              Buscar com IA Ô£¿
+            </button>
+          </div>
+        </form>
+      </div>
+      <div
+        class="grid grid-cols-1 lg:grid-cols-4 gap-6"
+      >
+        <aside
+          class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 self-start"
+        >
+          <div
+            class="flex justify-between items-center"
+          >
+            <h3
+              class="text-lg font-bold text-gray-800"
+            >
+              Filtros
+            </h3>
+            <button
+              class="text-xs font-semibold text-blue-600 hover:underline"
+            >
+              Limpar
+            </button>
+          </div>
+          <div
+            class="space-y-6 mt-4"
+          >
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="service"
+              >
+                Servi├ºo / Nome
+              </label>
+              <input
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="service"
+                name="service"
+                type="text"
+                value=""
+              />
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="location"
+              >
+                Localiza├º├úo
+              </label>
+              <input
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="location"
+                name="location"
+                type="text"
+                value=""
+              />
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="availability"
+              >
+                Disponibilidade
+              </label>
+              <select
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="availability"
+                name="availability"
+              >
+                <option
+                  value="any"
+                >
+                  Qualquer
+                </option>
+                <option
+                  value="imediata"
+                >
+                  Imediata
+                </option>
+                <option
+                  value="24h"
+                >
+                  Em 24h
+                </option>
+                <option
+                  value="3dias"
+                >
+                  Em 3 dias
+                </option>
+                <option
+                  value="1semana"
+                >
+                  Em 1 semana
+                </option>
+              </select>
+            </div>
+            <div
+              class="space-y-3"
+            >
+              <div
+                class="relative flex items-start"
+              >
+                <div
+                  class="flex h-6 items-center"
+                >
+                  <input
+                    class="h-4 w-4 rounded border-gray-300"
+                    id="isVerified"
+                    name="isVerified"
+                    type="checkbox"
+                  />
+                </div>
+                <div
+                  class="ml-3 text-sm"
+                >
+                  <label
+                    class="font-medium text-gray-800"
+                    for="isVerified"
+                  >
+                    Identidade Verificada
+                  </label>
+                </div>
+              </div>
+              <div
+                class="relative flex items-start"
+              >
+                <div
+                  class="flex h-6 items-center"
+                >
+         ...
+ ÔØ» Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ÔØ» tests/components/FindProvidersPage.quick.test.tsx:198:34
+    196|       render(<FindProvidersPage {...mockProps} />);
+    197| 
+    198|       const searchInput = screen.getByPlaceholderText(/buscar|pesquisaÔÇª
+       |                                  ^
+    199|       fireEvent.change(searchInput, { target: { value: 'eletricista' }ÔÇª
+    200| 
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[6/21]ÔÄ»
+
+ FAIL  tests/components/FindProvidersPage.quick.test.tsx > FindProvidersPage - Quick Coverage Tests > Search Functionality > deve filtrar prestadores ao buscar
+TestingLibraryElementError: Unable to find an element with the placeholder text of: /buscar|pesquisar/i
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="space-y-8"
+    >
+      <div
+        class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100"
+      >
+        <h1
+          class="text-3xl font-extrabold text-gray-900 tracking-tight"
+        >
+          Encontre o Profissional Perfeito
+        </h1>
+        <p
+          class="mt-2 text-lg text-gray-600"
+        >
+          Use nossa busca inteligente ou os filtros para achar exatamente o que voc├¬ precisa.
+        </p>
+        <form
+          class="mt-6"
+        >
+          <div
+            class="flex flex-col sm:flex-row gap-3"
+          >
+            <input
+              class="flex-grow block w-full rounded-lg border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              placeholder="Descreva o que precisa, ex: 'eletricista urgente em S├úo Paulo'"
+              type="text"
+              value=""
+            />
+            <button
+              class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 disabled:bg-gray-400"
+              type="submit"
+            >
+              Buscar com IA Ô£¿
+            </button>
+          </div>
+        </form>
+      </div>
+      <div
+        class="grid grid-cols-1 lg:grid-cols-4 gap-6"
+      >
+        <aside
+          class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 self-start"
+        >
+          <div
+            class="flex justify-between items-center"
+          >
+            <h3
+              class="text-lg font-bold text-gray-800"
+            >
+              Filtros
+            </h3>
+            <button
+              class="text-xs font-semibold text-blue-600 hover:underline"
+            >
+              Limpar
+            </button>
+          </div>
+          <div
+            class="space-y-6 mt-4"
+          >
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="service"
+              >
+                Servi├ºo / Nome
+              </label>
+              <input
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="service"
+                name="service"
+                type="text"
+                value=""
+              />
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="location"
+              >
+                Localiza├º├úo
+              </label>
+              <input
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="location"
+                name="location"
+                type="text"
+                value=""
+              />
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="availability"
+              >
+                Disponibilidade
+              </label>
+              <select
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="availability"
+                name="availability"
+              >
+                <option
+                  value="any"
+                >
+                  Qualquer
+                </option>
+                <option
+                  value="imediata"
+                >
+                  Imediata
+                </option>
+                <option
+                  value="24h"
+                >
+                  Em 24h
+                </option>
+                <option
+                  value="3dias"
+                >
+                  Em 3 dias
+                </option>
+                <option
+                  value="1semana"
+                >
+                  Em 1 semana
+                </option>
+              </select>
+            </div>
+            <div
+              class="space-y-3"
+            >
+              <div
+                class="relative flex items-start"
+              >
+                <div
+                  class="flex h-6 items-center"
+                >
+                  <input
+                    class="h-4 w-4 rounded border-gray-300"
+                    id="isVerified"
+                    name="isVerified"
+                    type="checkbox"
+                  />
+                </div>
+                <div
+                  class="ml-3 text-sm"
+                >
+                  <label
+                    class="font-medium text-gray-800"
+                    for="isVerified"
+                  >
+                    Identidade Verificada
+                  </label>
+                </div>
+              </div>
+              <div
+                class="relative flex items-start"
+              >
+                <div
+                  class="flex h-6 items-center"
+                >
+         ...
+ ÔØ» Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ÔØ» tests/components/FindProvidersPage.quick.test.tsx:207:34
+    205|       render(<FindProvidersPage {...mockProps} />);
+    206| 
+    207|       const searchInput = screen.getByPlaceholderText(/buscar|pesquisaÔÇª
+       |                                  ^
+    208|       const searchButton = screen.queryByRole('button', { name: /buscaÔÇª
+    209| 
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[7/21]ÔÄ»
+
+ FAIL  tests/components/FindProvidersPage.quick.test.tsx > FindProvidersPage - Quick Coverage Tests > Empty States > deve exibir mensagem quando n├úo houver resultados
+TestingLibraryElementError: Unable to find an element with the placeholder text of: /buscar|pesquisar/i
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="space-y-8"
+    >
+      <div
+        class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100"
+      >
+        <h1
+          class="text-3xl font-extrabold text-gray-900 tracking-tight"
+        >
+          Encontre o Profissional Perfeito
+        </h1>
+        <p
+          class="mt-2 text-lg text-gray-600"
+        >
+          Use nossa busca inteligente ou os filtros para achar exatamente o que voc├¬ precisa.
+        </p>
+        <form
+          class="mt-6"
+        >
+          <div
+            class="flex flex-col sm:flex-row gap-3"
+          >
+            <input
+              class="flex-grow block w-full rounded-lg border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              placeholder="Descreva o que precisa, ex: 'eletricista urgente em S├úo Paulo'"
+              type="text"
+              value=""
+            />
+            <button
+              class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 disabled:bg-gray-400"
+              type="submit"
+            >
+              Buscar com IA Ô£¿
+            </button>
+          </div>
+        </form>
+      </div>
+      <div
+        class="grid grid-cols-1 lg:grid-cols-4 gap-6"
+      >
+        <aside
+          class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 self-start"
+        >
+          <div
+            class="flex justify-between items-center"
+          >
+            <h3
+              class="text-lg font-bold text-gray-800"
+            >
+              Filtros
+            </h3>
+            <button
+              class="text-xs font-semibold text-blue-600 hover:underline"
+            >
+              Limpar
+            </button>
+          </div>
+          <div
+            class="space-y-6 mt-4"
+          >
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="service"
+              >
+                Servi├ºo / Nome
+              </label>
+              <input
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="service"
+                name="service"
+                type="text"
+                value=""
+              />
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="location"
+              >
+                Localiza├º├úo
+              </label>
+              <input
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="location"
+                name="location"
+                type="text"
+                value=""
+              />
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="availability"
+              >
+                Disponibilidade
+              </label>
+              <select
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="availability"
+                name="availability"
+              >
+                <option
+                  value="any"
+                >
+                  Qualquer
+                </option>
+                <option
+                  value="imediata"
+                >
+                  Imediata
+                </option>
+                <option
+                  value="24h"
+                >
+                  Em 24h
+                </option>
+                <option
+                  value="3dias"
+                >
+                  Em 3 dias
+                </option>
+                <option
+                  value="1semana"
+                >
+                  Em 1 semana
+                </option>
+              </select>
+            </div>
+            <div
+              class="space-y-3"
+            >
+              <div
+                class="relative flex items-start"
+              >
+                <div
+                  class="flex h-6 items-center"
+                >
+                  <input
+                    class="h-4 w-4 rounded border-gray-300"
+                    id="isVerified"
+                    name="isVerified"
+                    type="checkbox"
+                  />
+                </div>
+                <div
+                  class="ml-3 text-sm"
+                >
+                  <label
+                    class="font-medium text-gray-800"
+                    for="isVerified"
+                  >
+                    Identidade Verificada
+                  </label>
+                </div>
+              </div>
+              <div
+                class="relative flex items-start"
+              >
+                <div
+                  class="flex h-6 items-center"
+                >
+         ...
+ ÔØ» Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ÔØ» tests/components/FindProvidersPage.quick.test.tsx:266:34
+    264|       render(<FindProvidersPage {...mockProps} />);
+    265| 
+    266|       const searchInput = screen.getByPlaceholderText(/buscar|pesquisaÔÇª
+       |                                  ^
+    267|       fireEvent.change(searchInput, { target: { value: 'servi├ºo inexisÔÇª
+    268| 
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[8/21]ÔÄ»
+
+ FAIL  tests/components/FindProvidersPage.quick.test.tsx > FindProvidersPage - Quick Coverage Tests > Accessibility > deve ter labels acess├¡veis para inputs
+TestingLibraryElementError: Unable to find an element with the placeholder text of: /buscar|pesquisar/i
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="space-y-8"
+    >
+      <div
+        class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100"
+      >
+        <h1
+          class="text-3xl font-extrabold text-gray-900 tracking-tight"
+        >
+          Encontre o Profissional Perfeito
+        </h1>
+        <p
+          class="mt-2 text-lg text-gray-600"
+        >
+          Use nossa busca inteligente ou os filtros para achar exatamente o que voc├¬ precisa.
+        </p>
+        <form
+          class="mt-6"
+        >
+          <div
+            class="flex flex-col sm:flex-row gap-3"
+          >
+            <input
+              class="flex-grow block w-full rounded-lg border-gray-300 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              placeholder="Descreva o que precisa, ex: 'eletricista urgente em S├úo Paulo'"
+              type="text"
+              value=""
+            />
+            <button
+              class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 disabled:bg-gray-400"
+              type="submit"
+            >
+              Buscar com IA Ô£¿
+            </button>
+          </div>
+        </form>
+      </div>
+      <div
+        class="grid grid-cols-1 lg:grid-cols-4 gap-6"
+      >
+        <aside
+          class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 self-start"
+        >
+          <div
+            class="flex justify-between items-center"
+          >
+            <h3
+              class="text-lg font-bold text-gray-800"
+            >
+              Filtros
+            </h3>
+            <button
+              class="text-xs font-semibold text-blue-600 hover:underline"
+            >
+              Limpar
+            </button>
+          </div>
+          <div
+            class="space-y-6 mt-4"
+          >
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="service"
+              >
+                Servi├ºo / Nome
+              </label>
+              <input
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="service"
+                name="service"
+                type="text"
+                value=""
+              />
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="location"
+              >
+                Localiza├º├úo
+              </label>
+              <input
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="location"
+                name="location"
+                type="text"
+                value=""
+              />
+            </div>
+            <div>
+              <label
+                class="block text-sm font-medium text-gray-700"
+                for="availability"
+              >
+                Disponibilidade
+              </label>
+              <select
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                id="availability"
+                name="availability"
+              >
+                <option
+                  value="any"
+                >
+                  Qualquer
+                </option>
+                <option
+                  value="imediata"
+                >
+                  Imediata
+                </option>
+                <option
+                  value="24h"
+                >
+                  Em 24h
+                </option>
+                <option
+                  value="3dias"
+                >
+                  Em 3 dias
+                </option>
+                <option
+                  value="1semana"
+                >
+                  Em 1 semana
+                </option>
+              </select>
+            </div>
+            <div
+              class="space-y-3"
+            >
+              <div
+                class="relative flex items-start"
+              >
+                <div
+                  class="flex h-6 items-center"
+                >
+                  <input
+                    class="h-4 w-4 rounded border-gray-300"
+                    id="isVerified"
+                    name="isVerified"
+                    type="checkbox"
+                  />
+                </div>
+                <div
+                  class="ml-3 text-sm"
+                >
+                  <label
+                    class="font-medium text-gray-800"
+                    for="isVerified"
+                  >
+                    Identidade Verificada
+                  </label>
+                </div>
+              </div>
+              <div
+                class="relative flex items-start"
+              >
+                <div
+                  class="flex h-6 items-center"
+                >
+         ...
+ ÔØ» Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ÔØ» node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ÔØ» tests/components/FindProvidersPage.quick.test.tsx:293:34
+    291|       render(<FindProvidersPage {...mockProps} />);
+    292| 
+    293|       const searchInput = screen.getByPlaceholderText(/buscar|pesquisaÔÇª
+       |                                  ^
+    294|       expect(searchInput).toHaveAttribute('placeholder');
+    295|     });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[9/21]ÔÄ»
+
+ FAIL  tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Rendering and Basic Functionality > deve renderizar o componente ProfilePage
+Error: expect(element).not.toBeInTheDocument()
+
+expected document not to contain element, found <div
+  class="text-xl"
+>
+  Carregando perfil...
+</div> instead
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div>
+      <div
+        class="flex items-center justify-center min-h-screen"
+      >
+        <div
+          class="text-xl"
+        >
+          Carregando perfil...
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+ ÔØ» tests/components/ProfilePage.quick.test.tsx:60:55
+     58| 
+     59|       await waitFor(() => {
+     60|         expect(screen.queryByText(/carregando/i)).not.toBeInTheDocumenÔÇª
+       |                                                       ^
+     61|       });
+     62| 
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[10/21]ÔÄ»
+
+ FAIL  tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Rendering and Basic Functionality > deve exibir informa├º├Áes do perfil do prestador
+TestingLibraryElementError: Unable to find an element with the text: Jo├úo Silva. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="flex items-center justify-center min-h-screen"
+    >
+      <div
+        class="text-xl"
+      >
+        Carregando perfil...
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<html>
+  <head>
+    <title>
+      SERVIO.AI - Find the Perfect Professional
+    </title>
+  </head>
+  <body>
+    <div>
+      <div
+        class="flex items-center justify-center min-h-screen"
+      >
+        <div
+          class="text-xl"
+        >
+          Carregando perfil...
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+ ÔØ» Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ÔØ» tests/components/ProfilePage.quick.test.tsx:70:13
+     68|       render(<ProfilePage {...mockProps} />);
+     69| 
+     70|       await waitFor(() => {
+       |             ^
+     71|         expect(screen.getByText('Jo├úo Silva')).toBeInTheDocument();
+     72|       });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[11/21]ÔÄ»
+
+ FAIL  tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Profile Strength Calculation > deve calcular for├ºa do perfil corretamente
+TestingLibraryElementError: Unable to find an element with the text: Jo├úo Silva. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="flex items-center justify-center min-h-screen"
+    >
+      <div
+        class="text-xl"
+      >
+        Carregando perfil...
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<html>
+  <head>
+    <title>
+      SERVIO.AI - Find the Perfect Professional
+    </title>
+  </head>
+  <body>
+    <div>
+      <div
+        class="flex items-center justify-center min-h-screen"
+      >
+        <div
+          class="text-xl"
+        >
+          Carregando perfil...
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+ ÔØ» Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ÔØ» tests/components/ProfilePage.quick.test.tsx:90:13
+     88|       render(<ProfilePage {...mockProps} />);
+     89| 
+     90|       await waitFor(() => {
+       |             ^
+     91|         expect(screen.getByText('Jo├úo Silva')).toBeInTheDocument();
+     92|       });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[12/21]ÔÄ»
+
+ FAIL  tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Profile Strength Calculation > deve determinar que perfil com informa├º├Áes completas ├® forte
+TestingLibraryElementError: Unable to find an element with the text: Jo├úo Silva. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="flex items-center justify-center min-h-screen"
+    >
+      <div
+        class="text-xl"
+      >
+        Carregando perfil...
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<html>
+  <head>
+    <title>
+      SERVIO.AI - Find the Perfect Professional
+    </title>
+  </head>
+  <body>
+    <div>
+      <div
+        class="flex items-center justify-center min-h-screen"
+      >
+        <div
+          class="text-xl"
+        >
+          Carregando perfil...
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+ ÔØ» Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ÔØ» tests/components/ProfilePage.quick.test.tsx:102:13
+    100|       render(<ProfilePage {...mockProps} />);
+    101| 
+    102|       await waitFor(() => {
+       |             ^
+    103|         expect(screen.getByText('Jo├úo Silva')).toBeInTheDocument();
+    104|       });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[13/21]ÔÄ»
+
+ FAIL  tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Required Fields Validation > deve validar campos obrigat├│rios
+TestingLibraryElementError: Unable to find an element with the text: Jo├úo Silva. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="flex items-center justify-center min-h-screen"
+    >
+      <div
+        class="text-xl"
+      >
+        Carregando perfil...
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<html>
+  <head>
+    <title>
+      SERVIO.AI - Find the Perfect Professional
+    </title>
+  </head>
+  <body>
+    <div>
+      <div
+        class="flex items-center justify-center min-h-screen"
+      >
+        <div
+          class="text-xl"
+        >
+          Carregando perfil...
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+ ÔØ» Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ÔØ» tests/components/ProfilePage.quick.test.tsx:116:13
+    114|       render(<ProfilePage {...mockProps} />);
+    115| 
+    116|       await waitFor(() => {
+       |             ^
+    117|         expect(screen.getByText('Jo├úo Silva')).toBeInTheDocument();
+    118|       });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[14/21]ÔÄ»
+
+ FAIL  tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Required Fields Validation > deve exibir rating e n├║mero de avalia├º├Áes
+TestingLibraryElementError: Unable to find an element with the text: /4\.8/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="flex items-center justify-center min-h-screen"
+    >
+      <div
+        class="text-xl"
+      >
+        Carregando perfil...
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<html>
+  <head>
+    <title>
+      SERVIO.AI - Find the Perfect Professional
+    </title>
+  </head>
+  <body>
+    <div>
+      <div
+        class="flex items-center justify-center min-h-screen"
+      >
+        <div
+          class="text-xl"
+        >
+          Carregando perfil...
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+ ÔØ» Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ÔØ» tests/components/ProfilePage.quick.test.tsx:128:13
+    126|       render(<ProfilePage {...mockProps} />);
+    127| 
+    128|       await waitFor(() => {
+       |             ^
+    129|         const rating = screen.getByText(/4\.8/);
+    130|         expect(rating).toBeInTheDocument();
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[15/21]ÔÄ»
+
+ FAIL  tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > User Interaction > deve permitir voltar ao dashboard
+TestingLibraryElementError: Unable to find an element with the text: Jo├úo Silva. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="flex items-center justify-center min-h-screen"
+    >
+      <div
+        class="text-xl"
+      >
+        Carregando perfil...
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<html>
+  <head>
+    <title>
+      SERVIO.AI - Find the Perfect Professional
+    </title>
+  </head>
+  <body>
+    <div>
+      <div
+        class="flex items-center justify-center min-h-screen"
+      >
+        <div
+          class="text-xl"
+        >
+          Carregando perfil...
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+ ÔØ» Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ÔØ» tests/components/ProfilePage.quick.test.tsx:139:13
+    137|       render(<ProfilePage {...mockProps} />);
+    138| 
+    139|       await waitFor(() => {
+       |             ^
+    140|         expect(screen.getByText('Jo├úo Silva')).toBeInTheDocument();
+    141|       });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[16/21]ÔÄ»
+
+ FAIL  tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > User Interaction > deve chamar onLoginToContact quando usu├írio clica para contatar sem autenticar
+TestingLibraryElementError: Unable to find an element with the text: Jo├úo Silva. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="flex items-center justify-center min-h-screen"
+    >
+      <div
+        class="text-xl"
+      >
+        Carregando perfil...
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<html>
+  <head>
+    <title>
+      SERVIO.AI - Find the Perfect Professional
+    </title>
+  </head>
+  <body>
+    <div>
+      <div
+        class="flex items-center justify-center min-h-screen"
+      >
+        <div
+          class="text-xl"
+        >
+          Carregando perfil...
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+ ÔØ» Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ÔØ» tests/components/ProfilePage.quick.test.tsx:153:13
+    151|       render(<ProfilePage {...mockProps} />);
+    152| 
+    153|       await waitFor(() => {
+       |             ^
+    154|         expect(screen.getByText('Jo├úo Silva')).toBeInTheDocument();
+    155|       });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[17/21]ÔÄ»
+
+ FAIL  tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Content Display > deve exibir bio do prestador
+TestingLibraryElementError: Unable to find an element with the text: /experi├¬ncia/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="flex items-center justify-center min-h-screen"
+    >
+      <div
+        class="text-xl"
+      >
+        Carregando perfil...
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<html>
+  <head>
+    <title>
+      SERVIO.AI - Find the Perfect Professional
+    </title>
+  </head>
+  <body>
+    <div>
+      <div
+        class="flex items-center justify-center min-h-screen"
+      >
+        <div
+          class="text-xl"
+        >
+          Carregando perfil...
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+ ÔØ» Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ÔØ» tests/components/ProfilePage.quick.test.tsx:169:13
+    167|       render(<ProfilePage {...mockProps} />);
+    168| 
+    169|       await waitFor(() => {
+       |             ^
+    170|         expect(screen.getByText(/experi├¬ncia/i)).toBeInTheDocument();
+    171|       });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[18/21]ÔÄ»
+
+ FAIL  tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Content Display > deve exibir skills/especialidades
+AssertionError: expected 0 to be greater than 0
+
+Ignored nodes: comments, script, style
+<html>
+  <head>
+    <title>
+      SERVIO.AI - Find the Perfect Professional
+    </title>
+  </head>
+  <body>
+    <div>
+      <div
+        class="flex items-center justify-center min-h-screen"
+      >
+        <div
+          class="text-xl"
+        >
+          Carregando perfil...
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+ ÔØ» tests/components/ProfilePage.quick.test.tsx:180:39
+    178|         // Deve exibir pelo menos uma habilidade
+    179|         const skillsElements = screen.queryAllByText(/el├®trica|instalaÔÇª
+    180|         expect(skillsElements.length).toBeGreaterThan(0);
+       |                                       ^
+    181|       });
+    182|     });
+ ÔØ» runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ÔØ» checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ÔØ» Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[19/21]ÔÄ»
+
+ FAIL  tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Accessibility > deve ter estrutura sem├óntica correta
+TestingLibraryElementError: Unable to find role="main"
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="flex items-center justify-center min-h-screen"
+    >
+      <div
+        class="text-xl"
+      >
+        Carregando perfil...
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<html>
+  <head>
+    <title>
+      SERVIO.AI - Find the Perfect Professional
+    </title>
+  </head>
+  <body>
+    <div>
+      <div
+        class="flex items-center justify-center min-h-screen"
+      >
+        <div
+          class="text-xl"
+        >
+          Carregando perfil...
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+ ÔØ» Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ÔØ» tests/components/ProfilePage.quick.test.tsx:200:13
+    198|       render(<ProfilePage {...mockProps} />);
+    199| 
+    200|       await waitFor(() => {
+       |             ^
+    201|         expect(screen.getByRole('main')).toBeInTheDocument();
+    202|       });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[20/21]ÔÄ»
+
+ FAIL  tests/components/ProfilePage.quick.test.tsx > ProfilePage - Quick Coverage Tests > Accessibility > deve ter t├¡tulo acess├¡vel
+TestingLibraryElementError: Unable to find role="heading"
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="flex items-center justify-center min-h-screen"
+    >
+      <div
+        class="text-xl"
+      >
+        Carregando perfil...
+      </div>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<html>
+  <head>
+    <title>
+      SERVIO.AI - Find the Perfect Professional
+    </title>
+  </head>
+  <body>
+    <div>
+      <div
+        class="flex items-center justify-center min-h-screen"
+      >
+        <div
+          class="text-xl"
+        >
+          Carregando perfil...
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+ ÔØ» Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ÔØ» tests/components/ProfilePage.quick.test.tsx:208:13
+    206|       render(<ProfilePage {...mockProps} />);
+    207| 
+    208|       await waitFor(() => {
+       |             ^
+    209|         const heading = screen.getByRole('heading');
+    210|         expect(heading).toBeInTheDocument();
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[21/21]ÔÄ»
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m21 failed[39m[22m[2m | [22m[1m[32m42 passed[39m[22m[90m (63)[39m
+[2m   Start at [22m 17:42:32
+[2m   Duration [22m 37.10s[2m (transform 1.09s, setup 2.67s, collect 1.13s, tests 16.74s, environment 5.02s, prepare 929ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |    1.51 |    17.33 |    11.7 |    1.51 |                   
+ servio.ai         |       0 |    33.33 |   33.33 |       0 |                   
+  App.tsx          |       0 |        0 |       0 |       0 | 1-687             
+  ...baseConfig.ts |       0 |        0 |       0 |       0 | 1-109             
+  types.ts         |       0 |        0 |       0 |       0 |                   
+ ....ai/components |    3.61 |    16.32 |     6.6 |    3.61 |                   
+  ...ernalChat.tsx |       0 |        0 |       0 |       0 | 1-317             
+  ...estWizard.tsx |       0 |        0 |       0 |       0 | 1-563             
+  ...Assistant.tsx |       0 |        0 |       0 |       0 | 1-55              
+  AddItemModal.tsx |       0 |        0 |       0 |       0 | 1-320             
+  ...Analytics.tsx |       0 |        0 |       0 |       0 | 1-51              
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-215             
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-166             
+  ...puteModal.tsx |       0 |        0 |       0 |       0 | 1-179             
+  ...inancials.tsx |       0 |        0 |       0 |       0 | 1-149             
+  ...audAlerts.tsx |       0 |        0 |       0 |       0 | 1-151             
+  ...anagement.tsx |       0 |        0 |       0 |       0 | 1-199             
+  ...Marketing.tsx |       0 |        0 |       0 |       0 | 1-449             
+  ...ospecting.tsx |       0 |        0 |       0 |       0 | 1-273             
+  ...anagement.tsx |       0 |        0 |       0 |       0 | 1-441             
+  ...anagement.tsx |       0 |        0 |       0 |       0 | 1-295             
+  ...anagement.tsx |       0 |        0 |       0 |       0 | 1-466             
+  ...ationCard.tsx |       0 |        0 |       0 |       0 | 1-73              
+  ...RoomModal.tsx |       0 |        0 |       0 |       0 | 1-259             
+  AuthModal.tsx    |       0 |        0 |       0 |       0 | 1-254             
+  Avatar.tsx       |       0 |        0 |       0 |       0 | 1-69              
+  Chart.tsx        |       0 |        0 |       0 |       0 | 1-38              
+  ChatModal.tsx    |       0 |        0 |       0 |       0 | 1-461             
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-1209            
+  ...ntJobCard.tsx |       0 |        0 |       0 |       0 | 1-175             
+  ...leSidebar.tsx |       0 |        0 |       0 |       0 | 1-70              
+  ...edJobCard.tsx |   23.63 |      100 |       0 |   23.63 | 20-27,31-70       
+  ...irmDialog.tsx |       0 |        0 |       0 |       0 | 1-71              
+  Dashboard.tsx    |       0 |        0 |       0 |       0 | 1-125             
+  ...ailsModal.tsx |       0 |        0 |       0 |       0 | 1-158             
+  DisputeModal.tsx |       0 |        0 |       0 |       0 | 1-144             
+  EmptyState.tsx   |       0 |        0 |       0 |       0 | 1-44              
+  ...rBoundary.tsx |       0 |        0 |       0 |       0 | 1-76              
+  ...idersPage.tsx |   86.39 |    43.33 |      25 |   86.39 | ...19-120,310-315 
+  Header.tsx       |       0 |        0 |       0 |       0 | 1-147             
+  HeroSection.tsx  |       0 |        0 |       0 |       0 | 1-125             
+  ItemCard.tsx     |       0 |        0 |       0 |       0 | 1-57              
+  ...tailModal.tsx |       0 |        0 |       0 |       0 | 1-92              
+  JobCard.tsx      |       0 |        0 |       0 |       0 | 1-142             
+  JobFAQModal.tsx  |       0 |        0 |       0 |       0 | 1-95              
+  ...tionModal.tsx |       0 |        0 |       0 |       0 | 1-74              
+  JobTimeline.tsx  |       0 |        0 |       0 |       0 | 1-90              
+  ...ngSpinner.tsx |       0 |        0 |       0 |       0 | 1-57              
+  LocationMap.tsx  |    28.2 |      100 |       0 |    28.2 | 26-62             
+  ...ggestions.tsx |       0 |        0 |       0 |       0 | 1-100             
+  ...ultsModal.tsx |       0 |        0 |       0 |       0 | 1-86              
+  ...tionsBell.tsx |       0 |        0 |       0 |       0 | 1-81              
+  ...nsPopover.tsx |       0 |        0 |       0 |       0 | 1-91              
+  OmniInbox.tsx    |       0 |        0 |       0 |       0 | 1-597             
+  Pagination.tsx   |       0 |        0 |       0 |       0 | 1-106             
+  PaymentModal.tsx |       0 |        0 |       0 |       0 | 1-173             
+  ...SetupCard.tsx |       0 |        0 |       0 |       0 | 1-73              
+  ...ccessPage.tsx |       0 |        0 |       0 |       0 | 1-65              
+  ...ioGallery.tsx |    7.69 |      100 |       0 |    7.69 | 6-34,38-74        
+  ProfileModal.tsx |       0 |        0 |       0 |       0 | 1-449             
+  ProfilePage.tsx  |   35.74 |    24.13 |   33.33 |   35.74 | ...62-293,298-311 
+  ...eStrength.tsx |       0 |        0 |       0 |       0 | 1-116             
+  ProfileTips.tsx  |       0 |        0 |       0 |       0 | 1-54              
+  ProgressBar.tsx  |       0 |        0 |       0 |       0 | 1-69              
+  ...etailCard.tsx |       0 |        0 |       0 |       0 | 1-104             
+  ...ListModal.tsx |       0 |        0 |       0 |       0 | 1-107             
+  ...osalModal.tsx |       0 |        0 |       0 |       0 | 1-197             
+  ...tionModal.tsx |       0 |        0 |       0 |       0 | 1-75              
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-435             
+  ...torLayout.tsx |       0 |        0 |       0 |       0 | 1-43              
+  ...tatistics.tsx |       0 |        0 |       0 |       0 | 1-164             
+  ProviderCard.tsx |       0 |        0 |       0 |       0 | 1-93              
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-543             
+  ...ningsCard.tsx |       0 |        0 |       0 |       0 | 1-156             
+  ...erJobCard.tsx |       0 |        0 |       0 |       0 | 1-74              
+  ...ndingPage.tsx |       0 |        0 |       0 |       0 | 1-156             
+  ...nboarding.tsx |       0 |        0 |       0 |       0 | 1-243             
+  ...esultCard.tsx |     100 |    66.66 |     100 |     100 | 24,77             
+  ...ontactCTA.tsx |   15.78 |      100 |       0 |   15.78 | 9-28              
+  ...tionModal.tsx |       0 |        0 |       0 |       0 | 1-51              
+  ...alProgram.tsx |       0 |        0 |       0 |       0 | 1-49              
+  ReviewModal.tsx  |       0 |        0 |       0 |       0 | 1-156             
+  ...ndingPage.tsx |       0 |        0 |       0 |       0 | 1-126             
+  ...questForm.tsx |       0 |        0 |       0 |       0 | 1-120             
+  ...Generator.tsx |       0 |        0 |       0 |       0 | 1-107             
+  Spinner.tsx      |       0 |        0 |       0 |       0 | 1-44              
+  ...tingInput.tsx |       0 |        0 |       0 |       0 | 1-50              
+  StatCard.tsx     |       0 |        0 |       0 |       0 | 1-38              
+  StatusBadge.tsx  |       0 |        0 |       0 |       0 | 1-40              
+  ...edDataSEO.tsx |   21.42 |      100 |       0 |   21.42 | 11-23             
+  ...iodFilter.tsx |       0 |        0 |       0 |       0 | 1-33              
+  Toast.tsx        |       0 |        0 |       0 |       0 | 1-108             
+  ...Container.tsx |       0 |        0 |       0 |       0 | 1-20              
+  Tooltip.tsx      |       0 |        0 |       0 |       0 | 1-57              
+  ...lyticsData.ts |       0 |        0 |       0 |       0 | 1-68              
+  ...hboardData.ts |       0 |        0 |       0 |       0 | 1-64              
+ ...mponents/admin |       0 |        0 |       0 |       0 |                   
+  ...riesChart.tsx |       0 |        0 |       0 |       0 | 1-59              
+ ...ents/skeletons |       0 |        0 |       0 |       0 |                   
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-43              
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-50              
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-33              
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-56              
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-36              
+  ...etonBlock.tsx |       0 |        0 |       0 |       0 | 1-16              
+ ...mponents/utils |    12.9 |      100 |       0 |    12.9 |                   
+  a11yHelpers.ts   |    12.9 |      100 |       0 |    12.9 | ...43,49-54,60-67 
+ ...io.ai/services |       0 |       50 |      50 |       0 |                   
+  api.ts           |       0 |        0 |       0 |       0 | 1-1121            
+  ...Translator.ts |       0 |      100 |     100 |       0 | 17-249            
+  geminiService.ts |       0 |      100 |     100 |       0 | 39-382            
+  ...ingService.ts |       0 |        0 |       0 |       0 | 1-63              
+  ...ingService.ts |       0 |        0 |       0 |       0 | 1-367             
+  ...appService.ts |       0 |      100 |     100 |       0 | 15-32             
+ .../src/analytics |       0 |      100 |     100 |       0 |                   
+  adminMetrics.ts  |       0 |      100 |     100 |       0 | 64-188            
+ ...src/components |       0 |        0 |       0 |       0 |                   
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-489             
+  CheckoutFlow.tsx |       0 |        0 |       0 |       0 | 1-567             
+  ...ngResults.tsx |       0 |        0 |       0 |       0 | 1-263             
+  ...eSelector.tsx |       0 |        0 |       0 |       0 | 1-273             
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-297             
+  ...nSettings.tsx |       0 |        0 |       0 |       0 | 1-92              
+  ...rTracking.tsx |       0 |        0 |       0 |       0 | 1-422             
+  ...ctListing.tsx |       0 |        0 |       0 |       0 | 1-451             
+  ...pectorCRM.tsx |       0 |        0 |       0 |       0 | 1-1378            
+  ...Materials.tsx |       0 |        0 |       0 |       0 | 1-318             
+  ...nboarding.tsx |       0 |        0 |       0 |       0 | 1-266             
+  ...ckActions.tsx |       0 |        0 |       0 |       0 | 1-219             
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-359             
+  ...ingWizard.tsx |       0 |        0 |       0 |       0 | 1-1396            
+  ...Generator.tsx |       0 |        0 |       0 |       0 | 1-294             
+  ShoppingCart.tsx |       0 |        0 |       0 |       0 | 1-432             
+ ...ts/omnichannel |       0 |        0 |       0 |       0 |                   
+  ...nelStatus.tsx |       0 |        0 |       0 |       0 | 1-171             
+  OmniInbox.tsx    |       0 |        0 |       0 |       0 | 1-361             
+ ...nts/prospector |       0 |        0 |       0 |       0 |                   
+  AIActionCard.tsx |       0 |        0 |       0 |       0 | 1-222             
+  ...Generator.tsx |       0 |        0 |       0 |       0 | 1-323             
+  ...ctionsBar.tsx |       0 |        0 |       0 |       0 | 1-236             
+  ...aignModal.tsx |       0 |        0 |       0 |       0 | 1-296             
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-224             
+  ...Sequences.tsx |       0 |        0 |       0 |       0 | 1-299             
+  ...tionPanel.tsx |       0 |        0 |       0 |       0 | 1-145             
+  ...Container.tsx |       0 |        0 |       0 |       0 | 1-30              
+  ...mentModal.tsx |       0 |        0 |       0 |       0 | 1-202             
+  ...ScoreCard.tsx |       0 |        0 |       0 |       0 | 1-302             
+  ...rdingTour.tsx |       0 |        0 |       0 |       0 | 1-479             
+  ...ectCardV2.tsx |       0 |        0 |       0 |       0 | 1-341             
+  ...MEnhanced.tsx |       0 |        0 |       0 |       0 | 1-2210            
+  ...fessional.tsx |       0 |        0 |       0 |       0 | 1-434             
+  ...ctionsBar.tsx |       0 |        0 |       0 |       0 | 1-326             
+  ...kAddPanel.tsx |       0 |        0 |       0 |       0 | 1-379             
+  QuickPanel.tsx   |       0 |        0 |       0 |       0 | 1-80              
+  ...dViewsBar.tsx |       0 |        0 |       0 |       0 | 1-398             
+  ...iltersBar.tsx |       0 |        0 |       0 |       0 | 1-124             
+ ...i/src/contexts |       0 |        0 |       0 |       0 |                   
+  ...onContext.tsx |       0 |        0 |       0 |       0 | 1-39              
+ ...io.ai/src/data |       0 |      100 |     100 |       0 |                   
+  ...eTemplates.ts |       0 |      100 |     100 |       0 | 19-359            
+ ...o.ai/src/hooks |       0 |        0 |       0 |       0 |                   
+  ...mendations.ts |       0 |        0 |       0 |       0 | 1-276             
+  ...cedFilters.ts |       0 |        0 |       0 |       0 | 1-135             
+  ...dShortcuts.ts |       0 |        0 |       0 |       0 | 1-39              
+  ...onSettings.ts |       0 |        0 |       0 |       0 | 1-68              
+  useSeoMeta.ts    |       0 |        0 |       0 |       0 | 1-127             
+ servio.ai/src/lib |       0 |      100 |     100 |       0 |                   
+  firebaseLazy.ts  |       0 |      100 |     100 |       0 | 11-100            
+ ...o.ai/src/pages |       0 |        0 |       0 |       0 |                   
+  ...viderPage.tsx |       0 |        0 |       0 |       0 | 1-714             
+ ...src/prospector |       0 |       80 |      80 |       0 |                   
+  analytics.ts     |       0 |        0 |       0 |       0 | 1-33              
+  dedupe.ts        |       0 |      100 |     100 |       0 | 9-77              
+  leadScoring.ts   |       0 |      100 |     100 |       0 | 32-90             
+  sequencer.ts     |       0 |      100 |     100 |       0 | 15-48             
+  templates.ts     |       0 |      100 |     100 |       0 | 3-20              
+ .../src/providers |       0 |        0 |       0 |       0 |                   
+  ...aProvider.tsx |       0 |        0 |       0 |       0 | 1-129             
+ ...i/src/services |       0 |    28.57 |   28.57 |       0 |                   
+  ...icsService.ts |       0 |        0 |       0 |       0 | 1-235             
+  ...icsService.ts |       0 |        0 |       0 |       0 | 1-323             
+  fcmService.ts    |       0 |        0 |       0 |       0 | 1-207             
+  ...ionService.ts |       0 |        0 |       0 |       0 | 1-319             
+  ...icsService.ts |       0 |      100 |     100 |       0 | 52-317            
+  ...inkService.ts |       0 |        0 |       0 |       0 | 1-328             
+  ...onsService.ts |       0 |      100 |     100 |       0 | 36-181            
+ ...o.ai/src/utils |       0 |      100 |     100 |       0 |                   
+  logger.ts        |       0 |      100 |     100 |       0 | 13-37             
+  ...torHelpers.ts |       0 |      100 |     100 |       0 | 23-87             
+-------------------|---------|----------|---------|---------|-------------------
+ERROR: Coverage for lines (1.51%) does not meet global threshold (45%)
+ERROR: Coverage for functions (11.7%) does not meet global threshold (45%)
+ERROR: Coverage for statements (1.51%) does not meet global threshold (45%)
+ERROR: Coverage for branches (17.33%) does not meet global threshold (40%)

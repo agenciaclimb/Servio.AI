@@ -2,6 +2,14 @@ import { expect, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
 
+// Definir window.location básica para jsdom (evita erros em new URL()/router)
+if (typeof window !== 'undefined' && (!window.location || !window.location.origin)) {
+  const href = 'http://localhost/';
+  // @ts-expect-error: redefinição controlada do location para ambiente de teste jsdom
+  delete (window as any).location;
+  (window as any).location = new URL(href) as unknown as Location;
+}
+
 // Vitest/jsdom não expõe Notification por padrão, então mockamos o básico para destravar fluxos Prospector
 if (typeof globalThis.Notification === 'undefined') {
   class NotificationMock {

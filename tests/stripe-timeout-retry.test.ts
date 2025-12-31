@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import * as API from '../../services/api';
-import type { Job } from '../../types';
+import * as API from '../services/api';
+import type { Job } from '../types';
 
 describe('[E2E-SMOKE] Stripe Timeout + Retry', () => {
   afterEach(() => {

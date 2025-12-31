@@ -1,4 +1,5 @@
 import { defineConfig, configDefaults } from 'vitest/config';
+import path from 'path';
 
 export default defineConfig({
   test: {
@@ -18,6 +19,19 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: 'coverage',
+    },
+    setupFiles: ['./tests/setup.js'],
+    server: {
+      deps: {
+        inline: ['firebase-admin', 'firebase-functions', '@google-cloud/secret-manager'],
+      },
+    },
+  },
+  resolve: {
+    alias: {
+      'firebase-functions': path.resolve(__dirname, './tests/mocks/firebase-functions.js'),
+      '@google-cloud/secret-manager': path.resolve(__dirname, './tests/mocks/secret-manager.js'),
+      'firebase-admin': path.resolve(__dirname, './tests/mocks/firebase-admin.js'),
     },
   },
   css: {

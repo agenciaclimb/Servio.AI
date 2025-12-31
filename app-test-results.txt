@@ -1,0 +1,213 @@
+
+> servio-ai-frontend@0.0.0 test
+> vitest run --coverage tests/App.test.tsx --run
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/JE/servio.ai[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32mÔ£ô[39m tests/App.test.tsx [2m([22m[2m22 tests[22m[2m)[22m[33m 390[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m22 passed[39m[22m[90m (22)[39m
+[2m   Start at [22m 14:03:43
+[2m   Duration [22m 4.94s[2m (transform 670ms, setup 501ms, collect 241ms, tests 390ms, environment 848ms, prepare 151ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |    0.94 |    19.54 |   11.21 |    0.94 |                   
+ servio.ai         |   36.65 |       50 |   21.05 |   36.65 |                   
+  App.tsx          |   41.78 |       50 |   19.44 |   41.78 | ...57-659,670-687 
+  ...baseConfig.ts |       0 |        0 |       0 |       0 | 1-109             
+  types.ts         |       0 |        0 |       0 |       0 |                   
+ ....ai/components |    0.26 |        0 |       0 |    0.26 |                   
+  ...ernalChat.tsx |       0 |        0 |       0 |       0 | 1-317             
+  ...estWizard.tsx |       0 |        0 |       0 |       0 | 1-563             
+  ...Assistant.tsx |       0 |        0 |       0 |       0 | 1-55              
+  AddItemModal.tsx |       0 |        0 |       0 |       0 | 1-320             
+  ...Analytics.tsx |       0 |        0 |       0 |       0 | 1-51              
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-215             
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-166             
+  ...puteModal.tsx |       0 |        0 |       0 |       0 | 1-179             
+  ...inancials.tsx |       0 |        0 |       0 |       0 | 1-149             
+  ...audAlerts.tsx |       0 |        0 |       0 |       0 | 1-151             
+  ...anagement.tsx |       0 |        0 |       0 |       0 | 1-199             
+  ...Marketing.tsx |       0 |        0 |       0 |       0 | 1-449             
+  ...ospecting.tsx |       0 |        0 |       0 |       0 | 1-273             
+  ...anagement.tsx |       0 |        0 |       0 |       0 | 1-441             
+  ...anagement.tsx |       0 |        0 |       0 |       0 | 1-295             
+  ...anagement.tsx |       0 |        0 |       0 |       0 | 1-466             
+  ...ationCard.tsx |       0 |        0 |       0 |       0 | 1-73              
+  ...RoomModal.tsx |       0 |        0 |       0 |       0 | 1-259             
+  AuthModal.tsx    |       0 |        0 |       0 |       0 | 1-254             
+  Avatar.tsx       |       0 |        0 |       0 |       0 | 1-69              
+  Chart.tsx        |       0 |        0 |       0 |       0 | 1-38              
+  ChatModal.tsx    |       0 |        0 |       0 |       0 | 1-461             
+  ...Dashboard.tsx |    2.17 |      100 |       0 |    2.17 | 66-1207           
+  ...ntJobCard.tsx |       0 |        0 |       0 |       0 | 1-175             
+  ...leSidebar.tsx |       0 |        0 |       0 |       0 | 1-70              
+  ...edJobCard.tsx |       0 |        0 |       0 |       0 | 1-72              
+  ...irmDialog.tsx |       0 |        0 |       0 |       0 | 1-71              
+  Dashboard.tsx    |       0 |        0 |       0 |       0 | 1-125             
+  ...ailsModal.tsx |       0 |        0 |       0 |       0 | 1-158             
+  DisputeModal.tsx |       0 |        0 |       0 |       0 | 1-144             
+  EmptyState.tsx   |       0 |        0 |       0 |       0 | 1-44              
+  ...rBoundary.tsx |       0 |        0 |       0 |       0 | 1-76              
+  ...idersPage.tsx |       0 |        0 |       0 |       0 | 1-323             
+  Header.tsx       |       0 |        0 |       0 |       0 | 1-147             
+  HeroSection.tsx  |       0 |        0 |       0 |       0 | 1-125             
+  ItemCard.tsx     |       0 |        0 |       0 |       0 | 1-57              
+  ...tailModal.tsx |       0 |        0 |       0 |       0 | 1-92              
+  JobCard.tsx      |       0 |        0 |       0 |       0 | 1-142             
+  JobFAQModal.tsx  |       0 |        0 |       0 |       0 | 1-95              
+  ...tionModal.tsx |       0 |        0 |       0 |       0 | 1-74              
+  JobTimeline.tsx  |       0 |        0 |       0 |       0 | 1-90              
+  ...ngSpinner.tsx |       0 |        0 |       0 |       0 | 1-57              
+  LocationMap.tsx  |       0 |        0 |       0 |       0 | 1-64              
+  ...ggestions.tsx |       0 |        0 |       0 |       0 | 1-100             
+  ...ultsModal.tsx |       0 |        0 |       0 |       0 | 1-86              
+  ...tionsBell.tsx |       0 |        0 |       0 |       0 | 1-81              
+  ...nsPopover.tsx |       0 |        0 |       0 |       0 | 1-91              
+  OmniInbox.tsx    |       0 |        0 |       0 |       0 | 1-597             
+  Pagination.tsx   |       0 |        0 |       0 |       0 | 1-106             
+  PaymentModal.tsx |       0 |        0 |       0 |       0 | 1-173             
+  ...SetupCard.tsx |       0 |        0 |       0 |       0 | 1-73              
+  ...ccessPage.tsx |       0 |        0 |       0 |       0 | 1-65              
+  ...ioGallery.tsx |       0 |        0 |       0 |       0 | 1-76              
+  ProfileModal.tsx |       0 |        0 |       0 |       0 | 1-449             
+  ProfilePage.tsx  |    4.18 |      100 |       0 |    4.18 | 19-29,33-316      
+  ...eStrength.tsx |       0 |        0 |       0 |       0 | 1-116             
+  ProfileTips.tsx  |       0 |        0 |       0 |       0 | 1-54              
+  ProgressBar.tsx  |       0 |        0 |       0 |       0 | 1-69              
+  ...etailCard.tsx |       0 |        0 |       0 |       0 | 1-104             
+  ...ListModal.tsx |       0 |        0 |       0 |       0 | 1-107             
+  ...osalModal.tsx |       0 |        0 |       0 |       0 | 1-197             
+  ...tionModal.tsx |       0 |        0 |       0 |       0 | 1-75              
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-435             
+  ...torLayout.tsx |       0 |        0 |       0 |       0 | 1-43              
+  ...tatistics.tsx |       0 |        0 |       0 |       0 | 1-164             
+  ProviderCard.tsx |       0 |        0 |       0 |       0 | 1-93              
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-543             
+  ...ningsCard.tsx |       0 |        0 |       0 |       0 | 1-156             
+  ...erJobCard.tsx |       0 |        0 |       0 |       0 | 1-74              
+  ...ndingPage.tsx |       0 |        0 |       0 |       0 | 1-156             
+  ...nboarding.tsx |       0 |        0 |       0 |       0 | 1-243             
+  ...esultCard.tsx |       0 |        0 |       0 |       0 | 1-99              
+  ...ontactCTA.tsx |       0 |        0 |       0 |       0 | 1-30              
+  ...tionModal.tsx |       0 |        0 |       0 |       0 | 1-51              
+  ...alProgram.tsx |       0 |        0 |       0 |       0 | 1-49              
+  ReviewModal.tsx  |       0 |        0 |       0 |       0 | 1-156             
+  ...ndingPage.tsx |       0 |        0 |       0 |       0 | 1-126             
+  ...questForm.tsx |       0 |        0 |       0 |       0 | 1-120             
+  ...Generator.tsx |       0 |        0 |       0 |       0 | 1-107             
+  Spinner.tsx      |       0 |        0 |       0 |       0 | 1-44              
+  ...tingInput.tsx |       0 |        0 |       0 |       0 | 1-50              
+  StatCard.tsx     |       0 |        0 |       0 |       0 | 1-38              
+  StatusBadge.tsx  |       0 |        0 |       0 |       0 | 1-40              
+  ...edDataSEO.tsx |       0 |        0 |       0 |       0 | 1-25              
+  ...iodFilter.tsx |       0 |        0 |       0 |       0 | 1-33              
+  Toast.tsx        |       0 |        0 |       0 |       0 | 1-108             
+  ...Container.tsx |       0 |        0 |       0 |       0 | 1-20              
+  Tooltip.tsx      |       0 |        0 |       0 |       0 | 1-57              
+  ...lyticsData.ts |       0 |        0 |       0 |       0 | 1-68              
+  ...hboardData.ts |       0 |        0 |       0 |       0 | 1-64              
+ ...mponents/admin |       0 |        0 |       0 |       0 |                   
+  ...riesChart.tsx |       0 |        0 |       0 |       0 | 1-59              
+ ...ents/skeletons |       0 |        0 |       0 |       0 |                   
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-43              
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-50              
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-33              
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-56              
+  ...dSkeleton.tsx |       0 |        0 |       0 |       0 | 1-36              
+  ...etonBlock.tsx |       0 |        0 |       0 |       0 | 1-16              
+ ...mponents/utils |       0 |      100 |     100 |       0 |                   
+  a11yHelpers.ts   |       0 |      100 |     100 |       0 | 17-67             
+ ...io.ai/services |       0 |       50 |      50 |       0 |                   
+  api.ts           |       0 |        0 |       0 |       0 | 1-1121            
+  ...Translator.ts |       0 |      100 |     100 |       0 | 17-249            
+  geminiService.ts |       0 |      100 |     100 |       0 | 39-382            
+  ...ingService.ts |       0 |        0 |       0 |       0 | 1-63              
+  ...ingService.ts |       0 |        0 |       0 |       0 | 1-367             
+  ...appService.ts |       0 |      100 |     100 |       0 | 15-32             
+ .../src/analytics |       0 |      100 |     100 |       0 |                   
+  adminMetrics.ts  |       0 |      100 |     100 |       0 | 64-188            
+ ...src/components |       0 |        0 |       0 |       0 |                   
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-489             
+  CheckoutFlow.tsx |       0 |        0 |       0 |       0 | 1-567             
+  ...ngResults.tsx |       0 |        0 |       0 |       0 | 1-263             
+  ...eSelector.tsx |       0 |        0 |       0 |       0 | 1-273             
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-297             
+  ...nSettings.tsx |       0 |        0 |       0 |       0 | 1-92              
+  ...rTracking.tsx |       0 |        0 |       0 |       0 | 1-422             
+  ...ctListing.tsx |       0 |        0 |       0 |       0 | 1-451             
+  ...pectorCRM.tsx |       0 |        0 |       0 |       0 | 1-1378            
+  ...Materials.tsx |       0 |        0 |       0 |       0 | 1-318             
+  ...nboarding.tsx |       0 |        0 |       0 |       0 | 1-266             
+  ...ckActions.tsx |       0 |        0 |       0 |       0 | 1-219             
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-359             
+  ...ingWizard.tsx |       0 |        0 |       0 |       0 | 1-1396            
+  ...Generator.tsx |       0 |        0 |       0 |       0 | 1-294             
+  ShoppingCart.tsx |       0 |        0 |       0 |       0 | 1-432             
+ ...ts/omnichannel |       0 |        0 |       0 |       0 |                   
+  ...nelStatus.tsx |       0 |        0 |       0 |       0 | 1-171             
+  OmniInbox.tsx    |       0 |        0 |       0 |       0 | 1-361             
+ ...nts/prospector |       0 |        0 |       0 |       0 |                   
+  AIActionCard.tsx |       0 |        0 |       0 |       0 | 1-222             
+  ...Generator.tsx |       0 |        0 |       0 |       0 | 1-323             
+  ...ctionsBar.tsx |       0 |        0 |       0 |       0 | 1-236             
+  ...aignModal.tsx |       0 |        0 |       0 |       0 | 1-296             
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-224             
+  ...Sequences.tsx |       0 |        0 |       0 |       0 | 1-299             
+  ...tionPanel.tsx |       0 |        0 |       0 |       0 | 1-145             
+  ...Container.tsx |       0 |        0 |       0 |       0 | 1-30              
+  ...mentModal.tsx |       0 |        0 |       0 |       0 | 1-202             
+  ...ScoreCard.tsx |       0 |        0 |       0 |       0 | 1-302             
+  ...rdingTour.tsx |       0 |        0 |       0 |       0 | 1-479             
+  ...ectCardV2.tsx |       0 |        0 |       0 |       0 | 1-341             
+  ...MEnhanced.tsx |       0 |        0 |       0 |       0 | 1-2210            
+  ...fessional.tsx |       0 |        0 |       0 |       0 | 1-434             
+  ...ctionsBar.tsx |       0 |        0 |       0 |       0 | 1-326             
+  ...kAddPanel.tsx |       0 |        0 |       0 |       0 | 1-379             
+  QuickPanel.tsx   |       0 |        0 |       0 |       0 | 1-80              
+  ...dViewsBar.tsx |       0 |        0 |       0 |       0 | 1-398             
+  ...iltersBar.tsx |       0 |        0 |       0 |       0 | 1-124             
+ ...i/src/contexts |       0 |        0 |       0 |       0 |                   
+  ...onContext.tsx |       0 |        0 |       0 |       0 | 1-39              
+ ...io.ai/src/data |       0 |      100 |     100 |       0 |                   
+  ...eTemplates.ts |       0 |      100 |     100 |       0 | 19-359            
+ ...o.ai/src/hooks |       0 |        0 |       0 |       0 |                   
+  ...mendations.ts |       0 |        0 |       0 |       0 | 1-276             
+  ...cedFilters.ts |       0 |        0 |       0 |       0 | 1-135             
+  ...dShortcuts.ts |       0 |        0 |       0 |       0 | 1-39              
+  ...onSettings.ts |       0 |        0 |       0 |       0 | 1-68              
+  useSeoMeta.ts    |       0 |        0 |       0 |       0 | 1-127             
+ servio.ai/src/lib |       0 |      100 |     100 |       0 |                   
+  firebaseLazy.ts  |       0 |      100 |     100 |       0 | 11-100            
+ ...o.ai/src/pages |       0 |        0 |       0 |       0 |                   
+  ...viderPage.tsx |       0 |        0 |       0 |       0 | 1-714             
+ ...src/prospector |       0 |       80 |      80 |       0 |                   
+  analytics.ts     |       0 |        0 |       0 |       0 | 1-33              
+  dedupe.ts        |       0 |      100 |     100 |       0 | 9-77              
+  leadScoring.ts   |       0 |      100 |     100 |       0 | 32-90             
+  sequencer.ts     |       0 |      100 |     100 |       0 | 15-48             
+  templates.ts     |       0 |      100 |     100 |       0 | 3-20              
+ .../src/providers |       0 |        0 |       0 |       0 |                   
+  ...aProvider.tsx |       0 |        0 |       0 |       0 | 1-129             
+ ...i/src/services |       0 |    28.57 |   28.57 |       0 |                   
+  ...icsService.ts |       0 |        0 |       0 |       0 | 1-235             
+  ...icsService.ts |       0 |        0 |       0 |       0 | 1-323             
+  fcmService.ts    |       0 |        0 |       0 |       0 | 1-207             
+  ...ionService.ts |       0 |        0 |       0 |       0 | 1-319             
+  ...icsService.ts |       0 |      100 |     100 |       0 | 52-317            
+  ...inkService.ts |       0 |        0 |       0 |       0 | 1-328             
+  ...onsService.ts |       0 |      100 |     100 |       0 | 36-181            
+ ...o.ai/src/utils |       0 |      100 |     100 |       0 |                   
+  logger.ts        |       0 |      100 |     100 |       0 | 13-37             
+  ...torHelpers.ts |       0 |      100 |     100 |       0 | 23-87             
+-------------------|---------|----------|---------|---------|-------------------
+ERROR: Coverage for lines (0.94%) does not meet global threshold (45%)
+ERROR: Coverage for functions (11.21%) does not meet global threshold (45%)
+ERROR: Coverage for statements (0.94%) does not meet global threshold (45%)
+ERROR: Coverage for branches (19.54%) does not meet global threshold (40%)

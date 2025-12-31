@@ -1,0 +1,10 @@
+{
+  "type": "RESULT",
+  "prNumber": 62,
+  "verdict": "APPROVED",
+  "reasons": [],
+  "risk_level": "LOW",
+  "findings": [],
+  "doc_mestre_violations": [],
+  "emitted_at_utc": "2025-12-25T03:07:13.180Z"
+}
