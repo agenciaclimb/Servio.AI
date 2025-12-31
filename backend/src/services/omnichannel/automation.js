@@ -1,6 +1,6 @@
 /**
  * Motor de Automações Omnichannel - Servio.AI
- * 
+ *
  * Triggers:
  * 1. followup_48h - Cliente sem resposta há 48h
  * 2. followup_proposta - Prestador enviou proposta, cliente não respondeu
@@ -18,13 +18,13 @@ const db = admin.firestore();
 
 async function runAutomations() {
   console.log('[Automação] Iniciando verificação de triggers...');
-  
+
   const results = await Promise.all([
     checkFollowup48h(),
     checkFollowupProposta(),
     checkFollowupPagamento(),
     checkFollowupOnboarding(),
-    checkFollowupProspectorRecrutamento()
+    checkFollowupProspectorRecrutamento(),
   ]);
 
   console.log('[Automação] Resultados:', results);
@@ -42,9 +42,10 @@ async function checkFollowup48h() {
   const cutoff = new Date();
   cutoff.setHours(cutoff.getHours() - 48);
 
-  const snapshot = await db.collection('conversations')
+  const snapshot = await db
+    .collection('conversations')
     .where('userType', '==', 'cliente')
-    .where('lastMessageAt', '<=', admin.firestore.Timestamp.fromDate(cutoff))
+    .where('lastMessageAt', '<=', admin.Timestamp.fromDate(cutoff))
     .where('lastMessageSender', '==', 'omni_ia')
     .where('status', '==', 'active')
     .limit(50)
@@ -54,19 +55,19 @@ async function checkFollowup48h() {
 
   for (const doc of snapshot.docs) {
     const conv = doc.data();
-    
+
     // Verificar opt-out
     if (await checkOptOut(conv.participants[0])) continue;
 
     const message = `Olá! Vi que você não respondeu há alguns dias. Ainda posso ajudar com algo? 😊`;
-    
+
     await sendToChannel(conv.channel, conv.participants[0], message);
-    
+
     await db.collection('omni_logs').add({
       type: 'automation_followup_48h',
       conversationId: doc.id,
       channel: conv.channel,
-      timestamp: admin.firestore.Timestamp.now()
+      timestamp: admin.Timestamp.now(),
     });
 
     sent++;
@@ -83,9 +84,10 @@ async function checkFollowupProposta() {
   cutoff.setHours(cutoff.getHours() - 24);
 
   // Buscar propostas enviadas sem resposta há 24h
-  const snapshot = await db.collection('proposals')
+  const snapshot = await db
+    .collection('proposals')
     .where('status', '==', 'enviada')
-    .where('createdAt', '<=', admin.firestore.Timestamp.fromDate(cutoff))
+    .where('createdAt', '<=', admin.Timestamp.fromDate(cutoff))
     .limit(50)
     .get();
 
@@ -93,11 +95,11 @@ async function checkFollowupProposta() {
 
   for (const doc of snapshot.docs) {
     const proposal = doc.data();
-    
+
     // Buscar job e cliente
     const jobDoc = await db.collection('jobs').doc(proposal.jobId).get();
     if (!jobDoc.exists) continue;
-    
+
     const job = jobDoc.data();
     const clientId = job.clientId;
 
@@ -108,17 +110,17 @@ async function checkFollowupProposta() {
     if (!userDoc.exists) continue;
 
     const preferredChannel = userDoc.data().preferredChannel || 'webchat';
-    
+
     const message = `Olá! Vi que você recebeu uma proposta para "${job.title}". Gostaria de revisar? 📋`;
-    
+
     await sendToChannel(preferredChannel, clientId, message);
-    
+
     await db.collection('omni_logs').add({
       type: 'automation_followup_proposta',
       proposalId: doc.id,
       jobId: proposal.jobId,
       channel: preferredChannel,
-      timestamp: admin.firestore.Timestamp.now()
+      timestamp: admin.Timestamp.now(),
     });
 
     sent++;
@@ -134,9 +136,10 @@ async function checkFollowupPagamento() {
   const cutoff = new Date();
   cutoff.setHours(cutoff.getHours() - 12);
 
-  const snapshot = await db.collection('escrow')
+  const snapshot = await db
+    .collection('escrow')
     .where('status', '==', 'pending')
-    .where('createdAt', '<=', admin.firestore.Timestamp.fromDate(cutoff))
+    .where('createdAt', '<=', admin.Timestamp.fromDate(cutoff))
     .limit(30)
     .get();
 
@@ -144,23 +147,23 @@ async function checkFollowupPagamento() {
 
   for (const doc of snapshot.docs) {
     const escrow = doc.data();
-    
+
     if (await checkOptOut(escrow.clientId)) continue;
 
     const userDoc = await db.collection('users').doc(escrow.clientId).get();
     if (!userDoc.exists) continue;
 
     const preferredChannel = userDoc.data().preferredChannel || 'webchat';
-    
+
     const message = `Olá! Percebi que há um pagamento pendente de R$ ${escrow.amount.toFixed(2)}. Posso ajudar a concluir? 💳`;
-    
+
     await sendToChannel(preferredChannel, escrow.clientId, message);
-    
+
     await db.collection('omni_logs').add({
       type: 'automation_followup_pagamento',
       escrowId: doc.id,
       channel: preferredChannel,
-      timestamp: admin.firestore.Timestamp.now()
+      timestamp: admin.Timestamp.now(),
     });
 
     sent++;
@@ -175,13 +178,14 @@ async function checkFollowupPagamento() {
 async function checkFollowupOnboarding() {
   const cutoffMin = new Date();
   cutoffMin.setHours(cutoffMin.getHours() - 24);
-  
+
   const cutoffMax = new Date();
   cutoffMax.setHours(cutoffMax.getHours() - 25);
 
-  const snapshot = await db.collection('users')
-    .where('createdAt', '<=', admin.firestore.Timestamp.fromDate(cutoffMin))
-    .where('createdAt', '>=', admin.firestore.Timestamp.fromDate(cutoffMax))
+  const snapshot = await db
+    .collection('users')
+    .where('createdAt', '<=', admin.Timestamp.fromDate(cutoffMin))
+    .where('createdAt', '>=', admin.Timestamp.fromDate(cutoffMax))
     .where('onboardingCompleted', '==', false)
     .limit(50)
     .get();
@@ -190,27 +194,27 @@ async function checkFollowupOnboarding() {
 
   for (const doc of snapshot.docs) {
     const user = doc.data();
-    
+
     if (await checkOptOut(doc.id)) continue;
 
     const preferredChannel = user.preferredChannel || 'webchat';
-    
+
     const messages = {
       cliente: `Bem-vindo à Servio.AI! 👋 Vejo que você ainda não publicou seu primeiro serviço. Posso te ajudar a começar?`,
       prestador: `Olá! Vi que você se cadastrou como prestador. Quer ajuda para configurar seu perfil e começar a receber jobs? 🚀`,
-      prospector: `Bem-vindo à equipe! 🎉 Vamos começar sua jornada de prospecção? Tenho dicas valiosas para você.`
+      prospector: `Bem-vindo à equipe! 🎉 Vamos começar sua jornada de prospecção? Tenho dicas valiosas para você.`,
     };
 
     const message = messages[user.type] || messages.cliente;
-    
+
     await sendToChannel(preferredChannel, doc.id, message);
-    
+
     await db.collection('omni_logs').add({
       type: 'automation_followup_onboarding',
       userId: doc.id,
       userType: user.type,
       channel: preferredChannel,
-      timestamp: admin.firestore.Timestamp.now()
+      timestamp: admin.Timestamp.now(),
     });
 
     sent++;
@@ -226,9 +230,10 @@ async function checkFollowupProspectorRecrutamento() {
   const cutoff = new Date();
   cutoff.setHours(cutoff.getHours() - 72);
 
-  const snapshot = await db.collection('prospector_prospects')
+  const snapshot = await db
+    .collection('prospector_prospects')
     .where('status', '==', 'contatado')
-    .where('lastContactAt', '<=', admin.firestore.Timestamp.fromDate(cutoff))
+    .where('lastContactAt', '<=', admin.Timestamp.fromDate(cutoff))
     .limit(30)
     .get();
 
@@ -236,19 +241,19 @@ async function checkFollowupProspectorRecrutamento() {
 
   for (const doc of snapshot.docs) {
     const prospect = doc.data();
-    
+
     if (await checkOptOut(prospect.email)) continue;
 
     // Preferência: email para prospects
     const message = `Olá ${prospect.name}! 👋\n\nVi que conversamos recentemente sobre oportunidades na Servio.AI.\n\nAinda está interessado(a) em fazer parte da nossa plataforma de prestadores?\n\nTemos vagas abertas e adoraríamos te ter no time! 🚀`;
-    
+
     await sendToChannel('email', prospect.email, message, prospect.name);
-    
+
     await db.collection('omni_logs').add({
       type: 'automation_followup_prospector_recrutamento',
       prospectId: doc.id,
       channel: 'email',
-      timestamp: admin.firestore.Timestamp.now()
+      timestamp: admin.Timestamp.now(),
     });
 
     sent++;
@@ -264,7 +269,7 @@ async function checkFollowupProspectorRecrutamento() {
 async function checkOptOut(userId) {
   const doc = await db.collection('users').doc(userId).get();
   if (!doc.exists) return false;
-  
+
   const userData = doc.data();
   return userData.optOutAutomations === true;
 }
@@ -288,7 +293,7 @@ async function sendToChannel(channel, recipient, message, recipientName = '') {
 
 async function sendWhatsApp(phone, text) {
   const axios = require('axios');
-  
+
   try {
     await axios.post(
       `https://graph.facebook.com/v18.0/${process.env.WHATSAPP_PHONE_ID}/messages`,
@@ -296,13 +301,13 @@ async function sendWhatsApp(phone, text) {
         messaging_product: 'whatsapp',
         to: phone,
         type: 'text',
-        text: { body: text }
+        text: { body: text },
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.WHATSAPP_TOKEN}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
       }
     );
   } catch (error) {
@@ -312,19 +317,19 @@ async function sendWhatsApp(phone, text) {
 
 async function sendInstagram(recipientId, text) {
   const axios = require('axios');
-  
+
   try {
     await axios.post(
       `https://graph.facebook.com/v18.0/me/messages`,
       {
         recipient: { id: recipientId },
-        message: { text }
+        message: { text },
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.META_ACCESS_TOKEN}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${process.env.META_ACCESS_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
       }
     );
   } catch (error) {
@@ -334,19 +339,19 @@ async function sendInstagram(recipientId, text) {
 
 async function sendFacebook(recipientId, text) {
   const axios = require('axios');
-  
+
   try {
     await axios.post(
       `https://graph.facebook.com/v18.0/me/messages`,
       {
         recipient: { id: recipientId },
-        message: { text }
+        message: { text },
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.META_ACCESS_TOKEN}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${process.env.META_ACCESS_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
       }
     );
   } catch (error) {
@@ -357,14 +362,14 @@ async function sendFacebook(recipientId, text) {
 async function sendEmail(email, text, name) {
   const sgMail = require('@sendgrid/mail');
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  
+
   try {
     await sgMail.send({
       to: email,
       from: 'noreply@servio.ai',
       subject: 'Mensagem da Servio.AI',
       text,
-      html: `<p>Olá ${name || ''},</p><p>${text.replace(/\n/g, '<br>')}</p>`
+      html: `<p>Olá ${name || ''},</p><p>${text.replace(/\n/g, '<br>')}</p>`,
     });
   } catch (error) {
     console.error('[Automação Email] Erro:', error);
@@ -373,25 +378,31 @@ async function sendEmail(email, text, name) {
 
 async function saveWebChatMessage(userId, text) {
   const conversationId = `web_${userId}_auto`;
-  
+
   await db.collection('messages').add({
     conversationId,
     channel: 'webchat',
     sender: 'omni_ia',
     senderType: 'bot',
     text,
-    timestamp: admin.firestore.Timestamp.now(),
-    isAutomation: true
+    timestamp: admin.Timestamp.now(),
+    isAutomation: true,
   });
 
-  await db.collection('conversations').doc(conversationId).set({
-    channel: 'webchat',
-    participants: [userId, 'omni_ia'],
-    lastMessage: text,
-    lastMessageAt: admin.firestore.Timestamp.now(),
-    lastMessageSender: 'omni_ia',
-    status: 'active'
-  }, { merge: true });
+  await db
+    .collection('conversations')
+    .doc(conversationId)
+    .set(
+      {
+        channel: 'webchat',
+        participants: [userId, 'omni_ia'],
+        lastMessage: text,
+        lastMessageAt: admin.Timestamp.now(),
+        lastMessageSender: 'omni_ia',
+        status: 'active',
+      },
+      { merge: true }
+    );
 }
 
 module.exports = {
@@ -400,5 +411,5 @@ module.exports = {
   checkFollowupProposta,
   checkFollowupPagamento,
   checkFollowupOnboarding,
-  checkFollowupProspectorRecrutamento
+  checkFollowupProspectorRecrutamento,
 };

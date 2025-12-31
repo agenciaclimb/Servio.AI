@@ -1,6 +1,6 @@
 /**
  * Landing Pages API Routes
- * 
+ *
  * Endpoints:
  * POST   /api/landing-pages/generate     - Gera landing page com IA
  * POST   /api/landing-pages/:id/variant  - Cria variante A/B
@@ -11,7 +11,7 @@
  * POST   /api/landing-pages/:id/event    - Registra evento (view/conversion)
  * DELETE /api/landing-pages/:id          - Deleta página
  * POST   /api/landing-pages/form         - Submissão de formulário
- * 
+ *
  * @module landingPages
  */
 
@@ -19,7 +19,7 @@ const express = require('express');
 
 /**
  * Factory function para criar router
- * 
+ *
  * @param {Object} dependencies - Injeção de dependências
  * @param {Object} dependencies.db - Firestore instance
  * @param {LandingPageService} dependencies.landingPageService - Service
@@ -44,13 +44,7 @@ function createLandingPagesRouter({ db, landingPageService }) {
    */
   router.post('/generate', requireAuth, async (req, res) => {
     try {
-      const {
-        serviceType,
-        serviceName,
-        description,
-        targetAudience,
-        ctaText,
-      } = req.body;
+      const { serviceType, serviceName, description, targetAudience, ctaText } = req.body;
 
       // Validação
       if (!serviceType || !serviceName || !description || !targetAudience) {
@@ -224,7 +218,7 @@ function createLandingPagesRouter({ db, landingPageService }) {
   /**
    * POST /api/landing-pages/:id/event
    * Registra evento de page view ou conversão
-   * 
+   *
    * Pode ser chamado:
    * 1. Do frontend ao carregar página (view)
    * 2. Quando usuário preenche form (conversion)

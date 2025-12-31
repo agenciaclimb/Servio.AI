@@ -4,10 +4,9 @@
  * Task 4.2 - Integração Twilio SMS/Voice Notifications
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import TwilioService from '../../src/services/twilioService';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 
-// Mock Twilio and Firebase
+// Mock Twilio and Firebase BEFORE imports
 vi.mock('twilio', () => ({
   default: vi.fn(() => ({
     messages: {
@@ -42,9 +41,26 @@ vi.mock('firebase-admin', () => ({
   },
 }));
 
-describe('TwilioService', () => {
-  beforeEach(() => {
+describe('TwilioService', { timeout: 60000 }, () => {
+  let TwilioService: any;
+
+  beforeEach(async () => {
     vi.clearAllMocks();
+    vi.resetModules(); // Reset modules to re-evaluate top-level code
+
+    // Set Environment Variables for the test
+    vi.stubEnv('TWILIO_ACCOUNT_SID', 'AC_TEST_SID');
+    vi.stubEnv('TWILIO_AUTH_TOKEN', 'AUTH_TOKEN_TEST');
+    vi.stubEnv('TWILIO_PHONE_NUMBER', '+15005550006');
+
+    // Dynamic import to pick up the env vars
+    // Adjusting path to verify exact location
+    const module = await import('../../src/services/twilioService.ts');
+    TwilioService = module.default;
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   describe('sendSMS', () => {
@@ -246,7 +262,7 @@ describe('TwilioService', () => {
     it('should have proper template structure', () => {
       const templates = TwilioService.getTemplates();
 
-      Object.values(templates).forEach(template => {
+      Object.values(templates).forEach((template: any) => {
         expect(template.key).toBeDefined();
         expect(template.smsBody).toBeDefined();
         expect(template.voiceMessage).toBeDefined();

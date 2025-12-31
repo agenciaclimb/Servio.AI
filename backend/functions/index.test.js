@@ -1,6 +1,6 @@
 /**
  * Testes para Cloud Functions - processUserSignUp
- * 
+ *
  * Framework: firebase-functions-test
  * Docs: https://firebase.google.com/docs/functions/unit-testing
  */
@@ -17,26 +17,26 @@ describe('Cloud Functions - processUserSignUp', () => {
   beforeAll(() => {
     // Stub Firebase Admin initialization
     adminInitStub = jest.spyOn(admin, 'initializeApp');
-    
+
     // Mock Firestore
     firestoreSetStub = jest.fn().mockResolvedValue(undefined);
     const firestoreDocStub = jest.fn(() => ({
-      set: firestoreSetStub
+      set: firestoreSetStub,
     }));
     const firestoreCollectionStub = jest.fn(() => ({
-      doc: firestoreDocStub
+      doc: firestoreDocStub,
     }));
     jest.spyOn(admin, 'firestore').mockReturnValue({
       collection: firestoreCollectionStub,
       FieldValue: {
-        serverTimestamp: jest.fn(() => 'SERVER_TIMESTAMP')
-      }
+        serverTimestamp: jest.fn(() => 'SERVER_TIMESTAMP'),
+      },
     });
 
     // Mock Auth
     setCustomUserClaimsStub = jest.fn().mockResolvedValue(undefined);
     jest.spyOn(admin, 'auth').mockReturnValue({
-      setCustomUserClaims: setCustomUserClaimsStub
+      setCustomUserClaims: setCustomUserClaimsStub,
     });
 
     // Import functions after mocking
@@ -58,7 +58,7 @@ describe('Cloud Functions - processUserSignUp', () => {
       // Arrange
       const userRecord = {
         uid: 'test-uid-123',
-        email: 'novousuario@example.com'
+        email: 'novousuario@example.com',
       };
 
       // Wrap the function
@@ -70,7 +70,7 @@ describe('Cloud Functions - processUserSignUp', () => {
       // Assert
       expect(setCustomUserClaimsStub).toHaveBeenCalledTimes(1);
       expect(setCustomUserClaimsStub).toHaveBeenCalledWith('test-uid-123', {
-        role: 'cliente'
+        role: 'cliente',
       });
     });
 
@@ -78,7 +78,7 @@ describe('Cloud Functions - processUserSignUp', () => {
       // Arrange
       const userRecord = {
         uid: 'test-uid-456',
-        email: 'usuario@test.com'
+        email: 'usuario@test.com',
       };
 
       const wrapped = test.wrap(myFunctions.processUserSignUp);
@@ -95,7 +95,7 @@ describe('Cloud Functions - processUserSignUp', () => {
           type: 'cliente',
           createdAt: 'SERVER_TIMESTAMP',
           updatedAt: 'SERVER_TIMESTAMP',
-          status: 'ativo'
+          status: 'ativo',
         },
         { merge: true }
       );
@@ -105,23 +105,23 @@ describe('Cloud Functions - processUserSignUp', () => {
       // Arrange
       const userRecord = {
         uid: 'test-uid-789',
-        email: 'email-como-id@test.com'
+        email: 'email-como-id@test.com',
       };
 
       const wrapped = test.wrap(myFunctions.processUserSignUp);
 
       // Mock para verificar document ID
       const docMock = jest.fn(() => ({
-        set: firestoreSetStub
+        set: firestoreSetStub,
       }));
       const collectionMock = jest.fn(() => ({
-        doc: docMock
+        doc: docMock,
       }));
       admin.firestore.mockReturnValue({
         collection: collectionMock,
         FieldValue: {
-          serverTimestamp: jest.fn(() => 'SERVER_TIMESTAMP')
-        }
+          serverTimestamp: jest.fn(() => 'SERVER_TIMESTAMP'),
+        },
       });
 
       // Act
@@ -136,12 +136,12 @@ describe('Cloud Functions - processUserSignUp', () => {
       // Arrange
       const userRecord = {
         uid: 'test-uid-error',
-        email: 'error@test.com'
+        email: 'error@test.com',
       };
 
       // Mock console.error para verificar logging
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-      
+
       // Simular erro no setCustomUserClaims
       setCustomUserClaimsStub.mockRejectedValueOnce(new Error('Auth service unavailable'));
 
@@ -164,7 +164,7 @@ describe('Cloud Functions - processUserSignUp', () => {
       const users = [
         { uid: 'uid-1', email: 'user1@test.com' },
         { uid: 'uid-2', email: 'user2@test.com' },
-        { uid: 'uid-3', email: 'user3@test.com' }
+        { uid: 'uid-3', email: 'user3@test.com' },
       ];
 
       const wrapped = test.wrap(myFunctions.processUserSignUp);
@@ -178,10 +178,7 @@ describe('Cloud Functions - processUserSignUp', () => {
 
       // Verificar cada usuário recebeu role: 'cliente'
       users.forEach((user, index) => {
-        expect(setCustomUserClaimsStub.mock.calls[index]).toEqual([
-          user.uid,
-          { role: 'cliente' }
-        ]);
+        expect(setCustomUserClaimsStub.mock.calls[index]).toEqual([user.uid, { role: 'cliente' }]);
       });
     });
   });

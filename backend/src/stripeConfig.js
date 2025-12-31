@@ -15,7 +15,9 @@ function createStripe() {
   }
   const mode = detectMode(key);
   if (mode === 'test' && process.env.NODE_ENV === 'production') {
-    console.warn('[Stripe] TEST key detected while NODE_ENV=production. Replace with LIVE key before launch.');
+    console.warn(
+      '[Stripe] TEST key detected while NODE_ENV=production. Replace with LIVE key before launch.'
+    );
   }
   const instance = stripeLib(key);
   return { instance, mode };

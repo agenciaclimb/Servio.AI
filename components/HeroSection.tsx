@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 
 interface HeroSectionProps {
   onSmartSearch: (prompt: string) => void;
+  onLoginClick?: () => void;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch, onLoginClick }) => {
   const [prompt, setPrompt] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -15,15 +16,31 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch }) => {
   };
 
   return (
-    <div className="text-center py-16 px-4 sm:px-6 lg:px-8">
+    <section
+      role="region"
+      aria-label="Buscar serviços"
+      className="text-center py-16 px-4 sm:px-6 lg:px-8"
+    >
       <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tighter">
-        Qual problema podemos
-        <span className="block text-blue-600">resolver para você hoje?</span>
+        Encontre o serviço perfeito
+        <span className="block text-blue-600">para você hoje</span>
       </h1>
       <p className="mt-4 max-w-md mx-auto text-lg text-gray-600 sm:text-xl md:mt-5 md:max-w-3xl">
-        Simplesmente descreva sua necessidade abaixo e deixe nossa IA criar um pedido de serviço
-        detalhado para os melhores profissionais.
+        Descreva o que você precisa e encontraremos os melhores profissionais para você.
       </p>
+
+      {/* Botão de Login/Cadastro */}
+      {onLoginClick && (
+        <div className="mt-4">
+          <button
+            onClick={onLoginClick}
+            className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+          >
+            Entrar / Cadastre-se
+          </button>
+        </div>
+      )}
+
       <div className="mt-8 max-w-xl mx-auto">
         <form onSubmit={handleSubmit} className="sm:flex sm:gap-3">
           <div className="w-full">
@@ -36,7 +53,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch }) => {
               value={prompt}
               onChange={e => setPrompt(e.target.value)}
               className="block w-full rounded-lg border-gray-300 px-5 py-4 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500 transition"
-              placeholder="Ex: Preciso instalar um ventilador de teto no meu quarto"
+              placeholder="Buscar serviço ou profissional..."
               required
             />
           </div>
@@ -45,7 +62,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch }) => {
             className="mt-3 w-full sm:mt-0 sm:w-auto flex-shrink-0 inline-flex items-center justify-center rounded-lg bg-blue-600 px-8 py-4 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
             data-testid="hero-submit-button"
           >
-            Começar Agora ✨
+            Buscar
           </button>
         </form>
         <p className="mt-4 text-xs text-gray-600">
@@ -60,13 +77,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch }) => {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            'Eletricista',
-            'Encanador',
-            'Pintor',
-            'Marceneiro',
-            'Pedreiro',
-            'Jardineiro',
-            'Técnico de TI',
+            'Elétrica',
+            'Hidráulica',
+            'Reparos',
+            'Limpeza',
+            'Pintura',
+            'Jardinagem',
+            'TI',
             'Chaveiro',
           ].map(service => (
             <button
@@ -110,7 +127,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch }) => {
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

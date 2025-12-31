@@ -31,21 +31,22 @@ async function searchProfessionals(category, location, maxResults = 20) {
         locationBias: {
           circle: {
             center: await geocodeLocation(location),
-            radius: 50000.0 // 50km de raio
-          }
-        }
+            radius: 50000.0, // 50km de raio
+          },
+        },
       },
       {
         headers: {
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': GOOGLE_PLACES_API_KEY,
-          'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.googleMapsUri,places.businessStatus'
-        }
+          'X-Goog-FieldMask':
+            'places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.googleMapsUri,places.businessStatus',
+        },
       }
     );
 
     const places = response.data.places || [];
-    
+
     return places.map(place => ({
       placeId: place.id,
       name: place.displayName?.text || 'Nome não disponível',
@@ -59,11 +60,14 @@ async function searchProfessionals(category, location, maxResults = 20) {
       category,
       location,
       source: 'google_places_api',
-      fetchedAt: new Date().toISOString()
+      fetchedAt: new Date().toISOString(),
     }));
   } catch (error) {
-    console.error('Erro ao buscar profissionais no Google Places:', error.response?.data || error.message);
-    
+    console.error(
+      'Erro ao buscar profissionais no Google Places:',
+      error.response?.data || error.message
+    );
+
     // Retorna array vazio em caso de erro para não quebrar o fluxo
     return [];
   }
@@ -77,15 +81,12 @@ async function searchProfessionals(category, location, maxResults = 20) {
 async function geocodeLocation(location) {
   try {
     // Usa Geocoding API do Google
-    const response = await axios.get(
-      'https://maps.googleapis.com/maps/api/geocode/json',
-      {
-        params: {
-          address: location,
-          key: GOOGLE_PLACES_API_KEY
-        }
-      }
-    );
+    const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+      params: {
+        address: location,
+        key: GOOGLE_PLACES_API_KEY,
+      },
+    });
 
     if (response.data.results && response.data.results.length > 0) {
       const { lat, lng } = response.data.results[0].geometry.location;
@@ -112,16 +113,14 @@ async function getPlaceDetails(placeId) {
       throw new Error('GOOGLE_PLACES_API_KEY não configurada');
     }
 
-    const response = await axios.get(
-      `${PLACES_API_BASE}/places/${placeId}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Goog-Api-Key': GOOGLE_PLACES_API_KEY,
-          'X-Goog-FieldMask': 'id,displayName,formattedAddress,nationalPhoneNumber,internationalPhoneNumber,websiteUri,rating,userRatingCount,googleMapsUri,regularOpeningHours,photos,reviews,businessStatus'
-        }
-      }
-    );
+    const response = await axios.get(`${PLACES_API_BASE}/places/${placeId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': GOOGLE_PLACES_API_KEY,
+        'X-Goog-FieldMask':
+          'id,displayName,formattedAddress,nationalPhoneNumber,internationalPhoneNumber,websiteUri,rating,userRatingCount,googleMapsUri,regularOpeningHours,photos,reviews,businessStatus',
+      },
+    });
 
     const place = response.data;
 
@@ -139,15 +138,15 @@ async function getPlaceDetails(placeId) {
       photos: (place.photos || []).map(photo => ({
         name: photo.name,
         widthPx: photo.widthPx,
-        heightPx: photo.heightPx
+        heightPx: photo.heightPx,
       })),
       reviews: (place.reviews || []).slice(0, 5).map(review => ({
         author: review.authorAttribution?.displayName || 'Anônimo',
         rating: review.rating || 0,
         text: review.text?.text || '',
-        publishTime: review.publishTime || ''
+        publishTime: review.publishTime || '',
       })),
-      fetchedAt: new Date().toISOString()
+      fetchedAt: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Erro ao buscar detalhes do local:', error.response?.data || error.message);
@@ -162,10 +161,10 @@ async function getPlaceDetails(placeId) {
  */
 function isValidPhone(phone) {
   if (!phone) return false;
-  
+
   // Remove caracteres não numéricos
   const cleaned = phone.replace(/\D/g, '');
-  
+
   // Valida: mínimo 10 dígitos (DDD + número)
   return cleaned.length >= 10 && cleaned.length <= 15;
 }
@@ -177,29 +176,24 @@ function isValidPhone(phone) {
  * @returns {Array} Profissionais filtrados
  */
 function filterByQuality(professionals, filters = {}) {
-  const {
-    minRating = 3.5,
-    minReviews = 1,
-    requirePhone = true,
-    requireWebsite = false
-  } = filters;
+  const { minRating = 3.5, minReviews = 1, requirePhone = true, requireWebsite = false } = filters;
 
   return professionals.filter(pro => {
     // Rating mínimo
     if (pro.rating < minRating) return false;
-    
+
     // Número mínimo de reviews
     if (pro.reviewCount < minReviews) return false;
-    
+
     // Requer telefone válido
     if (requirePhone && !isValidPhone(pro.phone)) return false;
-    
+
     // Requer website
     if (requireWebsite && !pro.website) return false;
-    
+
     // Apenas negócios operacionais
     if (pro.businessStatus !== 'OPERATIONAL') return false;
-    
+
     return true;
   });
 }
@@ -212,22 +206,17 @@ function filterByQuality(professionals, filters = {}) {
  * @returns {Promise<Array>} Profissionais de alta qualidade
  */
 async function searchQualityProfessionals(category, location, options = {}) {
-  const {
-    maxResults = 20,
-    minRating = 4.0,
-    minReviews = 3,
-    requirePhone = true
-  } = options;
+  const { maxResults = 20, minRating = 4.0, minReviews = 3, requirePhone = true } = options;
 
   // Busca mais resultados para compensar a filtragem
   const rawResults = await searchProfessionals(category, location, maxResults * 2);
-  
+
   // Filtra por qualidade
   const filtered = filterByQuality(rawResults, {
     minRating,
     minReviews,
     requirePhone,
-    requireWebsite: false
+    requireWebsite: false,
   });
 
   // Ordena por rating (maior primeiro)
@@ -246,5 +235,5 @@ module.exports = {
   getPlaceDetails,
   searchQualityProfessionals,
   filterByQuality,
-  isValidPhone
+  isValidPhone,
 };

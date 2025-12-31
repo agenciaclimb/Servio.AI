@@ -1,6 +1,6 @@
 /**
  * WhatsApp Multi-Role Routes
- * 
+ *
  * Rotas para envio de mensagens WhatsApp para diferentes tipos de usuários:
  * - Cliente
  * - Prestador
@@ -28,11 +28,12 @@ router.post('/client/job-posted', async (req, res) => {
       return res.status(400).json({ error: 'Telefone e título do job obrigatórios' });
     }
 
-    const result = await whatsappMultiRoleService.sendClientMessage(
-      phone,
-      'JOB_POSTED',
-      { jobTitle, jobDescription, jobLocation, link }
-    );
+    const result = await whatsappMultiRoleService.sendClientMessage(phone, 'JOB_POSTED', {
+      jobTitle,
+      jobDescription,
+      jobLocation,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -53,11 +54,12 @@ router.post('/client/proposal-received', async (req, res) => {
       return res.status(400).json({ error: 'Telefone e nome do prestador obrigatórios' });
     }
 
-    const result = await whatsappMultiRoleService.sendClientMessage(
-      phone,
-      'PROPOSAL_RECEIVED',
-      { providerName, amount, rating, link }
-    );
+    const result = await whatsappMultiRoleService.sendClientMessage(phone, 'PROPOSAL_RECEIVED', {
+      providerName,
+      amount,
+      rating,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -78,11 +80,11 @@ router.post('/client/proposal-accepted', async (req, res) => {
       return res.status(400).json({ error: 'Telefone e nome do prestador obrigatórios' });
     }
 
-    const result = await whatsappMultiRoleService.sendClientMessage(
-      phone,
-      'PROPOSAL_ACCEPTED',
-      { providerName, startDate, link }
-    );
+    const result = await whatsappMultiRoleService.sendClientMessage(phone, 'PROPOSAL_ACCEPTED', {
+      providerName,
+      startDate,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -103,11 +105,10 @@ router.post('/client/job-completed', async (req, res) => {
       return res.status(400).json({ error: 'Telefone obrigatório' });
     }
 
-    const result = await whatsappMultiRoleService.sendClientMessage(
-      phone,
-      'JOB_COMPLETED',
-      { jobTitle, link }
-    );
+    const result = await whatsappMultiRoleService.sendClientMessage(phone, 'JOB_COMPLETED', {
+      jobTitle,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -128,11 +129,11 @@ router.post('/client/payment-reminder', async (req, res) => {
       return res.status(400).json({ error: 'Telefone obrigatório' });
     }
 
-    const result = await whatsappMultiRoleService.sendClientMessage(
-      phone,
-      'PAYMENT_REMINDER',
-      { amount, providerName, link }
-    );
+    const result = await whatsappMultiRoleService.sendClientMessage(phone, 'PAYMENT_REMINDER', {
+      amount,
+      providerName,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -155,11 +156,12 @@ router.post('/provider/new-job', async (req, res) => {
       return res.status(400).json({ error: 'Telefone e categoria obrigatórios' });
     }
 
-    const result = await whatsappMultiRoleService.sendProviderMessage(
-      phone,
-      'NEW_JOB',
-      { category, location, budget, link }
-    );
+    const result = await whatsappMultiRoleService.sendProviderMessage(phone, 'NEW_JOB', {
+      category,
+      location,
+      budget,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -180,11 +182,11 @@ router.post('/provider/job-match', async (req, res) => {
       return res.status(400).json({ error: 'Telefone e título do job obrigatórios' });
     }
 
-    const result = await whatsappMultiRoleService.sendProviderMessage(
-      phone,
-      'JOB_MATCH',
-      { jobTitle, location, link }
-    );
+    const result = await whatsappMultiRoleService.sendProviderMessage(phone, 'JOB_MATCH', {
+      jobTitle,
+      location,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -205,11 +207,12 @@ router.post('/provider/proposal-status', async (req, res) => {
       return res.status(400).json({ error: 'Telefone e status obrigatórios' });
     }
 
-    const result = await whatsappMultiRoleService.sendProviderMessage(
-      phone,
-      'PROPOSAL_STATUS',
-      { status, jobTitle, amount, link }
-    );
+    const result = await whatsappMultiRoleService.sendProviderMessage(phone, 'PROPOSAL_STATUS', {
+      status,
+      jobTitle,
+      amount,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -230,11 +233,12 @@ router.post('/provider/payment-received', async (req, res) => {
       return res.status(400).json({ error: 'Telefone e valor obrigatórios' });
     }
 
-    const result = await whatsappMultiRoleService.sendProviderMessage(
-      phone,
-      'PAYMENT_RECEIVED',
-      { amount, jobTitle, date, link }
-    );
+    const result = await whatsappMultiRoleService.sendProviderMessage(phone, 'PAYMENT_RECEIVED', {
+      amount,
+      jobTitle,
+      date,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -257,11 +261,10 @@ router.post('/prospector/recruit-welcome', async (req, res) => {
       return res.status(400).json({ error: 'Telefone obrigatório' });
     }
 
-    const result = await whatsappMultiRoleService.sendProspectorMessage(
-      phone,
-      'RECRUIT_WELCOME',
-      { prospectorName, link }
-    );
+    const result = await whatsappMultiRoleService.sendProspectorMessage(phone, 'RECRUIT_WELCOME', {
+      prospectorName,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -307,11 +310,11 @@ router.post('/prospector/badge-unlocked', async (req, res) => {
       return res.status(400).json({ error: 'Telefone e nome do badge obrigatórios' });
     }
 
-    const result = await whatsappMultiRoleService.sendProspectorMessage(
-      phone,
-      'BADGE_UNLOCKED',
-      { badgeName, description, link }
-    );
+    const result = await whatsappMultiRoleService.sendProspectorMessage(phone, 'BADGE_UNLOCKED', {
+      badgeName,
+      description,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -332,11 +335,11 @@ router.post('/prospector/lead-reminder', async (req, res) => {
       return res.status(400).json({ error: 'Telefone obrigatório' });
     }
 
-    const result = await whatsappMultiRoleService.sendProspectorMessage(
-      phone,
-      'LEAD_REMINDER',
-      { leadName, daysSince, link }
-    );
+    const result = await whatsappMultiRoleService.sendProspectorMessage(phone, 'LEAD_REMINDER', {
+      leadName,
+      daysSince,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -384,11 +387,12 @@ router.post('/admin/system-alert', async (req, res) => {
       return res.status(400).json({ error: 'Telefone e tipo de alerta obrigatórios' });
     }
 
-    const result = await whatsappMultiRoleService.sendAdminMessage(
-      phone,
-      'SYSTEM_ALERT',
-      { alertType, severity, description, link }
-    );
+    const result = await whatsappMultiRoleService.sendAdminMessage(phone, 'SYSTEM_ALERT', {
+      alertType,
+      severity,
+      description,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -409,11 +413,13 @@ router.post('/admin/dispute-escalation', async (req, res) => {
       return res.status(400).json({ error: 'Telefone e título do job obrigatórios' });
     }
 
-    const result = await whatsappMultiRoleService.sendAdminMessage(
-      phone,
-      'DISPUTE_ESCALATION',
-      { jobTitle, reason, clientName, providerName, link }
-    );
+    const result = await whatsappMultiRoleService.sendAdminMessage(phone, 'DISPUTE_ESCALATION', {
+      jobTitle,
+      reason,
+      clientName,
+      providerName,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -434,11 +440,13 @@ router.post('/admin/daily-report', async (req, res) => {
       return res.status(400).json({ error: 'Telefone obrigatório' });
     }
 
-    const result = await whatsappMultiRoleService.sendAdminMessage(
-      phone,
-      'DAILY_REPORT',
-      { jobsCreated, proposals, recruits, revenue, link }
-    );
+    const result = await whatsappMultiRoleService.sendAdminMessage(phone, 'DAILY_REPORT', {
+      jobsCreated,
+      proposals,
+      recruits,
+      revenue,
+      link,
+    });
 
     res.json(result);
   } catch (error) {
@@ -469,9 +477,11 @@ router.get('/templates/:userType', (req, res) => {
   try {
     const { userType } = req.params;
     const templates = whatsappMultiRoleService.getAvailableTemplates(userType);
-    
+
     if (Object.keys(templates).length === 0) {
-      return res.status(404).json({ error: `Templates não encontrados para user type: ${userType}` });
+      return res
+        .status(404)
+        .json({ error: `Templates não encontrados para user type: ${userType}` });
     }
 
     res.json({

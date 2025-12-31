@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-const PipedriveService = require('../services/pipedriveService');
+const PipedriveService = require('../../src/services/pipedriveService');
 
 describe('PipedriveService', () => {
   let service;
@@ -26,6 +26,15 @@ describe('PipedriveService', () => {
 
   describe('createLead', () => {
     it('deve criar um lead com sucesso', async () => {
+      // Mock para getOrCreateOrganization (GET /organizations/search)
+      mockClient.get.mockResolvedValueOnce({
+        data: {
+          success: true,
+          data: { items: [{ item: { id: 999 } }] },
+        },
+      });
+
+      // Mock para createLead (POST /persons)
       mockClient.post.mockResolvedValueOnce({
         data: {
           success: true,
@@ -46,13 +55,24 @@ describe('PipedriveService', () => {
       const result = await service.createLead(lead);
 
       expect(result).toBe(12345);
-      expect(mockClient.post).toHaveBeenCalledWith('/persons', expect.objectContaining({
-        name: lead.nome,
-        email: lead.email,
-      }));
+      expect(mockClient.post).toHaveBeenCalledWith(
+        '/persons',
+        expect.objectContaining({
+          name: lead.nome,
+          email: lead.email,
+        })
+      );
     });
 
     it('deve lançar erro se resposta for inválida', async () => {
+      // Mock para getOrCreateOrganization (GET /organizations/search)
+      mockClient.get.mockResolvedValueOnce({
+        data: {
+          success: true,
+          data: { items: [{ item: { id: 999 } }] },
+        },
+      });
+
       mockClient.post.mockResolvedValueOnce({
         data: {
           success: false,
@@ -96,10 +116,13 @@ describe('PipedriveService', () => {
       const result = await service.createDeal(deal, 123);
 
       expect(result).toBe(67890);
-      expect(mockClient.post).toHaveBeenCalledWith('/deals', expect.objectContaining({
-        title: deal.title,
-        value: deal.value,
-      }));
+      expect(mockClient.post).toHaveBeenCalledWith(
+        '/deals',
+        expect.objectContaining({
+          title: deal.title,
+          value: deal.value,
+        })
+      );
     });
   });
 
@@ -112,10 +135,7 @@ describe('PipedriveService', () => {
       const updates = { status: 'won', value: 6000 };
       await service.updateDeal(67890, updates);
 
-      expect(mockClient.put).toHaveBeenCalledWith(
-        '/deals/67890',
-        expect.objectContaining(updates)
-      );
+      expect(mockClient.put).toHaveBeenCalledWith('/deals/67890', expect.objectContaining(updates));
     });
   });
 
@@ -196,11 +216,11 @@ describe('PipedriveService', () => {
           data: { success: true, data: { id: 55555 } },
         });
 
-      const result = await service.syncProposalToDeal(
-        'prop-789',
-        'client@example.com',
-        { title: 'Nova Proposta', value: 8000, currency: 'BRL' }
-      );
+      const result = await service.syncProposalToDeal('prop-789', 'client@example.com', {
+        title: 'Nova Proposta',
+        value: 8000,
+        currency: 'BRL',
+      });
 
       expect(result).toBe(55555);
     });

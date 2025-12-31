@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * TESTES: Guardrails de Segregação
- * 
+ *
  * Validar que deny-local-audit-results.js detecta corretamente
  * arquivos ACK/RESULT sem proof-of-origin.txt
  */
@@ -68,10 +68,13 @@ describe('Guardrail Anti-Simulação', () => {
 
     // Criar proof-of-origin sem hash
     const proofPath = path.join(TEST_DIR, 'proof-of-origin.txt');
-    fs.writeFileSync(proofPath, `
+    fs.writeFileSync(
+      proofPath,
+      `
 Data: 2025-12-13 10:30
 Link: https://chat.openai.com/share/abc123
-    `.trim());
+    `.trim()
+    );
 
     // Executar guardrail (deve falhar)
     const exitCode = runGuardrail();
@@ -86,11 +89,14 @@ Link: https://chat.openai.com/share/abc123
 
     // Criar proof-of-origin com hash incorreto
     const proofPath = path.join(TEST_DIR, 'proof-of-origin.txt');
-    fs.writeFileSync(proofPath, `
+    fs.writeFileSync(
+      proofPath,
+      `
 Data: 2025-12-13 10:30
 Link: https://chat.openai.com/share/abc123
 Hash: wronghash123
-    `.trim());
+    `.trim()
+    );
 
     // Executar guardrail (deve falhar)
     const exitCode = runGuardrail();
@@ -109,12 +115,15 @@ Hash: wronghash123
 
     // Criar proof-of-origin completo
     const proofPath = path.join(TEST_DIR, 'proof-of-origin.txt');
-    fs.writeFileSync(proofPath, `
+    fs.writeFileSync(
+      proofPath,
+      `
 Data: 2025-12-13 10:30
 Link: https://chat.openai.com/share/abc123
 Hash: ${hash}
 Autor: Test User
-    `.trim());
+    `.trim()
+    );
 
     // Executar guardrail (deve passar)
     const exitCode = runGuardrail();
@@ -138,27 +147,24 @@ Autor: Test User
 function runGuardrail() {
   // Temporariamente alterar EVENTS_DIR para TEST_DIR
   const originalEventsDir = path.join(__dirname, '../ai-tasks/events');
-  
+
   try {
     // Simular ai-tasks/events/ apontando para TEST_DIR
     const testEventsDir = path.join(__dirname, '../ai-tasks');
     if (!fs.existsSync(testEventsDir)) {
       fs.mkdirSync(testEventsDir, { recursive: true });
     }
-    
+
     const eventsSymlink = path.join(testEventsDir, 'events');
     if (fs.existsSync(eventsSymlink)) {
       fs.rmSync(eventsSymlink, { recursive: true, force: true });
     }
-    
+
     // Copiar arquivos de teste para ai-tasks/events/
     fs.mkdirSync(eventsSymlink, { recursive: true });
     const testFiles = fs.readdirSync(TEST_DIR);
     testFiles.forEach(file => {
-      fs.copyFileSync(
-        path.join(TEST_DIR, file),
-        path.join(eventsSymlink, file)
-      );
+      fs.copyFileSync(path.join(TEST_DIR, file), path.join(eventsSymlink, file));
     });
 
     // Executar guardrail

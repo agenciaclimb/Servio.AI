@@ -1,12 +1,12 @@
 /**
  * CSRF PROTECTION MIDDLEWARE
- * 
+ *
  * Proteção contra Cross-Site Request Forgery usando csrf-csrf (moderna)
  * - Double CSRF tokens (cookie + header)
  * - Cookies HttpOnly com prefix __Host-
  * - Exclusão automática de webhooks
  * - Rotação de tokens
- * 
+ *
  * @module middleware/csrfProtection
  */
 
@@ -21,14 +21,11 @@ const csrfSecret = process.env.CSRF_SECRET;
 if (!csrfSecret && process.env.NODE_ENV === 'production') {
   throw new Error(
     'CSRF_SECRET environment variable must be set in production. ' +
-    'Please configure a strong, random secret of at least 64 characters.'
+      'Please configure a strong, random secret of at least 64 characters.'
   );
 }
 
-const {
-  generateToken,
-  doubleCsrfProtection,
-} = doubleCsrf({
+const { generateToken, doubleCsrfProtection } = doubleCsrf({
   getSecret: () => csrfSecret || 'change-me-in-production-random-64-chars-minimum',
   cookieName: '__Host-psifi.x-csrf-token',
   cookieOptions: {
@@ -54,7 +51,7 @@ function addCsrfToken(req, res, next) {
     console.error('[CSRF] Erro ao gerar token:', error);
     return res.status(500).json({
       error: 'Erro ao gerar token de segurança',
-      code: 'CSRF_GENERATION_ERROR'
+      code: 'CSRF_GENERATION_ERROR',
     });
   }
 }
@@ -92,13 +89,13 @@ function csrfErrorHandler(err, req, res, next) {
       ip: req.ip,
       path: req.path,
       method: req.method,
-      headers: req.headers
+      headers: req.headers,
     });
 
     return res.status(403).json({
       error: 'Token CSRF inválido ou ausente',
       code: 'CSRF_VALIDATION_FAILED',
-      message: 'Por favor, recarregue a página e tente novamente'
+      message: 'Por favor, recarregue a página e tente novamente',
     });
   }
 
@@ -128,10 +125,7 @@ function rotateCsrfToken(req, res, next) {
  * @param {Object} options - Opções de configuração
  */
 function setupCsrfProtection(app, options = {}) {
-  const {
-    exempt = ['/api/stripe-webhook', '/api/webhooks/*'],
-    enableRotation = true,
-  } = options;
+  const { exempt = ['/api/stripe-webhook', '/api/webhooks/*'], enableRotation = true } = options;
 
   // 1. Cookie parser (necessário para csrf-csrf)
   app.use(cookieParser());
@@ -164,13 +158,13 @@ function createCsrfTokenEndpoint(app) {
       const token = generateToken(req, res);
       res.json({
         csrfToken: token,
-        expiresIn: 3600000 // 1 hora em ms
+        expiresIn: 3600000, // 1 hora em ms
       });
     } catch (error) {
       console.error('[CSRF] Erro ao gerar token no endpoint:', error);
       res.status(500).json({
         error: 'Erro ao gerar token',
-        code: 'CSRF_GENERATION_ERROR'
+        code: 'CSRF_GENERATION_ERROR',
       });
     }
   });

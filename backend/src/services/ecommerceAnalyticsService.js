@@ -156,9 +156,7 @@ async function getFunnelMetrics(db, dateRange = 'last30days') {
   const checkoutCount = ordersSnapshot.size;
 
   // Get completed payments (step 3)
-  const paidOrders = ordersSnapshot.docs.filter(
-    doc => doc.data().paymentStatus === 'pago'
-  );
+  const paidOrders = ordersSnapshot.docs.filter(doc => doc.data().paymentStatus === 'pago');
   const paymentCount = paidOrders.length;
 
   const cartToCheckout = cartCount > 0 ? (checkoutCount / cartCount) * 100 : 0;
@@ -213,15 +211,15 @@ async function buildCustomReport(db, filters = {}) {
 
   // Filter by product
   if (filters.productId) {
-    orders = orders.filter(order =>
-      order.items && order.items.some(item => item.productId === filters.productId)
+    orders = orders.filter(
+      order => order.items && order.items.some(item => item.productId === filters.productId)
     );
   }
 
   // Filter by category
   if (filters.category) {
-    orders = orders.filter(order =>
-      order.items && order.items.some(item => item.category === filters.category)
+    orders = orders.filter(
+      order => order.items && order.items.some(item => item.category === filters.category)
     );
   }
 
@@ -233,9 +231,7 @@ async function buildCustomReport(db, filters = {}) {
   return {
     filters,
     orderCount: orders.length,
-    totalRevenue: parseFloat(
-      orders.reduce((sum, o) => sum + (o.total || 0), 0).toFixed(2)
-    ),
+    totalRevenue: parseFloat(orders.reduce((sum, o) => sum + (o.total || 0), 0).toFixed(2)),
     averageOrderValue: parseFloat(
       (orders.reduce((sum, o) => sum + (o.total || 0), 0) / (orders.length || 1)).toFixed(2)
     ),
@@ -262,10 +258,9 @@ function generateCSVExport(orders) {
     order.total || 0,
   ]);
 
-  const csv = [
-    headers.join(','),
-    ...rows.map(row => row.map(cell => `"${cell}"`).join(',')),
-  ].join('\n');
+  const csv = [headers.join(','), ...rows.map(row => row.map(cell => `"${cell}"`).join(','))].join(
+    '\n'
+  );
 
   return csv;
 }

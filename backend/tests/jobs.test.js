@@ -35,9 +35,7 @@ describe('Jobs API Endpoints', () => {
         set: mockDb.set,
       }));
 
-      const response = await request(app)
-        .post('/jobs')
-        .send(newJob);
+      const response = await request(app).post('/jobs').send(newJob);
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('id');
@@ -56,7 +54,9 @@ describe('Jobs API Endpoints', () => {
       const response = await request(app).get('/jobs?status=aberto');
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockJobs);
+      // Legacy route retorna estrutura paginada: { jobs, nextPageCursor, page }
+      expect(response.body).toHaveProperty('jobs');
+      expect(response.body.jobs).toEqual(mockJobs);
       expect(mockDb.where).toHaveBeenCalledWith('status', '==', 'aberto');
     });
   });
@@ -65,9 +65,7 @@ describe('Jobs API Endpoints', () => {
     it('should update job status to "a_caminho"', async () => {
       const jobId = 'job-to-update';
 
-      const response = await request(app)
-        .post(`/jobs/${jobId}/set-on-the-way`)
-        .send();
+      const response = await request(app).post(`/jobs/${jobId}/set-on-the-way`).send();
 
       expect(response.status).toBe(200);
       expect(response.body.message).toBe('Status updated to "a_caminho" successfully.');

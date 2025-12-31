@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 // Mock TwilioService since it's CommonJS
-const TwilioService = vi.fn().mockImplementation((db) => {
+const TwilioService = vi.fn().mockImplementation(db => {
   return {
     db,
     accountSid: 'test_account_sid',
@@ -54,16 +54,18 @@ describe('TwilioService', () => {
           limit: vi.fn(() => ({
             get: vi.fn().mockResolvedValue({
               empty: false,
-              docs: [{
-                ref: { update: vi.fn() },
-                data: () => ({ twilioSid: 'SM123', status: 'sent' }),
-              }],
+              docs: [
+                {
+                  ref: { update: vi.fn() },
+                  data: () => ({ twilioSid: 'SM123', status: 'sent' }),
+                },
+              ],
             }),
           })),
           orderBy: vi.fn(() => ({
             limit: vi.fn(() => ({
               get: vi.fn().mockResolvedValue({
-                forEach: (fn) => {
+                forEach: fn => {
                   fn({
                     id: 'comm1',
                     data: () => ({
@@ -95,7 +97,7 @@ describe('TwilioService', () => {
       expect(twilioService.phoneNumber).toBe('+15551234567');
     });
 
-  it('should send SMS successfully', async () => {
+    it('should send SMS successfully', async () => {
       twilioService.sendSMS.mockResolvedValue({
         success: true,
         messageSid: 'SM123456789',

@@ -1,8 +1,8 @@
 /**
  * Test Gmail Service
- * 
+ *
  * Tests email sending functionality with Gmail SMTP.
- * 
+ *
  * Setup before running:
  * 1. Add to backend/.env:
  *    GMAIL_USER=your-email@gmail.com
@@ -100,7 +100,7 @@ async function testGmailService() {
       process.env.GMAIL_USER,
       'Pedro Oliveira',
       'Eletricista',
-      450.00
+      450.0
     );
     console.log('✅ Conversion notification email sent successfully\n');
   } catch (error) {
