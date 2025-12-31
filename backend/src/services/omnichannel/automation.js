@@ -44,7 +44,7 @@ async function checkFollowup48h() {
 
   const snapshot = await db.collection('conversations')
     .where('userType', '==', 'cliente')
-    .where('lastMessageAt', '<=', admin.firestore.Timestamp.fromDate(cutoff))
+    .where('lastMessageAt', '<=', admin.Timestamp.fromDate(cutoff))
     .where('lastMessageSender', '==', 'omni_ia')
     .where('status', '==', 'active')
     .limit(50)
@@ -66,7 +66,7 @@ async function checkFollowup48h() {
       type: 'automation_followup_48h',
       conversationId: doc.id,
       channel: conv.channel,
-      timestamp: admin.firestore.Timestamp.now()
+      timestamp: admin.Timestamp.now()
     });
 
     sent++;
@@ -85,7 +85,7 @@ async function checkFollowupProposta() {
   // Buscar propostas enviadas sem resposta há 24h
   const snapshot = await db.collection('proposals')
     .where('status', '==', 'enviada')
-    .where('createdAt', '<=', admin.firestore.Timestamp.fromDate(cutoff))
+    .where('createdAt', '<=', admin.Timestamp.fromDate(cutoff))
     .limit(50)
     .get();
 
@@ -118,7 +118,7 @@ async function checkFollowupProposta() {
       proposalId: doc.id,
       jobId: proposal.jobId,
       channel: preferredChannel,
-      timestamp: admin.firestore.Timestamp.now()
+      timestamp: admin.Timestamp.now()
     });
 
     sent++;
@@ -136,7 +136,7 @@ async function checkFollowupPagamento() {
 
   const snapshot = await db.collection('escrow')
     .where('status', '==', 'pending')
-    .where('createdAt', '<=', admin.firestore.Timestamp.fromDate(cutoff))
+    .where('createdAt', '<=', admin.Timestamp.fromDate(cutoff))
     .limit(30)
     .get();
 
@@ -160,7 +160,7 @@ async function checkFollowupPagamento() {
       type: 'automation_followup_pagamento',
       escrowId: doc.id,
       channel: preferredChannel,
-      timestamp: admin.firestore.Timestamp.now()
+      timestamp: admin.Timestamp.now()
     });
 
     sent++;
@@ -180,8 +180,8 @@ async function checkFollowupOnboarding() {
   cutoffMax.setHours(cutoffMax.getHours() - 25);
 
   const snapshot = await db.collection('users')
-    .where('createdAt', '<=', admin.firestore.Timestamp.fromDate(cutoffMin))
-    .where('createdAt', '>=', admin.firestore.Timestamp.fromDate(cutoffMax))
+    .where('createdAt', '<=', admin.Timestamp.fromDate(cutoffMin))
+    .where('createdAt', '>=', admin.Timestamp.fromDate(cutoffMax))
     .where('onboardingCompleted', '==', false)
     .limit(50)
     .get();
@@ -210,7 +210,7 @@ async function checkFollowupOnboarding() {
       userId: doc.id,
       userType: user.type,
       channel: preferredChannel,
-      timestamp: admin.firestore.Timestamp.now()
+      timestamp: admin.Timestamp.now()
     });
 
     sent++;
@@ -228,7 +228,7 @@ async function checkFollowupProspectorRecrutamento() {
 
   const snapshot = await db.collection('prospector_prospects')
     .where('status', '==', 'contatado')
-    .where('lastContactAt', '<=', admin.firestore.Timestamp.fromDate(cutoff))
+    .where('lastContactAt', '<=', admin.Timestamp.fromDate(cutoff))
     .limit(30)
     .get();
 
@@ -248,7 +248,7 @@ async function checkFollowupProspectorRecrutamento() {
       type: 'automation_followup_prospector_recrutamento',
       prospectId: doc.id,
       channel: 'email',
-      timestamp: admin.firestore.Timestamp.now()
+      timestamp: admin.Timestamp.now()
     });
 
     sent++;
@@ -380,7 +380,7 @@ async function saveWebChatMessage(userId, text) {
     sender: 'omni_ia',
     senderType: 'bot',
     text,
-    timestamp: admin.firestore.Timestamp.now(),
+    timestamp: admin.Timestamp.now(),
     isAutomation: true
   });
 
@@ -388,7 +388,7 @@ async function saveWebChatMessage(userId, text) {
     channel: 'webchat',
     participants: [userId, 'omni_ia'],
     lastMessage: text,
-    lastMessageAt: admin.firestore.Timestamp.now(),
+    lastMessageAt: admin.Timestamp.now(),
     lastMessageSender: 'omni_ia',
     status: 'active'
   }, { merge: true });

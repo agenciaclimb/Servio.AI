@@ -9,36 +9,59 @@
  * - Scheduler de automações
  */
 
-const request = require('supertest');
-const admin = require('firebase-admin');
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+// ============================================================
+// MOCKS GLOBAIS — ANTES DE QUALQUER IMPORT
+// ============================================================
 
-// Mock Firebase Admin
+const { describe, it, beforeEach, afterEach, expect, vi } = require('vitest');
+const request = require('supertest');
+
+// Mock firebase-admin GLOBALMENTE ANTES de importá-lo
 vi.mock('firebase-admin', () => ({
-  initializeApp: vi.fn(),
-  firestore: vi.fn(() => ({
-    collection: vi.fn()
-  })),
+  initializeApp: () => {},
+  firestore: () => ({
+    collection: function(name) {
+      return {
+        where: function() { return this; },
+        orderBy: function() { return this; },
+        limit: function() { return this; },
+        get: async () => ({ docs: [] }),
+        doc: () => ({
+          get: async () => ({ exists: false, data: () => {} }),
+          set: async () => {},
+          update: async () => {}
+        }),
+        add: async () => ({ id: 'doc_id' })
+      };
+    }
+  }),
   apps: [],
   Timestamp: {
-    now: vi.fn(() => ({ toDate: () => new Date() })),
-    fromDate: vi.fn((date) => ({ toDate: () => date })),
-    fromMillis: vi.fn((ms) => ({ toDate: () => new Date(ms) }))
+    now: () => ({ toDate: () => new Date() }),
+    fromDate: (date) => ({ toDate: () => date }),
+    fromMillis: (ms) => ({ toDate: () => new Date(ms) })
   }
 }));
 
-// Mock Gemini
+// Mock Gemini ANTES de importar
 vi.mock('@google/generative-ai', () => ({
-  GoogleGenerativeAI: vi.fn(() => ({
-    getGenerativeModel: vi.fn(() => ({
-      generateContent: vi.fn(async () => ({
-        response: {
-          text: () => 'Olá! Como posso ajudar você hoje?'
-        }
-      }))
-    }))
-  }))
+  GoogleGenerativeAI: function() {
+    return {
+      getGenerativeModel: () => ({
+        generateContent: async () => ({
+          response: { text: () => 'Mock response' }
+        })
+      })
+    };
+  }
 }));
+
+const admin = require('firebase-admin');
+
+// Ensure Gemini API Key is set (deve estar em .env.local ou PowerShell session)
+if (!process.env.GEMINI_API_KEY) {
+  console.warn('⚠️  GEMINI_API_KEY não encontrada. Carregue via: Get-Content .env.local | Where-Object { $_ -match "^GEMINI_API_KEY=" } | ForEach-Object { $env:GEMINI_API_KEY = $_.Split("=")[1] }');
+}
 
 describe('Omnichannel Service - Webhooks', () => {
   let app;
@@ -96,16 +119,13 @@ describe('Omnichannel Service - Webhooks', () => {
                 mockConversations.set(id, { ...existing, ...data });
               })
             })),
-            where: vi.fn(() => ({
-              orderBy: vi.fn(() => ({
-                limit: vi.fn(() => ({
-                  get: vi.fn(async () => ({
-                    docs: Array.from(mockConversations.entries()).map(([id, data]) => ({
-                      id,
-                      data: () => data
-                    }))
-                  }))
-                }))
+            where: vi.fn(function() { return this; }),
+            orderBy: vi.fn(function() { return this; }),
+            limit: vi.fn(function() { return this; }),
+            get: vi.fn(async () => ({
+              docs: Array.from(mockConversations.entries()).map(([id, data]) => ({
+                id,
+                data: () => data
               }))
             }))
           },
@@ -141,8 +161,14 @@ describe('Omnichannel Service - Webhooks', () => {
     app = express();
     app.use(express.json());
     
-    // Mock admin.firestore()
+    // Mock admin.firestore() and ensure Timestamp is available
     vi.spyOn(admin, 'firestore').mockReturnValue(mockDb);
+    // Ensure admin.Timestamp methods are mocked
+    admin.Timestamp = {
+      now: vi.fn(() => ({ toDate: () => new Date() })),
+      fromDate: vi.fn((date) => ({ toDate: () => date })),
+      fromMillis: vi.fn((ms) => ({ toDate: () => new Date(ms) }))
+    };
 
     const omniRouter = require('../src/services/omnichannel');
     app.use('/api/omni', omniRouter);
@@ -308,6 +334,13 @@ describe('Omnichannel Service - Automações', () => {
   let automation;
 
   beforeEach(() => {
+    // Setup admin.Timestamp mock before using it
+    admin.Timestamp = {
+      now: vi.fn(() => ({ toDate: () => new Date() })),
+      fromDate: vi.fn((date) => ({ toDate: () => date })),
+      fromMillis: vi.fn((ms) => ({ toDate: () => new Date(ms) }))
+    };
+
     // Mock database
     const mockConversations = [
       {

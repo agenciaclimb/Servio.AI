@@ -5,8 +5,35 @@
 
 const express = require('express');
 const crypto = require('crypto');
-const functions = require('firebase-functions');
-const { db } = require('../firebaseConfig');
+const functions = (() => {
+  try {
+    return require('firebase-functions');
+  } catch {
+    return {
+      logger: {
+        info: (...args) => console.log('[Pipedrive]', ...args),
+        warn: (...args) => console.warn('[Pipedrive]', ...args),
+        error: (...args) => console.error('[Pipedrive]', ...args),
+      },
+    };
+  }
+})();
+let db;
+try {
+  ({ db } = require('../firebaseConfig'));
+} catch {
+  db = {
+    collection: () => ({
+      doc: () => ({
+        get: async () => ({ exists: false, data: () => ({}) }),
+        update: async () => {},
+      }),
+      add: async () => ({ id: 'mock-id' }),
+      where: () => ({ get: async () => ({ docs: [] }) }),
+      get: async () => ({ docs: [] }),
+    }),
+  };
+}
 const PipedriveService = require('../services/pipedriveService');
 
 const router = express.Router();

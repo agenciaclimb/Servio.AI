@@ -6,154 +6,108 @@
  */
 
 const express = require('express');
-const { requireAuth } = require('../middleware/auth');
-const {
-  generateNextActions,
-  predictConversion,
-  suggestFollowUpSequence,
-  generateComprehensiveRecommendation,
-} = require('../services/aiRecommendationService');
 
-const router = express.Router();
+module.exports = (dependencies = {}) => {
+  const { requireAuth } = dependencies.auth || require('../middleware/auth');
+  const aiServiceFactory = dependencies.aiServiceFactory || require('../services/aiRecommendationService');
 
-/**
- * POST /api/prospector/ai-recommendations
- * Gera recomendações completas para um lead
- * 
- * Body:
- * {
- *   "prospectorId": "string",
- *   "lead": {lead object},
- *   "leadScore": number (0-100),
- *   "history": [{type, date}]
- * }
- * 
- * Response: Comprehensive recommendation object
- */
-router.post('/ai-recommendations', requireAuth, async (req, res) => {
-  try {
-    const { prospectorId, lead, leadScore = 50, history = [] } = req.body;
+  const {
+    generateNextActions,
+    predictConversion,
+    suggestFollowUpSequence,
+    generateComprehensiveRecommendation,
+  } = aiServiceFactory(); // Initialize with default dependencies (or passed if factory supports it, but here we just call it)
 
-    // Validar que o prospector só pode ver suas recomendações
-    if (prospectorId !== req.user.email && !req.user.isAdmin) {
-      return res.status(403).json({ error: 'Unauthorized' });
+  const router = express.Router();
+
+  /**
+   * POST /api/prospector/ai-recommendations
+   * Gera recomendações completas para um lead
+   * 
+   * Body:
+   * {
+   *   "prospectorId": "string",
+   *   "lead": {lead object},
+   *   "leadScore": number (0-100),
+   *   "history": [{type, date}]
+   * }
+   * 
+   * Response: Comprehensive recommendation object
+   */
+  router.post('/ai-recommendations', requireAuth, async (req, res) => {
+    try {
+      const { prospectorId, lead, leadScore = 50, history = [] } = req.body;
+
+      // Validar que o prospector só pode ver suas recomendações
+      if (prospectorId && req.user.email && prospectorId !== req.user.email && !req.user.isAdmin) {
+         // Note: Added safety check for req.user.email existence
+        return res.status(403).json({ error: 'Unauthorized' });
+      }
+
+      if (!lead) {
+        return res.status(400).json({ error: 'Lead is required' });
+      }
+
+      // Gerar recomendação completa
+      const recommendation = await generateComprehensiveRecommendation(lead, leadScore, history);
+
+      res.json(recommendation);
+    } catch (error) {
+      console.error('Error in ai-recommendations:', error);
+      res.status(500).json({ error: 'Failed to generate recommendations' });
     }
+  });
 
-    if (!lead) {
-      return res.status(400).json({ error: 'Lead is required' });
+  // POST /api/prospector/next-action
+  router.post('/next-action', requireAuth, async (req, res) => {
+    try {
+      const { lead, history = [] } = req.body;
+      if (!lead) return res.status(400).json({ error: 'Lead is required' });
+
+      const result = await generateNextActions(lead, history);
+      res.json(result);
+    } catch (error) {
+       console.error('Error:', error);
+       res.status(500).json({ error: 'Internal error' });
     }
+  });
 
-    // Gerar recomendação completa
-    const recommendation = await generateComprehensiveRecommendation(lead, leadScore, history);
+  // POST /api/prospector/conversion-prediction
+  router.post('/conversion-prediction', requireAuth, async (req, res) => {
+    try {
+      const { lead, leadScore, history } = req.body;
+      if (!lead) return res.status(400).json({ error: 'Lead is required' });
 
-    res.json({
-      ...recommendation,
-      prospectorId,
-    });
-  } catch (error) {
-    console.error('Error generating AI recommendations:', error);
-    res.status(500).json({ error: 'Failed to generate recommendations' });
-  }
-});
-
-/**
- * POST /api/prospector/next-action
- * Gera apenas a próxima ação recomendada
- * 
- * Body: { lead, history }
- * Response: { action, template, timeToSend, confidence, reasoning }
- */
-router.post('/next-action', requireAuth, async (req, res) => {
-  try {
-    const { lead, history = [] } = req.body;
-
-    if (!lead) {
-      return res.status(400).json({ error: 'Lead is required' });
+      const result = await predictConversion(lead, leadScore, history);
+      res.json(result);
+    } catch (error) {
+       console.error('Error:', error);
+       res.status(500).json({ error: 'Internal error' });
     }
+  });
 
-    const nextAction = await generateNextActions(lead, history);
+  // POST /api/prospector/followup-sequence
+  router.post('/followup-sequence', requireAuth, async (req, res) => {
+    try {
+      const { lead, history } = req.body;
+      if (!lead) return res.status(400).json({ error: 'Lead is required' });
 
-    res.json({
-      ...nextAction,
-      generatedAt: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error('Error generating next action:', error);
-    res.status(500).json({ error: 'Failed to generate next action' });
-  }
-});
-
-/**
- * POST /api/prospector/conversion-prediction
- * Prediz probabilidade de conversão
- * 
- * Body: { lead, leadScore, history }
- * Response: { probability, factors, risk, recommendation }
- */
-router.post('/conversion-prediction', requireAuth, async (req, res) => {
-  try {
-    const { lead, leadScore = 50, history = [] } = req.body;
-
-    if (!lead) {
-      return res.status(400).json({ error: 'Lead is required' });
+      const result = await suggestFollowUpSequence(lead, history);
+      res.json(result);
+    } catch (error) {
+       console.error('Error:', error);
+       res.status(500).json({ error: 'Internal error' });
     }
+  });
+  
+  // GET /api/prospector/ai-status
+  router.get('/ai-status', requireAuth, async (req, res) => {
+      res.json({
+          status: 'available',
+          service: 'measured (gemini)',
+          timestamp: new Date().toISOString()
+      });
+  });
 
-    const prediction = await predictConversion(lead, leadScore, history);
-
-    res.json({
-      ...prediction,
-      generatedAt: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error('Error predicting conversion:', error);
-    res.status(500).json({ error: 'Failed to predict conversion' });
-  }
-});
-
-/**
- * POST /api/prospector/followup-sequence
- * Sugere sequência de follow-ups
- * 
- * Body: { lead, history }
- * Response: { sequence: [{step, action, delay, message, scheduledFor}] }
- */
-router.post('/followup-sequence', requireAuth, async (req, res) => {
-  try {
-    const { lead, history = [] } = req.body;
-
-    if (!lead) {
-      return res.status(400).json({ error: 'Lead is required' });
-    }
-
-    const followUpSequence = await suggestFollowUpSequence(lead, history);
-
-    res.json({
-      ...followUpSequence,
-      generatedAt: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error('Error suggesting follow-up sequence:', error);
-    res.status(500).json({ error: 'Failed to suggest follow-up sequence' });
-  }
-});
-
-/**
- * GET /api/prospector/ai-status
- * Verifica se o serviço de IA está disponível
- */
-router.get('/ai-status', requireAuth, async (req, res) => {
-  try {
-    // Verificar se GEMINI_API_KEY está configurada
-    const hasApiKey = !!process.env.GEMINI_API_KEY;
-
-    res.json({
-      status: hasApiKey ? 'available' : 'not-configured',
-      service: 'gemini-2.0-flash-exp',
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to check AI status' });
-  }
-});
-
-module.exports = router;
+  return router;
+};

@@ -171,5 +171,6 @@ module.exports = {
   pauseSchedule,
   resumeSchedule,
   optOutSchedule,
-  processDueEmails
+  processDueEmails,
+  isRateLimited
 };

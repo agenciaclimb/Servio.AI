@@ -1,0 +1,21 @@
+
+> servio-ai-frontend@0.0.0 validate:prod
+> npm run typecheck && npm test && npm run e2e:smoke && npm run build
+
+
+> servio-ai-frontend@0.0.0 typecheck
+> npx tsc -p tsconfig.build.json --noEmit
+
+
+> servio-ai-frontend@0.0.0 test
+> vitest run --coverage
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/JE/servio.ai[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+stderr | tests/week3/ProspectorDashboard.expansion.test.tsx
+[firebase] Usando mocks porque a configura├º├úo est├í ausente ou desativada.
+
+ [2m[90mÔåô[39m[22m tests/week3/ProspectorDashboard.expansion.test.tsx [2m([22m[2m56 tests[22m[2m | [22m[33m56 skipped[39m[2m)[22m
+ [32mÔ£ô[39m tests/week3/ServiceIntegration.gemini.test.tsx [2m([22m[2m25 tests[22m[2m)[22m[90m 32[2mms[22m[39m
