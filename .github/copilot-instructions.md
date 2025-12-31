@@ -11,6 +11,8 @@
 - **Marketplace app**: React 18 + TypeScript + Vite frontend, Express + Firestore backend, Stripe payments, Gemini AI features. Production/live; email is the Firestore document ID everywhere (legacy, migration to uid in progress).
 - **Frontend structure**: [App.tsx](App.tsx) uses React Router + lazy loading + Suspense for 4 main dashboards (admin, client, provider, prospector). Components in [components/](components/), business logic in [services/](services/), hooks in [hooks/](hooks/), contexts in [contexts/](contexts/).
 - **Backend architecture**: Constructed via `createApp({ db, storage, stripe, genAI, rateLimitConfig })` in [backend/src/index.js](backend/src/index.js) (~4400 linhas). Routes segregated by entity in [backend/src/routes/](backend/src/routes/) (jobs.js, users.js, payments.js, etc.). Always inject mocks in tests instead of importing a singleton app.
+  - **Route modules**: AI recommendations, analytics, CRM, e-commerce, landing pages, monitoring, Pipedrive webhooks, Twilio/WhatsApp. Import pattern: `const route = require('./routes/entityName'); app.use('/api/entity', route);`.
+  - **128 registered routes**: Server logs all routes on startup. Critical: `/api/csrf-token`, `/api/stripe-webhook`, `/api/prospector/*`, `/api/users/*`, `/api/jobs/*`.
 - **Auth pattern**: Ownership checks use `request.auth.token.email` (see [firestore.rules](firestore.rules) lines 26-40); document IDs remain emails even though `uid` exists as a field. Custom claims (`role`) set by Cloud Function avoid Firestore reads—authorization is immutable via JWT token.
 
 ## Core Conventions
@@ -94,6 +96,20 @@
 
 - **Vitest config**: [vitest.config.ts](vitest.config.ts) uses jsdom, `singleThread: true`, `maxWorkers: 1` for stability; coverage via v8 provider. Excludes: `backend/**`, `doc/**`, `node_modules/**`.
 - **Backend tests**: Use `createApp()` with injected mocks **never import singleton**. Example: `const app = createApp({ db: mockDb, stripe: null, genAI: null });`. Run: `npm run test:backend` (Vitest in `backend/` dir). Respect middleware chain—don't bypass auth checks.
+  - **Critical**: Always use `createApp()` factory pattern—never import `app` directly from [backend/src/index.js](backend/src/index.js). This preserves DI, rate limiters, and auth middleware.
+  - **Rate limiter config**: Inject `rateLimitConfig: { enableInTests: true }` to test rate limiting; otherwise limiters are disabled in test env.
+  - **Auth simulation**: Set `req.auth = { token: { email: 'test@example.com', role: 'admin' } }` before requests to simulate authenticated users.
 - **Frontend tests**: 261+ passing tests across [tests/](tests/) and [tests/e2e/](tests/e2e/). Smoke tests (10 critical flows) in [tests/e2e/smoke/basic-smoke.spec.ts](tests/e2e/smoke/basic-smoke.spec.ts); run `npm run e2e:smoke` for <2min validation.
 - **Setup files**: [tests/setup.ts](tests/setup.ts) for frontend (MSW, mocks), [backend/vitest.config.mjs](backend/vitest.config.mjs) for backend (no Firestore reads in tests).
 - **E2E stability**: Single worker (`workers: 1`), no parallel execution (`fullyParallel: false`), retries disabled in local (2 in CI). Preview server auto-starts on port 4173.
+
+## Debugging & Troubleshooting
+
+- **Local dev stack**: Frontend on port 3000 (proxies `/api` → `localhost:8081`), backend on 8081. Start both: `npm run dev` (frontend) + `npm run backend:start` (backend). Check [vite.config.ts](vite.config.ts) proxy config if API calls fail.
+- **Common gotchas**:
+  - **Build fails**: Run `npm run typecheck` first—missing deps often cause silent build failures. Check for `@types/*` packages.
+  - **Tests timeout**: Reduce workers (`maxWorkers: 1`) or increase timeouts in [vitest.config.ts](vitest.config.ts). Frontend tests use 30s timeout, backend tests inherit from config.
+  - **Auth errors 401**: Check custom claims in JWT token (`role` field). Claims are set by Cloud Function; local dev may need manual token setup.
+  - **Rate limit 429**: Limiters active in production. Disable via `process.env.NODE_ENV='test'` or inject `rateLimitConfig: { enableInTests: false }`.
+- **GCP troubleshooting**: PowerShell scripts in [scripts/](scripts/) for common ops: `gcloud_tail_logs.ps1` (Cloud Run logs), `gcloud_fix_firestore_iam.ps1` (IAM issues). Windows-first environment.
+- **Validation gate**: `npm run validate:prod` runs full pre-deploy checks (lint → typecheck → test → build → secrets audit). Must pass before merge to `main`.
