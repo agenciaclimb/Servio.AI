@@ -16,14 +16,15 @@ const prospectorAnalyticsService = {
 
     try {
       // Read from aggregated daily collection (produzido pelo scheduler)
-      const snapshot = await db.collection('analytics_daily')
+      const snapshot = await db
+        .collection('analytics_daily')
         .where('date', '>=', thirtyDaysAgo)
         .orderBy('date', 'asc')
         .get();
 
       const timeline = snapshot.docs.map(doc => {
         const data = doc.data() || {};
-        const dateVal = data.date?.toDate?.() ? data.date.toDate() : (data.date || new Date());
+        const dateVal = data.date?.toDate?.() ? data.date.toDate() : data.date || new Date();
         const dateStr = dateVal.toISOString().split('T')[0];
 
         return {
@@ -33,7 +34,7 @@ const prospectorAnalyticsService = {
           followUp: data.totalFollowUps || 0,
           revenue: data.totalRevenue || 0,
           conversionRate: data.conversionRate || 0,
-          campaignCount: data.campaignCount || 0
+          campaignCount: data.campaignCount || 0,
         };
       });
 
@@ -41,7 +42,7 @@ const prospectorAnalyticsService = {
         success: true,
         data: timeline,
         period: '30 days',
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
     } catch (error) {
       console.error('[Analytics] Error getting metrics timeline:', error);
@@ -54,7 +55,8 @@ const prospectorAnalyticsService = {
    */
   async calculateCampaignMetrics() {
     try {
-      const snapshot = await db.collection('prospector_campaigns')
+      const snapshot = await db
+        .collection('prospector_campaigns')
         .where('status', '==', 'active')
         .get();
 
@@ -78,7 +80,7 @@ const prospectorAnalyticsService = {
           conversionRate,
           revenue: data.totalRevenue || 0,
           createdAt: data.createdAt?.toDate?.() || null,
-          updatedAt: data.updatedAt?.toDate?.() || null
+          updatedAt: data.updatedAt?.toDate?.() || null,
         });
 
         totalLeads += leads;
@@ -96,9 +98,9 @@ const prospectorAnalyticsService = {
           totalLeads,
           totalConverted,
           overallConversionRate: totalLeads > 0 ? (totalConverted / totalLeads) * 100 : 0,
-          totalRevenue
+          totalRevenue,
         },
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
     } catch (error) {
       console.error('[Analytics] Error calculating campaign metrics:', error);
@@ -117,7 +119,8 @@ const prospectorAnalyticsService = {
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     try {
-      const snapshot = await db.collection('prospector_campaigns')
+      const snapshot = await db
+        .collection('prospector_campaigns')
         .where('updatedAt', '>=', today)
         .where('updatedAt', '<', tomorrow)
         .get();
@@ -139,18 +142,22 @@ const prospectorAnalyticsService = {
 
       // Store daily rollup
       const dateStr = today.toISOString().split('T')[0];
-      await db.collection('analytics_daily')
+      await db
+        .collection('analytics_daily')
         .doc(dateStr)
-        .set({
-          date: today,
-          totalOutreach,
-          totalConversions,
-          totalFollowUps,
-          totalRevenue,
-          conversionRate: totalOutreach > 0 ? (totalConversions / totalOutreach) * 100 : 0,
-          campaignCount,
-          createdAt: admin.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
+        .set(
+          {
+            date: today,
+            totalOutreach,
+            totalConversions,
+            totalFollowUps,
+            totalRevenue,
+            conversionRate: totalOutreach > 0 ? (totalConversions / totalOutreach) * 100 : 0,
+            campaignCount,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          },
+          { merge: true }
+        );
 
       return {
         success: true,
@@ -160,10 +167,10 @@ const prospectorAnalyticsService = {
           totalFollowUps,
           totalRevenue,
           conversionRate: totalOutreach > 0 ? (totalConversions / totalOutreach) * 100 : 0,
-          campaignCount
+          campaignCount,
         },
         date: dateStr,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       console.error('[Analytics] Error running daily rollup:', error);
@@ -176,20 +183,21 @@ const prospectorAnalyticsService = {
    */
   async getChannelPerformance() {
     try {
-      const snapshot = await db.collection('outreach_messages')
+      const snapshot = await db
+        .collection('outreach_messages')
         .where('timestamp', '>=', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000))
         .get();
 
       const channelStats = {
         email: { sent: 0, opened: 0, clicked: 0, converted: 0 },
         whatsapp: { sent: 0, opened: 0, clicked: 0, converted: 0 },
-        sms: { sent: 0, opened: 0, clicked: 0, converted: 0 }
+        sms: { sent: 0, opened: 0, clicked: 0, converted: 0 },
       };
 
       snapshot.forEach(doc => {
         const data = doc.data();
         const channel = data.channel || 'email';
-        
+
         if (channelStats[channel]) {
           channelStats[channel].sent += 1;
           if (data.opened) channelStats[channel].opened += 1;
@@ -204,13 +212,13 @@ const prospectorAnalyticsService = {
         sent: stats.sent,
         openRate: stats.sent > 0 ? (stats.opened / stats.sent) * 100 : 0,
         clickRate: stats.sent > 0 ? (stats.clicked / stats.sent) * 100 : 0,
-        conversionRate: stats.sent > 0 ? (stats.converted / stats.sent) * 100 : 0
+        conversionRate: stats.sent > 0 ? (stats.converted / stats.sent) * 100 : 0,
       }));
 
       return {
         success: true,
         channels: channelPerformance,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
     } catch (error) {
       console.error('[Analytics] Error getting channel performance:', error);
@@ -223,7 +231,8 @@ const prospectorAnalyticsService = {
    */
   async getTopProspects(limit = 10) {
     try {
-      const snapshot = await db.collection('prospects')
+      const snapshot = await db
+        .collection('prospects')
         .orderBy('conversionScore', 'desc')
         .limit(limit)
         .get();
@@ -232,20 +241,20 @@ const prospectorAnalyticsService = {
         id: doc.id,
         ...doc.data(),
         score: doc.data().conversionScore || 0,
-        status: doc.data().status || 'pending'
+        status: doc.data().status || 'pending',
       }));
 
       return {
         success: true,
         prospects: topProspects,
         count: topProspects.length,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
     } catch (error) {
       console.error('[Analytics] Error getting top prospects:', error);
       throw error;
     }
-  }
+  },
 };
 
 module.exports = prospectorAnalyticsService;

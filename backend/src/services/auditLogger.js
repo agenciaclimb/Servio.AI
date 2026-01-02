@@ -1,6 +1,6 @@
 /**
  * AUDIT LOGGER
- * 
+ *
  * Sistema de auditoria avançado que registra todas operações críticas
  * - Login/logout (sucesso e falha)
  * - Criação/modificação de jobs
@@ -9,7 +9,7 @@
  * - Acesso a dados sensíveis
  * - Tentativas de autenticação falhadas
  * - Alterações de permissões
- * 
+ *
  * @module services/auditLogger
  */
 
@@ -34,7 +34,15 @@ class AuditLogger {
    * @param {string} options.errorMessage - Mensagem de erro se failed
    * @returns {Promise<Object>} Documento criado
    */
-  async log(action, userId, resource, details = {}, ipAddress = null, userAgent = null, options = {}) {
+  async log(
+    action,
+    userId,
+    resource,
+    details = {},
+    ipAddress = null,
+    userAgent = null,
+    options = {}
+  ) {
     const logEntry = {
       action,
       userId: userId || 'anonymous',
@@ -46,7 +54,7 @@ class AuditLogger {
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
       sessionId: options.sessionId || null,
       errorMessage: options.errorMessage || null,
-      severity: this._determineSeverity(action, options.status)
+      severity: this._determineSeverity(action, options.status),
     };
 
     const docRef = await this.collection.add(logEntry);
@@ -58,7 +66,7 @@ class AuditLogger {
 
     return {
       id: docRef.id,
-      ...logEntry
+      ...logEntry,
     };
   }
 
@@ -70,7 +78,12 @@ class AuditLogger {
    * @returns {string} 'low', 'medium', 'high', 'critical'
    */
   _determineSeverity(action, status) {
-    const criticalActions = ['PROCESS_PAYMENT', 'CHANGE_PERMISSIONS', 'DELETE_USER', 'REVOKE_API_KEY'];
+    const criticalActions = [
+      'PROCESS_PAYMENT',
+      'CHANGE_PERMISSIONS',
+      'DELETE_USER',
+      'REVOKE_API_KEY',
+    ];
     const highActions = ['LOGIN_FAILED', 'UNAUTHORIZED_ACCESS', 'CREATE_ADMIN'];
     const mediumActions = ['LOGIN', 'LOGOUT', 'CREATE_JOB', 'UPDATE_PROFILE'];
 
@@ -133,7 +146,7 @@ class AuditLogger {
       logEntry,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
       investigated: false,
-      severity: logEntry.severity
+      severity: logEntry.severity,
     });
 
     // TODO: Integrar com sistema de notificações
@@ -143,7 +156,7 @@ class AuditLogger {
     console.warn(`[SECURITY_ALERT] Atividade suspeita detectada:`, {
       action: logEntry.action,
       userId: logEntry.userId,
-      ipAddress: logEntry.ipAddress
+      ipAddress: logEntry.ipAddress,
     });
   }
 
@@ -173,15 +186,12 @@ class AuditLogger {
       query = query.where('timestamp', '<=', options.endDate);
     }
 
-    const snapshot = await query
-      .orderBy('timestamp', 'desc')
-      .limit(limit)
-      .get();
+    const snapshot = await query.orderBy('timestamp', 'desc').limit(limit).get();
 
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
-      timestamp: doc.data().timestamp?.toDate()
+      timestamp: doc.data().timestamp?.toDate(),
     }));
   }
 
@@ -203,15 +213,12 @@ class AuditLogger {
       query = query.where('timestamp', '<=', options.endDate);
     }
 
-    const snapshot = await query
-      .orderBy('timestamp', 'desc')
-      .limit(limit)
-      .get();
+    const snapshot = await query.orderBy('timestamp', 'desc').limit(limit).get();
 
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
-      timestamp: doc.data().timestamp?.toDate()
+      timestamp: doc.data().timestamp?.toDate(),
     }));
   }
 
@@ -228,15 +235,12 @@ class AuditLogger {
       query = query.where('investigated', '==', options.investigated);
     }
 
-    const snapshot = await query
-      .orderBy('timestamp', 'desc')
-      .limit(limit)
-      .get();
+    const snapshot = await query.orderBy('timestamp', 'desc').limit(limit).get();
 
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
-      timestamp: doc.data().timestamp?.toDate()
+      timestamp: doc.data().timestamp?.toDate(),
     }));
   }
 
@@ -250,7 +254,7 @@ class AuditLogger {
     await this.db.collection('securityAlerts').doc(alertId).update({
       investigated: true,
       investigatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      investigationNotes: notes
+      investigationNotes: notes,
     });
   }
 
@@ -305,10 +309,18 @@ class AuditLogger {
    * @returns {Promise<Object>}
    */
   async logSuccessfulLogin(userId, ipAddress, userAgent) {
-    return this.log('LOGIN', userId, 'auth', {
-      method: 'email-password',
-      success: true
-    }, ipAddress, userAgent, { status: 'success' });
+    return this.log(
+      'LOGIN',
+      userId,
+      'auth',
+      {
+        method: 'email-password',
+        success: true,
+      },
+      ipAddress,
+      userAgent,
+      { status: 'success' }
+    );
   }
 
   /**
@@ -319,10 +331,18 @@ class AuditLogger {
    * @returns {Promise<Object>}
    */
   async logFailedLogin(email, ipAddress, reason) {
-    return this.log('LOGIN_FAILED', null, 'auth', {
-      attemptedEmail: email,
-      reason
-    }, ipAddress, null, { status: 'failed', errorMessage: reason });
+    return this.log(
+      'LOGIN_FAILED',
+      null,
+      'auth',
+      {
+        attemptedEmail: email,
+        reason,
+      },
+      ipAddress,
+      null,
+      { status: 'failed', errorMessage: reason }
+    );
   }
 
   /**
@@ -336,7 +356,7 @@ class AuditLogger {
     return this.log('CREATE_JOB', userId, 'job', {
       jobId,
       title: jobData.title,
-      budget: jobData.orcamento
+      budget: jobData.orcamento,
     });
   }
 
@@ -351,7 +371,7 @@ class AuditLogger {
     return this.log('PROCESS_PAYMENT', userId, 'payment', {
       paymentId,
       amount,
-      currency: 'BRL'
+      currency: 'BRL',
     });
   }
 }

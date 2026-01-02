@@ -1,6 +1,6 @@
 /**
  * Twilio Routes - Endpoints REST para integração Twilio
- * 
+ *
  * Endpoints:
  * - POST /api/twilio/send-sms - Envia SMS individual
  * - POST /api/twilio/send-whatsapp - Envia WhatsApp individual
@@ -11,7 +11,7 @@
  * - POST /api/twilio/webhook/recording-status - Webhook status de gravação
  * - GET /api/twilio/history/:prospectId - Histórico de comunicações
  * - GET /api/twilio/health - Status de saúde da conexão
- * 
+ *
  * @module TwilioRoutes
  */
 
@@ -20,26 +20,28 @@ const crypto = require('crypto');
 
 /**
  * Verifica assinatura do webhook Twilio
- * 
+ *
  * @param {Object} req - Request do Express
  * @returns {boolean} True se assinatura válida
  */
 function verifyTwilioWebhook(req) {
   const twilioSignature = req.headers['x-twilio-signature'];
   const authToken = process.env.TWILIO_AUTH_TOKEN;
-  
+
   if (!twilioSignature || !authToken) {
     return false;
   }
 
   // Reconstrói URL completa
   const url = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
-  
+
   // Constrói string de dados
   let data = url;
-  Object.keys(req.body).sort().forEach(key => {
-    data += key + req.body[key];
-  });
+  Object.keys(req.body)
+    .sort()
+    .forEach(key => {
+      data += key + req.body[key];
+    });
 
   // Calcula HMAC-SHA1
   const hmac = crypto.createHmac('sha1', authToken);
@@ -50,7 +52,7 @@ function verifyTwilioWebhook(req) {
 
 /**
  * Factory para criar router Twilio
- * 
+ *
  * @param {Object} deps - Dependências injetadas
  * @param {Object} deps.db - Instância do Firestore
  * @param {Object} deps.twilioService - Instância do TwilioService
@@ -294,15 +296,12 @@ function createTwilioRouter({ db, twilioService }) {
   router.post('/webhook/recording-status', async (req, res) => {
     try {
       const { CallSid, RecordingUrl, RecordingSid, RecordingDuration } = req.body;
-      
+
       console.log(`🎙️ Recording webhook: Call ${CallSid}, Recording ${RecordingSid}`);
 
       // Atualiza comunicação com URL de gravação
       const communicationsRef = db.collection('communications');
-      const snapshot = await communicationsRef
-        .where('twilioSid', '==', CallSid)
-        .limit(1)
-        .get();
+      const snapshot = await communicationsRef.where('twilioSid', '==', CallSid).limit(1).get();
 
       if (!snapshot.empty) {
         const docRef = snapshot.docs[0].ref;
@@ -312,7 +311,7 @@ function createTwilioRouter({ db, twilioService }) {
           recordingDuration: parseInt(RecordingDuration, 10),
           updatedAt: new Date(),
         });
-        
+
         console.log(`✅ Recording saved for call ${CallSid}`);
       }
 

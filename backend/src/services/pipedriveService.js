@@ -3,13 +3,33 @@
  * Fornece sincronização bidirecional de leads e deals
  */
 
-const axios = require('axios');
-const functions = require('firebase-functions');
+// Removed top-level requires to allow dependency injection and avoid test failures
+// const axios = require('axios');
+// const functions = require('firebase-functions');
 
 class PipedriveService {
-  constructor(config) {
+  constructor(config, deps = {}) {
     this.config = config;
-    this.client = axios.create({
+
+    // Dependency Injection with lazy require fallback
+    this.axios = deps.axios || require('axios');
+    this.functions =
+      deps.functions ||
+      (() => {
+        try {
+          return require('firebase-functions');
+        } catch {
+          return {
+            logger: {
+              info: (...args) => console.log('[PipedriveService]', ...args),
+              warn: (...args) => console.warn('[PipedriveService]', ...args),
+              error: (...args) => console.error('[PipedriveService]', ...args),
+            },
+          };
+        }
+      })();
+
+    this.client = this.axios.create({
       baseURL: `https://${config.companyDomain}.pipedrive.com/v1`,
       params: {
         api_token: config.apiKey,
@@ -36,10 +56,10 @@ class PipedriveService {
         throw new Error(`Pipedrive error: ${response.data.error}`);
       }
 
-      functions.logger.info(`Lead criado no Pipedrive: ${response.data.data.id}`, { lead });
+      this.functions.logger.info(`Lead criado no Pipedrive: ${response.data.data.id}`, { lead });
       return response.data.data.id;
     } catch (error) {
-      functions.logger.error('Erro ao criar lead no Pipedrive:', error);
+      this.functions.logger.error('Erro ao criar lead no Pipedrive:', error);
       throw error;
     }
   }
@@ -65,10 +85,10 @@ class PipedriveService {
         throw new Error(`Pipedrive error: ${response.data.error}`);
       }
 
-      functions.logger.info(`Deal criado no Pipedrive: ${response.data.data.id}`, { deal });
+      this.functions.logger.info(`Deal criado no Pipedrive: ${response.data.data.id}`, { deal });
       return response.data.data.id;
     } catch (error) {
-      functions.logger.error('Erro ao criar deal no Pipedrive:', error);
+      this.functions.logger.error('Erro ao criar deal no Pipedrive:', error);
       throw error;
     }
   }
@@ -90,9 +110,9 @@ class PipedriveService {
         throw new Error(`Pipedrive error: ${response.data.error}`);
       }
 
-      functions.logger.info(`Deal atualizado no Pipedrive: ${dealId}`, { updates });
+      this.functions.logger.info(`Deal atualizado no Pipedrive: ${dealId}`, { updates });
     } catch (error) {
-      functions.logger.error(`Erro ao atualizar deal ${dealId}:`, error);
+      this.functions.logger.error(`Erro ao atualizar deal ${dealId}:`, error);
       throw error;
     }
   }
@@ -112,17 +132,20 @@ class PipedriveService {
 
       const pipeline = await this.getDefaultPipeline();
 
-      return await this.createDeal({
-        ...dealData,
-        id: '',
-        pipelineId: pipeline.id,
-        leadId: personId.toString(),
-        status: 'open',
-        createdAt: new Date(),
-        servioProposalId: proposalId,
-      }, personId);
+      return await this.createDeal(
+        {
+          ...dealData,
+          id: '',
+          pipelineId: pipeline.id,
+          leadId: personId.toString(),
+          status: 'open',
+          createdAt: new Date(),
+          servioProposalId: proposalId,
+        },
+        personId
+      );
     } catch (error) {
-      functions.logger.error('Erro ao sincronizar proposta:', error);
+      this.functions.logger.error('Erro ao sincronizar proposta:', error);
       throw error;
     }
   }
@@ -145,7 +168,7 @@ class PipedriveService {
 
       return response.data.data.items[0].item.id;
     } catch (error) {
-      functions.logger.error('Erro ao buscar pessoa:', error);
+      this.functions.logger.error('Erro ao buscar pessoa:', error);
       return null;
     }
   }
@@ -201,7 +224,7 @@ class PipedriveService {
         servioProposalId: proposalId,
       };
     } catch (error) {
-      functions.logger.error('Erro ao buscar deal:', error);
+      this.functions.logger.error('Erro ao buscar deal:', error);
       return null;
     }
   }
@@ -231,7 +254,7 @@ class PipedriveService {
 
       return createResponse.data.data.id;
     } catch (error) {
-      functions.logger.error('Erro ao gerenciar organização:', error);
+      this.functions.logger.error('Erro ao gerenciar organização:', error);
       throw error;
     }
   }
@@ -253,7 +276,7 @@ class PipedriveService {
         name: pipeline.name,
       };
     } catch (error) {
-      functions.logger.error('Erro ao obter pipeline:', error);
+      this.functions.logger.error('Erro ao obter pipeline:', error);
       throw error;
     }
   }
@@ -262,7 +285,7 @@ class PipedriveService {
    * Processar webhook do Pipedrive
    */
   async handleWebhook(event, db) {
-    functions.logger.info('Webhook Pipedrive recebido:', { event: event.event });
+    this.functions.logger.info('Webhook Pipedrive recebido:', { event: event.event });
 
     switch (event.event) {
       case 'added.person':
@@ -278,7 +301,7 @@ class PipedriveService {
         await this.handlePersonDeleted(event.data, db);
         break;
       default:
-        functions.logger.warn(`Webhook desconhecido: ${event.event}`);
+        this.functions.logger.warn(`Webhook desconhecido: ${event.event}`);
     }
   }
 
@@ -288,7 +311,7 @@ class PipedriveService {
       const email = data.email?.[0]?.value;
 
       if (!email) {
-        functions.logger.warn('Pessoa sem email recebida do Pipedrive');
+        this.functions.logger.warn('Pessoa sem email recebida do Pipedrive');
         return;
       }
 
@@ -299,9 +322,9 @@ class PipedriveService {
         timestamp: new Date(),
       });
 
-      functions.logger.info(`Pessoa sincronizada: ${email}`);
+      this.functions.logger.info(`Pessoa sincronizada: ${email}`);
     } catch (error) {
-      functions.logger.error('Erro em handlePersonAdded:', error);
+      this.functions.logger.error('Erro em handlePersonAdded:', error);
     }
   }
 
@@ -319,9 +342,9 @@ class PipedriveService {
         timestamp: new Date(),
       });
 
-      functions.logger.info(`Deal sincronizado: ${title} (${dealId})`);
+      this.functions.logger.info(`Deal sincronizado: ${title} (${dealId})`);
     } catch (error) {
-      functions.logger.error('Erro em handleDealAdded:', error);
+      this.functions.logger.error('Erro em handleDealAdded:', error);
     }
   }
 
@@ -336,9 +359,9 @@ class PipedriveService {
         timestamp: new Date(),
       });
 
-      functions.logger.info(`Deal atualizado: ${dealId}`, { previous, current });
+      this.functions.logger.info(`Deal atualizado: ${dealId}`, { previous, current });
     } catch (error) {
-      functions.logger.error('Erro em handleDealUpdated:', error);
+      this.functions.logger.error('Erro em handleDealUpdated:', error);
     }
   }
 
@@ -351,9 +374,9 @@ class PipedriveService {
         timestamp: new Date(),
       });
 
-      functions.logger.info(`Pessoa deletada: ${personId}`);
+      this.functions.logger.info(`Pessoa deletada: ${personId}`);
     } catch (error) {
-      functions.logger.error('Erro em handlePersonDeleted:', error);
+      this.functions.logger.error('Erro em handlePersonDeleted:', error);
     }
   }
 }

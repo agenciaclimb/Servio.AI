@@ -1,12 +1,12 @@
 /**
  * RATE LIMITER MIDDLEWARE
- * 
+ *
  * Implementa rate limiting em 4 níveis:
  * - Global: 1000 req/15min
  * - Auth: 5 tentativas/15min
  * - API: 100 req/min
  * - Payment: 10 req/min
- * 
+ *
  * @module middleware/rateLimiter
  */
 
@@ -22,7 +22,7 @@ const globalLimiter = rateLimit({
   message: {
     error: 'Muitas requisições. Tente novamente mais tarde.',
     code: 'RATE_LIMIT_EXCEEDED',
-    retryAfter: '15 minutos'
+    retryAfter: '15 minutos',
   },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
@@ -34,9 +34,9 @@ const globalLimiter = rateLimit({
     res.status(429).json({
       error: 'Muitas requisições. Tente novamente mais tarde.',
       code: 'RATE_LIMIT_EXCEEDED',
-      retryAfter: '15 minutos'
+      retryAfter: '15 minutos',
     });
-  }
+  },
 });
 
 /**
@@ -49,7 +49,7 @@ const authLimiter = rateLimit({
   message: {
     error: 'Muitas tentativas de login. Tente novamente em 15 minutos.',
     code: 'AUTH_RATE_LIMIT_EXCEEDED',
-    retryAfter: '15 minutos'
+    retryAfter: '15 minutos',
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -60,9 +60,9 @@ const authLimiter = rateLimit({
     res.status(429).json({
       error: 'Muitas tentativas de login. Tente novamente em 15 minutos.',
       code: 'AUTH_RATE_LIMIT_EXCEEDED',
-      retryAfter: '15 minutos'
+      retryAfter: '15 minutos',
     });
-  }
+  },
 });
 
 /**
@@ -75,7 +75,7 @@ const apiLimiter = rateLimit({
   message: {
     error: 'Muitas requisições para a API. Tente novamente em 1 minuto.',
     code: 'API_RATE_LIMIT_EXCEEDED',
-    retryAfter: '1 minuto'
+    retryAfter: '1 minuto',
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -84,9 +84,9 @@ const apiLimiter = rateLimit({
     res.status(429).json({
       error: 'Muitas requisições para a API. Tente novamente em 1 minuto.',
       code: 'API_RATE_LIMIT_EXCEEDED',
-      retryAfter: '1 minuto'
+      retryAfter: '1 minuto',
     });
-  }
+  },
 });
 
 /**
@@ -99,7 +99,7 @@ const paymentLimiter = rateLimit({
   message: {
     error: 'Muitas requisições de pagamento. Tente novamente em 1 minuto.',
     code: 'PAYMENT_RATE_LIMIT_EXCEEDED',
-    retryAfter: '1 minuto'
+    retryAfter: '1 minuto',
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -109,9 +109,9 @@ const paymentLimiter = rateLimit({
     res.status(429).json({
       error: 'Muitas requisições de pagamento. Tente novamente em 1 minuto.',
       code: 'PAYMENT_RATE_LIMIT_EXCEEDED',
-      retryAfter: '1 minuto'
+      retryAfter: '1 minuto',
     });
-  }
+  },
 });
 
 /**
@@ -124,7 +124,7 @@ const webhookLimiter = rateLimit({
   message: {
     error: 'Muitos webhooks recebidos. Tente novamente em 1 minuto.',
     code: 'WEBHOOK_RATE_LIMIT_EXCEEDED',
-    retryAfter: '1 minuto'
+    retryAfter: '1 minuto',
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -133,9 +133,9 @@ const webhookLimiter = rateLimit({
     res.status(429).json({
       error: 'Muitos webhooks recebidos. Tente novamente em 1 minuto.',
       code: 'WEBHOOK_RATE_LIMIT_EXCEEDED',
-      retryAfter: '1 minuto'
+      retryAfter: '1 minuto',
     });
-  }
+  },
 });
 
 /**
@@ -153,7 +153,7 @@ function createCustomLimiter({ windowMs, max, message, skipSuccessfulRequests = 
     max,
     message: {
       error: message || 'Muitas requisições',
-      code: 'CUSTOM_RATE_LIMIT_EXCEEDED'
+      code: 'CUSTOM_RATE_LIMIT_EXCEEDED',
     },
     standardHeaders: true,
     legacyHeaders: false,
@@ -162,9 +162,9 @@ function createCustomLimiter({ windowMs, max, message, skipSuccessfulRequests = 
       console.warn(`[CUSTOM_RATE_LIMIT] IP ${req.ip} excedeu limite customizado`);
       res.status(429).json({
         error: message || 'Muitas requisições',
-        code: 'CUSTOM_RATE_LIMIT_EXCEEDED'
+        code: 'CUSTOM_RATE_LIMIT_EXCEEDED',
       });
-    }
+    },
   });
 }
 
@@ -174,5 +174,5 @@ module.exports = {
   apiLimiter,
   paymentLimiter,
   webhookLimiter,
-  createCustomLimiter
+  createCustomLimiter,
 };

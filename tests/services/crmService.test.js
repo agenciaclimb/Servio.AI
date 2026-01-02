@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 // Mock CRMService since it's CommonJS
-const CRMService = vi.fn().mockImplementation((db) => {
+const CRMService = vi.fn().mockImplementation(db => {
   return {
     db,
     pipedriveAxios: {

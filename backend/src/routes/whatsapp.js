@@ -1,6 +1,6 @@
 /**
  * WhatsApp Business API Routes
- * 
+ *
  * Endpoints para integração com WhatsApp Business API
  * - POST /api/whatsapp/send - Enviar mensagem
  * - POST /api/whatsapp/webhook - Receber webhook
@@ -87,7 +87,7 @@ Fico no aguardo!`;
 /**
  * POST /api/whatsapp/webhook
  * Recebe webhooks do WhatsApp (mensagens recebidas, status de entrega, etc.)
- * 
+ *
  * Meta Business Manager → App → Webhook URL:
  * https://api.servio-ai.com/api/whatsapp/webhook
  */
@@ -138,7 +138,7 @@ router.post('/webhook', (req, res) => {
 /**
  * GET /api/whatsapp/webhook
  * Verifica webhook (requerido pelo WhatsApp para setup)
- * 
+ *
  * Parâmetros:
  * - hub.mode: 'subscribe'
  * - hub.challenge: Token de desafio

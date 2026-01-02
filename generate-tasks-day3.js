@@ -1,11 +1,11 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import fs from "node:fs";
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import fs from 'node:fs';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 if (!GEMINI_API_KEY) {
   // eslint-disable-next-line no-console
-  console.error("❌ Erro: GEMINI_API_KEY não configurada");
+  console.error('❌ Erro: GEMINI_API_KEY não configurada');
   process.exit(1);
 }
 
@@ -74,33 +74,33 @@ Dia 3 deve focar em:
 
 const generateTasksDay3 = async () => {
   const client = new GoogleGenerativeAI(GEMINI_API_KEY);
-  const model = client.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+  const model = client.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
-    const result = await model.generateContent(prompt);
-    const tasksJson = result.response.text();
+  const result = await model.generateContent(prompt);
+  const tasksJson = result.response.text();
 
-    // Extrair JSON se vier envolvido em markdown
-    const jsonMatch = tasksJson.match(/```json\n([\s\S]*?)\n```/);
-    const cleanJson = jsonMatch ? jsonMatch[1] : tasksJson;
+  // Extrair JSON se vier envolvido em markdown
+  const jsonMatch = tasksJson.match(/```json\n([\s\S]*?)\n```/);
+  const cleanJson = jsonMatch ? jsonMatch[1] : tasksJson;
 
-    // Validar JSON
-    const tasks = JSON.parse(cleanJson);
+  // Validar JSON
+  const tasks = JSON.parse(cleanJson);
 
-    // Salvar arquivo
-    fs.writeFileSync("tasks-day-3-generated.json", JSON.stringify(tasks, null, 2));
+  // Salvar arquivo
+  fs.writeFileSync('tasks-day-3-generated.json', JSON.stringify(tasks, null, 2));
 
+  // eslint-disable-next-line no-console
+  console.log('✅ Tasks geradas com sucesso!');
+  // eslint-disable-next-line no-console
+  console.log(`📊 Total: ${tasks.tasks.length} tasks`);
+
+  return tasks;
+};
+
+generateTasksDay3()
+  .then(() => process.exit(0))
+  .catch(error => {
     // eslint-disable-next-line no-console
-    console.log("✅ Tasks geradas com sucesso!");
-    // eslint-disable-next-line no-console
-    console.log(`📊 Total: ${tasks.tasks.length} tasks`);
-
-    return tasks;
-  };
-
-  generateTasksDay3()
-    .then(() => process.exit(0))
-    .catch((error) => {
-      // eslint-disable-next-line no-console
-      console.error("❌ Erro:", error instanceof Error ? error.message : String(error));
-      process.exit(1);
-    });
+    console.error('❌ Erro:', error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  });

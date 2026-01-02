@@ -87,3 +87,14 @@ export const getStorage = async (): Promise<FirebaseStorage> => {
   }
   return storageInstance;
 };
+/**
+ * Internal reset function for testing purposes
+ * Clears all cached Firebase instances
+ */
+export const _resetFirebaseState = () => {
+  firebaseInitialized = false;
+  appInstance = null;
+  authInstance = null;
+  dbInstance = null;
+  storageInstance = null;
+};

@@ -42,8 +42,13 @@ const EXCEPTIONS = [
 
 function getStagedFiles() {
   try {
-    const output = execSync('git diff --cached --name-only --diff-filter=ACM', { encoding: 'utf8' });
-    return output.trim().split('\n').filter(f => f && fs.existsSync(f));
+    const output = execSync('git diff --cached --name-only --diff-filter=ACM', {
+      encoding: 'utf8',
+    });
+    return output
+      .trim()
+      .split('\n')
+      .filter(f => f && fs.existsSync(f));
   } catch {
     return [];
   }
@@ -58,8 +63,9 @@ function scanFile(filePath) {
     for (const match of matches) {
       // Skip se for exceção conhecida
       const isException = EXCEPTIONS.some(exc => filePath.includes(exc));
-      const isFirebasePublicKey = filePath.includes('firebaseConfig') && name === 'Firebase API Key';
-      
+      const isFirebasePublicKey =
+        filePath.includes('firebaseConfig') && name === 'Firebase API Key';
+
       if (!isException && !isFirebasePublicKey) {
         findings.push({
           file: filePath,

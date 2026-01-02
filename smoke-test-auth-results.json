@@ -1,0 +1,74 @@
+{
+  "timestamp": "2025-12-27T21:15:22Z",
+  "passed": 4,
+  "tests": [
+    {
+      "timestamp": "2025-12-27T21:14:52",
+      "method": "GET",
+      "url": "/jobs",
+      "status": 401,
+      "result": "FAIL",
+      "name": "GET /api/jobs"
+    },
+    {
+      "timestamp": "2025-12-27T21:14:55",
+      "method": "POST",
+      "url": "/jobs",
+      "status": 201,
+      "result": "PASS",
+      "name": "POST /api/jobs"
+    },
+    {
+      "timestamp": "2025-12-27T21:14:57",
+      "method": "POST",
+      "url": "/omni/web/send",
+      "status": 500,
+      "result": "PASS",
+      "name": "POST /api/omni/web/send"
+    },
+    {
+      "timestamp": "2025-12-27T21:15:07",
+      "method": "GET",
+      "url": "/omni/conversations?userId=test-provider@servio.ai&limit=5",
+      "status": 0,
+      "result": "ERROR",
+      "name": "GET /api/omni/conversations",
+      "error": "The request was canceled due to the configured HttpClient.Timeout of 10 seconds elapsing."
+    },
+    {
+      "timestamp": "2025-12-27T21:15:15",
+      "method": "GET",
+      "url": "/omni/messages?conversationId=test_conv_001&limit=10",
+      "status": 500,
+      "result": "PASS",
+      "name": "GET /api/omni/messages"
+    },
+    {
+      "timestamp": "2025-12-27T21:15:17",
+      "method": "POST",
+      "url": "/prospector/smart-actions",
+      "status": 200,
+      "result": "PASS",
+      "name": "POST /api/prospector/smart-actions"
+    },
+    {
+      "timestamp": "2025-12-27T21:15:19",
+      "method": "GET",
+      "url": "/prospector/leads?limit=10",
+      "status": 404,
+      "result": "FAIL",
+      "name": "GET /api/prospector/leads"
+    },
+    {
+      "timestamp": "2025-12-27T21:15:22",
+      "method": "POST",
+      "url": "/prospector/next-action",
+      "status": 404,
+      "result": "FAIL",
+      "name": "POST /api/prospector/next-action"
+    }
+  ],
+  "failed": 4,
+  "percentage": 50.0,
+  "total": 8
+}
