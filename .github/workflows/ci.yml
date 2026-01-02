@@ -39,8 +39,17 @@ jobs:
           if [ -f package-lock.json ]; then npm ci; elif [ -f package.json ]; then npm i; fi
 
       - name: Install dependencies (backend)
+        env:
+          ESBUILD_BINARY_PATH: ''
         run: |
-          if [ -f backend/package.json ]; then (cd backend && npm ci || npm i); fi
+          if [ -f backend/package.json ]; then
+            cd backend
+            # Remove qualquer esbuild global que cause conflito
+            rm -rf ~/.npm/_npx 2>/dev/null || true
+            npm ci --ignore-scripts || npm i --legacy-peer-deps --ignore-scripts
+            # Reinstala binários do esbuild corretamente
+            node node_modules/esbuild/install.js || true
+          fi
 
       - name: Lint (root)
         continue-on-error: true
