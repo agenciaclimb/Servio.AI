@@ -65,7 +65,10 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
           VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
-        run: echo "Tests skipped in CI (pass locally 158/158 ok). Continuing with build."
+        run: |
+          echo "Running backend tests..."
+          cd backend && npm test -- --run --no-coverage && cd ..
+          echo "Backend tests completed."
 
       - name: Generate coverage summary
         if: always()
