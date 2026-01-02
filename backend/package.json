@@ -39,6 +39,6 @@
     "plugins": {}
   },
   "engines": {
-    "node": "18"
+    "node": ">=18"
   }
 }
