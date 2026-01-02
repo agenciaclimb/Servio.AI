@@ -4,10 +4,7 @@
   "verdict": "APPROVED",
   "reasons": [],
   "risk_level": "LOW",
-  "findings": [
-    "Nenhuma vulnerabilidade de segurança crítica detectada.",
-    "Qualidade do código dentro dos padrões aceitáveis."
-  ],
+  "findings": ["Nenhum problema de segurança crítico ou violação de qualidade detectada."],
   "doc_mestre_violations": [],
-  "emitted_at_utc": "2025-12-31T18:08:15.634Z"
+  "emitted_at_utc": "2026-01-02T13:22:55.597Z"
 }
