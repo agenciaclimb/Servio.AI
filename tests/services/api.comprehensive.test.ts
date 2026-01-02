@@ -36,8 +36,8 @@ vi.mock('../../mockData', () => ({
   MOCK_FRAUD_ALERTS: [],
 }));
 
-// SKIP: Este teste assume que 'apiCall' é exportado de services/api.ts, 
-// mas é uma função interna. Os testes precisam ser reescritos para usar 
+// SKIP: Este teste assume que 'apiCall' é exportado de services/api.ts,
+// mas é uma função interna. Os testes precisam ser reescritos para usar
 // mock de fetch ou export da função interna.
 describe.skip('API Service Comprehensive Tests', () => {
   // Mock fetch to simulate backend failures, triggering fallback to mock data

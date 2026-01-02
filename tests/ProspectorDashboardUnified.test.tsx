@@ -8,7 +8,7 @@ import * as api from '../services/api';
 vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(() => ({
     currentUser: { email: 'prospector@test.com', uid: 'test-uid' },
-    onAuthStateChanged: vi.fn((cb) => {
+    onAuthStateChanged: vi.fn(cb => {
       cb({ email: 'prospector@test.com', uid: 'test-uid' });
       return vi.fn();
     }),
