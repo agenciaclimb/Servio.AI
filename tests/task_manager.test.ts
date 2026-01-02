@@ -3,12 +3,26 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import * as fs from 'node:fs';
 import { TaskManager } from '../ai-tasks/task_manager';
 import { TaskStatus } from '../ai-tasks/task_interface';
 
-// Mock do módulo fs (corresponde à importação node:fs)
-vi.mock('node:fs');
+// Mock manual do módulo fs com vi.hoisted para evitar problemas de hoisting
+const { mockExistsSync, mockReadFileSync, mockWriteFileSync } = vi.hoisted(() => ({
+  mockExistsSync: vi.fn(),
+  mockReadFileSync: vi.fn(),
+  mockWriteFileSync: vi.fn(),
+}));
+
+vi.mock('node:fs', () => ({
+  existsSync: mockExistsSync,
+  readFileSync: mockReadFileSync,
+  writeFileSync: mockWriteFileSync,
+  default: {
+    existsSync: mockExistsSync,
+    readFileSync: mockReadFileSync,
+    writeFileSync: mockWriteFileSync,
+  },
+}));
 
 describe('TaskManager', () => {
   let taskManager: TaskManager;
@@ -56,8 +70,8 @@ describe('TaskManager', () => {
         ],
       };
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(mockData));
+      mockExistsSync.mockReturnValue(true);
+      mockReadFileSync.mockReturnValue(JSON.stringify(mockData));
 
       const tasks = await taskManager.loadTasksFromFile('test.json');
 
@@ -67,7 +81,7 @@ describe('TaskManager', () => {
     });
 
     it('deve lançar erro se arquivo não existir', async () => {
-      vi.mocked(fs.existsSync).mockReturnValue(false);
+      mockExistsSync.mockReturnValue(false);
 
       await expect(taskManager.loadTasksFromFile('missing.json')).rejects.toThrow(
         /Arquivo não encontrado/
@@ -75,8 +89,8 @@ describe('TaskManager', () => {
     });
 
     it('deve lançar erro para JSON inválido', async () => {
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue('{ invalid json }');
+      mockExistsSync.mockReturnValue(true);
+      mockReadFileSync.mockReturnValue('{ invalid json }');
 
       await expect(taskManager.loadTasksFromFile('invalid.json')).rejects.toThrow();
     });
@@ -88,8 +102,8 @@ describe('TaskManager', () => {
         tasks: [],
       };
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(invalidData));
+      mockExistsSync.mockReturnValue(true);
+      mockReadFileSync.mockReturnValue(JSON.stringify(invalidData));
 
       await expect(taskManager.loadTasksFromFile('test.json')).rejects.toThrow(/protocol_version/);
     });
@@ -106,8 +120,8 @@ describe('TaskManager', () => {
         ],
       };
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(invalidData));
+      mockExistsSync.mockReturnValue(true);
+      mockReadFileSync.mockReturnValue(JSON.stringify(invalidData));
 
       await expect(taskManager.loadTasksFromFile('test.json')).rejects.toThrow(/campo obrigatório/);
     });
@@ -142,8 +156,8 @@ describe('TaskManager', () => {
         ],
       };
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(mockData));
+      mockExistsSync.mockReturnValue(true);
+      mockReadFileSync.mockReturnValue(JSON.stringify(mockData));
 
       await taskManager.loadTasksFromFile('test.json');
     });
@@ -206,8 +220,8 @@ describe('TaskManager', () => {
         ],
       };
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(mockData));
+      mockExistsSync.mockReturnValue(true);
+      mockReadFileSync.mockReturnValue(JSON.stringify(mockData));
 
       await taskManager.loadTasksFromFile('test.json');
     });
@@ -262,8 +276,8 @@ describe('TaskManager', () => {
         ],
       };
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(mockData));
+      mockExistsSync.mockReturnValue(true);
+      mockReadFileSync.mockReturnValue(JSON.stringify(mockData));
 
       await taskManager.loadTasksFromFile('test.json');
     });
