@@ -1,7 +1,7 @@
 /**
  * Script simplificado: cria documentos Firestore via fetch/node-fetch
  * para usuários E2E que já existem no Auth mas não têm doc no Firestore.
- * 
+ *
  * Usa Firestore REST API diretamente (sem Admin SDK).
  */
 
@@ -32,7 +32,7 @@ const USERS = [
     name: 'E2E Admin',
     type: 'admin',
     location: 'São Paulo',
-  }
+  },
 ];
 
 function toFirestoreValue(val) {
@@ -58,7 +58,8 @@ function buildFirestoreDoc(user) {
   };
   if (user.headline) fields.headline = toFirestoreValue(user.headline);
   if (user.specialties) fields.specialties = toFirestoreValue(user.specialties);
-  if (user.verificationStatus) fields.verificationStatus = toFirestoreValue(user.verificationStatus);
+  if (user.verificationStatus)
+    fields.verificationStatus = toFirestoreValue(user.verificationStatus);
   if (user.providerRate) fields.providerRate = toFirestoreValue(user.providerRate);
   return { fields };
 }
@@ -66,7 +67,7 @@ function buildFirestoreDoc(user) {
 async function createOrUpdateDoc(email, docPayload) {
   // PATCH to create/update: https://firestore.googleapis.com/v1/projects/{projectId}/databases/(default)/documents/{collection}/{documentId}
   const path = `/v1/projects/${PROJECT_ID}/databases/(default)/documents/${COLLECTION}/${encodeURIComponent(email)}`;
-  
+
   return new Promise((resolve, reject) => {
     const postData = JSON.stringify(docPayload);
     const options = {
@@ -78,10 +79,12 @@ async function createOrUpdateDoc(email, docPayload) {
         'Content-Length': Buffer.byteLength(postData),
       },
     };
-    
-    const req = https.request(options, (res) => {
+
+    const req = https.request(options, res => {
       let data = '';
-      res.on('data', (chunk) => { data += chunk; });
+      res.on('data', chunk => {
+        data += chunk;
+      });
       res.on('end', () => {
         if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
           resolve(data);
@@ -90,7 +93,7 @@ async function createOrUpdateDoc(email, docPayload) {
         }
       });
     });
-    
+
     req.on('error', reject);
     req.write(postData);
     req.end();
@@ -99,8 +102,10 @@ async function createOrUpdateDoc(email, docPayload) {
 
 (async () => {
   console.log('⚠️  AVISO: Este script usa Firestore REST API sem autenticação.');
-  console.log('⚠️  Certifique-se de que as regras do Firestore permitem escrita pública ou use outro método.\n');
-  
+  console.log(
+    '⚠️  Certifique-se de que as regras do Firestore permitem escrita pública ou use outro método.\n'
+  );
+
   try {
     for (const u of USERS) {
       try {

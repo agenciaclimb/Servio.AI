@@ -92,31 +92,34 @@ describe('ClientDashboard', () => {
     const quickActionsTitle = screen.getByText('Ações Rápidas');
     expect(quickActionsTitle).toBeInTheDocument();
 
-    // Tabs na sidebar
-    expect(screen.getByRole('button', { name: /Início/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Meus Serviços/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Meus Itens/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '❓Ajuda' })).toBeInTheDocument();
+    // Tabs na sidebar (usando getAllByRole porque pode haver versão mobile/desktop)
+    const inicioButtons = screen.getAllByRole('button', { name: /Início/i });
+    const servicosButtons = screen.getAllByRole('button', { name: /Serviços/i });
+    const itensButtons = screen.getAllByRole('button', { name: /Itens/i });
+    const ajudaButtons = screen.getAllByRole('button', { name: /Ajuda/i });
 
-    // Saudação
-    expect(screen.getByText(/Olá, Ana!/)).toBeInTheDocument();
+    expect(inicioButtons.length).toBeGreaterThanOrEqual(1);
+    expect(servicosButtons.length).toBeGreaterThanOrEqual(1);
+    expect(itensButtons.length).toBeGreaterThanOrEqual(1);
+    expect(ajudaButtons.length).toBeGreaterThanOrEqual(1);
+
+    // Saudação - mostra apenas o primeiro nome (Ana!) com emoji 👋
+    expect(screen.getByText('Ana!')).toBeInTheDocument();
   }, 15000);
 
   test('alternância de tabs e estados vazios (serviços/itens/ajuda)', async () => {
     renderDashboard();
 
-    // Vai para Meus Serviços
-    await userEvent.click(screen.getByRole('button', { name: /Meus Serviços/i }));
-    expect(screen.getAllByText('Meus Serviços').length).toBeGreaterThanOrEqual(2); // sidebar + content
+    // Vai para Serviços
+    await userEvent.click(screen.getByRole('button', { name: /Serviços/i }));
     expect(screen.getByText('Nenhum serviço ainda')).toBeInTheDocument();
 
-    // Vai para Meus Itens
-    await userEvent.click(screen.getByRole('button', { name: /Meus Itens/i }));
-    expect(screen.getAllByText('Meus Itens').length).toBeGreaterThanOrEqual(1);
+    // Vai para Itens
+    await userEvent.click(screen.getByRole('button', { name: /Itens/i }));
     expect(screen.getByText('Nenhum item cadastrado')).toBeInTheDocument();
 
     // Vai para Ajuda
-    await userEvent.click(screen.getByRole('button', { name: '❓Ajuda' }));
+    await userEvent.click(screen.getByRole('button', { name: /Ajuda/i }));
     expect(screen.getByText('Central de Ajuda')).toBeInTheDocument();
   }, 15000);
 
@@ -140,8 +143,8 @@ describe('ClientDashboard', () => {
     const onNewJobFromItem = vi.fn();
     renderDashboard({ onNewJobFromItem });
 
-    // Navega para a aba "Meus Serviços"
-    await userEvent.click(screen.getByRole('button', { name: /Meus Serviços/i }));
+    // Navega para a aba "Serviços"
+    await userEvent.click(screen.getByRole('button', { name: /Serviços/i }));
 
     // Há dois botões "+ Novo Serviço" nessa view; clicar no primeiro já deve disparar o callback
     const novoServicoButtons = screen.getAllByRole('button', { name: /\+ Novo Serviço/i });

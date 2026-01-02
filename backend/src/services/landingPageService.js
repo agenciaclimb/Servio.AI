@@ -1,6 +1,6 @@
 /**
  * LandingPageService - Gerador de Landing Pages com IA Gemini
- * 
+ *
  * Funcionalidades:
  * - Geração de landing pages com IA Gemini 2.0
  * - Templates customizáveis para diferentes tipos de serviços
@@ -9,7 +9,7 @@
  * - A/B testing com múltiplas variações
  * - SEO otimizado (meta tags, sitemap, schema markup)
  * - Themes dinamicamente gerados
- * 
+ *
  * @module LandingPageService
  */
 
@@ -23,7 +23,7 @@ class LandingPageService {
   constructor(firestore) {
     this.db = firestore;
     this.geminiApiKey = process.env.GEMINI_API_KEY;
-    
+
     if (this.geminiApiKey) {
       const genAI = new GoogleGenerativeAI(this.geminiApiKey);
       this.model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
@@ -34,7 +34,7 @@ class LandingPageService {
 
   /**
    * Gera uma landing page completa com IA Gemini
-   * 
+   *
    * @param {Object} params - Parâmetros da página
    * @param {string} params.serviceType - Tipo de serviço (consultoria, design, dev, etc)
    * @param {string} params.serviceName - Nome do serviço
@@ -128,7 +128,7 @@ Make the form submit to /api/landing-pages/form with method POST.
 
   /**
    * Extrai metadados do HTML gerado
-   * 
+   *
    * @private
    * @param {string} htmlContent - Conteúdo HTML
    * @param {string} serviceName - Nome do serviço
@@ -166,7 +166,7 @@ Make the form submit to /api/landing-pages/form with method POST.
 
   /**
    * Calcula score SEO da página
-   * 
+   *
    * @private
    * @param {string} htmlContent - Conteúdo HTML
    * @returns {number} Score entre 0-100
@@ -204,7 +204,7 @@ Make the form submit to /api/landing-pages/form with method POST.
 
   /**
    * Salva landing page no Firestore
-   * 
+   *
    * @private
    * @param {Object} pageData - Dados da página
    * @returns {Promise<string>} ID do documento criado
@@ -239,7 +239,7 @@ Make the form submit to /api/landing-pages/form with method POST.
 
   /**
    * Cria variação A/B da landing page
-   * 
+   *
    * @param {string} pageId - ID da página original
    * @param {Object} modifications - Modificações (headline, colors, cta text, etc)
    * @returns {Promise<Object>} Página variante criada
@@ -292,7 +292,7 @@ Make the form submit to /api/landing-pages/form with method POST.
       // Salva como variante
       const variantId = `${pageId}_v${Date.now()}`;
       const variantRef = this.db.collection('landing_pages').doc(variantId);
-      
+
       await variantRef.set({
         ...originalData,
         variantOf: pageId,
@@ -325,7 +325,7 @@ Make the form submit to /api/landing-pages/form with method POST.
 
   /**
    * Registra evento de page view ou conversão
-   * 
+   *
    * @param {string} pageId - ID da página
    * @param {string} eventType - 'view' ou 'conversion'
    * @param {Object} metadata - Dados adicionais (utm params, referrer, etc)
@@ -358,7 +358,7 @@ Make the form submit to /api/landing-pages/form with method POST.
       }
 
       updates.conversionRate = updates.conversions
-        ? (updates.conversions / updates.views * 100).toFixed(2)
+        ? ((updates.conversions / updates.views) * 100).toFixed(2)
         : 0;
 
       await pageRef.update(updates);
@@ -372,7 +372,7 @@ Make the form submit to /api/landing-pages/form with method POST.
 
   /**
    * Obtém análise de uma landing page
-   * 
+   *
    * @param {string} pageId - ID da página
    * @returns {Promise<Object>} Dados analíticos
    */
@@ -405,7 +405,7 @@ Make the form submit to /api/landing-pages/form with method POST.
       // Calcula métricas
       const views = events.filter(e => e.eventType === 'view').length;
       const conversions = events.filter(e => e.eventType === 'conversion').length;
-      const conversionRate = views > 0 ? (conversions / views * 100).toFixed(2) : 0;
+      const conversionRate = views > 0 ? ((conversions / views) * 100).toFixed(2) : 0;
 
       return {
         success: true,
@@ -434,7 +434,7 @@ Make the form submit to /api/landing-pages/form with method POST.
 
   /**
    * Publica uma landing page em produção (Cloud Run)
-   * 
+   *
    * @param {string} pageId - ID da página
    * @returns {Promise<Object>} URL da página publicada
    */
@@ -483,7 +483,7 @@ Make the form submit to /api/landing-pages/form with method POST.
 
   /**
    * Lista todas as landing pages do prospector
-   * 
+   *
    * @param {string} prospectorEmail - Email do prospector
    * @returns {Promise<Array>} Lista de páginas
    */
@@ -514,14 +514,14 @@ Make the form submit to /api/landing-pages/form with method POST.
 
   /**
    * Deleta uma landing page
-   * 
+   *
    * @param {string} pageId - ID da página
    * @returns {Promise<void>}
    */
   async deletePage(pageId) {
     try {
       const pageRef = this.db.collection('landing_pages').doc(pageId);
-      
+
       // Deleta variantes também
       const pageDoc = await pageRef.get();
       const variants = pageDoc.data().variants || [];
@@ -535,9 +535,7 @@ Make the form submit to /api/landing-pages/form with method POST.
 
       // Deleta eventos associados
       const eventsRef = this.db.collection('landing_page_events');
-      const eventsSnapshot = await eventsRef
-        .where('pageId', '==', pageId)
-        .get();
+      const eventsSnapshot = await eventsRef.where('pageId', '==', pageId).get();
 
       eventsSnapshot.forEach(doc => {
         doc.ref.delete();

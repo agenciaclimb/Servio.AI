@@ -119,8 +119,8 @@ describe('ClientDashboard – chat & agendamento (integração leve)', () => {
 
     const { props } = renderDash({ allMessages: [scheduleMsg] });
 
-    // Ir para "Meus Serviços" e abrir chat do job ativo
-    await userEvent.click(screen.getByRole('button', { name: /Meus Serviços/i }));
+    // Ir para "Serviços" e abrir chat do job ativo
+    await userEvent.click(screen.getByRole('button', { name: /Serviços/i }));
     const chatButtons = screen.getAllByRole('button', { name: /^Chat$/i });
     await userEvent.click(chatButtons[0]);
 
@@ -155,8 +155,8 @@ describe('ClientDashboard – chat & agendamento (integração leve)', () => {
   it('mostra aviso ao tentar salvar perfil sem campos obrigatórios', async () => {
     renderDash({});
 
-    // Abrir modal de conta
-    await userEvent.click(screen.getByRole('button', { name: /Conta Pessoal/i }));
+    // Abrir modal de conta (texto é apenas "Conta")
+    await userEvent.click(screen.getByRole('button', { name: /^Conta$/i }));
 
     // Limpa campos obrigatórios e tenta salvar
     const nameInput = screen.getByDisplayValue('Ana Cliente');
@@ -178,7 +178,7 @@ describe('ClientDashboard – chat & agendamento (integração leve)', () => {
     vi.spyOn(API, 'createMessage').mockRejectedValueOnce(new Error('fail'));
 
     renderDash({});
-    await userEvent.click(screen.getByRole('button', { name: /Meus Serviços/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Serviços/i }));
     const chatButtons = screen.getAllByRole('button', { name: /^Chat$/i });
     await userEvent.click(chatButtons[0]);
 

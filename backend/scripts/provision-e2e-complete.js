@@ -1,5 +1,5 @@
 /**
- * Script híbrido: 
+ * Script híbrido:
  * 1. Cria usuários no Firebase Auth via REST API
  * 2. Faz login com cada um para obter idToken
  * 3. Chama backend /api/users com o token para criar doc Firestore
@@ -34,16 +34,22 @@ const USERS = [
     type: 'admin',
     name: 'E2E Admin',
     location: 'São Paulo',
-  }
+  },
 ];
 
 function httpsPostJson({ hostname, path, headers = {} }, bodyObj) {
   const body = JSON.stringify(bodyObj);
-  const fullHeaders = { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...headers };
+  const fullHeaders = {
+    'Content-Type': 'application/json',
+    'Content-Length': Buffer.byteLength(body),
+    ...headers,
+  };
   return new Promise((resolve, reject) => {
-    const req = https.request({ hostname, path, method: 'POST', headers: fullHeaders }, (res) => {
+    const req = https.request({ hostname, path, method: 'POST', headers: fullHeaders }, res => {
       let data = '';
-      res.on('data', d => { data += d; });
+      res.on('data', d => {
+        data += d;
+      });
       res.on('end', () => {
         try {
           const parsed = data ? JSON.parse(data) : {};
@@ -68,14 +74,20 @@ async function signUpOrLogin(email, password) {
   // Try signUp first
   try {
     const signUpPath = `/v1/accounts:signUp?key=${encodeURIComponent(FIREBASE_API_KEY)}`;
-    const res = await httpsPostJson({ hostname, path: signUpPath }, { email, password, returnSecureToken: true });
+    const res = await httpsPostJson(
+      { hostname, path: signUpPath },
+      { email, password, returnSecureToken: true }
+    );
     return { idToken: res.idToken, exists: false };
   } catch (err) {
     const msg = String(err.message || '');
     if (msg.includes('EMAIL_EXISTS')) {
       // Try login
       const loginPath = `/v1/accounts:signInWithPassword?key=${encodeURIComponent(FIREBASE_API_KEY)}`;
-      const res = await httpsPostJson({ hostname, path: loginPath }, { email, password, returnSecureToken: true });
+      const res = await httpsPostJson(
+        { hostname, path: loginPath },
+        { email, password, returnSecureToken: true }
+      );
       return { idToken: res.idToken, exists: true };
     }
     throw err;
@@ -84,17 +96,31 @@ async function signUpOrLogin(email, password) {
 
 function httpRequest({ hostname, path, method, headers, port, isHttps }, bodyObj) {
   const body = bodyObj ? JSON.stringify(bodyObj) : '';
-  const fullHeaders = bodyObj ? { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...headers } : headers;
+  const fullHeaders = bodyObj
+    ? { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...headers }
+    : headers;
   const client = isHttps ? https : require('http');
-  
+
   return new Promise((resolve, reject) => {
-    const options = { hostname, path, method, headers: fullHeaders, port: port || (isHttps ? 443 : 80) };
-    const req = client.request(options, (res) => {
+    const options = {
+      hostname,
+      path,
+      method,
+      headers: fullHeaders,
+      port: port || (isHttps ? 443 : 80),
+    };
+    const req = client.request(options, res => {
       let data = '';
-      res.on('data', chunk => { data += chunk; });
+      res.on('data', chunk => {
+        data += chunk;
+      });
       res.on('end', () => {
         if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
-          try { resolve(data ? JSON.parse(data) : {}); } catch { resolve({}); }
+          try {
+            resolve(data ? JSON.parse(data) : {});
+          } catch {
+            resolve({});
+          }
         } else {
           reject(new Error(`${method} ${res.statusCode}: ${data}`));
         }
@@ -109,7 +135,7 @@ function httpRequest({ hostname, path, method, headers, port, isHttps }, bodyObj
 async function createFirestoreDocViaBackend(user, idToken) {
   const url = new URL(BACKEND_URL);
   const nowIso = new Date().toISOString();
-  
+
   const payload = {
     email: user.email,
     name: user.name,
@@ -124,14 +150,17 @@ async function createFirestoreDocViaBackend(user, idToken) {
   if (user.verificationStatus) payload.verificationStatus = user.verificationStatus;
   if (user.type === 'prestador') payload.providerRate = 0.85;
 
-  return httpRequest({
-    hostname: url.hostname,
-    path: `/users`,
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${idToken}` },
-    port: url.port ? Number(url.port) : undefined,
-    isHttps: url.protocol === 'https:',
-  }, payload);
+  return httpRequest(
+    {
+      hostname: url.hostname,
+      path: `/users`,
+      method: 'POST',
+      headers: { Authorization: `Bearer ${idToken}` },
+      port: url.port ? Number(url.port) : undefined,
+      isHttps: url.protocol === 'https:',
+    },
+    payload
+  );
 }
 
 (async () => {
@@ -143,11 +172,11 @@ async function createFirestoreDocViaBackend(user, idToken) {
   try {
     for (const u of USERS) {
       console.log(`\n🔐 Processando: ${u.email}`);
-      
+
       // 1. SignUp or Login
       const { idToken, exists } = await signUpOrLogin(u.email, u.password);
       console.log(`  ✅ Auth: ${exists ? 'já existia' : 'criado'}`);
-      
+
       // 2. Create Firestore doc via backend
       try {
         await createFirestoreDocViaBackend(u, idToken);
@@ -161,7 +190,7 @@ async function createFirestoreDocViaBackend(user, idToken) {
         }
       }
     }
-    
+
     console.log('\n✅ Provisionamento completo!');
     process.exit(0);
   } catch (err) {

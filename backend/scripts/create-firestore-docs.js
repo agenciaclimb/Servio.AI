@@ -9,7 +9,10 @@ const admin = require('firebase-admin');
 if (!admin.apps || admin.apps.length === 0) {
   try {
     // Tentar usar credenciais do ambiente
-    const projectId = process.env.FIREBASE_PROJECT_ID || process.env.GOOGLE_CLOUD_PROJECT || 'gen-lang-client-0737507616';
+    const projectId =
+      process.env.FIREBASE_PROJECT_ID ||
+      process.env.GOOGLE_CLOUD_PROJECT ||
+      'gen-lang-client-0737507616';
     admin.initializeApp({
       projectId: projectId,
     });
@@ -44,13 +47,13 @@ const USERS = [
     name: 'E2E Admin',
     type: 'admin',
     location: 'São Paulo',
-  }
+  },
 ];
 
 (async () => {
   try {
     const nowIso = new Date().toISOString();
-    
+
     for (const u of USERS) {
       const docRef = db.collection('users').doc(u.email);
       const payload = {
@@ -66,11 +69,11 @@ const USERS = [
         ...(u.verificationStatus && { verificationStatus: u.verificationStatus }),
         ...(u.providerRate && { providerRate: u.providerRate }),
       };
-      
+
       await docRef.set(payload, { merge: true });
       console.log(`✅ Documento Firestore criado/atualizado para: ${u.email}`);
     }
-    
+
     console.log('\n✅ Todos os documentos Firestore foram criados com sucesso!');
     process.exit(0);
   } catch (err) {

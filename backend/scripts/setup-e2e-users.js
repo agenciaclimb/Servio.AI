@@ -49,15 +49,15 @@ const USERS = [
     location: 'São Paulo',
     headline: 'Prestador E2E',
     specialties: ['limpeza', 'reparos'],
-    verificationStatus: 'verificado'
+    verificationStatus: 'verificado',
   },
   {
     email: 'admin@servio.ai',
     password: 'AdminE2E!123',
     type: 'admin',
     name: 'E2E Admin',
-    location: 'São Paulo'
-  }
+    location: 'São Paulo',
+  },
 ];
 
 function firestoreUserPayload(user) {
@@ -84,7 +84,11 @@ async function provisionUser(u, auth, db) {
     console.log(`[AUTH] User already exists: ${u.email}`);
   } catch (e) {
     if (e.code === 'auth/user-not-found') {
-      authRecord = await auth.createUser({ email: u.email, password: u.password, displayName: u.name });
+      authRecord = await auth.createUser({
+        email: u.email,
+        password: u.password,
+        displayName: u.name,
+      });
       console.log(`[AUTH] Created user: ${u.email}`);
     } else {
       throw e;

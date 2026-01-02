@@ -1,13 +1,13 @@
 /**
  * TwilioService - Serviço de integração com Twilio API
- * 
+ *
  * Funcionalidades:
  * - Envio de SMS
  * - Envio de WhatsApp
  * - Chamadas telefônicas com gravação
  * - Webhook receivers para status de mensagens e chamadas
  * - Histórico de comunicações em Firestore
- * 
+ *
  * @module TwilioService
  */
 
@@ -23,7 +23,7 @@ class TwilioService {
     this.authToken = process.env.TWILIO_AUTH_TOKEN;
     this.phoneNumber = process.env.TWILIO_PHONE_NUMBER;
     this.whatsappNumber = process.env.TWILIO_WHATSAPP_NUMBER;
-    
+
     // Inicializa cliente Twilio apenas se credenciais estiverem presentes
     if (this.accountSid && this.authToken) {
       this.initializeTwilioClient();
@@ -37,11 +37,11 @@ class TwilioService {
    */
   initializeTwilioClient() {
     const authHeader = Buffer.from(`${this.accountSid}:${this.authToken}`).toString('base64');
-    
+
     this.twilioClient = axios.create({
       baseURL: `https://api.twilio.com/2010-04-01/Accounts/${this.accountSid}`,
       headers: {
-        'Authorization': `Basic ${authHeader}`,
+        Authorization: `Basic ${authHeader}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       timeout: 15000,
@@ -52,7 +52,7 @@ class TwilioService {
 
   /**
    * Envia SMS para um número de telefone
-   * 
+   *
    * @param {Object} params - Parâmetros do SMS
    * @param {string} params.to - Número de destino (formato E.164: +5511999999999)
    * @param {string} params.body - Corpo da mensagem
@@ -71,11 +71,14 @@ class TwilioService {
       }
 
       // Envia SMS via Twilio API
-      const response = await this.twilioClient.post('/Messages.json', new URLSearchParams({
-        From: this.phoneNumber,
-        To: to,
-        Body: body,
-      }));
+      const response = await this.twilioClient.post(
+        '/Messages.json',
+        new URLSearchParams({
+          From: this.phoneNumber,
+          To: to,
+          Body: body,
+        })
+      );
 
       const messageData = response.data;
 
@@ -102,7 +105,7 @@ class TwilioService {
       };
     } catch (error) {
       console.error('❌ Error sending SMS:', error.message);
-      
+
       // Registra erro no Firestore
       await this.logCommunication({
         prospectId,
@@ -121,7 +124,7 @@ class TwilioService {
 
   /**
    * Envia mensagem WhatsApp via Twilio
-   * 
+   *
    * @param {Object} params - Parâmetros do WhatsApp
    * @param {string} params.to - Número WhatsApp de destino (formato E.164: +5511999999999)
    * @param {string} params.body - Corpo da mensagem
@@ -180,7 +183,7 @@ class TwilioService {
       };
     } catch (error) {
       console.error('❌ Error sending WhatsApp:', error.message);
-      
+
       // Registra erro no Firestore
       await this.logCommunication({
         prospectId,
@@ -199,7 +202,7 @@ class TwilioService {
 
   /**
    * Realiza chamada telefônica com gravação
-   * 
+   *
    * @param {Object} params - Parâmetros da chamada
    * @param {string} params.to - Número de destino
    * @param {string} params.prospectId - ID do prospect relacionado
@@ -259,7 +262,7 @@ class TwilioService {
       };
     } catch (error) {
       console.error('❌ Error making call:', error.message);
-      
+
       // Registra erro no Firestore
       await this.logCommunication({
         prospectId,
@@ -277,7 +280,7 @@ class TwilioService {
 
   /**
    * Processa webhook de status de mensagem
-   * 
+   *
    * @param {Object} webhookData - Dados do webhook Twilio
    * @returns {Promise<Object>} Resultado do processamento
    */
@@ -289,14 +292,11 @@ class TwilioService {
 
       // Busca comunicação existente no Firestore
       const communicationsRef = this.db.collection('communications');
-      const snapshot = await communicationsRef
-        .where('twilioSid', '==', MessageSid)
-        .limit(1)
-        .get();
+      const snapshot = await communicationsRef.where('twilioSid', '==', MessageSid).limit(1).get();
 
       if (snapshot.empty) {
         console.warn(`⚠️ Communication not found for SID: ${MessageSid}`);
-        
+
         // Cria registro se for mensagem entrante
         if (webhookData.SmsStatus === 'received') {
           await this.logCommunication({
@@ -310,7 +310,7 @@ class TwilioService {
             timestamp: new Date(),
           });
         }
-        
+
         return { success: true, action: 'created_new' };
       }
 
@@ -332,7 +332,7 @@ class TwilioService {
 
   /**
    * Processa webhook de status de chamada
-   * 
+   *
    * @param {Object} webhookData - Dados do webhook Twilio
    * @returns {Promise<Object>} Resultado do processamento
    */
@@ -344,10 +344,7 @@ class TwilioService {
 
       // Busca comunicação existente no Firestore
       const communicationsRef = this.db.collection('communications');
-      const snapshot = await communicationsRef
-        .where('twilioSid', '==', CallSid)
-        .limit(1)
-        .get();
+      const snapshot = await communicationsRef.where('twilioSid', '==', CallSid).limit(1).get();
 
       if (snapshot.empty) {
         console.warn(`⚠️ Communication not found for SID: ${CallSid}`);
@@ -382,7 +379,7 @@ class TwilioService {
 
   /**
    * Obtém histórico de comunicações de um prospect
-   * 
+   *
    * @param {string} prospectId - ID do prospect
    * @param {string} type - Tipo de comunicação (sms, whatsapp, call, all)
    * @returns {Promise<Array>} Lista de comunicações
@@ -405,7 +402,9 @@ class TwilioService {
         });
       });
 
-      console.log(`📊 Retrieved ${communications.length} communications for prospect ${prospectId}`);
+      console.log(
+        `📊 Retrieved ${communications.length} communications for prospect ${prospectId}`
+      );
 
       return communications;
     } catch (error) {
@@ -416,7 +415,7 @@ class TwilioService {
 
   /**
    * Registra comunicação no Firestore
-   * 
+   *
    * @param {Object} data - Dados da comunicação
    * @returns {Promise<string>} ID do documento criado
    */
@@ -438,7 +437,7 @@ class TwilioService {
 
   /**
    * Verifica status de saúde da conexão com Twilio
-   * 
+   *
    * @returns {Promise<Object>} Status da conexão
    */
   async checkHealth() {
@@ -462,7 +461,7 @@ class TwilioService {
       };
     } catch (error) {
       console.error('❌ Twilio health check failed:', error.message);
-      
+
       return {
         healthy: false,
         error: error.message,
@@ -472,7 +471,7 @@ class TwilioService {
 
   /**
    * Envia SMS em batch para múltiplos prospects
-   * 
+   *
    * @param {Array} messages - Array de objetos {to, body, prospectId}
    * @returns {Promise<Object>} Resultado do envio em batch
    */

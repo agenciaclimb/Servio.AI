@@ -42,9 +42,9 @@ describe('API Endpoints', () => {
       const response = await request(app).get('/users');
 
       expect(response.statusCode).toBe(200);
-      expect(response.body).toEqual(expect.arrayContaining([
-        expect.objectContaining({ id: 'user1', name: 'Test User' })
-      ]));
+      expect(response.body).toEqual(
+        expect.arrayContaining([expect.objectContaining({ id: 'user1', name: 'Test User' })])
+      );
     });
   });
 
@@ -62,9 +62,7 @@ describe('API Endpoints', () => {
 
       const newUser = { email: 'new.user@test.com', name: 'New User' };
 
-      const response = await request(app)
-        .post('/users')
-        .send(newUser);
+      const response = await request(app).post('/users').send(newUser);
 
       expect(response.statusCode).toBe(201);
       expect(response.body).toEqual({ message: 'User created successfully', id: newUser.email });

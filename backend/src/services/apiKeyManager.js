@@ -1,12 +1,12 @@
 /**
  * API KEY MANAGER
- * 
+ *
  * Sistema de rotação automática de chaves de API com versionamento
  * - Gera novas keys com versão
  * - Mantém 2 versões simultâneas por 7 dias
  * - Depreca e remove após período
  * - Logs de todas as rotações em Firestore
- * 
+ *
  * @module services/apiKeyManager
  */
 
@@ -59,7 +59,7 @@ class ApiKeyManager {
    */
   async generateNewKey(userId, service, options = {}) {
     const expiresInDays = options.expiresInDays || 7;
-    
+
     // Buscar versão atual
     const existingKeys = await this.collection
       .where('userId', '==', userId)
@@ -91,7 +91,7 @@ class ApiKeyManager {
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       expiresAt,
       rotations: 0,
-      lastUsedAt: null
+      lastUsedAt: null,
     });
 
     // Log da operação
@@ -102,7 +102,7 @@ class ApiKeyManager {
       key, // Retornar apenas 1 vez (para usuário salvar)
       version,
       expiresAt,
-      service
+      service,
     };
   }
 
@@ -138,14 +138,14 @@ class ApiKeyManager {
 
     // Atualizar last used
     await keyDoc.ref.update({
-      lastUsedAt: admin.firestore.FieldValue.serverTimestamp()
+      lastUsedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
     return {
       id: keyDoc.id,
       userId: keyData.userId,
       version: keyData.version,
-      service: keyData.service
+      service: keyData.service,
     };
   }
 
@@ -168,7 +168,7 @@ class ApiKeyManager {
     expiredSnapshot.docs.forEach(doc => {
       batch.update(doc.ref, {
         status: 'expired',
-        revokedAt: admin.firestore.FieldValue.serverTimestamp()
+        revokedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
       revokedCount++;
 
@@ -180,15 +180,13 @@ class ApiKeyManager {
     await batch.commit();
 
     // Contar keys ativas
-    const activeSnapshot = await this.collection
-      .where('status', '==', 'active')
-      .get();
+    const activeSnapshot = await this.collection.where('status', '==', 'active').get();
 
     console.log(`[API_KEY_ROTATION] ${revokedCount} keys expiradas, ${activeSnapshot.size} ativas`);
 
     return {
       revoked: revokedCount,
-      active: activeSnapshot.size
+      active: activeSnapshot.size,
     };
   }
 
@@ -220,7 +218,7 @@ class ApiKeyManager {
         status: data.status,
         createdAt: data.createdAt?.toDate(),
         expiresAt: data.expiresAt?.toDate(),
-        lastUsedAt: data.lastUsedAt?.toDate()
+        lastUsedAt: data.lastUsedAt?.toDate(),
       };
     });
   }
@@ -243,7 +241,7 @@ class ApiKeyManager {
     await keyDoc.ref.update({
       status: 'revoked',
       revokedAt: admin.firestore.FieldValue.serverTimestamp(),
-      revocationReason: reason
+      revocationReason: reason,
     });
 
     await this._logRotation(data.userId, data.service, data.version, 'REVOKED', reason);
@@ -268,7 +266,7 @@ class ApiKeyManager {
       version,
       action,
       details,
-      timestamp: admin.firestore.FieldValue.serverTimestamp()
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
   }
 }

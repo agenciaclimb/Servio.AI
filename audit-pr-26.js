@@ -1,29 +1,29 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import fs from "fs";
-import { execSync } from "child_process";
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import fs from 'fs';
+import { execSync } from 'child_process';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 if (!GEMINI_API_KEY) {
-  console.error("❌ Erro: GEMINI_API_KEY não configurada");
+  console.error('❌ Erro: GEMINI_API_KEY não configurada');
   process.exit(1);
 }
 
 async function auditPR26() {
   const client = new GoogleGenerativeAI(GEMINI_API_KEY);
-  const model = client.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+  const model = client.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
   // Obter diff do PR
-  let prDiff = "";
+  let prDiff = '';
   try {
-    prDiff = execSync("gh pr diff 26", { encoding: "utf-8" });
+    prDiff = execSync('gh pr diff 26', { encoding: 'utf-8' });
   } catch (error) {
-    console.error("❌ Erro ao obter diff do PR:", error.message);
+    console.error('❌ Erro ao obter diff do PR:', error.message);
     process.exit(1);
   }
 
   // Ler Documento Mestre
-  const _masterDoc = fs.readFileSync("DOCUMENTO_MESTRE_SERVIO_AI.md", "utf-8");
+  const _masterDoc = fs.readFileSync('DOCUMENTO_MESTRE_SERVIO_AI.md', 'utf-8');
 
   const prompt = `Tu és o Gemini, Auditor Global A+ do Protocolo Supremo v3.0 do Servio.AI.
 
@@ -79,27 +79,21 @@ Instruções claras para Copilot executar.
 **Responda como o Gemini Auditor Global A+. Sê rigoroso. Sê justo. Sê definitivo.**`;
 
   try {
-    console.log("🔍 Enviando PR #26 para auditoria do Gemini...\n");
-    
+    console.log('🔍 Enviando PR #26 para auditoria do Gemini...\n');
+
     const result = await model.generateContent(prompt);
     const auditReport = result.response.text();
 
     // Salvar relatório
-    fs.writeFileSync(
-      "automation_output/audit_PR_26.md",
-      auditReport,
-      "utf-8"
-    );
+    fs.writeFileSync('automation_output/audit_PR_26.md', auditReport, 'utf-8');
 
-    console.log("✅ Auditoria Completa!\n");
-    console.log("=" + "=".repeat(79));
+    console.log('✅ Auditoria Completa!\n');
+    console.log('=' + '='.repeat(79));
     console.log(auditReport);
-    console.log("=" + "=".repeat(79));
-    console.log(
-      "\n📄 Relatório salvo em: automation_output/audit_PR_26.md"
-    );
+    console.log('=' + '='.repeat(79));
+    console.log('\n📄 Relatório salvo em: automation_output/audit_PR_26.md');
   } catch (error) {
-    console.error("❌ Erro ao chamar Gemini API:", error.message);
+    console.error('❌ Erro ao chamar Gemini API:', error.message);
     process.exit(1);
   }
 }

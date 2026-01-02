@@ -21,7 +21,7 @@ const USERS = [
     password: 'SenhaE2E!123',
     type: 'cliente',
     name: 'E2E Cliente',
-    location: 'São Paulo'
+    location: 'São Paulo',
   },
   {
     email: 'e2e-prestador@servio.ai',
@@ -31,15 +31,15 @@ const USERS = [
     location: 'São Paulo',
     headline: 'Prestador E2E',
     specialties: ['limpeza', 'reparos'],
-    verificationStatus: 'verificado'
+    verificationStatus: 'verificado',
   },
   {
     email: 'admin@servio.ai',
     password: 'AdminE2E!123',
     type: 'admin',
     name: 'E2E Admin',
-    location: 'São Paulo'
-  }
+    location: 'São Paulo',
+  },
 ];
 
 function firestoreUserPayload(u) {
@@ -63,11 +63,17 @@ function firestoreUserPayload(u) {
 
 function httpsPostJson({ hostname, path, method = 'POST', headers = {} }, bodyObj) {
   const body = JSON.stringify(bodyObj);
-  const fullHeaders = { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body), ...headers };
+  const fullHeaders = {
+    'Content-Type': 'application/json',
+    'Content-Length': Buffer.byteLength(body),
+    ...headers,
+  };
   return new Promise((resolve, reject) => {
-    const req = https.request({ hostname, path, method, headers: fullHeaders }, (res) => {
+    const req = https.request({ hostname, path, method, headers: fullHeaders }, res => {
       let data = '';
-      res.on('data', d => { data += d; });
+      res.on('data', d => {
+        data += d;
+      });
       res.on('end', () => {
         try {
           const parsed = data ? JSON.parse(data) : {};
@@ -92,7 +98,10 @@ async function signUpWithEmailPassword(apiKey, email, password) {
   const hostname = 'identitytoolkit.googleapis.com';
   const path = `/v1/accounts:signUp?key=${encodeURIComponent(apiKey)}`;
   try {
-    const res = await httpsPostJson({ hostname, path }, { email, password, returnSecureToken: true });
+    const res = await httpsPostJson(
+      { hostname, path },
+      { email, password, returnSecureToken: true }
+    );
     return { ok: true, res };
   } catch (err) {
     // If already exists, treat as success for idempotency
@@ -106,7 +115,12 @@ async function signUpWithEmailPassword(apiKey, email, password) {
 
 function parseUrl(u) {
   const { hostname, pathname, protocol, port } = new URL(u);
-  return { hostname, pathPrefix: pathname.endsWith('/') ? pathname.slice(0, -1) : pathname, isHttps: protocol === 'https:', port };
+  return {
+    hostname,
+    pathPrefix: pathname.endsWith('/') ? pathname.slice(0, -1) : pathname,
+    isHttps: protocol === 'https:',
+    port,
+  };
 }
 
 async function createFirestoreUserDoc(backendUrl, payload) {
@@ -121,7 +135,7 @@ async function createFirestoreUserDoc(backendUrl, payload) {
     const postData = JSON.stringify(body);
     const options = {
       hostname,
-      port: port ? Number(port) : (isHttps ? 443 : 80),
+      port: port ? Number(port) : isHttps ? 443 : 80,
       path,
       method,
       headers: {
@@ -129,12 +143,18 @@ async function createFirestoreUserDoc(backendUrl, payload) {
         'Content-Length': Buffer.byteLength(postData),
       },
     };
-    const req = client.request(options, (res) => {
+    const req = client.request(options, res => {
       let data = '';
-      res.on('data', (chunk) => { data += chunk; });
+      res.on('data', chunk => {
+        data += chunk;
+      });
       res.on('end', () => {
         if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
-          try { resolve(data ? JSON.parse(data) : {}); } catch { resolve({}); }
+          try {
+            resolve(data ? JSON.parse(data) : {});
+          } catch {
+            resolve({});
+          }
         } else {
           reject(new Error(`Backend ${res.statusCode}: ${data}`));
         }
@@ -153,7 +173,8 @@ async function createFirestoreUserDoc(backendUrl, payload) {
       console.error('Missing VITE_FIREBASE_API_KEY (or FIREBASE_WEB_API_KEY) env.');
       process.exit(2);
     }
-    const backendUrl = process.env.BACKEND_URL || process.env.VITE_BACKEND_API_URL || 'http://localhost:8081';
+    const backendUrl =
+      process.env.BACKEND_URL || process.env.VITE_BACKEND_API_URL || 'http://localhost:8081';
 
     for (const u of USERS) {
       try {

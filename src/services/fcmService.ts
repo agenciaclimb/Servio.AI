@@ -54,6 +54,8 @@ export function isNotificationSupported(): boolean {
  */
 export function getNotificationPermission(): NotificationPermission {
   if (!isNotificationSupported()) return 'denied';
+  // Extra safety check for environments where Notification exists but is undefined
+  if (typeof Notification === 'undefined' || !Notification) return 'denied';
   return Notification.permission;
 }
 

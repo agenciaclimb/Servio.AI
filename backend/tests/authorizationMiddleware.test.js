@@ -1,7 +1,7 @@
 /**
  * Testes para Authorization Middleware (Task 1.2)
- * 
- * Valida que o middleware usa custom claims (req.user.role) 
+ *
+ * Valida que o middleware usa custom claims (req.user.role)
  * em vez de consultar o Firestore para verificação de roles.
  */
 
@@ -16,18 +16,18 @@ const mockFirestore = {
         data: () => ({
           type: 'admin',
           clientId: 'client@test.com',
-          providerId: 'provider@test.com'
-        })
-      })
-    }))
-  }))
+          providerId: 'provider@test.com',
+        }),
+      }),
+    })),
+  })),
 };
 
 vi.mock('firebase-admin', () => ({
   default: {
     firestore: vi.fn(() => mockFirestore),
-    initializeApp: vi.fn()
-  }
+    initializeApp: vi.fn(),
+  },
 }));
 
 // Importar as funções após o mock
@@ -43,12 +43,12 @@ describe('Authorization Middleware - Task 1.2 (Custom Claims)', () => {
     mockReq = {
       user: null,
       headers: {},
-      params: {}
+      params: {},
     };
 
     mockRes = {
       status: vi.fn().mockReturnThis(),
-      json: vi.fn().mockReturnThis()
+      json: vi.fn().mockReturnThis(),
     };
 
     mockNext = vi.fn();
@@ -60,7 +60,7 @@ describe('Authorization Middleware - Task 1.2 (Custom Claims)', () => {
       mockReq.user = {
         email: 'admin@test.com',
         uid: 'uid-admin',
-        role: 'admin' // Custom claim
+        role: 'admin', // Custom claim
       };
 
       const middleware = requireRole('admin');
@@ -78,7 +78,7 @@ describe('Authorization Middleware - Task 1.2 (Custom Claims)', () => {
       mockReq.user = {
         email: 'prospector@test.com',
         uid: 'uid-prospector',
-        role: 'prospector'
+        role: 'prospector',
       };
 
       const middleware = requireRole('admin', 'prospector');
@@ -96,7 +96,7 @@ describe('Authorization Middleware - Task 1.2 (Custom Claims)', () => {
       mockReq.user = {
         email: 'cliente@test.com',
         uid: 'uid-cliente',
-        role: 'cliente'
+        role: 'cliente',
       };
 
       const middleware = requireRole('admin', 'prospector');
@@ -109,7 +109,7 @@ describe('Authorization Middleware - Task 1.2 (Custom Claims)', () => {
       expect(mockRes.status).toHaveBeenCalledWith(403);
       expect(mockRes.json).toHaveBeenCalledWith({
         error: 'Forbidden',
-        message: expect.stringContaining('This action requires one of: admin, prospector')
+        message: expect.stringContaining('This action requires one of: admin, prospector'),
       });
     });
 
@@ -117,7 +117,7 @@ describe('Authorization Middleware - Task 1.2 (Custom Claims)', () => {
       // Arrange: User sem custom claim role
       mockReq.user = {
         email: 'noroluser@test.com',
-        uid: 'uid-norole'
+        uid: 'uid-norole',
         // role: undefined (ausente)
       };
 
@@ -131,7 +131,7 @@ describe('Authorization Middleware - Task 1.2 (Custom Claims)', () => {
       expect(mockRes.status).toHaveBeenCalledWith(403);
       expect(mockRes.json).toHaveBeenCalledWith({
         error: 'Forbidden',
-        message: 'User role not found. Please contact support.'
+        message: 'User role not found. Please contact support.',
       });
     });
 
@@ -149,19 +149,19 @@ describe('Authorization Middleware - Task 1.2 (Custom Claims)', () => {
       expect(mockRes.status).toHaveBeenCalledWith(401);
       expect(mockRes.json).toHaveBeenCalledWith({
         error: 'Unauthorized',
-        message: 'Valid authentication token required'
+        message: 'Valid authentication token required',
       });
     });
 
     it('deve NÃO buscar no Firestore quando custom claim está presente', async () => {
       // Este teste valida que não há chamadas ao Firestore
       // quando o role está no custom claim (objetivo da Task 1.2)
-      
+
       // Arrange
       mockReq.user = {
         email: 'admin@test.com',
         uid: 'uid-admin',
-        role: 'admin'
+        role: 'admin',
       };
 
       const middleware = requireRole('admin');
@@ -186,7 +186,7 @@ describe('Authorization Middleware - Task 1.2 (Custom Claims)', () => {
       mockReq.user = {
         email: 'admin@test.com',
         uid: 'uid-admin',
-        role: 'admin'
+        role: 'admin',
       };
 
       // Act
@@ -202,7 +202,7 @@ describe('Authorization Middleware - Task 1.2 (Custom Claims)', () => {
       mockReq.user = {
         email: 'cliente@test.com',
         uid: 'uid-cliente',
-        role: 'cliente'
+        role: 'cliente',
       };
 
       // Act
@@ -214,21 +214,19 @@ describe('Authorization Middleware - Task 1.2 (Custom Claims)', () => {
     });
   });
 
-
-
   describe('Performance: Firestore Reads Reduction', () => {
     it('deve reduzir leituras do Firestore ao usar custom claims', async () => {
       // Este teste documenta o objetivo principal da Task 1.2:
       // Antes: requireRole fazia 1 leitura no Firestore por requisição
       // Depois: requireRole usa custom claim, 0 leituras no Firestore
-      
+
       const { default: admin } = await import('firebase-admin');
       const firestoreSpy = vi.spyOn(admin, 'firestore');
 
       mockReq.user = {
         email: 'user@test.com',
         uid: 'uid-user',
-        role: 'prospector'
+        role: 'prospector',
       };
 
       const middleware = requireRole('prospector');

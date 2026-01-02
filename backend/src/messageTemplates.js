@@ -1,6 +1,6 @@
 /**
  * Message Templates for Prospectors
- * 
+ *
  * Ready-to-use templates for WhatsApp, Email, and Social Media
  * with personalization placeholders and conversion-optimized content.
  */
@@ -15,7 +15,7 @@ Descobri a *Servio.AI*, uma plataforma que conecta prestadores com clientes de f
 Você ganha mais visibilidade, pagamentos seguros e avaliações verificadas! 
 
 Quer saber mais? Te mando o link: {link}`,
-      
+
       professional: `Olá {nome}, tudo bem?
 
 Sou {prospectorName} e gostaria de apresentar uma oportunidade que pode transformar seu negócio.
@@ -31,7 +31,7 @@ A *Servio.AI* é uma plataforma que conecta prestadores de serviços com cliente
 Cadastro rápido: {link}
 
 Alguma dúvida? Estou aqui para ajudar! 😊`,
-      
+
       referral: `E aí {nome}! 🚀
 
 Lembra que você mencionou que estava buscando mais clientes?
@@ -41,7 +41,7 @@ Achei algo perfeito: a *Servio.AI* é tipo um "Uber" para serviços profissionai
 Já ajudei vários profissionais a crescerem por lá. Quer dar uma olhada?
 
 Link: {link}`,
-      
+
       urgency: `{nome}, oportunidade especial! ⏰
 
 A Servio.AI está em fase de crescimento e os *primeiros 100 prestadores* ganham:
@@ -51,9 +51,9 @@ A Servio.AI está em fase de crescimento e os *primeiros 100 prestadores* ganham
 
 Vagas limitadas! Cadastre-se: {link}
 
-Não perca essa chance! 💪`
+Não perca essa chance! 💪`,
     },
-    
+
     followUp: {
       day2: `Oi {nome}! 😊
 
@@ -62,7 +62,7 @@ Conseguiu dar uma olhada na Servio.AI?
 Se tiver alguma dúvida sobre como funciona, fico feliz em explicar. É bem simples e sem riscos!
 
 {link}`,
-      
+
       day5: `{nome}, como vai? 👋
 
 Vi que você ainda não se cadastrou na Servio.AI. Alguma dúvida que eu possa esclarecer?
@@ -70,7 +70,7 @@ Vi que você ainda não se cadastrou na Servio.AI. Alguma dúvida que eu possa e
 A plataforma já ajudou centenas de profissionais a conseguirem mais clientes. E é *100% gratuito* para começar!
 
 Link direto: {link}`,
-      
+
       day10: `Última chance, {nome}! 🚨
 
 Percebi que você pode ter perdido minha mensagem anterior sobre a Servio.AI.
@@ -79,9 +79,9 @@ Não quero que você perca essa oportunidade de crescer seu negócio. É literal
 
 Se não for para você, sem problemas! Mas vale a pena conhecer: {link}
 
-Abraço! 👍`
+Abraço! 👍`,
     },
-    
+
     objections: {
       expensive: `Entendo sua preocupação, {nome}! 💰
 
@@ -90,7 +90,7 @@ Na verdade, a Servio.AI é *GRÁTIS* para se cadastrar. Você só paga uma peque
 Ou seja: zero risco! Você só paga se ganhar dinheiro pela plataforma. Faz sentido?
 
 {link}`,
-      
+
       noTime: `Tranquilo, {nome}! ⏰
 
 O cadastro leva *menos de 3 minutos* e você não precisa ficar na plataforma o tempo todo.
@@ -98,7 +98,7 @@ O cadastro leva *menos de 3 minutos* e você não precisa ficar na plataforma o 
 Você recebe notificações quando aparecem jobs na sua área. Decide se quer aceitar ou não. Simples assim!
 
 Link rápido: {link}`,
-      
+
       dontNeed: `Entendo, {nome}! 😊
 
 Mas mesmo com clientela, a Servio.AI pode ser um *extra* para preencher horários vagos.
@@ -106,7 +106,7 @@ Mas mesmo com clientela, a Servio.AI pode ser um *extra* para preencher horário
 Vários profissionais usam só pra isso: complementar a agenda quando está mais vazia.
 
 Zero compromisso, dá pra testar: {link}`,
-      
+
       alreadyUseOther: `Legal, {nome}! 👍
 
 A Servio.AI não substitui nada, é só um *canal a mais*. Muitos profissionais usam várias plataformas ao mesmo tempo.
@@ -116,10 +116,10 @@ A diferença aqui é:
 ✅ Pagamento garantido via escrow
 ✅ Sem mensalidade
 
-Vale testar como complemento: {link}`
-    }
+Vale testar como complemento: {link}`,
+    },
   },
-  
+
   email: {
     cold: {
       subject: '🚀 Oportunidade: Mais clientes para seu negócio de {category}',
@@ -151,9 +151,9 @@ Abraço,
 {prospectorContact}
 
 ---
-*P.S.: Estamos em fase de crescimento e os primeiros cadastrados ganham destaque na plataforma!*`
+*P.S.: Estamos em fase de crescimento e os primeiros cadastrados ganham destaque na plataforma!*`,
     },
-    
+
     followUp48h: {
       subject: 'Re: Oportunidade Servio.AI - Alguma dúvida?',
       body: `Oi {nome},
@@ -167,9 +167,9 @@ Se tiver qualquer dúvida sobre como funciona, ficarei feliz em explicar por tel
 **Ou prefere que eu ligue?** Me avise o melhor horário: {prospectorPhone}
 
 Abraço,
-{prospectorName}`
+{prospectorName}`,
     },
-    
+
     followUp7days: {
       subject: '🎯 Última tentativa - Servio.AI',
       body: `{nome},
@@ -184,10 +184,10 @@ A Servio.AI já está ajudando centenas de prestadores a crescerem seus negócio
 • Ok, vou dar uma olhada: {link}
 
 Obrigado pelo seu tempo,
-{prospectorName}`
-    }
+{prospectorName}`,
+    },
   },
-  
+
   social: {
     facebook: {
       post: `🚀 *OPORTUNIDADE PARA PRESTADORES DE SERVIÇOS* 🚀
@@ -209,7 +209,7 @@ A *Servio.AI* conecta você com clientes qualificados na sua região!
 Cadastre-se: {link}
 
 #PrestarorDeServiços #ServiosAI #NovosCli entes`,
-      
+
       story: `💼 ATENÇÃO PRESTADORES! 💼
 
 Quer mais clientes? 📈
@@ -219,9 +219,9 @@ Cadastre-se na Servio.AI:
 
 É grátis e leva 2 min! ⏰
 
-#Prestador #Servicos #Clientes`
+#Prestador #Servicos #Clientes`,
     },
-    
+
     instagram: {
       post: `🔥 OPORTUNIDADE PARA PROFISSIONAIS 🔥
 
@@ -236,16 +236,16 @@ Link na bio: {shortLink}
 Ou acesse: servio-ai.com
 
 #PrestarorDeServiços #Eletricista #Encanador #Pintor #Marceneiro #TrabalheComNosco`,
-      
+
       story: `🎯 Quer mais clientes?
 
 Cadastre-se na Servio.AI!
 
 Link: {shortLink}
 
-[Arraste para cima]`
+[Arraste para cima]`,
     },
-    
+
     linkedin: {
       post: `*SERVIO.AI: A PLATAFORMA QUE CONECTA PRESTADORES E CLIENTES*
 
@@ -262,17 +262,17 @@ Elétrica, Hidráulica, Pintura, Marcenaria, Limpeza, Jardinagem, Manutenção e
 
 Interessado em conhecer? Cadastro gratuito: {link}
 
-#Tecnologia #Marketplace #Serviços #Inovação #EmpreendedorismoDig ital`
-    }
+#Tecnologia #Marketplace #Serviços #Inovação #EmpreendedorismoDig ital`,
+    },
   },
-  
+
   sms: {
     initial: `Oi {nome}! Sou {prospectorName}. Te indiquei na Servio.AI, plataforma que conecta prestadores com clientes. Cadastro grátis: {shortLink}`,
-    
+
     followUp: `{nome}, conseguiu ver a Servio.AI? É grátis e pode te trazer mais clientes! {shortLink}`,
-    
-    urgent: `{nome}, últimos dias de cadastro com taxa ZERO nos 5 primeiros jobs! {shortLink}`
-  }
+
+    urgent: `{nome}, últimos dias de cadastro com taxa ZERO nos 5 primeiros jobs! {shortLink}`,
+  },
 };
 
 /**
@@ -280,7 +280,7 @@ Interessado em conhecer? Cadastro gratuito: {link}
  */
 function personalizeTemplate(template, data) {
   let personalized = template;
-  
+
   // Replace all placeholders
   const replacements = {
     '{nome}': data.prospectName || '[Nome]',

@@ -1,11 +1,11 @@
 /**
  * REQUEST VALIDATORS
- * 
+ *
  * Validação rigorosa de entrada usando Zod
  * - Schemas para todos os endpoints críticos
  * - Validação de tipos, formatos e ranges
  * - Mensagens de erro estruturadas
- * 
+ *
  * @module validators/requestValidators
  */
 
@@ -15,68 +15,70 @@ const { z } = require('zod');
  * Schema para criação de job
  */
 const createJobSchema = z.object({
-  titulo: z.string()
+  titulo: z
+    .string()
     .min(5, 'Título deve ter no mínimo 5 caracteres')
     .max(200, 'Título deve ter no máximo 200 caracteres')
     .trim(),
 
-  descricao: z.string()
+  descricao: z
+    .string()
     .min(10, 'Descrição deve ter no mínimo 10 caracteres')
     .max(5000, 'Descrição deve ter no máximo 5000 caracteres')
     .trim(),
 
-  orcamento: z.number()
+  orcamento: z
+    .number()
     .min(10, 'Orçamento mínimo é R$ 10')
     .max(999999, 'Orçamento máximo é R$ 999.999')
     .positive('Orçamento deve ser positivo'),
 
-  localizacao: z.string()
+  localizacao: z
+    .string()
     .min(3, 'Localização deve ter no mínimo 3 caracteres')
     .max(500, 'Localização deve ter no máximo 500 caracteres')
     .trim(),
 
-  categoria: z.enum(['design', 'dev', 'marketing', 'business', 'consultoria', 'escritor', 'tradutor', 'outro'], {
-    errorMap: () => ({ message: 'Categoria inválida' })
-  }),
+  categoria: z.enum(
+    ['design', 'dev', 'marketing', 'business', 'consultoria', 'escritor', 'tradutor', 'outro'],
+    {
+      errorMap: () => ({ message: 'Categoria inválida' }),
+    }
+  ),
 
   tags: z.array(z.string().max(50)).max(10, 'Máximo 10 tags').optional(),
 
   prazo: z.date().optional(),
 
-  urgente: z.boolean().optional()
+  urgente: z.boolean().optional(),
 });
 
 /**
  * Schema para login
  */
 const loginSchema = z.object({
-  email: z.string()
-    .email('Email inválido')
-    .max(255, 'Email muito longo')
-    .toLowerCase()
-    .trim(),
+  email: z.string().email('Email inválido').max(255, 'Email muito longo').toLowerCase().trim(),
 
-  password: z.string()
+  password: z
+    .string()
     .min(8, 'Senha deve ter no mínimo 8 caracteres')
-    .max(128, 'Senha deve ter no máximo 128 caracteres')
+    .max(128, 'Senha deve ter no máximo 128 caracteres'),
 });
 
 /**
  * Schema para registro de usuário
  */
 const registerSchema = z.object({
-  nome: z.string()
+  nome: z
+    .string()
     .min(2, 'Nome deve ter no mínimo 2 caracteres')
     .max(100, 'Nome deve ter no máximo 100 caracteres')
     .trim(),
 
-  email: z.string()
-    .email('Email inválido')
-    .max(255)
-    .toLowerCase()
-    .trim(),
+  email: z.string().email('Email inválido').max(255).toLowerCase().trim(),
 
-  password: z.string()
+  password: z
+    .string()
     .min(8, 'Senha deve ter no mínimo 8 caracteres')
     .max(128)
     .regex(/[A-Z]/, 'Senha deve conter pelo menos 1 letra maiúscula')
@@ -84,36 +86,35 @@ const registerSchema = z.object({
     .regex(/[0-9]/, 'Senha deve conter pelo menos 1 número'),
 
   tipo: z.enum(['cliente', 'prestador'], {
-    errorMap: () => ({ message: 'Tipo deve ser "cliente" ou "prestador"' })
+    errorMap: () => ({ message: 'Tipo deve ser "cliente" ou "prestador"' }),
   }),
 
-  telefone: z.string()
+  telefone: z
+    .string()
     .regex(/^\+?[1-9]\d{1,14}$/, 'Telefone inválido (formato internacional)')
     .optional(),
 
-  cpfCnpj: z.string()
+  cpfCnpj: z
+    .string()
     .regex(/^\d{11}$|^\d{14}$/, 'CPF/CNPJ inválido')
-    .optional()
+    .optional(),
 });
 
 /**
  * Schema para pagamento
  */
 const paymentSchema = z.object({
-  jobId: z.string()
-    .length(28, 'Job ID inválido (deve ter 28 caracteres)'),
+  jobId: z.string().length(28, 'Job ID inválido (deve ter 28 caracteres)'),
 
-  amount: z.number()
-    .positive('Valor deve ser positivo')
-    .max(999999, 'Valor máximo é R$ 999.999'),
+  amount: z.number().positive('Valor deve ser positivo').max(999999, 'Valor máximo é R$ 999.999'),
 
   currency: z.literal('BRL', {
-    errorMap: () => ({ message: 'Apenas BRL é aceito' })
+    errorMap: () => ({ message: 'Apenas BRL é aceito' }),
   }),
 
   paymentMethodId: z.string().optional(),
 
-  saveCard: z.boolean().optional()
+  saveCard: z.boolean().optional(),
 });
 
 /**
@@ -122,23 +123,24 @@ const paymentSchema = z.object({
 const proposalSchema = z.object({
   jobId: z.string().length(28),
 
-  valor: z.number()
-    .positive('Valor deve ser positivo')
-    .max(999999, 'Valor máximo é R$ 999.999'),
+  valor: z.number().positive('Valor deve ser positivo').max(999999, 'Valor máximo é R$ 999.999'),
 
-  prazo: z.number()
+  prazo: z
+    .number()
     .int('Prazo deve ser um número inteiro')
     .min(1, 'Prazo mínimo é 1 dia')
     .max(365, 'Prazo máximo é 365 dias'),
 
-  descricao: z.string()
+  descricao: z
+    .string()
     .min(20, 'Descrição deve ter no mínimo 20 caracteres')
     .max(2000, 'Descrição deve ter no máximo 2000 caracteres')
     .trim(),
 
-  portfolioLinks: z.array(
-    z.string().url('Link de portfólio inválido')
-  ).max(5, 'Máximo 5 links de portfólio').optional()
+  portfolioLinks: z
+    .array(z.string().url('Link de portfólio inválido'))
+    .max(5, 'Máximo 5 links de portfólio')
+    .optional(),
 });
 
 /**
@@ -149,21 +151,26 @@ const updateProfileSchema = z.object({
 
   bio: z.string().max(500).trim().optional(),
 
-  telefone: z.string().regex(/^\+?[1-9]\d{1,14}$/).optional(),
+  telefone: z
+    .string()
+    .regex(/^\+?[1-9]\d{1,14}$/)
+    .optional(),
 
-  endereco: z.object({
-    rua: z.string().max(200),
-    numero: z.string().max(10),
-    complemento: z.string().max(100).optional(),
-    bairro: z.string().max(100),
-    cidade: z.string().max(100),
-    estado: z.string().length(2),
-    cep: z.string().regex(/^\d{5}-?\d{3}$/)
-  }).optional(),
+  endereco: z
+    .object({
+      rua: z.string().max(200),
+      numero: z.string().max(10),
+      complemento: z.string().max(100).optional(),
+      bairro: z.string().max(100),
+      cidade: z.string().max(100),
+      estado: z.string().length(2),
+      cep: z.string().regex(/^\d{5}-?\d{3}$/),
+    })
+    .optional(),
 
   skills: z.array(z.string().max(50)).max(20, 'Máximo 20 skills').optional(),
 
-  hourlyRate: z.number().positive().max(10000).optional()
+  hourlyRate: z.number().positive().max(10000).optional(),
 });
 
 /**
@@ -172,17 +179,19 @@ const updateProfileSchema = z.object({
 const reviewSchema = z.object({
   jobId: z.string().length(28),
 
-  rating: z.number()
+  rating: z
+    .number()
     .int('Rating deve ser inteiro')
     .min(1, 'Rating mínimo é 1')
     .max(5, 'Rating máximo é 5'),
 
-  comentario: z.string()
+  comentario: z
+    .string()
     .min(10, 'Comentário deve ter no mínimo 10 caracteres')
     .max(1000, 'Comentário deve ter no máximo 1000 caracteres')
     .trim(),
 
-  anonimo: z.boolean().optional()
+  anonimo: z.boolean().optional(),
 });
 
 /**
@@ -205,7 +214,7 @@ const searchJobsSchema = z.object({
 
   page: z.number().int().min(1).optional(),
 
-  limit: z.number().int().min(1).max(100).optional()
+  limit: z.number().int().min(1).max(100).optional(),
 });
 
 /**
@@ -230,13 +239,13 @@ function validateRequest(schema) {
         const errors = error.errors.map(err => ({
           field: err.path.join('.'),
           message: err.message,
-          code: err.code
+          code: err.code,
         }));
 
         return res.status(400).json({
           error: 'Validação falhou',
           code: 'VALIDATION_ERROR',
-          details: errors
+          details: errors,
         });
       }
 
@@ -244,7 +253,7 @@ function validateRequest(schema) {
       console.error('[VALIDATION_ERROR]', error);
       return res.status(500).json({
         error: 'Erro interno na validação',
-        code: 'INTERNAL_ERROR'
+        code: 'INTERNAL_ERROR',
       });
     }
   };
@@ -266,20 +275,20 @@ function validateQuery(schema) {
       if (error instanceof z.ZodError) {
         const errors = error.errors.map(err => ({
           field: err.path.join('.'),
-          message: err.message
+          message: err.message,
         }));
 
         return res.status(400).json({
           error: 'Query parameters inválidos',
           code: 'VALIDATION_ERROR',
-          details: errors
+          details: errors,
         });
       }
 
       console.error('[QUERY_VALIDATION_ERROR]', error);
       return res.status(500).json({
         error: 'Erro interno na validação',
-        code: 'INTERNAL_ERROR'
+        code: 'INTERNAL_ERROR',
       });
     }
   };
@@ -300,7 +309,7 @@ const commonSchemas = {
   currency: z.literal('BRL'),
   date: z.coerce.date(), // Converte string para Date
   positiveNumber: z.number().positive(),
-  percentage: z.number().min(0).max(100)
+  percentage: z.number().min(0).max(100),
 };
 
 module.exports = {
@@ -319,5 +328,5 @@ module.exports = {
   validateQuery,
 
   // Helpers
-  commonSchemas
+  commonSchemas,
 };

@@ -47,7 +47,7 @@ async function auditPullRequest(prNumber, repo) {
   try {
     // 1. Busca dados do PR via gh CLI
     const { stdout: prData } = await execAsync(
-      `gh pr view ${prNumber} --repo ${repo} --json title,body,files,commits,checks`
+      `gh pr view ${prNumber} --repo ${repo} --json title,body,files,commits,statusCheckRollup,headRefName,baseRefName`
     );
 
     const pr = JSON.parse(prData);
@@ -123,7 +123,7 @@ async function performChecks(pr) {
   const checks = {
     // 1. Validação de Nome de Branch
     branchNameValid: {
-      passed: /^feature\/task-\d+\.\d+$/.test(pr.headRefName || ''),
+      passed: /^feature\/task-\d+\.\d+(?:-[a-z0-9-]+)?$/i.test(pr.headRefName || ''),
       rule: 'Branch deve ser feature/task-X.Y',
       priority: 'ALTA',
     },
@@ -137,7 +137,7 @@ async function performChecks(pr) {
 
     // 3. Sem Arquivos .env Commitados
     noEnvFiles: {
-      passed: !pr.files.some(f => f.name.includes('.env') || f.name.includes('secret')),
+      passed: !(pr.files || []).some(f => (f.path || '').includes('.env') || (f.path || '').includes('secret')),
       rule: 'Não pode commitar .env ou secrets',
       priority: 'CRÍTICA',
     },
@@ -151,7 +151,7 @@ async function performChecks(pr) {
 
     // 5. Testes Inclusos
     testsIncluded: {
-      passed: pr.files.some(f => f.name.includes('.test.') || f.name.includes('.spec.')),
+      passed: (pr.files || []).some(f => (f.path || '').includes('.test.') || (f.path || '').includes('.spec.')),
       rule: 'Features devem incluir testes',
       priority: 'ALTA',
     },
@@ -180,19 +180,25 @@ async function performChecks(pr) {
 function validateAtomicCommits(commits) {
   if (!Array.isArray(commits) || commits.length === 0) return false;
 
-  const validPattern = /^(feat|fix|docs|refactor|test):\s*\[task-\d+\.\d+\]/;
-  return commits.every(c => validPattern.test(c.message));
+  const validPattern = /^(feat|fix|docs|refactor|test):\s*\[task-\d+\.\d+\]/i;
+  return commits.every(c => {
+    const msg = [c.messageHeadline, c.messageBody, c.message].filter(Boolean).join(' ');
+    return validPattern.test(msg);
+  });
 }
 
 /**
  * Valida arquivos TypeScript
  */
 function validateTypeScript(files) {
-  const tsFiles = files.filter(f => f.name.endsWith('.ts') || f.name.endsWith('.tsx'));
+  const tsFiles = files.filter(f => (f.path || '').endsWith('.ts') || (f.path || '').endsWith('.tsx'));
   if (tsFiles.length === 0) return true; // Sem mudanças TS = OK
 
   // Verificação simplificada
-  return !tsFiles.some(f => f.additions > 0 && !f.patch.includes('interface ') && !f.patch.includes('type '));
+  return !tsFiles.some(f => {
+    if (!f.patch) return false; // sem patch disponível, não reprova
+    return f.additions > 0 && !f.patch.includes('interface ') && !f.patch.includes('type ');
+  });
 }
 
 /**

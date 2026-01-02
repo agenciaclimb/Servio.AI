@@ -19,16 +19,20 @@ function createMockDb() {
             async get() {
               const exists = Boolean(store[name][id]);
               return { exists, data: () => store[name][id] };
-            }
+            },
           };
-        }
+        },
       };
-    }
+    },
   };
 }
 
 describe('Stripe Webhook (checkout.session.completed)', () => {
-  let app; let db; let stripeMock; let escrowId; let paymentIntentId;
+  let app;
+  let db;
+  let stripeMock;
+  let escrowId;
+  let paymentIntentId;
   beforeEach(() => {
     process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test';
     db = createMockDb();
@@ -40,9 +44,9 @@ describe('Stripe Webhook (checkout.session.completed)', () => {
         constructEvent: () => ({
           id: 'evt_test_1',
           type: 'checkout.session.completed',
-          data: { object: { metadata: { escrowId }, payment_intent: paymentIntentId } }
-        })
-      }
+          data: { object: { metadata: { escrowId }, payment_intent: paymentIntentId } },
+        }),
+      },
     };
     app = createApp({ db, stripe: stripeMock });
   });
@@ -51,7 +55,7 @@ describe('Stripe Webhook (checkout.session.completed)', () => {
     const res = await request(app)
       .post('/api/stripe-webhook')
       .set('stripe-signature', 'test')
-      .set('Content-Type','application/json')
+      .set('Content-Type', 'application/json')
       .send(Buffer.from('{}')); // raw body for express.raw
     expect(res.status).toBe(200);
     const updated = db._store.escrows[escrowId];
@@ -60,9 +64,17 @@ describe('Stripe Webhook (checkout.session.completed)', () => {
   });
 
   it('is idempotent (second identical event does not alter data)', async () => {
-    await request(app).post('/api/stripe-webhook').set('stripe-signature', 'test').set('Content-Type','application/json').send(Buffer.from('{}'));
+    await request(app)
+      .post('/api/stripe-webhook')
+      .set('stripe-signature', 'test')
+      .set('Content-Type', 'application/json')
+      .send(Buffer.from('{}'));
     const first = { ...db._store.escrows[escrowId] };
-    await request(app).post('/api/stripe-webhook').set('stripe-signature', 'test').set('Content-Type','application/json').send(Buffer.from('{}'));
+    await request(app)
+      .post('/api/stripe-webhook')
+      .set('stripe-signature', 'test')
+      .set('Content-Type', 'application/json')
+      .send(Buffer.from('{}'));
     const second = db._store.escrows[escrowId];
     expect(second).toEqual(first);
   });

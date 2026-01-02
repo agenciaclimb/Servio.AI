@@ -13,7 +13,6 @@ const mockFirestore = {
 };
 
 describe('Cloud Functions Tests', () => {
-  
   describe('calculateProviderRate', () => {
     // Import the function (we'll need to export it separately for testing)
     const calculateProviderRate = (provider = {}, stats = {}) => {
@@ -27,13 +26,23 @@ describe('Cloud Functions Tests', () => {
 
       const profileComplete = headline && verificationStatus === 'verificado' ? 0.02 : 0;
       const highRating = averageRating >= 4.8 ? 0.02 : 0;
-      const volumeTier = totalRevenue >= 11000 ? 0.03 : totalRevenue >= 6000 ? 0.02 : totalRevenue >= 1500 ? 0.01 : 0;
+      const volumeTier =
+        totalRevenue >= 11000
+          ? 0.03
+          : totalRevenue >= 6000
+            ? 0.02
+            : totalRevenue >= 1500
+              ? 0.01
+              : 0;
       const lowDisputeRate = totalJobs > 0 && totalDisputes / totalJobs < 0.05 ? 0.01 : 0;
 
       let rate = baseRate + profileComplete + highRating + volumeTier + lowDisputeRate;
       rate = Math.min(0.85, rate);
 
-      const tier = highRating && profileComplete && volumeTier >= 0.02 && lowDisputeRate > 0 ? 'Ouro' : 'Bronze';
+      const tier =
+        highRating && profileComplete && volumeTier >= 0.02 && lowDisputeRate > 0
+          ? 'Ouro'
+          : 'Bronze';
 
       return {
         currentRate: Number(rate.toFixed(2)),
@@ -64,7 +73,7 @@ describe('Cloud Functions Tests', () => {
         averageRating: 4.9,
       };
       const result = calculateProviderRate({}, stats);
-        expect(result.currentRate).toBe(0.78); // 0.75 + 0.02 (high rating) + 0.01 (low disputes - 0/10)
+      expect(result.currentRate).toBe(0.78); // 0.75 + 0.02 (high rating) + 0.01 (low disputes - 0/10)
       expect(result.bonuses.highRating).toBe(0.02);
     });
 
@@ -99,7 +108,7 @@ describe('Cloud Functions Tests', () => {
         totalDisputes: 1,
       };
       const result = calculateProviderRate(provider, stats);
-        expect(result.currentRate).toBe(0.83); // 0.75 + 0.02 + 0.02 + 0.03 + 0.01 = 0.83
+      expect(result.currentRate).toBe(0.83); // 0.75 + 0.02 + 0.02 + 0.03 + 0.01 = 0.83
       expect(result.tier).toBe('Ouro');
     });
 

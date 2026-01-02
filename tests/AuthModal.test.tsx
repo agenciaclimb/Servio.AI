@@ -1,8 +1,23 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import AuthModal from '../components/AuthModal';
 import { User } from '../types';
+
+// Mock Firebase Auth - precisa estar antes dos imports do componente
+vi.mock('firebase/auth', () => ({
+  getAuth: vi.fn(() => ({})),
+  signInWithEmailAndPassword: vi.fn(() => Promise.resolve({ user: { email: 'test@test.com' } })),
+  createUserWithEmailAndPassword: vi.fn(() =>
+    Promise.resolve({ user: { email: 'test@test.com' } })
+  ),
+}));
+
+// Mock firebaseConfig
+vi.mock('../firebaseConfig', () => ({
+  auth: {},
+  signInWithGoogle: vi.fn(() => Promise.resolve({ user: { email: 'google@test.com' } })),
+}));
 
 const renderModal = (props?: Partial<React.ComponentProps<typeof AuthModal>>) => {
   const onClose = vi.fn();
@@ -23,7 +38,11 @@ const renderModal = (props?: Partial<React.ComponentProps<typeof AuthModal>>) =>
 };
 
 describe('AuthModal', () => {
-  it('renderiza título de login e envia credenciais', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('renderiza título de login e envia credenciais', async () => {
     const { onSuccess } = renderModal({ mode: 'login', userType: 'cliente' });
 
     expect(screen.getByText('Bem-vindo de volta!')).toBeInTheDocument();
@@ -34,7 +53,9 @@ describe('AuthModal', () => {
     fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'senhaSegura' } });
     fireEvent.click(screen.getByTestId('auth-submit-button'));
 
-    expect(onSuccess).toHaveBeenCalledWith('cliente@teste.com', 'cliente');
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledWith('cliente@teste.com', 'cliente');
+    });
   });
 
   it('permite alternar para cadastro e valida senhas diferentes', () => {
@@ -48,7 +69,7 @@ describe('AuthModal', () => {
     expect(onSwitchMode).toHaveBeenCalledWith('register');
   });
 
-  it('em modo register, valida combinação de senhas e mínimo de caracteres', () => {
+  it('em modo register, valida combinação de senhas e mínimo de caracteres', async () => {
     const { onSuccess } = renderModal({ mode: 'register', userType: 'prestador' });
 
     // Título para cadastro de prestador
@@ -76,7 +97,9 @@ describe('AuthModal', () => {
     fireEvent.click(screen.getByTestId('auth-submit-button'));
 
     // onSuccess deve ser chamado com userType recebido nas props (prestador)
-    expect(onSuccess).toHaveBeenCalledWith('pro@teste.com', 'prestador');
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledWith('pro@teste.com', 'prestador');
+    });
   });
 
   it('fecha ao clicar no botão de fechar (X) ou fora do modal', () => {
@@ -99,12 +122,15 @@ describe('AuthModal', () => {
     expect(onSwitchMode).toHaveBeenCalledWith('login');
   });
 
-  it('em login com prestador, dispara onSuccess com tipo correto', () => {
+  it('em login com prestador, dispara onSuccess com tipo correto', async () => {
     const { onSuccess } = renderModal({ mode: 'login', userType: 'prestador' });
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'pro@teste.com' } });
     fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'senhaOk' } });
     fireEvent.click(screen.getByTestId('auth-submit-button'));
-    expect(onSuccess).toHaveBeenCalledWith('pro@teste.com', 'prestador');
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledWith('pro@teste.com', 'prestador');
+    });
   });
 
   it('limpa mensagem de erro quando usuário corrige as senhas', () => {

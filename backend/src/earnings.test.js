@@ -42,7 +42,7 @@ describe('calculateProviderRate', () => {
 
   it('should add volume bonus based on total revenue', () => {
     const provider = { ...baseProvider, headline: '' }; // Incomplete profile
-    
+
     // Prata
     let result = calculateProviderRate(provider, { ...baseStats, totalRevenue: 1500 });
     expect(result.bonuses.volumeTier).toBe(0.01);
@@ -91,7 +91,7 @@ describe('calculateProviderRate', () => {
     // Adicionando um bônus hipotético para ultrapassar o teto
     const providerWithExtraBonus = { ...baseProvider, hasCriminalRecordCheck: true }; // Supondo que isso dê mais bônus no futuro
     const stats = { totalJobs: 100, averageRating: 5.0, totalRevenue: 20000, totalDisputes: 0 };
-    
+
     // A soma seria 0.75 + 0.02 (perfil) + 0.02 (avaliação) + 0.03 (volume) + 0.01 (disputa) = 0.83.
     // Para forçar o teto, vamos assumir que um futuro bônus de "resposta rápida" de 0.02 foi adicionado.
     // 0.83 + 0.02 = 0.85. Se adicionarmos mais, deve travar em 0.85.

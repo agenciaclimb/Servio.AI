@@ -30,7 +30,7 @@ vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(() => ({})),
 }));
 
-import HeroSection from '../../../components/HeroSection';
+import HeroSection from '../../components/HeroSection';
 
 describe('HeroSection - Comprehensive Quality Tests', () => {
   const user = userEvent.setup();
@@ -46,15 +46,16 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
   describe('Component Rendering', () => {
     it('should render without errors', () => {
       render(<HeroSection />);
-      expect(screen.getByRole('main', { hidden: true }) || document.body).toBeInTheDocument();
+      // O componente usa role="region", não role="main"
+      expect(screen.getByRole('region') || document.body).toBeInTheDocument();
     });
 
     it('should render hero heading', () => {
       render(<HeroSection />);
-      const heading = screen.queryByRole('heading');
-      if (heading) {
-        expect(heading).toBeInTheDocument();
-      }
+      // O componente usa h2 para o título, que tem role="heading"
+      const headings = screen.queryAllByRole('heading');
+      // Verifica se há pelo menos um heading, ou se há texto de título alternativo
+      expect(headings.length > 0 || screen.queryByText(/Servio/i)).toBeTruthy();
     });
 
     it('should render call-to-action buttons', () => {
@@ -92,7 +93,7 @@ describe('HeroSection - Comprehensive Quality Tests', () => {
   describe('Visual Elements', () => {
     it('should render images if present', () => {
       const { container } = render(<HeroSection />);
-      const _images = container.querySelectorAll('img');
+      const images = container.querySelectorAll('img');
       // Should have images or be ready for them
       if (images.length > 0) {
         images.forEach(img => {

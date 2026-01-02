@@ -1,13 +1,13 @@
 /**
  * Landing Pages Service Tests
- * 
+ *
  * Test Suite for LandingPageService
  * - AI-powered page generation with Gemini
  * - A/B variant creation
  * - Analytics tracking
  * - Event recording
  * - Page publishing
- * 
+ *
  * @module landingPageService.test
  */
 
@@ -17,8 +17,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
  * Mock Firestore implementation
  */
 const createMockDb = () => ({
-  collection: vi.fn((collectionName) => ({
-    doc: vi.fn((docId) => ({
+  collection: vi.fn(collectionName => ({
+    doc: vi.fn(docId => ({
       get: vi.fn(async () => ({
         exists: true,
         id: docId,
@@ -46,17 +46,17 @@ const createMockDb = () => ({
     add: vi.fn(async () => ({
       id: 'new-page-id',
     })),
-    where: vi.fn(function() {
+    where: vi.fn(function () {
       return this;
     }),
-    orderBy: vi.fn(function() {
+    orderBy: vi.fn(function () {
       return this;
     }),
-    limit: vi.fn(function() {
+    limit: vi.fn(function () {
       return this;
     }),
     get: vi.fn(async () => ({
-      forEach: vi.fn((callback) => {
+      forEach: vi.fn(callback => {
         callback({
           id: 'page-1',
           data: vi.fn(() => ({
@@ -78,7 +78,8 @@ const createMockGemini = () => ({
   getGenerativeModel: vi.fn(() => ({
     generateContent: vi.fn(async () => ({
       response: {
-        text: vi.fn(() => `
+        text: vi.fn(
+          () => `
           <!DOCTYPE html>
           <html>
           <head>
@@ -114,7 +115,8 @@ const createMockGemini = () => ({
             <script src="https://www.googletagmanager.com/gtag/js?id=GA_ID"></script>
           </body>
           </html>
-        `),
+        `
+        ),
       },
     })),
   })),
@@ -175,8 +177,9 @@ describe('LandingPageService', () => {
       }
 
       async generateLandingPage(params) {
-        const { serviceName, serviceType, description, targetAudience, prospectorEmail, ctaText } = params;
-        
+        const { serviceName, serviceType, description, targetAudience, prospectorEmail, ctaText } =
+          params;
+
         const response = await this.model.generateContent('test prompt');
         const htmlContent = response.response.text();
 
@@ -237,17 +240,20 @@ describe('LandingPageService', () => {
         }
 
         const variantId = `${pageId}_v${Date.now()}`;
-        await this.db.collection('landing_pages').doc(variantId).set({
-          ...originalData,
-          variantOf: pageId,
-          variantId,
-          htmlContent: modifiedHtml,
-          modifications,
-          createdAt: new Date(),
-          status: 'draft',
-          views: 0,
-          conversions: 0,
-        });
+        await this.db
+          .collection('landing_pages')
+          .doc(variantId)
+          .set({
+            ...originalData,
+            variantOf: pageId,
+            variantId,
+            htmlContent: modifiedHtml,
+            modifications,
+            createdAt: new Date(),
+            status: 'draft',
+            views: 0,
+            conversions: 0,
+          });
 
         await originalRef.update({
           variants: [...(originalData.variants || []), variantId],
@@ -277,7 +283,7 @@ describe('LandingPageService', () => {
         }
 
         updates.conversionRate = updates.conversions
-          ? (updates.conversions / updates.views * 100).toFixed(2)
+          ? ((updates.conversions / updates.views) * 100).toFixed(2)
           : 0;
 
         await pageRef.update(updates);
@@ -335,7 +341,7 @@ describe('LandingPageService', () => {
           .get();
 
         const pages = [];
-        snapshot.forEach((doc) => {
+        snapshot.forEach(doc => {
           pages.push({
             id: doc.id,
             ...doc.data(),
