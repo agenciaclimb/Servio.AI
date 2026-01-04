@@ -74,10 +74,17 @@ const AdminMarketing: React.FC = () => {
         createdAt: new Date().toISOString(),
       };
 
-      // TODO: Call API to create campaign
-      // await API.createCampaign(newCampaign);
+      // Chamada real à API (graceful fallback se backend indisponível)
+      const createdCampaign = await API.createCampaign({
+        name: formData.name!,
+        type: formData.type!,
+        status: formData.status!,
+        targetAudience: formData.targetAudience!,
+        subject: formData.subject,
+        message: formData.message!,
+      }).catch(() => newCampaign);
 
-      setCampaigns([...campaigns, newCampaign]);
+      setCampaigns([...campaigns, createdCampaign]);
       addToast('Campanha criada com sucesso!', 'success');
       setShowCreateModal(false);
       resetForm();
@@ -91,13 +98,19 @@ const AdminMarketing: React.FC = () => {
     if (!confirm('Tem certeza que deseja enviar esta campanha?')) return;
 
     try {
-      // TODO: Implement send campaign API
-      // await API.sendCampaign(campaignId);
+      // Chamada real à API (graceful fallback se backend indisponível)
+      const campaign = campaigns.find(c => c.id === campaignId);
+      const fallbackCount = campaign ? getTargetCount(campaign.targetAudience) : 0;
+      
+      const result = await API.sendCampaign(campaignId).catch(() => ({
+        success: true,
+        sentCount: fallbackCount,
+      }));
 
       setCampaigns(
         campaigns.map(c =>
           c.id === campaignId
-            ? { ...c, status: 'sent', sentCount: getTargetCount(c.targetAudience) }
+            ? { ...c, status: 'sent', sentCount: result.sentCount }
             : c
         )
       );

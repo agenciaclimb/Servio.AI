@@ -287,6 +287,29 @@ export async function fetchCampaigns(): Promise<MarketingCampaign[]> {
   }
 }
 
+export async function createCampaign(campaign: Omit<MarketingCampaign, 'id' | 'createdAt'>): Promise<MarketingCampaign> {
+  if (USE_MOCK) {
+    if (DEBUG) console.warn('[api] mock create campaign');
+    return { ...campaign, id: `campaign_${Date.now()}`, createdAt: new Date().toISOString() };
+  }
+
+  return await apiCall<MarketingCampaign>('/campaigns', {
+    method: 'POST',
+    body: JSON.stringify(campaign),
+  });
+}
+
+export async function sendCampaign(campaignId: string): Promise<{ success: boolean; sentCount: number }> {
+  if (USE_MOCK) {
+    if (DEBUG) console.warn('[api] mock send campaign');
+    return { success: true, sentCount: 100 };
+  }
+
+  return await apiCall<{ success: boolean; sentCount: number }>(`/campaigns/${campaignId}/send`, {
+    method: 'POST',
+  });
+}
+
 // ============================================================================
 // PROSPECTORS & COMMISSIONS
 // ============================================================================
