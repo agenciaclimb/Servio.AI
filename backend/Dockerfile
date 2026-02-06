@@ -16,11 +16,12 @@ COPY .build-version /tmp/.build-version
 # Copy source code
 COPY src/ ./src/
 
-# Expose port 8081 (default for backend)
-EXPOSE 8081
+# Expose port 8080 (Cloud Run default)
+EXPOSE 8080
 
 # Set NODE_ENV to production
 ENV NODE_ENV=production
+ENV PORT=8080
 
 # Start the server
 CMD ["node", "src/index.js"]
