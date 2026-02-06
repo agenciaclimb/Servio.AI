@@ -147,7 +147,7 @@ const defaultStripe = stripeContainer ? stripeContainer.instance : null; // Can 
 const defaultGenAI = process.env.GEMINI_API_KEY
   ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
   : null;
-const port = process.env.PORT || 8081;
+const PORT = process.env.PORT || 8080;
 
 /**
  * Calculate provider revenue share rate based on profile and performance stats.
@@ -4508,8 +4508,9 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Start the server only if the file is run directly
+
 if (require.main === module) {
-  console.log('[SERVER] Starting server on port', port);
+  console.log('[SERVER] Starting server on port', PORT);
   console.log('[SERVER] require.main:', require.main.filename);
   console.log('[SERVER] module:', module.filename);
 
@@ -4554,11 +4555,11 @@ if (require.main === module) {
 
   try {
     const host = '0.0.0.0'; // Listen on all interfaces (IPv4)
-    console.log('[SERVER] 🚀 Attempting to start server on', host, port);
+    console.log('[SERVER] 🚀 Attempting to start server on', host, PORT);
     console.log('[SERVER] app instance type:', typeof app);
     console.log('[SERVER] app.listen type:', typeof app.listen);
-    const server = app.listen(port, host, () => {
-      console.log(`[SERVER] ✅ Firestore Backend Service listening on ${host}:${port}`);
+    const server = app.listen(PORT, host, () => {
+      console.log(`[SERVER] ✅ Firestore Backend Service listening on ${host}:${PORT}`);
       console.log('[SERVER] Server address:', server.address());
     });
 
@@ -4588,7 +4589,7 @@ if (require.main === module) {
 
     // Heartbeat to keep terminal alive
     setInterval(() => {
-      console.log('[SERVER] Heartbeat - Server running on port', port);
+      console.log('[SERVER] Heartbeat - Server running on port', PORT);
     }, 30000); // Every 30 seconds
   } catch (err) {
     console.error('[SERVER] Fatal error starting server:', err);
