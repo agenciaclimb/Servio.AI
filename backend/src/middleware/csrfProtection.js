@@ -139,18 +139,48 @@ function setupCsrfProtection(app, options = {}) {
   // 1. Cookie parser (necessário para csrf-csrf)
   app.use(cookieParser());
 
-  // 2. Aplicar CSRF com exemptions
-  app.use(csrfExempt(exempt));
+  // 2. Aplicar proteção CSRF com exemptions
+  app.use((req, res, next) => {
+    const path = req.path || req.url;
+    const isExempt = exempt.some(exemptPath => {
+      if (exemptPath.endsWith('*')) {
+        const prefix = exemptPath.slice(0, -1);
+        return path.startsWith(prefix);
+      }
+      return path === exemptPath;
+    });
 
-  // 3. Adicionar token em todas as respostas
-  app.use(addCsrfToken);
+    if (isExempt) {
+      console.log(`[CSRF] Exempting path: ${path}`);
+      return next(); // Pula CSRF completamente
+    }
 
-  // 4. Error handler para CSRF
+    // Não é isenta, aplicar CSRF
+    try {
+      console.log('[CSRF] Attempting to generate token for', req.method, path);
+      const token = generateToken(req, res);
+      console.log('[CSRF] Token generated successfully, length:', token ? token.length : 0);
+      res.locals.csrfToken = token;
+      res.setHeader('X-CSRF-Token', token);
+      
+      // Aplicar validação CSRF
+      doubleCsrfProtection(req, res, next);
+    } catch (error) {
+      console.error('[CSRF] Erro ao gerar token:', error);
+      console.error('[CSRF] Error stack:', error.stack);
+      return res.status(500).json({
+        error: 'Erro ao gerar token de segurança',
+        code: 'CSRF_GENERATION_ERROR',
+      });
+    }
+  });
+
+  // 3. Error handler para CSRF
   app.use(csrfErrorHandler);
 
   console.log('[CSRF] Protection configurada com exemptions:', exempt);
 
-  // 5. Rotação automática (opcional)
+  // 4. Rotação automática (opcional)
   if (enableRotation) {
     app.use('/api/login', rotateCsrfToken);
     app.use('/api/logout', rotateCsrfToken);
