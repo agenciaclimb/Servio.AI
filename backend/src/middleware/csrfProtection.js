@@ -25,6 +25,11 @@ if (!csrfSecret && process.env.NODE_ENV === 'production') {
   );
 }
 
+// Debug logging
+console.log('[CSRF] Initializing with NODE_ENV:', process.env.NODE_ENV);
+console.log('[CSRF] CSRF_SECRET exists:', !!csrfSecret);
+console.log('[CSRF] CSRF_SECRET length:', csrfSecret ? csrfSecret.length : 0);
+
 const { generateToken, doubleCsrfProtection } = doubleCsrf({
   getSecret: () => csrfSecret || 'change-me-in-production-random-64-chars-minimum',
   cookieName: 'psifi.x-csrf-token',
@@ -44,12 +49,15 @@ const { generateToken, doubleCsrfProtection } = doubleCsrf({
  */
 function addCsrfToken(req, res, next) {
   try {
+    console.log('[CSRF] Attempting to generate token for', req.method, req.path);
     const token = generateToken(req, res);
+    console.log('[CSRF] Token generated successfully, length:', token ? token.length : 0);
     res.locals.csrfToken = token;
     res.setHeader('X-CSRF-Token', token);
     next();
   } catch (error) {
     console.error('[CSRF] Erro ao gerar token:', error);
+    console.error('[CSRF] Error stack:', error.stack);
     return res.status(500).json({
       error: 'Erro ao gerar token de segurança',
       code: 'CSRF_GENERATION_ERROR',
