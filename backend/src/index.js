@@ -292,7 +292,7 @@ function createApp({
   const isDevMode = process.env.NODE_ENV === 'development' || !process.env.NODE_ENV;
   if (!isTestEnv && !isDevMode) {
     setupCsrfProtection(app, {
-      exempt: ['/api/stripe-webhook', '/api/webhooks/*'],
+      exempt: ['/api/stripe-webhook', '/api/webhooks/*', '/api/health', '/api/version', '/api/routes'],
       enableRotation: true,
     });
     createCsrfTokenEndpoint(app);
