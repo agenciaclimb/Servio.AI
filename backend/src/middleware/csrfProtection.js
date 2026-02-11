@@ -27,7 +27,7 @@ if (!csrfSecret && process.env.NODE_ENV === 'production') {
 
 const { generateToken, doubleCsrfProtection } = doubleCsrf({
   getSecret: () => csrfSecret || 'change-me-in-production-random-64-chars-minimum',
-  cookieName: '__Host-psifi.x-csrf-token',
+  cookieName: 'psifi.x-csrf-token',
   cookieOptions: {
     httpOnly: true,
     sameSite: 'lax',
