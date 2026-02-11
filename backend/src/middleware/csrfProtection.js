@@ -31,6 +31,7 @@ const { generateToken, doubleCsrfProtection } = doubleCsrf({
   cookieOptions: {
     httpOnly: true,
     sameSite: 'lax',
+    path: '/',
     secure: process.env.NODE_ENV === 'production',
     maxAge: 3600000, // 1 hora
   },
