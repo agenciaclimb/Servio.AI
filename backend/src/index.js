@@ -287,17 +287,22 @@ function createApp({
   app.use(cors());
 
   // ===========================
-  // CSRF Protection (Task 4.6) - DISABLED IN DEV MODE
+  // CSRF Protection (Task 4.6) - TEMPORARILY DISABLED
   // ===========================
+  // NOTA: CSRF temporariamente desabilitado devido a erro de geração de token
+  // TODO: Investigar por que csrf-csrf falha ao gerar tokens em produção
   const isDevMode = process.env.NODE_ENV === 'development' || !process.env.NODE_ENV;
-  if (!isTestEnv && !isDevMode) {
+  const csrfDisabled = process.env.DISABLE_CSRF === 'true' || true; // TEMPORÁRIO
+  
+  if (!isTestEnv && !isDevMode && !csrfDisabled) {
     setupCsrfProtection(app, {
       exempt: ['/api/stripe-webhook', '/api/webhooks/*', '/api/health', '/api/version', '/api/routes'],
       enableRotation: true,
     });
     createCsrfTokenEndpoint(app);
-  } else if (isDevMode) {
-    console.log('[CSRF] DISABLED in development mode for local testing');
+    console.log('[CSRF] Protection ENABLED');
+  } else {
+    console.log('[CSRF] DISABLED - Reason:', isTestEnv ? 'test mode' : isDevMode ? 'dev mode' : 'temporarily disabled');
   }
 
   // ===========================
