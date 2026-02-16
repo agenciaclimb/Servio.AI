@@ -25,10 +25,12 @@ if (!csrfSecret && process.env.NODE_ENV === 'production') {
   );
 }
 
-// Debug logging
-console.log('[CSRF] Initializing with NODE_ENV:', process.env.NODE_ENV);
-console.log('[CSRF] CSRF_SECRET exists:', !!csrfSecret);
-console.log('[CSRF] CSRF_SECRET length:', csrfSecret ? csrfSecret.length : 0);
+// Debug logging (apenas em desenvolvimento)
+if (process.env.NODE_ENV !== 'production') {
+  console.log('[CSRF] Initializing with NODE_ENV:', process.env.NODE_ENV);
+  console.log('[CSRF] CSRF_SECRET exists:', !!csrfSecret);
+  console.log('[CSRF] CSRF_SECRET length:', csrfSecret ? csrfSecret.length : 0);
+}
 
 const { generateToken, doubleCsrfProtection } = doubleCsrf({
   getSecret: () => csrfSecret || 'change-me-in-production-random-64-chars-minimum',

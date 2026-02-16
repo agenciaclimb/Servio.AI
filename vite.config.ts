@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => {
       minify: 'terser', // Usar terser para minificação mais agressiva
       terserOptions: {
         compress: {
-          drop_console: true, // Remover console.log em produção
+          drop_console: false, // MANTER console.log para debug de features
           drop_debugger: true,
         },
       },

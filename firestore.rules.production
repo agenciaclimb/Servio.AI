@@ -1,0 +1,308 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // =================================
+    // Helper Functions - Task 1.4
+    // 
+    // REWRITTEN: Using custom claims from JWT token instead of Firestore reads.
+    // This eliminates performance bottlenecks and improves security by making
+    // authorization claims immutable (signed by Firebase Auth).
+    //
+    // Custom claims populated by Cloud Function (Task 1.1):
+    // - request.auth.token.role: 'admin' | 'cliente' | 'prestador' | 'prospector'
+    //
+    // For email-based access control (temporary until migration to uid):
+    // - request.auth.token.email: User's email from Firebase Auth token
+    // =================================
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // Temporary: Email-based ownership (documents still keyed by email)
+    // This is used during transition period until complete migration to uid-based IDs
+    function authEmail() {
+      return isSignedIn() ? request.auth.token.email : null;
+    }
+
+    function isOwnerEmail(docId) {
+      return isSignedIn() && authEmail() == docId;
+    }
+
+    // ✅ Task 1.4: Role-based access using custom claims (no Firestore reads)
+    function getRole() {
+      return request.auth.token.role;
+    }
+
+    function isAdmin() {
+      return getRole() == 'admin';
+    }
+    
+    function isClient() {
+      return getRole() == 'cliente';
+    }
+
+    function isProvider() {
+      return getRole() == 'prestador';
+    }
+
+    function isProspector() {
+      return getRole() == 'prospector';
+    }
+
+    // Job participation is checked directly via email in rules (no get() calls)
+    // Jobs still use email as clientId/providerId until migration to uid-based IDs
+    // This approach avoids Firestore reads while maintaining security during transition
+
+    // =================================
+    // Collection Rules
+    // =================================
+
+    match /users/{userId} {
+      // ✅ Task 1.4: Use uid field in document for ownership verification
+      // Fall back to email comparison for temporary compatibility during migration
+      allow read: if (isSignedIn() && request.auth.uid == resource.data.uid) || isAdmin();
+      
+      // User can create their own document
+      // userId is still email (document ID), but uid from Firebase Auth must be present
+      allow create: if isSignedIn() 
+                    && authEmail() == userId
+                    && request.resource.data.email == userId
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.type in ['cliente', 'prestador', 'prospector', 'admin']
+                    && request.resource.data.name is string
+                    && request.resource.data.email is string;
+
+      // ✅ Task 1.4: Use custom claims for role validation (no type field read needed)
+      // User can update own profile without changing role
+      // Admin can update any profile
+      allow update: if (isSignedIn() && request.auth.uid == resource.data.uid && 
+                       request.resource.data.type == resource.data.type)
+                    || isAdmin();
+      
+      allow delete: if false;
+    }
+
+    match /jobs/{jobId} {
+      // ✅ Task 1.4: Check participation directly via email (no get() calls)
+      // Jobs still use email as clientId/providerId until migration
+      allow read: if (isSignedIn() && (authEmail() == resource.data.clientId || authEmail() == resource.data.providerId)) || isAdmin();
+      
+      // ✅ Task 1.4: isClient() uses custom claim (no Firestore read)
+      allow create: if isClient() 
+                    && isOwnerEmail(request.resource.data.clientId)
+                    && request.resource.data.title is string
+                    && request.resource.data.description is string
+                    && request.resource.data.category is string;
+      
+      allow update: if ((isSignedIn() && (authEmail() == resource.data.clientId || authEmail() == resource.data.providerId) && !('status' in request.resource.data.diff.changedKeys())))
+                    || isAdmin();
+      
+      allow delete: if false;
+
+      // Marketplace matching subcollection (read-only for client/admin, write via backend/admin)
+      match /potential_matches/{matchId} {
+        allow read: if isAdmin() || (
+          isSignedIn() &&
+          get(/databases/$(database)/documents/jobs/$(jobId)).data.clientId == authEmail()
+        );
+
+        // Writes devem ocorrer apenas pelo backend (service account/admin)
+        allow create, update, delete: if isAdmin();
+      }
+    }
+
+    match /proposals/{proposalId} {
+      // ✅ Task 1.4: Direct email check (no get() calls) - prevents information leak
+      // Only job participants can read proposals for that job
+      allow read: if isSignedIn() && (authEmail() == resource.data.clientId || authEmail() == resource.data.providerId);
+      
+      // ✅ Task 1.4: isProvider() uses custom claim (no get() calls)
+      allow create: if isProvider() 
+                    && isOwnerEmail(request.resource.data.providerId)
+                    && request.resource.data.amount is number
+                    && request.resource.data.amount > 0
+                    && request.resource.data.jobId is string;
+                    
+      // ✅ Task 1.4: Client can update proposal to accept/reject (no get() calls)
+      // Assume client owns job if they are updating it - full validation in backend
+      allow update: if isClient()
+                    && (request.resource.data.status in ['accepted', 'rejected']);
+      
+      allow delete: if false;
+    }
+
+    match /messages/{messageId} {
+      // ✅ Task 1.4: Direct email check (no get() calls)
+      // Only participants of the chat (job) can read or create messages
+      // chatId = jobId, so check if user is client or provider of that job
+      allow read: if isSignedIn() && (authEmail() == resource.data.clientId || authEmail() == resource.data.providerId);
+      // Sender must be a job participant and must set their email as sender
+      allow create: if isSignedIn() && (authEmail() == request.resource.data.clientId || authEmail() == request.resource.data.providerId)
+                    && isOwnerEmail(request.resource.data.sender)
+                    && request.resource.data.text is string
+                    && request.resource.data.createdAt is timestamp;
+      allow update, delete: if false;
+    }
+
+    match /notifications/{notificationId} {
+      // Recipient can read/update notifications (userId = email)
+      allow read, update: if isOwnerEmail(resource.data.userId);
+      // Only the system (backend) can create notifications, so client writes are disallowed
+      allow create, delete: if false;
+    }
+
+    match /escrows/{escrowId} {
+      // ✅ Task 1.4: Direct email check (no get() calls)
+      // Only participants or admins can read escrow details
+      allow read: if (isSignedIn() && (authEmail() == resource.data.clientId || authEmail() == resource.data.providerId)) || isAdmin();
+      // Only the system (backend) can create or update escrows
+      allow create, update, delete: if false;
+    }
+
+    match /fraud_alerts/{alertId} {
+      // Only admins can read/update fraud alerts
+      allow read, update: if isAdmin();
+      // Only the system (backend) can create alerts
+      allow create, delete: if false;
+    }
+
+    match /disputes/{disputeId} {
+      // ✅ Task 1.4: Direct email check (no get() calls)
+      // Only the initiator, the other job participant, or an admin can read
+      allow read: if (isSignedIn() && (authEmail() == resource.data.clientId || authEmail() == resource.data.providerId)) || isAdmin();
+      // A job participant can create a dispute
+      allow create: if isSignedIn() && (authEmail() == request.resource.data.clientId || authEmail() == request.resource.data.providerId);
+      // Only an admin can resolve (update) a dispute
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /maintained_items/{itemId} {
+      // Owner can manage items (clientId = email)
+      allow read, create, update, delete: if isOwnerEmail(resource.data.clientId);
+    }
+
+    match /bids/{bidId} {
+      // ✅ Task 1.4: Direct email check (no get() calls)
+      // Similar to proposals - only job participants can read
+      allow read: if isSignedIn() && (authEmail() == resource.data.clientId || authEmail() == resource.data.providerId);
+      
+      // ✅ Task 1.4: isProvider() uses custom claim (no get() calls)
+      allow create: if isProvider() 
+                    && isOwnerEmail(request.resource.data.providerId)
+                    && request.resource.data.amount is number
+                    && request.resource.data.amount > 0;
+      
+      allow update, delete: if false;
+    }
+
+    // =================================
+    // Prospecting Module Rules
+    // =================================
+    
+    match /referral_links/{prospectorId} {
+      // ✅ Task 1.4: isProspector() uses custom claim
+      allow read, create, update: if isProspector() || isAdmin();
+      allow delete: if false;
+    }
+
+    match /referral_clicks/{clickId} {
+      // Prospector pode ler apenas cliques relacionados ao seu próprio link
+      allow read: if (isSignedIn() && resource.data.prospectorId == authEmail()) || isAdmin();
+      // Escrita somente via backend (Cloud Run / Functions) – front não grava direto
+      allow create, update, delete: if false;
+    }
+
+    match /referral_conversions/{conversionId} {
+      // ✅ Task 1.4: isAdmin() uses custom claim
+      // Somente admin e o próprio prospector podem ler conversões ligadas ao seu link
+      allow read: if isAdmin() || (isSignedIn() && resource.data.prospectorId == authEmail());
+      // Escrita apenas via backend (registro de conversão)
+      allow create, update, delete: if false;
+    }
+
+    match /message_templates/{templateId} {
+      // All signed-in users can read templates
+      allow read: if isSignedIn();
+      // ✅ Task 1.4: isAdmin() uses custom claim
+      // Only admin can create/update templates
+      allow create, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /notification_settings/{userId} {
+      // ✅ Task 1.4: isOwner() uses custom claim (request.auth.uid)
+      // User pode ler/gravar as próprias configurações (ID = UID ou email)
+      allow read, write: if isOwner(userId) || isOwnerEmail(userId);
+    }
+
+    match /notification_preferences/{prospectorId} {
+      // Preferências de notificação específicas de prospector (coleção usada por notificationService.ts)
+      allow read, write: if isOwnerEmail(prospectorId) || isAdmin();
+    }
+
+    match /prospector_stats/{prospectorId} {
+      // Only prospector themselves or admin can read their stats (prevent disclosure)
+      // ✅ Task 1.4: isAdmin() uses custom claim
+      allow read: if isOwnerEmail(prospectorId) || isOwner(prospectorId) || isAdmin();
+      // System updates stats (admin/backend only)
+      allow write: if isAdmin();
+    }
+
+    match /prospector_leaderboard/{entryId} {
+      // Anyone signed in can read leaderboard
+      allow read: if isSignedIn();
+      // ✅ Task 1.4: isAdmin() uses custom claim
+      // Only system can write
+      allow write: if isAdmin();
+    }
+
+    // Prospector personal CRM leads
+    match /prospector_prospects/{leadId} {
+      // Prospector can read only their own leads
+      allow read: if isSignedIn() && resource.data.prospectorId == authEmail();
+      // ✅ Task 1.4: isProspector() uses custom claim
+      // Create allowed only for prospectors creating their own lead documents
+      allow create: if isProspector()
+                    && request.resource.data.prospectorId == authEmail()
+                    && request.resource.data.name is string
+                    && request.resource.data.phone is string
+                    && request.resource.data.createdAt is timestamp
+                    && request.resource.data.updatedAt is timestamp;
+      // Update/Delete allowed only by the owner prospector
+      allow update, delete: if isProspector() && resource.data.prospectorId == authEmail();
+    }
+
+    match /admin_logs/{logId} {
+      // ✅ Task 1.4: isAdmin() uses custom claim (no Firestore read)
+      // Only admin can read logs
+      allow read: if isAdmin();
+      // Only backend/admin can create logs
+      allow create, update, delete: if false;
+    }
+
+    // =================================
+    // Supplementary Rules (if needed)
+    // =================================
+
+    match /analytics/{documentId=**} {
+      // Analytics data - readable by all signed-in users
+      // Write only for admin/backend
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /system_config/{configId} {
+      // System configuration - readable by all signed-in users
+      // Write only for admin/backend
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}

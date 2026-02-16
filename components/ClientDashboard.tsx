@@ -620,84 +620,92 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="p-3 sm:p-6 flex-1">
-          <div className="flex items-center gap-2 mb-6 sm:mb-8">
-            <span className="text-xl sm:text-2xl">👋</span>
+        <div className="p-4 sm:p-6 flex-1">
+          {/* Cabeçalho do perfil */}
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
             <div>
-              <p className="text-xs sm:text-sm font-semibold text-gray-900">
+              <p className="text-base font-semibold text-gray-900">
                 {user.name.split(' ')[0]}!
               </p>
               <button
                 onClick={() => setIsProfileModalOpen(true)}
-                className="text-xs text-blue-600 hover:underline"
+                className="text-sm text-blue-600 hover:underline font-medium"
               >
-                Conta
+                Minha Conta
               </button>
             </div>
           </div>
 
-          <nav className="space-y-1">
+          {/* Menu de navegação melhorado */}
+          <nav className="space-y-2">
             <button
               onClick={() => {
                 setCurrentView('inicio');
                 setIsMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+              className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
                 currentView === 'inicio'
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <span className="text-base sm:text-lg">🏠</span>
-              <span className="hidden sm:inline">Início</span>
-              <span className="sm:hidden">Início</span>
+              <span className="text-2xl">🏠</span>
+              <span>Início</span>
             </button>
             <button
               onClick={() => {
                 setCurrentView('servicos');
                 setIsMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+              className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
                 currentView === 'servicos'
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <span className="text-base sm:text-lg">📋</span>
-              <span className="truncate">Serviços</span>
+              <span className="text-2xl">📋</span>
+              <span>Serviços</span>
             </button>
             <button
               onClick={() => {
                 setCurrentView('itens');
                 setIsMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+              className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
                 currentView === 'itens'
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <span className="text-base sm:text-lg">📦</span>
-              <span className="truncate">Itens</span>
+              <span className="text-2xl">🛠️</span>
+              <span>Meus Itens</span>
             </button>
             <button
               onClick={() => {
                 setCurrentView('ajuda');
                 setIsMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+              className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
                 currentView === 'ajuda'
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <span className="text-base sm:text-lg">❓</span>
-              <span className="truncate">Ajuda</span>
+              <span className="text-2xl">❓</span>
+              <span>Ajuda</span>
             </button>
           </nav>
         </div>
-        <div className="p-3 sm:p-6 border-t border-gray-200">
-          <button className="text-xs sm:text-sm text-gray-600 hover:text-blue-600">Sair</button>
+        
+        {/* Rodapé do menu */}
+        <div className="p-4 sm:p-6 border-t border-gray-200">
+          <button className="w-full flex items-center gap-3 px-4 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+            <span className="text-xl">🚪</span>
+            <span className="text-sm font-medium">Sair da conta</span>
+          </button>
         </div>
       </aside>
 

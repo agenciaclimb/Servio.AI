@@ -16,19 +16,19 @@ const helmet = require('helmet');
 
 /**
  * Configuração de Content Security Policy
+ * NOTA: 'unsafe-inline' removido para maior segurança
+ * Frontend deve usar nonces ou hashes para scripts/styles inline
  */
 const cspDirectives = {
   defaultSrc: ["'self'"],
   scriptSrc: [
     "'self'",
-    "'unsafe-inline'", // TODO: Remover quando possível (usar nonces)
     'https://www.googletagmanager.com',
     'https://www.google-analytics.com',
     'https://js.stripe.com',
   ],
   styleSrc: [
     "'self'",
-    "'unsafe-inline'", // TODO: Remover quando possível
     'https://fonts.googleapis.com',
   ],
   imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
@@ -37,6 +37,7 @@ const cspDirectives = {
     "'self'",
     'https://api.servio.ai',
     'https://servio-backend-v2-1000250760228.us-west1.run.app',
+    'https://gen-lang-client-0737507616.web.app',
     'https://firestore.googleapis.com',
     'https://www.google-analytics.com',
     'https://api.stripe.com',

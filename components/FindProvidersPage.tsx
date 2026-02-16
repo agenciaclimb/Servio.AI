@@ -30,18 +30,82 @@ const FindProvidersPage: React.FC<FindProvidersPageProps> = ({
   const [sortBy, setSortBy] = useState<SortBy>('relevance');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Extract location from search query (simple NLP)
+  const extractLocationFromQuery = (query: string): string => {
+    const lowerQuery = query.toLowerCase();
+    
+    // Common prepositions that indicate location in Portuguese
+    const locationPatterns = [
+      /\s+em\s+([a-záàâãéèêíïóôõöúçñ\s]+?)(?:\s|$)/i,
+      /\s+de\s+([a-záàâãéèêíïóôõöúçñ\s]+?)(?:\s|$)/i,
+      /\s+na\s+([a-záàâãéèêíïóôõöúçñ\s]+?)(?:\s|$)/i,
+      /\s+no\s+([a-záàâãéèêíïóôõöúçñ\s]+?)(?:\s|$)/i,
+    ];
+    
+    // List of common Brazilian cities and states
+    const commonLocations = [
+      'são paulo', 'rio de janeiro', 'belo horizonte', 'brasília', 'salvador',
+      'fortaleza', 'recife', 'curitiba', 'porto alegre', 'manaus', 'belém',
+      'goiânia', 'campinas', 'guarulhos', 'são luís', 'são gonçalo', 'maceió',
+      'duque de caxias', 'natal', 'campo grande', 'teresina', 'são bernardo do campo',
+      'nova iguaçu', 'joão pessoa', 'santo andré', 'osasco', 'jaboatão dos guararapes',
+      'são josé dos campos', 'ribeirão preto', 'uberlândia', 'sorocaba', 'contagem',
+      'sp', 'rj', 'mg', 'ba', 'pr', 'rs', 'pe', 'ce', 'pa', 'sc', 'go', 'ma', 'es',
+      'pb', 'am', 'rn', 'mt', 'df', 'ms', 'al', 'pi', 'se', 'ro', 'to', 'ac', 'ap', 'rr'
+    ];
+    
+    // Try to match location patterns
+    for (const pattern of locationPatterns) {
+      const match = query.match(pattern);
+      if (match && match[1]) {
+        const potentialLocation = match[1].trim();
+        // Verify if it's a known location
+        if (commonLocations.some(loc => potentialLocation.toLowerCase().includes(loc))) {
+          return potentialLocation.charAt(0).toUpperCase() + potentialLocation.slice(1);
+        }
+        return potentialLocation.charAt(0).toUpperCase() + potentialLocation.slice(1);
+      }
+    }
+    
+    // Direct match with common locations (without prepositions)
+    for (const location of commonLocations) {
+      if (lowerQuery.includes(location)) {
+        return location.split(' ').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+      }
+    }
+    
+    return '';
+  };
+
   const handleAISearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim() === '') return;
 
     setIsLoading(true);
     try {
-      // AI parsing disabled (unused types). Simple fallback search only.
-      setFilters(prev => ({ ...prev, service: searchQuery }));
+      // Extract location from search query
+      const detectedLocation = extractLocationFromQuery(searchQuery);
+      
+      console.log('🔍 [FindProviders] Busca:', searchQuery);
+      console.log('📍 [FindProviders] Localização detectada:', detectedLocation);
+      
+      // Update filters with service and auto-detected location
+      setFilters(prev => ({ 
+        ...prev, 
+        service: searchQuery,
+        location: detectedLocation || prev.location // Keep existing if none detected
+      }));
+      
+      // Show feedback if location was detected
+      if (detectedLocation) {
+        console.info(`✅ Localização preenchida automaticamente: ${detectedLocation}`);
+      }
     } catch (error) {
       console.error('AI Search failed:', error);
       // Fallback to basic search if AI fails
-      setFilters(prev => ({ ...prev, service: searchQuery, location: '' }));
+      setFilters(prev => ({ ...prev, service: searchQuery }));
     } finally {
       setIsLoading(false);
     }

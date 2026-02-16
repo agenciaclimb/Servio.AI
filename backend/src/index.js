@@ -282,27 +282,50 @@ function createApp({
   }
 
   // ===========================
-  // CORS (antes do CSRF)
+  // CORS (antes do CSRF) - RESTRITO A DOMÍNIOS AUTORIZADOS
   // ===========================
-  app.use(cors());
+  const allowedOrigins = [
+    'https://gen-lang-client-0737507616.web.app',
+    'https://servio-backend-v2-611018430672.us-west1.run.app',
+    'http://localhost:3000', // Dev frontend
+    'http://localhost:4173', // Vite preview
+  ];
+
+  app.use(cors({
+    origin: (origin, callback) => {
+      // Permitir requisições sem origin (mobile apps, Postman, etc.)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn('[CORS] Origem bloqueada:', origin);
+        callback(new Error('Origem não permitida pelo CORS'));
+      }
+    },
+    credentials: true, // Permitir cookies
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-XSRF-TOKEN', 'X-CSRF-TOKEN'],
+  }));
 
   // ===========================
-  // CSRF Protection (Task 4.6) - TEMPORARILY DISABLED
+  // CSRF Protection V2 (Task 4.6) - REABILITADO
   // ===========================
-  // NOTA: CSRF temporariamente desabilitado devido a erro de geração de token
-  // TODO: Investigar por que csrf-csrf falha ao gerar tokens em produção
+  // Implementação manual robusta usando Double Submit Cookie pattern
+  // Migrado de csrf-csrf para solução nativa (mais estável em Cloud Run)
   const isDevMode = process.env.NODE_ENV === 'development' || !process.env.NODE_ENV;
-  const csrfDisabled = process.env.DISABLE_CSRF === 'true' || true; // TEMPORÁRIO
+  const csrfDisabled = process.env.DISABLE_CSRF === 'true'; // Removido || true
   
-  if (!isTestEnv && !isDevMode && !csrfDisabled) {
-    setupCsrfProtection(app, {
+  if (!isTestEnv && !csrfDisabled) {
+    const { setupCsrfProtection: setupCsrfV2, createCsrfTokenEndpoint: createCsrfV2 } = require('./middleware/csrfProtectionV2');
+    setupCsrfV2(app, {
       exempt: ['/api/stripe-webhook', '/api/webhooks/*', '/api/health', '/api/version', '/api/routes'],
       enableRotation: true,
     });
-    createCsrfTokenEndpoint(app);
-    console.log('[CSRF] Protection ENABLED');
+    createCsrfV2(app);
+    console.log('[CSRF-V2] Protection ENABLED (production-ready)');
   } else {
-    console.log('[CSRF] DISABLED - Reason:', isTestEnv ? 'test mode' : isDevMode ? 'dev mode' : 'temporarily disabled');
+    console.log('[CSRF-V2] DISABLED - Reason:', isTestEnv ? 'test mode' : 'manual override');
   }
 
   // ===========================
@@ -426,8 +449,9 @@ function createApp({
     }
   });
 
-  // List registered routes (safe diagnostics, no secrets)
-  app.get('/api/routes', (_req, res) => {
+  // List registered routes (PROTEGIDO - ADMIN ONLY)
+  const { requireAdmin } = require('./authorizationMiddleware');
+  app.get('/api/routes', requireAdmin, (_req, res) => {
     try {
       const routes = [];
       const stack = app._router && app._router.stack ? app._router.stack : [];
@@ -446,7 +470,7 @@ function createApp({
           });
         }
       });
-      console.log('[/api/routes] Responding with', routes.length, 'routes');
+      console.log('[/api/routes] Admin acessou lista de rotas:', _req.user?.email);
       return res.status(200).json({ total: routes.length, routes });
     } catch (e) {
       console.error('[/api/routes] Error enumerating routes:', e);
@@ -3705,8 +3729,11 @@ Retorne apenas o corpo do email, sem assunto.`;
     }
   });
 
-  // Create a new job (with /api prefix)
-  app.post('/api/jobs', async (req, res) => {
+  // Create a new job (with /api prefix) - VALIDAÇÃO ZOD APLICADA
+  const { validateRequest } = require('./middleware/validationMiddleware');
+  const { createJobSchema } = require('./validators/requestValidators');
+  
+  app.post('/api/jobs', validateRequest(createJobSchema), async (req, res) => {
     try {
       const allowedMatchingStatus = ['pending', 'in_progress', 'completed', 'failed'];
       const requestedMatchingStatus = req.body.matching_status;
@@ -4497,8 +4524,7 @@ if (process.env.NODE_ENV !== 'production') {
       console.error('Error seeding E2E users:', error);
       res.status(500).json({
         error: 'Failed to seed E2E users',
-        details: error.message,
-        stack: error.stack,
+        details: process.env.NODE_ENV !== 'production' ? error.message : 'Internal error',
       });
     }
   }); // GET /dev/db-status - Verificar modo de armazenamento
@@ -4557,6 +4583,37 @@ if (require.main === module) {
       '[SERVER] ❌ WARNING: POST /api/prospector/smart-actions NOT FOUND in route list'
     );
   }
+
+  // =================================================================
+  // GLOBAL ERROR HANDLER (DEVE SER ÚLTIMO MIDDLEWARE)
+  // =================================================================
+  app.use((err, req, res, next) => {
+    // Log completo do erro (sempre, para debugging)
+    console.error('[ERROR_HANDLER] Unhandled error:', {
+      message: err.message,
+      stack: err.stack,
+      path: req.path,
+      method: req.method,
+      ip: req.ip,
+    });
+
+    // Determinar status code
+    const statusCode = err.statusCode || err.status || 500;
+
+    // Resposta ao cliente (sem expor stack trace em produção)
+    const response = {
+      error: err.message || 'Erro interno do servidor',
+      code: err.code || 'INTERNAL_SERVER_ERROR',
+    };
+
+    // Adicionar stack trace apenas em desenvolvimento
+    if (process.env.NODE_ENV !== 'production') {
+      response.stack = err.stack;
+      response.details = err.details || null;
+    }
+
+    res.status(statusCode).json(response);
+  });
 
   try {
     const host = '0.0.0.0'; // Listen on all interfaces (IPv4)

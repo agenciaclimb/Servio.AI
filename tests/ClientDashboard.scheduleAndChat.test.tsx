@@ -155,8 +155,8 @@ describe('ClientDashboard – chat & agendamento (integração leve)', () => {
   it('mostra aviso ao tentar salvar perfil sem campos obrigatórios', async () => {
     renderDash({});
 
-    // Abrir modal de conta (texto é apenas "Conta")
-    await userEvent.click(screen.getByRole('button', { name: /^Conta$/i }));
+    // Abrir modal de conta (texto é "Minha Conta")
+    await userEvent.click(screen.getByRole('button', { name: /Minha Conta/i }));
 
     // Limpa campos obrigatórios e tenta salvar
     const nameInput = screen.getByDisplayValue('Ana Cliente');

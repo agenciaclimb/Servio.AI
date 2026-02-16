@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "gen-lang-client-0737507616"
+    "default": "gen-lang-client-0737507616",
+    "production": "gen-lang-client-0737507616",
+    "staging": "servioai-staging"
   }
 }

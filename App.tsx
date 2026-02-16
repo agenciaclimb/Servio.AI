@@ -173,11 +173,15 @@ const App: React.FC = () => {
 
   const handleAuthSuccess = async (email: string, type: UserType, inviteCode?: string) => {
     try {
+      console.warn('[APP] handleAuthSuccess iniciado para:', email, 'tipo:', type);
       setAuthModal(null);
 
+      console.warn('[APP] Buscando usuário no Firestore...');
       let user = await API.fetchUserById(email);
+      console.warn('[APP] Resultado fetchUserById:', user ? 'Usuário encontrado' : 'Usuário não existe');
 
       if (!user) {
+        console.warn('[APP] Criando novo usuário...');
         const newUserPayload: Omit<User, 'memberSince' | 'id'> = {
           email,
           name: email.split('@')[0],
@@ -187,7 +191,9 @@ const App: React.FC = () => {
           status: 'ativo',
           verificationStatus: type === 'prestador' ? 'pendente' : undefined,
         };
+        console.warn('[APP] Payload do novo usuário:', newUserPayload);
         user = await API.createUser(newUserPayload);
+        console.warn('[APP] Usuário criado com sucesso:', user);
 
         if (type === 'prestador' && inviteCode) {
           try {
@@ -202,8 +208,10 @@ const App: React.FC = () => {
         }
       }
 
+      console.warn('[APP] Definindo currentUser:', user.email);
       setCurrentUser(user);
       setView({ name: 'dashboard' });
+      console.warn('[APP] Login concluído com sucesso!');
 
       registerUserFcmToken(email).catch(err => {
         logWarn('Falha ao registrar token FCM:', err);
@@ -227,9 +235,14 @@ const App: React.FC = () => {
         }
       }, 300);
     } catch (error) {
+      console.error('🔴 [APP] ERRO em handleAuthSuccess:', error);
+      console.error('[APP] Mensagem:', (error as Error)?.message);
+      console.error('[APP] Stack:', (error as Error)?.stack);
+      
       logError('Erro ao fazer login:', error);
       alert('Erro ao fazer login. Por favor, tente novamente.');
       setAuthModal(null);
+      throw error; // Re-throw para AuthModal capturar
     }
   };
 

@@ -18,8 +18,9 @@ vi.mock('../../utils/logger', () => ({
   logError: vi.fn(),
 }));
 
-// Use the correct backend URL that the service will import
-const BACKEND_URL = 'https://servio-ai-1000250760228.us-west1.run.app';
+// Get backend URL from the same environment variable the service uses
+// This makes tests environment-agnostic (works in both staging and production)
+const BACKEND_URL = (import.meta as any).env?.VITE_BACKEND_API_URL || 'https://us-central1-servioai-staging.cloudfunctions.net';
 
 // Mock fetch
 global.fetch = vi.fn();

@@ -38,6 +38,24 @@ const BACKEND_URL =
   'https://servio-backend-h5ogjon7aa-uw.a.run.app';
 const USE_MOCK = false; // Always try real backend first, fallback to mock on error
 
+// STAGING MODE: Skip backend entirely for user operations (CORS workaround)
+const STAGING_MODE = import.meta.env.VITE_FIREBASE_PROJECT_ID === 'servioai-staging';
+
+// VERSION CHECK - GIGANTE
+console.warn('═══════════════════════════════════════════════════════');
+console.warn('🔧 API SERVICE INICIADO - VERSÃO 2026-01-09');
+console.warn('═══════════════════════════════════════════════════════');
+console.warn(`📋 STAGING_MODE: ${STAGING_MODE}`);
+console.warn(`📋 Project ID: ${import.meta.env.VITE_FIREBASE_PROJECT_ID}`);
+console.warn(`📋 Backend URL: ${BACKEND_URL}`);
+console.warn(`📋 Use Mock: ${USE_MOCK}`);
+console.warn('═══════════════════════════════════════════════════════');
+
+if (STAGING_MODE) {
+  console.warn('✅ STAGING MODE ATIVO - Backend DESABILITADO!');
+  console.warn('✅ Todas as operações de usuário usam Firestore direto!');
+}
+
 // Optional debug flag to reduce noisy console.log in production builds
 const DEBUG =
   (import.meta as unknown as { env?: Record<string, string> })?.env?.VITE_DEBUG === 'true';
@@ -76,17 +94,41 @@ function makeApiError(
 
 /**
  * Generic API call helper
+ * Version: 2026-01-26-v3 (AUTH TOKEN ADICIONADO)
  */
 async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000); // 15s safeguard
+  
+  // VERSION CHECK - Se você ver isso, código novo está rodando!
+  console.warn(`🔧 [API v3] Tentando: ${BACKEND_URL}${endpoint}`);
+  
+  // Get Firebase Auth token if user is authenticated
+  let authToken = '';
   try {
+    const { auth } = await import('../firebaseConfig');
+    if (auth.currentUser) {
+      authToken = await auth.currentUser.getIdToken();
+      console.warn(`🔐 [API v3] Token Firebase obtido para: ${auth.currentUser.email}`);
+    }
+  } catch (authError) {
+    console.warn('[API v3] Não foi possível obter token de autenticação:', authError);
+  }
+  
+  try {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(options?.headers as Record<string, string>),
+    };
+    
+    // Add Authorization header if we have a token
+    if (authToken) {
+      headers['Authorization'] = `Bearer ${authToken}`;
+    }
+    
     const response = await fetch(`${BACKEND_URL}${endpoint}`, {
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      },
+      headers,
       signal: controller.signal,
     });
     clearTimeout(timeout);
@@ -102,12 +144,21 @@ async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
     return await response.json();
   } catch (error) {
     clearTimeout(timeout);
+    
+    // VERSION CHECK - Se você ver isso, fallback está ATIVO!
+    console.error(`🚨 [API v2] ERRO detectado em ${endpoint} - ACIONANDO FALLBACK!`, error);
+    
+    // STAGING: Always use NETWORK error to trigger Firestore fallback
+    // CORS errors, network failures, etc should all fallback to Firestore
     if ((error as Error).name === 'AbortError') {
       const apiErr = makeApiError('TIMEOUT');
       console.warn(`[api] Timeout on ${endpoint}`, apiErr);
       throw apiErr;
     }
-    if (DEBUG) console.warn(`[api] call failed ${endpoint}`, error);
+    
+    // Log and throw NETWORK error for fallback handling
+    console.warn(`[api] Backend unavailable for ${endpoint}, triggering fallback`, error);
+    
     // If error already structured, rethrow
     if ((error as ApiError)?.code) throw error as ApiError;
     throw makeApiError('NETWORK');
@@ -152,12 +203,58 @@ export async function fetchUserById(userId: string): Promise<User | null> {
     return user || null;
   }
 
+  // STAGING: Use Firestore directly (skip backend)
+  if (STAGING_MODE) {
+    console.warn(`✅ [STAGING] Usando Firestore direto para buscar usuário ${userId}`);
+    try {
+      const { getFirestore } = await import('firebase/firestore');
+      const { getDoc, doc } = await import('firebase/firestore');
+      
+      const db = getFirestore();
+      const userDoc = await getDoc(doc(db, 'users', userId));
+      
+      if (!userDoc.exists()) {
+        console.warn(`[STAGING] User ${userId} not found in Firestore`);
+        return null;
+      }
+      
+      console.warn(`✅ [STAGING] User ${userId} carregado do Firestore com sucesso`);
+      return userDoc.data() as User;
+    } catch (firestoreError) {
+      console.error('❌ [STAGING] Failed to fetch user from Firestore:', firestoreError);
+      return null;
+    }
+  }
+
+  // Production: Try backend first
   try {
     return await apiCall<User>(`/users/${userId}`);
   } catch (error) {
-    console.warn(`Failed to fetch user ${userId}, using mock data`);
-    const user = MOCK_USERS.find(u => u.email === userId);
-    return user || null;
+    console.warn(`[STAGING] Backend not available (${(error as Error)?.message}), using Firestore directly for user ${userId}`);
+    
+    // Fallback: Use Firestore directly
+    try {
+      const { getFirestore } = await import('firebase/firestore');
+      const { getDoc, doc } = await import('firebase/firestore');
+      
+      const db = getFirestore();
+      const userDoc = await getDoc(doc(db, 'users', userId));
+      
+      if (!userDoc.exists()) {
+        console.warn(`[STAGING] User ${userId} not found in Firestore, trying MOCK_USERS`);
+        // Fallback to mock data when user doesn't exist in Firestore
+        const user = MOCK_USERS.find(u => u.email === userId);
+        return user || null;
+      }
+      
+      console.warn(`[STAGING] User ${userId} loaded from Firestore successfully`);
+      return userDoc.data() as User;
+    } catch (firestoreError) {
+      console.error('[STAGING] Failed to fetch user from Firestore:', firestoreError);
+      // Final fallback to mock data
+      const user = MOCK_USERS.find(u => u.email === userId);
+      return user || null;
+    }
   }
 }
 
@@ -172,14 +269,100 @@ export async function createUser(user: Omit<User, 'memberSince'>): Promise<User>
     return newUser;
   }
 
+  // STAGING: Use Firestore directly (skip backend)
+  if (STAGING_MODE) {
+    console.warn(`✅ [STAGING] Criando usuário direto no Firestore: ${user.email}`);
+    try {
+      const { getFirestore } = await import('firebase/firestore');
+      const { setDoc, doc } = await import('firebase/firestore');
+      const { auth } = await import('../firebaseConfig');
+      
+      const db = getFirestore();
+      const currentUser = auth.currentUser;
+      
+      if (!currentUser) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const newUser: User = {
+        ...user,
+        memberSince: new Date().toISOString(),
+      };
+
+      // Remove campos undefined (Firestore não aceita)
+      const firestoreData: Record<string, unknown> = {
+        ...newUser,
+        uid: currentUser.uid,
+      };
+      
+      // Remover campos undefined
+      Object.keys(firestoreData).forEach(key => {
+        if (firestoreData[key] === undefined) {
+          delete firestoreData[key];
+        }
+      });
+
+      console.warn(`✅ [STAGING] Dados para Firestore:`, firestoreData);
+
+      // Use email as document ID (legacy pattern)
+      await setDoc(doc(db, 'users', user.email), firestoreData);
+      
+      console.warn(`✅ [STAGING] User ${user.email} criado no Firestore com sucesso`);
+      return newUser;
+    } catch (firestoreError) {
+      console.error('❌ [STAGING] Failed to create user in Firestore:', firestoreError);
+      throw firestoreError;
+    }
+  }
+
+  // Production: Try backend first
   try {
     return await apiCall<User>('/users', {
       method: 'POST',
       body: JSON.stringify(user),
     });
   } catch (error) {
-    console.error('Failed to create user:', error);
-    throw error;
+    console.warn('[STAGING] Backend not available (${(error as Error)?.message}), using Firestore directly', error);
+    
+    // Fallback: Use Firestore directly
+    try {
+      const { getFirestore } = await import('firebase/firestore');
+      const { setDoc, doc } = await import('firebase/firestore');
+      const { auth } = await import('../firebaseConfig');
+      
+      const db = getFirestore();
+      const currentUser = auth.currentUser;
+      
+      if (!currentUser) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const newUser: User = {
+        ...user,
+        memberSince: new Date().toISOString(),
+      };
+
+      // Remove campos undefined (Firestore não aceita)
+      const firestoreData: Record<string, unknown> = {
+        ...newUser,
+        uid: currentUser.uid,
+      };
+      
+      Object.keys(firestoreData).forEach(key => {
+        if (firestoreData[key] === undefined) {
+          delete firestoreData[key];
+        }
+      });
+
+      // Use email as document ID (legacy pattern)
+      await setDoc(doc(db, 'users', user.email), firestoreData);
+      
+      console.warn(`[STAGING] User ${user.email} created in Firestore successfully`);
+      return newUser;
+    } catch (firestoreError) {
+      console.error('[STAGING] Failed to create user in Firestore:', firestoreError);
+      throw firestoreError;
+    }
   }
 }
 

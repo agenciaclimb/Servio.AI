@@ -62,11 +62,17 @@ const AuthModal: React.FC<AuthModalProps> = ({
         await createUserWithEmailAndPassword(auth, email, password);
       }
 
-      // Chamar callback de sucesso
-      if (inviteCode) {
-        onSuccess(email, userType, inviteCode);
-      } else {
-        onSuccess(email, userType);
+      // Chamar callback de sucesso e aguardar conclusão
+      try {
+        if (inviteCode) {
+          await onSuccess(email, userType, inviteCode);
+        } else {
+          await onSuccess(email, userType);
+        }
+      } catch (successError) {
+        console.error('Erro ao processar cadastro:', successError);
+        setError('Erro ao fazer login. Por favor, tente novamente.');
+        return;
       }
     } catch (err: unknown) {
       console.error('Erro de autenticação:', err);

@@ -227,7 +227,7 @@ export default function ReferralLinkGenerator({
         <h3 className="text-lg font-semibold mb-4">Compartilhar nas Redes Sociais</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           <a
-            href={shareUrls.whatsapp}
+            href={shareUrls?.whatsapp || '#'}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
@@ -237,7 +237,7 @@ export default function ReferralLinkGenerator({
           </a>
 
           <a
-            href={shareUrls.facebook}
+            href={shareUrls?.facebook || '#'}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
@@ -247,7 +247,7 @@ export default function ReferralLinkGenerator({
           </a>
 
           <a
-            href={shareUrls.telegram}
+            href={shareUrls?.telegram || '#'}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition"
@@ -257,7 +257,7 @@ export default function ReferralLinkGenerator({
           </a>
 
           <a
-            href={shareUrls.linkedin}
+            href={shareUrls?.linkedin || '#'}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition"
@@ -267,7 +267,7 @@ export default function ReferralLinkGenerator({
           </a>
 
           <a
-            href={shareUrls.twitter}
+            href={shareUrls?.twitter || '#'}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition"

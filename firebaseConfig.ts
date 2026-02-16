@@ -83,6 +83,13 @@ export const getStorageInstance = async (): Promise<FirebaseStorage> => {
 
 export const getAnalyticsIfSupported = async (): Promise<Analytics | null> => {
   if (isFirebaseMock) return null;
+  
+  // Check if measurementId is valid (not a placeholder)
+  const measurementId = import.meta.env.VITE_FIREBASE_MEASUREMENT_ID;
+  if (!measurementId || measurementId === 'G-MEASUREMENT' || !measurementId.startsWith('G-')) {
+    console.warn('[firebase] Analytics desabilitado: measurementId inválido ou ausente');
+    return null;
+  }
 
   if (analyticsInstance) return analyticsInstance;
 

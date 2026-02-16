@@ -77,24 +77,25 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSmartSearch, onLoginClick }
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            'Elétrica',
-            'Hidráulica',
-            'Reparos',
-            'Limpeza',
-            'Pintura',
-            'Jardinagem',
-            'TI',
-            'Chaveiro',
+            { name: 'Elétrica', prompt: 'Preciso de um serviço de elétrica' },
+            { name: 'Hidráulica', prompt: 'Preciso de um serviço de hidráulica' },
+            { name: 'Reparos', prompt: 'Preciso de um serviço de reparos' },
+            { name: 'Limpeza', prompt: 'Preciso de um serviço de limpeza' },
+            { name: 'Pintura', prompt: 'Preciso de um serviço de pintura' },
+            { name: 'Jardinagem', prompt: 'Preciso de um serviço de jardinagem' },
+            { name: 'TI', prompt: 'Preciso de um serviço de TI' },
+            { name: 'Chaveiro', prompt: 'Preciso de um serviço de chaveiro' },
           ].map(service => (
             <button
-              key={service}
+              key={service.name}
               onClick={() => {
-                setPrompt(`Preciso de um ${service}`);
-                handleSubmit(new Event('submit') as unknown as React.FormEvent<HTMLFormElement>);
+                // Usar o prompt diretamente em vez de depender do estado
+                setPrompt(service.prompt);
+                onSmartSearch(service.prompt);
               }}
               className="p-4 bg-white rounded-lg shadow hover:shadow-md transition border border-gray-200 text-gray-700 font-medium hover:bg-blue-50 hover:border-blue-300"
             >
-              {service}
+              {service.name}
             </button>
           ))}
         </div>

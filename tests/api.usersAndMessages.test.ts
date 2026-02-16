@@ -10,6 +10,18 @@ import {
   fetchNotifications,
 } from '../services/api';
 
+// Mock Firebase modules globally for STAGING_MODE
+vi.mock('firebase/firestore', () => ({
+  getFirestore: vi.fn(),
+  getDoc: vi.fn(),
+  setDoc: vi.fn(),
+  doc: vi.fn(),
+}));
+
+vi.mock('../firebaseConfig', () => ({
+  auth: { currentUser: { uid: 'test-uid-123', email: 'test@test.com' } },
+}));
+
 // Tipar global para evitar TS reclamar em alguns ambientes
 declare const global: any;
 
@@ -45,29 +57,28 @@ describe('API Service – Users, Jobs, Messages & Notifications', () => {
       const userId = 'cliente@servio.ai';
       const backendUser = { email: userId, name: 'Cliente X', type: 'cliente' };
 
-      // Sucesso do backend
-      vi.spyOn(global, 'fetch').mockResolvedValueOnce({
-        ok: true,
-        json: async () => backendUser,
-      } as any);
+      // Import mocked Firestore functions
+      const { getDoc } = await import('firebase/firestore');
+      
+      // Mock successful Firestore response
+      (getDoc as any).mockResolvedValueOnce({
+        exists: () => true,
+        data: () => backendUser,
+      });
 
-      const ok = await fetchUserById(userId);
-      expect(ok?.email).toBe(userId);
-
-      // Falha do backend -> fallback para MOCK_USERS
-      vi.spyOn(global, 'fetch').mockRejectedValueOnce(new Error('offline'));
-      const fb = await fetchUserById(userId);
-      expect(fb?.email).toBe(userId); // user existe em MOCK_USERS
+      // Test: deve retornar usuário via Firestore em staging
+      const result = await fetchUserById(userId);
+      expect(result?.email).toBe(userId);
     });
 
     it('createUser: cria usuário (POST) com sucesso', async () => {
       const newUser = { email: 'novo@test.com', name: 'Novo', type: 'cliente' } as any;
-      const created = { ...newUser, memberSince: new Date().toISOString() };
 
-      vi.spyOn(global, 'fetch').mockResolvedValueOnce({
-        ok: true,
-        json: async () => created,
-      } as any);
+      // Import mocked Firestore functions
+      const { setDoc } = await import('firebase/firestore');
+      
+      // Mock successful Firestore setDoc
+      (setDoc as any).mockResolvedValueOnce(undefined);
 
       const result = await createUser(newUser);
       expect(result.email).toBe('novo@test.com');
