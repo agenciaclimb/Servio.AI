@@ -382,6 +382,18 @@ function createApp({
     return express.json()(req, res, next);
   });
 
+  // Global middleware to handle invalid/malformed JSON payloads (SyntaxError)
+  app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+      console.error(`[Express] Invalid JSON Payload received on ${req.method} ${req.path}:`, err.message);
+      return res.status(400).json({
+        error: "Payload JSON inválido. Verifique a formatação da sua requisição.",
+        code: "INVALID_JSON_PAYLOAD"
+      });
+    }
+    next(err);
+  });
+
   // Debug log to verify code deployment
   console.log('[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"');
 
