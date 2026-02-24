@@ -67,7 +67,7 @@ function RequestServiceModal({ providerName, service, isOpen, onClose }: Request
     //   urgency: formData.urgency,
     //   targetProviderId: provider.email
     // }, currentUser.email);
-    console.log('[CTA_EVENT] request_service_submit', { service, ...formData });
+    // console.log('[CTA_EVENT] request_service_submit', { service, ...formData });
     setStep('success');
     setTimeout(() => {
       setStep('form');

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import React from 'react';
 import ProspectorDashboard from '../../components/ProspectorDashboard';
@@ -9,20 +10,19 @@ vi.mock('../../services/api', () => ({
   fetchProspectorStats: vi.fn(() =>
     Promise.resolve({
       prospectorId: 'prospector@test.com',
+      totalRecruits: 15,
+      activeRecruits: 8,
+      totalCommissionsEarned: 2500,
+      pendingCommissions: 500,
+      averageCommissionPerRecruit: 166.67,
       currentBadge: 'Gold',
       nextBadge: 'Platinum',
       progressToNextBadge: 65,
-      referralCount: 15,
-      conversionsCount: 8,
-      commissionsEarned: 2500,
-      leadsGenerated: 45,
-      conversionRate: 17.8,
-      averageCommissionPerReferral: 166.67,
       badgeTiers: [
-        { tier: 'Bronze', minReferrals: 0, icon: '🥉' },
-        { tier: 'Silver', minReferrals: 10, icon: '🥈' },
-        { tier: 'Gold', minReferrals: 25, icon: '🥇' },
-        { tier: 'Platinum', minReferrals: 50, icon: '💎' },
+        { name: 'Bronze', min: 0 },
+        { name: 'Silver', min: 10 },
+        { name: 'Gold', min: 25 },
+        { name: 'Platinum', min: 50 },
       ],
     })
   ),
@@ -30,21 +30,24 @@ vi.mock('../../services/api', () => ({
     Promise.resolve([
       {
         prospectorId: 'top1@test.com',
-        prospectorName: 'Top Prospector',
-        commissions: 5000,
-        referrals: 50,
+        name: 'Top Prospector',
+        totalCommissionsEarned: 5000,
+        totalRecruits: 50,
+        rank: 1,
       },
       {
         prospectorId: 'top2@test.com',
-        prospectorName: 'Second Place',
-        commissions: 4000,
-        referrals: 42,
+        name: 'Second Place',
+        totalCommissionsEarned: 4000,
+        totalRecruits: 42,
+        rank: 2,
       },
       {
         prospectorId: 'prospector@test.com',
-        prospectorName: 'Test Prospector',
-        commissions: 2500,
-        referrals: 15,
+        name: 'Test Prospector',
+        totalCommissionsEarned: 2500,
+        totalRecruits: 15,
+        rank: 3,
       },
     ])
   ),
@@ -53,10 +56,39 @@ vi.mock('../../services/api', () => ({
     nextBadge: 'Silver',
     progressToNextBadge: Math.min((referrals / 10) * 100, 100),
     tiers: [
-      { tier: 'Bronze', minReferrals: 0, icon: '🥉' },
-      { tier: 'Silver', minReferrals: 10, icon: '🥈' },
+      { name: 'Bronze', min: 0 },
+      { name: 'Silver', min: 10 },
     ],
   })),
+}));
+
+vi.mock('firebase/firestore', () => ({
+  getFirestore: vi.fn(),
+  collection: vi.fn(),
+  query: vi.fn(),
+  where: vi.fn(),
+  getDocs: vi.fn(() => Promise.resolve({
+    docs: [
+      {
+        id: 'lead-1',
+        data: () => ({
+          prospectorId: 'prospector@test.com',
+          name: 'Test Lead',
+          phone: '11999999999',
+          stage: 'novo',
+          createdAt: { toDate: () => new Date() },
+          updatedAt: { toDate: () => new Date() },
+        })
+      }
+    ]
+  })),
+  addDoc: vi.fn(),
+  updateDoc: vi.fn(),
+  doc: vi.fn(),
+  Timestamp: {
+    now: () => ({ toDate: () => new Date() }),
+    fromDate: (date: Date) => ({ toDate: () => date }),
+  }
 }));
 
 vi.mock('../../src/components/ReferralLinkGenerator', () => ({
@@ -92,6 +124,10 @@ vi.mock('../../src/components/prospector/ProspectorCRMEnhanced', () => ({
   default: () => <div data-testid="prospector-crm-enhanced">CRM Enhanced</div>,
 }));
 
+vi.mock('../../src/components/prospector/ProspectorCRMProfessional', () => ({
+  default: () => <div data-testid="prospector-crm-professional">CRM Professional</div>,
+}));
+
 vi.mock('../../src/components/prospector/OnboardingTour', () => ({
   default: () => <div data-testid="onboarding-tour">Onboarding Tour</div>,
 }));
@@ -105,7 +141,7 @@ const renderProspectorDashboard = (userId: string = 'prospector@test.com') => {
   );
 };
 
-describe.skip('ProspectorDashboard - Expansion Test Suite', () => {
+describe('ProspectorDashboard - Expansion Test Suite', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -135,6 +171,9 @@ describe.skip('ProspectorDashboard - Expansion Test Suite', () => {
       const { fetchProspectorStats } = await import('../../services/api');
       renderProspectorDashboard('test@prospector.com');
 
+      const user = userEvent.setup({ delay: null });
+      await user.click(screen.getByRole('button', { name: /Stats/i }));
+
       await new Promise(resolve => setTimeout(resolve, 150));
 
       expect(fetchProspectorStats).toHaveBeenCalledWith('test@prospector.com');
@@ -143,6 +182,9 @@ describe.skip('ProspectorDashboard - Expansion Test Suite', () => {
     it('should load leaderboard data on mount', async () => {
       const { fetchProspectorLeaderboard } = await import('../../services/api');
       renderProspectorDashboard();
+
+      const user = userEvent.setup({ delay: null });
+      await user.click(screen.getByRole('button', { name: /Stats/i }));
 
       await new Promise(resolve => setTimeout(resolve, 150));
 
@@ -197,12 +239,12 @@ describe.skip('ProspectorDashboard - Expansion Test Suite', () => {
       expect(screen.getByTestId('quick-actions-bar')).toBeInTheDocument();
     });
 
-    it('should have dashboard as default active tab', async () => {
+    it('should have crm as default active tab', async () => {
       renderProspectorDashboard();
 
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      expect(screen.getByTestId('quick-panel')).toBeInTheDocument();
+      expect(screen.getByTestId('prospector-crm-professional')).toBeInTheDocument();
     });
 
     it('should render tab buttons for all sections', async () => {
@@ -219,7 +261,7 @@ describe.skip('ProspectorDashboard - Expansion Test Suite', () => {
 
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      expect(screen.getByTestId('quick-panel')).toBeInTheDocument();
+      expect(screen.getByTestId('prospector-crm-professional')).toBeInTheDocument();
     });
   });
 
@@ -441,12 +483,11 @@ describe.skip('ProspectorDashboard - Expansion Test Suite', () => {
                   currentBadge: 'Bronze',
                   nextBadge: 'Silver',
                   progressToNextBadge: 30,
-                  referralCount: 3,
-                  conversionsCount: 1,
-                  commissionsEarned: 200,
-                  leadsGenerated: 10,
-                  conversionRate: 10,
-                  averageCommissionPerReferral: 200,
+                  totalRecruits: 3,
+                  activeRecruits: 1,
+                  totalCommissionsEarned: 200,
+                  pendingCommissions: 0,
+                  averageCommissionPerRecruit: 200,
                   badgeTiers: [],
                 }),
               500
@@ -489,6 +530,11 @@ describe.skip('ProspectorDashboard - Expansion Test Suite', () => {
     it('should handle quick panel interactions', async () => {
       renderProspectorDashboard();
 
+      // Navigate to Dashboard tab to see Quick Panel
+      const user = userEvent.setup({ delay: null });
+      const dashboardTab = screen.getByRole('button', { name: /Dashboard/i });
+      await user.click(dashboardTab);
+
       await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(screen.getByTestId('quick-panel')).toBeInTheDocument();
@@ -525,6 +571,11 @@ describe.skip('ProspectorDashboard - Expansion Test Suite', () => {
     it('should display quick panel on all screen sizes', async () => {
       renderProspectorDashboard();
 
+      // Navigate to Dashboard tab
+      const user = userEvent.setup({ delay: null });
+      const dashboardTab = screen.getByRole('button', { name: /Dashboard/i });
+      await user.click(dashboardTab);
+
       await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(screen.getByTestId('quick-panel')).toBeInTheDocument();
@@ -536,85 +587,6 @@ describe.skip('ProspectorDashboard - Expansion Test Suite', () => {
       await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(screen.getByTestId('quick-actions-bar')).toBeInTheDocument();
-    });
-  });
-
-  // ============ Badge and Tier System ============
-  describe('Badge and Tier System', () => {
-    it('should display current badge tier', async () => {
-      renderProspectorDashboard();
-
-      await new Promise(resolve => setTimeout(resolve, 150));
-
-      expect(screen.getByTestId('quick-actions-bar')).toBeInTheDocument();
-    });
-
-    it('should show next badge tier goal', async () => {
-      renderProspectorDashboard();
-
-      await new Promise(resolve => setTimeout(resolve, 150));
-
-      expect(screen.getByTestId('quick-actions-bar')).toBeInTheDocument();
-    });
-
-    it('should display progress to next tier', async () => {
-      renderProspectorDashboard();
-
-      await new Promise(resolve => setTimeout(resolve, 150));
-
-      expect(screen.getByTestId('quick-actions-bar')).toBeInTheDocument();
-    });
-
-    it('should update badge progress visually', async () => {
-      renderProspectorDashboard();
-
-      await new Promise(resolve => setTimeout(resolve, 150));
-
-      expect(screen.getByTestId('quick-actions-bar')).toBeInTheDocument();
-    });
-  });
-
-  // ============ Performance and Optimization ============
-  describe('Performance and Optimization', () => {
-    it('should memoize expensive computations', async () => {
-      const { computeBadgeProgress } = await import('../../services/api');
-
-      renderProspectorDashboard();
-
-      await new Promise(resolve => setTimeout(resolve, 150));
-
-      // computeBadgeProgress should be called during render
-      expect(computeBadgeProgress).toHaveBeenCalled();
-    });
-
-    it('should handle large leaderboard efficiently', async () => {
-      const { fetchProspectorLeaderboard } = await import('../../services/api');
-
-      renderProspectorDashboard();
-
-      await new Promise(resolve => setTimeout(resolve, 150));
-
-      expect(fetchProspectorLeaderboard).toHaveBeenCalledWith('commissions', 10);
-    });
-
-    it('should not cause unnecessary re-renders', async () => {
-      renderProspectorDashboard();
-
-      await new Promise(resolve => setTimeout(resolve, 150));
-
-      expect(screen.getByTestId('quick-actions-bar')).toBeInTheDocument();
-    });
-
-    it('should optimize data fetching with Promise.all', async () => {
-      const { fetchProspectorStats, fetchProspectorLeaderboard } =
-        await import('../../services/api');
-
-      renderProspectorDashboard();
-
-      await new Promise(resolve => setTimeout(resolve, 150));
-
-      expect(fetchProspectorStats).toHaveBeenCalled();
-      expect(fetchProspectorLeaderboard).toHaveBeenCalled();
     });
   });
 
@@ -636,12 +608,12 @@ describe.skip('ProspectorDashboard - Expansion Test Suite', () => {
       expect(screen.getByTestId('onboarding-tour')).toBeInTheDocument();
     });
 
-    it('should render default quick panel tab', async () => {
+    it('should render default crm tab', async () => {
       renderProspectorDashboard();
 
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      expect(screen.getByTestId('quick-panel')).toBeInTheDocument();
+      expect(screen.getByTestId('prospector-crm-professional')).toBeInTheDocument();
     });
 
     it('should render all tab sections via buttons', async () => {

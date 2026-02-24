@@ -4,7 +4,7 @@ import fs from 'node:fs';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 if (!GEMINI_API_KEY) {
-  // eslint-disable-next-line no-console
+
   console.error('❌ Erro: GEMINI_API_KEY não configurada');
   process.exit(1);
 }
@@ -100,7 +100,7 @@ const generateTasksDay3 = async () => {
 generateTasksDay3()
   .then(() => process.exit(0))
   .catch(error => {
-    // eslint-disable-next-line no-console
+
     console.error('❌ Erro:', error instanceof Error ? error.message : String(error));
     process.exit(1);
   });

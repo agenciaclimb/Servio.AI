@@ -43,9 +43,12 @@ const MODEL_FAST = 'gemini-2.5-flash';
 const MODEL_THINK = 'gemini-2.5-pro';
 
 // Helpers
+const secureLogger = require('./src/utils/secureLogger');
+
 const handleApiError = (res, error, apiName) => {
-  console.error(`Error in ${apiName}:`, error);
-  res.status(500).json({ error: `Falha na API: ${apiName}.` });
+  secureLogger.error(`[AI-Endpoint] Error in ${apiName}:`, error);
+  // Remove menção sensível ao final do tratamento
+  res.status(500).json({ error: `Ocorreu uma falha na API: ${apiName}. Detalhes internos protegidos por política de segurança.` });
 };
 const safeJSON = (text, fallback = null) => {
   try {

@@ -189,46 +189,29 @@ describe('App Component', () => {
   });
 
   it('should parse URL parameters for profile view', async () => {
-    const originalLocation = window.location;
-    Object.defineProperty(window, 'location', {
-      value: { ...originalLocation, search: '?profile=user@example.com' },
-      writable: true,
-    });
+    window.history.replaceState({}, '', '?profile=user@example.com');
 
     render(<App />);
 
     // Profile view would be rendered if implemented
     expect(screen.getByTestId('header')).toBeInTheDocument();
 
-    Object.defineProperty(window, 'location', {
-      value: originalLocation,
-      writable: true,
-    });
+    window.history.replaceState({}, '', '/');
   });
 
   it('should parse URL parameters for service landing', async () => {
-    const originalLocation = window.location;
-    Object.defineProperty(window, 'location', {
-      value: { ...originalLocation, search: '?servico=eletrica&local=sao-paulo' },
-      writable: true,
-    });
+    window.history.replaceState({}, '', '?servico=eletrica&local=sao-paulo');
 
     render(<App />);
 
     expect(screen.getByTestId('header')).toBeInTheDocument();
 
-    Object.defineProperty(window, 'location', {
-      value: originalLocation,
-      writable: true,
-    });
+    window.history.replaceState({}, '', '/');
   });
 
   it('should handle chunk loading errors gracefully', async () => {
-    const originalLocation = window.location;
-    Object.defineProperty(window, 'location', {
-      value: { ...originalLocation, reload: vi.fn() },
-      writable: true,
-    });
+    const originalReload = window.location.reload;
+    window.location.reload = vi.fn();
 
     render(<App />);
 
@@ -245,18 +228,12 @@ describe('App Component', () => {
     // Should have set the reload flag
     expect(sessionStorage.getItem('hasReloadedForChunkError')).toBe('true');
 
-    Object.defineProperty(window, 'location', {
-      value: originalLocation,
-      writable: true,
-    });
+    window.location.reload = originalReload;
   });
 
   it('should handle error events from chunk loading', async () => {
-    const originalLocation = window.location;
-    Object.defineProperty(window, 'location', {
-      value: { ...originalLocation, reload: vi.fn() },
-      writable: true,
-    });
+    const originalReload = window.location.reload;
+    window.location.reload = vi.fn();
 
     render(<App />);
 
@@ -269,18 +246,12 @@ describe('App Component', () => {
     // Should have set the reload flag
     expect(sessionStorage.getItem('hasReloadedForChunkError')).toBe('true');
 
-    Object.defineProperty(window, 'location', {
-      value: originalLocation,
-      writable: true,
-    });
+    window.location.reload = originalReload;
   });
 
   it('should prevent multiple reloads for chunk errors', async () => {
-    const originalLocation = window.location;
-    Object.defineProperty(window, 'location', {
-      value: { ...originalLocation, reload: vi.fn() },
-      writable: true,
-    });
+    const originalReload = window.location.reload;
+    window.location.reload = vi.fn();
 
     sessionStorage.setItem('hasReloadedForChunkError', 'true');
 
@@ -297,10 +268,7 @@ describe('App Component', () => {
     // Should not reload again - flag already exists
     expect(sessionStorage.getItem('hasReloadedForChunkError')).toBe('true');
 
-    Object.defineProperty(window, 'location', {
-      value: originalLocation,
-      writable: true,
-    });
+    window.location.reload = originalReload;
   });
 
   it('should clean up error listeners on unmount', async () => {

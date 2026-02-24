@@ -1,0 +1,54 @@
+File: C:/Users/Admin/Desktop/Talina/Servio.AI/tests/App.test.tsx
+  Test: should parse URL parameters for profile view
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should parse URL parameters for service landing
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should handle chunk loading errors gracefully
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should handle error events from chunk loading
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should prevent multiple reloads for chunk errors
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should clean up error listeners on unmount
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should fetch all users and jobs for find-providers view
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should handle view navigation
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should render Header with proper props
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should initialize with no current user
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should maintain maintained items state
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should maintain all notifications state
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should manage job data to create state
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should manage contact provider after login state
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+  Test: should cleanup on component unmount
+  Error: Error: No window.location.(origin|href) available to create URL for href: /
+---
+File: C:/Users/Admin/Desktop/Talina/Servio.AI/tests/ProposalModal.test.tsx
+  Test: permite enviar proposta com pre├ºo e mensagem
+  Error: AssertionError: expected "vi.fn()" to be called with arguments: [ { ΓÇª(2) } ][90m
+  Test: exibe erro quando pre├ºo ├⌐ inv├ílido
+  Error: Error: Unable to find an element with the text: /Por favor, insira um valor v├ílido/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+  Test: permite submeter proposta sem mensagem
+  Error: AssertionError: expected "vi.fn()" to be called with arguments: [ { message: '', price: 200 } ][90m
+---
+File: C:/Users/Admin/Desktop/Talina/Servio.AI/tests/components/FindProvidersPage.smoke.test.tsx
+  Test: renderiza e permite buscar com IA
+  Error: TypeError: Cannot read properties of undefined (reading 'toLowerCase')
+---
+File: C:/Users/Admin/Desktop/Talina/Servio.AI/tests/week3/ProspectorDashboard.expansion.test.tsx
+  Test: should load prospector stats on mount
+  Error: AssertionError: expected "vi.fn()" to be called with arguments: [ 'test@prospector.com' ][90m
+  Test: should load leaderboard data on mount
+  Error: AssertionError: expected "vi.fn()" to be called at least once
+  Test: should handle quick panel interactions
+  Error: TestingLibraryElementError: Found multiple elements with the text: Dashboard
+  Test: should display quick panel on all screen sizes
+  Error: TestingLibraryElementError: Unable to find an accessible element with the role "button" and name `/dashboard ia/i`
+---

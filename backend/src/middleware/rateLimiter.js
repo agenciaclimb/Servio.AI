@@ -41,26 +41,30 @@ const globalLimiter = rateLimit({
 
 /**
  * Rate Limiter para Auth (Login/Registro)
- * Protege contra brute force attacks
+ * Protege contra brute force attacks com bloqueio de IP.
+ * Configurável via variáveis de ambiente para Produção.
  */
+const AUTH_WINDOW_MIN = Number(process.env.AUTH_RATE_LIMIT_WINDOW_MIN) || 15;
+const AUTH_MAX_TRIES = Number(process.env.AUTH_RATE_LIMIT_MAX_TRIES) || 5;
+
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 5, // máximo 5 tentativas por janela
+  windowMs: AUTH_WINDOW_MIN * 60 * 1000,
+  max: AUTH_MAX_TRIES,
   message: {
-    error: 'Muitas tentativas de login. Tente novamente em 15 minutos.',
+    error: `Muitas tentativas de autorização falhas. Acesso bloqueado por ${AUTH_WINDOW_MIN} minutos por medida de segurança.`,
     code: 'AUTH_RATE_LIMIT_EXCEEDED',
-    retryAfter: '15 minutos',
+    retryAfter: `${AUTH_WINDOW_MIN} minutos`,
   },
   standardHeaders: true,
   legacyHeaders: false,
-  // Não conta requisições bem-sucedidas (login válido)
+  // Bloqueio Progressivo: Pula reqs bem-sucedidas. Apenas falhas descontam da franquia bruta de bloqueio.
   skipSuccessfulRequests: true,
   handler: (req, res) => {
-    console.warn(`[AUTH_RATE_LIMIT] IP ${req.ip} excedeu limite de tentativas de login`);
+    console.warn(`[BRUTE_FORCE_BLOCK] IP ${req.ip} excedeu as ${AUTH_MAX_TRIES} tentativas na janela de ${AUTH_WINDOW_MIN}m.`);
     res.status(429).json({
-      error: 'Muitas tentativas de login. Tente novamente em 15 minutos.',
+      error: `Segurança: Muitas tentativas. Seu IP foi bloqueado temporariamente por ${AUTH_WINDOW_MIN} minutos.`,
       code: 'AUTH_RATE_LIMIT_EXCEEDED',
-      retryAfter: '15 minutos',
+      retryAfter: `${AUTH_WINDOW_MIN} minutos`,
     });
   },
 });

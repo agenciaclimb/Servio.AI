@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ProposalModal from '../components/ProposalModal';
 import type { Job, User } from '../types';
@@ -79,8 +79,8 @@ describe('ProposalModal', () => {
     await user.type(messageInput, 'Tenho experiência de 10 anos em pintura');
 
     // Submete
-    const submitButton = screen.getByRole('button', { name: /Confirmar e Enviar/i });
-    await user.click(submitButton);
+    const form = screen.getByRole('button', { name: /Confirmar e Enviar/i }).closest('form') as HTMLFormElement;
+    fireEvent.submit(form);
 
     expect(onSubmit).toHaveBeenCalledWith({
       message: 'Tenho experiência de 10 anos em pintura',
@@ -99,8 +99,8 @@ describe('ProposalModal', () => {
     await user.clear(priceInput);
     await user.type(priceInput, '-50');
 
-    const submitButton = screen.getByRole('button', { name: /Confirmar e Enviar/i });
-    await user.click(submitButton);
+    const form = screen.getByRole('button', { name: /Confirmar e Enviar/i }).closest('form') as HTMLFormElement;
+    fireEvent.submit(form);
 
     await waitFor(() => {
       expect(screen.getByText(/Por favor, insira um valor válido/i)).toBeInTheDocument();
@@ -173,8 +173,8 @@ describe('ProposalModal', () => {
     await user.clear(priceInput);
     await user.type(priceInput, '200');
 
-    const submitButton = screen.getByRole('button', { name: /Confirmar e Enviar/i });
-    await user.click(submitButton);
+    const form = screen.getByRole('button', { name: /Confirmar e Enviar/i }).closest('form') as HTMLFormElement;
+    fireEvent.submit(form);
 
     expect(onSubmit).toHaveBeenCalledWith({
       message: '',

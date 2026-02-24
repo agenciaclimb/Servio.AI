@@ -64,10 +64,10 @@ class EventMonitor {
   private fallbackThresholdMinutes = 240; // 4h
 
   async start() {
-    console.log('🔄 Event Monitor iniciado - PROTOCOLO SUPREMO v4.0');
-    console.log(`📁 Monitorando: ${EVENTS_DIR}`);
-    console.log(`⏱️  Intervalo de polling: ${this.pollIntervalMs}ms`);
-    console.log(`📊 Log de eventos: ${LOG_FILE}`);
+    // console.log('🔄 Event Monitor iniciado - PROTOCOLO SUPREMO v4.0');
+    // console.log(`📁 Monitorando: ${EVENTS_DIR}`);
+    // console.log(`⏱️  Intervalo de polling: ${this.pollIntervalMs}ms`);
+    // console.log(`📊 Log de eventos: ${LOG_FILE}`);
 
     this.ensurePaths();
     this.registerMonitorRun();
@@ -106,7 +106,7 @@ class EventMonitor {
               `TIMEOUT: ACK não recebido para PR #${pr} após ${state.timeout_threshold_ack_minutes} minutos (aguardando ${minutesElapsed}m)`,
               'N1'
             );
-            console.error(`❌ TIMEOUT ACK: PR #${pr} aguardando há ${minutesElapsed}m`);
+            // console.error(`❌ TIMEOUT ACK: PR #${pr} aguardando há ${minutesElapsed}m`);
           }
         }
 
@@ -118,7 +118,7 @@ class EventMonitor {
               `TIMEOUT: RESULT não recebido para PR #${pr} após ${state.timeout_threshold_result_minutes} minutos (aguardando ${minutesElapsed}m)`,
               'N2'
             );
-            console.error(`❌ TIMEOUT RESULT: PR #${pr} aguardando há ${minutesElapsed}m`);
+            // console.error(`❌ TIMEOUT RESULT: PR #${pr} aguardando há ${minutesElapsed}m`);
           }
         }
 
@@ -133,7 +133,7 @@ class EventMonitor {
               `FALLBACK READY: PR #${pr} ultrapassou ${effectiveFallbackThreshold} minutos sem auditoria. Liberar somente com justificativa registrada.`,
               'CRIT'
             );
-            console.error(`⚠️ FALLBACK READY: PR #${pr} aguardando ${minutesElapsed}m`);
+            // console.error(`⚠️ FALLBACK READY: PR #${pr} aguardando ${minutesElapsed}m`);
           }
         }
 
@@ -147,7 +147,7 @@ class EventMonitor {
             timestamp: new Date().toISOString(),
           });
           state.ack_received_at = ack.timestamp;
-          console.log(`✅ ACK recebido para PR #${pr}: ${ack.status}`);
+          // console.log(`✅ ACK recebido para PR #${pr}: ${ack.status}`);
         }
 
         // Verificar RESULT recebido
@@ -172,10 +172,10 @@ class EventMonitor {
               verdict: result.verdict,
               timestamp: new Date().toISOString(),
             });
-            console.log(`🟢 EXECUTOR DESBLOQUEADO - PR #${pr} APROVADO`);
+            // console.log(`🟢 EXECUTOR DESBLOQUEADO - PR #${pr} APROVADO`);
           } else if (result.verdict === 'REJECTED') {
             this.recordAlert(`REJECTED: PR #${pr} foi rejeitado pelo Gemini`, 'CRIT');
-            console.error(`❌ PR #${pr} REJEITADO`);
+            // console.error(`❌ PR #${pr} REJEITADO`);
           }
         }
       }
@@ -184,7 +184,7 @@ class EventMonitor {
       state.last_state_check = new Date().toISOString();
       fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2), 'utf-8');
     } catch (error) {
-      console.error('❌ Erro no monitor:', error);
+      // console.error('❌ Erro no monitor:', error);
     }
   }
 

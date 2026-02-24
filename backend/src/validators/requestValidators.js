@@ -218,6 +218,54 @@ const searchJobsSchema = z.object({
 });
 
 /**
+ * Schemas para endpoints de Inteligência Artificial (Fase 5)
+ */
+const aiEnhanceJobSchema = z.object({
+  prompt: z.string().min(5, 'Prompt curto demais.').max(5000, 'Prompt muito longo.').trim(),
+  address: z.string().max(200).optional(),
+  fileCount: z.number().int().min(0).max(10).optional()
+}).strict(); // previne chaves extras injetadas
+
+const aiSuggestMaintenanceSchema = z.object({
+  item: z.object({
+    name: z.string().min(2).max(100).trim(),
+    category: z.string().max(50).trim().optional(),
+    lastMaintenance: z.string().max(30).optional()
+  }).strict()
+}).strict();
+
+const aiGenerateTipSchema = z.object({
+  user: z.object({
+    name: z.string().max(100).trim().optional(),
+    bio: z.string().max(500).trim().optional(),
+    headline: z.string().max(100).trim().optional()
+  }).strict().optional()
+}).strict();
+
+const aiEnhanceProfileSchema = z.object({
+  profile: z.object({
+    name: z.string().max(100).trim().optional(),
+    headline: z.string().max(100).trim().optional(),
+    bio: z.string().max(500).trim().optional()
+  }).strict().optional()
+}).strict();
+
+const aiGenerateReferralSchema = z.object({
+  senderName: z.string().max(100).trim().optional(),
+  friendEmail: z.string().email('Email para recomendação inválido.').max(200).optional()
+}).strict();
+
+const aiGenerateProposalSchema = z.object({
+  job: z.object({
+    description: z.string().max(5000).trim().optional(),
+    category: z.string().max(50).trim().optional()
+  }).strict().optional(),
+  provider: z.object({
+    name: z.string().max(100).trim().optional()
+  }).strict().optional()
+}).strict();
+
+/**
  * Middleware genérico de validação
  * @param {z.ZodSchema} schema - Schema Zod para validação
  * @returns {Function} Express middleware
@@ -322,6 +370,14 @@ module.exports = {
   updateProfileSchema,
   reviewSchema,
   searchJobsSchema,
+  
+  // AI Schemas (Fase 5)
+  aiEnhanceJobSchema,
+  aiSuggestMaintenanceSchema,
+  aiGenerateTipSchema,
+  aiEnhanceProfileSchema,
+  aiGenerateReferralSchema,
+  aiGenerateProposalSchema,
 
   // Middlewares
   validateRequest,

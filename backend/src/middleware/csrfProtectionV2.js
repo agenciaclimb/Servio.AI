@@ -41,9 +41,9 @@ function addCsrfToken(req, res, next) {
       
       // Configurar cookie com token
       res.cookie(cookieName, token, {
-        httpOnly: false, // MUST be false para JavaScript poder ler (Double Submit Cookie pattern)
+        httpOnly: true, // MUST be true para bloquear acesso via JavaScript e prevenir XSS -> CSRF
         secure: process.env.NODE_ENV === 'production', // HTTPS only em produção
-        sameSite: 'lax', // Proteção adicional contra CSRF
+        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', // Proteção estrita cross-origin em prod
         path: '/',
         maxAge: 3600000, // 1 hora
       });

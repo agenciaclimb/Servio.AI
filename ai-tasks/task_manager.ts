@@ -230,21 +230,21 @@ export class TaskManager {
   /**
    * Sistema de logging simples
    */
-  private log(level: 'info' | 'warn' | 'error' | 'debug', message: string): void {
+  private log(level: 'info' | 'warn' | 'error' | 'debug', _message: string): void {
     const levels = { debug: 0, info: 1, warn: 2, error: 3 };
     const configLevel = levels[this.config.log_level];
     const messageLevel = levels[level];
 
     if (messageLevel >= configLevel) {
-      const timestamp = new Date().toISOString();
-      const prefix = {
-        info: 'ℹ️',
-        warn: '⚠️',
-        error: '❌',
-        debug: '🔍',
-      }[level];
+      // const timestamp = new Date().toISOString();
+      // const prefix = {
+      //   info: 'ℹ️',
+      //   warn: '⚠️',
+      //   error: '❌',
+      //   debug: '🔍',
+      // }[level];
 
-      console.log(`[${timestamp}] ${prefix} [TaskManager] ${message}`);
+      // console.log(`[${timestamp}] ${prefix} [TaskManager] ${message}`);
     }
   }
 

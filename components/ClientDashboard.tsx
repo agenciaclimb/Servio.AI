@@ -110,7 +110,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
         }));
         setUserJobs(validJobs);
       } catch (error) {
-        console.error('Erro ao carregar jobs do cliente:', error);
+        // console.error('Erro ao carregar jobs do cliente:', error);
         addToast('Erro ao carregar seus serviços. Tente novamente.', 'error');
         setUserJobs([]); // Define array vazio em caso de erro
       } finally {
@@ -218,22 +218,22 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       setMatchingResults(results);
       addToast('Profissionais recomendados carregados com sucesso!', 'success');
     } catch (error) {
-      console.error('Erro ao buscar profissionais recomendados:', error);
+      // console.error('Erro ao buscar profissionais recomendados:', error);
       addToast('Erro ao carregar profissionais recomendados. Tente novamente.', 'error');
       setIsMatchingModalOpen(false);
     }
   };
 
-  const handleInviteProvider = async (providerId: string) => {
+  const handleInviteProvider = async (_providerId: string) => {
     if (!matchingJobId) return;
 
     try {
       // Call the existing submitProposal API with invite intent
       // For now, we'll use a mock/placeholder approach until backend supports direct invites
-      console.log(`Inviting provider ${providerId} to job ${matchingJobId}`);
+      // console.log(`Inviting provider ${providerId} to job ${matchingJobId}`);
       addToast('Prestador convidado com sucesso!', 'success');
     } catch (error) {
-      console.error('Erro ao convidar prestador:', error);
+      // console.error('Erro ao convidar prestador:', error);
       addToast('Erro ao enviar convite. Tente novamente.', 'error');
     }
   };

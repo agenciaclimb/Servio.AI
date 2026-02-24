@@ -1,41 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+
     <!-- Preconnect para recursos externos críticos (performance) -->
-    <link rel="preconnect" href="https://firebaseapp.com" crossorigin>
-    <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://securetoken.googleapis.com" crossorigin>
-    
+    <link rel="preconnect" href="https://firebaseapp.com" crossorigin />
+    <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://securetoken.googleapis.com" crossorigin />
+
     <!-- Preconnect para recursos secundários -->
-    <link rel="preconnect" href="https://js.stripe.com">
-    <link rel="preconnect" href="https://generativelanguage.googleapis.com">
-    <link rel="dns-prefetch" href="https://servio-backend-h5ogjon7aa-uw.a.run.app">
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-    
+    <link rel="preconnect" href="https://js.stripe.com" />
+    <link rel="preconnect" href="https://generativelanguage.googleapis.com" />
+    <link rel="dns-prefetch" href="https://servio-backend-h5ogjon7aa-uw.a.run.app" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+
+    <!-- CSP Restruturado para Produção: Bloqueia injeções maliciosas -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.servio.ai https://servio-backend-v2-1000250760228.us-west1.run.app https://servio-backend-v2-611018430672.us-west1.run.app https://gen-lang-client-0737507616.web.app https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.google-analytics.com https://api.stripe.com ws://localhost:* http://localhost:*; frame-src 'self' https://js.stripe.com https://hooks.stripe.com; object-src 'none'; media-src 'self'; manifest-src 'self'; worker-src 'self' blob:; form-action 'self'; frame-ancestors 'none'; base-uri 'self';"
+    />
+
     <title>SERVIO.AI - Encontre o Profissional Perfeito</title>
-    <meta name="description" content="Marketplace que conecta clientes com prestadores de serviços usando IA Gemini para matching personalizado, pagamentos seguros e avaliações verificadas." id="meta-description" />
-    
+    <meta
+      name="description"
+      content="Marketplace que conecta clientes com prestadores de serviços usando IA Gemini para matching personalizado, pagamentos seguros e avaliações verificadas."
+      id="meta-description"
+    />
+
     <!-- Meta tags adicionais para SEO -->
-    <meta name="keywords" content="serviços, profissionais, marketplace, IA, Gemini, prestadores, clientes">
-    <meta name="author" content="SERVIO.AI">
-    <meta name="robots" content="index, follow">
-    
+    <meta
+      name="keywords"
+      content="serviços, profissionais, marketplace, IA, Gemini, prestadores, clientes"
+    />
+    <meta name="author" content="SERVIO.AI" />
+    <meta name="robots" content="index, follow" />
+
     <!-- Open Graph para redes sociais -->
-    <meta property="og:title" content="SERVIO.AI - Encontre o Profissional Perfeito">
-    <meta property="og:description" content="Marketplace inteligente com matching por IA">
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="pt_BR">
+    <meta property="og:title" content="SERVIO.AI - Encontre o Profissional Perfeito" />
+    <meta property="og:description" content="Marketplace inteligente com matching por IA" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
     <script src="https://js.stripe.com/v3/"></script>
     <!-- Removido importmap externo para garantir que o Vite bundle use dependências locais durante CI -->
-<link rel="stylesheet" href="/index.css">
-</head>
+    <link rel="stylesheet" href="/index.css" />
+  </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>

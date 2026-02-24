@@ -88,8 +88,8 @@ const FindProvidersPage: React.FC<FindProvidersPageProps> = ({
       // Extract location from search query
       const detectedLocation = extractLocationFromQuery(searchQuery);
       
-      console.log('🔍 [FindProviders] Busca:', searchQuery);
-      console.log('📍 [FindProviders] Localização detectada:', detectedLocation);
+      // console.log('🔍 [FindProviders] Busca:', searchQuery);
+      // console.log('📍 [FindProviders] Localização detectada:', detectedLocation);
       
       // Update filters with service and auto-detected location
       setFilters(prev => ({ 
@@ -100,10 +100,10 @@ const FindProvidersPage: React.FC<FindProvidersPageProps> = ({
       
       // Show feedback if location was detected
       if (detectedLocation) {
-        console.info(`✅ Localização preenchida automaticamente: ${detectedLocation}`);
+        // console.info(`✅ Localização preenchida automaticamente: ${detectedLocation}`);
       }
     } catch (error) {
-      console.error('AI Search failed:', error);
+      // console.error('AI Search failed:', error);
       // Fallback to basic search if AI fails
       setFilters(prev => ({ ...prev, service: searchQuery }));
     } finally {
@@ -166,7 +166,7 @@ const FindProvidersPage: React.FC<FindProvidersPageProps> = ({
       const textMatch = !filters.service || nameMatch || headlineMatch || specialtiesMatch;
 
       const locationMatch =
-        !filters.location || user.location.toLowerCase().includes(locationLower);
+        !filters.location || (user.location?.toLowerCase().includes(locationLower) ?? false);
       const certificatesMatch = !filters.hasCertificates || user.hasCertificates === true;
       const verifiedMatch = !filters.isVerified || user.verificationStatus === 'verificado';
       const availabilityMatch =

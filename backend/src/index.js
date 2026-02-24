@@ -45,6 +45,12 @@ const {
   updateProfileSchema,
   reviewSchema,
   searchJobsSchema,
+  aiEnhanceJobSchema,
+  aiSuggestMaintenanceSchema,
+  aiGenerateTipSchema,
+  aiEnhanceProfileSchema,
+  aiGenerateReferralSchema,
+  aiGenerateProposalSchema,
 } = require('./validators/requestValidators');
 const ApiKeyManager = require('./services/apiKeyManager');
 const AuditLogger = require('./services/auditLogger');
@@ -409,30 +415,47 @@ function createApp({
       /* ignore */
     }
 
-    return { buildVersion, routeCount };
+    const memoryUsage = process.memoryUsage();
+
+    return { 
+      buildVersion, 
+      routeCount,
+      uptimeSecs: process.uptime(),
+      memory: {
+        rss: Math.round(memoryUsage.rss / 1024 / 1024) + 'MB',
+        heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024) + 'MB',
+        heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024) + 'MB',
+      }
+    };
   };
 
   // Health check endpoint for load balancers and monitoring
   app.get('/health', (req, res) => {
-    const { buildVersion, routeCount } = computeHealthData();
+    const healthData = computeHealthData();
     res.status(200).json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
       service: 'servio-backend',
-      version: buildVersion,
-      routes: routeCount,
+      version: healthData.buildVersion,
+      routes: healthData.routeCount,
+      uptimeSecs: healthData.uptimeSecs,
+      memory: healthData.memory,
+      environment: process.env.NODE_ENV || 'development'
     });
   });
 
   // Health check alias for API prefix compatibility
   app.get('/api/health', (req, res) => {
-    const { buildVersion, routeCount } = computeHealthData();
+    const healthData = computeHealthData();
     res.status(200).json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
       service: 'servio-backend',
-      version: buildVersion,
-      routes: routeCount,
+      version: healthData.buildVersion,
+      routes: healthData.routeCount,
+      uptimeSecs: healthData.uptimeSecs,
+      memory: healthData.memory,
+      environment: process.env.NODE_ENV || 'development'
     });
   });
 
@@ -501,7 +524,7 @@ function createApp({
   });
 
   // POST /api/enhance-job - Enhance job request with AI
-  app.post('/api/enhance-job', geminiLimiter, async (req, res) => {
+  app.post('/api/enhance-job', geminiLimiter, validateRequest(aiEnhanceJobSchema), async (req, res) => {
     const { prompt, address, fileCount } = req.body;
     if (!prompt) {
       return res.status(400).json({ error: 'Prompt is required.' });
@@ -604,7 +627,7 @@ Responda APENAS com o JSON, sem markdown ou texto adicional.`;
   });
 
   // POST /api/suggest-maintenance - Suggest maintenance for an item
-  app.post('/api/suggest-maintenance', async (req, res) => {
+  app.post('/api/suggest-maintenance', geminiLimiter, validateRequest(aiSuggestMaintenanceSchema), async (req, res) => {
     const { item } = req.body;
     if (!item || !item.name) {
       return res.status(400).json({ error: 'Item data is required.' });
@@ -696,7 +719,7 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
   }
 
   // POST /api/generate-tip
-  app.post('/api/generate-tip', geminiLimiter, async (req, res) => {
+  app.post('/api/generate-tip', geminiLimiter, validateRequest(aiGenerateTipSchema), async (req, res) => {
     const user = req.body?.user || {};
     const baseTip = `Complete seu perfil adicionando uma foto profissional, ${user.name || 'usuário'}.`; // deterministic
     const model = getModel();
@@ -717,7 +740,7 @@ Retorne apenas a dica sem explicações adicionais.`;
   });
 
   // POST /api/enhance-profile
-  app.post('/api/enhance-profile', geminiLimiter, async (req, res) => {
+  app.post('/api/enhance-profile', geminiLimiter, validateRequest(aiEnhanceProfileSchema), async (req, res) => {
     const profile = req.body?.profile || {};
     const stub = {
       suggestedHeadline: `Profissional de ${profile.headline?.split(' ')[0] || 'Serviços'} Confiável`,
@@ -753,7 +776,7 @@ Requisitos: tom profissional, claro, conciso. Resposta APENAS JSON.`;
   });
 
   // POST /api/generate-referral
-  app.post('/api/generate-referral', geminiLimiter, async (req, res) => {
+  app.post('/api/generate-referral', geminiLimiter, validateRequest(aiGenerateReferralSchema), async (req, res) => {
     const { senderName, friendEmail } = req.body || {};
     const subjectStub = `Convite para conhecer a SERVIO.AI`;
     const bodyStub = `Olá ${friendEmail || 'amigo'}, ${senderName || 'Um usuário'} está recomendando a plataforma SERVIO.AI para contratar ou oferecer serviços com segurança.`;
@@ -783,7 +806,7 @@ Formato JSON: {"subject":"...","body":"..."}`;
   });
 
   // POST /api/generate-proposal
-  app.post('/api/generate-proposal', geminiLimiter, async (req, res) => {
+  app.post('/api/generate-proposal', geminiLimiter, validateRequest(aiGenerateProposalSchema), async (req, res) => {
     const { job, provider } = req.body || {};
     const stubMessage = `Olá! Posso ajudar com "${job?.description?.slice(0, 60) || 'seu serviço'}" garantindo qualidade e prazo. Vamos prosseguir?`;
     const model = getModel();

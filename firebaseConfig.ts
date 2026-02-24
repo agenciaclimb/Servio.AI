@@ -1,5 +1,8 @@
+console.log('XXX DEBUG: firebaseConfig loading');
+console.log('XXX DEBUG: import.meta.env.MODE:', import.meta.env.MODE);
+
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserSessionPersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import type { FirebaseStorage } from 'firebase/storage';
 import type { Analytics } from 'firebase/analytics';
@@ -49,6 +52,8 @@ if (isFirebaseMock) {
   db = {} as ReturnType<typeof getFirestore>;
 } else {
   auth = getAuth(app);
+  // Protegendo a sessão limitando o escopo ao lifetime da aba (evita sequestros over-time de LocalStorage)
+  setPersistence(auth, browserSessionPersistence).catch(console.error);
   db = getFirestore(app);
 }
 

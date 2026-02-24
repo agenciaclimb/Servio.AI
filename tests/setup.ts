@@ -1,126 +1,79 @@
-import { expect, afterEach, vi } from 'vitest';
+import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
-import * as matchers from '@testing-library/jest-dom/matchers';
+import { afterEach, vi } from 'vitest';
 
-// Definir window.location básica para jsdom (evita erros em new URL()/router)
-if (typeof window !== 'undefined' && (!window.location || !window.location.origin)) {
-  const href = 'http://localhost/';
-  // @ts-expect-error: redefinição controlada do location para ambiente de teste jsdom
-  delete (window as any).location;
-  (window as any).location = new URL(href) as unknown as Location;
-}
-
-// Vitest/jsdom não expõe Notification por padrão, então mockamos o básico para destravar fluxos Prospector
-if (typeof globalThis.Notification === 'undefined') {
-  class NotificationMock {
-    static permission: NotificationPermission = 'granted';
-    title: string;
-    options?: NotificationOptions;
-
-    constructor(title: string, options?: NotificationOptions) {
-      this.title = title;
-      this.options = options;
-    }
-
-    static async requestPermission(): Promise<NotificationPermission> {
-      return NotificationMock.permission;
-    }
-
-    close() {
-      /* noop */
-    }
-  }
-
-  (globalThis as any).Notification = NotificationMock;
-}
-
-// Mock MSW server if not available
-let server: any;
-try {
-  const mswModule = await import('./msw/server');
-  server = mswModule.server;
-} catch {
-  server = { listen: vi.fn(), close: vi.fn(), resetHandlers: vi.fn() };
-}
-
-// Silenciar warnings/erros ruidosos e esperados em testes
-const originalWarn = console.warn;
-const originalError = console.error;
-
-const shouldSilenceMsg = (msg: string) =>
-  // Fallbacks e mocks esperados
-  msg.includes('Failed to fetch') ||
-  msg.includes('using mock data') ||
-  msg.includes('Fallback heuristic used') ||
-  msg.includes('AI matching failed, using basic local matching') ||
-  // Warnings de libs durante testes
-  msg.includes('not wrapped in act(') ||
-  msg.includes('React Router Future Flag Warning') ||
-  msg.includes('ReactDOMTestUtils.act is deprecated') ||
-  msg.includes('ReactDOMTestUtils.act') ||
-  // Firebase Messaging em ambiente de teste/jsdom
-  msg.includes('Messaging not supported in this browser');
-
-const shouldSilenceArgs = (args: any[]) => {
-  try {
-    for (const a of args) {
-      // Verifica string direta
-      if (typeof a === 'string' && shouldSilenceMsg(a)) return true;
-      // Verifica Error com message
-      if (
-        a &&
-        typeof a === 'object' &&
-        typeof a.message === 'string' &&
-        shouldSilenceMsg(a.message)
-      ) {
-        return true;
-      }
-      // Tenta serializar objetos simples
-      if (a && typeof a === 'object') {
-        const maybe = (() => {
-          try {
-            return JSON.stringify(a);
-          } catch {
-            return undefined;
-          }
-        })();
-        if (maybe && shouldSilenceMsg(maybe)) return true;
-      }
-    }
-  } catch {
-    // ignora erros na filtragem
-  }
-  return false;
-};
-
-console.warn = (...args: any[]) => {
-  if (shouldSilenceArgs(args)) return;
-  originalWarn.apply(console, args);
-};
-
-console.error = (...args: any[]) => {
-  if (shouldSilenceArgs(args)) return;
-  originalError.apply(console, args);
-};
-
-// MSW opcional: ativar apenas se ENABLE_MSW estiver definido no global para não afetar spies de fetch.
-const mswActive = Boolean((globalThis as any).ENABLE_MSW);
-if (mswActive) {
-  server.listen({ onUnhandledRequest: 'bypass' });
-  (globalThis as any).__MSW_SERVER__ = server;
-}
-
-expect.extend(matchers);
-
+// Runs a cleanup after each test case (e.g. clearing jsdom)
 afterEach(() => {
   cleanup();
-  if (mswActive) {
-    (globalThis as any).__MSW_SERVER__?.resetHandlers();
-  }
 });
-// Vitest não oferece afterAll aqui sem import; se mswActive, fechar em process.on('exit')
-if (mswActive) {
-  process.on('exit', () => {
-    (globalThis as any).__MSW_SERVER__?.close();
-  });
+
+// Mocks for happy-dom compatibility
+Object.defineProperty(navigator, 'clipboard', {
+  value: {
+    writeText: vi.fn(),
+    readText: vi.fn(),
+  },
+  writable: true,
+  configurable: true,
+});
+
+class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
 }
+global.ResizeObserver = ResizeObserver;
+
+if (!global.PointerEvent) {
+  class PointerEvent extends Event {
+    public height: number;
+    public isPrimary: boolean;
+    public pointerId: number;
+    public pointerType: string;
+    public pressure: number;
+    public tangentialPressure: number;
+    public tiltX: number;
+    public tiltY: number;
+    public twist: number;
+    public width: number;
+
+    constructor(type: string, params: PointerEventInit = {}) {
+      super(type, params);
+      this.pointerId = params.pointerId || 0;
+      this.width = params.width || 0;
+      this.height = params.height || 0;
+      this.pressure = params.pressure || 0;
+      this.tangentialPressure = params.tangentialPressure || 0;
+      this.tiltX = params.tiltX || 0;
+      this.tiltY = params.tiltY || 0;
+      this.twist = params.twist || 0;
+      this.pointerType = params.pointerType || '';
+      this.isPrimary = params.isPrimary || false;
+    }
+  }
+  global.PointerEvent = PointerEvent as any;
+}
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
+
+Object.defineProperty(window, 'scrollIntoView', {
+  writable: true,
+  value: vi.fn(),
+});
+
+Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+  writable: true,
+  value: vi.fn(),
+});
