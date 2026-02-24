@@ -3753,9 +3753,6 @@ Retorne apenas o corpo do email, sem assunto.`;
   });
 
   // Create a new job (with /api prefix) - VALIDAÇÃO ZOD APLICADA
-  const { validateRequest } = require('./middleware/validationMiddleware');
-  const { createJobSchema } = require('./validators/requestValidators');
-  
   app.post('/api/jobs', validateRequest(createJobSchema), async (req, res) => {
     try {
       const allowedMatchingStatus = ['pending', 'in_progress', 'completed', 'failed'];
