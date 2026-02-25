@@ -379,7 +379,7 @@ function createApp({
   // Use express.json() for all routes except the webhook
   app.use((req, res, next) => {
     if (req.path === '/api/stripe-webhook') return next();
-    return express.json()(req, res, next);
+    return express.json({ strict: true })(req, res, next);
   });
 
   // Global middleware to handle invalid/malformed JSON payloads (SyntaxError)
@@ -4413,6 +4413,37 @@ Retorne apenas o corpo do email, sem assunto.`;
   const analyticsRouter = require('./routes/analytics');
   app.use('/api/analytics', analyticsRouter);
 
+  // =================================================================
+  // GLOBAL ERROR HANDLER (DEVE SER ÚLTIMO MIDDLEWARE)
+  // =================================================================
+  app.use((err, req, res, next) => {
+    // Log completo do erro (sempre, para debugging)
+    console.error('[ERROR_HANDLER] Unhandled error:', {
+      message: err.message,
+      stack: err.stack,
+      path: req.path,
+      method: req.method,
+      ip: req.ip,
+    });
+
+    // Determinar status code
+    const statusCode = err.statusCode || err.status || 500;
+
+    // Resposta ao cliente (sem expor stack trace em produção)
+    const response = {
+      error: err.message || 'Erro interno do servidor',
+      code: err.code || 'INTERNAL_SERVER_ERROR',
+    };
+
+    // Adicionar stack trace apenas em desenvolvimento
+    if (process.env.NODE_ENV !== 'production') {
+      response.stack = err.stack;
+      response.details = err.details || null;
+    }
+
+    res.status(statusCode).json(response);
+  });
+
   return app;
 }
 
@@ -4616,35 +4647,13 @@ if (require.main === module) {
     );
   }
 
-  // =================================================================
-  // GLOBAL ERROR HANDLER (DEVE SER ÚLTIMO MIDDLEWARE)
-  // =================================================================
-  app.use((err, req, res, next) => {
-    // Log completo do erro (sempre, para debugging)
-    console.error('[ERROR_HANDLER] Unhandled error:', {
-      message: err.message,
-      stack: err.stack,
-      path: req.path,
-      method: req.method,
-      ip: req.ip,
-    });
+  // Catch unhandled promise rejections so they don't crash Cloud Run
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('[SERVER] ❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  });
 
-    // Determinar status code
-    const statusCode = err.statusCode || err.status || 500;
-
-    // Resposta ao cliente (sem expor stack trace em produção)
-    const response = {
-      error: err.message || 'Erro interno do servidor',
-      code: err.code || 'INTERNAL_SERVER_ERROR',
-    };
-
-    // Adicionar stack trace apenas em desenvolvimento
-    if (process.env.NODE_ENV !== 'production') {
-      response.stack = err.stack;
-      response.details = err.details || null;
-    }
-
-    res.status(statusCode).json(response);
+  process.on('uncaughtException', (err) => {
+    console.error('[SERVER] ❌ Uncaught Exception:', err);
   });
 
   try {
