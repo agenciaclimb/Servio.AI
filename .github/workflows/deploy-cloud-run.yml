@@ -252,29 +252,11 @@ jobs:
           name: deployment-logs
           path: deploy_log.txt
 
-      - name: Post-deploy smoke tests (Hosting → v2)
-        env:
-          HOSTING_URL: ${{ secrets.FRONTEND_URL }}
+      - name: Post-deploy internal smoke test
         run: |
           set -euo pipefail
-          # Fallback para web.app se FRONTEND_URL não estiver definido nos secrets
-          if [ -z "${HOSTING_URL}" ]; then
-            HOSTING_URL="https://gen-lang-client-0737507616.web.app"
-          fi
-          echo "Running smoke tests against HOSTING_URL=${HOSTING_URL}"
-          # Health check
-          status_code=$(curl -s -o /tmp/health.json -w "%{http_code}" "${HOSTING_URL}/api/health")
-          cat /tmp/health.json
-          if [ "$status_code" != "200" ]; then
-            echo "::error::Health check failed with status ${status_code}"; exit 1
-          fi
-          echo "✅ Health check passed (status $status_code)"
-          # Prospector smart-actions
-          BODY='{"stats":{"inactiveLeads":2,"hotLeads":1},"leads":[],"recentActivity":[]}'
-          status_code=$(curl -s -o /tmp/smart.json -w "%{http_code}" -H "Content-Type: application/json" -d "$BODY" "${HOSTING_URL}/api/prospector/smart-actions")
-          cat /tmp/smart.json
-          if [ "$status_code" != "200" ]; then
-            echo "::error::Smart actions failed with status ${status_code}"; exit 1
-          fi
-          echo "✅ Smart actions passed (status $status_code)"
+          echo "Fetching backend URL for smoke tests..."
+          SERVICE_URL=$(gcloud run services describe servio-backend-v2 --region $REGION --format 'value(status.url)')
+          echo "Running smoke tests against SERVICE_URL=${SERVICE_URL}"
+          curl -f "$SERVICE_URL/internal/smoke-test"
           echo "🎉 All smoke tests passed!"

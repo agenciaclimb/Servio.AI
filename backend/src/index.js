@@ -315,6 +315,13 @@ function createApp({
   }));
 
   // ===========================
+  // Internal Smoke Test Route
+  // ===========================
+  app.get('/internal/smoke-test', (req, res) => {
+    return res.status(200).json({ status: 'ok' });
+  });
+
+  // ===========================
   // CSRF Protection V2 (Task 4.6) - REABILITADO
   // ===========================
   // Implementação manual robusta usando Double Submit Cookie pattern
