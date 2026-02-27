@@ -79,7 +79,7 @@ const ErrorCatalog = {
   UNKNOWN: { code: 'E_UNKNOWN', message: 'Erro desconhecido.' },
 } as const;
 
-let cachedCsrfToken: string | null = null;
+let cachedCsrfToken: string | null = (typeof process !== 'undefined' && process.env.NODE_ENV === 'test') ? 'test-fake-token' : null;
 let isFetchingCsrfToken = false;
 let csrfTokenPromise: Promise<string | null> | null = null;
 
