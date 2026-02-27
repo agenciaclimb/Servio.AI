@@ -111,16 +111,32 @@ function resolveEndpoint(endpoint: string): string {
  * A utility to handle API responses from our own backend.
  * Ensures absolute URL resolution for Node test environment compatibility.
  */
-const fetchFromBackend = async <T>(endpoint: string, body: object): Promise<T> => {
+const fetchFromBackend = async <T>(endpoint: string, body: object | FormData): Promise<T> => {
   const fullUrl = resolveEndpoint(endpoint);
+  const isFormData = body instanceof FormData;
+  
   // Add a safety timeout and one quick retry to improve resilience
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 12000); // 12s timeout
+  
+  let csrfToken = null;
+  try {
+    csrfToken = await API.ensureCsrfToken();
+  } catch (e) {
+    console.warn('[geminiService] Falha ao obter CSRF token inicial', e);
+  }
+
+  const headers: Record<string, string> = isFormData ? {} : { 'Content-Type': 'application/json' };
+  if (csrfToken) {
+    headers['x-csrf-token'] = csrfToken;
+  }
+
   try {
     const response = await fetch(fullUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      credentials: 'include',
+      headers,
+      body: isFormData ? (body as FormData) : JSON.stringify(body),
       signal: controller.signal,
     });
     clearTimeout(timeout);
@@ -138,8 +154,9 @@ const fetchFromBackend = async <T>(endpoint: string, body: object): Promise<T> =
     await new Promise(r => setTimeout(r, 300));
     const retryResp = await fetch(fullUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      credentials: 'include',
+      headers,
+      body: isFormData ? (body as FormData) : JSON.stringify(body),
     }).catch(() => null);
     if (!retryResp || !retryResp.ok) {
       const msg = (err as Error)?.message || 'Falha de rede ao contatar o servidor.';

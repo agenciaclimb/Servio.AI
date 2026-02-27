@@ -34,30 +34,13 @@ const {
   customSecurityHeaders,
 } = require('./middleware/securityHeaders');
 const { setupCsrfProtection, createCsrfTokenEndpoint } = require('./middleware/csrfProtection');
-const {
-  validateRequest,
-  validateQuery,
-  loginSchema,
-  registerSchema,
-  createJobSchema,
-  proposalSchema,
-  paymentSchema,
-  updateProfileSchema,
-  reviewSchema,
-  searchJobsSchema,
-  aiEnhanceJobSchema,
-  aiSuggestMaintenanceSchema,
-  aiGenerateTipSchema,
-  aiEnhanceProfileSchema,
-  aiGenerateReferralSchema,
-  aiGenerateProposalSchema,
-} = require('./validators/requestValidators');
 const ApiKeyManager = require('./services/apiKeyManager');
 const AuditLogger = require('./services/auditLogger');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 // Prospector follow-up automation scheduler helpers
 const { processPendingOutreach } = require('./outreachScheduler');
 // Follow-up email processing service & Gmail integration
+
 const gmailService = require('./gmailService');
 const followUpService = require('./followUpService');
 // WhatsApp Business API service
@@ -201,6 +184,25 @@ function calculateProviderRate(provider = {}, stats = {}) {
     tier,
   };
 }
+
+const {
+  validateRequest,
+  validateQuery,
+  loginSchema,
+  registerSchema,
+  createJobSchema,
+  proposalSchema,
+  paymentSchema,
+  updateProfileSchema,
+  reviewSchema,
+  searchJobsSchema,
+  aiEnhanceJobSchema,
+  aiSuggestMaintenanceSchema,
+  aiGenerateTipSchema,
+  aiEnhanceProfileSchema,
+  aiGenerateReferralSchema,
+  aiGenerateProposalSchema,
+} = require('./validators/requestValidators');
 
 /**
  * Factory function to create the Express app with dependency injection

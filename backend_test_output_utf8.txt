@@ -1,0 +1,584 @@
+﻿
+> servio-ai-frontend@0.0.0 test:backend
+> cd backend && node ./node_modules/vitest/vitest.mjs run --no-coverage
+
+node.exe : [33mThe CJS build of Vite's Node API is deprecated. See 
+https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more 
+details.[39m
+No linha:1 caractere:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([33mThe CJS bu...e details.[39m:String) [], 
+    RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/Admin/Desktop/Talina/Servio.AI/backend[39m
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mModo Mem├│ria[2m > [22m[2mdeve detectar modo mem├│ria quando sem Project ID
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mModo Mem├│ria[2m > [22m[2mdeve detectar modo mem├│ria quando sem 
+Project ID
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mModo Mem├│ria[2m > [22m[2mdeve ter m├⌐todos principais dispon├¡veis
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mModo Mem├│ria[2m > [22m[2mdeve ter m├⌐todos principais 
+dispon├¡veis
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mOpera├º├╡es CRUD[2m > [22m[2mdeve criar documento com set()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mOpera├º├╡es CRUD[2m > [22m[2mdeve criar documento com set()
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mOpera├º├╡es CRUD[2m > [22m[2mdeve gerar ID autom├ítico quando doc() chamado sem argumento
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mOpera├º├╡es CRUD[2m > [22m[2mdeve gerar ID autom├ítico quando 
+doc() chamado sem argumento
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mOpera├º├╡es CRUD[2m > [22m[2mdeve atualizar documento com update()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mOpera├º├╡es CRUD[2m > [22m[2mdeve atualizar documento com update()
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mOpera├º├╡es CRUD[2m > [22m[2mdeve fazer merge com set({ merge: true })
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mOpera├º├╡es CRUD[2m > [22m[2mdeve fazer merge com set({ merge: 
+true })
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mOpera├º├╡es CRUD[2m > [22m[2mdeve deletar documento
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mOpera├º├╡es CRUD[2m > [22m[2mdeve deletar documento
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mOpera├º├╡es CRUD[2m > [22m[2mdeve adicionar documento com add()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mOpera├º├╡es CRUD[2m > [22m[2mdeve adicionar documento com add()
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+ [32mΓ£ô[39m tests/followUpService.test.js [2m([22m[2m4 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mQueries[2m > [22m[2mdeve filtrar com where()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mQueries[2m > [22m[2mdeve filtrar com where()
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+ [32mΓ£ô[39m tests/authorizationMiddleware.test.js [2m([22m[2m9 tests[22m[2m)[22m[90m 21[2mms[22m[39m
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mQueries[2m > [22m[2mdeve limitar resultados com limit()
+[22m[39m[DB] Mem├│ria limpa
+
+ [32mΓ£ô[39m tests/user-uid-field.test.js [2m([22m[2m13 tests[22m[2m)[22m[90m 23[2mms[22m[39m
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mQueries[2m > [22m[2mdeve limitar resultados com limit()
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mQueries[2m > [22m[2mdeve ordenar com orderBy()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mQueries[2m > [22m[2mdeve ordenar com orderBy()
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mQueries[2m > [22m[2mdeve combinar where + orderBy + limit
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mQueries[2m > [22m[2mdeve combinar where + orderBy + limit
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mfieldValueHelpers[2m > [22m[2mdeve processar increment()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mfieldValueHelpers[2m > [22m[2mdeve processar increment()
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mfieldValueHelpers[2m > [22m[2mdeve processar serverTimestamp()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mfieldValueHelpers[2m > [22m[2mdeve processar serverTimestamp()
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mfieldValueHelpers[2m > [22m[2mdeve processar arrayUnion()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mfieldValueHelpers[2m > [22m[2mdeve processar arrayRemove()
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mfieldValueHelpers[2m > [22m[2mdeve processar arrayUnion()
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mfieldValueHelpers[2m > [22m[2mdeve processar arrayRemove()
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mExport e Debug[2m > [22m[2mdeve exportar dados com _exportMemory()
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mExport e Debug[2m > [22m[2mdeve limpar dados com _clearMemory()
+[22m[39m[DB] Mem├│ria limpa
+[DB] Mem├│ria limpa
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mComportamento do snapshot[2m > [22m[2msnapshot deve ter propriedade exists
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mComportamento do snapshot[2m > [22m[2msnapshot deve ter propriedade id
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mExport e Debug[2m > [22m[2mdeve exportar dados com _exportMemory()
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mExport e Debug[2m > [22m[2mdeve limpar dados com _clearMemory()
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mComportamento do snapshot[2m > [22m[2msnapshot deve ter 
+propriedade exists
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mComportamento do snapshot[2m > [22m[2msnapshot deve ter 
+propriedade id
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+[90mstdout[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback System[2m > [22m[2mComportamento do snapshot[2m > [22m[2msnapshot.docs deve ter map
+[22m[39m[DB] Mem├│ria limpa
+
+[90mstderr[2m | tests/dbWrapper.test.js[2m > [22m[2mdbWrapper - Memory Fallback 
+System[2m > [22m[2mComportamento do snapshot[2m > [22m[2msnapshot.docs deve ter map
+[22m[39m[DB] ΓÜá∩╕Å  Modo mem├│ria for├ºado para testes
+
+ [32mΓ£ô[39m tests/dbWrapper.test.js [2m([22m[2m21 tests[22m[2m)[22m[90m 30[2mms[22m[39m
+ [32mΓ£ô[39m tests/services/whatsappService.test.ts [2m([22m[2m21 tests[22m[2m)[22m[90m 42[2mms[22m[39m
+[90mstdout[2m | tests/services/pipedriveService.test.js[2m > [22m[2mPipedriveService[2m > [22m[2mcreateLead[2m > [22m[2mdeve criar um lead com sucesso
+[22m[39m[PipedriveService] Lead criado no Pipedrive: 12345 {
+  lead: {
+    id: [32m'1'[39m,
+    email: [32m'client@example.com'[39m,
+    nome: [32m'John Client'[39m,
+    empresa: [32m'Tech Corp'[39m,
+    telefone: [32m'+5511999999999'[39m,
+    createdAt: [35m2026-02-24T14:40:41.363Z[39m,
+    servioJobId: [32m'job-123'[39m
+  }
+}
+
+[90mstderr[2m | tests/services/pipedriveService.test.js[2m > 
+[22m[2mPipedriveService[2m > [22m[2mcreateLead[2m > [22m[2mdeve lan├ºar erro se 
+resposta for inv├ílida
+[22m[39m[PipedriveService] Erro ao criar lead no Pipedrive: Error: Pipedrive error: 
+Invalid request
+    at PipedriveService.createLead [90m(C:\Users\Admin\Desktop\Talina\Servio.AI\backend\[
+39msrc\services\pipedriveService.js:56:15[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at [90mC:\Users\Admin\Desktop\Talina\Servio.AI\backend\[39mtests\services\pipedriveSe
+rvice.test.js:91:7
+    at [90mfile:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_modules/[4m@
+vitest/runner[24m/dist/index.js:533:5
+    at runTest [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_modu
+les/[4m@vitest/runner[24m/dist/index.js:1056:11[90m)[39m
+    at runSuite [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1205:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1205:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1205:15[90m)[39m
+    at runFiles [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1262:5[90m)[39m
+    at startTests [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_m
+odules/[4m@vitest/runner[24m/dist/index.js:1271:3[90m)[39m
+
+[90mstdout[2m | tests/services/pipedriveService.test.js[2m > [22m[2mPipedriveService[2m > [22m[2mcreateDeal[2m > [22m[2mdeve criar um deal com sucesso
+[22m[39m[PipedriveService] Deal criado no Pipedrive: 67890 {
+  deal: {
+    id: [32m'1'[39m,
+    title: [32m'Proposta de Servi├ºo'[39m,
+    value: [33m5000[39m,
+    currency: [32m'BRL'[39m,
+    status: [32m'open'[39m,
+    pipelineId: [32m'1'[39m,
+    leadId: [32m'123'[39m,
+    createdAt: [35m2026-02-24T14:40:41.391Z[39m,
+    servioProposalId: [32m'prop-456'[39m
+  }
+}
+
+[90mstdout[2m | tests/services/pipedriveService.test.js[2m > [22m[2mPipedriveService[2m > [22m[2mupdateDeal[2m > [22m[2mdeve atualizar um deal
+[22m[39m[PipedriveService] Deal atualizado no Pipedrive: 67890 { updates: { status: [32m'won'[39m, value: [33m6000[39m } }
+
+[90mstdout[2m | tests/services/pipedriveService.test.js[2m > [22m[2mPipedriveService[2m > [22m[2msyncProposalToDeal[2m > [22m[2mdeve sincronizar proposta com novo deal
+[22m[39m[PipedriveService] Deal criado no Pipedrive: 55555 {
+  deal: {
+    title: [32m'Nova Proposta'[39m,
+    value: [33m8000[39m,
+    currency: [32m'BRL'[39m,
+    id: [32m''[39m,
+    pipelineId: [32m'1'[39m,
+    leadId: [32m'99999'[39m,
+    status: [32m'open'[39m,
+    createdAt: [35m2026-02-24T14:40:41.413Z[39m,
+    servioProposalId: [32m'prop-789'[39m
+  }
+}
+
+[90mstdout[2m | tests/services/pipedriveService.test.js[2m > [22m[2mPipedriveService[2m > [22m[2mhandleWebhook[2m > [22m[2mdeve processar webhook de pessoa adicionada
+[22m[39m[PipedriveService] Webhook Pipedrive recebido: { event: [32m'added.person'[39m }
+[PipedriveService] Pessoa sincronizada: newlead@example.com
+
+[90mstdout[2m | tests/services/pipedriveService.test.js[2m > [22m[2mPipedriveService[2m > [22m[2mhandleWebhook[2m > [22m[2mdeve processar webhook de deal adicionado
+[22m[39m[PipedriveService] Webhook Pipedrive recebido: { event: [32m'added.deal'[39m }
+[PipedriveService] Deal sincronizado: Novo Deal (67890)
+
+ [32mΓ£ô[39m tests/services/pipedriveService.test.js [2m([22m[2m13 tests[22m[2m)[22m[90m 174[2mms[22m[39m
+[90mstdout[2m | tests/securityMiddlewares.test.js
+[22m[39m[CSRF] Initializing with NODE_ENV: test
+[CSRF] CSRF_SECRET exists: [33mfalse[39m
+[CSRF] CSRF_SECRET length: [33m0[39m
+
+[90mstderr[2m | tests/services/ecommerceService.test.js[2m > [22m[2mE-commerce 
+Service[2m > [22m[2mProduct Management[2m > [22m[2mshould reject product creation 
+with invalid price
+[22m[39mError creating product: Error: Invalid product data: name, sku, and valid price 
+required
+    at Module.createProduct [90m(C:\Users\Admin\Desktop\Talina\Servio.AI\backend\[39msrc\
+services\ecommerceService.js:68:13[90m)[39m
+    at [90mC:\Users\Admin\Desktop\Talina\Servio.AI\backend\[39mtests\services\ecommerceSe
+rvice.test.js:103:37
+    at [90mfile:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_modules/[4m@
+vitest/runner[24m/dist/index.js:146:14
+    at [90mfile:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_modules/[4m@
+vitest/runner[24m/dist/index.js:533:11
+    at runWithTimeout [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mno
+de_modules/[4m@vitest/runner[24m/dist/index.js:39:7[90m)[39m
+    at runTest [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_modu
+les/[4m@vitest/runner[24m/dist/index.js:1056:17[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at runSuite [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1205:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1205:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1205:15[90m)[39m
+
+[90mstderr[2m | tests/services/ecommerceService.test.js[2m > [22m[2mE-commerce 
+Service[2m > [22m[2mCart Management[2m > [22m[2mshould reject adding item with 
+insufficient stock
+[22m[39mError adding to cart: Error: Insufficient stock. Available: 1
+    at Module.addToCart [90m(C:\Users\Admin\Desktop\Talina\Servio.AI\backend\[39msrc\serv
+ices\ecommerceService.js:138:13[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at [90mC:\Users\Admin\Desktop\Talina\Servio.AI\backend\[39mtests\services\ecommerceSe
+rvice.test.js:169:7
+    at [90mfile:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_modules/[4m@
+vitest/runner[24m/dist/index.js:533:5
+    at runTest [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_modu
+les/[4m@vitest/runner[24m/dist/index.js:1056:11[90m)[39m
+    at runSuite [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1205:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1205:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1205:15[90m)[39m
+    at runFiles [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1262:5[90m)[39m
+    at startTests [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_m
+odules/[4m@vitest/runner[24m/dist/index.js:1271:3[90m)[39m
+
+[90mstderr[2m | tests/services/ecommerceService.test.js[2m > [22m[2mE-commerce 
+Service[2m > [22m[2mCheckout & Payment[2m > [22m[2mshould reject checkout with empty 
+cart
+[22m[39mError creating checkout session: Error: Cart is empty
+    at Module.createCheckoutSession [90m(C:\Users\Admin\Desktop\Talina\Servio.AI\backend\
+[39msrc\services\ecommerceService.js:283:13[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at [90mC:\Users\Admin\Desktop\Talina\Servio.AI\backend\[39mtests\services\ecommerceSe
+rvice.test.js:235:7
+    at [90mfile:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_modules/[4m@
+vitest/runner[24m/dist/index.js:533:5
+    at runTest [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_modu
+les/[4m@vitest/runner[24m/dist/index.js:1056:11[90m)[39m
+    at runSuite [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1205:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1205:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1205:15[90m)[39m
+    at runFiles [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_mod
+ules/[4m@vitest/runner[24m/dist/index.js:1262:5[90m)[39m
+    at startTests [90m(file:///C:/Users/Admin/Desktop/Talina/Servio.AI/backend/[39mnode_m
+odules/[4m@vitest/runner[24m/dist/index.js:1271:3[90m)[39m
+
+ [32mΓ£ô[39m tests/services/ecommerceService.test.js [2m([22m[2m15 tests[22m[2m)[22m[90m 66[2mms[22m[39m
+ [32mΓ£ô[39m tests/services/landingPageService.test.ts [2m([22m[2m22 tests[22m[2m)[22m[33m 507[2mms[22m[39m
+ [32mΓ£ô[39m tests/services/twilioService.test.ts [2m([22m[2m22 tests[22m[2m)[22m[33m 517[2mms[22m[39m
+[90mstdout[2m | tests/securityMiddlewares.test.js[2m > [22m[2mcsrfProtection helpers[2m > [22m[2mcsrfExempt should bypass configured paths
+[22m[39m[CSRF] Exempting path: /api/stripe-webhook
+
+[90mstderr[2m | tests/securityMiddlewares.test.js[2m > [22m[2mcsrfProtection 
+helpers[2m > [22m[2mcsrfErrorHandler should return 403 on CSRF error
+[22m[39m[CSRF] Token inv├ílido ou ausente: { ip: [32m'4.4.4.4'[39m, path: 
+[32m'/api/test'[39m, method: [32m'POST'[39m, headers: {} }
+
+ [32mΓ£ô[39m tests/securityMiddlewares.test.js [2m([22m[2m10 tests[22m[2m)[22m[90m 57[2mms[22m[39m
+ [32mΓ£ô[39m tests/routes/aiRecommendations.test.js [2m([22m[2m20 tests[22m[2m)[22m[33m 378[2mms[22m[39m
+[2m11:40:42[22m [33m[1m[vite][22m[39m [33mwarning: [33mDuplicate key "firestore" 
+in object literal[33m
+21 |      firestore: mockFirestore,
+22 |      apps: [],
+23 |      firestore: mockFirestore, // Add this property to the admin object itself if 
+needed by some requires
+   |      ^
+24 |    };
+25 |  
+[39m
+  Plugin: [35mvite:esbuild[39m
+  File: [36mC:/Users/Admin/Desktop/Talina/Servio.AI/backend/tests/services/monitoringServi
+ce.test.ts[39m
+[90mstdout[2m | tests/gmailService.test.js[2m > [22m[2mgmailService[2m > [22m[2mverifies SMTP connection
+[22m[39m[Gmail] SMTP server is ready to send emails
+
+[90mstdout[2m | tests/gmailService.test.js[2m > [22m[2mgmailService[2m > [22m[2msends a basic email with default from
+[22m[39m[Gmail] Email sent: <mock-1771944042500@servio-ai.com> to: to@example.com
+
+[90mstdout[2m | tests/gmailService.test.js[2m > [22m[2mgmailService[2m > [22m[2msendProspectorInvite composes expected subject and link
+[22m[39m[Gmail] Email sent: <mock-1771944042506@servio-ai.com> to: joao@example.com
+
+[90mstdout[2m | tests/gmailService.test.js[2m > [22m[2mgmailService[2m > [22m[2msendFollowUpReminder composes expected subject
+[22m[39m[Gmail] Email sent: <mock-1771944042516@servio-ai.com> to: maria@example.com
+
+[90mstdout[2m | tests/gmailService.test.js[2m > [22m[2mgmailService[2m > [22m[2msendConversionNotification formats commission value
+[22m[39m[Gmail] Email sent: <mock-1771944042521@servio-ai.com> to: ana@example.com
+
+ [32mΓ£ô[39m tests/gmailService.test.js [2m([22m[2m5 tests[22m[2m)[22m[90m 227[2mms[22m[39m
+ [32mΓ£ô[39m tests/services/monitoringService.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+[90mstdout[2m | tests/securityHardening.middleware.test.js[2m > [22m[2mSecurity Hardening Middlewares[2m > [22m[2mshould export CSRF protection setup
+[22m[39m[CSRF] Initializing with NODE_ENV: test
+[CSRF] CSRF_SECRET exists: [33mfalse[39m
+[CSRF] CSRF_SECRET length: [33m0[39m
+
+ [32mΓ£ô[39m tests/securityHardening.middleware.test.js [2m([22m[2m3 tests[22m[2m)[22m[90m 80[2mms[22m[39m
+ [2m[90mΓåô[39m[22m tests/routes/pipedriveWebhook.test.ts [2m([22m[2m8 tests[22m[2m | [22m[33m8 skipped[39m[2m)[22m
+[90mstdout[2m | tests/outreachAutomation.test.js
+[22m[39m[CSRF] Initializing with NODE_ENV: test
+[CSRF] CSRF_SECRET exists: [33mfalse[39m
+[CSRF] CSRF_SECRET length: [33m0[39m
+[2026-02-24T14:40:42.852Z] [WARN] ΓÜá∩╕Å  WhatsApp credentials not configured - service disabled
+[CSRF-V2] DISABLED - Reason: test mode
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+[90mstderr[2m | tests/outreachAutomation.test.js
+[22m[39m[DB] ΓÜá∩╕Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ΓÇô Stripe features disabled
+
+ [31mΓ¥»[39m tests/outreachAutomation.test.js [2m([22m[2m0 test[22m[2m)[22m
+[90mstdout[2m | tests/prospectorPhase1.test.js
+[22m[39m[CSRF] Initializing with NODE_ENV: test
+[CSRF] CSRF_SECRET exists: [33mfalse[39m
+[CSRF] CSRF_SECRET length: [33m0[39m
+[2026-02-24T14:40:42.861Z] [WARN] ΓÜá∩╕Å  WhatsApp credentials not configured - service disabled
+[CSRF-V2] DISABLED - Reason: test mode
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+[90mstderr[2m | tests/prospectorPhase1.test.js
+[22m[39m[DB] ΓÜá∩╕Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ΓÇô Stripe features disabled
+
+ [31mΓ¥»[39m tests/prospectorPhase1.test.js [2m([22m[2m0 test[22m[2m)[22m
+[90mstdout[2m | tests/jobs-pagination.test.js
+[22m[39m[CSRF] Initializing with NODE_ENV: test
+[CSRF] CSRF_SECRET exists: [33mfalse[39m
+[CSRF] CSRF_SECRET length: [33m0[39m
+[2026-02-24T14:40:42.889Z] [WARN] ΓÜá∩╕Å  WhatsApp credentials not configured - service disabled
+[CSRF-V2] DISABLED - Reason: test mode
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+[90mstderr[2m | tests/jobs-pagination.test.js
+[22m[39m[DB] ΓÜá∩╕Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ΓÇô Stripe features disabled
+
+ [31mΓ¥»[39m tests/jobs-pagination.test.js [2m([22m[2m0 test[22m[2m)[22m
+[90mstdout[2m | src/earnings.test.js
+[22m[39m[CSRF] Initializing with NODE_ENV: test
+[CSRF] CSRF_SECRET exists: [33mfalse[39m
+[CSRF] CSRF_SECRET length: [33m0[39m
+[2026-02-24T14:40:42.971Z] [WARN] ΓÜá∩╕Å  WhatsApp credentials not configured - service disabled
+[CSRF-V2] DISABLED - Reason: test mode
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+[90mstderr[2m | src/earnings.test.js
+[22m[39m[DB] ΓÜá∩╕Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ΓÇô Stripe features disabled
+
+ [31mΓ¥»[39m src/earnings.test.js [2m([22m[2m0 test[22m[2m)[22m
+[90mstdout[2m | tests/leaderboardCacheRate.test.js
+[22m[39m[CSRF] Initializing with NODE_ENV: test
+[CSRF] CSRF_SECRET exists: [33mfalse[39m
+[CSRF] CSRF_SECRET length: [33m0[39m
+[2026-02-24T14:40:43.415Z] [WARN] ΓÜá∩╕Å  WhatsApp credentials not configured - service disabled
+[CSRF-V2] DISABLED - Reason: test mode
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+[90mstderr[2m | tests/leaderboardCacheRate.test.js
+[22m[39m[DB] ΓÜá∩╕Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ΓÇô Stripe features disabled
+
+
+ [31mΓ¥»[39m tests/leaderboardCacheRate.test.js [2m([22m[2m0 test[22m[2m)[22m
+[90mstdout[2m | tests/rateLimit.test.js
+[22m[39m[CSRF] Initializing with NODE_ENV: test
+[CSRF] CSRF_SECRET exists: [33mfalse[39m
+[CSRF] CSRF_SECRET length: [33m0[39m
+[2026-02-24T14:40:43.437Z] [WARN] ΓÜá∩╕Å  WhatsApp credentials not configured - service disabled
+[CSRF-V2] DISABLED - Reason: test mode
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+[90mstderr[2m | tests/rateLimit.test.js
+[22m[39m[DB] ΓÜá∩╕Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ΓÇô Stripe features disabled
+
+[90mstdout[2m | tests/stripeWebhook.test.js
+[22m[39m[CSRF] Initializing with NODE_ENV: test
+[CSRF] CSRF_SECRET exists: [33mfalse[39m
+[CSRF] CSRF_SECRET length: [33m0[39m
+[2026-02-24T14:40:43.457Z] [WARN] ΓÜá∩╕Å  WhatsApp credentials not configured - service disabled
+[CSRF-V2] DISABLED - Reason: test mode
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+[90mstderr[2m | tests/stripeWebhook.test.js
+[22m[39m[DB] ΓÜá∩╕Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ΓÇô Stripe features disabled
+
+ [31mΓ¥»[39m tests/stripeWebhook.test.js [2m([22m[2m0 test[22m[2m)[22m
+[90mstderr[2m | tests/jobs.test.js
+[22m[39m[DB] ΓÜá∩╕Å  No Google Cloud Project ID found - usando armazenamento em mem├│ria
+[Stripe] STRIPE_SECRET_KEY missing ΓÇô Stripe features disabled
+ [31mΓ¥»[39m tests/rateLimit.test.js [2m([22m[2m0 test[22m[2m)[22m
+[90mstdout[2m | tests/jobs.test.js
+[22m[39m[CSRF] Initializing with NODE_ENV: test
+[CSRF] CSRF_SECRET exists: [33mfalse[39m
+[CSRF] CSRF_SECRET length: [33m0[39m
+[2026-02-24T14:40:43.441Z] [WARN] ΓÜá∩╕Å  WhatsApp credentials not configured - service disabled
+
+[CSRF-V2] DISABLED - Reason: test mode
+[DEPLOY-DEBUG] Root message: "SERVIO.AI Backend v3.0 with Health check"
+
+ [31mΓ¥»[39m tests/jobs.test.js [2m([22m[2m0 test[22m[2m)[22m
+
+[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1m[7m Failed Suites 8 [27m[22mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/jobs-pagination.test.js[2m [ 
+tests/jobs-pagination.test.js ][22m
+[31m[1mReferenceError[22m: Cannot access 'validateRequest' before initialization[39m
+[36m [2mΓ¥»[22m createApp src/index.js:[2m527:47[22m[39m
+    [90m525| [39m
+    [90m526| [39m  // POST /api/enhance-job - Enhance job request with AI
+    [90m527| [39m  app.post('/api/enhance-job', geminiLimiter, 
+validateRequest(aiEnhancΓÇª
+    [90m   | [39m                                              [31m^[39m
+    [90m528| [39m    const { prompt, address, fileCount } = req.body;
+    [90m529| [39m    if (!prompt) {
+[90m [2mΓ¥»[22m src/index.js:[2m4411:13[22m[39m
+[90m [2mΓ¥»[22m tests/jobs-pagination.test.js:[2m12:25[22m[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/8]ΓÄ»[
+22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/jobs.test.js[2m [ tests/jobs.test.js ][22m
+[31m[1mReferenceError[22m: Cannot access 'validateRequest' before initialization[39m
+[36m [2mΓ¥»[22m createApp src/index.js:[2m527:47[22m[39m
+    [90m525| [39m
+    [90m526| [39m  // POST /api/enhance-job - Enhance job request with AI
+    [90m527| [39m  app.post('/api/enhance-job', geminiLimiter, 
+validateRequest(aiEnhancΓÇª
+    [90m   | [39m                                              [31m^[39m
+    [90m528| [39m    const { prompt, address, fileCount } = req.body;
+    [90m529| [39m    if (!prompt) {
+[90m [2mΓ¥»[22m src/index.js:[2m4411:13[22m[39m
+[90m [2mΓ¥»[22m tests/jobs.test.js:[2m3:31[22m[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/8]ΓÄ»[
+22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/leaderboardCacheRate.test.js[2m [ 
+tests/leaderboardCacheRate.test.js ][22m
+[31m[1m[7m FAIL [27m[22m[39m tests/outreachAutomation.test.js[2m [ 
+tests/outreachAutomation.test.js ][22m
+[31m[1m[7m FAIL [27m[22m[39m tests/prospectorPhase1.test.js[2m [ 
+tests/prospectorPhase1.test.js ][22m
+[31m[1m[7m FAIL [27m[22m[39m tests/stripeWebhook.test.js[2m [ 
+tests/stripeWebhook.test.js ][22m
+[31m[1mReferenceError[22m: Cannot access 'validateRequest' before initialization[39m
+[36m [2mΓ¥»[22m createApp src/index.js:[2m527:47[22m[39m
+    [90m525| [39m
+    [90m526| [39m  // POST /api/enhance-job - Enhance job request with AI
+    [90m527| [39m  app.post('/api/enhance-job', geminiLimiter, 
+validateRequest(aiEnhancΓÇª
+    [90m   | [39m                                              [31m^[39m
+    [90m528| [39m    const { prompt, address, fileCount } = req.body;
+    [90m529| [39m    if (!prompt) {
+[90m [2mΓ¥»[22m Object.<anonymous> src/index.js:[2m4411:13[22m[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[3/8]ΓÄ»[
+22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/rateLimit.test.js[2m [ tests/rateLimit.test.js 
+][22m
+[31m[1mReferenceError[22m: Cannot access 'validateRequest' before initialization[39m
+[36m [2mΓ¥»[22m createApp src/index.js:[2m527:47[22m[39m
+    [90m525| [39m
+    [90m526| [39m  // POST /api/enhance-job - Enhance job request with AI
+    [90m527| [39m  app.post('/api/enhance-job', geminiLimiter, 
+validateRequest(aiEnhancΓÇª
+    [90m   | [39m                                              [31m^[39m
+    [90m528| [39m    const { prompt, address, fileCount } = req.body;
+    [90m529| [39m    if (!prompt) {
+[90m [2mΓ¥»[22m src/index.js:[2m4411:13[22m[39m
+[90m [2mΓ¥»[22m tests/rateLimit.test.js:[2m12:25[22m[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[4/8]ΓÄ»[
+22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m src/earnings.test.js[2m [ src/earnings.test.js ][22m
+[31m[1mReferenceError[22m: Cannot access 'validateRequest' before initialization[39m
+[36m [2mΓ¥»[22m createApp src/index.js:[2m527:47[22m[39m
+    [90m525| [39m
+    [90m526| [39m  // POST /api/enhance-job - Enhance job request with AI
+    [90m527| [39m  app.post('/api/enhance-job', geminiLimiter, 
+validateRequest(aiEnhancΓÇª
+    [90m   | [39m                                              [31m^[39m
+    [90m528| [39m    const { prompt, address, fileCount } = req.body;
+    [90m529| [39m    if (!prompt) {
+[90m [2mΓ¥»[22m src/index.js:[2m4411:13[22m[39m
+[90m [2mΓ¥»[22m src/earnings.test.js:[2m2:31[22m[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[5/8]ΓÄ»[
+22m[39m
+
+[2m Test Files [22m [1m[31m8 failed[39m[22m[2m | [22m[1m[32m14 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (23)[39m
+[2m      Tests [22m [1m[32m181 passed[39m[22m[2m | [22m[33m8 skipped[39m[90m (189)[39m
+[2m   Start at [22m 11:40:40
+[2m   Duration [22m 3.42s[2m (transform 1.78s, setup 1.91s, collect 4.60s, tests 2.14s, environment 8ms, prepare 7.44s)[22m
+

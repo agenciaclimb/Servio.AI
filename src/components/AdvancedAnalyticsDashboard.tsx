@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './AdvancedAnalyticsDashboard.css';
 
+import * as API from '../services/api';
+
 interface MetricCard {
   label: string;
   value: string | number;
@@ -173,7 +175,6 @@ export const AdvancedAnalyticsDashboard: React.FC = () => {
         body: JSON.stringify({ filters }),
       });
       if (!response.ok) throw new Error('Failed to generate report');
-      await response.json();
       alert('Report generated successfully!');
     } catch (err) {
       // Silent error handling
@@ -198,7 +199,6 @@ export const AdvancedAnalyticsDashboard: React.FC = () => {
         body: JSON.stringify(config),
       });
       if (!response.ok) throw new Error('Failed to schedule report');
-      await response.json();
       alert('Report scheduled successfully!');
       setShowReportScheduler(false);
       setReportConfig({ title: '', recipients: '', frequency: 'weekly', format: 'csv' });

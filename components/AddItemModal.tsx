@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { getModalOverlayProps, getModalContentProps } from './utils/a11yHelpers';
 import type { MaintainedItem } from '../types';
 import { identifyItemFromImage } from '../services/geminiService';
+import * as API from '../services/api';
 import LoadingSpinner from './LoadingSpinner';
 
 interface AddItemModalProps {
@@ -52,6 +53,9 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ onClose, onSave }) => {
     setImageDataUrl(dataUrl);
 
     try {
+      // Garantir que o token CSRF está carregado antes do POST de upload/identificação (Requisição V2)
+      await API.ensureCsrfToken();
+
       const base64Image = await toBase64(file);
       const result = await identifyItemFromImage(base64Image, file.type);
 

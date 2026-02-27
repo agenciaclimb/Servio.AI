@@ -30,7 +30,7 @@ function generateCsrfToken() {
 function addCsrfToken(req, res, next) {
   try {
     const cookieName = 'XSRF-TOKEN';
-    const headerName = 'X-XSRF-TOKEN';
+    const headerName = 'X-CSRF-TOKEN';
     
     // Verificar se já existe token válido no cookie
     let token = req.cookies?.[cookieName];
@@ -71,7 +71,7 @@ function addCsrfToken(req, res, next) {
  */
 function validateCsrfToken(req, res, next) {
   const cookieName = 'XSRF-TOKEN';
-  const headerName = 'x-xsrf-token'; // Express normaliza headers para lowercase
+  const headerName = 'x-csrf-token'; // Express normaliza headers para lowercase
   
   // Ignorar métodos seguros (não alteram estado)
   const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
@@ -209,7 +209,7 @@ function createCsrfTokenEndpoint(app) {
     res.json({
       token,
       cookieName: 'XSRF-TOKEN',
-      headerName: 'X-XSRF-TOKEN',
+      headerName: 'X-CSRF-TOKEN',
     });
   });
 

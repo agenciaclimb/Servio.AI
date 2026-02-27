@@ -79,6 +79,34 @@ const ErrorCatalog = {
   UNKNOWN: { code: 'E_UNKNOWN', message: 'Erro desconhecido.' },
 } as const;
 
+let cachedCsrfToken: string | null = null;
+let isFetchingCsrfToken = false;
+let csrfTokenPromise: Promise<string | null> | null = null;
+
+export async function ensureCsrfToken(): Promise<string | null> {
+  if (cachedCsrfToken) return cachedCsrfToken;
+  if (isFetchingCsrfToken && csrfTokenPromise) return csrfTokenPromise;
+
+  isFetchingCsrfToken = true;
+  csrfTokenPromise = (async () => {
+    try {
+      const resp = await fetch(`${BACKEND_URL}/api/csrf-token`, {credentials: 'include'});
+      if (resp.ok) {
+        const data = await resp.json();
+        cachedCsrfToken = data.token;
+        return data.token;
+      }
+      return null;
+    } catch (e) {
+      console.warn('[API] Falha ao obter CSRF token inicial', e);
+      return null;
+    } finally {
+      isFetchingCsrfToken = false;
+    }
+  })();
+  return csrfTokenPromise;
+}
+
 function makeApiError(
   key: keyof typeof ErrorCatalog,
   status?: number,
@@ -116,8 +144,17 @@ async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
   }
   
   try {
+    const isStateModifying = options?.method && !['GET', 'HEAD', 'OPTIONS'].includes(options.method.toUpperCase());
+    
+    // Auto-fetch and include CSRF Token for state-modifying requests
+    let csrfToken = cachedCsrfToken;
+    if (isStateModifying && !csrfToken) {
+       csrfToken = await ensureCsrfToken();
+    }
+
+    const isFormData = options?.body instanceof FormData;
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       ...(options?.headers as Record<string, string>),
     };
     
@@ -125,9 +162,15 @@ async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
     if (authToken) {
       headers['Authorization'] = `Bearer ${authToken}`;
     }
+
+    // Include the CSRF token if we're mutating data
+    if (isStateModifying && csrfToken) {
+      headers['x-csrf-token'] = csrfToken;
+    }
     
     const response = await fetch(`${BACKEND_URL}${endpoint}`, {
       ...options,
+      credentials: 'include', // Ensure cookies are sent for double-submit cookie pattern
       headers,
       signal: controller.signal,
     });
@@ -138,7 +181,15 @@ async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
       if (response.status === 401 || response.status === 403) errKey = 'AUTH';
       else if (response.status === 404) errKey = 'NOT_FOUND';
       else if (response.status >= 500) errKey = 'SERVER';
-      const details = await response.json().catch(() => ({ message: response.statusText }));
+      let details;
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch (jsonErr) {
+        // If response.json() fails (e.g., not valid JSON, or mock issue)
+        errorData = { error: 'A comunicação com o servidor falhou.' };
+      }
+      details = errorData; // Assign the safely obtained errorData to details
       throw makeApiError(errKey, response.status, details);
     }
     return await response.json();
