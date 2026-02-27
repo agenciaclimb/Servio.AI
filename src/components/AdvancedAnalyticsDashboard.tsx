@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './AdvancedAnalyticsDashboard.css';
 
-import * as API from '../services/api';
 
 interface MetricCard {
   label: string;
