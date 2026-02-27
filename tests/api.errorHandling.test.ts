@@ -158,7 +158,7 @@ describe('apiCall - Error Handling', () => {
       } catch (error: any) {
         expect(error.code).toBe('E_SERVER');
         expect(error.status).toBe(500);
-        expect(error.details).toEqual({ message: 'Internal Server Error' });
+        expect(error.details).toEqual({ error: 'A comunicação com o servidor falhou.' });
       }
     });
   });

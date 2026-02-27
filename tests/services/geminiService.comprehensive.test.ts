@@ -35,16 +35,17 @@ describe('Gemini Service', () => {
 
       const result = await geminiService.enhanceJobRequest('Preciso de um eletricista');
 
-      expect(fetch).toHaveBeenCalledWith(`${BASE_URL}/api/enhance-job`, {
+      expect(fetch).toHaveBeenCalledWith(`${BASE_URL}/api/enhance-job`, expect.objectContaining({
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           prompt: 'Preciso de um eletricista',
           address: undefined,
           fileCount: undefined,
         }),
         signal: expect.any(AbortSignal),
-      });
+      }));
       expect(result).toEqual(mockEnhancedRequest);
       expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
