@@ -8,7 +8,6 @@ import { User, PortfolioItem, ExtractedDocumentInfo } from '../../types';
 import { auth } from '../../firebaseConfig';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { extractInfoFromDocument } from '../../services/geminiService';
-import * as API from '../../services/api';
 
 // Temporary types until proper types are defined
 interface Certification {
@@ -178,14 +177,11 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({
         (updatedData as Partial<User> & { cnpj?: string }).cnpj = extractedDocData.cnpj;
       }
 
-      const csrfToken = await API.ensureCsrfToken();
       const response = await fetch(`${baseUrl}/users/${user.email}`, {
         method: 'PUT',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          'x-csrf-token': csrfToken,
         },
         body: JSON.stringify(updatedData),
       });
@@ -374,17 +370,14 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({
     try {
       const token = await auth.currentUser?.getIdToken();
       const baseUrl = (import.meta.env.VITE_BACKEND_API_URL || '').replace(/\/$/, '');
-      const csrfToken = await API.ensureCsrfToken();
       const headers = {
         'Content-Type': 'application/json',
-        'x-csrf-token': csrfToken,
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       };
 
       // 1) Cria conta Connect (Express) e persiste stripeAccountId no usuário (email como ID)
       const accountRes = await fetch(`${baseUrl}/api/stripe/create-connect-account`, {
         method: 'POST',
-        credentials: 'include',
         headers,
         body: JSON.stringify({ userId: user.email }),
       });
@@ -395,7 +388,6 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({
       // 2) Gera Account Link para onboarding
       const linkRes = await fetch(`${baseUrl}/api/stripe/create-account-link`, {
         method: 'POST',
-        credentials: 'include',
         headers,
         body: JSON.stringify({ userId: user.email }),
       });
@@ -455,14 +447,11 @@ const ProviderOnboardingWizard: React.FC<ProviderOnboardingWizardProps> = ({
         aiGeneratedBio: data.aiGeneratedBio,
       };
 
-      const csrfToken = await API.ensureCsrfToken();
       await fetch(`${baseUrl}/users/${user.email}`, {
         method: 'PUT',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          'x-csrf-token': csrfToken,
         },
         body: JSON.stringify(updatedUser),
       });
