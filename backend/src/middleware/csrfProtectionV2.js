@@ -195,7 +195,7 @@ function setupCsrfProtection(app, options = {}) {
  * GET /api/csrf-token
  */
 function createCsrfTokenEndpoint(app) {
-  app.get('/api/csrf-token', (req, res) => {
+  app.get('/api/csrf', (req, res) => {
     // addCsrfToken já foi executado pelo middleware global
     const token = res.locals.csrfToken || req.cookies?.['XSRF-TOKEN'];
     
@@ -213,7 +213,7 @@ function createCsrfTokenEndpoint(app) {
     });
   });
 
-  console.log('[CSRF-V2] Endpoint /api/csrf-token criado');
+  console.log('[CSRF-V2] Endpoint /api/csrf criado');
 }
 
 module.exports = {

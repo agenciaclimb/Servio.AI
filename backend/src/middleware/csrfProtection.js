@@ -194,7 +194,7 @@ function setupCsrfProtection(app, options = {}) {
  * GET /api/csrf-token
  */
 function createCsrfTokenEndpoint(app) {
-  app.get('/api/csrf-token', (req, res) => {
+  app.get('/api/csrf', (req, res) => {
     try {
       const token = generateToken(req, res);
       res.json({

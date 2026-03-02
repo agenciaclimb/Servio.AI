@@ -90,7 +90,7 @@ export async function ensureCsrfToken(): Promise<string | null> {
   isFetchingCsrfToken = true;
   csrfTokenPromise = (async () => {
     try {
-      const resp = await fetch(`${BACKEND_URL}/api/csrf-token`, {credentials: 'include'});
+      const resp = await fetch(`${BACKEND_URL}/api/csrf`, {credentials: 'include'});
       if (resp.ok) {
         const data = await resp.json();
         cachedCsrfToken = data.token;
