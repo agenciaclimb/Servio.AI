@@ -30,7 +30,7 @@ function generateCsrfToken() {
 function addCsrfToken(req, res, next) {
   try {
     const cookieName = 'XSRF-TOKEN';
-    const headerName = 'X-CSRF-TOKEN';
+    const headerName = 'X-XSRF-TOKEN';
     
     // Verificar se já existe token válido no cookie
     let token = req.cookies?.[cookieName];
@@ -41,9 +41,9 @@ function addCsrfToken(req, res, next) {
       
       // Configurar cookie com token
       res.cookie(cookieName, token, {
-        httpOnly: true, // MUST be true para bloquear acesso via JavaScript e prevenir XSS -> CSRF
+        httpOnly: false, // MUST be false para JavaScript poder ler (Double Submit Cookie pattern)
         secure: process.env.NODE_ENV === 'production', // HTTPS only em produção
-        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', // Proteção estrita cross-origin em prod
+        sameSite: 'lax', // Proteção adicional contra CSRF
         path: '/',
         maxAge: 3600000, // 1 hora
       });
@@ -71,7 +71,7 @@ function addCsrfToken(req, res, next) {
  */
 function validateCsrfToken(req, res, next) {
   const cookieName = 'XSRF-TOKEN';
-  const headerName = 'x-csrf-token'; // Express normaliza headers para lowercase
+  const headerName = 'x-xsrf-token'; // Express normaliza headers para lowercase
   
   // Ignorar métodos seguros (não alteram estado)
   const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
@@ -195,7 +195,7 @@ function setupCsrfProtection(app, options = {}) {
  * GET /api/csrf-token
  */
 function createCsrfTokenEndpoint(app) {
-  app.get('/api/csrf', (req, res) => {
+  app.get('/api/csrf-token', (req, res) => {
     // addCsrfToken já foi executado pelo middleware global
     const token = res.locals.csrfToken || req.cookies?.['XSRF-TOKEN'];
     
@@ -209,11 +209,11 @@ function createCsrfTokenEndpoint(app) {
     res.json({
       token,
       cookieName: 'XSRF-TOKEN',
-      headerName: 'X-CSRF-TOKEN',
+      headerName: 'X-XSRF-TOKEN',
     });
   });
 
-  console.log('[CSRF-V2] Endpoint /api/csrf criado');
+  console.log('[CSRF-V2] Endpoint /api/csrf-token criado');
 }
 
 module.exports = {

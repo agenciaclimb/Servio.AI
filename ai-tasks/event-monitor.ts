@@ -183,8 +183,8 @@ class EventMonitor {
       // Salvar estado atualizado
       state.last_state_check = new Date().toISOString();
       fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2), 'utf-8');
-    } catch (error) {
-      // console.error('❌ Erro no monitor:', error);
+    } catch (_error) {
+      // console.error('❌ Erro no monitor:', _error);
     }
   }
 

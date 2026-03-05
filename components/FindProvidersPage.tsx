@@ -102,8 +102,8 @@ const FindProvidersPage: React.FC<FindProvidersPageProps> = ({
       if (detectedLocation) {
         // console.info(`✅ Localização preenchida automaticamente: ${detectedLocation}`);
       }
-    } catch (error) {
-      // console.error('AI Search failed:', error);
+    } catch (_error) {
+      // console.error('AI Search failed:', _error);
       // Fallback to basic search if AI fails
       setFilters(prev => ({ ...prev, service: searchQuery }));
     } finally {

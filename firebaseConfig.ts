@@ -1,6 +1,3 @@
-console.log('XXX DEBUG: firebaseConfig loading');
-console.log('XXX DEBUG: import.meta.env.MODE:', import.meta.env.MODE);
-
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserSessionPersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';

@@ -30,12 +30,17 @@ import {
   MOCK_FRAUD_ALERTS,
 } from '../mockData';
 
-// Get backend URL from environment variable (prefer unified VITE_API_BASE_URL)
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  import.meta.env.VITE_BACKEND_URL ||
-  import.meta.env.VITE_BACKEND_API_URL ||
-  'https://servio-backend-h5ogjon7aa-uw.a.run.app';
+const isBrowser = typeof window !== 'undefined';
+const isDev = import.meta.env.DEV;
+const isTest = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
+
+const BACKEND_URL = (isBrowser && !isDev && !isTest)
+  ? '' // In production browser, use relative path for Firebase Hosting rewrite
+  : (import.meta.env.VITE_API_BASE_URL ||
+     import.meta.env.VITE_BACKEND_URL ||
+     import.meta.env.VITE_BACKEND_API_URL ||
+     'http://localhost:8081');
+
 const USE_MOCK = false; // Always try real backend first, fallback to mock on error
 
 // STAGING MODE: Skip backend entirely for user operations (CORS workaround)
@@ -165,10 +170,12 @@ async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
 
     // Include the CSRF token if we're mutating data
     if (isStateModifying && csrfToken) {
-      headers['x-csrf-token'] = csrfToken;
+      headers['X-CSRF-TOKEN'] = csrfToken;
     }
-    
-    const response = await fetch(`${BACKEND_URL}${endpoint}`, {
+    // Standardize the endpoint to always have the '/api' prefix for Cloud Run rewrite
+    const finalEndpoint = endpoint.startsWith('/api') ? endpoint : `/api${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+
+    const response = await fetch(`${BACKEND_URL}${finalEndpoint}`, {
       ...options,
       credentials: 'include', // Ensure cookies are sent for double-submit cookie pattern
       headers,
