@@ -44,21 +44,33 @@ const BACKEND_URL = (isBrowser && !isDev && !isTest)
 const USE_MOCK = false; // Always try real backend first, fallback to mock on error
 
 // STAGING MODE: Skip backend entirely for user operations (CORS workaround)
-const STAGING_MODE = import.meta.env.VITE_FIREBASE_PROJECT_ID === 'servioai-staging';
+// CRITICAL: NEVER enable in production - must use real backend
+const STAGING_MODE = import.meta.env.PROD 
+  ? false // 🔴 PRODUCTION: ALWAYS use real backend via Cloud Run
+  : import.meta.env.VITE_STAGING_MODE === 'true'; // DEV: explicit opt-in only
 
-// VERSION CHECK - GIGANTE
-console.warn('═══════════════════════════════════════════════════════');
-console.warn('🔧 API SERVICE INICIADO - VERSÃO 2026-01-09');
-console.warn('═══════════════════════════════════════════════════════');
-console.warn(`📋 STAGING_MODE: ${STAGING_MODE}`);
-console.warn(`📋 Project ID: ${import.meta.env.VITE_FIREBASE_PROJECT_ID}`);
-console.warn(`📋 Backend URL: ${BACKEND_URL}`);
-console.warn(`📋 Use Mock: ${USE_MOCK}`);
-console.warn('═══════════════════════════════════════════════════════');
+// VERSION CHECK - DEV ONLY
+if (isDev) {
+  console.warn('═══════════════════════════════════════════════════════');
+  console.warn('🔧 API SERVICE INICIADO - VERSÃO 2026-01-09');
+  console.warn('═══════════════════════════════════════════════════════');
+  console.warn(`📋 STAGING_MODE: ${STAGING_MODE}`);
+  console.warn(`📋 Project ID: ${import.meta.env.VITE_FIREBASE_PROJECT_ID}`);
+  console.warn(`📋 Backend URL: ${BACKEND_URL}`);
+  console.warn(`📋 Use Mock: ${USE_MOCK}`);
+  console.warn('═══════════════════════════════════════════════════════');
 
-if (STAGING_MODE) {
-  console.warn('✅ STAGING MODE ATIVO - Backend DESABILITADO!');
-  console.warn('✅ Todas as operações de usuário usam Firestore direto!');
+  if (STAGING_MODE) {
+    console.warn('⚠️  STAGING MODE ATIVO - Backend direto DESABILITADO!');
+    console.warn('⚠️  Operações de usuário usam Firestore direto!');
+  }
+}
+
+// 🔴 SAFETY CHECK: PRODUCTION MUST NEVER USE STAGING_MODE
+if (import.meta.env.PROD && STAGING_MODE) {
+  console.error('🔴 PRODUCTION BLOCKER: STAGING_MODE não pode ser ativado em produção!');
+  console.error('🔴 VIOLAÇÃO DE LANÇAMENTO: Backend deve ir para Cloud Run, não Firestore direto!');
+  throw new Error('STAGING_MODE ativado em produção - deployment bloqueado');
 }
 
 // Optional debug flag to reduce noisy console.log in production builds
@@ -261,6 +273,12 @@ export async function fetchUserById(userId: string): Promise<User | null> {
     return user || null;
   }
 
+  // 🔴 SAFETY: Production MUST NOT use STAGING_MODE
+  if (import.meta.env.PROD && STAGING_MODE) {
+    console.error('🔴 PRODUCTION BLOCKER: STAGING_MODE detectado em fetchUserById em produção!');
+    throw new Error('STAGING_MODE ativado em produção - requests devem ir para Cloud Run /api/users/:id');
+  }
+
   // STAGING: Use Firestore directly (skip backend)
   if (STAGING_MODE) {
     console.warn(`✅ [STAGING] Usando Firestore direto para buscar usuário ${userId}`);
@@ -325,6 +343,12 @@ export async function createUser(user: Omit<User, 'memberSince'>): Promise<User>
     MOCK_USERS.push(newUser);
     if (DEBUG) console.warn('[api] mock create user', newUser);
     return newUser;
+  }
+
+  // 🔴 SAFETY: Production MUST NOT use STAGING_MODE
+  if (import.meta.env.PROD && STAGING_MODE) {
+    console.error('🔴 PRODUCTION BLOCKER: STAGING_MODE detectado em createUser em produção!');
+    throw new Error('STAGING_MODE ativado em produção - requests devem ir para Cloud Run /api/users');
   }
 
   // STAGING: Use Firestore directly (skip backend)
