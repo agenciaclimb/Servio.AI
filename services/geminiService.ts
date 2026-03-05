@@ -77,34 +77,34 @@ function resolveEndpoint(endpoint: string): string {
     return aiBase.replace(/\/$/, '') + endpoint;
   }
 
+  // Standardize the endpoint to always have the '/api' prefix for Cloud Run rewrite
+  const finalEndpoint = endpoint.startsWith('/api') ? endpoint : `/api${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+
   // Decide environment behavior
   const isBrowser = typeof globalThis !== 'undefined' && 'window' in globalThis;
+  const isTest = typeof process !== 'undefined' && process.env.NODE_ENV === 'test' || getEnvVar('VITEST');
+  // Handle Vite env for dev check, with fallback
+  const isDev = getEnvVar('DEV') === 'true' || getEnvVar('MODE') === 'development' || (typeof import.meta !== 'undefined' && (import.meta as any).env?.DEV)
 
-  // In Vitest (even if jsdom provides window), Node's fetch requires absolute URLs.
-  // In tests that simulate a bare "browser-like" window (no document), return relative.
-  const hasDocument = typeof (globalThis as { document?: unknown }).document !== 'undefined';
-  const globalWithWindow = globalThis as { document?: { defaultView?: unknown }; window?: unknown };
-  const isWindowLinkedToDocument =
-    hasDocument && globalWithWindow.document?.defaultView === globalWithWindow.window;
-  if (isBrowser && (!hasDocument || !isWindowLinkedToDocument)) {
-    return endpoint;
+  // Real browser PRODUCTION: use relative path for Firebase Hosting rewrite
+  if (isBrowser && !isTest && !isDev) {
+    return finalEndpoint;
   }
 
-  // In Vitest/jsdom runs (with full window+document), force absolute localhost to keep fetch happy
-  if (getEnvVar('VITEST')) {
-    return 'http://localhost:5173'.replace(/\/$/, '') + endpoint;
+  // In Vitest/jsdom runs, force absolute localhost to keep Node fetch happy
+  if (isTest) {
+    return 'http://localhost:5173'.replace(/\/$/, '') + finalEndpoint;
   }
 
-  // Real browser: relative path (Vite proxy in dev, same-origin in prod)
-  if (isBrowser) {
-    return endpoint;
+  const viteBackend = getEnvVar('VITE_BACKEND_API_URL') || getEnvVar('VITE_API_BASE_URL') || getEnvVar('VITE_BACKEND_URL');
+  if (viteBackend) {
+    return viteBackend.replace(/\/$/, '') + finalEndpoint;
   }
 
-  // In pure Node (non-browser), construct absolute from env or sensible default
-  const viteBackend = getEnvVar('VITE_BACKEND_API_URL') || getEnvVar('VITE_API_BASE_URL');
+  // In pure Node (non-browser) without explicit VITE envs, construct absolute from sensible default
   const nodeEnvBackend = getEnvVar('API_BASE_URL');
-  const base = viteBackend || nodeEnvBackend || 'http://localhost:5173';
-  return base.replace(/\/$/, '') + endpoint;
+  const base = nodeEnvBackend || 'http://localhost:5173';
+  return base.replace(/\/$/, '') + finalEndpoint;
 }
 
 /**
@@ -128,7 +128,7 @@ const fetchFromBackend = async <T>(endpoint: string, body: object | FormData): P
 
   const headers: Record<string, string> = isFormData ? {} : { 'Content-Type': 'application/json' };
   if (csrfToken) {
-    headers['x-csrf-token'] = csrfToken;
+    headers['X-CSRF-TOKEN'] = csrfToken;
   }
 
   try {

@@ -109,8 +109,8 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
           description: job.description || 'Serviço solicitado',
         }));
         setUserJobs(validJobs);
-      } catch (error) {
-        // console.error('Erro ao carregar jobs do cliente:', error);
+      } catch (_error) {
+        // console.error('Erro ao carregar jobs do cliente:', _error);
         addToast('Erro ao carregar seus serviços. Tente novamente.', 'error');
         setUserJobs([]); // Define array vazio em caso de erro
       } finally {
@@ -169,7 +169,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
             const newMessages = messages.filter(m => !existingIds.has(m.id));
             return [...prev, ...newMessages];
           });
-        } catch (error) {
+        } catch (_error) {
           /* Intentionally ignored */
         }
       };
@@ -217,8 +217,8 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       const results = await API.matchProvidersForJob(job.id);
       setMatchingResults(results);
       addToast('Profissionais recomendados carregados com sucesso!', 'success');
-    } catch (error) {
-      // console.error('Erro ao buscar profissionais recomendados:', error);
+    } catch (_error) {
+      // console.error('Erro ao buscar profissionais recomendados:', _error);
       addToast('Erro ao carregar profissionais recomendados. Tente novamente.', 'error');
       setIsMatchingModalOpen(false);
     }
@@ -232,8 +232,8 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
       // For now, we'll use a mock/placeholder approach until backend supports direct invites
       // console.log(`Inviting provider ${providerId} to job ${matchingJobId}`);
       addToast('Prestador convidado com sucesso!', 'success');
-    } catch (error) {
-      // console.error('Erro ao convidar prestador:', error);
+    } catch (_error) {
+      // console.error('Erro ao convidar prestador:', _error);
       addToast('Erro ao enviar convite. Tente novamente.', 'error');
     }
   };
@@ -353,7 +353,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
 
       setPayingForProposal(null);
       setViewingProposalsForJob(null);
-    } catch (error) {
+    } catch (_error) {
       addToast('Erro ao processar pagamento. Tente novamente.', 'error'); // 3. Substituir alert()
     }
   };
@@ -398,7 +398,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
 
       setJobInFocus(null);
       addToast('Serviço finalizado e pagamento liberado com sucesso!', 'success'); // 3. Substituir alert()
-    } catch (error) {
+    } catch (_error) {
       addToast('Erro ao finalizar serviço. Tente novamente.', 'error'); // 3. Substituir alert()
     }
   };
@@ -494,7 +494,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
           });
         }
       }
-    } catch (error) {
+    } catch (_error) {
       addToast('Erro ao enviar mensagem. Tente novamente.', 'error'); // 3. Substituir alert()
     }
   };

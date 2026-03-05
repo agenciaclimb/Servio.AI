@@ -30,7 +30,8 @@ module.exports = {
     '@typescript-eslint/no-empty-interface': 'off', // Compatibilidade
     '@typescript-eslint/no-unused-vars': ['warn', { 
       argsIgnorePattern: '^_',
-      varsIgnorePattern: '^_'
+      varsIgnorePattern: '^_',
+      caughtErrorsIgnorePattern: '^_'
     }],
   },
 };

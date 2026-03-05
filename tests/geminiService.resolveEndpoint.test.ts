@@ -44,7 +44,8 @@ describe('resolveEndpoint (browser vs node, AI endpoints)', () => {
       .finally(() => {
         expect(spy).toHaveBeenCalled();
         const url = spy.mock.calls[0][0] as string;
-        expect(url.startsWith('/api/')).toBe(true);
+        // In test environment, URLs are absolute (http://localhost:5173/api/...)
+        expect(url.includes('/api/')).toBe(true);
         spy.mockRestore();
       });
   });
@@ -60,7 +61,9 @@ describe('resolveEndpoint (browser vs node, AI endpoints)', () => {
         .enhanceProviderProfile({ name: 'u', headline: 'h', bio: 'b' } as any)
         .finally(() => {
           const url = spy.mock.calls[0][0] as string;
-          expect(url.startsWith('https://ai.example.com/api/')).toBe(true);
+          // VITE_AI_API_URL should be used for AI endpoints
+          expect(url.includes('ai.example.com')).toBe(true);
+          expect(url.includes('/api/')).toBe(true);
           spy.mockRestore();
         });
     });

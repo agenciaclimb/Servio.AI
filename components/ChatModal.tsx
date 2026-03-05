@@ -101,7 +101,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
       if (suggestion) {
         setSuggestedSchedule(suggestion);
       }
-    } catch (error) {
+    } catch (_error) {
       /* Intentionally ignored */
     } finally {
       setIsCheckingForSchedule(false);
@@ -116,7 +116,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
       if (suggestion) {
         setAssistantSuggestion(suggestion);
       }
-    } catch (error) {
+    } catch (_error) {
       /* Intentionally ignored */
     } finally {
       setIsAssistantLoading(false);
