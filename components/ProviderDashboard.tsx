@@ -135,7 +135,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         };
         setAllFraudAlerts((prev: FraudAlert[]) => [newAlert, ...prev]);
       }
-    } catch (error) {
+    } catch (_error) {
       addToast('Erro ao enviar proposta. Tente novamente.', 'error');
       setProposingForJob(null);
     }
@@ -172,7 +172,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         };
         setAllFraudAlerts(prev => [newAlert, ...prev]);
       }
-    } catch (error) {
+    } catch (_error) {
       /* Intentionally ignored - análise de fraude é best-effort */
     }
   };
@@ -208,7 +208,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
       const emailContent = await generateReferralEmail(user.name, friendEmail);
       setReferralEmail(emailContent);
       // In a real app, you'd send the email here.
-    } catch (error) {
+    } catch (_error) {
       addToast('Falha ao gerar e-mail de indicação.', 'error');
     }
   };
@@ -237,7 +237,7 @@ const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
           isRead: false,
         });
       }
-    } catch (error) {
+    } catch (_error) {
       addToast('Erro ao enviar mensagem. Tente novamente.', 'error');
     }
   };

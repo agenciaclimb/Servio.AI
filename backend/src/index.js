@@ -34,13 +34,24 @@ const {
   customSecurityHeaders,
 } = require('./middleware/securityHeaders');
 const { setupCsrfProtection, createCsrfTokenEndpoint } = require('./middleware/csrfProtection');
+const {
+  validateRequest,
+  validateQuery,
+  loginSchema,
+  registerSchema,
+  createJobSchema,
+  proposalSchema,
+  paymentSchema,
+  updateProfileSchema,
+  reviewSchema,
+  searchJobsSchema,
+} = require('./validators/requestValidators');
 const ApiKeyManager = require('./services/apiKeyManager');
 const AuditLogger = require('./services/auditLogger');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 // Prospector follow-up automation scheduler helpers
 const { processPendingOutreach } = require('./outreachScheduler');
 // Follow-up email processing service & Gmail integration
-
 const gmailService = require('./gmailService');
 const followUpService = require('./followUpService');
 // WhatsApp Business API service
@@ -185,25 +196,6 @@ function calculateProviderRate(provider = {}, stats = {}) {
   };
 }
 
-const {
-  validateRequest,
-  validateQuery,
-  loginSchema,
-  registerSchema,
-  createJobSchema,
-  proposalSchema,
-  paymentSchema,
-  updateProfileSchema,
-  reviewSchema,
-  searchJobsSchema,
-  aiEnhanceJobSchema,
-  aiSuggestMaintenanceSchema,
-  aiGenerateTipSchema,
-  aiEnhanceProfileSchema,
-  aiGenerateReferralSchema,
-  aiGenerateProposalSchema,
-} = require('./validators/requestValidators');
-
 /**
  * Factory function to create the Express app with dependency injection
  * @param {Object} options - Configuration options
@@ -317,13 +309,6 @@ function createApp({
   }));
 
   // ===========================
-  // Internal Smoke Test Route
-  // ===========================
-  app.get('/internal/smoke-test', (req, res) => {
-    return res.status(200).json({ status: 'ok' });
-  });
-
-  // ===========================
   // CSRF Protection V2 (Task 4.6) - REABILITADO
   // ===========================
   // Implementação manual robusta usando Double Submit Cookie pattern
@@ -388,19 +373,7 @@ function createApp({
   // Use express.json() for all routes except the webhook
   app.use((req, res, next) => {
     if (req.path === '/api/stripe-webhook') return next();
-    return express.json({ strict: true })(req, res, next);
-  });
-
-  // Global middleware to handle invalid/malformed JSON payloads (SyntaxError)
-  app.use((err, req, res, next) => {
-    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
-      console.error(`[Express] Invalid JSON Payload received on ${req.method} ${req.path}:`, err.message);
-      return res.status(400).json({
-        error: "Payload JSON inválido. Verifique a formatação da sua requisição.",
-        code: "INVALID_JSON_PAYLOAD"
-      });
-    }
-    next(err);
+    return express.json()(req, res, next);
   });
 
   // Debug log to verify code deployment
@@ -436,47 +409,30 @@ function createApp({
       /* ignore */
     }
 
-    const memoryUsage = process.memoryUsage();
-
-    return { 
-      buildVersion, 
-      routeCount,
-      uptimeSecs: process.uptime(),
-      memory: {
-        rss: Math.round(memoryUsage.rss / 1024 / 1024) + 'MB',
-        heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024) + 'MB',
-        heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024) + 'MB',
-      }
-    };
+    return { buildVersion, routeCount };
   };
 
   // Health check endpoint for load balancers and monitoring
   app.get('/health', (req, res) => {
-    const healthData = computeHealthData();
+    const { buildVersion, routeCount } = computeHealthData();
     res.status(200).json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
       service: 'servio-backend',
-      version: healthData.buildVersion,
-      routes: healthData.routeCount,
-      uptimeSecs: healthData.uptimeSecs,
-      memory: healthData.memory,
-      environment: process.env.NODE_ENV || 'development'
+      version: buildVersion,
+      routes: routeCount,
     });
   });
 
   // Health check alias for API prefix compatibility
   app.get('/api/health', (req, res) => {
-    const healthData = computeHealthData();
+    const { buildVersion, routeCount } = computeHealthData();
     res.status(200).json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
       service: 'servio-backend',
-      version: healthData.buildVersion,
-      routes: healthData.routeCount,
-      uptimeSecs: healthData.uptimeSecs,
-      memory: healthData.memory,
-      environment: process.env.NODE_ENV || 'development'
+      version: buildVersion,
+      routes: routeCount,
     });
   });
 
@@ -545,7 +501,7 @@ function createApp({
   });
 
   // POST /api/enhance-job - Enhance job request with AI
-  app.post('/api/enhance-job', geminiLimiter, validateRequest(aiEnhanceJobSchema), async (req, res) => {
+  app.post('/api/enhance-job', geminiLimiter, async (req, res) => {
     const { prompt, address, fileCount } = req.body;
     if (!prompt) {
       return res.status(400).json({ error: 'Prompt is required.' });
@@ -648,7 +604,7 @@ Responda APENAS com o JSON, sem markdown ou texto adicional.`;
   });
 
   // POST /api/suggest-maintenance - Suggest maintenance for an item
-  app.post('/api/suggest-maintenance', geminiLimiter, validateRequest(aiSuggestMaintenanceSchema), async (req, res) => {
+  app.post('/api/suggest-maintenance', async (req, res) => {
     const { item } = req.body;
     if (!item || !item.name) {
       return res.status(400).json({ error: 'Item data is required.' });
@@ -740,7 +696,7 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
   }
 
   // POST /api/generate-tip
-  app.post('/api/generate-tip', geminiLimiter, validateRequest(aiGenerateTipSchema), async (req, res) => {
+  app.post('/api/generate-tip', geminiLimiter, async (req, res) => {
     const user = req.body?.user || {};
     const baseTip = `Complete seu perfil adicionando uma foto profissional, ${user.name || 'usuário'}.`; // deterministic
     const model = getModel();
@@ -761,7 +717,7 @@ Retorne apenas a dica sem explicações adicionais.`;
   });
 
   // POST /api/enhance-profile
-  app.post('/api/enhance-profile', geminiLimiter, validateRequest(aiEnhanceProfileSchema), async (req, res) => {
+  app.post('/api/enhance-profile', geminiLimiter, async (req, res) => {
     const profile = req.body?.profile || {};
     const stub = {
       suggestedHeadline: `Profissional de ${profile.headline?.split(' ')[0] || 'Serviços'} Confiável`,
@@ -797,7 +753,7 @@ Requisitos: tom profissional, claro, conciso. Resposta APENAS JSON.`;
   });
 
   // POST /api/generate-referral
-  app.post('/api/generate-referral', geminiLimiter, validateRequest(aiGenerateReferralSchema), async (req, res) => {
+  app.post('/api/generate-referral', geminiLimiter, async (req, res) => {
     const { senderName, friendEmail } = req.body || {};
     const subjectStub = `Convite para conhecer a SERVIO.AI`;
     const bodyStub = `Olá ${friendEmail || 'amigo'}, ${senderName || 'Um usuário'} está recomendando a plataforma SERVIO.AI para contratar ou oferecer serviços com segurança.`;
@@ -827,7 +783,7 @@ Formato JSON: {"subject":"...","body":"..."}`;
   });
 
   // POST /api/generate-proposal
-  app.post('/api/generate-proposal', geminiLimiter, validateRequest(aiGenerateProposalSchema), async (req, res) => {
+  app.post('/api/generate-proposal', geminiLimiter, async (req, res) => {
     const { job, provider } = req.body || {};
     const stubMessage = `Olá! Posso ajudar com "${job?.description?.slice(0, 60) || 'seu serviço'}" garantindo qualidade e prazo. Vamos prosseguir?`;
     const model = getModel();
@@ -1466,53 +1422,75 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
     const { jobId } = req.params;
 
     try {
-      const escrowQuery = await db.collection('escrows').where('jobId', '==', jobId).limit(1).get();
+      // STEP 1: Atomic read + lock via runTransaction
+      const transactionResult = await db.runTransaction(async (transaction) => {
+        // Read escrow document
+        const escrowQuery = await db.collection('escrows').where('jobId', '==', jobId).limit(1).get();
 
-      if (escrowQuery.empty) {
-        return res.status(404).json({
-          error: 'Registro de pagamento não encontrado para este job.',
+        if (escrowQuery.empty) {
+          throw new Error('ESCROW_NOT_FOUND');
+        }
+
+        const escrowDoc = escrowQuery.docs[0];
+        const escrowData = escrowDoc.data();
+        
+        // Read job document
+        const jobRef = db.collection('jobs').doc(jobId);
+        const jobDoc = await transaction.get(jobRef);
+        
+        if (!jobDoc.exists) {
+          throw new Error('JOB_NOT_FOUND');
+        }
+        
+        const jobData = jobDoc.data();
+
+        // Authorization check
+        if (jobData.clientId !== req.user.email) {
+          throw new Error('FORBIDDEN_NOT_CLIENT');
+        }
+
+        // CRITICAL: Check payment status with distributed lock
+        if (escrowData.paymentStatus === 'releasing') {
+          throw new Error('PAYMENT_ALREADY_RELEASING');
+        }
+
+        if (escrowData.paymentStatus === 'released' || escrowData.status === 'liberado') {
+          throw new Error('PAYMENT_ALREADY_RELEASED');
+        }
+
+        if (escrowData.status !== 'pago') {
+          throw new Error(`INVALID_ESCROW_STATUS_${escrowData.status}`);
+        }
+
+        // LOCK: Mark as 'releasing' atomically
+        transaction.update(escrowDoc.ref, {
+          paymentStatus: 'releasing',
+          paymentReleasingAt: new Date().toISOString(),
+          paymentReleasingBy: req.user.email,
         });
-      }
 
-      const escrowDoc = escrowQuery.docs[0];
-      const escrowData = escrowDoc.data();
-      const jobDoc = await db.collection('jobs').doc(jobId).get();
-      const jobData = jobDoc.data();
+        return { escrowDoc, escrowData, jobData };
+      });
 
-      if (jobData.clientId !== req.user.email) {
-        return res.status(403).json({
-          error: 'Forbidden: Only the client can release the payment.',
-        });
-      }
+      const { escrowDoc, escrowData, jobData } = transactionResult;
 
-      if (escrowData.status !== 'pago') {
-        return res.status(400).json({
-          error: `Pagamento não pode ser liberado. Status atual: ${escrowData.status}`,
-        });
-      }
-
+      // STEP 2: Fetch provider data (outside transaction)
       const providerDoc = await db.collection('users').doc(escrowData.providerId).get();
       if (!providerDoc.exists) {
-        return res.status(404).json({ error: 'Prestador não encontrado para o pagamento.' });
+        throw new Error('PROVIDER_NOT_FOUND');
       }
       const providerData = providerDoc.data();
       const providerStripeId = providerData.stripeAccountId;
 
       if (!providerStripeId) {
-        return res
-          .status(400)
-          .json({ error: 'O prestador não possui uma conta de pagamento configurada.' });
+        throw new Error('PROVIDER_NO_STRIPE_ACCOUNT');
       }
 
       if (!escrowData.paymentIntentId) {
-        return res
-          .status(400)
-          .json({
-            error: 'ID de intenção de pagamento não encontrado. Não é possível liberar os fundos.',
-          });
+        throw new Error('PAYMENT_INTENT_ID_MISSING');
       }
 
-      // Reutiliza a lógica de cálculo de estatísticas
+      // STEP 3: Calculate provider earnings (reusing existing logic)
       const jobsSnapshot = await db
         .collection('jobs')
         .where('providerId', '==', escrowData.providerId)
@@ -1538,49 +1516,118 @@ Seja direto, prático e motivador. Responda em português brasileiro.`;
       const paymentIntent = await stripe.paymentIntents.retrieve(escrowData.paymentIntentId);
       const chargeId = paymentIntent.latest_charge;
 
-      // Create the transfer to the provider's connected account
+      // STEP 4: Create Stripe transfer (idempotent by nature of Stripe)
       const transfer = await stripe.transfers.create({
         amount: providerShare,
         currency: 'brl',
         destination: providerStripeId,
-        source_transaction: chargeId, // Link the transfer to the original charge
+        source_transaction: chargeId,
         metadata: {
           jobId: jobId,
           escrowId: escrowDoc.id,
         },
       });
 
-      console.log(
-        `Stripe Transfer successful for Escrow ID: ${escrowDoc.id}. Transfer ID: ${transfer.id}. Amount: ${providerShare / 100}`
-      );
+      const logger = require('./logger');
+      logger.info('Stripe Transfer successful', {
+        escrowId: escrowDoc.id,
+        transferId: transfer.id,
+        amount: providerShare / 100,
+        jobId,
+      });
 
-      // Update provider's commission rate in their profile
+      // STEP 5: Mark as 'released' after Stripe success (atomic update)
       await db.collection('users').doc(escrowData.providerId).update({
         providerRate: earningsProfile.currentRate,
       });
 
-      // Update job and escrow status
       await db
         .collection('jobs')
         .doc(jobId)
         .update({
           status: 'concluido',
           earnings: {
-            totalAmount: escrowData.amount / 100, // Convert cents to BRL
-            providerShare: providerShare / 100, // Convert cents to BRL
-            platformFee: platformShare / 100, // Convert cents to BRL
+            totalAmount: escrowData.amount / 100,
+            providerShare: providerShare / 100,
+            platformFee: platformShare / 100,
             paidAt: new Date().toISOString(),
           },
         });
-      await escrowDoc.ref.update({ status: 'liberado', stripeTransferId: transfer.id });
+
+      await escrowDoc.ref.update({
+        status: 'liberado',
+        paymentStatus: 'released',
+        paymentReleasedAt: new Date().toISOString(),
+        stripeTransferId: transfer.id,
+      });
+
+      logger.info('Payment released successfully', {
+        jobId,
+        transferId: transfer.id,
+        providerShare: providerShare / 100,
+      });
 
       res.status(200).json({
         success: true,
         message: 'Pagamento liberado e serviço concluído com sucesso.',
+        transferId: transfer.id,
       });
     } catch (error) {
-      console.error('Error releasing payment:', error);
-      res.status(500).json({ error: 'Falha ao liberar o pagamento.' });
+      const logger = require('./logger');
+      
+      // Rollback: revert to 'pago' if failed after 'releasing'
+      if (error.message !== 'PAYMENT_ALREADY_RELEASING' &&
+          error.message !== 'PAYMENT_ALREADY_RELEASED' &&
+          error.message !== 'ESCROW_NOT_FOUND') {
+        try {
+          const escrowQuery = await db.collection('escrows').where('jobId', '==', jobId).limit(1).get();
+          if (!escrowQuery.empty) {
+            await escrowQuery.docs[0].ref.update({
+              paymentStatus: 'pago',
+              paymentReleasingAt: null,
+              paymentReleasingBy: null,
+              lastError: error.message,
+              lastErrorAt: new Date().toISOString(),
+            });
+          }
+        } catch (rollbackError) {
+          logger.error('Rollback failed', { jobId, error: rollbackError.message });
+        }
+      }
+
+      logger.error('Release payment failed', {
+        jobId,
+        error: error.message,
+        stack: error.stack,
+      });
+
+      // Map errors to HTTP status codes
+      const statusCode =
+        error.message === 'PAYMENT_ALREADY_RELEASED' ? 409 :
+        error.message === 'PAYMENT_ALREADY_RELEASING' ? 409 :
+        error.message === 'ESCROW_NOT_FOUND' ? 404 :
+        error.message === 'JOB_NOT_FOUND' ? 404 :
+        error.message === 'PROVIDER_NOT_FOUND' ? 404 :
+        error.message === 'FORBIDDEN_NOT_CLIENT' ? 403 :
+        error.message === 'PROVIDER_NO_STRIPE_ACCOUNT' ? 400 :
+        error.message === 'PAYMENT_INTENT_ID_MISSING' ? 400 :
+        error.message.startsWith('INVALID_ESCROW_STATUS') ? 400 : 500;
+
+      const userMessage =
+        error.message === 'PAYMENT_ALREADY_RELEASED' ? 'Pagamento já foi liberado anteriormente.' :
+        error.message === 'PAYMENT_ALREADY_RELEASING' ? 'Pagamento está sendo processado. Aguarde.' :
+        error.message === 'ESCROW_NOT_FOUND' ? 'Registro de pagamento não encontrado para este job.' :
+        error.message === 'FORBIDDEN_NOT_CLIENT' ? 'Apenas o cliente pode liberar o pagamento.' :
+        error.message === 'PROVIDER_NO_STRIPE_ACCOUNT' ? 'O prestador não possui uma conta de pagamento configurada.' :
+        error.message === 'PAYMENT_INTENT_ID_MISSING' ? 'ID de intenção de pagamento não encontrado.' :
+        error.message.startsWith('INVALID_ESCROW_STATUS') ? `Pagamento não pode ser liberado. Status: ${error.message.split('_').pop()}` :
+        'Falha ao liberar o pagamento.';
+
+      res.status(statusCode).json({
+        success: false,
+        error: userMessage,
+        code: error.message,
+      });
     }
   });
 
@@ -3774,6 +3821,9 @@ Retorne apenas o corpo do email, sem assunto.`;
   });
 
   // Create a new job (with /api prefix) - VALIDAÇÃO ZOD APLICADA
+  const { validateRequest } = require('./middleware/validationMiddleware');
+  const { createJobSchema } = require('./validators/requestValidators');
+  
   app.post('/api/jobs', validateRequest(createJobSchema), async (req, res) => {
     try {
       const allowedMatchingStatus = ['pending', 'in_progress', 'completed', 'failed'];
@@ -4422,37 +4472,6 @@ Retorne apenas o corpo do email, sem assunto.`;
   const analyticsRouter = require('./routes/analytics');
   app.use('/api/analytics', analyticsRouter);
 
-  // =================================================================
-  // GLOBAL ERROR HANDLER (DEVE SER ÚLTIMO MIDDLEWARE)
-  // =================================================================
-  app.use((err, req, res, next) => {
-    // Log completo do erro (sempre, para debugging)
-    console.error('[ERROR_HANDLER] Unhandled error:', {
-      message: err.message,
-      stack: err.stack,
-      path: req.path,
-      method: req.method,
-      ip: req.ip,
-    });
-
-    // Determinar status code
-    const statusCode = err.statusCode || err.status || 500;
-
-    // Resposta ao cliente (sem expor stack trace em produção)
-    const response = {
-      error: err.message || 'Erro interno do servidor',
-      code: err.code || 'INTERNAL_SERVER_ERROR',
-    };
-
-    // Adicionar stack trace apenas em desenvolvimento
-    if (process.env.NODE_ENV !== 'production') {
-      response.stack = err.stack;
-      response.details = err.details || null;
-    }
-
-    res.status(statusCode).json(response);
-  });
-
   return app;
 }
 
@@ -4656,13 +4675,35 @@ if (require.main === module) {
     );
   }
 
-  // Catch unhandled promise rejections so they don't crash Cloud Run
-  process.on('unhandledRejection', (reason, promise) => {
-    console.error('[SERVER] ❌ Unhandled Rejection at:', promise, 'reason:', reason);
-  });
+  // =================================================================
+  // GLOBAL ERROR HANDLER (DEVE SER ÚLTIMO MIDDLEWARE)
+  // =================================================================
+  app.use((err, req, res, next) => {
+    // Log completo do erro (sempre, para debugging)
+    console.error('[ERROR_HANDLER] Unhandled error:', {
+      message: err.message,
+      stack: err.stack,
+      path: req.path,
+      method: req.method,
+      ip: req.ip,
+    });
 
-  process.on('uncaughtException', (err) => {
-    console.error('[SERVER] ❌ Uncaught Exception:', err);
+    // Determinar status code
+    const statusCode = err.statusCode || err.status || 500;
+
+    // Resposta ao cliente (sem expor stack trace em produção)
+    const response = {
+      error: err.message || 'Erro interno do servidor',
+      code: err.code || 'INTERNAL_SERVER_ERROR',
+    };
+
+    // Adicionar stack trace apenas em desenvolvimento
+    if (process.env.NODE_ENV !== 'production') {
+      response.stack = err.stack;
+      response.details = err.details || null;
+    }
+
+    res.status(statusCode).json(response);
   });
 
   try {

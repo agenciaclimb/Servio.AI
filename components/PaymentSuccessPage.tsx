@@ -13,7 +13,7 @@ const PaymentSuccessPage: React.FC = () => {
         try {
           // Simula a confirmação do webhook e a criação do escrow no backend
           await API.confirmPayment(jobId, sessionId);
-        } catch (error) {
+        } catch (_error) {
           // Idealmente, mostrar um erro para o usuário
         }
       }

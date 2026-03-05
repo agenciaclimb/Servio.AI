@@ -81,7 +81,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
       } else {
         addToast('Não foi possível carregar os detalhes da disputa.', 'error');
       }
-    } catch (error) {
+    } catch (_error) {
       addToast('Erro ao buscar dados da disputa.', 'error');
     }
   };

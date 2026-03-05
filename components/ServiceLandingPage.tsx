@@ -28,7 +28,7 @@ const ServiceLandingPage: React.FC<ServiceLandingPageProps> = ({ serviceId }) =>
         } else {
           setError('Serviço não encontrado ou indisponível.');
         }
-      } catch (err) {
+      } catch (_err) {
         setError('Serviço não encontrado ou indisponível.');
       } finally {
         setLoading(false);
