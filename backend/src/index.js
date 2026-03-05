@@ -338,6 +338,12 @@ function createApp({
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split('Bearer ')[1];
+      const isDebug = process.env.NODE_ENV !== 'production';
+
+      if (isDebug) {
+        console.warn('[Auth] Bearer token detected, length:', token.length);
+        console.warn('[Auth] Token prefix:', token.substring(0, 10) + '...');
+      }
 
       try {
         // Decodificar token e extrair custom claims
@@ -350,11 +356,20 @@ function createApp({
           role: decodedToken.role || 'cliente', // Custom claim definido na Task 1.1
         };
 
+        if (isDebug) {
+          console.warn('[Auth] ✅ Token verified successfully for:', req.user.email, 'Role:', req.user.role);
+        }
+
         return next();
       } catch (error) {
-        console.error('[Auth] Token verification failed:', error.message);
+        console.error('[Auth] ❌ Token verification failed:', error.message);
+        if (process.env.DEBUG === 'true') {
+          console.error('[Auth] Error details:', error);
+        }
         // Token inválido, mas não bloqueamos - deixa endpoints protegidos rejeitarem
       }
+    } else if (authHeader) {
+      console.warn('[Auth] ⚠️  Authorization header found but format invalid:', authHeader.substring(0, 20) + '...');
     }
 
     // Lightweight test/dev auth: allow injecting user via header in non-authenticated environments
@@ -363,6 +378,9 @@ function createApp({
       const injected = req.headers['x-user-email'];
       if (injected && typeof injected === 'string') {
         req.user = { email: injected };
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('[Auth] Using injected user (dev mode):', injected);
+        }
         // Role será buscado do Firestore por getCurrentUser() em authorizationMiddleware
       }
     }

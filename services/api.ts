@@ -154,10 +154,16 @@ async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const { auth } = await import('../firebaseConfig');
     if (auth.currentUser) {
       authToken = await auth.currentUser.getIdToken();
-      console.warn(`🔐 [API v3] Token Firebase obtido para: ${auth.currentUser.email}`);
+      if (DEBUG) {
+        console.warn(`🔐 [API v3] Token obtained for: ${auth.currentUser.email}`);
+        console.warn(`🔐 [API v3] Token length: ${authToken?.length || 0}`);
+        console.warn(`🔐 [API v3] Header Authorization: Bearer ${authToken ? '[set]' : '[empty]'}`);
+      }
+    } else {
+      if (DEBUG) console.warn('🔐 [API v3] No authenticated user (auth.currentUser is null)');
     }
   } catch (authError) {
-    console.warn('[API v3] Não foi possível obter token de autenticação:', authError);
+    console.warn('[API v3] Failed to get auth token:', authError);
   }
   
   try {
@@ -187,6 +193,15 @@ async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
     // Standardize the endpoint to always have the '/api' prefix for Cloud Run rewrite
     const finalEndpoint = endpoint.startsWith('/api') ? endpoint : `/api${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
 
+    if (DEBUG) {
+      console.warn(`🔧 [API v3] Sending request: ${BACKEND_URL}${finalEndpoint}`);
+      console.warn(`🔧 [API v3] Authorization header: ${authToken ? 'Bearer [token]' : '[not set]'}`);
+      console.warn(`🔧 [API v3] Headers:`, Object.entries(headers).reduce((acc, [k, v]) => {
+        acc[k] = k === 'Authorization' ? '[REDACTED]' : v;
+        return acc;
+      }, {} as Record<string, string>));
+    }
+
     const response = await fetch(`${BACKEND_URL}${finalEndpoint}`, {
       ...options,
       credentials: 'include', // Ensure cookies are sent for double-submit cookie pattern
@@ -196,6 +211,13 @@ async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
     clearTimeout(timeout);
 
     if (!response.ok) {
+      // 🔴 DEBUG 401/403 Auth errors
+      if ((response.status === 401 || response.status === 403) && DEBUG) {
+        console.error(`🔴 [API v3] Auth failed (${response.status}): ${finalEndpoint}`);
+        console.error(`🔴 [API v3] Auth header sent: ${authToken ? 'Yes (Bearer token)' : 'No'}`);
+        console.error(`🔴 [API v3] Headers: ${JSON.stringify(Object.entries(headers).map(([k, v]) => [k, k === 'Authorization' ? '[REDACTED]' : v]))}`);
+      }
+      
       let errKey: keyof typeof ErrorCatalog = 'SERVER';
       if (response.status === 401 || response.status === 403) errKey = 'AUTH';
       else if (response.status === 404) errKey = 'NOT_FOUND';

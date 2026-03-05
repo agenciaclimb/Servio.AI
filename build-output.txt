@@ -1,0 +1,80 @@
+﻿
+> servio-ai-frontend@0.0.0 build
+> vite build
+
+[36mvite v7.3.0 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 2542 modules transformed.
+rendering chunks...
+node.exe : [33m[plugin vite:reporter] 
+No linha:1 caractere:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([33m[plugin vite:reporter] :Stri 
+   ng) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(!) C:/Users/Admin/Desktop/Talina/Servio.AI/firebaseConfig.ts is dynamically 
+imported by C:/Users/Admin/Desktop/Talina/Servio.AI/services/api.ts, 
+C:/Users/Admin/Desktop/Talina/Servio.AI/services/api.ts, 
+C:/Users/Admin/Desktop/Talina/Servio.AI/services/api.ts but also statically 
+imported by 
+C:/Users/Admin/Desktop/Talina/Servio.AI/components/AIJobRequestWizard.tsx, 
+C:/Users/Admin/Desktop/Talina/Servio.AI/components/AuthModal.tsx, 
+C:/Users/Admin/Desktop/Talina/Servio.AI/components/ChatModal.tsx, 
+C:/Users/Admin/Desktop/Talina/Servio.AI/components/ProspectorDashboard.tsx, 
+C:/Users/Admin/Desktop/Talina/Servio.AI/components/ProviderOnboarding.tsx, 
+C:/Users/Admin/Desktop/Talina/Servio.AI/hooks/useProspectorStats.ts, 
+C:/Users/Admin/Desktop/Talina/Servio.AI/services/messagingService.ts, C:/Users/
+Admin/Desktop/Talina/Servio.AI/src/components/prospector/BulkCampaignModal.tsx,
+ C:/Users/Admin/Desktop/Talina/Servio.AI/src/components/prospector/OnboardingTo
+ur.tsx, C:/Users/Admin/Desktop/Talina/Servio.AI/src/components/prospector/Prosp
+ectorCRMProfessional.tsx, 
+C:/Users/Admin/Desktop/Talina/Servio.AI/src/services/referralLinkService.ts, 
+dynamic import will not move module into another chunk.
+[39m
+computing gzip size...
+[2mdist/[22m[32mindex.html                                       [39m[1m[2m  3.66 kB[22m[1m[22m[2m Γöé gzip:   1.32 kB[22m
+[2mdist/[22m[35massets/ProductListing-CbBw8EBx.css               [39m[1m[2m  5.31 kB[22m[1m[22m[2m Γöé gzip:   1.49 kB[22m
+[2mdist/[22m[35massets/AdvancedAnalyticsDashboard-D1e0Kxtw.css   [39m[1m[2m  5.77 kB[22m[1m[22m[2m Γöé gzip:   1.62 kB[22m
+[2mdist/[22m[35massets/ShoppingCart-CnKX3NpO.css                 [39m[1m[2m  6.22 kB[22m[1m[22m[2m Γöé gzip:   1.63 kB[22m
+[2mdist/[22m[35massets/CheckoutFlow-C1JRM1Zy.css                 [39m[1m[2m  6.29 kB[22m[1m[22m[2m Γöé gzip:   1.64 kB[22m
+[2mdist/[22m[35massets/OrderTracking-D4pu6lDC.css                [39m[1m[2m  8.00 kB[22m[1m[22m[2m Γöé gzip:   1.97 kB[22m
+[2mdist/[22m[35massets/index-DOPOk7XI.css                        [39m[1m[2m 59.03 kB[22m[1m[22m[2m Γöé gzip:  10.07 kB[22m
+[2mdist/[22m[36massets/SkeletonBlock-Cj5KTh0H.js                 [39m[1m[2m  0.23 kB[22m[1m[22m[2m Γöé gzip:   0.21 kB[22m[2m Γöé map:     0.64 kB[22m
+[2mdist/[22m[36massets/LoadingSpinner-DfTkktj0.js                [39m[1m[2m  1.13 kB[22m[1m[22m[2m Γöé gzip:   0.70 kB[22m[2m Γöé map:     2.86 kB[22m
+[2mdist/[22m[36massets/LocationMap-t5CqJ64F.js                   [39m[1m[2m  1.53 kB[22m[1m[22m[2m Γöé gzip:   0.79 kB[22m[2m Γöé map:     3.58 kB[22m
+[2mdist/[22m[36massets/PaymentSuccessPage-BC7UyY9i.js            [39m[1m[2m  1.58 kB[22m[1m[22m[2m Γöé gzip:   0.89 kB[22m[2m Γöé map:     3.67 kB[22m
+[2mdist/[22m[36massets/QuickPanel--GcLWRfx.js                    [39m[1m[2m  1.67 kB[22m[1m[22m[2m Γöé gzip:   0.82 kB[22m[2m Γöé map:     4.16 kB[22m
+[2mdist/[22m[36massets/ProspectingNotificationModal-CSGlVa3Y.js  [39m[1m[2m  1.99 kB[22m[1m[22m[2m Γöé gzip:   1.02 kB[22m[2m Γöé map:     4.21 kB[22m
+[2mdist/[22m[36massets/errorMessages-R2cNbir1.js                 [39m[1m[2m  2.57 kB[22m[1m[22m[2m Γöé gzip:   1.07 kB[22m[2m Γöé map:    10.44 kB[22m
+[2mdist/[22m[36massets/ServiceLandingPage-Cpi7K2EZ.js            [39m[1m[2m  3.24 kB[22m[1m[22m[2m Γöé gzip:   1.06 kB[22m[2m Γöé map:     7.22 kB[22m
+[2mdist/[22m[36massets/DisputeDetailsModal-sXkdkx0J.js           [39m[1m[2m  3.56 kB[22m[1m[22m[2m Γöé gzip:   1.58 kB[22m[2m Γöé map:     9.13 kB[22m
+[2mdist/[22m[36massets/prospectingService-D9ffyEjw.js            [39m[1m[2m  4.39 kB[22m[1m[22m[2m Γöé gzip:   1.54 kB[22m[2m Γöé map:    15.10 kB[22m
+[2mdist/[22m[36massets/MatchingResultsModal-lHoIfMEN.js          [39m[1m[2m  4.44 kB[22m[1m[22m[2m Γöé gzip:   1.87 kB[22m[2m Γöé map:    10.02 kB[22m
+[2mdist/[22m[36massets/index-lGUDspn2.js                         [39m[1m[2m  4.54 kB[22m[1m[22m[2m Γöé gzip:   1.52 kB[22m[2m Γöé map:   166.51 kB[22m
+[2mdist/[22m[36massets/geminiService-Djkb8n7B.js                 [39m[1m[2m  4.67 kB[22m[1m[22m[2m Γöé gzip:   2.21 kB[22m[2m Γöé map:    19.29 kB[22m
+[2mdist/[22m[36massets/ProviderLandingPage-B5_Ftu8p.js           [39m[1m[2m  6.27 kB[22m[1m[22m[2m Γöé gzip:   2.12 kB[22m[2m Γöé map:    10.37 kB[22m
+[2mdist/[22m[36massets/AIInternalChat-Dagv7lgN.js                [39m[1m[2m  6.70 kB[22m[1m[22m[2m Γöé gzip:   2.59 kB[22m[2m Γöé map:    17.40 kB[22m
+[2mdist/[22m[36massets/ProductListing-DVPXqMLR.js                [39m[1m[2m  7.54 kB[22m[1m[22m[2m Γöé gzip:   2.59 kB[22m[2m Γöé map:    23.94 kB[22m
+[2mdist/[22m[36massets/ShoppingCart-D6lzuoJb.js                  [39m[1m[2m  7.64 kB[22m[1m[22m[2m Γöé gzip:   2.60 kB[22m[2m Γöé map:    22.64 kB[22m
+[2mdist/[22m[36massets/OrderTracking-Bd3pgpys.js                 [39m[1m[2m  8.10 kB[22m[1m[22m[2m Γöé gzip:   2.50 kB[22m[2m Γöé map:    22.19 kB[22m
+[2mdist/[22m[36massets/CheckoutFlow-Bazx33pI.js                  [39m[1m[2m  9.53 kB[22m[1m[22m[2m Γöé gzip:   2.94 kB[22m[2m Γöé map:    27.51 kB[22m
+[2mdist/[22m[36massets/AdvancedAnalyticsDashboard-BirSAl2L.js    [39m[1m[2m  9.78 kB[22m[1m[22m[2m Γöé gzip:   2.68 kB[22m[2m Γöé map:    27.36 kB[22m
+[2mdist/[22m[36massets/ProspectorCRMProfessional-Dx5A27TC.js     [39m[1m[2m 10.24 kB[22m[1m[22m[2m Γöé gzip:   2.92 kB[22m[2m Γöé map:    26.94 kB[22m
+[2mdist/[22m[36massets/index.esm-D0XooDNX.js                     [39m[1m[2m 10.84 kB[22m[1m[22m[2m Γöé gzip:   4.28 kB[22m[2m Γöé map:   150.24 kB[22m
+[2mdist/[22m[36massets/FindProvidersPage-Du9jbOnf.js             [39m[1m[2m 10.91 kB[22m[1m[22m[2m Γöé gzip:   3.75 kB[22m[2m Γöé map:    29.25 kB[22m
+[2mdist/[22m[36massets/ProfilePage-CHnLoqgI.js                   [39m[1m[2m 12.08 kB[22m[1m[22m[2m Γöé gzip:   4.09 kB[22m[2m Γöé map:    31.07 kB[22m
+[2mdist/[22m[36massets/AIJobRequestWizard-Dkw1nz1O.js            [39m[1m[2m 14.17 kB[22m[1m[22m[2m Γöé gzip:   4.36 kB[22m[2m Γöé map:    36.77 kB[22m
+[2mdist/[22m[36massets/AuctionRoomModal-CezwlvHP.js              [39m[1m[2m 15.25 kB[22m[1m[22m[2m Γöé gzip:   4.75 kB[22m[2m Γöé map:    44.47 kB[22m
+[2mdist/[22m[36massets/ProtocolDashboard-DHkpLIie.js             [39m[1m[2m 15.68 kB[22m[1m[22m[2m Γöé gzip:   4.62 kB[22m[2m Γöé map:    47.41 kB[22m
+[2mdist/[22m[36massets/PublicProviderPage-q_1Zbeq1.js            [39m[1m[2m 20.85 kB[22m[1m[22m[2m Γöé gzip:   6.18 kB[22m[2m Γöé map:    53.89 kB[22m
+[2mdist/[22m[36massets/ProviderDashboard-BtMgWD-r.js             [39m[1m[2m 53.50 kB[22m[1m[22m[2m Γöé gzip:  13.73 kB[22m[2m Γöé map:   143.31 kB[22m
+[2mdist/[22m[36massets/ClientDashboard-mlyH7Crc.js               [39m[1m[2m 59.98 kB[22m[1m[22m[2m Γöé gzip:  14.29 kB[22m[2m Γöé map:   159.12 kB[22m
+[2mdist/[22m[36massets/AdminDashboard-Db5RKn_b.js                [39m[1m[2m 83.73 kB[22m[1m[22m[2m Γöé gzip:  14.88 kB[22m[2m Γöé map:   227.43 kB[22m
+[2mdist/[22m[36massets/index-bXwZWyjM.js                         [39m[1m[2m 98.47 kB[22m[1m[22m[2m Γöé gzip:  31.71 kB[22m[2m Γöé map:   660.13 kB[22m
+[2mdist/[22m[36massets/react-vendor-Dw_yU8dF.js                  [39m[1m[2m139.26 kB[22m[1m[22m[2m Γöé gzip:  45.01 kB[22m[2m Γöé map:   348.35 kB[22m
+[2mdist/[22m[36massets/ProspectorDashboard-f62AK_wv.js           [39m[1m[2m173.93 kB[22m[1m[22m[2m Γöé gzip:  52.92 kB[22m[2m Γöé map:   596.65 kB[22m
+[2mdist/[22m[36massets/MetricsPageDashboard-C12fEz-b.js          [39m[1m[2m370.25 kB[22m[1m[22m[2m Γöé gzip: 106.46 kB[22m[2m Γöé map: 1,799.08 kB[22m
+[2mdist/[22m[36massets/firebase-vendor-D7xEfidt.js               [39m[1m[2m458.35 kB[22m[1m[22m[2m Γöé gzip: 136.72 kB[22m[2m Γöé map: 2,374.07 kB[22m
+[32mΓ£ô built in 13.52s[39m
