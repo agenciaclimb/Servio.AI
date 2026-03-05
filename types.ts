@@ -373,8 +373,14 @@ export interface ParsedSearchQuery {
 }
 
 export interface MaintenanceSuggestion {
-  suggestionTitle: string;
-  jobDescription: string;
+  // New fields from backend
+  title?: string;
+  description?: string;
+  urgency?: 'baixa' | 'media' | 'alta';
+  estimatedCost?: number;
+  // Legacy fields for backward compatibility
+  suggestionTitle?: string;
+  jobDescription?: string;
 }
 
 export interface ChatSuggestion {

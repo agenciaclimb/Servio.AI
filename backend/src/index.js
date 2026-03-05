@@ -659,7 +659,10 @@ Responda APENAS com o JSON, sem markdown ou texto adicional.`;
     };
 
     const model = getModel();
-    if (!model) return res.json(buildMaintenanceStub(item));
+    if (!model) {
+      const stub = buildMaintenanceStub(item);
+      return res.json(stub ? { title: stub.title, description: stub.description, urgency: stub.urgency, estimatedCost: stub.estimatedCost, suggestionTitle: stub.title, jobDescription: stub.description } : null);
+    }
 
     try {
       const systemPrompt = `Você é um assistente de manutenção preventiva. Analise o item e sugira manutenção se necessário.
@@ -691,10 +694,29 @@ Responda APENAS com o JSON ou null, sem markdown ou texto adicional.`;
       }
 
       const suggestion = JSON.parse(jsonMatch[0]);
-      res.json(suggestion);
+      // Normalize: include mapped fields for frontend compatibility
+      res.json({
+        title: suggestion.title || suggestion.suggestionTitle,
+        description: suggestion.description || suggestion.jobDescription,
+        urgency: suggestion.urgency,
+        estimatedCost: suggestion.estimatedCost,
+        suggestionTitle: suggestion.title || suggestion.suggestionTitle,
+        jobDescription: suggestion.description || suggestion.jobDescription,
+      });
     } catch (error) {
       console.warn('AI error /api/suggest-maintenance fallback:', error);
-      return res.json(buildMaintenanceStub(item));
+      const stub = buildMaintenanceStub(item);
+      if (stub) {
+        return res.json({
+          title: stub.title,
+          description: stub.description,
+          urgency: stub.urgency,
+          estimatedCost: stub.estimatedCost,
+          suggestionTitle: stub.title,
+          jobDescription: stub.description,
+        });
+      }
+      return res.json(null);
     }
   });
 
