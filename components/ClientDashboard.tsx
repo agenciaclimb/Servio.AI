@@ -857,15 +857,6 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({
                   + Novo Serviço
                 </button>
               </div>
-              <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">Meus Serviços</h1>
-                <button
-                  onClick={() => onNewJobFromItem('')}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm font-medium"
-                >
-                  + Novo Serviço
-                </button>
-              </div>
               {userJobs.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {userJobs.map(job => (
