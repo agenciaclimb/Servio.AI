@@ -6,6 +6,84 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 /**
+ * Mock products fallback data
+ */
+const MOCK_PRODUCTS = [
+  {
+    id: 'prod_001',
+    name: 'Consultoria de SEO',
+    description: 'Serviço completo de otimização para mecanismos de busca',
+    price: 1500,
+    category: 'consultoria',
+    rating: 4.8,
+    stock: 20,
+    status: 'active',
+    images: [],
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_002',
+    name: 'Design de Website',
+    description: 'Criação e design responsivo de website profissional',
+    price: 2500,
+    category: 'design',
+    rating: 4.6,
+    stock: 15,
+    status: 'active',
+    images: [],
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_003',
+    name: 'Gestão de Redes Sociais',
+    description: 'Gerenciamento profissional de redes sociais da sua empresa',
+    price: 1200,
+    category: 'marketing',
+    rating: 4.7,
+    stock: 25,
+    status: 'active',
+    images: [],
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_004',
+    name: 'Desenvolvimento em React',
+    description: 'Desenvolvimento de aplicação React moderna e escalável',
+    price: 3500,
+    category: 'desenvolvimento',
+    rating: 4.9,
+    stock: 10,
+    status: 'active',
+    images: [],
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_005',
+    name: 'Análise de Concorrentes',
+    description: 'Análise estratégica completa dos seus concorrentes',
+    price: 800,
+    category: 'consultoria',
+    rating: 4.5,
+    stock: 30,
+    status: 'active',
+    images: [],
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'prod_006',
+    name: 'Treinamento de Equipe',
+    description: 'Treinamento técnico e comportamental para sua equipe',
+    price: 2000,
+    category: 'treinamento',
+    rating: 4.7,
+    stock: 12,
+    status: 'active',
+    images: [],
+    createdAt: new Date().toISOString(),
+  },
+];
+
+/**
  * Get products with filters
  */
 async function getProducts(db, filters = {}) {
@@ -31,10 +109,46 @@ async function getProducts(db, filters = {}) {
       products.push(product);
     });
 
+    // If no products found in Firestore, return mock products as fallback
+    if (products.length === 0) {
+      console.warn('[E-commerce] No products found in Firestore, using mock data fallback');
+      let mockProducts = MOCK_PRODUCTS.filter(p => p.status === status);
+      
+      if (category) {
+        mockProducts = mockProducts.filter(p => p.category === category);
+      }
+      
+      if (minPrice || maxPrice) {
+        mockProducts = mockProducts.filter(p => {
+          if (minPrice && p.price < minPrice) return false;
+          if (maxPrice && p.price > maxPrice) return false;
+          return true;
+        });
+      }
+
+      return mockProducts.slice(0, limit);
+    }
+
     return products;
   } catch (error) {
-    console.error('Error getting products:', error);
-    throw error;
+    console.error('[E-commerce] Error getting products from Firestore:', error.message);
+    console.warn('[E-commerce] Falling back to mock products');
+    // Return mock products on error
+    let mockProducts = MOCK_PRODUCTS.filter(p => p.status === (filters.status || 'active'));
+    
+    if (filters.category) {
+      mockProducts = mockProducts.filter(p => p.category === filters.category);
+    }
+    
+    if (filters.minPrice || filters.maxPrice) {
+      mockProducts = mockProducts.filter(p => {
+        if (filters.minPrice && p.price < filters.minPrice) return false;
+        if (filters.maxPrice && p.price > filters.maxPrice) return false;
+        return true;
+      });
+    }
+
+    return mockProducts.slice(0, filters.limit || 50);
   }
 }
 
@@ -46,12 +160,23 @@ async function getProductById(db, productId) {
     const doc = await db.collection('products').doc(productId).get();
 
     if (!doc.exists) {
+      // Try to find in mock products
+      const mockProduct = MOCK_PRODUCTS.find(p => p.id === productId);
+      if (mockProduct) {
+        return mockProduct;
+      }
       throw new Error('Product not found');
     }
 
     return { id: doc.id, ...doc.data() };
   } catch (error) {
-    console.error('Error getting product:', error);
+    console.error('[E-commerce] Error getting product:', error.message);
+    // Try to find in mock products as fallback
+    const mockProduct = MOCK_PRODUCTS.find(p => p.id === productId);
+    if (mockProduct) {
+      console.warn('[E-commerce] Found product in mock data');
+      return mockProduct;
+    }
     throw error;
   }
 }

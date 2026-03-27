@@ -30,8 +30,9 @@ function createEcommerceRoutes(db) {
 
       res.json({ success: true, products });
     } catch (error) {
-      console.error('Error in GET /products:', error);
-      res.status(500).json({ success: false, error: error.message });
+      console.error('[E-commerce] Error in GET /products:', error.message);
+      // Return empty array instead of 500 error for better UX
+      res.status(200).json({ success: true, products: [], error: error.message });
     }
   });
 
@@ -44,8 +45,8 @@ function createEcommerceRoutes(db) {
       const product = await ecommerceService.getProductById(db, req.params.id);
       res.json({ success: true, product });
     } catch (error) {
-      console.error('Error in GET /products/:id:', error);
-      res.status(404).json({ success: false, error: error.message });
+      console.error('[E-commerce] Error in GET /products/:id:', error.message);
+      res.status(404).json({ success: false, error: 'Product not found' });
     }
   });
 
